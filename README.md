@@ -2,18 +2,25 @@
 
 Manage timezone settings via Puppet
 
-## How to use
+## Usage
 
 ### Set timezone to UTC
 ```
     class { 'timezone':
-        timezone => "UTC",
+        timezone => 'UTC',
     }
 ```
 
 ### Set timezone to Europe/Berlin
 ```
     class { 'timezone':
-        timezone => "Europe/Berlin",
+        timezone => 'Europe/Berlin',
     }
 ```
+
+## Other class parameters
+* ensure: present or absent, default: present
+* autoupgrade: true or false, default: false. Auto-upgrade package, if there is a newer version
+* package: string, default: OS specific. Set package name, if platform is not supported.
+* config_file: string, default: OS specific. Set config_file, if platform is not supported.
+* zoneinfo_dir: string, default: OS specific. Set zoneinfo_dir, if platform is not supported.
