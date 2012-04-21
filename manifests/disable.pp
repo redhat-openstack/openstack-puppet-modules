@@ -11,8 +11,8 @@
 # Sample Usage:
 #
 class snmpd::disable inherits snmpd {
-  Service["snmpd"] {
-    ensure => "stopped",
+  Service['snmpd'] {
+    ensure => 'stopped',
     enable => false,
   }
 }

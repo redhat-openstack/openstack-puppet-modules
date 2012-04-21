@@ -13,17 +13,17 @@
 # Requires:
 #
 # Sample Usage:
-#  snmpd::snmpv3_user { "myuser":
-#    authtype => "MD5",
+#  snmpd::snmpv3_user { 'myuser':
+#    authtype => 'MD5',
 #    authpass => '1234auth',
 #    privpass => '5678priv',
 #  }
 #
 define snmpd::snmpv3_user (
-  $authtype = "SHA",
   $authpass,
-  $privtype = "AES",
-  $privpass = ""
+  $authtype = 'SHA',
+  $privtype = 'AES',
+  $privpass = ''
 ) {
   if $privpass {
     $cmd = "createUser $title $authtype $authpass $privtype $privpass"
@@ -31,11 +31,11 @@ define snmpd::snmpv3_user (
     $cmd = "createUser $title $authtype $authpass"
   }
   exec { "create-snmpv3-user-${title}":
-    path    => "/bin:/sbin:/usr/bin:/usr/sbin",
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     command => "service snmpd stop ; echo \"$cmd\" >>${snmpd::params::var_net_snmp}/snmpd.conf && touch ${snmpd::params::var_net_snmp}/${title}",
     creates => "${snmpd::params::var_net_snmp}/${title}",
-    user    => "root",
-    require => [ Package["snmpd"], File["var-net-snmp"], ],
-    before  => Service["snmpd"],
+    user    => 'root',
+    require => [ Package['snmpd'], File['var-net-snmp'], ],
+    before  => Service['snmpd'],
   }
 }
