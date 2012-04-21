@@ -1,6 +1,13 @@
 class snmpd::params {
+  $ro_community = 'public'
+  $rw_community = 'private'
+  $ro_network   = '127.0.0.1'
+  $rw_network   = '127.0.0.1'
+  $contact      = 'Unknown'
+  $location     = 'Unknown'
+
   case $::operatingsystem {
-    "RedHat", "CentOS", "Scientific", "SLC", "OracleLinux", "OVS", "OEL", "Amazon": {
+    "RedHat", "CentOS", "Scientific", "SLC", "OracleLinux", "OVS", "OEL": {
       $package_name        = 'net-snmp'
       $client_package_name = 'net-snmp-utils'
       $client_config       = '/etc/snmp/snmp.conf'
@@ -18,7 +25,7 @@ class snmpd::params {
       } else {
         $trap_sysconfig    = '/etc/sysconfig/snmptrapd'
       }
-      $var-net-snmp        = '/var/net-snmp'
+      $var_net_snmp        = '/var/net-snmp'
     }
     "Fedora", "Ascendos", "CloudLinux", "PSBM": {
       fail("${::hostname}: This module does not support operatingsystem ${::operatingsystem}")

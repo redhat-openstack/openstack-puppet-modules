@@ -46,9 +46,9 @@ class snmpd::trapd {
   service { "snmptrapd":
     name       => $snmpd::params::trap_service_name,
     ensure     => "running",
-    enable     => "true",
-    hasrestart => "true",
-    hasstatus  => "true",
+    enable     => true,
+    hasrestart => true,
+    hasstatus  => true,
     require    => Package["snmpd"],
   }
 }

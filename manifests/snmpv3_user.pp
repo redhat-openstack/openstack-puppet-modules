@@ -32,8 +32,8 @@ define snmpd::snmpv3_user (
   }
   exec { "create-snmpv3-user-${title}":
     path    => "/bin:/sbin:/usr/bin:/usr/sbin",
-    command => "service snmpd stop ; echo \"$cmd\" >>${snmpd::params::var-net-snmp}/snmpd.conf && touch ${snmpd::params::var-net-snmp}/${title}",
-    creates => "${snmpd::params::var-net-snmp}/${title}",
+    command => "service snmpd stop ; echo \"$cmd\" >>${snmpd::params::var_net_snmp}/snmpd.conf && touch ${snmpd::params::var_net_snmp}/${title}",
+    creates => "${snmpd::params::var_net_snmp}/${title}",
     user    => "root",
     require => [ Package["snmpd"], File["var-net-snmp"], ],
     before  => Service["snmpd"],

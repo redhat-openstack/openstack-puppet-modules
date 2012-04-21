@@ -53,16 +53,16 @@ class snmpd {
     owner   => "root",
     group   => "root",
     ensure  => "directory",
-    path    => $snmpd::params::var-net-snmp,
+    path    => $snmpd::params::var_net_snmp,
     require => Package["snmpd"],
   }
 
   service { "snmpd":
     name       => $snmpd::params::service_name,
     ensure     => "running",
-    enable     => "true",
-    hasrestart => "true",
-    hasstatus  => "true",
+    enable     => true,
+    hasrestart => true,
+    hasstatus  => true,
     require    => Package["snmpd"],
   }
 }
