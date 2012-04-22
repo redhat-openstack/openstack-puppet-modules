@@ -1,10 +1,12 @@
 Puppet SNMP Module
 ==================
 
+[![Build Status](https://secure.travis-ci.org/runningman/puppet-snmpd.png?branch=master)](http://travis-ci.org/runningman/puppet-snmpd)
+
 Introduction
 ------------
 
-This is the snmpd module.
+This module manages the installation of the SNMP server, SNMP client, and SNMP trap server.
 It does not work yet.
 
 Copyright
