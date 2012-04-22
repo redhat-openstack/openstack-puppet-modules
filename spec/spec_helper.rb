@@ -1,18 +1,16 @@
-require 'pathname'
-dir = Pathname.new(__FILE__).parent
-$LOAD_PATH.unshift(dir, dir + 'lib', dir + '../lib')
-
-require 'mocha'
 require 'puppet'
-gem 'rspec', '=1.2.9'
-require 'spec/autorun'
+require 'rspec'
+require 'rspec-puppet'
 
-Spec::Runner.configure do |config|
-    config.mock_with :mocha
+def param_value(subject, type, title, param)
+  subject.resource(type, title).send(:parameters)[param.to_sym]
 end
 
-# We need this because the RAL uses 'should' as a method.  This
-# allows us the same behaviour but with a different method name.
-class Object
-    alias :must :should
+RSpec.configure do |c|
+  c.module_path = File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/modules'))
+  # Using an empty site.pp file to avoid: https://github.com/rodjek/rspec-puppet/issues/15
+  c.manifest_dir = File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/manifests'))
+  # Use fixtures for config file mainly to support using our own hiera.yaml settings.
+  # Pending: https://github.com/rodjek/rspec-puppet/pull/21
+  # c.config = File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/puppet.conf'))
 end
