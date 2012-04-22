@@ -1,5 +1,3 @@
 ###
 ### File managed by Puppet
 ###
-# snmptrapd command line options
-# OPTIONS="-Lsd -p /var/run/snmptrapd.pid"

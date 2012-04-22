@@ -1,30 +1,61 @@
-# Definition: snmpd::snmpv3_user
+# == Definition: snmpd::snmpv3_user
 #
-# Creates a SNMPv3 user.
+# This definition creates a SNMPv3 user.
 #
-# Parameters:
-#   $authtype - optional - defaults to SHA|MD5
-#   $authpass - required
-#   $privtype - optional - defaults to AES|DES
-#   $privpass - optional
+# === Parameters:
 #
-# Actions:
+# [*title*]
+#   Name of the user.
+#   Required
 #
-# Requires:
+# [*authpass*]
+#   Authentication password for the user.
+#   Required
 #
-# Sample Usage:
-#  snmpd::snmpv3_user { 'myuser':
-#    authtype => 'MD5',
-#    authpass => '1234auth',
-#    privpass => '5678priv',
-#  }
+# [*authtype*]
+#   Authentication type for the user.  SHA or MD5
+#   Default: SHA
+#
+# [*privpass*]
+#   Encryption password for the user.
+#   Default: no encryption password
+#
+# [*privtype*]
+#   Encryption type for the user.  AES or DES
+#   Default: AES
+#
+# === Actions:
+#
+# Creates a SNMPv3 user with authentication and encryption paswords.
+#
+# === Requires:
+#
+# Class['snmpd']
+#
+# === Sample Usage:
+#
+#   snmpd::snmpv3_user { 'myuser':
+#     authtype => 'MD5',
+#     authpass => '1234auth',
+#     privpass => '5678priv',
+#   }
+#
+# === Authors:
+#
+# Mike Arnold <mike@razorsedge.org>
+#
+# === Copyright:
+#
+# Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 define snmpd::snmpv3_user (
   $authpass,
   $authtype = 'SHA',
-  $privtype = 'AES',
-  $privpass = ''
+  $privpass = '',
+  $privtype = 'AES'
 ) {
+  include snmpd
+
   if $privpass {
     $cmd = "createUser $title $authtype $authpass $privtype $privpass"
   } else {

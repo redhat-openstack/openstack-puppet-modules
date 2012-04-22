@@ -1,42 +1,120 @@
-# Class: snmpd::trapd
+# == Class: snmpd::trapd
 #
-# This class manages snmptrapd.
+# This class handles installing the SNMP trap daemon.
 #
-# Parameters:
+# === Parameters:
 #
-# Actions:
+# [*ro_community*]
+#   Read-only (RO) community string.
+#   Default: public
 #
-# Requires:
+# [*rw_community*]
+#   Read-write (RW) community string.
+#   Default: private
 #
-# Sample Usage:
+# [*ensure*]
+#   Ensure if present or absent.
+#   Default: present
 #
-class snmpd::trapd {
+# [*service_ensure*]
+#   Ensure if service is running or stopped.
+#   Default: running
+#
+# [*service_name*]
+#   Name of SNMP service
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
+#
+# [*service_enable*]
+#   Start service at boot.
+#   Default: true
+#
+# [*service_hasstatus*]
+#   Service has status command.
+#   Default: true
+#
+# [*service_hasrestart*]
+#   Service has restart command.
+#   Default: true
+#
+# === Actions:
+#
+# Installs the SNMP trap daemon service and configuration.
+#
+# === Requires:
+#
+# Class['snmpd']
+#
+# === Sample Usage:
+#
+#   class { 'snmpd::trapd':
+#     ro_community => 'public',
+#   }
+#
+# === Authors:
+#
+# Mike Arnold <mike@razorsedge.org>
+#
+# === Copyright:
+#
+# Copyright (C) 2012 Mike Arnold, unless otherwise noted.
+#
+class snmpd::trapd (
+  $ro_community       = $snmpd::params::ro_community,
+  $rw_community       = $snmpd::params::rw_community,
+  $ensure             = 'present',
+  $service_ensure     = 'running',
+  $service_name       = $snmpd::params::trap_service_name,
+  $service_enable     = true,
+  $service_hasstatus  = true,
+  $service_hasrestart = true
+) inherits snmpd::params {
   include snmpd
 
+  case $ensure {
+    /(present)/: {
+      $file_ensure = 'present'
+      if $service_ensure in [ running, stopped ] {
+        $service_ensure_real = $service_ensure
+      } else {
+        fail('service_ensure parameter must be running or stopped')
+      }
+    }
+    /(absent)/: {
+      $file_ensure = 'absent'
+      $service_ensure_real = 'stopped'
+    }
+    default: {
+      fail('ensure parameter must be present or absent')
+    }
+  }
+
   file { 'snmptrapd.conf':
-    ensure  => 'present',
+    ensure  => $file_ensure,
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
     path    => $snmpd::params::trap_service_config,
-    source  => [
-      "puppet:///modules/snmpd/snmptrapd.conf.${::fqdn}",
-      "puppet:///modules/snmpd/snmptrapd.conf.${::osfamily}",
-      'puppet:///modules/snmpd/snmptrapd.conf',
-    ],
+    content => template('snmpd/snmptrapd.conf.erb'),
+#    source  => [
+#      "puppet:///modules/snmpd/snmptrapd.conf-${::fqdn}",
+#      "puppet:///modules/snmpd/snmptrapd.conf-${::osfamily}-${::lsbmajdistrelease}",
+#      'puppet:///modules/snmpd/snmptrapd.conf',
+#    ],
     require => Package['snmpd'],
     notify  => Service['snmptrapd'],
   }
 
   file { 'snmptrapd.sysconfig':
-    ensure  => 'present',
+    ensure  => $file_ensure,
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
     path    => $snmpd::params::trap_sysconfig,
     source  => [
-      "puppet:///modules/snmpd/snmptrapd.sysconfig.${::fqdn}",
-      "puppet:///modules/snmpd/snmptrapd.sysconfig.${::osfamily}",
+      "puppet:///modules/snmpd/snmptrapd.sysconfig-${::fqdn}",
+      "puppet:///modules/snmpd/snmptrapd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
       'puppet:///modules/snmpd/snmptrapd.sysconfig',
     ],
     require => Package['snmpd'],
@@ -44,11 +122,11 @@ class snmpd::trapd {
   }
 
   service { 'snmptrapd':
-    ensure     => 'running',
-    name       => $snmpd::params::trap_service_name,
-    enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
+    ensure     => $service_ensure_real,
+    name       => $service_name,
+    enable     => $service_enable,
+    hasstatus  => $service_hasstatus,
+    hasrestart => $service_hasrestart,
     require    => Package['snmpd'],
   }
 }
