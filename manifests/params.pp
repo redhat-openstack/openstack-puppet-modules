@@ -20,7 +20,7 @@ class snmpd::params {
 
 # These should not need to be changed.
   case $::operatingsystem {
-    'RedHat', 'CentOS', 'Scientific', 'SLC', 'OracleLinux', 'OVS', 'OEL': {
+    'RedHat', 'CentOS', 'Scientific', 'SLC', 'OracleLinux', 'OEL': {
       #TODO: Use $::lsbmajdistrelease or $majdistrelease?
       #$majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
 
@@ -45,7 +45,7 @@ class snmpd::params {
         $trap_sysconfig    = '/etc/sysconfig/snmptrapd'
       }
     }
-    'Fedora', 'Ascendos', 'CloudLinux', 'PSBM': {
+    'Fedora': {
       fail("Module snmpd is not yet supported on ${::operatingsystem}")
     }
     default: {
