@@ -15,8 +15,7 @@ describe 'snmpd::client' do
     end
   end
 
-  redhatish = ['RedHat', 'CentOS', 'Scientific', 'SLC', 'OracleLinux', 'OEL']
-  fedoraish = ['Fedora']
+  redhatish = ['RedHat']
 
   describe 'on a supported operatingsystem, with default settings' do
     redhatish.each do |os|

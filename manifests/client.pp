@@ -43,7 +43,7 @@ class snmpd::client (
   $autoupgrade  = false,
   $package_name = $snmpd::params::client_package_name
 ) inherits snmpd::params {
-  include snmpd
+  #include snmpd
   #TODO: do we want the client to install and enable the server?
 
   case $ensure {
