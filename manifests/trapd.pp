@@ -70,7 +70,7 @@ class snmpd::trapd (
   $service_hasstatus  = true,
   $service_hasrestart = true
 ) inherits snmpd::params {
-  include snmpd
+  #include snmpd
 
   case $ensure {
     /(present)/: {
