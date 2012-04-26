@@ -166,7 +166,7 @@ class snmpd (
   #TODO var-net-snmp ensure => 'directory'
   file { 'var-net-snmp':
     ensure  => 'directory',
-    mode    => '0700',
+    mode    => $snmpd::params::varnetsnmp_perms,
     owner   => 'root',
     group   => 'root',
     path    => $snmpd::params::var_net_snmp,

@@ -29,10 +29,13 @@ class snmpd::params {
       $service_name        = 'snmpd'
       if $::lsbmajdistrelease <= '5' {
         $sysconfig         = '/etc/sysconfig/snmpd.options'
+        $var_net_snmp      = '/var/net-snmp'
+        $varnetsnmp_perms  = '0700'
       } else {
         $sysconfig         = '/etc/sysconfig/snmpd'
+        $var_net_snmp      = '/var/lib/net-snmp'
+        $varnetsnmp_perms  = '0755'
       }
-      $var_net_snmp        = '/var/net-snmp'
 
       $client_package_name = 'net-snmp-utils'
       $client_config       = '/etc/snmp/snmp.conf'
