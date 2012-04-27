@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'snmpd::trapd' do
+describe 'snmp::server' do
 
   describe 'on a non-supported operatingsystem' do
     let(:params) {{}}
@@ -11,7 +11,7 @@ describe 'snmpd::trapd' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(/Module snmpd is not supported on foo/)
+      end.should raise_error(/Module snmp is not supported on foo/)
     end
   end
 
@@ -26,18 +26,22 @@ describe 'snmpd::trapd' do
           :operatingsystem   => os
         }
         end
-        it { should contain_file('snmptrapd.conf').with(
+#        it { should contain_package('snmpd').with(
+#          :ensure => 'present',
+#          :name   => 'net-snmp'
+#        )}
+        it { should contain_file('snmpd.conf').with(
           :ensure => 'present',
-          :path   => '/etc/snmp/snmptrapd.conf'
+          :path   => '/etc/snmp/snmpd.conf'
         )}
-        it { should contain_file('snmptrapd.sysconfig').with(
+        it { should contain_file('snmpd.sysconfig').with(
           :ensure => 'present',
-          :path   => '/etc/sysconfig/snmptrapd'
+          :path   => '/etc/sysconfig/snmpd'
         )}
-        it { should contain_service('snmptrapd').with(
+        it { should contain_service('snmpd').with(
           :ensure => 'running',
           :enable => true,
-          :name   => 'snmptrapd'
+          :name   => 'snmpd'
         )}
       end
     end
@@ -48,7 +52,8 @@ describe 'snmpd::trapd' do
       describe "for operating system #{os}" do
         let(:params) {
           {
-            :service_name   => 'snmp-trapserver',
+            :autoupgrade    => true,
+            :package_name   => 'snmp-server',
             :service_ensure => 'stopped',
             :service_enable => false
           }
@@ -58,21 +63,24 @@ describe 'snmpd::trapd' do
           :operatingsystem   => os
         }
         end
-        it { should contain_file('snmptrapd.conf').with(
+#        it { should contain_package('snmpd').with(
+#          :ensure => 'latest',
+#          :name   => 'net-snmp'
+#        )}
+        it { should contain_file('snmpd.conf').with(
           :ensure => 'present',
-          :path   => '/etc/snmp/snmptrapd.conf'
+          :path   => '/etc/snmp/snmpd.conf'
         )}
-        it { should contain_file('snmptrapd.sysconfig').with(
+        it { should contain_file('snmpd.sysconfig').with(
           :ensure => 'present',
-          :path   => '/etc/sysconfig/snmptrapd'
+          :path   => '/etc/sysconfig/snmpd'
         )}
-        it { should contain_service('snmptrapd').with(
+        it { should contain_service('snmpd').with(
           :ensure => 'stopped',
           :enable => false,
-          :name   => 'snmp-trapserver'
+          :name   => 'snmpd'
         )}
       end
     end
   end
 end
-

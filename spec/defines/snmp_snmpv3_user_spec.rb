@@ -1,27 +1,11 @@
 require 'spec_helper'
 
-describe 'snmpd::snmpv3_user' do
+describe 'snmp::snmpv3_user' do
   let :facts do {
     :lsbmajdistrelease => '6',
     :operatingsystem   => 'CentOS'
   }
   end
-
-#  let(:title) { 'myuser' }
-#
-#  let :params do {
-#      :authpass => 'myauthpass',
-#      :authtype => 'MD5',
-#      :privpass => 'myprivpass',
-#      :privtype => 'DES'
-#  }
-#  end
-#
-#  it { should contain_exec('create-snmpv3-user-myuser').with(
-#    :command => 'service snmpd stop ; echo "createUser myuser MD5 myauthpass DES myprivpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myuser',
-#    :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
-#    :before  => 'Service[snmpd]'
-#  )}
 
   describe 'with default settings' do
     let(:title) { 'myDEFAULTuser' }

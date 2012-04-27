@@ -1,4 +1,4 @@
-# == Definition: snmpd::snmpv3_user
+# == Definition: snmp::snmpv3_user
 #
 # This definition creates a SNMPv3 user.
 #
@@ -30,11 +30,11 @@
 #
 # === Requires:
 #
-# Class['snmpd']
+# Class['snmp']
 #
 # === Sample Usage:
 #
-#   snmpd::snmpv3_user { 'myuser':
+#   snmp::snmpv3_user { 'myuser':
 #     authtype => 'MD5',
 #     authpass => '1234auth',
 #     privpass => '5678priv',
@@ -48,13 +48,13 @@
 #
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
-define snmpd::snmpv3_user (
+define snmp::snmpv3_user (
   $authpass,
   $authtype = 'SHA',
   $privpass = '',
   $privtype = 'AES'
 ) {
-  include snmpd
+  include snmp::server
 
   if $privpass {
     $cmd = "createUser ${title} ${authtype} ${authpass} ${privtype} ${privpass}"
@@ -63,8 +63,8 @@ define snmpd::snmpv3_user (
   }
   exec { "create-snmpv3-user-${title}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    command => "service snmpd stop ; echo \"$cmd\" >>${snmpd::params::var_net_snmp}/snmpd.conf && touch ${snmpd::params::var_net_snmp}/${title}",
-    creates => "${snmpd::params::var_net_snmp}/${title}",
+    command => "service snmpd stop ; echo \"$cmd\" >>${snmp::params::var_net_snmp}/snmpd.conf && touch ${snmp::params::var_net_snmp}/${title}",
+    creates => "${snmp::params::var_net_snmp}/${title}",
     user    => 'root',
     require => [ Package['snmpd'], File['var-net-snmp'], ],
     before  => Service['snmpd'],

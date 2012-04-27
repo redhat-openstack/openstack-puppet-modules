@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'snmpd::client' do
+describe 'snmp' do
 
   describe 'on a non-supported operatingsystem' do
     let(:params) {{}}
@@ -11,7 +11,7 @@ describe 'snmpd::client' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(/Module snmpd is not supported on foo/)
+      end.should raise_error(/Module snmp is not supported on foo/)
     end
   end
 
@@ -26,6 +26,10 @@ describe 'snmpd::client' do
           :operatingsystem   => os
         }
         end
+        it { should contain_package('snmpd').with(
+          :ensure => 'present',
+          :name   => 'net-snmp'
+        )}
         it { should contain_package('snmp-client').with(
           :ensure => 'present',
           :name   => 'net-snmp-utils'
@@ -33,6 +37,10 @@ describe 'snmpd::client' do
         it { should contain_file('snmp.conf').with(
           :ensure => 'present',
           :path   => '/etc/snmp/snmp.conf'
+        )}
+        it { should contain_file('var-net-snmp').with(
+          :ensure => 'directory',
+          :path   => '/var/lib/net-snmp'
         )}
       end
     end
@@ -43,9 +51,8 @@ describe 'snmpd::client' do
       describe "for operating system #{os}" do
         let(:params) {
           {
-#            :ensure       => 'present',
+            :ensure       => 'present',
             :autoupgrade  => true,
-            :package_name => 'snmp-client'
           }
         }
         let :facts do {
@@ -53,13 +60,21 @@ describe 'snmpd::client' do
           :operatingsystem   => os
         }
         end
+        it { should contain_package('snmpd').with(
+          :ensure => 'latest',
+          :name   => 'net-snmp'
+        )}
         it { should contain_package('snmp-client').with(
           :ensure => 'latest',
-          :name   => 'snmp-client'
+          :name   => 'net-snmp-utils'
         )}
         it { should contain_file('snmp.conf').with(
           :ensure => 'present',
           :path   => '/etc/snmp/snmp.conf'
+        )}
+        it { should contain_file('var-net-snmp').with(
+          :ensure => 'directory',
+          :path   => '/var/lib/net-snmp'
         )}
       end
     end

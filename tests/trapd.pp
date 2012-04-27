@@ -1,2 +1,2 @@
-include snmpd::trapd
+include snmp::trapd
 

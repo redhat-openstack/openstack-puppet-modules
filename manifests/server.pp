@@ -1,6 +1,6 @@
-# == Class: snmp::trapd
+# == Class: snmp::server
 #
-# This class handles installing the SNMP trap daemon.
+# This class handles installing the SNMP daemon.
 #
 # === Parameters:
 #
@@ -12,9 +12,35 @@
 #   Read-write (RW) community string.
 #   Default: private
 #
+# [*ro_network*]
+#   Network that is allowed to RO query the daemon.
+#   Default: 127.0.0.1
+#
+# [*rw_network*]
+#   Network that is allowed to RW query the daemon.
+#   Default: 127.0.0.1
+#
+# [*contact*]
+#   Responsible person for the SNMP system.
+#   Default: Unknown
+#
+# [*location*]
+#   Location of the SNMP system.
+#   Default: Unknown
+#
 # [*ensure*]
 #   Ensure if present or absent.
 #   Default: present
+#
+# [*autoupgrade*]
+#   Upgrade package automatically, if there is a newer version.
+#   Default: false
+#
+# [*package_name*]
+#   Name of the package.
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
 #
 # [*service_ensure*]
 #   Ensure if service is running or stopped.
@@ -40,7 +66,7 @@
 #
 # === Actions:
 #
-# Installs the SNMP trap daemon service and configuration.
+# Installs the SNMP daemon package, service, and configuration.
 #
 # === Requires:
 #
@@ -48,7 +74,7 @@
 #
 # === Sample Usage:
 #
-#   class { 'snmp::trapd':
+#   class { 'snmp::server':
 #     ro_community => 'public',
 #   }
 #
@@ -60,12 +86,18 @@
 #
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
-class snmp::trapd (
+class snmp::server (
   $ro_community       = $snmp::params::ro_community,
   $rw_community       = $snmp::params::rw_community,
+  $ro_network         = $snmp::params::ro_network,
+  $rw_network         = $snmp::params::rw_network,
+  $contact            = $snmp::params::contact,
+  $location           = $snmp::params::location,
   $ensure             = 'present',
+  $autoupgrade        = false,
+  $package_name       = $snmp::params::package_name,
   $service_ensure     = 'running',
-  $service_name       = $snmp::params::trap_service_name,
+  $service_name       = $snmp::params::service_name,
   $service_enable     = true,
   $service_hasstatus  = true,
   $service_hasrestart = true
@@ -74,6 +106,11 @@ class snmp::trapd (
 
   case $ensure {
     /(present)/: {
+      if $autoupgrade == true {
+        $package_ensure = 'latest'
+      } else {
+        $package_ensure = 'present'
+      }
       $file_ensure = 'present'
       if $service_ensure in [ running, stopped ] {
         $service_ensure_real = $service_ensure
@@ -82,6 +119,7 @@ class snmp::trapd (
       }
     }
     /(absent)/: {
+      $package_ensure = 'absent'
       $file_ensure = 'absent'
       $service_ensure_real = 'stopped'
     }
@@ -90,38 +128,43 @@ class snmp::trapd (
     }
   }
 
-  file { 'snmptrapd.conf':
+#  package { 'snmpd':
+#    ensure => $package_ensure,
+#    name   => $package_name,
+#  }
+
+  file { 'snmpd.conf':
     ensure  => $file_ensure,
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
-    path    => $snmp::params::trap_service_config,
-    content => template('snmp/snmptrapd.conf.erb'),
+    path    => $snmp::params::service_config,
+    content => template('snmp/snmpd.conf.erb'),
 #    source  => [
-#      "puppet:///modules/snmp/snmptrapd.conf-${::fqdn}",
-#      "puppet:///modules/snmp/snmptrapd.conf-${::osfamily}-${::lsbmajdistrelease}",
-#      'puppet:///modules/snmp/snmptrapd.conf',
+#      "puppet:///modules/snmp/snmpd.conf-${::fqdn}",
+#      "puppet:///modules/snmp/snmpd.conf-${::osfamily}-${::lsbmajdistrelease}",
+#      'puppet:///modules/snmp/snmpd.conf',
 #    ],
     require => Package['snmpd'],
-    notify  => Service['snmptrapd'],
+    notify  => Service['snmpd'],
   }
 
-  file { 'snmptrapd.sysconfig':
+  file { 'snmpd.sysconfig':
     ensure  => $file_ensure,
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
-    path    => $snmp::params::trap_sysconfig,
+    path    => $snmp::params::sysconfig,
     source  => [
-      "puppet:///modules/snmp/snmptrapd.sysconfig-${::fqdn}",
-      "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
-      'puppet:///modules/snmp/snmptrapd.sysconfig',
+      "puppet:///modules/snmp/snmpd.sysconfig-${::fqdn}",
+      "puppet:///modules/snmp/snmpd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
+      'puppet:///modules/snmp/snmpd.sysconfig',
     ],
     require => Package['snmpd'],
-    notify  => Service['snmptrapd'],
+    notify  => Service['snmpd'],
   }
 
-  service { 'snmptrapd':
+  service { 'snmpd':
     ensure     => $service_ensure_real,
     name       => $service_name,
     enable     => $service_enable,

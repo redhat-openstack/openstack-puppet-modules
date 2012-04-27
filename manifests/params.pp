@@ -1,6 +1,6 @@
-# == Class: snmpd::params
+# == Class: snmp::params
 #
-# This class handles OS-specific configuration of the snmpd module.
+# This class handles OS-specific configuration of the snmp module.
 #
 # === Authors:
 #
@@ -10,7 +10,7 @@
 #
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
-class snmpd::params {
+class snmp::params {
   $ro_community = 'public'
   $rw_community = 'private'
   $ro_network   = '127.0.0.1'
@@ -49,10 +49,10 @@ class snmpd::params {
       }
     }
     'Fedora': {
-      fail("Module snmpd is not yet supported on ${::operatingsystem}")
+      fail("Module snmp is not yet supported on ${::operatingsystem}")
     }
     default: {
-      fail("Module snmpd is not supported on ${::operatingsystem}")
+      fail("Module snmp is not supported on ${::operatingsystem}")
     }
   }
 }

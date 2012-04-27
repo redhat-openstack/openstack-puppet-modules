@@ -1,2 +1,2 @@
-include snmpd
+include snmp
 
