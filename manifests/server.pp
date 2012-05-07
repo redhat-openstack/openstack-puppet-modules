@@ -128,11 +128,6 @@ class snmp::server (
     }
   }
 
-#  package { 'snmpd':
-#    ensure => $package_ensure,
-#    name   => $package_name,
-#  }
-
   file { 'snmpd.conf':
     ensure  => $file_ensure,
     mode    => '0644',
@@ -140,11 +135,6 @@ class snmp::server (
     group   => 'root',
     path    => $snmp::params::service_config,
     content => template('snmp/snmpd.conf.erb'),
-#    source  => [
-#      "puppet:///modules/snmp/snmpd.conf-${::fqdn}",
-#      "puppet:///modules/snmp/snmpd.conf-${::osfamily}-${::lsbmajdistrelease}",
-#      'puppet:///modules/snmp/snmpd.conf',
-#    ],
     require => Package['snmpd'],
     notify  => Service['snmpd'],
   }

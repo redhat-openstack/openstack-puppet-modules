@@ -12,7 +12,10 @@ passwords.
 
 Actions:
 
+* Installs the SNMP client package and configuration.
 * Installs the SNMP daemon package, service, and configuration.
+* Installs the SNMP trap daemon service and configuration.
+* Creates a SNMPv3 user with authentication and encryption paswords.
 
 OS Support:
 
@@ -44,7 +47,6 @@ Examples
       authpass => '1234auth',
       privpass => '5678priv',
     }
-    
 
 Notes
 -----
@@ -54,7 +56,7 @@ Notes
 Issues
 ------
 
-* 
+* None.
 
 Copyright
 ---------

@@ -97,11 +97,6 @@ class snmp::trapd (
     group   => 'root',
     path    => $snmp::params::trap_service_config,
     content => template('snmp/snmptrapd.conf.erb'),
-#    source  => [
-#      "puppet:///modules/snmp/snmptrapd.conf-${::fqdn}",
-#      "puppet:///modules/snmp/snmptrapd.conf-${::osfamily}-${::lsbmajdistrelease}",
-#      'puppet:///modules/snmp/snmptrapd.conf',
-#    ],
     require => Package['snmpd'],
     notify  => Service['snmptrapd'],
   }
