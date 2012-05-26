@@ -1,10 +1,10 @@
 name 'razorsedge-snmp'
-version '1.0.0'
+version '1.0.1'
 
 author 'razorsedge'
 license 'Apache 2.0'
-project_page 'https://github.com/runningman/puppet-snmp'
-source 'git://github.com/runningman/puppet-snmp.git'
+project_page 'https://github.com/razorsedge/puppet-snmp'
+source 'git://github.com/razorsedge/puppet-snmp.git'
 summary 'Puppet module to manage SNMP.'
 description 'This module manages the installation of the SNMP server, SNMP client, and SNMP
 trap server.  It also can create a SNMPv3 user with authentication and privacy

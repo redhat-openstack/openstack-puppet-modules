@@ -1,7 +1,7 @@
 Puppet SNMP Module
 ==================
 
-[![Build Status](https://secure.travis-ci.org/runningman/puppet-snmp.png?branch=master)](http://travis-ci.org/runningman/puppet-snmp)
+[![Build Status](https://secure.travis-ci.org/razorsedge/puppet-snmp.png?branch=master)](http://travis-ci.org/razorsedge/puppet-snmp)
 
 Introduction
 ------------
