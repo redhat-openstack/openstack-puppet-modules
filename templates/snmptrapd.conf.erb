@@ -1,5 +1,5 @@
 ###
 ### File managed by Puppet
 ###
-authCommunity   log,execute,net <%= scope.lookupvar('snmp::params::ro_community') %>
+authCommunity   log,execute,net <%= scope.lookupvar('snmp::trapd::ro_community') %>
 # traphandle SNMPv2-MIB::coldStart    /usr/bin/bin/my_great_script cold
