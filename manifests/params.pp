@@ -60,16 +60,16 @@ class snmp::params {
       fail("Module snmp is not yet supported on ${::operatingsystem}")
     }
     'Ubuntu': {
-      $package_name     = "snmpd"
-      $service_config   = "/etc/snmp/snmpd.conf"
-      $service_name     = "snmpd"
-      $sysconfig        = "/etc/default/snmp"
-      $var_net_snmp     = "/var/lib/snmp"
-      $varnetsnmp_perms = '0700'
+      $package_name        = 'snmpd'
+      $service_config      = '/etc/snmp/snmpd.conf'
+      $service_name        = 'snmpd'
+      $sysconfig           = '/etc/default/snmp'
+      $var_net_snmp        = '/var/lib/snmp'
+      $varnetsnmp_perms    = '0700'
 
       $client_package_name = 'snmp'
       $client_config       = '/etc/snmp/snmp.conf'
-  
+
       $trap_service_config = '/etc/snmp/snmptrapd.conf'
       $trap_service_name   = 'snmptrapd'
     }
