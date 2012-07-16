@@ -22,7 +22,7 @@ OS Support:
 * RedHat family  - tested on CentOS 5.8 and CentOS 6.2
 * Fedora         - not yet supported
 * SuSE family    - presently unsupported (patches welcome)
-* Debian family  - presently unsupported (patches welcome)
+* Debian family  - initial Ubuntu suport (patches welcome)
 * Solaris family - presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.
