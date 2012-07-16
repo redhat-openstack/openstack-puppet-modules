@@ -11,7 +11,7 @@ describe 'snmp' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(/Module snmp is not supported on foo/)
+      end.to raise_error(/Module snmp is not supported on foo/)
     end
   end
 
