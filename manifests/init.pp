@@ -83,8 +83,8 @@ class snmp (
   file { 'var-net-snmp':
     ensure  => 'directory',
     mode    => $snmp::params::varnetsnmp_perms,
-    owner   => 'root',
-    group   => 'root',
+    owner   => $snmp::params::varnetsnmp_owner,
+    group   => $snmp::params::varnetsnmp_group,
     path    => $snmp::params::var_net_snmp,
     require => Package['snmpd'],
   }

@@ -22,7 +22,7 @@ OS Support:
 * RedHat family  - tested on CentOS 5.8 and CentOS 6.2
 * Fedora         - not yet supported
 * SuSE family    - presently unsupported (patches welcome)
-* Debian family  - initial Ubuntu suport (patches welcome)
+* Debian family  - initial Debian & Ubuntu suport (patches welcome)
 * Solaris family - presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.
@@ -51,7 +51,17 @@ Examples
 Notes
 -----
 
-* Only tested on CentOS 5.8 and CentOS 6.2 x86_64.
+* Only tested on CentOS 5.8, CentOS 6.2 x86_64 and Debian squeeze.
+
+* SNMPv3 user auth is not tested on Debian.
+
+* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is not running the status script returns 'not running' so puppet restarts snmpd module. The following is a workarround
+
+class {'snmp::server':
+  ...
+  service_hasstatus => false,
+}
+
 
 Issues
 ------
