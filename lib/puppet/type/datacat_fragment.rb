@@ -5,6 +5,6 @@ Puppet::Type.newtype(:datacat_fragment) do
     newparam(:target) do
     end
 
-    newparam(:data) do
+    newproperty(:data) do
     end
 end
