@@ -10,12 +10,18 @@ Puppet::Type.newtype(:datacat) do
             r.is_a?(Puppet::Type.type(:datacat_fragment)) and r[:target] == self[:path]
         }
     end
+end
 
-    def self.merge_data(path, data)
-        debug "merge_data #{path} #{data}"
-        @@data ||= {}
+
+class Puppet::Type::Datacat::Common
+    @@data = {}
+
+    def self.set_data(path, data)
         @@data[path] ||= {}
         @@data[path].merge!(data)
-        debug @@data.inspect
+    end
+
+    def self.get_data(path)
+        @@data[path]
     end
 end

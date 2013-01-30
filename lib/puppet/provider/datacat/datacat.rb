@@ -4,9 +4,8 @@ Puppet::Type.type(:datacat).provide(:datacat) do
     def flush
         debug "flushing"
 
-        if @@data
-            debug @resource[:path]
-            data = @@data[@resource[:path]]
+        data = Puppet::Type::Datacat::Common.get_data(@resource[:path])
+        if data
             debug "Collected #{data.inspect}"
         else
             debug "no data exported"

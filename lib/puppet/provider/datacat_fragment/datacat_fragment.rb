@@ -1,9 +1,9 @@
 Puppet::Type.type(:datacat_fragment).provide(:datacat_fragment) do
     mk_resource_methods
 
-    def flush
-        debug "flushing"
-        datacat_class = Puppet::Type.type(:datacat)
-        datacat_class.merge_data(@resource[:target], @resource[:data])
+    def data
+        debug "Publishing '#{@resource[:data].inspect}'"
+        Puppet::Type::Datacat::Common.set_data(@resource[:target], @resource[:data])
+        @resource[:data]
     end
 end
