@@ -7,8 +7,12 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
         data = Puppet::Type::Datacat.get_data(@resource[:path])
         debug "Collected #{data.inspect}"
 
-        # XXX TODO do the template eval
-        content = "#{data.to_yaml}\n"
+        vars = Puppet::Type::Datacat::Binding.new(data)
+
+        debug "Applying template #{@resource[:template]}"
+        template = ERB.new(@resource[:template] || '', 0, '-')
+        template.filename = "pies"
+        content = template.result(vars.get_binding)
 
         # In the containing datacat define we created a sibling file
         # resource which will do much of the heavy lifting, and left a
@@ -23,5 +27,18 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
 
         debug "Found resource #{target_file.inspect} class #{target_file.class}"
         target_file[:content] = content
+    end
+end
+
+class Puppet::Type::Datacat
+end
+
+class Puppet::Type::Datacat::Binding
+    def initialize(d)
+        @data = d
+    end
+
+    def get_binding
+        binding()
     end
 end
