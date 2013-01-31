@@ -2,10 +2,10 @@ Puppet::Type.newtype(:datacat_collector) do
     newparam(:path, :namevar => true) do
     end
 
-    newparam(:template) do
+    newproperty(:template) do
     end
 
-    newproperty(:template_body) do
+    newparam(:template_body) do
     end
 
     autorequire(:datacat_fragment) do

@@ -2,8 +2,6 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     mk_resource_methods
 
     def flush
-        debug "flushing"
-
         data = Puppet::Type::Datacat.get_data(@resource[:path])
         debug "Collected #{data.inspect}"
 
