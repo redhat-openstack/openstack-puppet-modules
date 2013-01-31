@@ -10,8 +10,8 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
         vars = Puppet::Type::Datacat::Binding.new(data)
 
         debug "Applying template #{@resource[:template]}"
-        template = ERB.new(@resource[:template] || '', 0, '-')
-        template.filename = "pies"
+        template = ERB.new(@resource[:template_body] || '', 0, '-')
+        template.filename = @resource[:template]
         content = template.result(vars.get_binding)
 
         # In the containing datacat define we created a sibling file

@@ -2,15 +2,10 @@ Puppet::Type.newtype(:datacat_collector) do
     newparam(:path, :namevar => true) do
     end
 
-    newproperty(:template) do
-        munge do |filename|
-            unless file = Puppet::Parser::Files.find_template(filename, 'production')
-                # XXX how do I see this here? scope.compiler.environment.to_s)
-                raise Puppet::ParseError, "Could not find template '#{filename}'"
-            end
+    newparam(:template) do
+    end
 
-            File.read(file)
-        end
+    newproperty(:template_body) do
     end
 
     autorequire(:datacat_fragment) do
