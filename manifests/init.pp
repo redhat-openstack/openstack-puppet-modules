@@ -17,7 +17,7 @@ define datacat(
   file { $path:
     backup                  => $backup,
     checksum                => $checksum,
-    content                 => undef, # This will be set by the datacat_collector
+    content                 => "To be replaced by datacat_collector[${path}]\n",
     force                   => $force,
     group                   => $group,
     mode                    => $mode,
