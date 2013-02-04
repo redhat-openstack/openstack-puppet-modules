@@ -1,8 +1,11 @@
-Puppet::Type.newtype(:datacat) do
+Puppet::Type.newtype(:datacat_collector) do
     newparam(:path, :namevar => true) do
     end
 
     newproperty(:template) do
+    end
+
+    newparam(:template_body) do
     end
 
     autorequire(:datacat_fragment) do
@@ -13,7 +16,7 @@ Puppet::Type.newtype(:datacat) do
 end
 
 
-class Puppet::Type::Datacat::Common
+class Puppet::Type::Datacat
     @@data = {}
 
     def self.set_data(path, data)
