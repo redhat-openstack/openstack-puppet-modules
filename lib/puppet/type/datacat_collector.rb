@@ -14,17 +14,3 @@ Puppet::Type.newtype(:datacat_collector) do
     }
   end
 end
-
-
-class Puppet::Type::Datacat_collector
-  @@data = {}
-
-  def self.set_data(path, data)
-    @@data[path] ||= {}
-    @@data[path].merge!(data)
-  end
-
-  def self.get_data(path)
-    @@data[path]
-  end
-end
