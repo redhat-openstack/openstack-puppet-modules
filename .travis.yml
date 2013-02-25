@@ -23,4 +23,8 @@ matrix:
     - rvm: ruby-head
       env: PUPPET_GEM_VERSION="~> 2.6.0"
 notifications:
-  email: false
+  email:
+    recipients:
+      - richardc@unixbeard.net
+    on_success: always
+    on_failure: always
