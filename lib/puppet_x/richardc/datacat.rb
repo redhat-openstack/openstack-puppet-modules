@@ -10,14 +10,9 @@ class Puppet_X::Richardc::Datacat
     @@data[path] ||= {}
 
     deep_merge = Proc.new do |key,oldval,newval|
-      case newval
-      when Hash
-        oldval.merge(newval, &deep_merge)
-      when Array
-        oldval + newval
-      else
-        newval
-      end
+      newval.is_a?(Hash) && oldval.is_a?(Hash) ? oldval.merge(newval, &deep_merge)
+      : newval.is_a?(Array) && oldval.is_a?(Array) ? oldval + newval
+      : newval
     end
     @@data[path].merge!(data, &deep_merge)
   end
