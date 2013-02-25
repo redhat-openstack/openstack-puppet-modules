@@ -12,7 +12,7 @@ define datacat(
   $selrange                = undef,
   $selrole                 = undef,
   $seltype                 = undef,
-  $seluser                 = undef,
+  $seluser                 = undef
 ) {
   file { $path:
     backup                  => $backup,
