@@ -2,10 +2,10 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
   mk_resource_methods
 
   def flush
-    data = Puppet::Type::Datacat.get_data(@resource[:path])
+    data = Puppet::Type::Datacat_collector.get_data(@resource[:path])
     debug "Collected #{data.inspect}"
 
-    vars = Puppet::Type::Datacat::Binding.new(data)
+    vars = Puppet::Type::Datacat_collector::Binding.new(data)
 
     debug "Applying template #{@resource[:template]}"
     template = ERB.new(@resource[:template_body] || '', 0, '-')
@@ -28,10 +28,10 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
   end
 end
 
-class Puppet::Type::Datacat
+class Puppet::Type::Datacat_collector
 end
 
-class Puppet::Type::Datacat::Binding
+class Puppet::Type::Datacat_collector::Binding
   def initialize(d)
     @data = d
   end

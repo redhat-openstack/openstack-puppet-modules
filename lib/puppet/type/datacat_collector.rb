@@ -16,7 +16,7 @@ Puppet::Type.newtype(:datacat_collector) do
 end
 
 
-class Puppet::Type::Datacat
+class Puppet::Type::Datacat_collector
   @@data = {}
 
   def self.set_data(path, data)
