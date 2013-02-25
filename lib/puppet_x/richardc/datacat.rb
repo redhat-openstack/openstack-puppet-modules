@@ -8,7 +8,18 @@ class Puppet_X::Richardc::Datacat
 
   def self.set_data(path, data)
     @@data[path] ||= {}
-    @@data[path].merge!(data)
+
+    deep_merge = Proc.new do |key,oldval,newval|
+      case newval
+      when Hash
+        oldval.merge(newval, &deep_merge)
+      when Array
+        oldval + newval
+      else
+        newval
+      end
+    end
+    @@data[path].merge!(data, &deep_merge)
   end
 
   def self.get_data(path)
