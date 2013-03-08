@@ -1,0 +1,40 @@
+{
+  "name": "puppet-zookeeper",
+  "dependencies": [
+
+  ],
+  "author": "",
+  "license": "",
+  "version": "0.0.1",
+  "checksums": {
+    "lib/puppet/type/README.markdown": "34b8c80ba8683afca99f2d28ca7e70b2",
+    "spec/spec_helper.rb": "ca19ec4f451ebc7fdb035b52eae6e909",
+    "spec/unit/puppet/provider/README.markdown": "e52668944ee6af2fb5d5b9e798342645",
+    "templates/conf/dev/zoo.cfg.erb": "cd1156fcae58d14c42d038d9e6bd7666",
+    "templates/service/zookeeper.erb": "21daee444cffb8c1313f22f2d38e517c",
+    "files/README.markdown": "3d44458cc68d8513b51e3b56c604eec4",
+    "templates/conf/dev/java.env.erb": "d41d8cd98f00b204e9800998ecf8427e",
+    "templates/service/zookeeper_service.erb": "70158e1a883623b689201827bb4cce67",
+    "lib/puppet/parser/functions/README.markdown": "e596ce938864a80fd1e51640cca7f612",
+    "lib/puppet/provider/README.markdown": "3835801d7626dd8d541c4fdf7ca9f3e4",
+    "README": "808ed89376292289dc2dbef986ab565e",
+    "manifests/README.markdown": "b9970454391883e36b55137328792a55",
+    "spec/README.markdown": "32a1fc0121c28aff554ef5d422b8b51e",
+    "templates/README.markdown": "aada0a1952329e46b98695349dba6203",
+    "tests/init.pp": "b589cfd4938e1efa0ddb231181ab2bcb",
+    "manifests/services.pp": "ef4206245a92e81aa854abdbe181a676",
+    "metadata.json": "d34d0b70aba36510fbc2df4e667479ef",
+    "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
+    "templates/conf/dev/log4j.properties.erb": "16e28e76365ea9bed5bf47d309e70732",
+    "templates/conf/dev/myid.erb": "cccbc6e86c92b0d0418faa994943e80b",
+    "templates/service/zookeeper-server.erb": "c3820fd894fd61ac35cf683199ef70ca",
+    "lib/puppet/facter/README.markdown": "145e26334b4d80e48e9e55ba78800579",
+    "manifests/init.pp": "e28a5753f25c7932daeab86ff9da0368",
+    "Modulefile": "66cbbc8cecdf9e6b62e68dece230a60b",
+    "spec/unit/puppet/type/README.markdown": "de26a7643813abd6c2e7e28071b1ef94"
+  },
+  "types": [
+
+  ],
+  "source": ""
+}
