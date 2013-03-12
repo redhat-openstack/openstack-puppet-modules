@@ -4,10 +4,28 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
   mk_resource_methods
 
   def flush
-    data = Puppet_X::Richardc::Datacat.get_data(@resource[:path])
+    # Find the datacat_fragments that point at this collector
+    fragments = resource.catalog.resources.find_all do |r|
+      r.is_a?(Puppet::Type.type(:datacat_fragment)) && r[:target] == resource[:path]
+    end
+
+    # deep merge their data chunks
+    deep_merge = Proc.new do |key,oldval,newval|
+      newval.is_a?(Hash) && oldval.is_a?(Hash) ?
+        oldval.merge(newval, &deep_merge) :
+        newval.is_a?(Array) && oldval.is_a?(Array) ?
+          oldval + newval :
+          newval
+    end
+
+    data = {}
+    fragments.each do |fragment|
+      data.merge!(fragment[:data], &deep_merge)
+    end
+
     debug "Collected #{data.inspect}"
 
-    vars = Puppet_X::Richardc::Datacat::Binding.new(data)
+    vars = Puppet_X::Richardc::Datacat_Binding.new(data)
 
     debug "Applying template #{@resource[:template]}"
     template = ERB.new(@resource[:template_body] || '', 0, '-')
