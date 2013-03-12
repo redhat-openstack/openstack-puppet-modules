@@ -40,7 +40,7 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     target_file = @resource[:before].find do |r|
         r.type == 'File' and r.title == @resource[:path]
     end
-    # @resource[:before] contrains resource references, dereference it
+    # @resource[:before] contains resource references, dereference it
     target_file = target_file.resolve
 
     debug "Found resource #{target_file.inspect} class #{target_file.class}"
