@@ -6,9 +6,9 @@
 #   tmp_dir
 #   user
 #   group
-#   zookeeper_version
+#   version
 #   zookeeper_path
-#   zookeeper_log_dir
+#   log_dir
 #
 # Actions:
 #   deploy zookeeper
@@ -21,18 +21,26 @@
 #   include zookeeper
 #
 class zookeeper(
-  $tmp_dir = $zookeeper::params::tmp_dir,
-  $tarball = "zookeeper-${zookeeper_version}.tar.gz",
-  $log_dir = $zookeeper::params::log_dir,
-  $init_d_path = $zookeeper::params::init_d_path,
+  $myid,
+  $datastore       = $zookeeper::params::datastore,
+  $datastore_log   = $zookeeper::params::datastore_log,
+  $tmp_dir         = $zookeeper::params::tmp_dir,
+  $tarball         = "zookeeper-${version}.tar.gz",
+  $log_dir         = $zookeeper::params::log_dir,
+  $init_d_path     = $zookeeper::params::init_d_path,
   $init_d_template = $zookeeper::params::init_d_template,
-  $user = $zookeeper::params::user,
-  $zookeeper_version = $zookeeper::params::zookeeper_version,
-  $zookeeper_path = $zookeeper::params::zookeeper_path,
+  $user            = $zookeeper::params::user,
+  $version         = $zookeeper::params::version,
+  $zookeeper_path  = $zookeeper::params::zookeeper_path,
 ) inherits zookeeper::params {
   
   #full path to zookeeper folder
   $zookeeper_home = "${zookeeper_path}/zookeeper"
+
+  #check if it's already installed
+  Exec {
+    unless => "test -f ${zookeeper_path}/zookeeper/bin/zkServer.sh"
+  }
   
   # get files
   file {"zookeeper-tarball":
@@ -46,18 +54,18 @@ class zookeeper(
     cwd => "${tmp_dir}",
     user => "$user",
     require => File["zookeeper-tarball"],
-    creates => "${tmp_dir}/zookeeper-${zookeeper_version}",
+    creates => "${tmp_dir}/zookeeper-${version}",
   }
   
   exec { "move-zookeeper-directory":
-    command => "mv ${tmp_dir}/zookeeper-${zookeeper_version} ${zookeeper_path}/zookeeper",
+    command => "mv ${tmp_dir}/zookeeper-${version} ${zookeeper_path}/zookeeper",
     creates => "${zookeeper_home}",
     user => "root",
     require => Exec["zookeeper_untar"],
   }
   
 
-  file { "${zookeeper_home}/zookeeper-${zookeeper_version}":
+  file { "${zookeeper_home}/zookeeper-${version}":
     recurse => true,
     owner => $user,
     group => $group,
@@ -72,7 +80,7 @@ class zookeeper(
     ensure => directory,
   }
 
-  file { "${zookeeper_datastore}":
+  file { "${datastore}":
     ensure => directory, 
     owner => $user,
     group => $group,
@@ -81,17 +89,17 @@ class zookeeper(
     require => Exec["move-zookeeper-directory"],
   }
 
-  file { "${zookeeper_datastore}/myid":
+  file { "${datastore}/myid":
     ensure => file, 
     content => template("zookeeper/conf/${environment}/myid.erb"), 
     owner => $user,
     group => $group,
     mode => 644, 
     backup => false,
-    require => File["${zookeeper_datastore}"],
+    require => File["${datastore}"],
   }
 
-  file { "${zookeeper_datastore_log}":
+  file { "${datastore_log}":
     ensure => directory, 
     owner => $user,
     group => $group,
