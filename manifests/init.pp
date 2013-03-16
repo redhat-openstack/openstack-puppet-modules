@@ -32,28 +32,42 @@ class zookeeper(
   $user            = $zookeeper::params::user,
   $version         = $zookeeper::params::version,
   $zookeeper_path  = $zookeeper::params::zookeeper_path,
+  $mirror          = 'http://www.eu.apache.org/dist/zookeeper/stable/',
+  $url             = "${mirror}/${tarball}",
+  $path            = '/bin:/sbin:/usr/bin:/usr/sbin',
 ) inherits zookeeper::params {
   
   #full path to zookeeper folder
   $zookeeper_home = "${zookeeper_path}/zookeeper"
 
+
   #check if it's already installed
   Exec {
     unless => "test -f ${zookeeper_path}/zookeeper/bin/zkServer.sh"
   }
-  
-  # get files
-  file {"zookeeper-tarball":
-    path => "${tmp_dir}/${tarball}",
-    source => "puppet:///modules/zookeeper/${tarball}",
-    ensure => file,
+
+  exec { "retrieve ${url}":
+    cwd         => $tmp_dir,
+    command     => "wget ${url} -O ${work_dir}/${tarball}",
+    creates     => "${tmp_dir}/${tarball}",
+    timeout     => 3600,
+    unless      => "test -f ${tmp_dir}/${tarball}",
+    path        => $path,
   }
+
+  # get files from local fileserver
+  #file {"zookeeper-tarball":
+  #  path => "${tmp_dir}/${tarball}",
+  #  source => "puppet:///modules/zookeeper/${tarball}",
+  #  ensure => file,
+  #}
 
   exec { "zookeeper_untar":
     command => "tar -xzf ${tmp_dir}/${tarball}",
     cwd => "${tmp_dir}",
     user => "$user",
-    require => File["zookeeper-tarball"],
+    #require => File["zookeeper-tarball"],
+    require => Exec["retrieve ${url}"],
     creates => "${tmp_dir}/zookeeper-${version}",
   }
   
