@@ -21,3 +21,14 @@ You can override any of the defaults:
       log_dir       => "/var/log/zookeeper",
     }
 
+For more parameters see `manifests/params.pp`
+
+## Install
+
+If you are versioning your puppet conf with git (which you probably should) just add it as submodule, from your repository root:
+
+    git submodule add git://github.com/deric/puppet-zookeeper.git modules/zookeeper
+    
+## TODO 
+
+  - fetch releases automatically from apache website
