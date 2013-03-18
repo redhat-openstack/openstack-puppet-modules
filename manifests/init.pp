@@ -43,7 +43,7 @@ class zookeeper(
 
   #check if it's already installed
   Exec {
-    unless => "test -f ${zookeeper_path}/zookeeper/bin/zkServer.sh"
+    creates => "${zookeeper_path}/zookeeper/bin/zkServer.sh"
   }
 
   exec { "retrieve ${url}":
@@ -51,7 +51,6 @@ class zookeeper(
     command     => "wget ${url} -O ${work_dir}/${tarball}",
     creates     => "${tmp_dir}/${tarball}",
     timeout     => 3600,
-    unless      => "test -f ${tmp_dir}/${tarball}",
     path        => $path,
   }
 
