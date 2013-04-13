@@ -25,7 +25,7 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
 
     debug "Collected #{data.inspect}"
 
-    vars = Puppet_X::Richardc::Datacat_Binding.new(data)
+    vars = Puppet_X::Richardc::Datacat_Binding.new(data, resource[:template])
 
     debug "Applying template #{@resource[:template]}"
     template = ERB.new(@resource[:template_body] || '', 0, '-')
