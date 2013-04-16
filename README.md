@@ -11,47 +11,44 @@ the boilerplate down into the type.
 Sample Usage
 ------------
 
-```puppet
-datacat { '/etc/nagios/objects/hostgroups.cfg':
-    template => "${module_name}/hostgroups.cfg.erb",
-}
+    datacat { '/etc/nagios/objects/hostgroups.cfg':
+        template => "${module_name}/hostgroups.cfg.erb",
+    }
 
-datacat_fragment { "${::fqdn} in device hostgroup":
-    target => '/etc/nagios/objects/hostgroups.cfg',
-    data   => {
-        device => [ $::fqdn ],
-    },
-}
+    datacat_fragment { "${::fqdn} in device hostgroup":
+        target => '/etc/nagios/objects/hostgroups.cfg',
+        data   => {
+            device => [ $::fqdn ],
+        },
+    }
 
-# fred.dc1.notreal has an ilo fred-ilo.dc1.notreal
-$ilo_fqdn = regsubst($::fqdn, '\.', '-ilo.')
-datacat_fragment { "${ilo_fqdn} in device hostgroup":
-    target => '/etc/nagios/objects/hostgroups.cfg',
-    data   => {
-        device => [ $ilo_fqdn ],
-    },
-}
-```
+    # fred.dc1.notreal has an ilo fred-ilo.dc1.notreal
+    $ilo_fqdn = regsubst($::fqdn, '\.', '-ilo.')
+    datacat_fragment { "${ilo_fqdn} in device hostgroup":
+        target => '/etc/nagios/objects/hostgroups.cfg',
+        data   => {
+            device => [ $ilo_fqdn ],
+        },
+    }
 
-```erb
-# hostgroups.cfg.erb
-<% @data.keys.sort.each do |hostgroup| %>
-define hostgroup {
-    name <%= hostgroup %>
-    members <%= @data[hostgroup].sort.join(',') %>
-}
-<% end %>
-```
+And then in your `hostgroups.cfg.erb`
+
+    # hostgroups.cfg.erb
+    <% @data.keys.sort.each do |hostgroup| %>
+    define hostgroup {
+        name <%= hostgroup %>
+        members <%= @data[hostgroup].sort.join(',') %>
+    }
+    <% end %>
 
 Will produce something like:
 
-```
-# /etc/nagios/objects/hostgroups.cfg
-define hostgroup {
-    name device
-    members fred.dc1.notreal,fred-ilo.dc1.notreal
-}
-```
+
+    # /etc/nagios/objects/hostgroups.cfg
+    define hostgroup {
+        name device
+        members fred.dc1.notreal,fred-ilo.dc1.notreal
+    }
 
 Caveats
 -------
