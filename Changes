@@ -1,0 +1,6 @@
+HEAD
+    Changed README.md from Github flavored markup to standard markdown to make
+    the forge happier.
+
+0.0.1 Tuesday 16th April, 2013
+    Initial forge release
