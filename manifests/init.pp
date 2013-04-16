@@ -1,3 +1,19 @@
+# Definition: datacat
+#
+# This definition allows you to declare datacat managed files.
+#
+# Parameters:
+# All parameters are as for the file type, with the addition of a $template
+# parameter which is a path to a template to be used as the content of the
+# file.
+#
+# Sample Usage:
+#  datacat { '/etc/motd':
+#    owner => 'root',
+#    group => 'root,
+#    template => 'motd/motd.erb',
+#  }
+#
 define datacat(
   $template,
   $backup                  = undef,
