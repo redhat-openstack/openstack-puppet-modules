@@ -1,5 +1,5 @@
 name 'richardc-datacat'
-version '0.0.1'
+version '0.0.2'
 source 'git://github.com/richardc/puppet-datacat.git'
 author 'richardc'
 license 'Apache 2.0'
