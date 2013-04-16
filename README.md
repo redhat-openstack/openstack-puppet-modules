@@ -1,9 +1,10 @@
 Puppet types for concatenating data via a template
 ==================================================
 
-The `datacat` and `datacat_fragment` allow you to build up a data structure
-which is rendered using a template.  This is similar to some of the common
-concatenation patterns though it should be clearer.
+The `datacat` and `datacat_fragment` types allow you to build up a data
+structure which is rendered using a template.  This is similar to some of the
+common concatenation patterns though the intent should be clearer as it pushes
+the boilerplate down into the type.
 
 [![Build Status](https://travis-ci.org/richardc/puppet-datacat.png)](https://travis-ci.org/richardc/puppet-datacat)
 
@@ -52,12 +53,12 @@ define hostgroup {
 }
 ```
 
+Caveats
+-------
 
-So the basic idea is like concat, only where concat's combining operation
-is a simple concatenation of the fragments, the combining operation of a
-datacat is to evaluate a template, which means multiple fragments can
-appear in one line.
-
+The template is evaluated by the agent at the point of catalog evaluation,
+this means you cannot call out to puppet parser functions as you would when
+using the usual `template()` function.
 
 
 Copyright and License
