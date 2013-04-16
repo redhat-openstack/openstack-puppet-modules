@@ -1,3 +1,4 @@
 Gemfile.lock
 /spec/fixtures/manifests/site.pp
 /spec/fixtures/modules/datacat
+/pkg
