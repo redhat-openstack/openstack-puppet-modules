@@ -14,6 +14,8 @@ class zookeeper::config {
   require zookeeper::install
   include zookeeper::params
 
+  Class['zookeeper::install'] -> Class['zookeeper::config']
+
   file { "${log_dir}":
     owner => $user,
     group => $group,
