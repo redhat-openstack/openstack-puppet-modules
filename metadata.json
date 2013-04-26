@@ -3,9 +3,9 @@
   "dependencies": [
 
   ],
-  "author": "",
+  "author": "Tomas Barton",
   "license": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "checksums": {
     "lib/puppet/type/README.markdown": "34b8c80ba8683afca99f2d28ca7e70b2",
     "spec/spec_helper.rb": "ca19ec4f451ebc7fdb035b52eae6e909",

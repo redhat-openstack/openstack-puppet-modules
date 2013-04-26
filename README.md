@@ -1,34 +1,43 @@
 #puppet-zookeeper
 
 
-A puppet receipt for zookeeper. You should fetch last version of Zookeeper from web http://zookeeper.apache.org/releases.html#download and place it to `modules/zookeeper/files`
+A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper is a high-performance coordination service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
 
-Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.4.5
+Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
+
+## Requirements
+
+  * puppet 3 (or puppet 2.7+ and hiera gem)
+  * binary package of zookeeper
+  
+### Debian/Ubuntu
+  
+  * Debian 6 Squeeze: you can get ZooKeeper package from [Wheezy](http://packages.debian.org/wheezy/zookeeper) or [Sid](http://packages.debian.org/sid/zookeeper) repo.
 
 ## Basic Usage:
 
-    class { 'zookeeper':
-      myid    => '1',
-      version => '3.4.5'
-    }
+    class { 'zookeeper': }
+    
+##  Parameters
 
-You can override any of the defaults:
-
-    class { 'zookeeper':
-      myid          => '1',
-      datastore     => "/usr/lib/zookeeper/data",
-      datastore_log => "/var/log/zookeeper/datastore",
-      log_dir       => "/var/log/zookeeper",
-    }
+   - `myid` - cluster-unique zookeeper's instance id (1-255)
+   - `datastore`
+   - `log_dir`
 
 For more parameters see `manifests/params.pp`
 
 ## Install
 
-If you are versioning your puppet conf with git (which you probably should) just add it as submodule, from your repository root:
+### librarian (recommended)
+
+For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add
+
+    mod 'zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
+    
+### submodules    
+
+If you are versioning your puppet conf with git just add it as submodule, from your repository root:
 
     git submodule add git://github.com/deric/puppet-zookeeper.git modules/zookeeper
-    
-## TODO 
 
-  - fetch releases automatically from apache website
+    
