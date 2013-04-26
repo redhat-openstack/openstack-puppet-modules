@@ -19,7 +19,7 @@ class zookeeper::params {
 
   # log4j properties
   $rollingfile_threshold = hiera('rollingfile_threshold', 'ERROR')
-  $tracfile_threshold    = hiera('tracefile_threshold', 'TRACE')
+  $tracefile_threshold    = hiera('tracefile_threshold', 'TRACE')
 
 
   
