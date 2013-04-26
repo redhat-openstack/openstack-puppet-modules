@@ -24,17 +24,11 @@ Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
    - `datastore`
    - `log_dir`
 
-All parameters should be defined in hiera files, e.g. `common.yaml`, `Debian.yaml`, ... Until `calling_module` syntax will work in hiera, you can use simplified scoping with prefixes:
-
-     zookeeper_myid: 1
-     zookeeper_datastore: '/var/lib/zookeeper'
-     zookeeper_log_dir: '/var/log/zookeeper'
-     zookeeper_java_bin: '/usr/bin/java'
-
-With `calling_module` it would be enough to put in `zookeeper.yaml`:
+All parameters should be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 
      myid: 1
      client_port: 2181
+     datastore: '/var/lib/zookeeper'
 
 
 For more parameters see `manifests/params.pp`
