@@ -14,9 +14,12 @@
 #   class { 'zookeeper': }
 #
 class zookeeper {
-  include zookeeper::install
-  include zookeeper::config
   
+  anchor { 'zookeeper::start': }->
+  class { 'zookeeper::install': }->
+  class { 'zookeeper::config': }->
+  anchor { 'zookeeper::end': }
+    
   service { "zookeeper":
     ensure  => "running",
     enable  => "true",

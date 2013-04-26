@@ -10,12 +10,9 @@
 #
 # Sample Usage: include zookeeper::config
 #
-class zookeeper::config {
+class zookeeper::config inherits zookeeper::params {
   require zookeeper::install
-  include zookeeper::params
-
-  Class['zookeeper::install'] -> Class['zookeeper::config']
-
+  
   file { "${log_dir}":
     owner => $user,
     group => $group,
