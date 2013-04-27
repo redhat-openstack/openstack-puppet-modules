@@ -20,8 +20,9 @@ define ipa::replicainstall (
       refreshonly => true;
 
     "replicainstall-${host}":
-      command   => "/usr/sbin/ipa-replica-install --admin-password=${adminpw} --password=${dspw} --skip-conncheck --unattended ${file}",
-      timeout   => '0',
+      command     => "/usr/sbin/ipa-replica-install --admin-password=${adminpw} --password=${dspw} --skip-conncheck --unattended ${file}",
+      timeout     => '0',
+      logoutput   => "on_failure",
       refreshonly => true;
 
     "removereplicainfo-${host}":

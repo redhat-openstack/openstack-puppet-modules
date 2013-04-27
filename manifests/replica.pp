@@ -17,7 +17,7 @@ class ipa::replica (
   $kstart = {}
 ) {
 
-  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>> -> Ipa::Replicainstall[$::fqdn] -> Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>> -> Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>> -> Service['ipa']
+  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>> -> Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>> -> Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
 
   Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>>
   Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>>
