@@ -2,6 +2,9 @@ define ipa::cleanup (
   $svrpkg = {},
   $clntpkg = {}
 ){
+
+  Cron["k5start_admin"] -> Cron["k5start_root"] -> Exec[$name]
+
   exec {
     "$name":
       command   => "/bin/bash -c \"if [ -x /usr/sbin/ipactl ]; then /usr/sbin/ipactl stop ; fi ;\
@@ -16,7 +19,11 @@ define ipa::cleanup (
                    if [ -d /etc/ipa/ ]; then /bin/rm -rf /etc/ipa/ ; fi\"",
       timeout   => '0',
       logoutput => true,
-      require   => [Cron["k5start_admin"], Cron["k5start_root"]],
+  }
+
+  Cron <|title == 'k5start_root'|> {
+    ensure  => "absent",
+    require => undef
   }
 
   cron {
@@ -25,11 +32,5 @@ define ipa::cleanup (
       command => "/usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1",
       user    => 'root',
       minute  => "*/1";
-
-    "k5start_root":
-      ensure  => "absent",
-      command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
-      user    => 'root',
-      minute  => "*/1",
   }<- notify { "Running IPA install cleanup, please wait.": }
 }
