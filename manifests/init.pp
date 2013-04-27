@@ -20,8 +20,10 @@
 #  $desc = '' - Controls the description entry of an IPA client.
 #  $locality = '' - Controls the locality entry of an IPA client.
 #  $location = '' - Controls the location entry of an IPA client.
-#  $svrpkg = "ipa-server" - IPA server package.
-#  $clntpkg = "ipa-client" - IPA client package.
+#  $sssdtools = 'sssd-tools' - SSSD tools package.
+#  $svrpkg = 'ipa-server' - IPA server package.
+#  $clntpkg = 'ipa-client' - IPA client package.
+#  $ldaputils = 'openldap-clients' - LDAP utility package.
 #
 # === Variables
 #
@@ -53,13 +55,19 @@ class ipa (
   $locality = $ipa::params::locality,
   $location = $ipa::params::location,
   $svrpkg = $ipa::params::svrpkg,
-  $clntpkg = $ipa::params::clntpkg
+  $clntpkg = $ipa::params::clntpkg,
+  $ldaputils = $ipa::params::ldaputils,
+  $sssdtools = $ipa::params::sssdtools
 ) inherits ipa::params {
 
   @package {
     $ipa::svrpkg:
       ensure => installed;
     $ipa::clntpkg:
+      ensure => installed;
+    $ipa::ldaputils:
+      ensure => installed;
+    $ipa::sssdtools:
       ensure => installed;
   }
 
@@ -84,8 +92,12 @@ class ipa (
       require => Package["kstart"],
   }
 
-  validate_re("$ipa::adminpw",'^.........*$',"Parameter 'adminpw' must be at least 8 characters long")
-  validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
+  if $ipa::cleanup == false {
+    if $ipa::master == true or $ipa::replica == true {
+      validate_re("$ipa::adminpw",'^.........*$',"Parameter 'adminpw' must be at least 8 characters long")
+      validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
+    }
+  }
 
   if is_domain_name($ipa::domain) == false {
     fail("Parameter 'domain' is not a valid domain name")
@@ -101,7 +113,7 @@ class ipa (
       ipa::cleanup {
         "$fqdn":
           svrpkg  => $ipa::svrpkg,
-          clntpkg => $ipa::clntpkg;
+          clntpkg => $ipa::clntpkg,
       }
     }
   }
@@ -170,6 +182,8 @@ class ipa (
     class {
       "ipa::client":
         clntpkg   => $ipa::clntpkg,
+        ldaputils => $ipa::ldaputils,
+        sssdtools => $ipa::sssdtools,
         domain    => $ipa::domain,
         realm     => $ipa::realm,
         otp       => $ipa::otp,

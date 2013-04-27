@@ -33,9 +33,14 @@ class ipa::params {
   $desc = ''
   $locality = ''
   $location = ''
-  $svrpkg = "ipa-server"
+  $sssdtools = 'sssd-tools'
+  $svrpkg = 'ipa-server'
   $clntpkg = $::osfamily ? {
-    Debian  => "freeipa-client",
-    default => "ipa-client",
+    Debian  => 'freeipa-client',
+    default => 'ipa-client',
+  }
+  $ldaputils = $::osfamily ? {
+    Debian  => 'ldap-utils',
+    default => 'openldap-clients',
   }
 }

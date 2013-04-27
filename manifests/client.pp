@@ -12,6 +12,8 @@
 #
 class ipa::client (
   $clntpkg = {},
+  $ldaputils = {},
+  $sssdtools = {},
   $client = {},
   $domain = {},
   $realm = {},
@@ -41,7 +43,7 @@ class ipa::client (
     require    => Package[$ipa::client::clntpkg]
   }
 
-  realize Package[$ipa::client::clntpkg]
+  realize(Package["$ipa::client::clntpkg"], Package["$ipa::client::ldaputils"], Package["$ipa::client::sssdtools"])
 
   if $::osfamily == 'Debian' {
     file {
@@ -60,7 +62,7 @@ class ipa::client (
         require => File["/etc/pki"];
     }
 
-    File["/etc/pki/nssdb"] -> Ipa::Clientinstall[$::fqdn]
+    File["/etc/pki/nssdb"] -> Ipa::Clientinstall <<| |>>
   }
 
   @@ipa::hostadd {

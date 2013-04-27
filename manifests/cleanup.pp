@@ -3,6 +3,13 @@ define ipa::cleanup (
   $clntpkg = {}
 ){
 
+  $pkgrmcmd = $::osfamily ? {
+    RedHat => '/usr/bin/yum -y remove',
+    Debian => '/usr/bin/apt-get -y purge',
+  }
+
+  $pkgcmd = regsubst($pkgrmcmd,'\s.*$','')
+
   Cron["k5start_admin"] -> Cron["k5start_root"] -> Exec[$name]
 
   exec {
@@ -11,12 +18,11 @@ define ipa::cleanup (
                    if [ -n \"${::ipaadminhomedir}\" ] && [ -d ${::ipaadminhomedir} ]; then /bin/rm -rf ${::ipaadminhomedir} ; fi ;\
                    if [ -x /usr/sbin/ipa-server-install ]; then /usr/sbin/ipa-server-install --uninstall --unattended ; fi ;\
                    if [ -d /var/lib/pki-ca ]; then /usr/bin/pkiremove -pki_instance_root=/var/lib -pki_instance_name=pki-ca -force ; fi ;\
-                   /usr/bin/yum -y remove ${svrpkg} ${clntpkg} krb5-server 389-ds-base 389-ds-base-libs pki-ca pki-util pki-ca certmonger pki-native-tools pki-symkey pki-setup ipa-pki-common-theme pki-selinux ipa-pki-ca-theme ;\
-                   if [ -f /etc/ipa/default.conf ]; then /bin/rm -rf /etc/ipa/default.conf ; fi ;\
-                   if [ -d /var/lib/certmonger/ ]; then /bin/rm -rf /var/lib/certmonger/ ; fi ;\
-                   if [ -d /var/lib/ipa \]; then /bin/rm -rf /var/lib/ipa ; fi ;\
-                   if [ -d /var/lib/ipa-client/ ]; then /bin/rm -rf /var/lib/ipa-client/ ; fi ;\
-                   if [ -d /etc/ipa/ ]; then /bin/rm -rf /etc/ipa/ ; fi\"",
+                   if [ -x ${pkgcmd} ]; then ${pkgrmcmd} ${svrpkg} ${clntpkg} krb5-server 389-ds-base 389-ds-base-libs pki-ca pki-util pki-ca certmonger pki-native-tools pki-symkey pki-setup ipa-pki-common-theme pki-selinux ipa-pki-ca-theme ; fi ;\
+                   if [ -d /var/lib/certmonger ]; then /bin/rm -f /var/lib/certmonger/* ; fi ;\
+                   if [ -d /var/lib/ipa ]; then /bin/rm -f /var/lib/ipa/* ; fi ;\
+                   if [ -d /var/lib/ipa-client ]; then /bin/rm -f /var/lib/ipa-client/* ; fi ;\
+                   if [ -d /etc/ipa ]; then /bin/rm -f /etc/ipa/* ; fi\"",
       timeout   => '0',
       logoutput => true,
   }
