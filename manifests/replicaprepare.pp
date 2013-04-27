@@ -3,17 +3,11 @@ define ipa::replicaprepare (
   $dspw = {}
 ) {
 
-  Cron["k5start_root-${host}"] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-scp-${host}"] ~> Ipa::Hostdelete[$host]
+  Cron["k5start_root"] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-scp-${host}"] ~> Ipa::Hostdelete[$host]
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
 
-  cron {
-    "k5start_root-${host}":
-      command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
-      user    => 'root',
-      minute  => "*/1",
-      require => Package["kstart"],
-  }
+  realize Cron["k5start_root"]
 
   exec {
     "replicaprepare-${host}":
