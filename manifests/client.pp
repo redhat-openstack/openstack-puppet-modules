@@ -14,6 +14,7 @@ class ipa::client (
   $clntpkg = {},
   $ldaputils = {},
   $sssdtools = {},
+  $sssd = {},
   $client = {},
   $domain = {},
   $realm = {},
@@ -44,6 +45,10 @@ class ipa::client (
   }
 
   realize(Package["$ipa::client::clntpkg"], Package["$ipa::client::ldaputils"], Package["$ipa::client::sssdtools"])
+
+  if $ipa::client::sssd {
+    realize Service["sssd"]
+  }
 
   if $::osfamily == 'Debian' {
     file {

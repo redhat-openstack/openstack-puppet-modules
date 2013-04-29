@@ -20,7 +20,8 @@
 #  $desc = '' - Controls the description entry of an IPA client.
 #  $locality = '' - Controls the locality entry of an IPA client.
 #  $location = '' - Controls the location entry of an IPA client.
-#  $sssdtools = 'sssd-tools' - SSSD tools package.
+#  $sssdtools = 'sssd-tools' - Controls the installation of the SSSD tools package.
+#  $sssd = true - Controls the option to start the SSSD service.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = 'openldap-clients' - LDAP utility package.
@@ -57,7 +58,8 @@ class ipa (
   $svrpkg = $ipa::params::svrpkg,
   $clntpkg = $ipa::params::clntpkg,
   $ldaputils = $ipa::params::ldaputils,
-  $sssdtools = $ipa::params::sssdtools
+  $sssdtools = $ipa::params::sssdtools,
+  $sssd = $ipa::params::sssd
 ) inherits ipa::params {
 
   @package {
@@ -82,6 +84,8 @@ class ipa (
     "ipa":
       ensure  => 'running',
       require => Package[$ipa::svrpkg];
+    "sssd":
+      ensure  => 'running',
   }
 
   @cron {
@@ -115,19 +119,24 @@ class ipa (
           svrpkg  => $ipa::svrpkg,
           clntpkg => $ipa::clntpkg,
       }
+
+      if $ipa::sssd {
+        realize Service["sssd"]
+      }
     }
   }
 
   if $ipa::master == true {
     class {
       "ipa::master":
-        svrpkg      => $ipa::svrpkg,
-        dns         => $ipa::dns,
-        domain      => $ipa::domain,
-        realm       => $ipa::realm,
-        adminpw     => $ipa::adminpw,
-        dspw        => $ipa::dspw,
-        kstart      => $ipa::kstart;
+        svrpkg  => $ipa::svrpkg,
+        dns     => $ipa::dns,
+        domain  => $ipa::domain,
+        realm   => $ipa::realm,
+        adminpw => $ipa::adminpw,
+        dspw    => $ipa::dspw,
+        kstart  => $ipa::kstart,
+        sssd    => $ipa::sssd,
     }
     if $ipa::domain == false {
       fail("Required parameter 'domain' missing")
@@ -149,9 +158,13 @@ class ipa (
         svrpkg    => $ipa::svrpkg,
         adminpw   => $ipa::adminpw,
         dspw      => $ipa::dspw,
-        kstart    => $ipa::kstart;
+        kstart    => $ipa::kstart,
+        sssd      => $ipa::sssd;
       "ipa::client":
         clntpkg   => $ipa::clntpkg,
+        ldaputils => $ipa::ldaputils,
+        sssdtools => $ipa::sssdtools,
+        sssd      => $ipa::sssd,
         domain    => $ipa::domain,
         realm     => $ipa::realm,
         otp       => $ipa::otp,
@@ -184,6 +197,7 @@ class ipa (
         clntpkg   => $ipa::clntpkg,
         ldaputils => $ipa::ldaputils,
         sssdtools => $ipa::sssdtools,
+        sssd      => $ipa::sssd,
         domain    => $ipa::domain,
         realm     => $ipa::realm,
         otp       => $ipa::otp,

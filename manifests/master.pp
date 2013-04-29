@@ -17,7 +17,8 @@ class ipa::master (
   $domain = {},
   $adminpw = {},
   $dspw = {},
-  $kstart = {}
+  $kstart = {},
+  $sssd = {}
 ) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == 'ipa-replica-replication-firewall' |>> -> Ipa::Replicaprepare <<| tag == 'ipa-replica-prepare' |>>
@@ -33,6 +34,10 @@ class ipa::master (
   }
 
   realize Package[$ipa::master::svrpkg]
+
+  if $ipa::master::sssd {
+    realize Service["sssd"]
+  }
 
   if $ipa::master::kstart {
     realize Package["kstart"]

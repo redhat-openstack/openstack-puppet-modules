@@ -34,6 +34,7 @@ class ipa::params {
   $locality = ''
   $location = ''
   $sssdtools = 'sssd-tools'
+  $sssd = true
   $svrpkg = 'ipa-server'
   $clntpkg = $::osfamily ? {
     Debian  => 'freeipa-client',

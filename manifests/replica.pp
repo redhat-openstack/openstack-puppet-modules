@@ -14,7 +14,8 @@ class ipa::replica (
   $svrpkg = {},
   $adminpw = {},
   $dspw = {},
-  $kstart = {}
+  $kstart = {},
+  $sssd = {}
 ) {
 
   Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>> -> Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>> -> Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
@@ -29,11 +30,15 @@ class ipa::replica (
 
   realize Package[$ipa::replica::svrpkg] 
 
+  realize Service['ipa']
+
   if $ipa::replica::kstart { 
     realize Package["kstart"]
   }
 
-  realize Service['ipa']
+  if $ipa::replica::sssd {
+    realize Service["sssd"]
+  }
 
   firewall {
     "101 allow IPA replica TCP services (kerberos,kpasswd,ldap,ldaps)":
