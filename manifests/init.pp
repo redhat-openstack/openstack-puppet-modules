@@ -98,8 +98,13 @@ class ipa (
     "ipa":
       ensure  => 'running',
       require => Package[$ipa::svrpkg];
-    "sssd":
-      ensure  => 'running',
+  }
+
+  if $ipa::sssd {
+    @service {
+      "sssd":
+        ensure  => 'running',
+    }
   }
 
   @cron {
