@@ -118,10 +118,10 @@ class ipa (
   }
 
   if is_domain_name($ipa::domain) != true {
-    fail("Parameter 'domain' is not a valid domain name");
+    fail("Parameter 'domain' is not a valid domain name")
   }
   if is_domain_name($ipa::realm) != true {
-    fail("Parameter 'realm' is not a valid domain name");
+    fail("Parameter 'realm' is not a valid domain name")
   }
 
   if $ipa::cleanup == true {
