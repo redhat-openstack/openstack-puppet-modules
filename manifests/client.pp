@@ -13,7 +13,9 @@
 class ipa::client (
   $clntpkg = {},
   $ldaputils = {},
+  $ldaputilspkg = {},
   $sssdtools = {},
+  $sssdtoolspkg = {},
   $sssd = {},
   $client = {},
   $domain = {},
@@ -44,7 +46,15 @@ class ipa::client (
     require    => Package[$ipa::client::clntpkg]
   }
 
-  realize(Package["$ipa::client::clntpkg"], Package["$ipa::client::ldaputils"], Package["$ipa::client::sssdtools"])
+  realize Package["$ipa::client::clntpkg"]
+
+  if $ipa::client::ldaputils {
+    realize Package["$ipa::client::ldaputilspkg"]
+  }
+
+  if $ipa::client::sssdtools {
+    realize Package["$ipa::client::sssdtoolspkg"]
+  }
 
   if $ipa::client::sssd {
     realize Service["sssd"]
