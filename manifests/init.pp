@@ -74,13 +74,17 @@ class ipa (
   }
 
   if $ipa::ldaputils {
-    $ipa::ldaputilspkg:
-      ensure => installed;
+    @package {
+      $ipa::ldaputilspkg:
+        ensure => installed;
+    }
   }
 
   if $ipa::sssdtools {
-    $ipa::sssdtoolspkg:
-      ensure => installed;
+    @package {
+      $ipa::sssdtoolspkg:
+        ensure => installed;
+    }
   }
 
   if $ipa::kstart {
