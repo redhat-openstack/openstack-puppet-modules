@@ -46,14 +46,20 @@ class ipa::client (
     require    => Package[$ipa::client::clntpkg]
   }
 
-  realize Package["$ipa::client::clntpkg"]
+  if ! defined(Package[$ipa::client::clntpkg]) {
+    realize Package["$ipa::client::clntpkg"]
+  }
 
   if $ipa::client::ldaputils {
-    realize Package["$ipa::client::ldaputilspkg"]
+    if ! defined(Package[$ipa::client::ldaputilspkg]) {
+      realize Package["$ipa::client::ldaputilspkg"]
+    }
   }
 
   if $ipa::client::sssdtools {
-    realize Package["$ipa::client::sssdtoolspkg"]
+    if ! defined(Package[$ipa::client::sssdtoolspkg]) {
+      realize Package["$ipa::client::sssdtoolspkg"]
+    }
   }
 
   if $ipa::client::sssd {
