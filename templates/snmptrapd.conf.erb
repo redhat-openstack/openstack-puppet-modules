@@ -2,4 +2,6 @@
 ### File managed by Puppet
 ###
 authCommunity   log,execute,net <%= scope.lookupvar('snmp::trapd::ro_community') %>
-# traphandle SNMPv2-MIB::coldStart    /usr/bin/bin/my_great_script cold
+<% @trap_handlers.each do |handler| -%>
+<%= handler %>
+<% end %>
