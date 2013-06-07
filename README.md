@@ -1,14 +1,16 @@
 # IPA Puppet module
 
-**Puppet module that allows the creation of IPA master, replicas and clients.**
+## Overview
+
+Puppet module that allows the creation of IPA master, replicas and clients.
+
+All nodes added as clients will automatically be added to the domain.
 
 ## Dependencies
 
-IPA master and replicas require a RedHat family OS
+[Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) on the Puppet master.
 
-[Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) on the Puppet master
-
-[puppetlabs/puppetlabs-firewall](https://github.com/puppetlabs/puppetlabs-firewall) module
+[puppetlabs/puppetlabs-firewall](https://github.com/puppetlabs/puppetlabs-firewall) module.
 
 ## Usage
 
@@ -24,6 +26,14 @@ Here is a simple usage example. If you don't want to put your passwords in the c
                 dspw    => hiera('some_passwd')
         }
     }
+
+## Limitations
+
+IPA master and replicas require a RedHat family OS.
+
+Only one IPA master server can be defined per Puppet master.
+
+Only one IPA domain/realm can be defined per Puppet master.
 
 ## License
 
