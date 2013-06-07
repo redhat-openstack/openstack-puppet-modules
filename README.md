@@ -2,7 +2,11 @@
 
 ## Overview
 
-Puppet module that allows the creation of IPA master, replicas and clients.
+Puppet module that allows the creation of an IPA master, replicas and clients.
+
+One IPA master server is the minimum requirement.
+
+Any IPA replica servers will automatically be configured with a replication agreement on the master server.
 
 All nodes added as clients will automatically be added to the domain.
 
@@ -19,64 +23,59 @@ Here are a few simple usage examples. If you don't want to put your passwords in
 IPA master:
 
     node 'ipamaster.domain.name' {
-        class {
-            'ipa':
-                master  => true, # Only one master per Puppet master
-                domain  => 'domain.name',
-                realm   => 'DOMAIN.NAME',
-                adminpw => 'somepasswd', # Cleartext example
-                dspw    => hiera('some_passwd') # Using hiera
-        }
+      class { 'ipa':
+        master  => true, # Only one master per Puppet master
+        domain  => 'domain.name',
+        realm   => 'DOMAIN.NAME',
+        adminpw => 'somepasswd', # Cleartext example
+        dspw    => hiera('some_passwd') # Using hiera
+      }
     }
 
 IPA replica:
 
     node 'ipareplica1.domain.name' {
-        class {
-            'ipa':
-                replica => true, # Multiple replicas can be setup.
-                domain  => 'domain.name',
-                realm   => 'DOMAIN.NAME',
-                adminpw => 'somepasswd',
-                dspw    => 'somepasswd',
-                otp     => 'onetimepasswd'
-        }
+      class { 'ipa':
+        replica => true, # Multiple replicas can be setup.
+        domain  => 'domain.name',
+        realm   => 'DOMAIN.NAME',
+        adminpw => 'somepasswd',
+        dspw    => 'somepasswd',
+        otp     => 'onetimepasswd'
+      }
     }
 
 Another IPA replica:
 
     node 'ipareplica2.domain.name' {
-        class {
-            'ipa':
-                replica => true,
-                domain  => 'domain.name',
-                realm   => 'DOMAIN.NAME',
-                adminpw => hiera('some_passwd'),
-                dspw    => hiera('some_passwd'), 
-                otp     => hiera('one_time_passwd')
-        }
+      class { 'ipa':
+        replica => true,
+        domain  => 'domain.name',
+        realm   => 'DOMAIN.NAME',
+        adminpw => hiera('some_passwd'),
+        dspw    => hiera('some_passwd'), 
+        otp     => hiera('one_time_passwd')
+      }
     }
 
 IPA client:
 
     node 'ipaclient.domain.name' {
-        class {
-            'ipa':
-                client  => true,
-                domain  => 'domain.name',
-                realm   => 'DOMAIN.NAME',
-                desc    => 'This is an IPA client', # This string will show up the the description attribute of the computer account.
-                otp     => hiera('one_time_passwd')
-        }
+      class { 'ipa':
+        client  => true,
+        domain  => 'domain.name',
+        realm   => 'DOMAIN.NAME',
+        desc    => 'This is an IPA client', # This string will show up the the description attribute of the computer account.
+        otp     => hiera('one_time_passwd')
+      }
     }
 
 Cleanup parameter:
 
     node 'ipawhatever.domain.name' {
-        class {
-            'ipa':
-                cleanup => true # Removes IPA completely. Mutually exclusive from master, replica and client parameters.
-        }
+      class { 'ipa':
+        cleanup => true # Removes IPA completely. Mutually exclusive from master, replica and client parameters.
+      }
     }
 
 ## Limitations
@@ -106,4 +105,4 @@ Only one IPA domain/realm can be defined per Puppet master.
 
 Please report issues [here](https://github.com/huit/puppet-ipa/issues).
 
-For more information see https://github.com/huit/puppet-ipa.git
+For more information see [https://github.com/huit/puppet-ipa.git](https://github.com/huit/puppet-ipa.git)
