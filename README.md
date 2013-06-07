@@ -5,7 +5,9 @@
 ## Dependencies
 
 IPA master and replicas require a RedHat family OS
+
 [Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) on the Puppet master
+
 [puppetlabs/puppetlabs-firewall](https://github.com/puppetlabs/puppetlabs-firewall) module
 
 ## Usage
