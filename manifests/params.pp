@@ -21,11 +21,11 @@ class ipa::params {
   $replica = false
   $client = false
   $cleanup = false
-  $domain = {}
-  $realm = {}
-  $adminpw = {}
-  $dspw = {}
-  $otp = {}
+  $domain = undef
+  $realm = undef
+  $adminpw = undef
+  $dspw = undef
+  $otp = undef
   $dns = false
   $mkhomedir = false
   $ntp = false

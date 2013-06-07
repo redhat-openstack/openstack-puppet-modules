@@ -157,16 +157,16 @@ class ipa (
         kstart  => $ipa::kstart,
         sssd    => $ipa::sssd,
     }
-    if ! defined($ipa::domain) {
+    if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
-    if ! defined($ipa::realm) {
+    if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
-    if ! defined($ipa::adminpw) {
+    if ! $ipa::adminpw {
       fail("Required parameter 'adminpw' missing")
     }
-    if ! defined($ipa::dspw) {
+    if ! $ipa::dspw {
       fail("Required parameter 'dspw' missing")
     }
   }
@@ -195,19 +195,19 @@ class ipa (
         locality     => $ipa::locality,
         location     => $ipa::location;
     }
-    if ! defined($ipa::domain) {
+    if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
-    if ! defined($ipa::realm) {
+    if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
-    if ! defined($ipa::adminpw) {
+    if ! $ipa::adminpw {
       fail("Required parameter 'adminpw' missing")
     }
-    if ! defined($ipa::dspw) {
+    if ! $ipa::dspw {
       fail("Required parameter 'dspw' missing")
     }
-    if ! defined($ipa::otp) {
+    if ! $ipa::otp {
       fail("Required parameter 'otp' missing")
     }
   }
@@ -230,13 +230,13 @@ class ipa (
         locality     => $ipa::locality,
         location     => $ipa::location;
     }
-    if ! defined($ipa::domain) {
+    if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
-    if ! defined($ipa::realm) {
+    if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
-    if ! defined($ipa::otp) {
+    if ! $ipa::otp {
       fail("Required parameter 'otp' missing")
     }
   }
