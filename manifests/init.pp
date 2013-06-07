@@ -122,10 +122,10 @@ class ipa (
     }
   }
 
-  if is_domain_name($ipa::domain) != true {
+  if ! is_domain_name($ipa::domain) {
     fail("Parameter 'domain' is not a valid domain name")
   }
-  if is_domain_name($ipa::realm) != true {
+  if ! is_domain_name($ipa::realm) {
     fail("Parameter 'realm' is not a valid domain name")
   }
 
@@ -157,16 +157,16 @@ class ipa (
         kstart  => $ipa::kstart,
         sssd    => $ipa::sssd,
     }
-    if $ipa::domain == false {
+    if ! defined($ipa::domain) {
       fail("Required parameter 'domain' missing")
     }
-    if $ipa::realm == false {
+    if ! defined($ipa::realm) {
       fail("Required parameter 'realm' missing")
     }
-    if $ipa::adminpw == false {
+    if ! defined($ipa::adminpw) {
       fail("Required parameter 'adminpw' missing")
     }
-    if $ipa::dspw == false {
+    if ! defined($ipa::dspw) {
       fail("Required parameter 'dspw' missing")
     }
   }
@@ -195,19 +195,19 @@ class ipa (
         locality     => $ipa::locality,
         location     => $ipa::location;
     }
-    if $ipa::adminpw == false {
-      fail("Required parameter 'adminpw' missing")
-    }
-    if $ipa::dspw == false {
-      fail("Required parameter 'dspw' missing")
-    }
-    if $ipa::domain == false {
+    if ! defined($ipa::domain) {
       fail("Required parameter 'domain' missing")
     }
-    if $ipa::realm == false {
+    if ! defined($ipa::realm) {
       fail("Required parameter 'realm' missing")
     }
-    if $ipa::otp == false {
+    if ! defined($ipa::adminpw) {
+      fail("Required parameter 'adminpw' missing")
+    }
+    if ! defined($ipa::dspw) {
+      fail("Required parameter 'dspw' missing")
+    }
+    if ! defined($ipa::otp) {
       fail("Required parameter 'otp' missing")
     }
   }
@@ -230,13 +230,13 @@ class ipa (
         locality     => $ipa::locality,
         location     => $ipa::location;
     }
-    if $ipa::domain == false {
+    if ! defined($ipa::domain) {
       fail("Required parameter 'domain' missing")
     }
-    if $ipa::realm == false {
+    if ! defined($ipa::realm) {
       fail("Required parameter 'realm' missing")
     }
-    if $ipa::otp == false {
+    if ! defined($ipa::otp) {
       fail("Required parameter 'otp' missing")
     }
   }
