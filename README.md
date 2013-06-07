@@ -6,16 +6,16 @@
 
 Here is a simple usage example. If you don't want to put your passwords in the clear, then use hiera/gpg.
 
-  node 'ipamaster.domain.name' {
-    class {
-      'ipa':
-        master  => true,
-        domain  => 'domain.name',
-        realm   => 'DOMAIN.NAME',
-        adminpw => 'somepasswd',
-        dspw    => hiera('some_passwd')
+    node 'ipamaster.domain.name' {
+        class {
+            'ipa':
+                master  => true,
+                domain  => 'domain.name',
+                realm   => 'DOMAIN.NAME',
+                adminpw => 'somepasswd',
+                dspw    => hiera('some_passwd')
+        }
     }
-  }
 
 ## License
 
