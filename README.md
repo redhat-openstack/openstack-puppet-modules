@@ -2,17 +2,26 @@
 
 ## Overview
 
-Puppet module that allows the creation of an IPA master, replicas and clients.
+Puppet module that can manage an IPA master, replicas and clients.
 
-One IPA master server is the minimum requirement.
+huit/puppet-ipa aims at the management and configuration of a complete IPA environment under Puppet control.
 
-Any IPA replica servers will automatically be configured with a replication agreement on the master server.
+To start, an IPA master will be required as the beginning of the LDAP/Kerberos environment. IPA replicas can
+then be added for additional resiliancy.
 
-All nodes added as clients will automatically be added to the domain.
+Please note, a load balanced configuration is not handled by this module, additional configuration is required
+if load balancing client communication or a VIP is to be used.
+
+IPA replica servers will automatically be configured with a replication agreement on the IPA master server.
+
+All nodes added as clients will automatically be added to the IPA domain.
+
+A cleanup parameter has been included to remove the IPA server or client packages from nodes.
 
 ## Dependencies
 
-[Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) enabled on the Puppet master.
+The ability to use [Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) and 
+[Stored Configuration](http://projects.puppetlabs.com/projects/1/wiki/Using_Stored_Configuration) enabled on the Puppet master.
 
 [puppetlabs/puppetlabs-firewall](https://forge.puppetlabs.com/puppetlabs/firewall) module.
 
@@ -226,11 +235,21 @@ Cleanup parameter:
 
 IPA master and replicas require a RedHat family OS.
 
+Does not manage master/replica load balancing.
+
+Clients will need additional configuration if a VIP is to be used.
+
 Only one IPA master server can be defined per Puppet master.
 
 Only one IPA domain/realm can be defined per Puppet master.
 
+Client configuration does not work with Ubuntu 8.04
+
 ## License
+
+    huit/puppet-ipa - Puppet module that can manage an IPA master, replicas and clients.
+
+    Copyright (C) 2013 Harvard University Information Technology
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
