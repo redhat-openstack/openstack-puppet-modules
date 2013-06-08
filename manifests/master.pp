@@ -6,20 +6,11 @@
 #
 # Actions:
 #
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall
+# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
 #
 # Sample Usage:
 #
-class ipa::master (
-  $svrpkg = {},
-  $dns = {},
-  $realm = {},
-  $domain = {},
-  $adminpw = {},
-  $dspw = {},
-  $kstart = {},
-  $sssd = {}
-) {
+class ipa::master ($svrpkg = {}, $dns = {}, $realm = {}, $domain = {}, $adminpw = {}, $dspw = {}, $kstart = {}, $sssd = {}) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == 'ipa-replica-replication-firewall' |>> -> Ipa::Replicaprepare <<| tag == 'ipa-replica-prepare' |>>
 
@@ -47,59 +38,54 @@ class ipa::master (
 
   $dnsopt = $ipa::master::dns ? {
     true    => '--setup-dns',
-    default => '',
+    default => ''
   }
 
-  ipa::serverinstall {
-    "$::fqdn":
-      realm   => $ipa::master::realm,
-      domain  => $ipa::master::domain,
-      adminpw => $ipa::master::adminpw,
-      dspw    => $ipa::master::dspw,
-      dnsopt  => $ipa::master::dnsopt,
-      require => Package[$ipa::master::svrpkg];
+  ipa::serverinstall { "$::fqdn":
+    realm   => $ipa::master::realm,
+    domain  => $ipa::master::domain,
+    adminpw => $ipa::master::adminpw,
+    dspw    => $ipa::master::dspw,
+    dnsopt  => $ipa::master::dnsopt,
+    require => Package[$ipa::master::svrpkg]
   }
 
-  firewall {
-    "101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)":
-      ensure => 'present',
-      action => 'accept',
-      proto  => 'tcp',
-      dport  => ['80','88','389','443','464','636'];
-
-    "102 allow IPA master UDP serivces (kerberos,kpasswd,ntp)":
-      ensure => 'present',
-      action => 'accept',
-      proto  => 'udp',
-      dport  => ['88','123','464'];
+  firewall { "101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)":
+    ensure => 'present',
+    action => 'accept',
+    proto  => 'tcp',
+    dport  => ['80','88','389','443','464','636']
   }
 
-  @@ipa::replicapreparefirewall {
-    "$::fqdn":
-      source => $::ipaddress,
-      tag    => "ipa-replica-prepare-firewall";
+  firewall { "102 allow IPA master UDP serivces (kerberos,kpasswd,ntp)":
+    ensure => 'present',
+    action => 'accept',
+    proto  => 'udp',
+    dport  => ['88','123','464']
   }
 
-  @@ipa::masterreplicationfirewall {
-    "$::fqdn":
-      source => $::ipaddress,
-      tag    => "ipa-master-replication-firewall";
+  @@ipa::replicapreparefirewall { "$::fqdn":
+    source => $::ipaddress,
+    tag    => "ipa-replica-prepare-firewall"
   }
 
-  @@ipa::masterprincipal {
-    "$::fqdn":
-      realm => $ipa::master::realm,
-      tag   => "ipa-master-principal";
+  @@ipa::masterreplicationfirewall { "$::fqdn":
+    source => $::ipaddress,
+    tag    => "ipa-master-replication-firewall"
   }
 
-  @@ipa::clientinstall {
-    "$::fqdn":
-      masterfqdn => $::fqdn,
-      domain     => $ipa::master::domain,
-      realm      => $ipa::master::realm,
-      dspw       => $ipa::master::dspw,
-      otp        => '', 
-      mkhomedir  => '', 
-      ntp        => ''; 
+  @@ipa::masterprincipal { "$::fqdn":
+    realm => $ipa::master::realm,
+    tag   => "ipa-master-principal"
+  }
+
+  @@ipa::clientinstall { "$::fqdn":
+    masterfqdn => $::fqdn,
+    domain     => $ipa::master::domain,
+    realm      => $ipa::master::realm,
+    dspw       => $ipa::master::dspw,
+    otp        => '', 
+    mkhomedir  => '', 
+    ntp        => ''
   }
 }

@@ -1,6 +1,6 @@
 # == Class: ipa
 #
-# Configures IPA masters, replicas and clients.
+# Manages IPA masters, replicas and clients.
 #
 # === Parameters
 #
@@ -66,53 +66,48 @@ class ipa (
   $sssd = $ipa::params::sssd
 ) inherits ipa::params {
 
-  @package {
-    $ipa::svrpkg:
-      ensure => installed;
-    $ipa::clntpkg:
-      ensure => installed;
+  @package { $ipa::svrpkg:
+    ensure => installed
+  }
+
+  @package {  $ipa::clntpkg:
+    ensure => installed
   }
 
   if $ipa::ldaputils {
-    @package {
-      $ipa::ldaputilspkg:
-        ensure => installed;
+    @package { $ipa::ldaputilspkg:
+      ensure => installed
     }
   }
 
   if $ipa::sssdtools {
-    @package {
-      $ipa::sssdtoolspkg:
-        ensure => installed;
+    @package { $ipa::sssdtoolspkg:
+      ensure => installed
     }
   }
 
   if $ipa::kstart {
-    @package {
-      "kstart":
-        ensure => installed;
+    @package { "kstart":
+      ensure => installed
     }
   }
 
-  @service {
-    "ipa":
-      ensure  => 'running',
-      require => Package[$ipa::svrpkg];
+  @service { "ipa":
+    ensure  => 'running',
+    require => Package[$ipa::svrpkg]
   }
 
   if $ipa::sssd {
-    @service {
-      "sssd":
-        ensure  => 'running',
+    @service { "sssd":
+      ensure  => 'running'
     }
   }
 
-  @cron {
-    "k5start_root":
-      command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
-      user    => 'root',
-      minute  => "*/1",
-      require => Package["kstart"],
+  @cron { "k5start_root":
+    command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
+    user    => 'root',
+    minute  => "*/1",
+    require => Package["kstart"]
   }
 
   if $ipa::cleanup == false {
@@ -125,6 +120,7 @@ class ipa (
   if ! is_domain_name($ipa::domain) {
     fail("Parameter 'domain' is not a valid domain name")
   }
+
   if ! is_domain_name($ipa::realm) {
     fail("Parameter 'realm' is not a valid domain name")
   }
@@ -133,10 +129,9 @@ class ipa (
     if $ipa::master == true or $ipa::replica == true or $ipa::client == true {
       fail("Conflicting options selected. Cannot cleanup during an installation.")
     } else {
-      ipa::cleanup {
-        "$fqdn":
-          svrpkg  => $ipa::svrpkg,
-          clntpkg => $ipa::clntpkg,
+      ipa::cleanup { "$fqdn":
+        svrpkg  => $ipa::svrpkg,
+        clntpkg => $ipa::clntpkg
       }
 
       if $ipa::sssd {
@@ -146,96 +141,106 @@ class ipa (
   }
 
   if $ipa::master == true {
-    class {
-      "ipa::master":
-        svrpkg  => $ipa::svrpkg,
-        dns     => $ipa::dns,
-        domain  => $ipa::domain,
-        realm   => $ipa::realm,
-        adminpw => $ipa::adminpw,
-        dspw    => $ipa::dspw,
-        kstart  => $ipa::kstart,
-        sssd    => $ipa::sssd,
+    class { "ipa::master":
+      svrpkg  => $ipa::svrpkg,
+      dns     => $ipa::dns,
+      domain  => $ipa::domain,
+      realm   => $ipa::realm,
+      adminpw => $ipa::adminpw,
+      dspw    => $ipa::dspw,
+      kstart  => $ipa::kstart,
+      sssd    => $ipa::sssd
     }
+
     if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
+
     if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
+
     if ! $ipa::adminpw {
       fail("Required parameter 'adminpw' missing")
     }
+
     if ! $ipa::dspw {
       fail("Required parameter 'dspw' missing")
     }
   }
 
   if $ipa::replica == true {
-    class {
-      "ipa::replica":
-        svrpkg    => $ipa::svrpkg,
-        adminpw   => $ipa::adminpw,
-        dspw      => $ipa::dspw,
-        kstart    => $ipa::kstart,
-        sssd      => $ipa::sssd;
-      "ipa::client":
-        clntpkg      => $ipa::clntpkg,
-        ldaputils    => $ipa::ldaputils,
-        ldaputilspkg => $ipa::ldaputilspkg,
-        sssdtools    => $ipa::sssdtools,
-        sssdtoolspkg => $ipa::sssdtoolspkg,
-        sssd         => $ipa::sssd,
-        domain       => $ipa::domain,
-        realm        => $ipa::realm,
-        otp          => $ipa::otp,
-        mkhomedir    => $ipa::mkhomedir,
-        ntp          => $ipa::ntp,
-        desc         => $ipa::desc,
-        locality     => $ipa::locality,
-        location     => $ipa::location;
+    class { "ipa::replica":
+      svrpkg    => $ipa::svrpkg,
+      adminpw   => $ipa::adminpw,
+      dspw      => $ipa::dspw,
+      kstart    => $ipa::kstart,
+      sssd      => $ipa::sssd
+    
+    class { "ipa::client":
+      clntpkg      => $ipa::clntpkg,
+      ldaputils    => $ipa::ldaputils,
+      ldaputilspkg => $ipa::ldaputilspkg,
+      sssdtools    => $ipa::sssdtools,
+      sssdtoolspkg => $ipa::sssdtoolspkg,
+      sssd         => $ipa::sssd,
+      domain       => $ipa::domain,
+      realm        => $ipa::realm,
+      otp          => $ipa::otp,
+      mkhomedir    => $ipa::mkhomedir,
+      ntp          => $ipa::ntp,
+      desc         => $ipa::desc,
+      locality     => $ipa::locality,
+      location     => $ipa::location
     }
+
     if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
+
     if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
+
     if ! $ipa::adminpw {
       fail("Required parameter 'adminpw' missing")
     }
+
     if ! $ipa::dspw {
       fail("Required parameter 'dspw' missing")
     }
+
     if ! $ipa::otp {
       fail("Required parameter 'otp' missing")
     }
   }
 
   if $ipa::client == true {
-    class {
-      "ipa::client":
-        clntpkg      => $ipa::clntpkg,
-        ldaputils    => $ipa::ldaputils,
-        ldaputilspkg => $ipa::ldaputilspkg,
-        sssdtools    => $ipa::sssdtools,
-        sssdtoolspkg => $ipa::sssdtoolspkg,
-        sssd         => $ipa::sssd,
-        domain       => $ipa::domain,
-        realm        => $ipa::realm,
-        otp          => $ipa::otp,
-        mkhomedir    => $ipa::mkhomedir,
-        ntp          => $ipa::ntp,
-        desc         => $ipa::desc,
-        locality     => $ipa::locality,
-        location     => $ipa::location;
+    class { "ipa::client":
+      clntpkg      => $ipa::clntpkg,
+      ldaputils    => $ipa::ldaputils,
+      ldaputilspkg => $ipa::ldaputilspkg,
+      sssdtools    => $ipa::sssdtools,
+      sssdtoolspkg => $ipa::sssdtoolspkg,
+      sssd         => $ipa::sssd,
+      domain       => $ipa::domain,
+      realm        => $ipa::realm,
+      otp          => $ipa::otp,
+      mkhomedir    => $ipa::mkhomedir,
+      ntp          => $ipa::ntp,
+      desc         => $ipa::desc,
+      locality     => $ipa::locality,
+      location     => $ipa::location
     }
+
     if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
+
     if ! $ipa::realm {
       fail("Required parameter 'realm' missing")
     }
+
     if ! $ipa::otp {
       fail("Required parameter 'otp' missing")
     }

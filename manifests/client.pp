@@ -6,36 +6,20 @@
 #
 # Actions:
 #
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall
+# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
 #
 # Sample Usage:
 #
-class ipa::client (
-  $clntpkg = {},
-  $ldaputils = {},
-  $ldaputilspkg = {},
-  $sssdtools = {},
-  $sssdtoolspkg = {},
-  $sssd = {},
-  $client = {},
-  $domain = {},
-  $realm = {},
-  $otp = {},
-  $mkhomedir = false,
-  $ntp = false,
-  $desc = {},
-  $locality = {},
-  $location = {}
-) {
+class ipa::client ($clntpkg = {}, $ldaputils = {}, $ldaputilspkg = {}, $sssdtools = {}, $sssdtoolspkg = {}, $sssd = {}, $client = {}, $domain = {}, $realm = {}, $otp = {}, $mkhomedir = false, $ntp = false, $desc = {}, $locality = {}, $location = {}) {
 
   $mkhomediropt = $ipa::client::mkhomedir ? {
     true    => '--mkhomedir',
-    default => '',
+    default => ''
   }
 
   $ntpopt = $ipa::client::ntp ? {
     true    => '',
-    default => '--no-ntp',
+    default => '--no-ntp'
   }
 
   Ipa::Clientinstall <<| |>> {
@@ -67,30 +51,29 @@ class ipa::client (
   }
 
   if $::osfamily == 'Debian' {
-    file {
-      "/etc/pki":
-        ensure  => directory,
-        mode    => 755,
-        owner   => root,
-        group   => root,
-        require => Package[$ipa::client::clntpkg];
+    file { "/etc/pki":
+      ensure  => directory,
+      mode    => 755,
+      owner   => root,
+      group   => root,
+      require => Package[$ipa::client::clntpkg]
+    }
 
-      "/etc/pki/nssdb":
-        ensure  => directory,
-        mode    => 755,
-        owner   => root,
-        group   => root,
-        require => File["/etc/pki"];
+    file {"/etc/pki/nssdb":
+      ensure  => directory,
+      mode    => 755,
+      owner   => root,
+      group   => root,
+      require => File["/etc/pki"]
     }
 
     File["/etc/pki/nssdb"] -> Ipa::Clientinstall <<| |>>
   }
 
-  @@ipa::hostadd {
-    "$::fqdn":
-      otp      => $ipa::client::otp,
-      desc     => $ipa::client::desc,
-      locality => $ipa::client::locality,
-      location => $ipa::client::location;
+  @@ipa::hostadd { "$::fqdn":
+    otp      => $ipa::client::otp,
+    desc     => $ipa::client::desc,
+    locality => $ipa::client::locality,
+    location => $ipa::client::location
   }
 }
