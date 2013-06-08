@@ -8,11 +8,11 @@
 #  $replica = false - Configures a server to be an IPA replica LDAP/Kerberos node.
 #  $client = false - Configures a server to be an IPA client.
 #  $cleanup = false - Removes IPA specific packages.
-#  $domain = {} - Defines the LDAP domain.
-#  $realm = {} - Defines the Kerberos realm.
-#  $adminpw = {} - Defines the IPA administrative user password.
-#  $dspw = {} - Defines the IPA directory services password.
-#  $otp = {} - Defines an IPA client one-time-password.
+#  $domain = undef - Defines the LDAP domain.
+#  $realm = undef - Defines the Kerberos realm.
+#  $adminpw = undef - Defines the IPA administrative user password.
+#  $dspw = undef - Defines the IPA directory services password.
+#  $otp = undef - Defines an IPA client one-time-password.
 #  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
 #  $mkhomedir = false - Controls the option to create user home directories on first login.
 #  $ntp = false - Controls the option to configure NTP on a client.
@@ -20,12 +20,12 @@
 #  $desc = '' - Controls the description entry of an IPA client.
 #  $locality = '' - Controls the locality entry of an IPA client.
 #  $location = '' - Controls the location entry of an IPA client.
-#  $sssdtools = Controls the installation of the SSSD tools package.
+#  $sssdtools = true - Controls the installation of the SSSD tools package.
 #  $sssdtoolspkg = 'sssd-tools' - SSSD tools package.
 #  $sssd = true - Controls the option to start the SSSD service.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
-#  $ldaputils = Controls the instalation of the LDAP utilities package.
+#  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
 #
 # === Variables

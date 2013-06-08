@@ -18,6 +18,148 @@ All nodes added as clients will automatically be added to the domain.
 
 ## Usage
 
+Available parameters.
+
+####`master`
+
+Configures a server to be an IPA master LDAP/Kerberos node.
+
+Defaults to 'false'.
+
+####`replica`
+
+Configures a server to be an IPA replica LDAP/Kerberos node.
+
+Defaults to 'false'.
+
+####`client`
+
+Configures a server to be an IPA client.
+
+Defaults to 'false'.
+
+####`cleanup`
+
+Removes IPA specific packages.
+
+Defaults to 'false'.
+
+####`domain`
+
+Defines the LDAP domain.
+
+Defaults to 'undef'.
+
+####`realm`
+
+Defines the Kerberos realm.
+
+Defaults to 'undef'.
+
+####`adminpw`
+
+Defines the IPA administrative user password.
+
+Defaults to 'undef'.
+
+####`dspw`
+
+Defines the IPA directory services password.
+
+Defaults to 'undef'.
+
+####`otp`
+
+Defines an IPA client one-time-password.
+
+Defaults to 'undef'.
+
+####`dns`
+
+Controls the option to configure a DNS zone with the IPA master setup.
+
+Defaults to 'false'.
+
+####`mkhomedir`
+
+Controls the option to create user home directories on first login.
+
+Defaults to 'false'.
+
+####`ntp`
+
+Controls the option to configure NTP on a client.
+
+Defaults to 'false'.
+
+####`kstart`
+
+Controls the installation of kstart.
+
+Defaults to 'true'.
+
+####`desc`
+
+Controls the description entry of an IPA client.
+
+Defaults to ''.
+
+####`locality`
+
+Controls the locality entry of an IPA client.
+
+Defaults to ''.
+
+####`location`
+
+Controls the location entry of an IPA client.
+
+Defaults to ''.
+
+####`sssdtools`
+
+Controls the installation of the SSSD tools package.
+
+Defaults to 'true'.
+
+####`sssdtoolspkg`
+
+SSSD tools package.
+
+Defaults to 'sssd-tools'
+
+####`sssd`
+
+Controls the option to start the SSSD service.
+
+Defaults to 'true'.
+
+####`svrpkg`
+
+IPA server package.
+
+Defaults to 'ipa-server'.
+
+####`clntpkg`
+
+IPA client package.
+
+Defaults to 'ipa-client'.
+
+####`ldaputils`
+
+Controls the instalation of the LDAP utilities package.
+
+Defaults to 'true'.
+
+####`ldaputilspkg`
+
+LDAP utilities package.
+
+Defaults to 'openldap-clients'.
+
+## Usage examples
+
 Here are a few simple usage examples. If you don't want to put your passwords in the clear, then use hiera/gpg.
 
 IPA master:
