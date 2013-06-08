@@ -10,7 +10,13 @@
 #
 # Sample Usage:
 #
-class ipa::replica ($svrpkg = {}, $adminpw = {}, $dspw = {}, $kstart = {}, $sssd = {}) {
+class ipa::replica (
+  $svrpkg  = {},
+  $adminpw = {},
+  $dspw    = {},
+  $kstart  = {},
+  $sssd    = {}
+) {
 
   Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>> -> Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>> -> Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
 

@@ -10,7 +10,16 @@
 #
 # Sample Usage:
 #
-class ipa::master ($svrpkg = {}, $dns = {}, $realm = {}, $domain = {}, $adminpw = {}, $dspw = {}, $kstart = {}, $sssd = {}) {
+class ipa::master (
+  $svrpkg  = {},
+  $dns     = {},
+  $realm   = {},
+  $domain  = {},
+  $adminpw = {},
+  $dspw    = {},
+  $kstart  = {},
+  $sssd    = {}
+) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == 'ipa-replica-replication-firewall' |>> -> Ipa::Replicaprepare <<| tag == 'ipa-replica-prepare' |>>
 

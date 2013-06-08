@@ -1,4 +1,6 @@
-define ipa::flushcache ($host = $name) {
+define ipa::flushcache (
+  $host = $name
+) {
 
   $flushcmd = $::osfamily ? {
     'RedHat' => "/bin/bash -c \"if [ -x /usr/sbin/sss_cache ]; then /usr/sbin/sss_cache -UGN >/dev/null 2>&1 ; else /usr/bin/find /var/lib/sss/db -type f -exec rm -f '{}' \; ; fi\"",

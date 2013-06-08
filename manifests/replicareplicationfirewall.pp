@@ -1,4 +1,7 @@
-define ipa::replicareplicationfirewall ($host = $name, $source = {}) {
+define ipa::replicareplicationfirewall (
+  $host   = $name,
+  $source = {}
+) {
 
   firewall { "104 allow IPA replication services from replica ${host}":
     ensure => 'present',

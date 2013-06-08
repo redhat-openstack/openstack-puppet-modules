@@ -1,4 +1,8 @@
-define ipa::masterprincipal ($host = $name, $present = true, $realm = {}) {
+define ipa::masterprincipal (
+  $host    = $name,
+  $present = true,
+  $realm   = {}
+) {
 
   $principals = suffix(prefix(["${host}"], "host/"), "@${realm}")
 

@@ -1,4 +1,13 @@
-define ipa::clientinstall ($host = $name, $masterfqdn = {}, $domain = {}, $realm = {}, $dspw = {}, $otp = {}, $mkhomedir = {}, $ntp = {}) {
+define ipa::clientinstall (
+  $host       = $name,
+  $masterfqdn = {},
+  $domain     = {},
+  $realm      = {},
+  $dspw       = {},
+  $otp        = {},
+  $mkhomedir  = {},
+  $ntp        = {}
+) {
 
   Exec["client-install-${host}"] ~> Ipa::Flushcache["client-${host}"]
 

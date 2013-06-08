@@ -1,4 +1,7 @@
-define ipa::replicaprepare ($host = $name, $dspw = {}) {
+define ipa::replicaprepare (
+  $host = $name,
+  $dspw = {}
+) {
 
   Cron["k5start_root"] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-scp-${host}"] ~> Ipa::Hostdelete[$host]
 

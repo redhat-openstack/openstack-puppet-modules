@@ -1,4 +1,7 @@
-define ipa::masterreplicationfirewall ($host = $name, $source = {}) {
+define ipa::masterreplicationfirewall (
+  $host   = $name,
+  $source = {}
+) {
 
   firewall { "104 allow IPA replication services from master ${host}":
     ensure => 'present',

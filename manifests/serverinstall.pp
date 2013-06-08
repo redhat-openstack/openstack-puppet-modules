@@ -1,4 +1,11 @@
-define ipa::serverinstall ($host = $name, $realm = {}, $domain = {}, $adminpw = {}, $dspw = {}, $dnsopt = {}) {
+define ipa::serverinstall (
+  $host    = $name,
+  $realm   = {},
+  $domain  = {},
+  $adminpw = {},
+  $dspw    = {},
+  $dnsopt  = {}
+) {
 
   exec { "serverinstall-${host}":
     command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} ${dnsopt} --unattended",

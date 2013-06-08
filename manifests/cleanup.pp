@@ -1,4 +1,7 @@
-define ipa::cleanup ($svrpkg = {}, $clntpkg = {}) {
+define ipa::cleanup (
+  $svrpkg  = {},
+  $clntpkg = {}
+) {
 
   $pkgrmcmd = $::osfamily ? {
     RedHat => '/usr/bin/yum -y remove',

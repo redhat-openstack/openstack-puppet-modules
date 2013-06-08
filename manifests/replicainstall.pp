@@ -1,4 +1,8 @@
-define ipa::replicainstall ($host = $name, $adminpw = {}, $dspw = {}) {
+define ipa::replicainstall (
+  $host    = $name,
+  $adminpw = {},
+  $dspw    = {}
+) {
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
 

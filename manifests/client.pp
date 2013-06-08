@@ -10,7 +10,23 @@
 #
 # Sample Usage:
 #
-class ipa::client ($clntpkg = {}, $ldaputils = {}, $ldaputilspkg = {}, $sssdtools = {}, $sssdtoolspkg = {}, $sssd = {}, $client = {}, $domain = {}, $realm = {}, $otp = {}, $mkhomedir = false, $ntp = false, $desc = {}, $locality = {}, $location = {}) {
+class ipa::client (
+  $clntpkg      = {},
+  $ldaputils    = {},
+  $ldaputilspkg = {},
+  $sssdtools    = {},
+  $sssdtoolspkg = {},
+  $sssd         = {},
+  $client       = {},
+  $domain       = {},
+  $realm        = {},
+  $otp          = {},
+  $mkhomedir    = false,
+  $ntp          = false,
+  $desc         = {},
+  $locality     = {},
+  $location     = {}
+) {
 
   $mkhomediropt = $ipa::client::mkhomedir ? {
     true    => '--mkhomedir',

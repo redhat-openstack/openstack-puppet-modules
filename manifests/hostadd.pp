@@ -1,4 +1,10 @@
-define ipa::hostadd ($host = $name, $otp = {}, $desc = {}, $locality = {}, $location = {}) {
+define ipa::hostadd (
+  $host     = $name,
+  $otp      = {},
+  $desc     = {},
+  $locality = {},
+  $location = {}
+) {
 
   $timestamp = strftime("%a %b %d %Y %r")
   $descinfo = rstrip(join(['Added by HUIT IPA Puppet module on',$timestamp,$desc], " ")) 
