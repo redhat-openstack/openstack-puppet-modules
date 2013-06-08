@@ -14,7 +14,9 @@ All nodes added as clients will automatically be added to the domain.
 
 [Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) on the Puppet master.
 
-[puppetlabs/puppetlabs-firewall](https://github.com/puppetlabs/puppetlabs-firewall) module.
+[puppetlabs/puppetlabs-firewall](https://forge.puppetlabs.com/puppetlabs/firewall) module.
+
+[puppetlabs/stdlib](https://forge.puppetlabs.com/puppetlabs/stdlib) module.
 
 ## Usage
 
