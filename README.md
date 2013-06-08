@@ -12,7 +12,7 @@ All nodes added as clients will automatically be added to the domain.
 
 ## Dependencies
 
-[Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) on the Puppet master.
+[Exported resources](http://docs.puppetlabs.com/guides/exported_resources.html) enabled on the Puppet master.
 
 [puppetlabs/puppetlabs-firewall](https://forge.puppetlabs.com/puppetlabs/firewall) module.
 
