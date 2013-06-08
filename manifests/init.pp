@@ -176,6 +176,7 @@ class ipa (
       dspw      => $ipa::dspw,
       kstart    => $ipa::kstart,
       sssd      => $ipa::sssd
+    }
     
     class { "ipa::client":
       clntpkg      => $ipa::clntpkg,
