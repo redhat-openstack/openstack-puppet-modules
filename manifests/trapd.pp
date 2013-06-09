@@ -63,6 +63,7 @@
 class snmp::trapd (
   $ro_community       = $snmp::params::ro_community,
   $rw_community       = $snmp::params::rw_community,
+  $trap_handlers      = [],
   $ensure             = 'present',
   $service_ensure     = 'running',
   $service_name       = $snmp::params::trap_service_name,

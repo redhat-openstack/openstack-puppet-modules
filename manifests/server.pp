@@ -93,6 +93,8 @@ class snmp::server (
   $rw_network         = $snmp::params::rw_network,
   $contact            = $snmp::params::contact,
   $location           = $snmp::params::location,
+  $views              = $snmp::params::views,
+  $accesses           = $snmp::params::accesses,
   $ensure             = 'present',
   $autoupgrade        = false,
   $package_name       = $snmp::params::package_name,

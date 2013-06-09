@@ -17,6 +17,14 @@ class snmp::params {
   $rw_network   = '127.0.0.1'
   $contact      = 'Unknown'
   $location     = 'Unknown'
+  $views        = [
+    'view    systemview    included   .1.3.6.1.2.1.1',
+    'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+  ]
+  $accesses     = [
+    'access  notConfigGroup ""      any       noauth    exact  systemview none none',
+  ]
+
 
 # These should not need to be changed.
   case $::operatingsystem {
