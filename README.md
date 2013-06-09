@@ -1,7 +1,8 @@
-Puppet SNMP Module
-==================
+Install and manage SNMP services.
+=================================
 
-[![Build Status](https://secure.travis-ci.org/razorsedge/puppet-snmp.png?branch=master)](http://travis-ci.org/razorsedge/puppet-snmp)
+master branch: [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-snmp.png?branch=master)](http://travis-ci.org/razorsedge/puppet-snmp)
+develop branch: [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-snmp.png?branch=develop)](http://travis-ci.org/razorsedge/puppet-snmp)
 
 Introduction
 ------------
@@ -62,3 +63,8 @@ Copyright
 ---------
 
 Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
+
+[razorsedge/puppet-snmp on GitHub](https://github.com/razorsedge/puppet-snmp)
+
+[razorsedge/snmp on Puppet Forge](http://forge.puppetlabs.com/razorsedge/snmp)
+
