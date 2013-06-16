@@ -53,16 +53,8 @@ Notes
 -----
 
 * Only tested on CentOS 5.8, CentOS 6.2 x86_64 and Debian squeeze.
-
 * SNMPv3 user auth is not tested on Debian.
-
-* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is not running the status script returns 'not running' so puppet restarts snmpd module. The following is a workarround
-
-class {'snmp::server':
-  ...
-  service_hasstatus => false,
-}
-
+* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is not running the status script returns 'not running' so puppet restarts snmpd module. The following is a workaround: `class { 'snmp::server': service_hasstatus => false, }`
 
 Issues
 ------
