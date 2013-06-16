@@ -34,6 +34,7 @@ class snmp::params {
 
       $package_name        = 'net-snmp'
       $service_config      = '/etc/snmp/snmpd.conf'
+      $service_config_perms= '0644'
       $service_name        = 'snmpd'
       if $::lsbmajdistrelease <= '5' {
         $sysconfig         = '/etc/sysconfig/snmpd.options'
@@ -44,6 +45,8 @@ class snmp::params {
         $var_net_snmp      = '/var/lib/net-snmp'
         $varnetsnmp_perms  = '0755'
       }
+      $varnetsnmp_owner    = 'root'
+      $varnetsnmp_group    = 'root'
 
       $client_package_name = 'net-snmp-utils'
       $client_config       = '/etc/snmp/snmp.conf'
@@ -62,10 +65,30 @@ class snmp::params {
     'Ubuntu': {
       $package_name        = 'snmpd'
       $service_config      = '/etc/snmp/snmpd.conf'
+      $service_config_perms= '0600'
       $service_name        = 'snmpd'
       $sysconfig           = '/etc/default/snmp'
       $var_net_snmp        = '/var/lib/snmp'
       $varnetsnmp_perms    = '0700'
+      $varnetsnmp_owner    = 'snmp'
+      $varnetsnmp_group    = 'snmp'
+
+      $client_package_name = 'snmp'
+      $client_config       = '/etc/snmp/snmp.conf'
+
+      $trap_service_config = '/etc/snmp/snmptrapd.conf'
+      $trap_service_name   = 'snmptrapd'
+    }
+    'Debian': {
+      $package_name        = 'snmpd'
+      $service_config      = '/etc/snmp/snmpd.conf'
+      $service_config_perms= '0600'
+      $service_name        = 'snmpd'
+      $sysconfig           = '/etc/default/snmp'
+      $var_net_snmp        = '/var/lib/snmp'
+      $varnetsnmp_perms    = '0755'
+      $varnetsnmp_owner    = 'snmp'
+      $varnetsnmp_group    = 'snmp'
 
       $client_package_name = 'snmp'
       $client_config       = '/etc/snmp/snmp.conf'

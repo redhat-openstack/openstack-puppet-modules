@@ -16,7 +16,7 @@ describe 'snmp::server' do
   end
 
   redhatish = ['RedHat']
-  debianish = ['Ubuntu']
+  debianish = ['Ubuntu', 'Debian']
 
   describe 'on a supported operatingsystem, with default settings' do
     redhatish.each do |os|
