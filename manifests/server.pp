@@ -132,7 +132,7 @@ class snmp::server (
 
   file { 'snmpd.conf':
     ensure  => $file_ensure,
-    mode    => '0644',
+    mode    => $snmp::params::service_config_perms,
     owner   => 'root',
     group   => 'root',
     path    => $snmp::params::service_config,
