@@ -53,10 +53,10 @@ describe 'snmp::trapd' do
           :ensure => 'present',
           :path   => '/etc/snmp/snmptrapd.conf'
         )}
-        it { should contain_file('snmptrapd.sysconfig').with(
-          :ensure => 'present',
-          :path   => '/etc/default/snmptrapd'
-        )}
+#        it { should contain_file('snmptrapd.sysconfig').with(
+#          :ensure => 'present',
+#          :path   => '/etc/default/snmptrapd'
+#        )}
         it { should contain_service('snmptrapd').with(
           :ensure => 'running',
           :enable => true,
@@ -113,10 +113,10 @@ describe 'snmp::trapd' do
           :ensure => 'present',
           :path   => '/etc/snmp/snmptrapd.conf'
         )}
-        it { should contain_file('snmptrapd.sysconfig').with(
-          :ensure => 'present',
-          :path   => '/etc/default/snmptrapd'
-        )}
+#        it { should contain_file('snmptrapd.sysconfig').with(
+#          :ensure => 'present',
+#          :path   => '/etc/default/snmptrapd'
+#        )}
         it { should contain_service('snmptrapd').with(
           :ensure => 'stopped',
           :enable => false,

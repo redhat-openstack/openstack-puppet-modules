@@ -102,19 +102,21 @@ class snmp::trapd (
     notify  => Service['snmptrapd'],
   }
 
-  file { 'snmptrapd.sysconfig':
-    ensure  => $file_ensure,
-    mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
-    path    => $snmp::params::trap_sysconfig,
-    source  => [
-      "puppet:///modules/snmp/snmptrapd.sysconfig-${::fqdn}",
-      "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
-      'puppet:///modules/snmp/snmptrapd.sysconfig',
-    ],
-    require => Package['snmpd'],
-    notify  => Service['snmptrapd'],
+  if $::osfamily != 'Debian' {
+    file { 'snmptrapd.sysconfig':
+      ensure  => $file_ensure,
+      mode    => '0644',
+      owner   => 'root',
+      group   => 'root',
+      path    => $snmp::params::trap_sysconfig,
+      source  => [
+        "puppet:///modules/snmp/snmptrapd.sysconfig-${::fqdn}",
+        "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
+        'puppet:///modules/snmp/snmptrapd.sysconfig',
+      ],
+      require => Package['snmpd'],
+      notify  => Service['snmptrapd'],
+    }
   }
 
   service { 'snmptrapd':
