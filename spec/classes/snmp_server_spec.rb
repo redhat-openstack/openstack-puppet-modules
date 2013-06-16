@@ -16,6 +16,7 @@ describe 'snmp::server' do
   end
 
   redhatish = ['RedHat']
+  debianish = ['Ubuntu']
 
   describe 'on a supported operatingsystem, with default settings' do
     redhatish.each do |os|
@@ -37,6 +38,29 @@ describe 'snmp::server' do
         it { should contain_file('snmpd.sysconfig').with(
           :ensure => 'present',
           :path   => '/etc/sysconfig/snmpd'
+        )}
+        it { should contain_service('snmpd').with(
+          :ensure => 'running',
+          :enable => true,
+          :name   => 'snmpd'
+        )}
+      end
+    end
+
+    debianish.each do |os|
+      describe "for operating system #{os}" do
+        let(:params) {{}}
+        let :facts do {
+          :operatingsystem => os
+        }
+        end
+        it { should contain_file('snmpd.conf').with(
+          :ensure => 'present',
+          :path   => '/etc/snmp/snmpd.conf'
+        )}
+        it { should contain_file('snmpd.sysconfig').with(
+          :ensure => 'present',
+          :path   => '/etc/default/snmp'
         )}
         it { should contain_service('snmpd').with(
           :ensure => 'running',
@@ -74,6 +98,35 @@ describe 'snmp::server' do
         it { should contain_file('snmpd.sysconfig').with(
           :ensure => 'present',
           :path   => '/etc/sysconfig/snmpd'
+        )}
+        it { should contain_service('snmpd').with(
+          :ensure => 'stopped',
+          :enable => false,
+          :name   => 'snmpd'
+        )}
+      end
+    end
+    debianish.each do |os|
+      describe "for operating system #{os}" do
+        let(:params) {
+          {
+            :autoupgrade    => true,
+            :package_name   => 'snmp-server',
+            :service_ensure => 'stopped',
+            :service_enable => false
+          }
+        }
+        let :facts do {
+          :operatingsystem   => os
+        }
+        end
+        it { should contain_file('snmpd.conf').with(
+          :ensure => 'present',
+          :path   => '/etc/snmp/snmpd.conf'
+        )}
+        it { should contain_file('snmpd.sysconfig').with(
+          :ensure => 'present',
+          :path   => '/etc/default/snmp'
         )}
         it { should contain_service('snmpd').with(
           :ensure => 'stopped',
