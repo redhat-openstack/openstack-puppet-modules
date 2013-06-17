@@ -95,8 +95,8 @@ class snmp::server (
   $location           = $snmp::params::location,
   $views              = $snmp::params::views,
   $accesses           = $snmp::params::accesses,
-  $ensure             = 'present',
-  $autoupgrade        = false,
+  $ensure             = $snmp::params::ensure,
+  $autoupgrade        = $snmp::params::safe_autoupgrade,
   $package_name       = $snmp::params::package_name,
   $service_ensure     = 'running',
   $service_name       = $snmp::params::service_name,
@@ -104,6 +104,12 @@ class snmp::server (
   $service_hasstatus  = true,
   $service_hasrestart = true
 ) inherits snmp::params {
+  # Validate our booleans
+  validate_bool($autoupgrade)
+  validate_bool($service_enable)
+  validate_bool($service_hasstatus)
+  validate_bool($service_hasrestart)
+
   include snmp
 
   case $ensure {
