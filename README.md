@@ -61,6 +61,16 @@ Issues
 
 * None.
 
+Deprecation Warning
+-------------------
+
+The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp`.  All of their class parameters will be made available in the `snmp` class.
+
+License
+-------
+
+Please see LICENSE file.
+
 Copyright
 ---------
 
