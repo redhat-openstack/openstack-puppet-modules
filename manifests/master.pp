@@ -66,7 +66,7 @@ class ipa::master (
     dport  => ['80','88','389','443','464','636']
   }
 
-  firewall { "102 allow IPA master UDP serivces (kerberos,kpasswd,ntp)":
+  firewall { "102 allow IPA master UDP services (kerberos,kpasswd,ntp)":
     ensure => 'present',
     action => 'accept',
     proto  => 'udp',
@@ -92,7 +92,7 @@ class ipa::master (
     masterfqdn => $::fqdn,
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
-    dspw       => $ipa::master::dspw,
+    adminpw    => $ipa::master::adminpw,
     otp        => '', 
     mkhomedir  => '', 
     ntp        => ''
