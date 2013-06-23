@@ -1,5 +1,5 @@
 name 'razorsedge-snmp'
-version '1.0.2'
+version '2.0.0'
 
 author 'razorsedge'
 license 'Apache License, Version 2.0'
