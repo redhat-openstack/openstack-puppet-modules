@@ -1,9 +1,12 @@
+#!/usr/bin/env rspec
+
 require 'spec_helper'
 
-describe 'snmp::snmpv3_user' do
+describe 'snmp::snmpv3_user', :type => 'define' do
   let :facts do {
-    :lsbmajdistrelease => '6',
-    :operatingsystem   => 'CentOS'
+    :osfamily          => 'RedHat',
+    :operatingsystem   => 'CentOS',
+    :lsbmajdistrelease => '6'
   }
   end
 

@@ -33,9 +33,11 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp (
-  $ensure      = 'present',
-  $autoupgrade = false
+  $ensure      = $snmp::params::ensure,
+  $autoupgrade = $snmp::params::safe_autoupgrade
 ) inherits snmp::params {
+  # Validate our booleans
+  validate_bool($autoupgrade)
 
   case $ensure {
     /(present)/: {
@@ -79,7 +81,6 @@ class snmp (
     require => Package['snmpd'],
   }
 
-  #TODO var-net-snmp ensure => 'directory'
   file { 'var-net-snmp':
     ensure  => 'directory',
     mode    => $snmp::params::varnetsnmp_perms,
