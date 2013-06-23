@@ -93,13 +93,16 @@ class snmp::trapd (
 
   file { 'snmptrapd.conf':
     ensure  => $file_ensure,
-    mode    => '0644',
+    mode    => $snmp::params::service_config_perms,
     owner   => 'root',
     group   => 'root',
     path    => $snmp::params::trap_service_config,
     content => template('snmp/snmptrapd.conf.erb'),
     require => Package['snmpd'],
-    notify  => Service['snmptrapd'],
+    notify  => $::osfamily ? {
+      'Debian' => undef,
+      default  => Service['snmptrapd'],
+    },
   }
 
   if $::osfamily != 'Debian' {
@@ -117,14 +120,14 @@ class snmp::trapd (
       require => Package['snmpd'],
       notify  => Service['snmptrapd'],
     }
-  }
 
-  service { 'snmptrapd':
-    ensure     => $service_ensure_real,
-    name       => $service_name,
-    enable     => $service_enable,
-    hasstatus  => $service_hasstatus,
-    hasrestart => $service_hasrestart,
-    require    => [ Package['snmpd'], File['var-net-snmp'], ],
+    service { 'snmptrapd':
+      ensure     => $service_ensure_real,
+      name       => $service_name,
+      enable     => $service_enable,
+      hasstatus  => $service_hasstatus,
+      hasrestart => $service_hasrestart,
+      require    => [ Package['snmpd'], File['var-net-snmp'], ],
+    }
   }
 }

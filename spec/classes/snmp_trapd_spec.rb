@@ -75,12 +75,12 @@ describe 'snmp::trapd', :type => 'class' do
         end
         it { should contain_file('snmptrapd.conf').with(
           :ensure  => 'present',
-          :mode    => '0644',
+          :mode    => '0600',
           :owner   => 'root',
           :group   => 'root',
           :path    => '/etc/snmp/snmptrapd.conf',
           :require => 'Package[snmpd]',
-          :notify  => 'Service[snmptrapd]'
+          :notify  => nil
         )}
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
@@ -97,14 +97,15 @@ describe 'snmp::trapd', :type => 'class' do
 #          :require => 'Package[snmpd]',
 #          :notify  => 'Service[snmptrapd]'
 #        )}
-        it { should contain_service('snmptrapd').with(
-          :ensure     => 'running',
-          :name       => 'snmptrapd',
-          :enable     => true,
-          :hasstatus  => true,
-          :hasrestart => true,
-          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
-        )}
+        it { should_not contain_service('snmptrapd') }
+#        it { should contain_service('snmptrapd').with(
+#          :ensure     => 'running',
+#          :name       => 'snmptrapd',
+#          :enable     => true,
+#          :hasstatus  => true,
+#          :hasrestart => true,
+#          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
+#        )}
       end
     end
   end
