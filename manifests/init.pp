@@ -15,7 +15,8 @@
 #  }
 #
 define datacat(
-  $template,
+  $template                = undef,
+  $template_body           = undef,
   $backup                  = undef,
   $checksum                = undef,
   $force                   = undef,
@@ -46,9 +47,19 @@ define datacat(
     seluser                 => $seluser,
   }
 
+  $template_real = $template ? {
+    default => $template,
+    undef   => 'inline',
+  }
+
+  $template_body_real = $template_body ? {
+    default => $template_body,
+    undef   => template_body($template_real),
+  }
+
   datacat_collector { $path:
-    template      => $template,
-    template_body => template_body($template),
+    template      => $template_real,
+    template_body => $template_body_real,
     loglevel      => debug,
     before        => File[$title], # when we evaluate we modify the private data of File
   }
