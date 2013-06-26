@@ -1,3 +1,7 @@
+0.0.3 Wednesday 26th June, 2013
+    Reworked the behaviour of datacat_collector to only refresh the resource
+    when the output from the template evaluation changes. (Github #3)
+
 0.0.2 Tuesday 16th April, 2013
     Changed README.md from Github flavored markup to standard markdown to make
     the forge happier.
