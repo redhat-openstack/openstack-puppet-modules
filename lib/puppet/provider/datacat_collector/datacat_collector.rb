@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
   mk_resource_methods
 
-  def flush
+  def exists?
     # Find the datacat_fragments that point at this collector
     fragments = resource.catalog.resources.find_all do |r|
       r.is_a?(Puppet::Type.type(:datacat_fragment)) && r[:target] == resource[:path]
@@ -38,5 +38,8 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
 
     debug "Found resource #{target_file.inspect} class #{target_file.class}"
     target_file[:content] = content
+
+    # and claim there's nothing to change about *this* resource
+    true
   end
 end

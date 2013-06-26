@@ -60,7 +60,6 @@ define datacat(
   datacat_collector { $path:
     template      => $template_real,
     template_body => $template_body_real,
-    loglevel      => debug,
     before        => File[$title], # when we evaluate we modify the private data of File
   }
 }
