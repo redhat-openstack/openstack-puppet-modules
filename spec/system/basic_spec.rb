@@ -12,7 +12,7 @@ describe 'basic tests:' do
   it 'my class should work with no errors' do
     pp = <<-EOS
       datacat { "/tmp/demo1":
-        template_body => "<%= @data.to_yaml %>",
+        template_body => "<% @data.keys.sort.each do |k| %><%= k %>: <%= @data[k] %>, <% end %>",
       }
 
       datacat_fragment { "foo":
@@ -39,8 +39,7 @@ describe 'basic tests:' do
     end
 
     shell('cat /tmp/demo1') do |r|
-      r.stdout.should =~ /^\s*foo: /m
-      r.stdout.should =~ /^\s*bar: /m
+      r.stdout.should =~ /^bar: two, foo: one/
     end
   end
 end
