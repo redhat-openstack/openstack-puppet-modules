@@ -9,7 +9,7 @@ Puppet::Type.newtype(:datacat_fragment) do
     desc 'The title of the datacat resource that the data should be sent to.'
   end
 
-  newproperty(:data) do
+  newparam(:data) do
     desc 'A hash of data to be merged for this resource.'
   end
 end
