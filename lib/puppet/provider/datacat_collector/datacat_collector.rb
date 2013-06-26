@@ -10,14 +10,7 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     end
 
     # deep merge their data chunks
-    deep_merge = Proc.new do |key,oldval,newval|
-      newval.is_a?(Hash) && oldval.is_a?(Hash) ?
-        oldval.merge(newval, &deep_merge) :
-        newval.is_a?(Array) && oldval.is_a?(Array) ?
-          oldval + newval :
-          newval
-    end
-
+    deep_merge = Puppet_X::Richardc::Datacat.deep_merge
     data = {}
     fragments.each do |fragment|
       data.merge!(fragment[:data], &deep_merge)
