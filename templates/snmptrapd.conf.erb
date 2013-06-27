@@ -8,5 +8,5 @@ authCommunity   log,execute,net <%= @ro_community %>
 disableAuthorization <%= @disable_authorization %>
 doNotLogTraps <%= @do_not_log_traps %>
 <% @trap_handlers.each do |handler| -%>
-<%= handler %>
+traphandle <%= handler %>
 <% end %>
