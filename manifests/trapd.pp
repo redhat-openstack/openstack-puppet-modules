@@ -4,13 +4,22 @@
 #
 # === Parameters:
 #
+# [*snmp_trap_addr*]
+#   Defines a list of listening addresses, on which  to  receive  incoming  SNMP
+#   notifications.
+#   Default: []
+#
 # [*ro_community*]
 #   Read-only (RO) community string.
 #   Default: public
 #
-# [*rw_community*]
-#   Read-write (RW) community string.
-#   Default: private
+# [*disable_authorization*]
+#   Will disable access control checks.
+#   Default: false
+#
+# [*do_not_log_traps*]
+#   Disables  the  logging  of  notifications altogether.
+#   Default: true
 #
 # [*ensure*]
 #   Ensure if present or absent.
@@ -61,15 +70,17 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp::trapd (
-  $ro_community       = $snmp::params::ro_community,
-  $rw_community       = $snmp::params::rw_community,
-  $trap_handlers      = [],
-  $ensure             = $snmp::params::ensure,
-  $service_ensure     = 'running',
-  $service_name       = $snmp::params::trap_service_name,
-  $service_enable     = true,
-  $service_hasstatus  = true,
-  $service_hasrestart = true
+  $snmp_trap_addr        = [],
+  $ro_community          = $snmp::params::ro_community,
+  $disable_authorization = 'no',
+  $do_not_log_traps      = 'yes',
+  $trap_handlers         = [],
+  $ensure                = $snmp::params::ensure,
+  $service_ensure        = 'running',
+  $service_name          = $snmp::params::trap_service_name,
+  $service_enable        = true,
+  $service_hasstatus     = true,
+  $service_hasrestart    = true
 ) inherits snmp::params {
   include snmp
 
