@@ -50,6 +50,9 @@ Will produce something like:
         members fred.dc1.notreal,fred-ilo.dc1.notreal
     }
 
+There are additional samples in a blog post I wrote to describe the approach,
+http://richardc.unixbeard.net/2013/02/puppet-concat-patterns/
+
 Caveats
 -------
 
