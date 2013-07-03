@@ -3,3 +3,4 @@ Gemfile.lock
 /spec/fixtures/modules/datacat
 /pkg
 /.rspec_system
+/.ruby-version

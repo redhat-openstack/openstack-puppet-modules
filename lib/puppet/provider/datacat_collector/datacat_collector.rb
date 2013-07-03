@@ -33,6 +33,12 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     target_file = @resource[:before].find do |r|
         r.type == 'File' and r.title == @resource[:path]
     end
+
+    # This only seem to happen when spec testing.  Weird.
+    if target_file.catalog == nil
+      target_file.catalog = resource.catalog
+    end
+
     # @resource[:before] contains resource references, dereference it
     target_file = target_file.resolve
 

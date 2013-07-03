@@ -8,6 +8,13 @@ group :development, :test do
   gem 'puppet-lint'
 end
 
+group :development do
+  gem 'pry'
+  gem 'pry-debugger'
+  gem 'rb-readline'
+  gem 'awesome_print'
+end
+
 if puppetversion = ENV['PUPPET_GEM_VERSION']
   gem 'puppet', puppetversion, :require => false
 else
