@@ -1,6 +1,6 @@
 # == Class: snmp::trapd
 #
-# This class handles installing the SNMP trap daemon.
+# This class handles installing the Net-SNMP trap daemon.
 #
 # === Parameters:
 #
@@ -40,7 +40,7 @@
 #
 # === Actions:
 #
-# Installs the SNMP trap daemon service and configuration.
+# Installs the Net-SNMP trap daemon service and configuration.
 #
 # === Requires:
 #

@@ -1,6 +1,6 @@
 # == Class: snmp::server
 #
-# This class handles installing the SNMP daemon.
+# This class handles installing the Net-SNMP daemon.
 #
 # === Parameters:
 #
@@ -66,7 +66,7 @@
 #
 # === Actions:
 #
-# Installs the SNMP daemon package, service, and configuration.
+# Installs the Net-SNMP daemon package, service, and configuration.
 #
 # === Requires:
 #

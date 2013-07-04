@@ -1,6 +1,6 @@
 # == Class: snmp
 #
-# This class handles installing the SNMP client utilities.
+# This class handles installing the Net-SNMP client utilities.
 #
 # === Parameters:
 #
@@ -14,7 +14,7 @@
 #
 # === Actions:
 #
-# Installs the SNMP client package and configuration.
+# Installs the Net-SNMP client package and configuration.
 #
 # === Requires:
 #
