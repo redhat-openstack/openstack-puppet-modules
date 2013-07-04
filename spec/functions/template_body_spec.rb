@@ -6,6 +6,6 @@ describe 'template_body' do
   end
 
   it "should return the body of template_body/test1.erb" do
-    subject.call(['template_body/test1.erb']) == "Goodbye cruel world\n"
+    subject.call(['template_body/test1.erb']).should == "Goodbye cruel world\n"
   end
 end
