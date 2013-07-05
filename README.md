@@ -53,6 +53,7 @@ If you just want to install the SNMP client:
     }
 
 Only configure and run the snmptrap daemon:
+
     class { 'snmp':
       ro_community        => 'SeCrEt',
       service_ensure      => 'stopped',
