@@ -39,6 +39,8 @@ class snmp (
   # Validate our booleans
   validate_bool($autoupgrade)
 
+  $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
   case $ensure {
     /(present)/: {
       if $autoupgrade == true {
@@ -75,7 +77,7 @@ class snmp (
     path    => $snmp::params::client_config,
     source  => [
       "puppet:///modules/snmp/snmp.conf-${::fqdn}",
-      "puppet:///modules/snmp/snmp.conf-${::osfamily}-${::lsbmajdistrelease}",
+      "puppet:///modules/snmp/snmp.conf-${::osfamily}-${majdistrelease}",
       'puppet:///modules/snmp/snmp.conf',
     ],
     require => Package['snmpd'],

@@ -26,9 +26,9 @@ describe 'snmp', :type => 'class' do
       describe "for osfamily RedHat, operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
-          :osfamily          => 'RedHat',
-          :operatingsystem   => os,
-          :lsbmajdistrelease => '6'
+          :osfamily               => 'RedHat',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '6'
         }
         end
         it { should contain_package('snmpd').with(
@@ -96,9 +96,9 @@ describe 'snmp', :type => 'class' do
 
   context 'on a supported osfamily, custom parameters' do
     let :facts do {
-      :osfamily          => 'RedHat',
-      :operatingsystem   => 'RedHat',
-      :lsbmajdistrelease => '6'
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '6'
     }
     end
 

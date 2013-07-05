@@ -73,6 +73,8 @@ class snmp::trapd (
 ) inherits snmp::params {
   include snmp
 
+  $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
   case $ensure {
     /(present)/: {
       $file_ensure = 'present'
@@ -114,7 +116,7 @@ class snmp::trapd (
       path    => $snmp::params::trap_sysconfig,
       source  => [
         "puppet:///modules/snmp/snmptrapd.sysconfig-${::fqdn}",
-        "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
+        "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${majdistrelease}",
         'puppet:///modules/snmp/snmptrapd.sysconfig',
       ],
       require => Package['snmpd'],

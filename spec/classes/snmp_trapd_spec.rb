@@ -26,9 +26,9 @@ describe 'snmp::trapd', :type => 'class' do
       describe "for osfamily RedHat, operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
-          :osfamily          => 'RedHat',
-          :operatingsystem   => os,
-          :lsbmajdistrelease => '6'
+          :osfamily               => 'RedHat',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '6'
         }
         end
         it { should contain_file('snmptrapd.conf').with(
@@ -112,8 +112,8 @@ describe 'snmp::trapd', :type => 'class' do
 
   context 'on a supported osfamily, with custom parameters' do
     let :facts do {
-      :osfamily          => 'RedHat',
-      :lsbmajdistrelease => '6'
+      :osfamily               => 'RedHat',
+      :operatingsystemrelease => '6'
     }
     end
 

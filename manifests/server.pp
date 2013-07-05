@@ -112,6 +112,8 @@ class snmp::server (
 
   include snmp
 
+  $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
   case $ensure {
     /(present)/: {
       if $autoupgrade == true {
@@ -155,7 +157,7 @@ class snmp::server (
     path    => $snmp::params::sysconfig,
     source  => [
       "puppet:///modules/snmp/snmpd.sysconfig-${::fqdn}",
-      "puppet:///modules/snmp/snmpd.sysconfig-${::osfamily}-${::lsbmajdistrelease}",
+      "puppet:///modules/snmp/snmpd.sysconfig-${::osfamily}-${majdistrelease}",
       'puppet:///modules/snmp/snmpd.sysconfig',
     ],
     require => Package['snmpd'],
