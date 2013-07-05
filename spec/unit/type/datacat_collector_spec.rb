@@ -10,7 +10,8 @@ describe Puppet::Type.type(:datacat_collector) do
       @collector = Puppet::Type.type(:datacat_collector).new({
         :title => "/test",
         :template_body => '<%= @data.keys.sort.map { |x| "#{x}=#{@data[x]}" }.join(",") %>',
-        :before => @file.to_s,
+        :target_resource => @file,
+        :target_field => :content,
       })
       @catalog.add_resource @collector
     end
