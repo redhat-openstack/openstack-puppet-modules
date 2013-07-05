@@ -72,11 +72,11 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmpd]'
         )}
-#        it 'should contain File[snmpd.sysconfig] with contents "syscontact = Unknown"' do
-#          verify_contents(subject, 'snmpd.sysconfig', [
-#            'syscontact = Unknown',
-#          ])
-#        end
+        it 'should contain File[snmpd.sysconfig] with contents "OPTIONS="-LS0-6d -Lf /dev/null -p /var/run/snmpd.pid""' do
+          verify_contents(subject, 'snmpd.sysconfig', [
+            'OPTIONS="-LS0-6d -Lf /dev/null -p /var/run/snmpd.pid"',
+          ])
+        end
         it { should contain_service('snmpd').with(
           :ensure     => 'running',
           :name       => 'snmpd',
@@ -109,6 +109,11 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmptrapd]'
         )}
+        it 'should contain File[snmptrapd.sysconfig] with contents "OPTIONS="-Lsd -p /var/run/snmptrapd.pid""' do
+          verify_contents(subject, 'snmptrapd.sysconfig', [
+            'OPTIONS="-Lsd -p /var/run/snmptrapd.pid"',
+          ])
+        end
         it { should contain_service('snmptrapd').with(
           :ensure     => 'running',
           :name       => 'snmptrapd',
@@ -167,11 +172,12 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmpd]'
         )}
-#        it 'should contain File[snmpd.sysconfig] with contents "syscontact = Unknown"' do
-#          verify_contents(subject, 'snmpd.sysconfig', [
-#            'syscontact = Unknown',
-#          ])
-#        end
+        it 'should contain File[snmpd.sysconfig] with contents "SNMPDOPTS=\'-Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/snmpd.pid\'"' do
+          verify_contents(subject, 'snmpd.sysconfig', [
+            'SNMPDRUN=yes',
+            'SNMPDOPTS=\'-Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/snmpd.pid\'',
+          ])
+        end
         it { should contain_service('snmpd').with(
           :ensure     => 'running',
           :name       => 'snmpd',
@@ -188,7 +194,7 @@ describe 'snmp', :type => 'class' do
           :group   => 'root',
           :path    => '/etc/snmp/snmptrapd.conf',
           :require => 'Package[snmpd]',
-          :notify  => nil
+          :notify  => 'Service[snmpd]'
         )}
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
@@ -196,6 +202,12 @@ describe 'snmp', :type => 'class' do
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
+        it 'should contain File[snmpd.sysconfig] with contents "TRAPDOPTS=\'-Lsd -p /var/run/snmptrapd.pid\'"' do
+          verify_contents(subject, 'snmpd.sysconfig', [
+            'TRAPDRUN=no',
+            'TRAPDOPTS=\'-Lsd -p /var/run/snmptrapd.pid\'',
+          ])
+        end
         it { should_not contain_service('snmptrapd') }
       end
     end

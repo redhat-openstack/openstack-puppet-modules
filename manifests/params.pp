@@ -74,10 +74,13 @@ class snmp::params {
       $service_config_perms= '0644'
       $service_name        = 'snmpd'
       if ($majdistrelease <= '5') and ($::operatingsystem != 'Fedora') {
+        #$snmpd_options     = '-LS4d -Lf /dev/null -p /var/run/snmpd.pid -a"'
+        $snmpd_options     = '-LSd -Lf /dev/null -p /var/run/snmpd.pid -a"'
         $sysconfig         = '/etc/sysconfig/snmpd.options'
         $var_net_snmp      = '/var/net-snmp'
         $varnetsnmp_perms  = '0700'
       } else {
+        $snmpd_options     = '-LS0-6d -Lf /dev/null -p /var/run/snmpd.pid'
         $sysconfig         = '/etc/sysconfig/snmpd'
         $var_net_snmp      = '/var/lib/net-snmp'
         $varnetsnmp_perms  = '0755'
@@ -89,6 +92,7 @@ class snmp::params {
       $client_config       = '/etc/snmp/snmp.conf'
 
       $trap_service_config = '/etc/snmp/snmptrapd.conf'
+      $snmptrapd_options   = '-Lsd -p /var/run/snmptrapd.pid'
       $trap_service_name   = 'snmptrapd'
       if ($majdistrelease <= '5') and ($::operatingsystem != 'Fedora') {
         $trap_sysconfig    = '/etc/sysconfig/snmptrapd.options'
@@ -101,6 +105,7 @@ class snmp::params {
       $service_config      = '/etc/snmp/snmpd.conf'
       $service_config_perms= '0600'
       $service_name        = 'snmpd'
+      $snmpd_options       = '-Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/snmpd.pid'
       $sysconfig           = '/etc/default/snmp'
       $var_net_snmp        = '/var/lib/snmp'
       $varnetsnmp_perms    = '0755'
@@ -111,7 +116,7 @@ class snmp::params {
       $client_config       = '/etc/snmp/snmp.conf'
 
       $trap_service_config = '/etc/snmp/snmptrapd.conf'
-      $trap_service_name   = 'snmptrapd'
+      $snmptrapd_options   = '-Lsd -p /var/run/snmptrapd.pid'
     }
     default: {
       fail("Module ${::module} is not supported on ${::operatingsystem}")

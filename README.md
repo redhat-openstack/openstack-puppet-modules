@@ -52,6 +52,17 @@ If you just want to install the SNMP client:
       client_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
     }
 
+Only configure and run the snmptrap daemon:
+    class { 'snmp':
+      ro_community        => 'SeCrEt',
+      service_ensure      => 'stopped',
+      trap_service_ensure => 'running',
+      trap_handlers       => [
+        'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
+        'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+      ],
+    }
+
 To install a SNMP version 3 user:
 
     snmp::snmpv3_user { 'myuser':
@@ -74,8 +85,6 @@ Issues
 
 * Debian will not support the use of non-numeric OIDs.  Something about [rabid
   freedom](http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=561578).
-* On osfamily Debian, starting the snmptrap service does not work.  This will
-  be fixed in the upcomming refactor of this module.
 
 Deprecation Warning
 -------------------

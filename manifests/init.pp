@@ -28,6 +28,21 @@
 #   Location of the SNMP system.
 #   Default: Unknown
 #
+# [*views*]
+#   An array of views that are available to query.
+#   Default: 'view systemview included .1.3.6.1.2.1.1' and
+#            'view systemview included .1.3.6.1.2.1.25.1.1'
+#
+# [*accesses*]
+#   An array of access controls that are available to query.
+#   Default: 'access notConfigGroup "" any noauth exact systemview none none'
+#
+# [*trap_handlers*]
+#   An array of programs to invoke on receipt of traps.
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
+#   NOTIFICATION PROCESSING.
+#   Default: none
+#
 # [*install_client*]
 #   Whether to install the Net-SNMP client package.
 #   Default: false
@@ -49,6 +64,10 @@
 #   Name of the package.
 #   Only set this if your platform is not supported or you know what you are
 #   doing.
+#   Default: auto-set, platform specific
+#
+# [*snmpd_options*]
+#   Commandline options passed to snmpd via init script.
 #   Default: auto-set, platform specific
 #
 # [*service_ensure*]
@@ -73,6 +92,32 @@
 #   Service has restart command.
 #   Default: true
 #
+# [*snmptrapd_options*]
+#   Commandline options passed to snmptrapd via init script.
+#   Default: auto-set, platform specific
+#
+# [*trap_service_ensure*]
+#   Ensure if service is running or stopped.
+#   Default: stopped
+#
+# [*trap_service_name*]
+#   Name of SNMP service
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
+#
+# [*trap_service_enable*]
+#   Start service at boot.
+#   Default: true
+#
+# [*trap_service_hasstatus*]
+#   Service has status command.
+#   Default: true
+#
+# [*trap_service_hasrestart*]
+#   Service has restart command.
+#   Default: true
+#
 # === Actions:
 #
 # Installs the Net-SNMP daemon package, service, and configuration.
@@ -84,9 +129,21 @@
 #
 # === Sample Usage:
 #
+#   # Configure and run the snmp daemon and install the client:
 #   class { 'snmp':
 #     ro_community   => 'public',
 #     install_client => true,
+#   }
+#
+#   # Only configure and run the snmptrap daemon:
+#   class { 'snmp':
+#     ro_community        => 'SeCrEt',
+#     service_ensure      => 'stopped',
+#     trap_service_ensure => 'running',
+#     trap_handlers       => [
+#       'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
+#       'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+#     ],
 #   }
 #
 # === Authors:
@@ -112,12 +169,14 @@ class snmp (
   $ensure                  = $snmp::params::ensure,
   $autoupgrade             = $snmp::params::safe_autoupgrade,
   $package_name            = $snmp::params::package_name,
+  $snmpd_options           = $snmp::params::snmpd_options,
   $service_ensure          = 'running',
   $service_name            = $snmp::params::service_name,
   $service_enable          = true,
   $service_hasstatus       = true,
   $service_hasrestart      = true,
-  $trap_service_ensure     = 'running',
+  $snmptrapd_options       = $snmp::params::snmptrapd_options,
+  $trap_service_ensure     = 'stopped',
   $trap_service_name       = $snmp::params::trap_service_name,
   $trap_service_enable     = true,
   $trap_service_hasstatus  = true,
@@ -150,16 +209,41 @@ class snmp (
       } else {
         fail('service_ensure parameter must be running or stopped')
       }
+      if $trap_service_ensure in [ running, stopped ] {
+        $trap_service_ensure_real = $trap_service_ensure
+        $trap_service_enable_real = $trap_service_enable
+      } else {
+        fail('trap_service_ensure parameter must be running or stopped')
+      }
     }
     /(absent)/: {
       $package_ensure = 'absent'
       $file_ensure = 'absent'
       $service_ensure_real = 'stopped'
       $service_enable_real = false
+      $trap_service_ensure_real = 'stopped'
+      $trap_service_enable_real = false
     }
     default: {
       fail('ensure parameter must be present or absent')
     }
+  }
+
+  if $service_ensure_real == 'running' {
+    $snmpdrun = 'yes'
+  } else {
+    $snmpdrun = 'no'
+  }
+  if $trap_service_ensure_real == 'running' {
+    $trapdrun = 'yes'
+  } else {
+    $trapdrun = 'no'
+  }
+
+  if $::osfamily != 'Debian' {
+    $snmptrapd_conf_notify = Service['snmptrapd']
+  } else {
+    $snmptrapd_conf_notify = Service['snmpd']
   }
 
   if $install_client {
@@ -201,12 +285,7 @@ class snmp (
     owner   => 'root',
     group   => 'root',
     path    => $snmp::params::sysconfig,
-    # TODO change source to content
-    source  => [
-      "puppet:///modules/snmp/snmpd.sysconfig-${::fqdn}",
-      "puppet:///modules/snmp/snmpd.sysconfig-${::osfamily}-${::snmp::params::majdistrelease}",
-      'puppet:///modules/snmp/snmpd.sysconfig',
-    ],
+    content => template("snmp/snmpd.sysconfig-${::osfamily}.erb"),
     require => Package['snmpd'],
     notify  => Service['snmpd'],
   }
@@ -219,10 +298,7 @@ class snmp (
     path    => $snmp::params::trap_service_config,
     content => template('snmp/snmptrapd.conf.erb'),
     require => Package['snmpd'],
-    notify  => $::osfamily ? {
-      'Debian' => undef,
-      default  => Service['snmptrapd'],
-    },
+    notify  => $snmptrapd_conf_notify,
   }
 
   if $::osfamily != 'Debian' {
@@ -232,12 +308,7 @@ class snmp (
       owner   => 'root',
       group   => 'root',
       path    => $snmp::params::trap_sysconfig,
-      # TODO change source to content
-      source  => [
-        "puppet:///modules/snmp/snmptrapd.sysconfig-${::fqdn}",
-        "puppet:///modules/snmp/snmptrapd.sysconfig-${::osfamily}-${::snmp::params::majdistrelease}",
-        'puppet:///modules/snmp/snmptrapd.sysconfig',
-      ],
+      content => template("snmp/snmptrapd.sysconfig-${::osfamily}.erb"),
       require => Package['snmpd'],
       notify  => Service['snmptrapd'],
     }
