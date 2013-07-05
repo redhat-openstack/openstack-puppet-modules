@@ -1,6 +1,5 @@
 Puppet::Type.newtype(:datacat_collector) do
-  desc """
-  Manages the merginig of data and updating a related resource parameter.
+  desc %q{Manages the merginig of data and updating a related resource parameter.
   
   The `datacat_collector` type deeply merges a data hash from
   the `datacat_fragment` resources that target it.
@@ -12,7 +11,7 @@ Puppet::Type.newtype(:datacat_collector) do
   Sample usage:
 
     datacat_collector { 'open_ports':
-      template_body => '<%= @data[\"ports\"].sort.join(\",\") %>',
+      template_body => '<%= @data["ports"].sort.join(",") %>',
       target_resource => File_line['open_ports'],
       target_field    => 'line',
     }
@@ -29,8 +28,8 @@ Puppet::Type.newtype(:datacat_collector) do
 
 
   For convenience the common use case of targeting a file is wrapped in the
-  datacat defined type.
-  """
+  datacat defined type.}
+
   ensurable
 
   newparam(:path, :namevar => true) do

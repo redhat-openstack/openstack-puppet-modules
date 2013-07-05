@@ -53,6 +53,42 @@ Will produce something like:
 There are additional samples in a blog post I wrote to describe the approach,
 http://richardc.unixbeard.net/2013/02/puppet-concat-patterns/
 
+Types and Definitions
+---------------------
+
+## Defined Type: `datacat`
+
+Wraps the `datacat_collector` and `file` types to cover the most common
+use-case, collecting data for and templating an entire file.
+
+## Type: `datacat_collector`
+
+The `datacat_collector` type deeply merges a data hash from
+the `datacat_fragment` resources that target it.
+
+These fragments are then rendered via an erb template specified by the
+`template_body` parameter and used to update the `target_field` property
+of the related `target_resource`.
+
+Sample usage:
+
+    datacat_collector { 'open_ports':
+      template_body => '<%= @data["ports"].sort.join(",") %>',
+      target_resource => File_line['open_ports'],
+      target_field    => 'line',
+    }
+
+    datacat_fragment { 'open webserver':
+      target => 'open_ports',
+      data   => { ports => [ 80, 443 ] },
+    }
+
+    datacat_fragment { 'open ssh':
+      target => 'open_ports',
+      data   => { ports => [ 22 ] },
+    }
+
+
 Caveats
 -------
 
