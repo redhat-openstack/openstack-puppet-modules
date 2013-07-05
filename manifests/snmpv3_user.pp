@@ -54,7 +54,7 @@ define snmp::snmpv3_user (
   $privpass = '',
   $privtype = 'AES'
 ) {
-  include snmp::server
+  include snmp
 
   if $privpass {
     $cmd = "createUser ${title} ${authtype} ${authpass} ${privtype} ${privpass}"

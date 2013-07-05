@@ -65,10 +65,10 @@ class snmp::params {
     $safe_service_enable = $service_enable
   }
 
+  $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
   case $::osfamily {
     'RedHat': {
-      $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
-
       $package_name        = 'net-snmp'
       $service_config      = '/etc/snmp/snmpd.conf'
       $service_config_perms= '0644'

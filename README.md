@@ -30,18 +30,29 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
-    class { 'snmp': }
+To install the SNMP service:
 
-    class { 'snmp::server':
+    class { 'snmp':
       ro_community => 'notpublic',
       ro_network   => '10.20.30.40/32',
       contact      => 'root@yourdomain.org',
       location     => 'Phoenix, AZ',
     }
 
-    class { 'snmp::trapd':
-      ro_community => 'public',
+To install the SNMP service and the client:
+
+    class { 'snmp':
+      install_client => true,
+      client_config  => [ 'defVersion 2c', 'defCommunity public', ],
     }
+
+If you just want to install the SNMP client:
+
+    class { 'snmp::client':
+      client_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
+    }
+
+To install a SNMP version 3 user:
 
     snmp::snmpv3_user { 'myuser':
       authpass => '1234auth',
@@ -55,7 +66,7 @@ Notes
 * SNMPv3 user auth is not tested on Debian.
 * There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
   not running the status script returns 'not running' so puppet restarts the
-  snmpd service. The following is a workaround: `class { 'snmp::server':
+  snmpd service. The following is a workaround: `class { 'snmp':
   service_hasstatus => false, }`
 
 Issues
@@ -69,8 +80,9 @@ Issues
 Deprecation Warning
 -------------------
 
-The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp`.
-All of their class parameters will be made available in the `snmp` class.
+The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp` in
+version 3.0.0 of this module.  All of their class parameters will be made
+available in the `snmp` class.
 
 License
 -------
