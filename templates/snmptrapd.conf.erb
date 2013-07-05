@@ -10,3 +10,6 @@ doNotLogTraps <%= @do_not_log_traps %>
 <% @trap_handlers.each do |handler| -%>
 traphandle <%= handler %>
 <% end %>
+<% @forwards.each do |forward| -%>
+forward <%= forward %>
+<% end %>

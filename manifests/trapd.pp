@@ -21,6 +21,14 @@
 #   Disables  the  logging  of  notifications altogether.
 #   Default: true
 #
+# [*trap_handlers*]
+#   External programs for specialised processing.
+#   Default: []
+#
+# [*forwards*]
+#   Forward notification to another notification receiver.
+#   Default: []
+#
 # [*ensure*]
 #   Ensure if present or absent.
 #   Default: present
@@ -75,6 +83,7 @@ class snmp::trapd (
   $disable_authorization = 'no',
   $do_not_log_traps      = 'yes',
   $trap_handlers         = [],
+  $forwards              = [],
   $ensure                = $snmp::params::ensure,
   $service_ensure        = 'running',
   $service_name          = $snmp::params::trap_service_name,
