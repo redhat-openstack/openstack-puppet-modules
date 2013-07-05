@@ -1,6 +1,8 @@
 0.1.0 Not yet released
     Add a order parameter to the datacat_fragment type for relative ordering
     of fragment merging.
+    Exposed the datacat_collector type and allow it to be used for updating
+    more than just the file type's content parameter.
 
 0.0.3 Wednesday 26th June, 2013
     Reworked the behaviour of datacat_collector to only refresh the resource
