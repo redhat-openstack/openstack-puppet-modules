@@ -28,25 +28,19 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     template.filename = @resource[:template]
     content = template.result(vars.get_binding)
 
-    # In the containing datacat define we created a sibling file
-    # resource which will do much of the heavy lifting, and left a
-    # reference to it in our before metaparameter.  Now it's time to
-    # find that resource and update its content to the results of
-    # our template evaluation.
-    target_file = @resource[:before].find do |r|
-        r.type == 'File' and r.title == @resource[:path]
+    # Find the resource to modify
+    target_resource = @resource[:target_resource]
+    target_field    = @resource[:target_field].to_sym
+
+    # Resolve it to the real resource
+    if target_resource.class == Puppet::Resource
+      target_resource.catalog = resource.catalog
+      target_resource = target_resource.resolve
     end
 
-    # This only seem to happen when spec testing.  Weird.
-    if target_file.catalog == nil
-      target_file.catalog = resource.catalog
-    end
-
-    # @resource[:before] contains resource references, dereference it
-    target_file = target_file.resolve
-
-    debug "Found resource #{target_file.inspect} class #{target_file.class}"
-    target_file[:content] = content
+    debug "Found resource #{target_resource.inspect} class #{target_resource.class} field #{target_field.inspect}"
+    target_resource[target_field] = content
+    debug "Have set resource #{target_resource.inspect}"
 
     # and claim there's nothing to change about *this* resource
     true

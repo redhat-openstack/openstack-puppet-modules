@@ -58,8 +58,10 @@ define datacat(
   }
 
   datacat_collector { $path:
-    template      => $template_real,
-    template_body => $template_body_real,
-    before        => File[$title], # when we evaluate we modify the private data of File
+    template        => $template_real,
+    template_body   => $template_body_real,
+    target_resource => File[$title], # when we evaluate we modify the private data of this resource
+    target_field    => 'content',
+    before          => File[$title], # we want to evaluate before that resource so it can do the work
   }
 }
