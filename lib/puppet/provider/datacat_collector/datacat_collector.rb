@@ -9,6 +9,9 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
       r.is_a?(Puppet::Type.type(:datacat_fragment)) && r[:target] == resource[:path]
     end
 
+    # order fragments on their :order property
+    fragments = fragments.sort { |a,b| a[:order] <=> b[:order] }
+
     # deep merge their data chunks
     deep_merge = Puppet_X::Richardc::Datacat.deep_merge
     data = {}
