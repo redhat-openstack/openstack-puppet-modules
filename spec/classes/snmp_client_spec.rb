@@ -111,8 +111,8 @@ describe 'snmp::client', :type => 'class' do
       end
     end
 
-    describe 'client_config => [ "defVersion 2c", "defCommunity public" ]' do
-      let(:params) {{ :client_config => [ 'defVersion 2c', 'defCommunity public' ] }}
+    describe 'snmp_config => [ "defVersion 2c", "defCommunity public" ]' do
+      let(:params) {{ :snmp_config => [ 'defVersion 2c', 'defCommunity public' ] }}
       it { should contain_file('snmp.conf') }
       it 'should contain File[snmp.conf] with contents "defVersion 2c" and "defCommunity public"' do
         verify_contents(subject, 'snmp.conf', [

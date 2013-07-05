@@ -43,13 +43,13 @@ To install the SNMP service and the client:
 
     class { 'snmp':
       install_client => true,
-      client_config  => [ 'defVersion 2c', 'defCommunity public', ],
+      snmp_config    => [ 'defVersion 2c', 'defCommunity public', ],
     }
 
 If you just want to install the SNMP client:
 
     class { 'snmp::client':
-      client_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
+      snmp_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
     }
 
 Only configure and run the snmptrap daemon:

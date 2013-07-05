@@ -4,7 +4,7 @@
 #
 # === Parameters:
 #
-# [*client_config*]
+# [*snmp_config*]
 #   Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
 #   Default: none
@@ -34,7 +34,7 @@
 # === Sample Usage:
 #
 #   class { 'snmp::client':
-#     client_config => [ 'defVersion 2c', 'defCommunity public', ],
+#     snmp_config => [ 'defVersion 2c', 'defCommunity public', ],
 #   }
 #
 # === Authors:
@@ -46,7 +46,7 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp::client (
-  $client_config      = [],
+  $snmp_config        = $snmp::params::snmp_config,
   $ensure             = $snmp::params::ensure,
   $autoupgrade        = $snmp::params::safe_autoupgrade,
   $package_name       = $snmp::params::client_package_name

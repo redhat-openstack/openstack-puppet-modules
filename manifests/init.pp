@@ -47,7 +47,7 @@
 #   Whether to install the Net-SNMP client package.
 #   Default: false
 #
-# [*client_config*]
+# [*snmp_config*]
 #   Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
 #   Default: none
@@ -163,24 +163,24 @@ class snmp (
   $location                = $snmp::params::location,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
-  $trap_handlers           = [],
-  $install_client          = false,
-  $client_config           = [],
+  $trap_handlers           = $snmp::params::trap_handlers,
+  $install_client          = $snmp::params::install_client,
+  $snmp_config             = $snmp::params::snmp_config,
   $ensure                  = $snmp::params::ensure,
   $autoupgrade             = $snmp::params::safe_autoupgrade,
   $package_name            = $snmp::params::package_name,
   $snmpd_options           = $snmp::params::snmpd_options,
-  $service_ensure          = 'running',
+  $service_ensure          = $snmp::params::service_ensure,
   $service_name            = $snmp::params::service_name,
-  $service_enable          = true,
-  $service_hasstatus       = true,
-  $service_hasrestart      = true,
+  $service_enable          = $snmp::params::service_enable,
+  $service_hasstatus       = $snmp::params::service_hasstatus,
+  $service_hasrestart      = $snmp::params::service_hasrestart,
   $snmptrapd_options       = $snmp::params::snmptrapd_options,
-  $trap_service_ensure     = 'stopped',
+  $trap_service_ensure     = $snmp::params::trap_service_ensure,
   $trap_service_name       = $snmp::params::trap_service_name,
-  $trap_service_enable     = true,
-  $trap_service_hasstatus  = true,
-  $trap_service_hasrestart = true
+  $trap_service_enable     = $snmp::params::trap_service_enable,
+  $trap_service_hasstatus  = $snmp::params::trap_service_hasstatus,
+  $trap_service_hasrestart = $snmp::params::trap_service_hasrestart
 ) inherits snmp::params {
   # Validate our booleans
   validate_bool($install_client)
@@ -191,7 +191,7 @@ class snmp (
 
   # Validate our arrays
   validate_array($trap_handlers)
-  validate_array($client_config)
+  validate_array($snmp_config)
   validate_array($views)
   validate_array($accesses)
 
@@ -250,7 +250,7 @@ class snmp (
     class { 'snmp::client':
       ensure        => $ensure,
       autoupgrade   => $autoupgrade,
-      client_config => $client_config,
+      snmp_config   => $snmp_config,
     }
   }
 

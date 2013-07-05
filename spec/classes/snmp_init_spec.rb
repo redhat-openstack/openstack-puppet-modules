@@ -279,22 +279,22 @@ describe 'snmp', :type => 'class' do
       it { should contain_class('snmp::client').with(
         :ensure        => 'present',
         :autoupgrade   => 'false',
-        :client_config => ''
+        :snmp_config   => ''
       )}
     end
 
-    describe 'install_client => true, client_config => [ "defVersion 2c", "defCommunity public" ], ensure => absent, and autoupgrade => true' do
+    describe 'install_client => true, snmp_config => [ "defVersion 2c", "defCommunity public" ], ensure => absent, and autoupgrade => true' do
       let :params do {
         :install_client => true,
         :ensure         => 'absent',
         :autoupgrade    => true,
-        :client_config  => [ 'defVersion 2c', 'defCommunity public' ]
+        :snmp_config    => [ 'defVersion 2c', 'defCommunity public' ]
       }
       end
       it { should contain_class('snmp::client').with(
         :ensure        => 'absent',
         :autoupgrade   => 'true',
-        :client_config => [ 'defVersion 2c', 'defCommunity public' ]
+        :snmp_config   => [ 'defVersion 2c', 'defCommunity public' ]
       )}
     end
   end

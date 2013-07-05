@@ -16,20 +16,60 @@
 class snmp::params {
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
-# TODO
-  $ro_community = 'public'
-  $rw_community = 'private'
-  $ro_network   = '127.0.0.1'
-  $rw_network   = '127.0.0.1'
-  $contact      = 'Unknown'
-  $location     = 'Unknown'
-  $views        = [
-    'view    systemview    included   .1.3.6.1.2.1.1',
-    'view    systemview    included   .1.3.6.1.2.1.25.1.1',
-  ]
-  $accesses     = [
-    'access  notConfigGroup ""      any       noauth    exact  systemview none none',
-  ]
+  $ro_community = $::snmp_ro_community ? {
+    undef => 'public',
+    default => $::snmp_ro_community,
+  }
+
+  $rw_community = $::snmp_rw_community ? {
+    undef => 'private',
+    default => $::snmp_rw_community,
+  }
+
+  $ro_network = $::snmp_ro_network ? {
+    undef => '127.0.0.1',
+    default => $::snmp_ro_network,
+  }
+
+  $rw_network = $::snmp_rw_network ? {
+    undef => '127.0.0.1',
+    default => $::snmp_rw_network,
+  }
+
+  $contact = $::snmp_contact ? {
+    undef => 'Unknown',
+    default => $::snmp_contact,
+  }
+
+  $location = $::snmp_location ? {
+    undef => 'Unknown',
+    default => $::snmp_location,
+  }
+
+  $views = $::snmp_views ? {
+    undef => [
+      'view    systemview    included   .1.3.6.1.2.1.1',
+      'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+    ],
+    default => $::snmp_views,
+  }
+
+  $accesses = $::snmp_accesses ? {
+    undef => [
+      'access  notConfigGroup ""      any       noauth    exact  systemview none none',
+    ],
+    default => $::snmp_accesses,
+  }
+
+  $trap_handlers = $::snmp_trap_handlers ? {
+    undef => [],
+    default => $::snmp_trap_handlers,
+  }
+
+  $snmp_config = $::snmp_snmp_config ? {
+    undef => [],
+    default => $::snmp_snmp_config,
+  }
 
 ### The following parameters should not need to be changed.
 
@@ -41,6 +81,11 @@ class snmp::params {
   $service_ensure = $::snmp_service_ensure ? {
     undef => 'running',
     default => $::snmp_service_ensure,
+  }
+
+  $trap_service_ensure = $::snmp_trap_service_ensure ? {
+    undef => 'stopped',
+    default => $::snmp_trap_service_ensure,
   }
 
   # Since the top scope variable could be a string (if from an ENC), we might
@@ -55,6 +100,16 @@ class snmp::params {
     $safe_autoupgrade = $autoupgrade
   }
 
+  $install_client = $::snmp_install_client ? {
+    undef => false,
+    default => $::snmp_install_client,
+  }
+  if is_string($install_client) {
+    $safe_install_client = str2bool($install_client)
+  } else {
+    $safe_install_client = $install_client
+  }
+
   $service_enable = $::snmp_service_enable ? {
     undef => true,
     default => $::snmp_service_enable,
@@ -65,10 +120,60 @@ class snmp::params {
     $safe_service_enable = $service_enable
   }
 
-  $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+  $service_hasstatus = $::snmp_service_hasstatus ? {
+    undef => true,
+    default => $::snmp_service_hasstatus,
+  }
+  if is_string($service_hasstatus) {
+    $safe_service_hasstatus = str2bool($service_hasstatus)
+  } else {
+    $safe_service_hasstatus = $service_hasstatus
+  }
+
+  $service_hasrestart = $::snmp_service_hasrestart ? {
+    undef => true,
+    default => $::snmp_service_hasrestart,
+  }
+  if is_string($service_hasrestart) {
+    $safe_service_hasrestart = str2bool($service_hasrestart)
+  } else {
+    $safe_service_hasrestart = $service_hasrestart
+  }
+
+  $trap_service_enable = $::snmp_trap_service_enable ? {
+    undef => true,
+    default => $::snmp_trap_service_enable,
+  }
+  if is_string($trap_service_enable) {
+    $safe_trap_service_enable = str2bool($trap_service_enable)
+  } else {
+    $safe_trap_service_enable = $trap_service_enable
+  }
+
+  $trap_service_hasstatus = $::snmp_trap_service_hasstatus ? {
+    undef => true,
+    default => $::snmp_trap_service_hasstatus,
+  }
+  if is_string($trap_service_hasstatus) {
+    $safe_trap_service_hasstatus = str2bool($trap_service_hasstatus)
+  } else {
+    $safe_trap_service_hasstatus = $trap_service_hasstatus
+  }
+
+  $trap_service_hasrestart = $::snmp_trap_service_hasrestart ? {
+    undef => true,
+    default => $::snmp_trap_service_hasrestart,
+  }
+  if is_string($trap_service_hasrestart) {
+    $safe_trap_service_hasrestart = str2bool($trap_service_hasrestart)
+  } else {
+    $safe_trap_service_hasrestart = $trap_service_hasrestart
+  }
 
   case $::osfamily {
     'RedHat': {
+      $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
       $package_name        = 'net-snmp'
       $service_config      = '/etc/snmp/snmpd.conf'
       $service_config_perms= '0644'
