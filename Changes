@@ -1,3 +1,7 @@
+0.1.0 Not yet released
+    Add a order parameter to the datacat_fragment type for relative ordering
+    of fragment merging.
+
 0.0.3 Wednesday 26th June, 2013
     Reworked the behaviour of datacat_collector to only refresh the resource
     when the output from the template evaluation changes. (Github #3)
