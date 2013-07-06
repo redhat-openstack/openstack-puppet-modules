@@ -3,7 +3,6 @@
 	<name>snmp</name>
 	<comment></comment>
 	<projects>
-		<project>lsb</project>
 		<project>stdlib</project>
 	</projects>
 	<buildSpec>

@@ -30,18 +30,41 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
-    class { 'snmp': }
+To install the SNMP service:
 
-    class { 'snmp::server':
+    class { 'snmp':
       ro_community => 'notpublic',
       ro_network   => '10.20.30.40/32',
       contact      => 'root@yourdomain.org',
       location     => 'Phoenix, AZ',
     }
 
-    class { 'snmp::trapd':
-      ro_community => 'public',
+To install the SNMP service and the client:
+
+    class { 'snmp':
+      install_client => true,
+      snmp_config    => [ 'defVersion 2c', 'defCommunity public', ],
     }
+
+If you just want to install the SNMP client:
+
+    class { 'snmp::client':
+      snmp_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
+    }
+
+Only configure and run the snmptrap daemon:
+
+    class { 'snmp':
+      ro_community        => 'SeCrEt',
+      service_ensure      => 'stopped',
+      trap_service_ensure => 'running',
+      trap_handlers       => [
+        'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
+        'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+      ],
+    }
+
+To install a SNMP version 3 user:
 
     snmp::snmpv3_user { 'myuser':
       authpass => '1234auth',
@@ -53,24 +76,29 @@ Notes
 
 * Only tested on CentOS 5.8, CentOS 6.2 x86_64, and Debian squeeze.
 * SNMPv3 user auth is not tested on Debian.
-* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
-  not running the status script returns 'not running' so puppet restarts the
-  snmpd service. The following is a workaround: `class { 'snmp::server':
-  service_hasstatus => false, }`
 
 Issues
 ------
 
 * Debian will not support the use of non-numeric OIDs.  Something about [rabid
   freedom](http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=561578).
-* On osfamily Debian, starting the snmptrap service does not work.  This will
-  be fixed in the upcomming refactor of this module.
+
+TODO
+----
+
+* Support SuSE Linux.
+* Figure out how to install the RFC-standard MIBS on Debian so that `snmpwalk
+  -v 2c -c public localhost system` will function.
+* Refactor the contents of snmpd.conf and snmptrapd.conf.  Provide better API
+  access to modify the contents of those files.  Possibly support USM and VACM?
+* Refactor rspec tests to better cover the various OS combinations.
 
 Deprecation Warning
 -------------------
 
-The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp`.
-All of their class parameters will be made available in the `snmp` class.
+The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp` in
+version 3.0.0 of this module.  All of their class parameters will be made
+available in the `snmp` class.
 
 License
 -------

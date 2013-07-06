@@ -1,6 +1,0 @@
-###
-### File managed by Puppet
-###
-# snmpd command line options
-# OPTIONS="-Lsd -Lf /dev/null -p /var/run/snmpd.pid -a"
-OPTIONS="-LS4d -Lf /dev/null -p /var/run/snmpd.pid -a"

@@ -1,6 +1,3 @@
-###
-### File managed by Puppet
-###
 ###############################################################################
 #
 # snmpd.conf:
@@ -41,7 +38,7 @@
 # First, map the community name "public" into a "security name"
 
 #       sec.name  source          community
-#com2sec notConfigUser  default       public
+com2sec notConfigUser  default       public
 
 ####
 # Second, map the security name into a group name:
@@ -176,6 +173,16 @@ syscontact Root <root@localhost> (configure /etc/snmp/snmp.local.conf)
 #   system.sysServices.0 = 72
 
 
+###############################################################################
+# Logging
+#
+
+# We do not want annoying "Connection from UDP: " messages in syslog.
+# If the following option is commented out, snmpd will print each incoming
+# connection, which can be useful for debugging.
+
+dontLogTCPWrappersConnects yes
+
 # -----------------------------------------------------------------------------
 
 
@@ -256,7 +263,7 @@ syscontact Root <root@localhost> (configure /etc/snmp/snmp.local.conf)
 #
 #  exec NAME PROGRAM [ARGS ...]
 #
-#  NAME:     A generic name.
+#  NAME:     A generic name. The name must be unique for each exec statement.
 #  PROGRAM:  The program to run.  Include the path!
 #  ARGS:     optional arguments to be passed to the program
 
@@ -448,9 +455,6 @@ syscontact Root <root@localhost> (configure /etc/snmp/snmp.local.conf)
 
 # For specific usage information, see the man/snmpd.conf.5 manual page
 # as well as the local/passtest script used in the above example.
-
-# Added for support of bcm5820 cards.
-pass .1.3.6.1.4.1.4413.4.1 /usr/bin/ucd5820stat
 
 ###############################################################################
 # Further Information

@@ -4,9 +4,9 @@ require 'spec_helper'
 
 describe 'snmp::snmpv3_user', :type => 'define' do
   let :facts do {
-    :osfamily          => 'RedHat',
-    :operatingsystem   => 'CentOS',
-    :lsbmajdistrelease => '6'
+    :osfamily               => 'RedHat',
+    :operatingsystem        => 'CentOS',
+    :operatingsystemrelease => '6'
   }
   end
 
