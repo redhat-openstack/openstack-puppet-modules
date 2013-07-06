@@ -76,16 +76,22 @@ Notes
 
 * Only tested on CentOS 5.8, CentOS 6.2 x86_64, and Debian squeeze.
 * SNMPv3 user auth is not tested on Debian.
-* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
-  not running the status script returns 'not running' so puppet restarts the
-  snmpd service. The following is a workaround: `class { 'snmp':
-  service_hasstatus => false, }`
 
 Issues
 ------
 
 * Debian will not support the use of non-numeric OIDs.  Something about [rabid
   freedom](http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=561578).
+
+TODO
+----
+
+* Support SuSE Linux.
+* Figure out how to install the RFC-standard MIBS on Debian so that `snmpwalk
+  -v 2c -c public localhost system` will function.
+* Refactor the contents of snmpd.conf and snmptrapd.conf.  Provide better API
+  access to modify the contents of those files.  Possibly support USM and VACM?
+* Refactor rspec tests to better cover the various OS combinations.
 
 Deprecation Warning
 -------------------

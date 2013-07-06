@@ -131,7 +131,7 @@
 #
 #   # Configure and run the snmp daemon and install the client:
 #   class { 'snmp':
-#     ro_community   => 'public',
+#     ro_community   => 'SeCrEt',
 #     install_client => true,
 #   }
 #

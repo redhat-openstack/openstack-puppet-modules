@@ -216,7 +216,7 @@ describe 'snmp', :type => 'class' do
     end
   end
 
-  context 'on a supported osfamily, custom parameters' do
+  context 'on a supported osfamily (RedHat), custom parameters' do
     let :facts do {
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',
@@ -299,6 +299,93 @@ describe 'snmp', :type => 'class' do
         :autoupgrade   => 'true',
         :snmp_config   => [ 'defVersion 2c', 'defCommunity public' ]
       )}
+    end
+
+    describe 'service_ensure => stopped' do
+      let(:params) {{ :service_ensure => 'stopped' }}
+      it { should contain_service('snmpd').with_ensure('stopped') }
+      it { should contain_service('snmptrapd').with_ensure('stopped') }
+    end
+
+    describe 'trap_service_ensure => running' do
+      let(:params) {{ :trap_service_ensure => 'running' }}
+      it { should contain_service('snmpd').with_ensure('running') }
+      it { should contain_service('snmptrapd').with_ensure('running') }
+    end
+
+    describe 'service_ensure => stopped and trap_service_ensure => running' do
+      let :params do {
+        :service_ensure      => 'stopped',
+        :trap_service_ensure => 'running'
+      }
+      end
+      it { should contain_service('snmpd').with_ensure('stopped') }
+      it { should contain_service('snmptrapd').with_ensure('running') }
+    end
+
+    describe 'snmpd_options => blah' do
+      let(:params) {{ :snmpd_options => 'blah' }}
+      it { should contain_file('snmpd.sysconfig') }
+      it 'should contain File[snmpd.sysconfig] with contents "OPTIONS=\'blah\'"' do
+        verify_contents(subject, 'snmpd.sysconfig', [
+          'OPTIONS="blah"',
+        ])
+      end
+    end
+
+    describe 'snmptrapd_options => bleh' do
+      let(:params) {{ :snmptrapd_options => 'bleh' }}
+      it { should contain_file('snmptrapd.sysconfig') }
+      it 'should contain File[snmptrapd.sysconfig] with contents "OPTIONS=\'bleh\'"' do
+        verify_contents(subject, 'snmptrapd.sysconfig', [
+          'OPTIONS="bleh"',
+        ])
+      end
+    end
+  end
+
+  context 'on a supported osfamily (Debian), custom parameters' do
+    let :facts do {
+      :osfamily               => 'Debian',
+      :operatingsystem        => 'Debian',
+      :operatingsystemrelease => '7.0'
+    }
+    end
+
+    describe 'service_ensure => stopped and trap_service_ensure => running' do
+      let :params do {
+        :service_ensure      => 'stopped',
+        :trap_service_ensure => 'running'
+      }
+      end
+      it { should contain_service('snmpd').with_ensure('running') }
+      it { should_not contain_service('snmptrapd') }
+      it 'should contain File[snmpd.sysconfig] with contents "SNMPDRUN=no" and "TRAPDRUN=yes"' do
+        verify_contents(subject, 'snmpd.sysconfig', [
+          'SNMPDRUN=no',
+          'TRAPDRUN=yes',
+        ])
+      end
+    end
+
+    describe 'snmpd_options => blah' do
+      let(:params) {{ :snmpd_options => 'blah' }}
+      it { should contain_file('snmpd.sysconfig') }
+      it 'should contain File[snmpd.sysconfig] with contents "SNMPDOPTS=\'blah\'"' do
+        verify_contents(subject, 'snmpd.sysconfig', [
+          'SNMPDOPTS=\'blah\'',
+        ])
+      end
+    end
+
+    describe 'snmptrapd_options => bleh' do
+      let(:params) {{ :snmptrapd_options => 'bleh' }}
+      it { should contain_file('snmpd.sysconfig') }
+      it 'should contain File[snmpd.sysconfig] with contents "TRAPDOPTS=\'bleh\'"' do
+        verify_contents(subject, 'snmpd.sysconfig', [
+          'TRAPDOPTS=\'bleh\'',
+        ])
+      end
     end
   end
 
