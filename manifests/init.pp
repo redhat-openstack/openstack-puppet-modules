@@ -203,17 +203,24 @@ class snmp (
         $package_ensure = 'present'
       }
       $file_ensure = 'present'
-      if $service_ensure in [ running, stopped ] {
-        $service_ensure_real = $service_ensure
-        $service_enable_real = $service_enable
-      } else {
-        fail('service_ensure parameter must be running or stopped')
-      }
       if $trap_service_ensure in [ running, stopped ] {
         $trap_service_ensure_real = $trap_service_ensure
         $trap_service_enable_real = $trap_service_enable
       } else {
         fail('trap_service_ensure parameter must be running or stopped')
+      }
+      if $service_ensure in [ running, stopped ] {
+        # Make sure that if $trap_service_ensure == 'running' that
+        # $service_ensure_real == 'running' on Debian.
+        if ($::osfamily == 'Debian') and ($trap_service_ensure_real == 'running') {
+          $service_ensure_real = $trap_service_ensure_real
+          $service_enable_real = $trap_service_enable_real
+        } else {
+          $service_ensure_real = $service_ensure
+          $service_enable_real = $service_enable
+        }
+      } else {
+        fail('service_ensure parameter must be running or stopped')
       }
     }
     /(absent)/: {
@@ -229,12 +236,12 @@ class snmp (
     }
   }
 
-  if $service_ensure_real == 'running' {
+  if $service_ensure == 'running' {
     $snmpdrun = 'yes'
   } else {
     $snmpdrun = 'no'
   }
-  if $trap_service_ensure_real == 'running' {
+  if $trap_service_ensure == 'running' {
     $trapdrun = 'yes'
   } else {
     $trapdrun = 'no'
