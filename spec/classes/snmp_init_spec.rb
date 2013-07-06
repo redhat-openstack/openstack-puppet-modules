@@ -95,6 +95,7 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmptrapd]'
         )}
+        # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
             'authCommunity   log,execute,net public',
@@ -115,9 +116,9 @@ describe 'snmp', :type => 'class' do
           ])
         end
         it { should contain_service('snmptrapd').with(
-          :ensure     => 'running',
+          :ensure     => 'stopped',
           :name       => 'snmptrapd',
-          :enable     => true,
+          :enable     => false,
           :hasstatus  => true,
           :hasrestart => true,
           :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
@@ -157,6 +158,7 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmpd]'
         )}
+        # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
@@ -168,7 +170,7 @@ describe 'snmp', :type => 'class' do
           :mode    => '0644',
           :owner   => 'root',
           :group   => 'root',
-          :path    => '/etc/default/snmp',
+          :path    => '/etc/default/snmpd',
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmpd]'
         )}
@@ -196,6 +198,7 @@ describe 'snmp', :type => 'class' do
           :require => 'Package[snmpd]',
           :notify  => 'Service[snmpd]'
         )}
+        # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
             'authCommunity   log,execute,net public',
@@ -253,7 +256,7 @@ describe 'snmp', :type => 'class' do
       it { should contain_service('snmpd').with_ensure('running') }
       it { should contain_file('snmptrapd.conf').with_ensure('present') }
       it { should contain_file('snmptrapd.sysconfig').with_ensure('present') }
-      it { should contain_service('snmptrapd').with_ensure('running') }
+      it { should contain_service('snmptrapd').with_ensure('stopped') }
     end
 
     describe 'autoupgrade => badvalue' do

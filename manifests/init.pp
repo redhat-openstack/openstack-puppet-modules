@@ -314,9 +314,9 @@ class snmp (
     }
 
     service { 'snmptrapd':
-      ensure     => $service_ensure_real,
+      ensure     => $trap_service_ensure_real,
       name       => $trap_service_name,
-      enable     => $service_enable_real,
+      enable     => $trap_service_enable_real,
       hasstatus  => $trap_service_hasstatus,
       hasrestart => $trap_service_hasrestart,
       require    => [ Package['snmpd'], File['var-net-snmp'], ],
