@@ -46,6 +46,11 @@ class snmp::params {
     default => $::snmp_location,
   }
 
+  $services = $::snmp_services ? {
+    undef   => 72,
+    default => $::snmp_services,
+  }
+
   $views = $::snmp_views ? {
     undef   => [
       'view    systemview    included   .1.3.6.1.2.1.1',
@@ -56,7 +61,7 @@ class snmp::params {
 
   $accesses = $::snmp_accesses ? {
     undef   => [
-      'access  notConfigGroup ""      any       noauth    exact  systemview none none',
+      'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
     ],
     default => $::snmp_accesses,
   }

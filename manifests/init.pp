@@ -10,7 +10,7 @@
 #
 # [*rw_community*]
 #   Read-write (RW) community string.
-#   Default: private
+#   Default: none
 #
 # [*ro_network*]
 #   Network that is allowed to RO query the daemon.
@@ -28,6 +28,10 @@
 #   Location of the SNMP system.
 #   Default: Unknown
 #
+# [*services*]
+#   For a host system, a good value is 72 (application + end-to-end layers).
+#   Default: 72
+#
 # [*views*]
 #   An array of views that are available to query.
 #   Default: 'view systemview included .1.3.6.1.2.1.1' and
@@ -37,11 +41,13 @@
 #   An array of access controls that are available to query.
 #   Default: 'access notConfigGroup "" any noauth exact systemview none none'
 #
+#
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
 #   NOTIFICATION PROCESSING.
 #   Default: none
+#
 #
 # [*install_client*]
 #   Whether to install the Net-SNMP client package.
@@ -51,6 +57,7 @@
 #   Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
 #   Default: none
+#
 #
 # [*ensure*]
 #   Ensure if present or absent.

@@ -58,10 +58,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -160,10 +161,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -249,10 +251,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(

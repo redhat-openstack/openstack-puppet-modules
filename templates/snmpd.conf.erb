@@ -2,26 +2,61 @@
 ### File managed by Puppet
 ###
 
-#rocommunity <%= @ro_community %> <%= @ro_network %>
-#rwcommunity <%= @rw_community %> <%= @rw_network %>
-#sysservices 76
+################################################################################
+# AGENT BEHAVIOUR
 
+#agentaddress udp:127.0.0.1:161
+
+################################################################################
+# ACCESS CONTROL
+
+# ------------------------------------------------------------------------------
+# Traditional Access Control
+#rocommunity <%= @ro_community %> <%= @ro_network %>
+<% if @rw_community -%>
+#rwcommunity <%= @rw_community %> <%= @rw_network %>
+<% end -%>
+
+# ------------------------------------------------------------------------------
+# VACM Configuration
+#       sec.name       source        community
 com2sec notConfigUser  default       <%= @ro_community %>
 
+#       groupName      securityModel securityName
 group   notConfigGroup v1            notConfigUser
 group   notConfigGroup v2c           notConfigUser
 
-<% @views.each do |view| %>
+#       name          incl/excl  subtree             mask(optional)
+<% @views.each do |view| -%>
 <%= view %>
 <% end %>
 
-<% @accesses.each do |access| %>
+#       group          context sec.model sec.level prefix read       write notif
+<% @accesses.each do |access| -%>
 <%= access %>
 <% end %>
 
+# ------------------------------------------------------------------------------
+# Typed-View Configuration
+
+################################################################################
+# SYSTEM INFORMATION
+
+# ------------------------------------------------------------------------------
+# System Group
 syslocation <%= @location %>
 syscontact <%= @contact %>
+sysservices <%= @services %>
 
-dontLogTCPWrappersConnects yes
+################################################################################
+# EXTENDING AGENT FUNCTIONALITY
 
-master agentx
+# ------------------------------------------------------------------------------
+# AgentX Sub-Agents
+#master agentx
+
+################################################################################
+# OTHER CONFIGURATION
+
+#dontLogTCPWrappersConnects yes
+
