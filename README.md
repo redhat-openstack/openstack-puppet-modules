@@ -32,6 +32,7 @@ Examples
 To install the SNMP service:
 
     class { 'snmp':
+      agentaddress => 'udp:161',
       ro_community => 'notpublic',
       ro_network   => '10.20.30.40/32',
       contact      => 'root@yourdomain.org',
@@ -54,6 +55,7 @@ If you just want to install the SNMP client:
 Only configure and run the snmptrap daemon:
 
     class { 'snmp':
+      snmptrapdaddr       => 'udp:162',
       ro_community        => 'SeCrEt',
       service_ensure      => 'stopped',
       trap_service_ensure => 'running',
@@ -73,12 +75,16 @@ To install a SNMP version 3 user:
 Notes
 -----
 
-* Only tested on CentOS 5.9, CentOS 6.4, Ubuntu 12.04.2 LTS, Debian squeeze, and Debian wheezy x86_64.
+* Only tested on CentOS 5.9, CentOS 6.4, Ubuntu 12.04.2 LTS, Debian squeeze, and
+  Debian wheezy x86_64.
 * SNMPv3 user auth is not yet tested on Debian or Suse osfamilies.
 * There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
   not running the status script returns 'not running' so puppet restarts the
   snmpd service. The following is a workaround: `class { 'snmp':
   service_hasstatus => false, trap_service_hasstatus => false, }`
+* For security reasons, the SNMP daemons are configured to listen on the loopback
+  interface (127.0.0.1).  Use `agentaddress` and `snmptrapdaddr` to change this
+  configuration.
 
 Issues
 ------

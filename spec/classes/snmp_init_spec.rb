@@ -450,6 +450,24 @@ describe 'snmp', :type => 'class' do
       end
     end
 
+    describe 'agentaddress => 1.2.3.4' do
+      let(:params) {{ :agentaddress => '1.2.3.4' }}
+      it 'should contain File[snmpd.conf] with contents "1.2.3.4"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'agentaddress 1.2.3.4',
+        ])
+      end
+    end
+
+    describe 'snmptrapdaddr => 5.6.7.8' do
+      let(:params) {{ :snmptrapdaddr => '5.6.7.8' }}
+      it 'should contain File[snmptrapd.conf] with contents "5.6.7.8"' do
+        verify_contents(subject, 'snmptrapd.conf', [
+          'snmpTrapdAddr 5.6.7.8',
+        ])
+      end
+    end
+
     describe 'snmpd_config => [ "option 1", "option 2", ]' do
       let(:params) {{ :snmpd_config => [ 'option 1', 'option 2', ] }}
       it 'should contain File[snmpd.conf] with contents "option1" and "option 2"' do

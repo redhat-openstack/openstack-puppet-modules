@@ -4,6 +4,14 @@
 #
 # === Parameters:
 #
+# [*agentaddress*]
+#   Comma-separated list of addresses on which snmpd will listen.
+#   Default: udp:127.0.0.1:161
+#
+# [*snmptrapdaddr*]
+#   Comma-separated list of addresses on which snmptrapd will listen.
+#   Default: udp:127.0.0.1:162
+#
 # [*ro_community*]
 #   Read-only (RO) community string.
 #   Default: public
@@ -178,6 +186,8 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp (
+  $agentaddress            = $snmp::params::agentaddress,
+  $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
   $ro_community            = $snmp::params::ro_community,
   $rw_community            = $snmp::params::rw_community,
   $ro_network              = $snmp::params::ro_network,

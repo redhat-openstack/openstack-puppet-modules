@@ -1,6 +1,14 @@
 ###
 ### File managed by Puppet
 ###
+
+################################################################################
+# TRAPD BEHAVIOUR
+
+snmpTrapdAddr <%= @snmptrapdaddr %>
+
+################################################################################
+
 authCommunity   log,execute,net <%= @ro_community %>
 <% @trap_handlers.each do |handler| -%>
 <%= handler %>
