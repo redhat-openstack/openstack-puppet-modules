@@ -41,6 +41,12 @@
 #   An array of access controls that are available to query.
 #   Default: 'access notConfigGroup "" any noauth exact systemview none none'
 #
+# [*dlmod*]
+#   Array of dlmod lines to add to the snmpd.conf file.
+#   Must provide NAME and PATH (ex. "cmaX /usr/lib64/libcmaX64.so").
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for syntax.
+#   Default: none
+#
 #
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
@@ -170,6 +176,7 @@ class snmp (
   $location                = $snmp::params::location,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
+  $dlmod                   = $snmp::params::dlmod,
   $trap_handlers           = $snmp::params::trap_handlers,
   $install_client          = $snmp::params::install_client,
   $snmp_config             = $snmp::params::snmp_config,
@@ -201,6 +208,7 @@ class snmp (
   validate_array($snmp_config)
   validate_array($views)
   validate_array($accesses)
+  validate_array($dlmod)
 
   case $ensure {
     /(present)/: {

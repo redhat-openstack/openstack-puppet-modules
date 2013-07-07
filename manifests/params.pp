@@ -66,6 +66,11 @@ class snmp::params {
     default => $::snmp_accesses,
   }
 
+  $dlmod = $::snmp_dlmod ? {
+    undef   => [],
+    default => $::snmp_dlmod,
+  }
+
   $trap_handlers = $::snmp_trap_handlers ? {
     undef   => [],
     default => $::snmp_trap_handlers,

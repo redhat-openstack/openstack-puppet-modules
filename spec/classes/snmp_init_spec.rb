@@ -440,6 +440,15 @@ describe 'snmp', :type => 'class' do
         ])
       end
     end
+
+    describe 'dlmod => [ SomeString ]' do
+      let(:params) {{ :dlmod => [ 'SomeString', ] }}
+      it 'should contain File[snmpd.conf] with contents "dlmod SomeString"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'dlmod SomeString',
+        ])
+      end
+    end
   end
 
   context 'on a supported osfamily (Debian), custom parameters' do

@@ -51,6 +51,14 @@ sysservices <%= @services %>
 ################################################################################
 # EXTENDING AGENT FUNCTIONALITY
 
+<% if @dlmod.any? -%>
+# ------------------------------------------------------------------------------
+# Dynamically Loadable Modules
+<% @dlmod.each do |mod| -%>
+dlmod <%= mod %>
+<% end -%>
+
+<% end -%>
 # ------------------------------------------------------------------------------
 # AgentX Sub-Agents
 #master agentx
