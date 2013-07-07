@@ -449,6 +449,26 @@ describe 'snmp', :type => 'class' do
         ])
       end
     end
+
+    describe 'snmpd_config => [ "option 1", "option 2", ]' do
+      let(:params) {{ :snmpd_config => [ 'option 1', 'option 2', ] }}
+      it 'should contain File[snmpd.conf] with contents "option1" and "option 2"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'option 1',
+          'option 2',
+        ])
+      end
+    end
+
+    describe 'snmptrapd_config => [ "option 3", "option 4", ]' do
+      let(:params) {{ :snmptrapd_config => [ 'option 3', 'option 4', ] }}
+      it 'should contain File[snmptrapd.conf] with contents "option 3" and "option 4"' do
+        verify_contents(subject, 'snmptrapd.conf', [
+          'option 3',
+          'option 4',
+        ])
+      end
+    end
   end
 
   context 'on a supported osfamily (Debian), custom parameters' do

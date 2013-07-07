@@ -81,6 +81,16 @@ class snmp::params {
     default => $::snmp_snmp_config,
   }
 
+  $snmpd_config = $::snmp_snmpd_config ? {
+    undef   => [],
+    default => $::snmp_snmpd_config,
+  }
+
+  $snmptrapd_config = $::snmp_snmptrapd_config ? {
+    undef   => [],
+    default => $::snmp_snmptrapd_config,
+  }
+
 ### The following parameters should not need to be changed.
 
   $ensure = $::snmp_ensure ? {

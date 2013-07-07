@@ -47,11 +47,21 @@
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for syntax.
 #   Default: none
 #
+# [*snmpd_config*]
+#   Safety valve.  Array of lines to add to the snmpd.conf file.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html for all options.
+#   Default: none
+#
 #
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
 #   NOTIFICATION PROCESSING.
+#   Default: none
+#
+# [*snmptrapd_config*]
+#   Safety valve.  Array of lines to add to the snmptrapd.conf file.
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html for all options.
 #   Default: none
 #
 #
@@ -60,7 +70,7 @@
 #   Default: false
 #
 # [*snmp_config*]
-#   Array of lines to add to the client's global snmp.conf file.
+#   Safety valve.  Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
 #   Default: none
 #
@@ -177,7 +187,9 @@ class snmp (
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
   $dlmod                   = $snmp::params::dlmod,
+  $snmpd_config            = $snmp::params::snmpd_config,
   $trap_handlers           = $snmp::params::trap_handlers,
+  $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
   $snmp_config             = $snmp::params::snmp_config,
   $ensure                  = $snmp::params::ensure,
@@ -209,6 +221,8 @@ class snmp (
   validate_array($views)
   validate_array($accesses)
   validate_array($dlmod)
+  validate_array($snmpd_config)
+  validate_array($snmptrapd_config)
 
   case $ensure {
     /(present)/: {

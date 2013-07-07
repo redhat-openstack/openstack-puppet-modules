@@ -67,4 +67,6 @@ dlmod <%= mod %>
 # OTHER CONFIGURATION
 
 #dontLogTCPWrappersConnects yes
-
+<% @snmpd_config.each do |line| -%>
+<%= line %>
+<% end -%>
