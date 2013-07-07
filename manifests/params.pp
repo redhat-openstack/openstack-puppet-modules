@@ -230,6 +230,25 @@ class snmp::params {
       $trap_service_config = '/etc/snmp/snmptrapd.conf'
       $snmptrapd_options   = '-Lsd -p /var/run/snmptrapd.pid'
     }
+    'Suse': {
+      $package_name        = 'net-snmp'
+      $service_config      = '/etc/snmp/snmpd.conf'
+      $service_config_perms= '0600'
+      $service_name        = 'snmpd'
+      $snmpd_options       = 'd'
+      $sysconfig           = '/etc/sysconfig/net-snmp'
+      $var_net_snmp        = '/var/lib/net-snmp'
+      $varnetsnmp_perms    = '0755'
+      $varnetsnmp_owner    = 'root'
+      $varnetsnmp_group    = 'root'
+
+      $client_package_name = 'net-snmp'
+      $client_config       = '/etc/snmp/snmp.conf'
+
+      $trap_service_config = '/etc/snmp/snmptrapd.conf'
+      $trap_service_name   = 'snmptrapd'
+      $snmptrapd_options   = ''
+    }
     default: {
       fail("Module ${::module} is not supported on ${::operatingsystem}")
     }

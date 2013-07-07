@@ -20,10 +20,9 @@ Actions:
 
 OS Support:
 
-* RedHat family  - tested on CentOS 5.8 and CentOS 6.2
-* SuSE family    - presently unsupported (patches welcome)
-* Debian family  - initial Debian & Ubuntu suport (patches welcome)
-* Solaris family - presently unsupported (patches welcome)
+* RedHat family  - tested on CentOS 5.9 and CentOS 6.4
+* SuSE family    - tested on SLES 11 SP1
+* Debian family  - tested on Ubuntu 12.04.2 LTS, Debian 6.0.7, and Debian 7.0
 
 Class documentation is available via puppetdoc.
 
@@ -74,8 +73,12 @@ To install a SNMP version 3 user:
 Notes
 -----
 
-* Only tested on CentOS 5.8, CentOS 6.2 x86_64, and Debian squeeze.
-* SNMPv3 user auth is not tested on Debian.
+* Only tested on CentOS 5.9, CentOS 6.4, Ubuntu 12.04.2 LTS, Debian squeeze, and Debian wheezy x86_64.
+* SNMPv3 user auth is not yet tested on Debian or Suse osfamilies.
+* There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
+  not running the status script returns 'not running' so puppet restarts the
+  snmpd service. The following is a workaround: `class { 'snmp':
+  service_hasstatus => false, trap_service_hasstatus => false, }`
 
 Issues
 ------
@@ -86,7 +89,6 @@ Issues
 TODO
 ----
 
-* Support SuSE Linux.
 * Figure out how to install the RFC-standard MIBS on Debian so that `snmpwalk
   -v 2c -c public localhost system` will function.
 * Refactor the contents of snmpd.conf and snmptrapd.conf.  Provide better API

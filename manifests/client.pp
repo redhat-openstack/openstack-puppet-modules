@@ -72,9 +72,14 @@ class snmp::client (
     }
   }
 
-  package { 'snmp-client':
-    ensure => $package_ensure,
-    name   => $package_name,
+  if $::osfamily != 'Suse' {
+    package { 'snmp-client':
+      ensure => $package_ensure,
+      name   => $package_name,
+    }
+    $req = Package['snmp-client']
+  } else {
+    $req = undef
   }
 
   file { 'snmp.conf':
@@ -84,6 +89,6 @@ class snmp::client (
     group   => 'root',
     path    => $snmp::params::client_config,
     content => template('snmp/snmp.conf.erb'),
-    require => Package['snmp-client'],
+    require => $req,
   }
 }

@@ -22,6 +22,7 @@ describe 'snmp', :type => 'class' do
   #redhatish = ['RedHat', 'Fedora']
   debianish = ['Debian']
   #debianish = ['Debian', 'Ubuntu']
+  suseish = ['Suse']
 
   context 'on a supported osfamily, default parameters' do
     redhatish.each do |os|
@@ -214,6 +215,100 @@ describe 'snmp', :type => 'class' do
         it { should_not contain_service('snmptrapd') }
       end
     end
+
+    suseish.each do |os|
+      describe "for osfamily RedHat, operatingsystem #{os}" do
+        let(:params) {{}}
+        let :facts do {
+          :osfamily               => 'Suse',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '11.1'
+        }
+        end
+        it { should contain_package('snmpd').with(
+          :ensure => 'present',
+          :name   => 'net-snmp'
+        )}
+        it { should_not contain_class('snmp::client') }
+        it { should contain_file('var-net-snmp').with(
+          :ensure  => 'directory',
+          :mode    => '0755',
+          :owner   => 'root',
+          :group   => 'root',
+          :path    => '/var/lib/net-snmp',
+          :require => 'Package[snmpd]'
+        )}
+
+        it { should contain_file('snmpd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0600',
+          :owner   => 'root',
+          :group   => 'root',
+          :path    => '/etc/snmp/snmpd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmpd]'
+        )}
+        # TODO add more contents for File[snmpd.conf]
+        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+          verify_contents(subject, 'snmpd.conf', [
+            'syslocation Unknown',
+            'syscontact Unknown',
+          ])
+        end
+        it { should contain_file('snmpd.sysconfig').with(
+          :ensure  => 'present',
+          :mode    => '0644',
+          :owner   => 'root',
+          :group   => 'root',
+          :path    => '/etc/sysconfig/net-snmp',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmpd]'
+        )}
+        it 'should contain File[snmpd.sysconfig] with contents "SNMPD_LOGLEVEL="d""' do
+          verify_contents(subject, 'snmpd.sysconfig', [
+            'SNMPD_LOGLEVEL="d"',
+          ])
+        end
+        it { should contain_service('snmpd').with(
+          :ensure     => 'running',
+          :name       => 'snmpd',
+          :enable     => true,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
+        )}
+
+        it { should contain_file('snmptrapd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0600',
+          :owner   => 'root',
+          :group   => 'root',
+          :path    => '/etc/snmp/snmptrapd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmptrapd]'
+        )}
+        # TODO add more contents for File[snmptrapd.conf]
+        it 'should contain File[snmptrapd.conf] with correct contents' do
+          verify_contents(subject, 'snmptrapd.conf', [
+            'authCommunity   log,execute,net public',
+          ])
+        end
+        it { should_not contain_file('snmptrapd.sysconfig') }
+        it { should contain_exec('install /etc/init.d/snmptrapd').with(
+          :command => '/usr/bin/install -o 0 -g 0 -m0755 -p /usr/share/doc/packages/net-snmp/rc.snmptrapd /etc/init.d/snmptrapd',
+          :creates => '/etc/init.d/snmptrapd',
+          :require => 'Package[snmpd]'
+        )}
+        it { should contain_service('snmptrapd').with(
+          :ensure     => 'stopped',
+          :name       => 'snmptrapd',
+          :enable     => false,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', 'Exec[install /etc/init.d/snmptrapd]', ]
+        )}
+      end
+    end
   end
 
   context 'on a supported osfamily (RedHat), custom parameters' do
@@ -384,6 +479,47 @@ describe 'snmp', :type => 'class' do
       it 'should contain File[snmpd.sysconfig] with contents "TRAPDOPTS=\'bleh\'"' do
         verify_contents(subject, 'snmpd.sysconfig', [
           'TRAPDOPTS=\'bleh\'',
+        ])
+      end
+    end
+  end
+
+  context 'on a supported osfamily (Suse), custom parameters' do
+    let :facts do {
+      :osfamily               => 'Suse',
+      :operatingsystem        => 'Suse',
+      :operatingsystemrelease => '11.1'
+    }
+    end
+
+    describe 'service_ensure => stopped' do
+      let(:params) {{ :service_ensure => 'stopped' }}
+      it { should contain_service('snmpd').with_ensure('stopped') }
+      it { should contain_service('snmptrapd').with_ensure('stopped') }
+    end
+
+    describe 'trap_service_ensure => running' do
+      let(:params) {{ :trap_service_ensure => 'running' }}
+      it { should contain_service('snmpd').with_ensure('running') }
+      it { should contain_service('snmptrapd').with_ensure('running') }
+    end
+
+    describe 'service_ensure => stopped and trap_service_ensure => running' do
+      let :params do {
+        :service_ensure      => 'stopped',
+        :trap_service_ensure => 'running'
+      }
+      end
+      it { should contain_service('snmpd').with_ensure('stopped') }
+      it { should contain_service('snmptrapd').with_ensure('running') }
+    end
+
+    describe 'snmpd_options => blah' do
+      let(:params) {{ :snmpd_options => 'blah' }}
+      it { should contain_file('snmpd.sysconfig') }
+      it 'should contain File[snmpd.sysconfig] with contents "SNMPD_LOGLEVEL="blah""' do
+        verify_contents(subject, 'snmpd.sysconfig', [
+          'SNMPD_LOGLEVEL="blah"',
         ])
       end
     end

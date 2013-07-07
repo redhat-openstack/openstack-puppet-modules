@@ -22,6 +22,7 @@ describe 'snmp::client', :type => 'class' do
   #redhatish = ['RedHat', 'Fedora']
   debianish = ['Debian']
   #debianish = ['Debian', 'Ubuntu']
+  suseish = ['Suse']
 
   context 'on a supported osfamily, default parameters' do
     redhatish.each do |os|
@@ -68,6 +69,27 @@ describe 'snmp::client', :type => 'class' do
           :group   => 'root',
           :path    => '/etc/snmp/snmp.conf',
           :require => 'Package[snmp-client]'
+        )}
+      end
+    end
+
+    suseish.each do |os|
+      describe "for osfamily Suse, operatingsystem #{os}" do
+        let(:params) {{}}
+        let :facts do {
+          :osfamily               => 'Suse',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '11.1'
+        }
+        end
+        it { should_not contain_package('snmp-client') }
+        it { should contain_file('snmp.conf').with(
+          :ensure  => 'present',
+          :mode    => '0644',
+          :owner   => 'root',
+          :group   => 'root',
+          :path    => '/etc/snmp/snmp.conf',
+          :require => nil
         )}
       end
     end
