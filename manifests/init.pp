@@ -17,6 +17,7 @@
 define datacat(
   $template                = undef,
   $template_body           = undef,
+  $collects                = [],
   $backup                  = undef,
   $checksum                = undef,
   $force                   = undef,
@@ -62,6 +63,7 @@ define datacat(
     template_body   => $template_body_real,
     target_resource => File[$path], # when we evaluate we modify the private data of this resource
     target_field    => 'content',
+    collects        => $collects,
     before          => File[$path], # we want to evaluate before that resource so it can do the work
   }
 }

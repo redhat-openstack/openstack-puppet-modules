@@ -5,8 +5,10 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
 
   def exists?
     # Find the datacat_fragments that point at this collector
+    our_names = [ resource[:path], resource[:collects] ].flatten.compact
+
     fragments = resource.catalog.resources.find_all do |r|
-      r.is_a?(Puppet::Type.type(:datacat_fragment)) && [ r[:target] ].flatten.include?(resource[:path])
+      r.is_a?(Puppet::Type.type(:datacat_fragment)) && ((our_names & [ r[:target] ].flatten).size > 0)
     end
 
     # order fragments on their :order property
