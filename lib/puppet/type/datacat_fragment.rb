@@ -6,7 +6,7 @@ Puppet::Type.newtype(:datacat_fragment) do
   end
 
   newparam(:target) do
-    desc 'The title of the datacat resource that the data should be sent to.'
+    desc 'The title of the datacat resource that the data should be considered part of.  May be an array to indicate multiple targetted collectors.'
   end
 
   newparam(:order) do
