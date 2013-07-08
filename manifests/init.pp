@@ -4,13 +4,21 @@
 #
 # === Parameters:
 #
+# [*agentaddress*]
+#   Comma-separated list of addresses on which snmpd will listen.
+#   Default: udp:127.0.0.1:161
+#
+# [*snmptrapdaddr*]
+#   Comma-separated list of addresses on which snmptrapd will listen.
+#   Default: udp:127.0.0.1:162
+#
 # [*ro_community*]
 #   Read-only (RO) community string.
 #   Default: public
 #
 # [*rw_community*]
 #   Read-write (RW) community string.
-#   Default: private
+#   Default: none
 #
 # [*ro_network*]
 #   Network that is allowed to RO query the daemon.
@@ -28,6 +36,10 @@
 #   Location of the SNMP system.
 #   Default: Unknown
 #
+# [*services*]
+#   For a host system, a good value is 72 (application + end-to-end layers).
+#   Default: 72
+#
 # [*views*]
 #   An array of views that are available to query.
 #   Default: 'view systemview included .1.3.6.1.2.1.1' and
@@ -37,20 +49,39 @@
 #   An array of access controls that are available to query.
 #   Default: 'access notConfigGroup "" any noauth exact systemview none none'
 #
+# [*dlmod*]
+#   Array of dlmod lines to add to the snmpd.conf file.
+#   Must provide NAME and PATH (ex. "cmaX /usr/lib64/libcmaX64.so").
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for syntax.
+#   Default: none
+#
+# [*snmpd_config*]
+#   Safety valve.  Array of lines to add to the snmpd.conf file.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html for all options.
+#   Default: none
+#
+#
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
 #   NOTIFICATION PROCESSING.
 #   Default: none
 #
+# [*snmptrapd_config*]
+#   Safety valve.  Array of lines to add to the snmptrapd.conf file.
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html for all options.
+#   Default: none
+#
+#
 # [*install_client*]
 #   Whether to install the Net-SNMP client package.
 #   Default: false
 #
 # [*snmp_config*]
-#   Array of lines to add to the client's global snmp.conf file.
+#   Safety valve.  Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
 #   Default: none
+#
 #
 # [*ensure*]
 #   Ensure if present or absent.
@@ -141,8 +172,8 @@
 #     service_ensure      => 'stopped',
 #     trap_service_ensure => 'running',
 #     trap_handlers       => [
-#       'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
-#       'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+#       'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
+#       'traphandle IF-MIB::linkDown /home/nba/bin/traps down',
 #     ],
 #   }
 #
@@ -155,6 +186,8 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp (
+  $agentaddress            = $snmp::params::agentaddress,
+  $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
   $ro_community            = $snmp::params::ro_community,
   $rw_community            = $snmp::params::rw_community,
   $ro_network              = $snmp::params::ro_network,
@@ -163,7 +196,10 @@ class snmp (
   $location                = $snmp::params::location,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
+  $dlmod                   = $snmp::params::dlmod,
+  $snmpd_config            = $snmp::params::snmpd_config,
   $trap_handlers           = $snmp::params::trap_handlers,
+  $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
   $snmp_config             = $snmp::params::snmp_config,
   $ensure                  = $snmp::params::ensure,
@@ -194,6 +230,9 @@ class snmp (
   validate_array($snmp_config)
   validate_array($views)
   validate_array($accesses)
+  validate_array($dlmod)
+  validate_array($snmpd_config)
+  validate_array($snmptrapd_config)
 
   case $ensure {
     /(present)/: {
@@ -341,7 +380,11 @@ class snmp (
       enable     => $trap_service_enable_real,
       hasstatus  => $trap_service_hasstatus,
       hasrestart => $trap_service_hasrestart,
-      require    => [ Package['snmpd'], File['var-net-snmp'], Exec['install /etc/init.d/snmptrapd'], ],
+      require    => [
+        Package['snmpd'],
+        File['var-net-snmp'],
+        Exec['install /etc/init.d/snmptrapd'],
+      ],
     }
   }
 

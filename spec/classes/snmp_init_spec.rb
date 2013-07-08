@@ -58,10 +58,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -99,7 +100,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should contain_file('snmptrapd.sysconfig').with(
@@ -160,10 +161,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -202,7 +204,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
@@ -249,10 +251,11 @@ describe 'snmp', :type => 'class' do
           :notify  => 'Service[snmpd]'
         )}
         # TODO add more contents for File[snmpd.conf]
-        it 'should contain File[snmpd.conf] with contents "syslocation Unknown" and "syscontact Unknown"' do
+        it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'syslocation Unknown',
             'syscontact Unknown',
+            'sysservices 72',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -290,7 +293,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
@@ -434,6 +437,53 @@ describe 'snmp', :type => 'class' do
       it 'should contain File[snmptrapd.sysconfig] with contents "OPTIONS=\'bleh\'"' do
         verify_contents(subject, 'snmptrapd.sysconfig', [
           'OPTIONS="bleh"',
+        ])
+      end
+    end
+
+    describe 'dlmod => [ SomeString ]' do
+      let(:params) {{ :dlmod => [ 'SomeString', ] }}
+      it 'should contain File[snmpd.conf] with contents "dlmod SomeString"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'dlmod SomeString',
+        ])
+      end
+    end
+
+    describe 'agentaddress => 1.2.3.4' do
+      let(:params) {{ :agentaddress => '1.2.3.4' }}
+      it 'should contain File[snmpd.conf] with contents "1.2.3.4"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'agentaddress 1.2.3.4',
+        ])
+      end
+    end
+
+    describe 'snmptrapdaddr => 5.6.7.8' do
+      let(:params) {{ :snmptrapdaddr => '5.6.7.8' }}
+      it 'should contain File[snmptrapd.conf] with contents "5.6.7.8"' do
+        verify_contents(subject, 'snmptrapd.conf', [
+          'snmpTrapdAddr 5.6.7.8',
+        ])
+      end
+    end
+
+    describe 'snmpd_config => [ "option 1", "option 2", ]' do
+      let(:params) {{ :snmpd_config => [ 'option 1', 'option 2', ] }}
+      it 'should contain File[snmpd.conf] with contents "option1" and "option 2"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'option 1',
+          'option 2',
+        ])
+      end
+    end
+
+    describe 'snmptrapd_config => [ "option 3", "option 4", ]' do
+      let(:params) {{ :snmptrapd_config => [ 'option 3', 'option 4', ] }}
+      it 'should contain File[snmptrapd.conf] with contents "option 3" and "option 4"' do
+        verify_contents(subject, 'snmptrapd.conf', [
+          'option 3',
+          'option 4',
         ])
       end
     end
