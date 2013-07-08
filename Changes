@@ -1,3 +1,7 @@
+0.2.0 Monday 8th July, 2013
+    Allow the target parameter of a datacat_fragment to be an array to target
+    multiple collectors.
+
 0.1.0 Friday 5th July, 2013
     Add a order parameter to the datacat_fragment type for relative ordering
     of fragment merging.
