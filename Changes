@@ -1,3 +1,7 @@
+0.3.0
+    Add collects parameter to the datacat_collector typei, for acts-as
+    relationships.
+
 0.2.1 Monday 8th July, 2013
     Bugfix - when modifying the datacat_collector map on path the File should
     still match to $path
