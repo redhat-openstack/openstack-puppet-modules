@@ -57,7 +57,7 @@ define datacat(
     undef   => template_body($template_real),
   }
 
-  datacat_collector { $path:
+  datacat_collector { $title:
     template        => $template_real,
     template_body   => $template_body_real,
     target_resource => File[$title], # when we evaluate we modify the private data of this resource

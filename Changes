@@ -1,6 +1,8 @@
 0.2.0 Monday 8th July, 2013
     Allow the target parameter of a datacat_fragment to be an array to target
     multiple collectors.
+    The datacat_collector wrapped by the datacat type will now be named for the
+    resource rather than the file path.
 
 0.1.0 Friday 5th July, 2013
     Add a order parameter to the datacat_fragment type for relative ordering
