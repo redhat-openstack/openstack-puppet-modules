@@ -12,6 +12,7 @@ describe Puppet::Type.type(:datacat_collector) do
         :template_body => '<%= @data.keys.sort.map { |x| "#{x}=#{@data[x]}" }.join(",") %>',
         :target_resource => @file,
         :target_field => :content,
+        :collects => [ '/secret-name' ],
       })
       @catalog.add_resource @collector
     end
@@ -108,6 +109,19 @@ describe Puppet::Type.type(:datacat_collector) do
         @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
           :title => "target two",
           :target => [ "/test", "/othertest" ],
+          :data => { "alpha" => "one" },
+        })
+
+        @file.expects(:[]=).with(:content, "alpha=one")
+        @collector.provider.exists?
+      end
+    end
+
+    describe "collects parameter" do
+      it "should be able to collect for things targeted via the collects parameter" do
+        @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
+          :title => "target two",
+          :target => "/secret-name",
           :data => { "alpha" => "one" },
         })
 

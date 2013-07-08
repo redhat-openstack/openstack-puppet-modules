@@ -36,6 +36,10 @@ Puppet::Type.newtype(:datacat_collector) do
     desc "An identifier (typically a file path) that can be used by datacat_fragments so they know where to target the data."
   end
 
+  newparam(:collects) do
+    desc "Other resources we want to collect data from.  Allows for many-many datacats."
+  end
+
   newparam(:target_resource) do
     desc "The resource that we're going to set the field (eg File['/tmp/demo']) set theto set data tor"
   end
