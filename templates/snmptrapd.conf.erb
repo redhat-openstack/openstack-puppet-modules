@@ -8,11 +8,20 @@
 snmpTrapdAddr <%= @snmptrapdaddr %>
 
 ################################################################################
+# ACCESS CONTROL
 
-authCommunity   log,execute,net <%= @ro_community %>
+authCommunity log,execute,net <%= @ro_community %>
+
+################################################################################
+# NOTIFICATION PROCESSING
+
 <% @trap_handlers.each do |handler| -%>
 <%= handler %>
-<% end %>
+<% end -%>
+
+################################################################################
+# OTHER CONFIGURATION
+
 <% @snmptrapd_config.each do |line| -%>
 <%= line %>
 <% end -%>

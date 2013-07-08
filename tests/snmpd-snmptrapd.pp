@@ -3,7 +3,7 @@ class { 'snmp':
   trap_service_ensure => 'running',
   trap_service_enable => true,
   trap_handlers       => [
-    'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
-    'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+    'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
+    'traphandle IF-MIB::linkDown /home/nba/bin/traps down',
   ],
 }

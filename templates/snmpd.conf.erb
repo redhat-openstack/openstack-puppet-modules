@@ -29,12 +29,12 @@ group   notConfigGroup v2c           notConfigUser
 #       name          incl/excl  subtree             mask(optional)
 <% @views.each do |view| -%>
 <%= view %>
-<% end %>
+<% end -%>
 
 #       group          context sec.model sec.level prefix read       write notif
 <% @accesses.each do |access| -%>
 <%= access %>
-<% end %>
+<% end -%>
 
 # ------------------------------------------------------------------------------
 # Typed-View Configuration
@@ -59,14 +59,9 @@ dlmod <%= mod %>
 <% end -%>
 
 <% end -%>
-# ------------------------------------------------------------------------------
-# AgentX Sub-Agents
-#master agentx
-
 ################################################################################
 # OTHER CONFIGURATION
 
-#dontLogTCPWrappersConnects yes
 <% @snmpd_config.each do |line| -%>
 <%= line %>
 <% end -%>

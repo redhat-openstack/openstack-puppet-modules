@@ -100,7 +100,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should contain_file('snmptrapd.sysconfig').with(
@@ -204,7 +204,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
@@ -293,7 +293,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
-            'authCommunity   log,execute,net public',
+            'authCommunity log,execute,net public',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
