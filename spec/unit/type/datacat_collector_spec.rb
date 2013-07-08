@@ -102,5 +102,18 @@ describe Puppet::Type.type(:datacat_collector) do
         @collector.provider.exists?
       end
     end
+
+    describe "targeting multiple collectors" do
+      it "should support an array in the target attribute" do
+        @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
+          :title => "target two",
+          :target => [ "/test", "/othertest" ],
+          :data => { "alpha" => "one" },
+        })
+
+        @file.expects(:[]=).with(:content, "alpha=one")
+        @collector.provider.exists?
+      end
+    end
   end
 end
