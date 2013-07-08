@@ -1,3 +1,7 @@
+0.2.1 Monday 8th July, 2013
+    Bugfix - when modifying the datacat_collector map on path the File should
+    still match to $path
+
 0.2.0 Monday 8th July, 2013
     Allow the target parameter of a datacat_fragment to be an array to target
     multiple collectors.
