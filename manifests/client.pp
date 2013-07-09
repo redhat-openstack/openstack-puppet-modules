@@ -39,11 +39,12 @@ class ipa::client (
   }
 
   Ipa::Clientinstall <<| |>> {
-    name       => $::fqdn,
-    otp        => $ipa::client::otp,
-    mkhomedir  => $ipa::client::mkhomediropt,
-    ntp        => $ipa::client::ntpopt,
-    require    => Package[$ipa::client::clntpkg]
+    name      => $::fqdn,
+    otp       => $ipa::client::otp,
+    domain    => $ipa::client::domain,
+    mkhomedir => $ipa::client::mkhomediropt,
+    ntp       => $ipa::client::ntpopt,
+    require   => Package[$ipa::client::clntpkg]
   }
 
   if defined(Package[$ipa::client::clntpkg]) {
