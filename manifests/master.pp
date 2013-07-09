@@ -21,10 +21,10 @@ class ipa::master (
   $sssd    = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == 'ipa-replica-replication-firewall' |>> -> Ipa::Replicaprepare <<| tag == 'ipa-replica-prepare' |>>
+  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
 
-  Ipa::Replicareplicationfirewall <<| tag == 'ipa-replica-replication-firewall' |>>
-  Ipa::Replicaprepare <<| tag == 'ipa-replica-prepare' |>>
+  Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
+  Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
   Ipa::Hostadd <<| |>>
 
   $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")
@@ -75,17 +75,17 @@ class ipa::master (
 
   @@ipa::replicapreparefirewall { "$::fqdn":
     source => $::ipaddress,
-    tag    => "ipa-replica-prepare-firewall"
+    tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
   }
 
   @@ipa::masterreplicationfirewall { "$::fqdn":
     source => $::ipaddress,
-    tag    => "ipa-master-replication-firewall"
+    tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
   }
 
   @@ipa::masterprincipal { "$::fqdn":
     realm => $ipa::master::realm,
-    tag   => "ipa-master-principal"
+    tag   => "ipa-master-principal-${ipa::master::domain}"
   }
 
   @@ipa::clientinstall { "$::fqdn":

@@ -14,15 +14,16 @@ class ipa::replica (
   $svrpkg  = {},
   $adminpw = {},
   $dspw    = {},
+  $domain  = {},
   $kstart  = {},
   $sssd    = {}
 ) {
 
-  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>> -> Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>> -> Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
+  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
 
-  Ipa::Replicapreparefirewall <<| tag == 'ipa-replica-prepare-firewall' |>>
-  Ipa::Masterreplicationfirewall <<| tag == 'ipa-master-replication-firewall' |>>
-  Ipa::Masterprincipal <<| tag == 'ipa-master-principal' |>>
+  Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>>
+  Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>>
+  Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>>
 
   if $::osfamily != "RedHat" {
     fail("Cannot configure an IPA replica server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.") 
@@ -62,11 +63,11 @@ class ipa::replica (
 
   @@ipa::replicareplicationfirewall { "$::fqdn":
     source => $::ipaddress,
-    tag    => "ipa-replica-replication-firewall"
+    tag    => "ipa-replica-replication-firewall-${ipa::replica::domain}"
   }
 
   @@ipa::replicaprepare { "$::fqdn":
     dspw => $ipa::replica::dspw,
-    tag  => "ipa-replica-prepare"
+    tag  => "ipa-replica-prepare-${ipa::replica::domain}"
   }
 }

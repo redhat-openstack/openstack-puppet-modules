@@ -174,6 +174,7 @@ class ipa (
       svrpkg    => $ipa::svrpkg,
       adminpw   => $ipa::adminpw,
       dspw      => $ipa::dspw,
+      domain    => $ipa::domain,
       kstart    => $ipa::kstart,
       sssd      => $ipa::sssd
     }
