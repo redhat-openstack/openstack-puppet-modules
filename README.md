@@ -72,6 +72,14 @@ To install a SNMP version 3 user:
       privpass => '5678priv',
     }
 
+To install a SNMP version 3 user for snmptrapd:
+
+    snmp::snmpv3_user { 'myuser':
+      authpass => 'SeCrEt',
+      privpass => 'PhRaSe',
+      daemon   => 'snmptrapd',
+    }
+
 Notes
 -----
 

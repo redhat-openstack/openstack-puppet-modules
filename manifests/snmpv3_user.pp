@@ -24,6 +24,10 @@
 #   Encryption type for the user.  AES or DES
 #   Default: AES
 #
+# [*daemon*]
+#   Which daemon file in which to write the user.  snmpd or snmptrapd
+#   Default: snmpd
+#
 # === Actions:
 #
 # Creates a SNMPv3 user with authentication and encryption paswords.
@@ -52,9 +56,26 @@ define snmp::snmpv3_user (
   $authpass,
   $authtype = 'SHA',
   $privpass = '',
-  $privtype = 'AES'
+  $privtype = 'AES',
+  $daemon   = 'snmpd'
 ) {
+  # Validate our regular expressions
+  $Aoptions = [ '^SHA$', '^MD5$' ]
+  validate_re($authtype, $Aoptions, '$authtype must be either SHA or MD5.')
+  $Poptions = [ '^AES$', '^DES$' ]
+  validate_re($privtype, $Poptions, '$privtype must be either AES or DES.')
+  $Doptions = [ '^snmpd$', '^snmptrapd$' ]
+  validate_re($daemon, $Doptions, '$daemon must be either snmpd or snmptrapd.')
+
   include snmp
+
+  if ($daemon == 'snmptrapd') and ($::osfamily != 'Debian') {
+    $service_name   = 'snmptrapd'
+    $service_before = Service['snmptrapd']
+  } else {
+    $service_name   = 'snmpd'
+    $service_before = Service['snmpd']
+  }
 
   if $privpass {
     $cmd = "createUser ${title} ${authtype} ${authpass} ${privtype} ${privpass}"
@@ -63,11 +84,11 @@ define snmp::snmpv3_user (
   }
   exec { "create-snmpv3-user-${title}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    # TODO: Add "rwuser ${title}" (or rouser) to /etc/snmp/snmpd.conf
-    command => "service snmpd stop ; echo \"${cmd}\" >>${snmp::params::var_net_snmp}/snmpd.conf && touch ${snmp::params::var_net_snmp}/${title}",
-    creates => "${snmp::params::var_net_snmp}/${title}",
+    # TODO: Add "rwuser ${title}" (or rouser) to /etc/snmp/${daemon}.conf
+    command => "service ${service_name} stop ; echo \"${cmd}\" >>${snmp::params::var_net_snmp}/${daemon}.conf && touch ${snmp::params::var_net_snmp}/${title}-${daemon}",
+    creates => "${snmp::params::var_net_snmp}/${title}-${daemon}",
     user    => 'root',
     require => [ Package['snmpd'], File['var-net-snmp'], ],
-    before  => Service['snmpd'],
+    before  => $service_before,
   }
 }
