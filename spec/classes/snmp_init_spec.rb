@@ -380,7 +380,7 @@ describe 'snmp', :type => 'class' do
       it { should contain_class('snmp::client').with(
         :ensure        => 'present',
         :autoupgrade   => 'false',
-        :snmp_config   => ''
+        :snmp_config   => []
       )}
     end
 
