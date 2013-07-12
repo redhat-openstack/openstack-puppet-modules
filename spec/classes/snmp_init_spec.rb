@@ -101,6 +101,8 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
             'authCommunity log,execute,net public',
+            'disableAuthorization no',
+            'doNotLogTraps yes',
           ])
         end
         it { should contain_file('snmptrapd.sysconfig').with(

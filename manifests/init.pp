@@ -12,6 +12,11 @@
 #   Comma-separated list of addresses on which snmptrapd will listen.
 #   Default: udp:127.0.0.1:162
 #
+# [*snmp_trap_addr*]
+#   Defines a list of listening addresses, on which  to  receive  incoming  SNMP
+#   notifications.
+#   Default: []
+#
 # [*ro_community*]
 #   Read-only (RO) community string.
 #   Default: public
@@ -61,11 +66,23 @@
 #   Default: none
 #
 #
+# [*disable_authorization*]
+#   Will disable access control checks.
+#   Default: false
+#
+# [*do_not_log_traps*]
+#   Disables  the  logging  of  notifications altogether.
+#   Default: true
+#
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
 #   NOTIFICATION PROCESSING.
 #   Default: none
+#
+# [*forwards*]
+#   Forward notification to another notification receiver.
+#   Default: []
 #
 # [*snmptrapd_config*]
 #   Safety valve.  Array of lines to add to the snmptrapd.conf file.
@@ -188,6 +205,7 @@
 class snmp (
   $agentaddress            = $snmp::params::agentaddress,
   $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
+  $snmp_trap_addr        = [],
   $ro_community            = $snmp::params::ro_community,
   $rw_community            = $snmp::params::rw_community,
   $ro_network              = $snmp::params::ro_network,
@@ -198,7 +216,10 @@ class snmp (
   $accesses                = $snmp::params::accesses,
   $dlmod                   = $snmp::params::dlmod,
   $snmpd_config            = $snmp::params::snmpd_config,
+  $disable_authorization = 'no',
+  $do_not_log_traps      = 'yes',
   $trap_handlers           = $snmp::params::trap_handlers,
+  $forwards              = [],
   $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
   $snmp_config             = $snmp::params::snmp_config,

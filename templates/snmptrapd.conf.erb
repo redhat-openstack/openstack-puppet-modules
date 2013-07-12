@@ -6,18 +6,26 @@
 # TRAPD BEHAVIOUR
 
 snmpTrapdAddr <%= @snmptrapdaddr %>
+<% if @snmp_trap_addr.is_a?(Array) and  @snmp_trap_addr.count > 0 -%>
+snmpTrapdAddr <%= @snmp_trap_addr.join(',') %>
+<% end -%>
+doNotLogTraps <%= @do_not_log_traps %>
 
 ################################################################################
 # ACCESS CONTROL
 
 authCommunity log,execute,net <%= @ro_community %>
+disableAuthorization <%= @disable_authorization %>
 
 ################################################################################
 # NOTIFICATION PROCESSING
 
 <% @trap_handlers.each do |handler| -%>
-<%= handler %>
-<% end -%>
+traphandle <%= handler %>
+<% end %>
+<% @forwards.each do |forward| -%>
+forward <%= forward %>
+<% end %>
 
 ################################################################################
 # OTHER CONFIGURATION
