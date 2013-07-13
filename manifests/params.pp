@@ -22,7 +22,7 @@ class snmp::params {
   }
 
   $snmptrapdaddr = $::snmp_snmptrapdaddr ? {
-    undef   => 'udp:127.0.0.1:162',
+    undef   => [ 'udp:127.0.0.1:162' ],
     default => $::snmp_snmptrapdaddr,
   }
 
@@ -81,9 +81,24 @@ class snmp::params {
     default => $::snmp_dlmod,
   }
 
+  $disable_authorization = $::snmp_disable_authorization ? {
+    undef   => 'no',
+    default => $::snmp_disable_authorization,
+  }
+
+  $do_not_log_traps = $::snmp_do_not_log_traps ? {
+    undef   => 'no',
+    default => $::snmp_do_not_log_traps,
+  }
+
   $trap_handlers = $::snmp_trap_handlers ? {
     undef   => [],
     default => $::snmp_trap_handlers,
+  }
+
+  $trap_forwards = $::snmp_trap_forwards ? {
+    undef   => [],
+    default => $::snmp_trap_forwards,
   }
 
   $snmp_config = $::snmp_snmp_config ? {
