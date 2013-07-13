@@ -22,13 +22,8 @@ class snmp::params {
   }
 
   $snmptrapdaddr = $::snmp_snmptrapdaddr ? {
-    undef   => 'udp:127.0.0.1:162',
-    default => $::snmp_snmptrapdaddr,
-  }
-
-  $snmp_trap_addr = $::snmp_snmp_trap_addr ? {
     undef   => [ 'udp:127.0.0.1:162' ],
-    default => $::snmp_snmp_trap_addr,
+    default => $::snmp_snmptrapdaddr,
   }
 
   $ro_community = $::snmp_ro_community ? {

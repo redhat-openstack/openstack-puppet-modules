@@ -465,17 +465,8 @@ describe 'snmp', :type => 'class' do
       end
     end
 
-#    describe 'snmptrapdaddr => 5.6.7.8' do
-#      let(:params) {{ :snmptrapdaddr => '5.6.7.8' }}
-#      it 'should contain File[snmptrapd.conf] with contents "snmpTrapdAddr 5.6.7.8"' do
-#        verify_contents(subject, 'snmptrapd.conf', [
-#          'snmpTrapdAddr 5.6.7.8',
-#        ])
-#      end
-#    end
-
-    describe 'snmp_trap_addr => [ "5.6.7.8", "2.3.4.5:3333" ]' do
-      let(:params) {{ :snmp_trap_addr => ['5.6.7.8','2.3.4.5:3333'] }}
+    describe 'snmptrapdaddr => [ "5.6.7.8", "2.3.4.5:3333" ]' do
+      let(:params) {{ :snmptrapdaddr => ['5.6.7.8','2.3.4.5:3333'] }}
       it 'should contain File[snmptrapd.conf] with contents "snmpTrapdAddr 5.6.7.8,2.3.4.5:3333"' do
         verify_contents(subject, 'snmptrapd.conf', [
           'snmpTrapdAddr 5.6.7.8,2.3.4.5:3333',

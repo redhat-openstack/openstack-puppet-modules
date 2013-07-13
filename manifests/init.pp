@@ -9,10 +9,6 @@
 #   Default: udp:127.0.0.1:161
 #
 # [*snmptrapdaddr*]
-#   Comma-separated list of addresses on which snmptrapd will listen.
-#   Default: udp:127.0.0.1:162
-#
-# [*snmp_trap_addr*]
 #   An array of addresses, on which snmptrapd will listen to receive incoming
 #   SNMP notifications.
 #   Default: udp:127.0.0.1:162
@@ -191,8 +187,8 @@
 #     service_ensure      => 'stopped',
 #     trap_service_ensure => 'running',
 #     trap_handlers       => [
-#       'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
-#       'traphandle IF-MIB::linkDown /home/nba/bin/traps down',
+#       'default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
+#       'IF-MIB::linkDown /home/nba/bin/traps down',
 #     ],
 #   }
 #
@@ -207,7 +203,6 @@
 class snmp (
   $agentaddress            = $snmp::params::agentaddress,
   $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
-  $snmp_trap_addr          = $snmp::params::snmp_trap_addr,
   $ro_community            = $snmp::params::ro_community,
   $rw_community            = $snmp::params::rw_community,
   $ro_network              = $snmp::params::ro_network,
@@ -249,7 +244,7 @@ class snmp (
   validate_bool($service_hasrestart)
 
   # Validate our arrays
-  validate_array($snmp_trap_addr)
+  validate_array($snmptrapdaddr)
   validate_array($trap_handlers)
   validate_array($trap_forwards)
   validate_array($snmp_config)
