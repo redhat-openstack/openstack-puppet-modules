@@ -10,5 +10,5 @@ description 'This module manages the installation of the SNMP server, SNMP clien
 dependency 'puppetlabs/stdlib', '>=2.3.0'
 
 # Generate the changelog file
-system("git-log-to-changelog > CHANGELOG")
-$? == 0 or fail "changelog generation #{$?}!"
+#system("git-log-to-changelog > CHANGELOG")
+#$? == 0 or fail "changelog generation #{$?}!"
