@@ -60,6 +60,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
+            'agentaddress udp:127.0.0.1:161',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
@@ -165,6 +166,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
+            'agentaddress udp:127.0.0.1:161',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
@@ -257,6 +259,7 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
+            'agentaddress udp:127.0.0.1:161',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
@@ -456,11 +459,11 @@ describe 'snmp', :type => 'class' do
       end
     end
 
-    describe 'agentaddress => 1.2.3.4' do
-      let(:params) {{ :agentaddress => '1.2.3.4' }}
-      it 'should contain File[snmpd.conf] with contents "1.2.3.4"' do
+    describe 'agentaddress => [ "1.2.3.4", "8.6.7.5:222" ]' do
+      let(:params) {{ :agentaddress => ['1.2.3.4','8.6.7.5:222'] }}
+      it 'should contain File[snmpd.conf] with contents "agentaddress 1.2.3.4,8.6.7.5:222"' do
         verify_contents(subject, 'snmpd.conf', [
-          'agentaddress 1.2.3.4',
+          'agentaddress 1.2.3.4,8.6.7.5:222',
         ])
       end
     end

@@ -5,7 +5,7 @@
 # === Parameters:
 #
 # [*agentaddress*]
-#   Comma-separated list of addresses on which snmpd will listen.
+#   An array of addresses, on which snmpd will listen for queries.
 #   Default: udp:127.0.0.1:161
 #
 # [*snmptrapdaddr*]

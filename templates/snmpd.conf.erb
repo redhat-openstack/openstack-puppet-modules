@@ -5,7 +5,9 @@
 ################################################################################
 # AGENT BEHAVIOUR
 
-agentaddress <%= @agentaddress %>
+<% if (@agentaddress.is_a?(Array)) and (@agentaddress.count > 0) -%>
+agentaddress <%= @agentaddress.join(',') %>
+<% end -%>
 
 ################################################################################
 # ACCESS CONTROL
