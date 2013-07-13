@@ -5,8 +5,8 @@
 ################################################################################
 # TRAPD BEHAVIOUR
 
-snmpTrapdAddr <%= @snmptrapdaddr %>
-<% if @snmp_trap_addr.is_a?(Array) and  @snmp_trap_addr.count > 0 -%>
+#snmpTrapdAddr <%= @snmptrapdaddr %>
+<% if (@snmp_trap_addr.is_a?(Array)) and (@snmp_trap_addr.count > 0) -%>
 snmpTrapdAddr <%= @snmp_trap_addr.join(',') %>
 <% end -%>
 doNotLogTraps <%= @do_not_log_traps %>
@@ -23,7 +23,7 @@ disableAuthorization <%= @disable_authorization %>
 <% @trap_handlers.each do |handler| -%>
 traphandle <%= handler %>
 <% end %>
-<% @forwards.each do |forward| -%>
+<% @trap_forwards.each do |forward| -%>
 forward <%= forward %>
 <% end %>
 

@@ -13,9 +13,9 @@
 #   Default: udp:127.0.0.1:162
 #
 # [*snmp_trap_addr*]
-#   Defines a list of listening addresses, on which  to  receive  incoming  SNMP
-#   notifications.
-#   Default: []
+#   An array of addresses, on which snmptrapd will listen to receive incoming
+#   SNMP notifications.
+#   Default: udp:127.0.0.1:162
 #
 # [*ro_community*]
 #   Read-only (RO) community string.
@@ -67,12 +67,12 @@
 #
 #
 # [*disable_authorization*]
-#   Will disable access control checks.
-#   Default: false
+#   Disable all access control checks.
+#   Default: no
 #
 # [*do_not_log_traps*]
-#   Disables  the  logging  of  notifications altogether.
-#   Default: true
+#   Disable the logging of notifications altogether.
+#   Default: no
 #
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
@@ -80,9 +80,11 @@
 #   NOTIFICATION PROCESSING.
 #   Default: none
 #
-# [*forwards*]
-#   Forward notification to another notification receiver.
-#   Default: []
+# [*trap_forwards*]
+#   An array of destinations to send to on receipt of traps.
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
+#   NOTIFICATION PROCESSING.
+#   Default: none
 #
 # [*snmptrapd_config*]
 #   Safety valve.  Array of lines to add to the snmptrapd.conf file.
@@ -205,7 +207,7 @@
 class snmp (
   $agentaddress            = $snmp::params::agentaddress,
   $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
-  $snmp_trap_addr        = [],
+  $snmp_trap_addr          = $snmp::params::snmp_trap_addr,
   $ro_community            = $snmp::params::ro_community,
   $rw_community            = $snmp::params::rw_community,
   $ro_network              = $snmp::params::ro_network,
@@ -216,10 +218,10 @@ class snmp (
   $accesses                = $snmp::params::accesses,
   $dlmod                   = $snmp::params::dlmod,
   $snmpd_config            = $snmp::params::snmpd_config,
-  $disable_authorization = 'no',
-  $do_not_log_traps      = 'yes',
+  $disable_authorization   = $snmp::params::disable_authorization,
+  $do_not_log_traps        = $snmp::params::do_not_log_traps,
   $trap_handlers           = $snmp::params::trap_handlers,
-  $forwards              = [],
+  $trap_forwards           = $snmp::params::trap_forwards,
   $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
   $snmp_config             = $snmp::params::snmp_config,
@@ -247,13 +249,20 @@ class snmp (
   validate_bool($service_hasrestart)
 
   # Validate our arrays
+  validate_array($snmp_trap_addr)
   validate_array($trap_handlers)
+  validate_array($trap_forwards)
   validate_array($snmp_config)
   validate_array($views)
   validate_array($accesses)
   validate_array($dlmod)
   validate_array($snmpd_config)
   validate_array($snmptrapd_config)
+
+  # Validate our regular expressions
+  $states = [ '^yes$', '^no$' ]
+  validate_re($disable_authorization, $states, '$disable_authorization must be either yes or no.')
+  validate_re($do_not_log_traps, $states, '$do_not_log_traps must be either yes or no.')
 
   case $ensure {
     /(present)/: {

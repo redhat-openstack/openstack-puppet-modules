@@ -100,9 +100,9 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
+            'doNotLogTraps no',
             'authCommunity log,execute,net public',
             'disableAuthorization no',
-            'doNotLogTraps yes',
           ])
         end
         it { should contain_file('snmptrapd.sysconfig').with(
@@ -206,7 +206,9 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
+            'doNotLogTraps no',
             'authCommunity log,execute,net public',
+            'disableAuthorization no',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
@@ -295,7 +297,9 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmptrapd.conf]
         it 'should contain File[snmptrapd.conf] with correct contents' do
           verify_contents(subject, 'snmptrapd.conf', [
+            'doNotLogTraps no',
             'authCommunity log,execute,net public',
+            'disableAuthorization no',
           ])
         end
         it { should_not contain_file('snmptrapd.sysconfig') }
@@ -461,11 +465,20 @@ describe 'snmp', :type => 'class' do
       end
     end
 
-    describe 'snmptrapdaddr => 5.6.7.8' do
-      let(:params) {{ :snmptrapdaddr => '5.6.7.8' }}
-      it 'should contain File[snmptrapd.conf] with contents "5.6.7.8"' do
+#    describe 'snmptrapdaddr => 5.6.7.8' do
+#      let(:params) {{ :snmptrapdaddr => '5.6.7.8' }}
+#      it 'should contain File[snmptrapd.conf] with contents "snmpTrapdAddr 5.6.7.8"' do
+#        verify_contents(subject, 'snmptrapd.conf', [
+#          'snmpTrapdAddr 5.6.7.8',
+#        ])
+#      end
+#    end
+
+    describe 'snmp_trap_addr => [ "5.6.7.8", "2.3.4.5:3333" ]' do
+      let(:params) {{ :snmp_trap_addr => ['5.6.7.8','2.3.4.5:3333'] }}
+      it 'should contain File[snmptrapd.conf] with contents "snmpTrapdAddr 5.6.7.8,2.3.4.5:3333"' do
         verify_contents(subject, 'snmptrapd.conf', [
-          'snmpTrapdAddr 5.6.7.8',
+          'snmpTrapdAddr 5.6.7.8,2.3.4.5:3333',
         ])
       end
     end
