@@ -30,12 +30,12 @@ group   notConfigGroup v2c           notConfigUser
 
 #       name          incl/excl  subtree             mask(optional)
 <% @views.each do |view| -%>
-<%= view %>
+view    <%= view %>
 <% end -%>
 
 #       group          context sec.model sec.level prefix read       write notif
 <% @accesses.each do |access| -%>
-<%= access %>
+access  <%= access %>
 <% end -%>
 
 # ------------------------------------------------------------------------------

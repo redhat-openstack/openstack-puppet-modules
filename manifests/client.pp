@@ -7,7 +7,7 @@
 # [*snmp_config*]
 #   Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
-#   Default: none
+#   Default: []
 #
 # [*ensure*]
 #   Ensure if present or absent.

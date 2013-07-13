@@ -6,12 +6,12 @@
 #
 # [*agentaddress*]
 #   An array of addresses, on which snmpd will listen for queries.
-#   Default: udp:127.0.0.1:161
+#   Default: [ udp:127.0.0.1:161 ]
 #
 # [*snmptrapdaddr*]
 #   An array of addresses, on which snmptrapd will listen to receive incoming
 #   SNMP notifications.
-#   Default: udp:127.0.0.1:162
+#   Default: [ udp:127.0.0.1:162 ]
 #
 # [*ro_community*]
 #   Read-only (RO) community string.
@@ -43,59 +43,64 @@
 #
 # [*views*]
 #   An array of views that are available to query.
-#   Default: 'view systemview included .1.3.6.1.2.1.1' and
-#            'view systemview included .1.3.6.1.2.1.25.1.1'
+#   Must provide VNAME, TYPE, OID, and [MASK].
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ 'systemview included .1.3.6.1.2.1.1',
+#              'systemview included .1.3.6.1.2.1.25.1.1' ]
 #
 # [*accesses*]
 #   An array of access controls that are available to query.
-#   Default: 'access notConfigGroup "" any noauth exact systemview none none'
+#   Must provide GROUP, CONTEXT, {any|v1|v2c|usm|tsm|ksm}, LEVEL, PREFX, READ,
+#   WRITE, and NOTIFY.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ 'notConfigGroup "" any noauth exact systemview none none' ]
 #
 # [*dlmod*]
 #   Array of dlmod lines to add to the snmpd.conf file.
 #   Must provide NAME and PATH (ex. "cmaX /usr/lib64/libcmaX64.so").
-#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for syntax.
-#   Default: none
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for details.
+#   Default: []
 #
 # [*snmpd_config*]
 #   Safety valve.  Array of lines to add to the snmpd.conf file.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html for all options.
-#   Default: none
+#   Default: []
 #
 #
 # [*disable_authorization*]
-#   Disable all access control checks.
+#   Disable all access control checks. (yes|no)
 #   Default: no
 #
 # [*do_not_log_traps*]
-#   Disable the logging of notifications altogether.
+#   Disable the logging of notifications altogether. (yes|no)
 #   Default: no
 #
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
-#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
-#   NOTIFICATION PROCESSING.
-#   Default: none
+#   Must provide OID and PROGRAM (ex. "IF-MIB::linkDown /bin/traps down").
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+#   Default: []
 #
 # [*trap_forwards*]
 #   An array of destinations to send to on receipt of traps.
-#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html section
-#   NOTIFICATION PROCESSING.
-#   Default: none
+#   Must provide OID and DESTINATION (ex. "IF-MIB::linkUp udp:1.2.3.5:162").
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+#   Default: []
 #
 # [*snmptrapd_config*]
 #   Safety valve.  Array of lines to add to the snmptrapd.conf file.
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html for all options.
-#   Default: none
+#   Default: []
 #
 #
 # [*install_client*]
-#   Whether to install the Net-SNMP client package.
+#   Whether to install the Net-SNMP client package. (true|false)
 #   Default: false
 #
 # [*snmp_config*]
 #   Safety valve.  Array of lines to add to the client's global snmp.conf file.
 #   See http://www.net-snmp.org/docs/man/snmp.conf.html for all options.
-#   Default: none
+#   Default: []
 #
 #
 # [*ensure*]

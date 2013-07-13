@@ -61,6 +61,13 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161',
+            '#rocommunity public 127.0.0.1',
+            'com2sec notConfigUser  default       public',
+            'group   notConfigGroup v1            notConfigUser',
+            'group   notConfigGroup v2c           notConfigUser',
+            'view    systemview    included   .1.3.6.1.2.1.1',
+            'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+            'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
@@ -167,6 +174,13 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161',
+            '#rocommunity public 127.0.0.1',
+            'com2sec notConfigUser  default       public',
+            'group   notConfigGroup v1            notConfigUser',
+            'group   notConfigGroup v2c           notConfigUser',
+            'view    systemview    included   .1.3.6.1.2.1.1',
+            'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+            'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
@@ -260,6 +274,13 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161',
+            '#rocommunity public 127.0.0.1',
+            'com2sec notConfigUser  default       public',
+            'group   notConfigGroup v1            notConfigUser',
+            'group   notConfigGroup v2c           notConfigUser',
+            'view    systemview    included   .1.3.6.1.2.1.1',
+            'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+            'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
             'syslocation Unknown',
             'syscontact Unknown',
             'sysservices 72',
