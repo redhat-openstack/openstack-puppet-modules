@@ -32,7 +32,7 @@ Examples
 To install the SNMP service:
 
     class { 'snmp':
-      agentaddress => 'udp:161',
+      agentaddress => [ 'udp:161', ],
       ro_community => 'notpublic',
       ro_network   => '10.20.30.40/32',
       contact      => 'root@yourdomain.org',
@@ -55,17 +55,19 @@ If you just want to install the SNMP client:
 Only configure and run the snmptrap daemon:
 
     class { 'snmp':
-      snmptrapdaddr       => 'udp:162',
+      snmptrapdaddr       => [ 'udp:162', ],
       ro_community        => 'SeCrEt',
       service_ensure      => 'stopped',
       trap_service_ensure => 'running',
+      trap_service_enable => true,
       trap_handlers       => [
-        'traphandle default /usr/bin/perl /usr/bin/traptoemail me@somewhere.com',
-        'traphandle TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+        'default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
+        'TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
       ],
+      trap_forwards       => [ 'default udp:55.55.55.55:162' ],
     }
 
-To install a SNMP version 3 user:
+To install a SNMP version 3 user for snmpd:
 
     snmp::snmpv3_user { 'myuser':
       authpass => '1234auth',
@@ -105,9 +107,7 @@ TODO
 
 * Figure out how to install the RFC-standard MIBS on Debian so that `snmpwalk
   -v 2c -c public localhost system` will function.
-* Refactor the contents of snmpd.conf and snmptrapd.conf.  Provide better API
-  access to modify the contents of those files.  Possibly support USM and VACM?
-* Refactor rspec tests to better cover the various OS combinations.
+* Possibly support USM and VACM?
 
 Deprecation Warning
 -------------------
