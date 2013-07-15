@@ -90,6 +90,8 @@ class ipa::client (
   @@ipa::hostadd { "$::fqdn":
     otp      => $ipa::client::otp,
     desc     => $ipa::client::desc,
+    clientos => $::lsbdistdescription,
+    clientpf => $::manufacturer,
     locality => $ipa::client::locality,
     location => $ipa::client::location
   }
