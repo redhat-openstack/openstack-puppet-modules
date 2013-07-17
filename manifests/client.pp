@@ -21,7 +21,6 @@ class ipa::client (
   $domain       = {},
   $realm        = {},
   $sudo         = {},
-  $sudopw       = {},
   $otp          = {},
   $mkhomedir    = false,
   $ntp          = false,
@@ -51,6 +50,8 @@ class ipa::client (
 
   if $ipa::client::sudo {
     Ipa::Configsudo <<| |>>
+      name    => $::fqdn,
+      require => Ipa::Clientinstall[$::fqdn]
   }
 
   if defined(Package[$ipa::client::clntpkg]) {

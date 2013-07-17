@@ -31,6 +31,8 @@ class ipa::master (
 
   if $ipa::master::sudo {
     Ipa::Configsudo <<| |>>
+      name    => $::fqdn,
+      require => Ipa::Serverinstall[$::fqdn]
   }
 
   $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")

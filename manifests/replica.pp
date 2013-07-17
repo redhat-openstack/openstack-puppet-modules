@@ -29,6 +29,8 @@ class ipa::replica (
 
   if $ipa::replica::sudo {
     Ipa::Configsudo <<| |>>
+      name    => $::fqdn,
+      require => Ipa::Replicainstall[$::fqdn]
   }
 
   if $::osfamily != "RedHat" {
