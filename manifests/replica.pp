@@ -28,9 +28,10 @@ class ipa::replica (
   Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>>
 
   if $ipa::replica::sudo {
-    Ipa::Configsudo <<| |>>
+    Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
       require => Ipa::Replicainstall[$::fqdn]
+    }
   }
 
   if $::osfamily != "RedHat" {

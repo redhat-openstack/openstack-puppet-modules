@@ -49,9 +49,10 @@ class ipa::client (
   }
 
   if $ipa::client::sudo {
-    Ipa::Configsudo <<| |>>
+    Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
       require => Ipa::Clientinstall[$::fqdn]
+    }
   }
 
   if defined(Package[$ipa::client::clntpkg]) {
