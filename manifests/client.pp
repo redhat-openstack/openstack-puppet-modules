@@ -93,6 +93,12 @@ class ipa::client (
     }
 
     File["/etc/pki/nssdb"] -> Ipa::Clientinstall <<| |>>
+
+    if $ipa::client::sudo {
+      package { 'sudo-ldap':
+        ensure => installed
+      }
+    }
   }
 
   @@ipa::hostadd { "$::fqdn":
