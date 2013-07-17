@@ -13,8 +13,9 @@ define ipa::configsudo (
   augeas { "nsswitch-sudoers-${host}":
     context => '/files/etc/nsswitch.conf',
     changes => [
-      "set [database = 'sudoers']/service[1] files",
-      "set [database = 'sudoers']/service[2] ldap"
+      "set database[. = ''] sudoers",
+      "set database[. = 'sudoers']/service[1] files",
+      "set database[. = 'sudoers']/service[2] ldap"
     ]
   }
 
