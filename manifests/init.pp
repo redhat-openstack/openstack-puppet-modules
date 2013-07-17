@@ -181,7 +181,6 @@ class ipa (
       adminpw   => $ipa::adminpw,
       dspw      => $ipa::dspw,
       sudo      => $ipa::sudo,
-      sudopw    => $ipa::sudopw,
       domain    => $ipa::domain,
       kstart    => $ipa::kstart,
       sssd      => $ipa::sssd
@@ -198,7 +197,6 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
-      sudopw       => $ipa::sudopw,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
@@ -239,7 +237,6 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
-      sudopw       => $ipa::sudopw,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
