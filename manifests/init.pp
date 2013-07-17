@@ -23,6 +23,8 @@
 #  $sssdtools = true - Controls the installation of the SSSD tools package.
 #  $sssdtoolspkg = 'sssd-tools' - SSSD tools package.
 #  $sssd = true - Controls the option to start the SSSD service.
+#  $sudo = false - Controls the option to configure sudo in LDAP.
+#  $sudopw = undef - Defines the sudo user bind password.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
@@ -57,6 +59,8 @@ class ipa (
   $desc         = $ipa::params::desc,
   $locality     = $ipa::params::locality,
   $location     = $ipa::params::location,
+  $sudo         = $ipa::params::sudo,
+  $sudopw       = $ipa::params::sudopw,
   $svrpkg       = $ipa::params::svrpkg,
   $clntpkg      = $ipa::params::clntpkg,
   $ldaputils    = $ipa::params::ldaputils,
@@ -148,6 +152,8 @@ class ipa (
       realm   => $ipa::realm,
       adminpw => $ipa::adminpw,
       dspw    => $ipa::dspw,
+      sudo    => $ipa::sudo,
+      sudopw  => $ipa::sudopw,
       kstart  => $ipa::kstart,
       sssd    => $ipa::sssd
     }
@@ -174,6 +180,8 @@ class ipa (
       svrpkg    => $ipa::svrpkg,
       adminpw   => $ipa::adminpw,
       dspw      => $ipa::dspw,
+      sudo      => $ipa::sudo,
+      sudopw    => $ipa::sudopw,
       domain    => $ipa::domain,
       kstart    => $ipa::kstart,
       sssd      => $ipa::sssd
@@ -189,6 +197,8 @@ class ipa (
       domain       => $ipa::domain,
       realm        => $ipa::realm,
       otp          => $ipa::otp,
+      sudo         => $ipa::sudo,
+      sudopw       => $ipa::sudopw,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
@@ -228,6 +238,8 @@ class ipa (
       domain       => $ipa::domain,
       realm        => $ipa::realm,
       otp          => $ipa::otp,
+      sudo         => $ipa::sudo,
+      sudopw       => $ipa::sudopw,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,

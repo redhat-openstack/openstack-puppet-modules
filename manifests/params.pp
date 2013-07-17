@@ -36,6 +36,8 @@ class ipa::params {
   $sssdtools    = true
   $sssdtoolspkg = 'sssd-tools'
   $sssd         = true
+  $sudo         = false
+  $sudopw       = undef
   $svrpkg       = 'ipa-server'
   $clntpkg      = $::osfamily ? {
     Debian  => 'freeipa-client',

@@ -20,6 +20,8 @@ class ipa::client (
   $client       = {},
   $domain       = {},
   $realm        = {},
+  $sudo         = {},
+  $sudopw       = {},
   $otp          = {},
   $mkhomedir    = false,
   $ntp          = false,
@@ -45,6 +47,10 @@ class ipa::client (
     mkhomedir => $ipa::client::mkhomediropt,
     ntp       => $ipa::client::ntpopt,
     require   => Package[$ipa::client::clntpkg]
+  }
+
+  if $ipa::client::sudo {
+    Ipa::Configsudo <<| |>>
   }
 
   if defined(Package[$ipa::client::clntpkg]) {

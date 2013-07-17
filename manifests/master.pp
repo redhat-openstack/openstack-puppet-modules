@@ -17,6 +17,8 @@ class ipa::master (
   $domain  = {},
   $adminpw = {},
   $dspw    = {},
+  $sudo    = {},
+  $sudopw  = {},
   $kstart  = {},
   $sssd    = {}
 ) {
@@ -26,6 +28,10 @@ class ipa::master (
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
   Ipa::Hostadd <<| |>>
+
+  if $ipa::master::sudo {
+    Ipa::Configsudo <<| |>>
+  }
 
   $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")
 
@@ -96,5 +102,14 @@ class ipa::master (
     otp        => '', 
     mkhomedir  => '', 
     ntp        => ''
+  }
+
+  if $ipa::master::sudo {
+    @@ipa::configsudo { "$::fqdn":
+      masterfqdn => $::fqdn,
+      domain     => $ipa::master::domain,
+      adminpw    => $ipa::master::adminpw,
+      sudopw     => $ipa::master::sudopw
+    }
   }
 }
