@@ -30,6 +30,7 @@ define ipa::configsudo (
   exec { "set-sudopw-${host}":
     command     => "/bin/bash -c \"LDAPTLS_REQCERT=never /usr/bin/ldappasswd -x -H ldaps://${masterfqdn} -D uid=admin,cn=users,cn=accounts,${dc} -w ${adminpw} -s ${sudopw} uid=sudo,cn=sysaccounts,cn=etc,${dc}\"",
     unless      => "/bin/bash -c \"LDAPTLS_REQCERT=never /usr/bin/ldapsearch -x -H ldaps://${masterfqdn} -D uid=sudo,cn=sysaccounts,cn=etc,${dc} -w ${sudopw} -b cn=sysaccounts,cn=etc,${dc} uid=sudo\"",
+    onlyif      => "/usr/bin/test $(/bin/hostname -f) = $masterfqdn",
     logoutput   => "on_failure",
     refreshonly => true
   }
