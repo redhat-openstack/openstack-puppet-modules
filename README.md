@@ -145,6 +145,18 @@ Controls the option to start the SSSD service.
 
 Defaults to 'true'.
 
+####`sudo`
+
+Controls the option to configure sudo in LDAP.
+
+Defaults to 'false'.
+
+####`sudopw`
+
+Defines the sudo user bind password.
+
+Defaults to 'undef'.
+
 ####`svrpkg`
 
 IPA server package.
@@ -238,10 +250,6 @@ IPA master and replicas require a RedHat family OS.
 Does not manage master/replica load balancing.
 
 Clients will need additional configuration if a VIP is to be used.
-
-Only one IPA master server can be defined per Puppet master.
-
-Only one IPA domain/realm can be defined per Puppet master.
 
 Client configuration does not work with Ubuntu 8.04
 
