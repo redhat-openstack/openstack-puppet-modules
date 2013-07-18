@@ -157,13 +157,19 @@ Defines the sudo user bind password.
 
 Defaults to 'undef'.
 
+####`debiansudopkg`
+
+Controls the installation of the Debian sudo-ldap package.
+
+Defaults to 'true'.
+
 ####`automount`
 
 Controls the option to configure automounter maps in LDAP.
 
 Defaults to 'false'.
 
-###`autofs`
+####`autofs`
 
 Controls the option to start the autofs service.
 
