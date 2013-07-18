@@ -167,7 +167,7 @@ Defaults to 'false'.
 
 Controls the option to start the autofs service.
 
-Defaults to 'true'.
+Defaults to 'false'.
 
 ####`svrpkg`
 

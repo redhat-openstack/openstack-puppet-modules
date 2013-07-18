@@ -26,7 +26,7 @@
 #  $sudo = false - Controls the option to configure sudo in LDAP.
 #  $sudopw = undef - Defines the sudo user bind password.
 #  $automount = false - Controls the option to configure automounter maps in LDAP.
-#  $autofs = true - Controls the option to start the autofs service.
+#  $autofs = false - Controls the option to start the autofs service.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.

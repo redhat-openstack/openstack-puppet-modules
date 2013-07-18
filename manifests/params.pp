@@ -39,7 +39,7 @@ class ipa::params {
   $sudo         = false
   $sudopw       = undef
   $automount    = false
-  $autofs       = true
+  $autofs       = false
   $svrpkg       = 'ipa-server'
   $clntpkg      = $::osfamily ? {
     Debian  => 'freeipa-client',
