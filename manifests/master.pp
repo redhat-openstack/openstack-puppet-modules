@@ -42,6 +42,7 @@ class ipa::master (
   if $ipa::master::automount {
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
+      os      => $::osfamily,
       notify  => Service["autofs"],
       require => Ipa::Serverinstall[$::fqdn]
     }
@@ -134,6 +135,7 @@ class ipa::master (
   if $ipa::master::automount {
     @@ipa::configautomount { "$::fqdn":
       masterfqdn => $::fqdn,
+      os         => $::osfamily,
       domain     => $ipa::master::domain,
       realm      => $ipa::master::realm
     }

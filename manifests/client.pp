@@ -61,6 +61,7 @@ class ipa::client (
   if $ipa::client::automount {
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
+      os      => $::osfamily,
       notify  => Service["autofs"],
       require => Ipa::Clientinstall[$::fqdn]
     }

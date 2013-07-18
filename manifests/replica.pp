@@ -40,6 +40,7 @@ class ipa::replica (
   if $ipa::replica::automount {
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
+      os      => $::osfamily,
       notify  => Service["autofs"],
       require => Ipa::Replicainstall[$::fqdn]
     }

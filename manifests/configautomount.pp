@@ -1,5 +1,6 @@
 define ipa::configautomount (
   $host       = $name,
+  $os         = {},
   $domain     = {},
   $realm      = {},
   $masterfqdn = {}
@@ -8,6 +9,11 @@ define ipa::configautomount (
   Augeas["nsswitch-automount-${host}"] -> Augeas["sysconfig-autofs-${name}"] -> File["autofs_ldap_auth-${host}"]
 
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
+
+  $autofspath = $os ? {
+    Debian  => '/etc/default/autofs',
+    default => '/etc/sysconfig/autofs'
+  }
 
   augeas { "nsswitch-automount-${host}":
     context => '/files/etc/nsswitch.conf',
@@ -19,7 +25,7 @@ define ipa::configautomount (
   }
 
   augeas { "sysconfig-autofs-${name}":
-    context => "/files/etc/sysconfig/autofs",
+    context => "$autofspath",
     changes => [
       "set MAP_OBJECT_CLASS automountMap",
       "set ENTRY_OBJECT_CLASS automount",
