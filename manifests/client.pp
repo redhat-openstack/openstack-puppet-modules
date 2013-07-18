@@ -11,24 +11,25 @@
 # Sample Usage:
 #
 class ipa::client (
-  $clntpkg      = {},
-  $ldaputils    = {},
-  $ldaputilspkg = {},
-  $sssdtools    = {},
-  $sssdtoolspkg = {},
-  $sssd         = {},
-  $client       = {},
-  $domain       = {},
-  $realm        = {},
-  $sudo         = {},
-  $automount    = {},
-  $autofs       = {},
-  $otp          = {},
-  $mkhomedir    = false,
-  $ntp          = false,
-  $desc         = {},
-  $locality     = {},
-  $location     = {}
+  $clntpkg       = {},
+  $ldaputils     = {},
+  $ldaputilspkg  = {},
+  $sssdtools     = {},
+  $sssdtoolspkg  = {},
+  $sssd          = {},
+  $client        = {},
+  $domain        = {},
+  $realm         = {},
+  $sudo          = {},
+  $debiansudopkg = {},
+  $automount     = {},
+  $autofs        = {},
+  $otp           = {},
+  $mkhomedir     = false,
+  $ntp           = false,
+  $desc          = {},
+  $locality      = {},
+  $location      = {}
 ) {
 
   $mkhomediropt = $ipa::client::mkhomedir ? {
@@ -110,10 +111,11 @@ class ipa::client (
 
     File["/etc/pki/nssdb"] -> Ipa::Clientinstall <<| |>>
 
-    if $ipa::client::sudo {
-      package { 'sudo-ldap':
+    if $ipa::client::sudo and $ipa::client::debiansudopkg {
+      @package { 'sudo-ldap':
         ensure => installed
       }
+      realize Package['sudo-ldap']
     }
   }
 

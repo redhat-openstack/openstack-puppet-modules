@@ -25,6 +25,7 @@
 #  $sssd = true - Controls the option to start the SSSD service.
 #  $sudo = false - Controls the option to configure sudo in LDAP.
 #  $sudopw = undef - Defines the sudo user bind password.
+#  $debiansudopkg = true - Controls the installation of the Debian sudo-ldap package.
 #  $automount = false - Controls the option to configure automounter maps in LDAP.
 #  $autofs = false - Controls the option to start the autofs service.
 #  $svrpkg = 'ipa-server' - IPA server package.
@@ -45,33 +46,34 @@
 #
 #
 class ipa (
-  $master       = $ipa::params::master,
-  $replica      = $ipa::params::replica,
-  $client       = $ipa::params::client,
-  $cleanup      = $ipa::params::cleanup,
-  $domain       = downcase($ipa::params::domain),
-  $realm        = upcase($ipa::params::realm),
-  $adminpw      = $ipa::params::adminpw,
-  $dspw         = $ipa::params::dspw,
-  $otp          = $ipa::params::otp,
-  $dns          = $ipa::params::dns,
-  $mkhomedir    = $ipa::params::mkhomedir,
-  $ntp          = $ipa::params::ntp,
-  $kstart       = $ipa::params::kstart,
-  $desc         = $ipa::params::desc,
-  $locality     = $ipa::params::locality,
-  $location     = $ipa::params::location,
-  $sudo         = $ipa::params::sudo,
-  $sudopw       = $ipa::params::sudopw,
-  $automount    = $ipa::params::automount,
-  $autofs       = $ipa::params::autofs,
-  $svrpkg       = $ipa::params::svrpkg,
-  $clntpkg      = $ipa::params::clntpkg,
-  $ldaputils    = $ipa::params::ldaputils,
-  $ldaputilspkg = $ipa::params::ldaputilspkg,
-  $sssdtools    = $ipa::params::sssdtools,
-  $sssdtoolspkg = $ipa::params::sssdtoolspkg,
-  $sssd         = $ipa::params::sssd
+  $master        = $ipa::params::master,
+  $replica       = $ipa::params::replica,
+  $client        = $ipa::params::client,
+  $cleanup       = $ipa::params::cleanup,
+  $domain        = downcase($ipa::params::domain),
+  $realm         = upcase($ipa::params::realm),
+  $adminpw       = $ipa::params::adminpw,
+  $dspw          = $ipa::params::dspw,
+  $otp           = $ipa::params::otp,
+  $dns           = $ipa::params::dns,
+  $mkhomedir     = $ipa::params::mkhomedir,
+  $ntp           = $ipa::params::ntp,
+  $kstart        = $ipa::params::kstart,
+  $desc          = $ipa::params::desc,
+  $locality      = $ipa::params::locality,
+  $location      = $ipa::params::location,
+  $sudo          = $ipa::params::sudo,
+  $sudopw        = $ipa::params::sudopw,
+  $debiansudopkg = $ipa::params::debiansudopkg,
+  $automount     = $ipa::params::automount,
+  $autofs        = $ipa::params::autofs,
+  $svrpkg        = $ipa::params::svrpkg,
+  $clntpkg       = $ipa::params::clntpkg,
+  $ldaputils     = $ipa::params::ldaputils,
+  $ldaputilspkg  = $ipa::params::ldaputilspkg,
+  $sssdtools     = $ipa::params::sssdtools,
+  $sssdtoolspkg  = $ipa::params::sssdtoolspkg,
+  $sssd          = $ipa::params::sssd
 ) inherits ipa::params {
 
   @package { $ipa::svrpkg:
@@ -243,23 +245,24 @@ class ipa (
 
   if $ipa::client == true {
     class { "ipa::client":
-      clntpkg      => $ipa::clntpkg,
-      ldaputils    => $ipa::ldaputils,
-      ldaputilspkg => $ipa::ldaputilspkg,
-      sssdtools    => $ipa::sssdtools,
-      sssdtoolspkg => $ipa::sssdtoolspkg,
-      sssd         => $ipa::sssd,
-      domain       => $ipa::domain,
-      realm        => $ipa::realm,
-      otp          => $ipa::otp,
-      sudo         => $ipa::sudo,
-      automount    => $ipa::automount,
-      autofs       => $ipa::autofs,
-      mkhomedir    => $ipa::mkhomedir,
-      ntp          => $ipa::ntp,
-      desc         => $ipa::desc,
-      locality     => $ipa::locality,
-      location     => $ipa::location
+      clntpkg       => $ipa::clntpkg,
+      ldaputils     => $ipa::ldaputils,
+      ldaputilspkg  => $ipa::ldaputilspkg,
+      sssdtools     => $ipa::sssdtools,
+      sssdtoolspkg  => $ipa::sssdtoolspkg,
+      sssd          => $ipa::sssd,
+      domain        => $ipa::domain,
+      realm         => $ipa::realm,
+      otp           => $ipa::otp,
+      sudo          => $ipa::sudo,
+      debiansudopkg => $ipa::debiansudopkg,
+      automount     => $ipa::automount,
+      autofs        => $ipa::autofs,
+      mkhomedir     => $ipa::mkhomedir,
+      ntp           => $ipa::ntp,
+      desc          => $ipa::desc,
+      locality      => $ipa::locality,
+      location      => $ipa::location
     }
 
     if ! $ipa::domain {
