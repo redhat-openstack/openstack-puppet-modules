@@ -31,7 +31,6 @@ define ipa::configsudo (
         "set tls_checkpeer yes",
         "set bind_timelimit 5",
         "set timelimit 15",
-        "set uri ldap://${masterfqdn}",
         "set sudoers_base ou=sudoers,${dc}"
       ]
     }
