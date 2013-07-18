@@ -35,14 +35,14 @@ define ipa::configsudo (
         "set sudoers_base ou=sudoers,${dc}"
       ]
     }
-  }
-
-  file { "sudo-ldap-${host}":
-    path    => "/etc/sudo-ldap.conf",
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0640',
-    content => template('ipa/sudo-ldap.conf.erb')
+  } else {
+    file { "sudo-ldap-${host}":
+      path    => "/etc/sudo-ldap.conf",
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0640',
+      content => template('ipa/sudo-ldap.conf.erb')
+    }
   }
 
   exec { "set-sudopw-${host}":
