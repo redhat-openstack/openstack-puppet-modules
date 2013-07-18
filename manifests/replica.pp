@@ -11,14 +11,16 @@
 # Sample Usage:
 #
 class ipa::replica (
-  $svrpkg  = {},
-  $adminpw = {},
-  $dspw    = {},
-  $domain  = {},
-  $sudo    = {},
-  $sudopw  = {},
-  $kstart  = {},
-  $sssd    = {}
+  $svrpkg    = {},
+  $adminpw   = {},
+  $dspw      = {},
+  $domain    = {},
+  $sudo      = {},
+  $sudopw    = {},
+  $automount = {},
+  $autofs    = {},
+  $kstart    = {},
+  $sssd      = {}
 ) {
 
   Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
@@ -33,6 +35,18 @@ class ipa::replica (
       os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Replicainstall[$::fqdn]
     }
+  }
+
+  if $ipa::replica::automount {
+    Ipa::Configautomount <<| |>> {
+      name    => $::fqdn,
+      notify  => Service["autofs"],
+      require => Ipa::Replicainstall[$::fqdn]
+    }
+  }
+
+  if $ipa::replica::autofs {
+    realize Service["autofs"]
   }
 
   if $::osfamily != "RedHat" {

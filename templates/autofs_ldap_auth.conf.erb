@@ -3,5 +3,5 @@
      tlsrequired="no"
      authrequired="yes"
      authtype="GSSAPI"
-     clientprinc="host/<%= fqdn -%>@<%= realm -%>" 
+     clientprinc="host/<%= scope.lookupvar('::fqdn') -%>@<%= @realm -%>" 
 />

@@ -25,6 +25,8 @@
 #  $sssd = true - Controls the option to start the SSSD service.
 #  $sudo = false - Controls the option to configure sudo in LDAP.
 #  $sudopw = undef - Defines the sudo user bind password.
+#  $automount = false - Controls the option to configure automounter maps in LDAP.
+#  $autofs = true - Controls the option to start the autofs service.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
@@ -61,6 +63,8 @@ class ipa (
   $location     = $ipa::params::location,
   $sudo         = $ipa::params::sudo,
   $sudopw       = $ipa::params::sudopw,
+  $automount    = $ipa::params::automount,
+  $autofs       = $ipa::params::autofs,
   $svrpkg       = $ipa::params::svrpkg,
   $clntpkg      = $ipa::params::clntpkg,
   $ldaputils    = $ipa::params::ldaputils,
@@ -107,6 +111,12 @@ class ipa (
     }
   }
 
+  if $ipa::autofs {
+    @service { "autofs":
+      ensure  => 'running'
+    }
+  }
+
   @cron { "k5start_root":
     command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
     user    => 'root',
@@ -146,16 +156,18 @@ class ipa (
 
   if $ipa::master == true {
     class { "ipa::master":
-      svrpkg  => $ipa::svrpkg,
-      dns     => $ipa::dns,
-      domain  => $ipa::domain,
-      realm   => $ipa::realm,
-      adminpw => $ipa::adminpw,
-      dspw    => $ipa::dspw,
-      sudo    => $ipa::sudo,
-      sudopw  => $ipa::sudopw,
-      kstart  => $ipa::kstart,
-      sssd    => $ipa::sssd
+      svrpkg    => $ipa::svrpkg,
+      dns       => $ipa::dns,
+      domain    => $ipa::domain,
+      realm     => $ipa::realm,
+      adminpw   => $ipa::adminpw,
+      dspw      => $ipa::dspw,
+      sudo      => $ipa::sudo,
+      sudopw    => $ipa::sudopw,
+      automount => $ipa::automount,
+      autofs    => $ipa::autofs,
+      kstart    => $ipa::kstart,
+      sssd      => $ipa::sssd
     }
 
     if ! $ipa::domain {
@@ -181,6 +193,8 @@ class ipa (
       adminpw   => $ipa::adminpw,
       dspw      => $ipa::dspw,
       sudo      => $ipa::sudo,
+      automount => $ipa::automount,
+      autofs    => $ipa::autofs,
       domain    => $ipa::domain,
       kstart    => $ipa::kstart,
       sssd      => $ipa::sssd
@@ -197,6 +211,8 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
+      automount    => $ipa::automount,
+      autofs       => $ipa::autofs,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
@@ -237,6 +253,8 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
+      automount    => $ipa::automount,
+      autofs       => $ipa::autofs,
       mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,

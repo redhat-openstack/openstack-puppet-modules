@@ -21,6 +21,8 @@ class ipa::client (
   $domain       = {},
   $realm        = {},
   $sudo         = {},
+  $automount    = {},
+  $autofs       = {},
   $otp          = {},
   $mkhomedir    = false,
   $ntp          = false,
@@ -54,6 +56,18 @@ class ipa::client (
       os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Clientinstall[$::fqdn]
     }
+  }
+
+  if $ipa::client::automount {
+    Ipa::Configautomount <<| |>> {
+      name    => $::fqdn,
+      notify  => Service["autofs"],
+      require => Ipa::Clientinstall[$::fqdn]
+    }
+  }
+
+  if $ipa::client::autofs {
+    realize Service["autofs"]
   }
 
   if defined(Package[$ipa::client::clntpkg]) {

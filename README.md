@@ -157,6 +157,18 @@ Defines the sudo user bind password.
 
 Defaults to 'undef'.
 
+####`automount`
+
+Controls the option to configure automounter maps in LDAP.
+
+Defaults to 'false'.
+
+###`autofs`
+
+Controls the option to start the autofs service.
+
+Defaults to 'true'.
+
 ####`svrpkg`
 
 IPA server package.

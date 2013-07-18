@@ -11,16 +11,18 @@
 # Sample Usage:
 #
 class ipa::master (
-  $svrpkg  = {},
-  $dns     = {},
-  $realm   = {},
-  $domain  = {},
-  $adminpw = {},
-  $dspw    = {},
-  $sudo    = {},
-  $sudopw  = {},
-  $kstart  = {},
-  $sssd    = {}
+  $svrpkg    = {},
+  $dns       = {},
+  $realm     = {},
+  $domain    = {},
+  $adminpw   = {},
+  $dspw      = {},
+  $sudo      = {},
+  $sudopw    = {},
+  $automount = {},
+  $autofs    = {},
+  $kstart    = {},
+  $sssd      = {}
 ) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -35,6 +37,18 @@ class ipa::master (
       os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Serverinstall[$::fqdn]
     }
+  }
+
+  if $ipa::master::automount {
+    Ipa::Configautomount <<| |>> {
+      name    => $::fqdn,
+      notify  => Service["autofs"],
+      require => Ipa::Serverinstall[$::fqdn]
+    }
+  }
+
+  if $ipa::master::autofs {
+    realize Service["autofs"]
   }
 
   $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")
@@ -114,6 +128,14 @@ class ipa::master (
       domain     => $ipa::master::domain,
       adminpw    => $ipa::master::adminpw,
       sudopw     => $ipa::master::sudopw
+    }
+  }
+
+  if $ipa::master::automount {
+    @@ipa::configautomount { "$::fqdn":
+      masterfqdn => $::fqdn,
+      domain     => $ipa::master::domain,
+      realm      => $ipa::master::realm
     }
   }
 }

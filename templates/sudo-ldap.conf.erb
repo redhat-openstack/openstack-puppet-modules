@@ -1,5 +1,5 @@
-binddn uid=sudo,cn=sysaccounts,cn=etc,<%= dc %>
-bindpw <%= sudopw %>
+binddn uid=sudo,cn=sysaccounts,cn=etc,<%= @dc %>
+bindpw <%= @sudopw %>
 
 ssl start_tls
 tls_cacertfile /etc/ipa/ca.crt
@@ -8,5 +8,5 @@ tls_checkpeer yes
 bind_timelimit 5
 timelimit 15
 
-uri ldap://<%= masterfqdn %>
-sudoers_base ou=sudoers,<%= dc -%>
+uri ldap://<%= @masterfqdn %>
+sudoers_base ou=sudoers,<%= @dc %>
