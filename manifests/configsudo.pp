@@ -1,5 +1,6 @@
 define ipa::configsudo (
   $host       = $name,
+  $os         = {},
   $sudopw     = {},
   $adminpw    = {},
   $domain     = {},
@@ -17,6 +18,23 @@ define ipa::configsudo (
       "set database[. = 'sudoers']/service[1] files",
       "set database[. = 'sudoers']/service[2] ldap"
     ]
+  }
+
+  if $os == 'Redhat5' {
+    augeas { "sudo-ldap-rhel5-${host}":
+      context => '/files/etc/ldap.conf',
+      changes => [
+        "set binddn uid=sudo,cn=sysaccounts,cn=etc,${dc}",
+        "set bindpw $sudopw",
+        "set ssl start_tls",
+        "set tls_cacertfile /etc/ipa/ca.crt",
+        "set tls_checkpeer yes",
+        "set bind_timelimit 5",
+        "set timelimit 15",
+        "set uri ldap://${masterfqdn}",
+        "set sudoers_base ou=sudoers,${dc}"
+      ]
+    }
   }
 
   file { "sudo-ldap-${host}":

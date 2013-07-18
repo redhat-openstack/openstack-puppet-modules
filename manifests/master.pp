@@ -32,6 +32,7 @@ class ipa::master (
   if $ipa::master::sudo {
     Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
+      os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Serverinstall[$::fqdn]
     }
   }

@@ -30,6 +30,7 @@ class ipa::replica (
   if $ipa::replica::sudo {
     Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
+      os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Replicainstall[$::fqdn]
     }
   }

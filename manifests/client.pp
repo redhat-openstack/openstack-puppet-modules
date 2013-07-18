@@ -51,6 +51,7 @@ class ipa::client (
   if $ipa::client::sudo {
     Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
+      os      => "${::osfamily}${::lsbmajdistrelease}",
       require => Ipa::Clientinstall[$::fqdn]
     }
   }
