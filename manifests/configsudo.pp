@@ -7,7 +7,7 @@ define ipa::configsudo (
   $masterfqdn = {}
 ) {
 
-  Augeas["nsswitch-sudoers-${host}"] -> File["sudo-ldap-${host}"] ~> Exec["set-sudopw-${host}"]
+  Augeas["nsswitch-sudoers-${host}"] ~> Exec["set-sudopw-${host}"]
 
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
 
@@ -20,7 +20,7 @@ define ipa::configsudo (
     ]
   }
 
-  if $os == 'Redhat5' {
+  if $os == 'RedHat5' {
     augeas { "sudo-ldap-rhel5-${host}":
       context => '/files/etc/ldap.conf',
       changes => [
