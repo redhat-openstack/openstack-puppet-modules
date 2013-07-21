@@ -224,8 +224,6 @@ class ipa (
       automount    => $ipa::automount,
       autofs       => $ipa::autofs,
       mkhomedir    => $ipa::mkhomedir,
-      loadbalance  => $ipa::loadbalance,
-      ipaservers   => $ipa::ipaservers,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
       locality     => $ipa::locality,
