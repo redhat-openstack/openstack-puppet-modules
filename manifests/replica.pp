@@ -99,7 +99,7 @@ class ipa::replica (
   }
 
   if $ipa::replica::loadbalance {
-    ipa::loadbalanceconf { "$::fqdn":
+    ipa::loadbalanceconf { "replica-${::fqdn}":
       ipaservers => $ipa::replica::ipaservers,
       mkhomedir  => $ipa::replica::mkhomedir,
       require    => Ipa::Replicainstall[$::fqdn]

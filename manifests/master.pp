@@ -144,7 +144,7 @@ class ipa::master (
   }
 
   if $ipa::master::loadbalance {
-    ipa::loadbalanceconf { "$::fqdn":
+    ipa::loadbalanceconf { "master${::fqdn}":
       ipaservers => $ipa::master::ipaservers,
       mkhomedir  => $ipa::master::mkhomedir,
       require    => Ipa::Serverinstall[$::fqdn]

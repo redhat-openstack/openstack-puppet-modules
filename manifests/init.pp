@@ -206,6 +206,7 @@ class ipa (
       sudo        => $ipa::sudo,
       automount   => $ipa::automount,
       autofs      => $ipa::autofs,
+      mkhomedir    => $ipa::mkhomedir,
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
@@ -221,9 +222,6 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
-      automount    => $ipa::automount,
-      autofs       => $ipa::autofs,
-      mkhomedir    => $ipa::mkhomedir,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
       locality     => $ipa::locality,
