@@ -15,7 +15,6 @@ define ipa::loadbalanceconf (
 
   exec { "loadbalanceconf-authconfig-${host}":
     command     => "/usr/sbin/authconfig --ldapserver=${servers} --krb5kdc=${servers} --krb5adminserver=${servers} ${mkhomediropt} --update",
-    refreshonly => true,
     logoutput   => "on_failure"
   }<- notify { "Addling load balanced IPA directory services, please wait.": }
 
