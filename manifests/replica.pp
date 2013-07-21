@@ -14,8 +14,6 @@ class ipa::replica (
   $svrpkg      = {},
   $adminpw     = {},
   $dspw        = {},
-  $ipaservers  = [],
-  $loadbalance = {},
   $domain      = {},
   $sudo        = {},
   $sudopw      = {},
@@ -96,13 +94,5 @@ class ipa::replica (
   @@ipa::replicaprepare { "$::fqdn":
     dspw => $ipa::replica::dspw,
     tag  => "ipa-replica-prepare-${ipa::replica::domain}"
-  }
-
-  if $ipa::replica::loadbalance {
-    ipa::loadbalanceconf { "replica-${::fqdn}":
-      ipaservers => $ipa::replica::ipaservers,
-      mkhomedir  => $ipa::replica::mkhomedir,
-      require    => Ipa::Replicainstall[$::fqdn]
-    }
   }
 }
