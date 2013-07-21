@@ -91,6 +91,18 @@ Controls the option to configure a DNS zone with the IPA master setup.
 
 Defaults to 'false'.
 
+####`loadbalance`
+
+Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
+
+Defaults to 'false'.
+
+####`ipaservers`
+
+Defines an array of additional hostnames to be used in a load balanced IPA client configuration.
+
+Defaults to '[]'
+
 ####`mkhomedir`
 
 Controls the option to create user home directories on first login.
@@ -205,6 +217,7 @@ Here are a few simple usage examples. If you don't want to put your passwords in
 
 IPA master:
 
+```puppet
     node 'ipamaster.domain.name' {
       class { 'ipa':
         master  => true, # Only one master per Puppet master
@@ -214,9 +227,11 @@ IPA master:
         dspw    => hiera('some_passwd') # Using hiera
       }
     }
+```
 
 IPA replica:
 
+```puppet
     node 'ipareplica1.domain.name' {
       class { 'ipa':
         replica => true, # Multiple replicas can be setup.
@@ -227,9 +242,11 @@ IPA replica:
         otp     => 'onetimepasswd'
       }
     }
+```
 
 Another IPA replica:
 
+```puppet
     node 'ipareplica2.domain.name' {
       class { 'ipa':
         replica => true,
@@ -240,36 +257,39 @@ Another IPA replica:
         otp     => hiera('one_time_passwd')
       }
     }
+```
 
 IPA client:
 
+```puppet
     node 'ipaclient.domain.name' {
       class { 'ipa':
-        client  => true,
-        domain  => 'domain.name',
-        realm   => 'DOMAIN.NAME',
-        desc    => 'This is an IPA client', # This string will show up the the description attribute of the computer account.
-        otp     => hiera('one_time_passwd')
+        client      => true,
+        domain      => 'domain.name',
+        realm       => 'DOMAIN.NAME',
+        loadbalance => true,
+        ipaservers  => ['ipaloadbalanceddnsname.domain.name','ipamaster.domain.name','ipareplica1.domain.name','ipareplica2.domain.name'],
+        desc        => 'This is an IPA client', # This string will show up the the description attribute of the computer account.
+        otp         => hiera('one_time_passwd')
       }
     }
+```
 
 Cleanup parameter:
 
+```puppet
     node 'ipawhatever.domain.name' {
       class { 'ipa':
         cleanup => true # Removes IPA completely. Mutually exclusive from master, replica and client parameters.
       }
     }
+```
 
 ## Limitations
 
 IPA master and replicas require a RedHat family OS.
 
-Does not manage master/replica load balancing.
-
-Clients will need additional configuration if a VIP is to be used.
-
-Client configuration does not work with Ubuntu 8.04
+Client configuration does not work with Ubuntu 8.04 and Ubuntu 10.04
 
 ## License
 

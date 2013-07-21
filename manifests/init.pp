@@ -14,6 +14,8 @@
 #  $dspw = undef - Defines the IPA directory services password.
 #  $otp = undef - Defines an IPA client one-time-password.
 #  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
+#  $loadbalance = false - Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
+#  $ipaservers = [] - Defines an array of additional hostnames to be used in a load balanced IPA client configuration.
 #  $mkhomedir = false - Controls the option to create user home directories on first login.
 #  $ntp = false - Controls the option to configure NTP on a client.
 #  $kstart = true - Controls the installation of kstart.
@@ -52,6 +54,8 @@ class ipa (
   $cleanup       = $ipa::params::cleanup,
   $domain        = downcase($ipa::params::domain),
   $realm         = upcase($ipa::params::realm),
+  $ipaservers    = $ipa::params::ipaservers,
+  $loadbalance   = $ipa::params::loadbalance,
   $adminpw       = $ipa::params::adminpw,
   $dspw          = $ipa::params::dspw,
   $otp           = $ipa::params::otp,
@@ -158,18 +162,20 @@ class ipa (
 
   if $ipa::master == true {
     class { "ipa::master":
-      svrpkg    => $ipa::svrpkg,
-      dns       => $ipa::dns,
-      domain    => $ipa::domain,
-      realm     => $ipa::realm,
-      adminpw   => $ipa::adminpw,
-      dspw      => $ipa::dspw,
-      sudo      => $ipa::sudo,
-      sudopw    => $ipa::sudopw,
-      automount => $ipa::automount,
-      autofs    => $ipa::autofs,
-      kstart    => $ipa::kstart,
-      sssd      => $ipa::sssd
+      svrpkg      => $ipa::svrpkg,
+      dns         => $ipa::dns,
+      domain      => $ipa::domain,
+      realm       => $ipa::realm,
+      adminpw     => $ipa::adminpw,
+      dspw        => $ipa::dspw,
+      loadbalance => $ipa::loadbalance,
+      ipaservers  => $ipa::ipaservers,
+      sudo        => $ipa::sudo,
+      sudopw      => $ipa::sudopw,
+      automount   => $ipa::automount,
+      autofs      => $ipa::autofs,
+      kstart      => $ipa::kstart,
+      sssd        => $ipa::sssd
     }
 
     if ! $ipa::domain {
@@ -191,15 +197,17 @@ class ipa (
 
   if $ipa::replica == true {
     class { "ipa::replica":
-      svrpkg    => $ipa::svrpkg,
-      adminpw   => $ipa::adminpw,
-      dspw      => $ipa::dspw,
-      sudo      => $ipa::sudo,
-      automount => $ipa::automount,
-      autofs    => $ipa::autofs,
-      domain    => $ipa::domain,
-      kstart    => $ipa::kstart,
-      sssd      => $ipa::sssd
+      svrpkg      => $ipa::svrpkg,
+      domain      => $ipa::domain,
+      adminpw     => $ipa::adminpw,
+      dspw        => $ipa::dspw,
+      loadbalance => $ipa::loadbalance,
+      ipaservers  => $ipa::ipaservers,
+      sudo        => $ipa::sudo,
+      automount   => $ipa::automount,
+      autofs      => $ipa::autofs,
+      kstart      => $ipa::kstart,
+      sssd        => $ipa::sssd
     }
     
     class { "ipa::client":
@@ -216,6 +224,8 @@ class ipa (
       automount    => $ipa::automount,
       autofs       => $ipa::autofs,
       mkhomedir    => $ipa::mkhomedir,
+      loadbalance  => $ipa::loadbalance,
+      ipaservers   => $ipa::ipaservers,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
       locality     => $ipa::locality,
@@ -259,6 +269,8 @@ class ipa (
       automount     => $ipa::automount,
       autofs        => $ipa::autofs,
       mkhomedir     => $ipa::mkhomedir,
+      loadbalance   => $ipa::loadbalance,
+      ipaservers    => $ipa::ipaservers,
       ntp           => $ipa::ntp,
       desc          => $ipa::desc,
       locality      => $ipa::locality,

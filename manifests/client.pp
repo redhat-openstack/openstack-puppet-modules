@@ -25,6 +25,8 @@ class ipa::client (
   $automount     = {},
   $autofs        = {},
   $otp           = {},
+  $ipaservers    = [],
+  $loadbalance   = {},
   $mkhomedir     = false,
   $ntp           = false,
   $desc          = {},
@@ -32,22 +34,12 @@ class ipa::client (
   $location      = {}
 ) {
 
-  $mkhomediropt = $ipa::client::mkhomedir ? {
-    true    => '--mkhomedir',
-    default => ''
-  }
-
-  $ntpopt = $ipa::client::ntp ? {
-    true    => '',
-    default => '--no-ntp'
-  }
-
   Ipa::Clientinstall <<| |>> {
     name      => $::fqdn,
     otp       => $ipa::client::otp,
     domain    => $ipa::client::domain,
-    mkhomedir => $ipa::client::mkhomediropt,
-    ntp       => $ipa::client::ntpopt,
+    mkhomedir => $ipa::client::mkhomedir,
+    ntp       => $ipa::client::ntp,
     require   => Package[$ipa::client::clntpkg]
   }
 
@@ -126,5 +118,13 @@ class ipa::client (
     clientpf => $::manufacturer,
     locality => $ipa::client::locality,
     location => $ipa::client::location
+  }
+
+  if $ipa::client::loadbalance {
+    ipa::loadbalanceconf { "$::fqdn":
+      ipaservers => $ipa::client::ipaservers,
+      mkhomedir  => $ipa::client::mkhomedir,
+      require    => Ipa::Clientinstall[$::fqdn]
+    }
   }
 }

@@ -27,6 +27,8 @@ class ipa::params {
   $dspw          = undef
   $otp           = undef
   $dns           = false
+  $loadbalance   = false
+  $ipaservers    = []
   $mkhomedir     = false
   $ntp           = false
   $kstart        = true
