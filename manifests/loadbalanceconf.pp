@@ -6,7 +6,7 @@ define ipa::loadbalanceconf (
 
   Exec["loadbalanceconf-authconfig-${host}"] ~> Ipa::Flushcache["loadbalanceconf-flushcache-${host}"]
 
-  $servers = chop(inline_template('<% @ipaservers.each do |@ipaserver| -%><%= @ipaserver %>,<% done -%>'))
+  $servers = chop(inline_template('<% ipaservers.each do |ipaserver| -%><%= ipaserver %>,<% done -%>'))
 
   $mkhomediropt = $mkhomedir ? {
     true    => '--enablemkhomedir',
