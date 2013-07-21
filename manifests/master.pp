@@ -11,18 +11,20 @@
 # Sample Usage:
 #
 class ipa::master (
-  $svrpkg    = {},
-  $dns       = {},
-  $realm     = {},
-  $domain    = {},
-  $adminpw   = {},
-  $dspw      = {},
-  $sudo      = {},
-  $sudopw    = {},
-  $automount = {},
-  $autofs    = {},
-  $kstart    = {},
-  $sssd      = {}
+  $svrpkg      = {},
+  $dns         = {},
+  $realm       = {},
+  $domain      = {},
+  $ipaservers  = [],
+  $loadbalance = {},
+  $adminpw     = {},
+  $dspw        = {},
+  $sudo        = {},
+  $sudopw      = {},
+  $automount   = {},
+  $autofs      = {},
+  $kstart      = {},
+  $sssd        = {}
 ) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -138,6 +140,14 @@ class ipa::master (
       os         => $::osfamily,
       domain     => $ipa::master::domain,
       realm      => $ipa::master::realm
+    }
+  }
+
+  if $ipa::master::loadbalance {
+    ipa::loadbalanceconf { "$::fqdn":
+      ipaservers => $ipa::master::ipaservers,
+      mkhomedir  => $ipa::master::mkhomedir,
+      require    => Ipa::Serverinstall[$::fqdn]
     }
   }
 }

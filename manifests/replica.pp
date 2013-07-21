@@ -11,16 +11,18 @@
 # Sample Usage:
 #
 class ipa::replica (
-  $svrpkg    = {},
-  $adminpw   = {},
-  $dspw      = {},
-  $domain    = {},
-  $sudo      = {},
-  $sudopw    = {},
-  $automount = {},
-  $autofs    = {},
-  $kstart    = {},
-  $sssd      = {}
+  $svrpkg      = {},
+  $adminpw     = {},
+  $dspw        = {},
+  $ipaservers  = [],
+  $loadbalance = {},
+  $domain      = {},
+  $sudo        = {},
+  $sudopw      = {},
+  $automount   = {},
+  $autofs      = {},
+  $kstart      = {},
+  $sssd        = {}
 ) {
 
   Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
@@ -94,5 +96,13 @@ class ipa::replica (
   @@ipa::replicaprepare { "$::fqdn":
     dspw => $ipa::replica::dspw,
     tag  => "ipa-replica-prepare-${ipa::replica::domain}"
+  }
+
+  if $ipa::replica::loadbalance {
+    ipa::loadbalanceconf { "$::fqdn":
+      ipaservers => $ipa::replica::ipaservers,
+      mkhomedir  => $ipa::replica::mkhomedir,
+      require    => Ipa::Replicainstall[$::fqdn]
+    }
   }
 }
