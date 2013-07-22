@@ -22,7 +22,7 @@ define ipa::loadbalanceconf (
       exec { "loadbalanceconf-authconfig-${host}":
         command     => "/usr/sbin/authconfig --ldapserver=${servers} --ldapbasedn=${dc} --krb5kdc=${servers} --krb5adminserver=${servers} ${mkhomediropt} --update",
         logoutput   => "on_failure"
-      }<- notify { "Addling load balanced IPA directory services, please wait.": } ~> Ipa::Flushcache["loadbalanceconf-flushcache-${host}"]
+      }<- notify { "Configuring load balanced IPA directory services, please wait.": } ~> Ipa::Flushcache["loadbalanceconf-flushcache-${host}"]
     }
   }
 
