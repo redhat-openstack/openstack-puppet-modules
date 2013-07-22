@@ -122,6 +122,7 @@ class ipa::client (
 
   if $ipa::client::loadbalance {
     ipa::loadbalanceconf { "client-${::fqdn}":
+      domain     => $ipa::client::domain,
       ipaservers => $ipa::client::ipaservers,
       mkhomedir  => $ipa::client::mkhomedir,
       require    => Ipa::Clientinstall[$::fqdn]
