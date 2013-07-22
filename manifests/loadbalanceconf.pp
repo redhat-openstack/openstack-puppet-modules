@@ -13,7 +13,7 @@ define ipa::loadbalanceconf (
     'Debian': {
       notify { "Unable to configure load balanced IPA directory services for Debian.": }
     }
-    'default': {
+    default: {
       $mkhomediropt = $mkhomedir ? {
         true    => '--enablemkhomedir',
         default => ''
