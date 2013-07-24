@@ -144,7 +144,7 @@ class ipa::master (
   }
 
   if $ipa::master::loadbalance {
-    ipa::loadbalanceconf { "master${::fqdn}":
+    ipa::loadbalanceconf { "master-${::fqdn}":
       domain     => $ipa::master::domain,
       ipaservers => $ipa::master::ipaservers,
       mkhomedir  => $ipa::master::mkhomedir,
