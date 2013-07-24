@@ -129,5 +129,33 @@ describe Puppet::Type.type(:datacat_collector) do
         @collector.provider.exists?
       end
     end
+
+    describe "source_key parameter" do
+      before :each do
+        @source_key_collector = Puppet::Type.type(:datacat_collector).new({
+          :title => "/source_key",
+          :target_resource => @file,
+          :target_field => :source,
+          :source_key => 'source_path',
+        })
+        @catalog.add_resource @source_key_collector
+      end
+
+      it "should set an array when asked" do
+        @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
+          :title => "target one",
+          :target => "/source_key",
+          :data => { "source_path" => [ "one" ] },
+        })
+        @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
+          :title => "target two",
+          :target => "/source_key",
+          :data => { "source_path" => [ "two" ] },
+        })
+
+        @file.expects(:[]=).with(:source, [ 'one', 'two' ])
+        @source_key_collector.provider.exists?
+      end
+    end
   end
 end
