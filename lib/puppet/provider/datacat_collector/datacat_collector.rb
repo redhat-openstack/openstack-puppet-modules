@@ -23,12 +23,17 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
 
     debug "Collected #{data.inspect}"
 
-    vars = Puppet_X::Richardc::Datacat_Binding.new(data, resource[:template])
+    if @resource[:source_key]
+      debug "Selecting source_key #{@resource[:source_key]}"
+      content = data[@resource[:source_key]]
+    else
+      vars = Puppet_X::Richardc::Datacat_Binding.new(data, resource[:template])
 
-    debug "Applying template #{@resource[:template]}"
-    template = ERB.new(@resource[:template_body] || '', 0, '-')
-    template.filename = @resource[:template]
-    content = template.result(vars.get_binding)
+      debug "Applying template #{@resource[:template]}"
+      template = ERB.new(@resource[:template_body] || '', 0, '-')
+      template.filename = @resource[:template]
+      content = template.result(vars.get_binding)
+    end
 
     # Find the resource to modify
     target_resource = @resource[:target_resource]

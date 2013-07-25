@@ -48,6 +48,10 @@ Puppet::Type.newtype(:datacat_collector) do
     desc 'The field of the resource to put the results in'
   end
 
+  newparam(:source_key) do
+    desc 'If specified, the key from @data to copy across to the target_field (bypasses template evaluation)'
+  end
+
   newparam(:template) do
     desc 'Path to the template to render.  Used in error reporting.'
   end
