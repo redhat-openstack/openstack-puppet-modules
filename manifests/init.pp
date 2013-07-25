@@ -108,6 +108,7 @@ class ipa (
 
   @service { "ipa":
     ensure  => 'running',
+    enable  => true,
     require => Package[$ipa::svrpkg]
   }
 
@@ -120,7 +121,8 @@ class ipa (
 
   if $ipa::autofs {
     @service { "autofs":
-      ensure  => 'running'
+      ensure => 'running',
+      enable => true
     }
   }
 
