@@ -113,7 +113,8 @@ class ipa (
 
   if $ipa::sssd {
     @service { "sssd":
-      ensure  => 'running'
+      ensure => 'running',
+      enable => true
     }
   }
 
