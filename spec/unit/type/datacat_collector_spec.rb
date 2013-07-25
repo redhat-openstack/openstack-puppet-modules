@@ -144,11 +144,13 @@ describe Puppet::Type.type(:datacat_collector) do
       it "should set an array when asked" do
         @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
           :title => "target one",
+          :order => "10",
           :target => "/source_key",
           :data => { "source_path" => [ "one" ] },
         })
         @catalog.add_resource Puppet::Type.type(:datacat_fragment).new({
           :title => "target two",
+          :order => "20",
           :target => "/source_key",
           :data => { "source_path" => [ "two" ] },
         })
