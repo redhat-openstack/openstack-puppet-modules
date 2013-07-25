@@ -52,16 +52,16 @@ class ipa::client (
   }
 
   if $ipa::client::automount {
+    if $ipa::client::autofs {
+      realize Service["autofs"]
+    }
+
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
       os      => $::osfamily,
       notify  => Service["autofs"],
       require => Ipa::Clientinstall[$::fqdn]
     }
-  }
-
-  if $ipa::client::autofs {
-    realize Service["autofs"]
   }
 
   if defined(Package[$ipa::client::clntpkg]) {

@@ -201,9 +201,6 @@ class ipa (
       domain      => $ipa::domain,
       adminpw     => $ipa::adminpw,
       dspw        => $ipa::dspw,
-      sudo        => $ipa::sudo,
-      automount   => $ipa::automount,
-      autofs      => $ipa::autofs,
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
@@ -222,6 +219,8 @@ class ipa (
       realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
+      automount    => $ipa::automount,
+      autofs       => $ipa::autofs,
       ntp          => $ipa::ntp,
       desc         => $ipa::desc,
       locality     => $ipa::locality,

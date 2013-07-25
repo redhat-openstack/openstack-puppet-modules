@@ -42,16 +42,16 @@ class ipa::master (
   }
 
   if $ipa::master::automount {
+    if $ipa::master::autofs {
+      realize Service["autofs"]
+    }
+
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
       os      => $::osfamily,
       notify  => Service["autofs"],
       require => Ipa::Serverinstall[$::fqdn]
     }
-  }
-
-  if $ipa::master::autofs {
-    realize Service["autofs"]
   }
 
   $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")
