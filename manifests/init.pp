@@ -119,6 +119,14 @@ class ipa (
     }
   }
 
+  case $::osfamily {
+    'RedHat':
+      service { "oddjobd":
+        ensure => 'stopped',
+        enable => false
+      }
+  }
+
   if $ipa::autofs {
     @service { "autofs":
       ensure => 'running',
