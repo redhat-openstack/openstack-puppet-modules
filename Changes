@@ -1,3 +1,7 @@
+HEAD
+    Added `source_key` parameter to datacat_collector, to allow bypassing the
+    templating step.
+
 0.3.0 Tuesday 9th July, 2013
     Add collects parameter to the datacat_collector type, for acts-as
     relationships.
