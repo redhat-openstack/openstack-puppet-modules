@@ -28,7 +28,7 @@ define ipa::clientinstall (
     unless    => "/bin/bash -c \"LDAPTLS_REQCERT=never /usr/bin/ldapsearch -LLL -x -H ldaps://${masterfqdn} -D uid=admin,cn=users,cn=accounts,${dc} -b ${dc} -w ${adminpw} fqdn=${host} | /bin/grep ^krbPrincipalName\"",
     timeout   => '0',
     tries     => '60',
-    try_sleep => '60',
+    try_sleep => '90',
     logoutput => "on_failure"
   }<- notify { "Running IPA client install, please wait.": }
 
