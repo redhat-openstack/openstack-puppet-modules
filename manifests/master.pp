@@ -44,6 +44,7 @@ class ipa::master (
   if $ipa::master::automount {
     if $ipa::master::autofs {
       realize Service["autofs"]
+      realize Package["autofs"]
     }
 
     Ipa::Configautomount <<| |>> {

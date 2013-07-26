@@ -54,6 +54,7 @@ class ipa::client (
   if $ipa::client::automount {
     if $ipa::client::autofs {
       realize Service["autofs"]
+      realize Package["autofs"]
     }
 
     Ipa::Configautomount <<| |>> {
