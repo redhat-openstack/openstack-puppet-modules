@@ -13,6 +13,7 @@ Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
 ### Debian/Ubuntu
   
   * Debian 6 Squeeze: you can get ZooKeeper package from [Wheezy](http://packages.debian.org/wheezy/zookeeper) or [Sid](http://packages.debian.org/sid/zookeeper) repo.
+  * Debian 7 Wheezy: available in apt repository
 
 ## Basic Usage:
 
@@ -23,6 +24,8 @@ Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
    - `myid` - cluster-unique zookeeper's instance id (1-255)
    - `datastore`
    - `log_dir`
+   - `zookeeper_purgeInterval` - automatically will delete zookeeper logs (available since 3.4.0)
+   - `zookeeper_snapRetainCount` - number of snapshots that will be kept after purging (since 3.4.0)
 
 All parameters should be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 

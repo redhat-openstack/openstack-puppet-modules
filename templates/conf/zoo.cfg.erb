@@ -51,3 +51,14 @@ snapCount=<%= scope.lookupvar('zookeeper::params::snap_count') %>
 # read throughput the leader can be configured to not accept clients and focus
 # on coordination.
 #leaderServes=yes
+
+# Since 3.4.0: When enabled, ZooKeeper auto purge feature retains the autopurge.
+# snapRetainCount most recent snapshots and the corresponding transaction logs 
+# in the dataDir and dataLogDir respectively and deletes the rest. 
+# Defaults to 3. Minimum value is 3.
+autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::params::snapRetainCount') %>
+
+# Since 3.4.0: The time interval in hours for which the purge task has to be 
+# triggered. Set to a positive integer (1 and above) to enable the auto purging. 
+# Defaults to 0.
+autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::params::purgeInterval') %>

@@ -15,7 +15,12 @@ class zookeeper::params {
   $zoo_main    = hiera('zoo_main', 'org.apache.zookeeper.server.quorum.QuorumPeerMain')
   $lo4j_prop   = hiera('log4j_prop', 'INFO,ROLLINGFILE')
 
+
   $servers     = hiera_array('zookeeper_servers', [''])
+
+  $snapRetainCount = hiera('zookeeper_snapRetainCount', 3)
+  # interval in hours, purging enabled when >= 1
+  $purgeInterval   = hiera('zookeeper_purgeInterval', 0)
 
   # log4j properties
   $rollingfile_threshold = hiera('rollingfile_threshold', 'ERROR')
