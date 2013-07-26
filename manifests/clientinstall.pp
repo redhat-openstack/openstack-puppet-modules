@@ -29,6 +29,7 @@ define ipa::clientinstall (
     timeout   => '0',
     tries     => '60',
     try_sleep => '90',
+    returns   => ['0','1'],
     logoutput => "on_failure"
   }<- notify { "Running IPA client install, please wait.": }
 
