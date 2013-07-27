@@ -33,7 +33,6 @@ define ipa::serverinstall (
     exec { "admin_keytab":
       command => "/usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin'",
       cwd     => "${::ipaadminhomedir}",
-      creates => "${::ipaadminhomedir}/admin.keytab",
       unless  => "/usr/bin/kvno -c /tmp/krb5cc_${::ipaadminuidnumber} -k ${::ipaadminhomedir}/admin.keytab admin@${realm}",
       notify  => File["${::ipaadminhomedir}/admin.keytab"],
       require => [File["${::ipaadminhomedir}"], K5login["${::ipaadminhomedir}/.k5login"]]
