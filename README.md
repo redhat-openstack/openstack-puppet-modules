@@ -183,7 +183,7 @@ Defaults to 'false'.
 
 ####`autofs`
 
-Controls the option to start the autofs service.
+Controls the option to start the autofs service and install the autofs package.
 
 Defaults to 'false'.
 

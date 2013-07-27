@@ -29,7 +29,7 @@
 #  $sudopw = undef - Defines the sudo user bind password.
 #  $debiansudopkg = true - Controls the installation of the Debian sudo-ldap package.
 #  $automount = false - Controls the option to configure automounter maps in LDAP.
-#  $autofs = false - Controls the option to start the autofs service.
+#  $autofs = false - Controls the option to start the autofs service and install the autofs package.
 #  $svrpkg = 'ipa-server' - IPA server package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
