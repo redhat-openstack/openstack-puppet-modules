@@ -110,6 +110,19 @@ class ipa::client (
       }
       realize Package['sudo-ldap']
     }
+    
+    if $ipa::client::mkhomedir == true {
+      augeas {
+        'mkhomedir_pam' :
+          context => '/files/etc/pam.d/common-session',
+          changes => ['ins 1000000 after *[last()]',
+                      'set 1000000/type session',
+                      'set 1000000/control required',
+                      'set 1000000/module pam_mkhomedir.so',
+                      'set 1000000/argument umask=0022'],
+          onlyif  => "match *[type='session'][module='pam_mkhomedir.so'][argument='umask=0022'] size == 0"
+      }
+    }
   }
 
   @@ipa::hostadd { "$::fqdn":
