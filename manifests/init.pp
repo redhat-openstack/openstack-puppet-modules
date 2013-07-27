@@ -146,8 +146,12 @@ class ipa (
     require => Package["kstart"]
   }
 
-  if $ipa::cleanup == false {
-    if $ipa::master == true or $ipa::replica == true {
+  if $ipa::master and $ipa::replica {
+    fail("Conflicting options selected. Cannot configure both master and replica at once.")
+  } 
+
+  if ! $ipa::cleanup {
+    if $ipa::master or $ipa::replica {
       validate_re("$ipa::adminpw",'^.........*$',"Parameter 'adminpw' must be at least 8 characters long")
       validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
     }
@@ -161,8 +165,8 @@ class ipa (
     fail("Parameter 'realm' is not a valid domain name")
   }
 
-  if $ipa::cleanup == true {
-    if $ipa::master == true or $ipa::replica == true or $ipa::client == true {
+  if $ipa::cleanup {
+    if $ipa::master or $ipa::replica or $ipa::client {
       fail("Conflicting options selected. Cannot cleanup during an installation.")
     } else {
       ipa::cleanup { "$fqdn":
@@ -176,7 +180,7 @@ class ipa (
     }
   }
 
-  if $ipa::master == true {
+  if $ipa::master true {
     class { "ipa::master":
       svrpkg      => $ipa::svrpkg,
       dns         => $ipa::dns,
@@ -211,7 +215,7 @@ class ipa (
     }
   }
 
-  if $ipa::replica == true {
+  if $ipa::replica {
     class { "ipa::replica":
       svrpkg      => $ipa::svrpkg,
       domain      => $ipa::domain,
@@ -264,7 +268,7 @@ class ipa (
     }
   }
 
-  if $ipa::client == true {
+  if $ipa::client {
     class { "ipa::client":
       clntpkg       => $ipa::clntpkg,
       ldaputils     => $ipa::ldaputils,
