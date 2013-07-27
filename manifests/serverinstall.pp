@@ -31,11 +31,11 @@ define ipa::serverinstall (
     }
 
     exec { "admin_keytab":
-      command => ["/usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin'","/usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1"],
+      command => "/usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1",
       cwd     => "${::ipaadminhomedir}",
       unless  => "/usr/bin/kvno -c /tmp/krb5cc_${::ipaadminuidnumber} -k ${::ipaadminhomedir}/admin.keytab admin@${realm}",
       notify  => File["${::ipaadminhomedir}/admin.keytab"],
-      require => [File["${::ipaadminhomedir}"], K5login["${::ipaadminhomedir}/.k5login"]]
+      require => Cron["k5start_admin"]
     }
 
     cron { "k5start_admin":
