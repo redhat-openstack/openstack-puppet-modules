@@ -1,10 +1,10 @@
 name    'huit-ipa'
-version '0.0.1'
+version '1.0.1'
 source 'Harvard University Information Technology'
 author 'huit'
 license 'Apache License, Version 2.0'
 summary 'Manage IPA master, replicas, and clients'
-description 'This module enables Puppet management of IPA masters, replicas, and clients.  Master and replica support has been tested with RHEL6 and Red Hat IPA/FreeIPA 3.x; client support has also been tested with Ubuntu 10.04 LTS.'
+description 'This module enables Puppet management of IPA masters, replicas, and clients.  Master and replica support has been tested with RHEL6 and Red Hat IPA/FreeIPA 3.x; client support has also been tested with Ubuntu 10.04 LTS and Debian GNU/Linux 7.1 (wheezy).'
 project_page 'https://github.com/huit/puppet-ipa'
 
 ## Add dependencies, if any:
