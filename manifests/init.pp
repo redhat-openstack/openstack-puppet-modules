@@ -84,7 +84,7 @@ class ipa (
     ensure => installed
   }
 
-  @package {  $ipa::clntpkg:
+  @package { $ipa::clntpkg:
     ensure => installed
   }
 
@@ -180,7 +180,7 @@ class ipa (
     }
   }
 
-  if $ipa::master true {
+  if $ipa::master {
     class { "ipa::master":
       svrpkg      => $ipa::svrpkg,
       dns         => $ipa::dns,
