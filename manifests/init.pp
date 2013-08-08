@@ -32,10 +32,11 @@ define datacat(
   $seltype                 = undef,
   $seluser                 = undef
 ) {
-  file { $path:
+  file { $title:
+    path                    => $path,
     backup                  => $backup,
     checksum                => $checksum,
-    content                 => "To be replaced by datacat_collector[${path}]\n",
+    content                 => "To be replaced by datacat_collector[${title}]\n",
     force                   => $force,
     group                   => $group,
     mode                    => $mode,
@@ -61,9 +62,9 @@ define datacat(
   datacat_collector { $title:
     template        => $template_real,
     template_body   => $template_body_real,
-    target_resource => File[$path], # when we evaluate we modify the private data of this resource
+    target_resource => File[$title], # when we evaluate we modify the private data of this resource
     target_field    => 'content',
     collects        => $collects,
-    before          => File[$path], # we want to evaluate before that resource so it can do the work
+    before          => File[$title], # we want to evaluate before that resource so it can do the work
   }
 }
