@@ -1,3 +1,7 @@
+0.4.1 Thursday 8th August, 2013
+    Changes `datacat` define to name the wrapped `file` resource with the
+    $title of the resource itself.
+
 0.4.0 Thursday 25th July, 2013
     Added `source_key` parameter to datacat_collector, to allow bypassing the
     templating step.
