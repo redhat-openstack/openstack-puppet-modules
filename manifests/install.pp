@@ -12,11 +12,15 @@
 #
 class zookeeper::install {
   
-  zookeeper::requires { "$name-requires-zookeeper": package => 'zookeeper' }
+  #zookeeper::requires { "$name-requires-zookeeper": package => 'zookeeper' }
 
   # a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging 
   # for Debian packaging
   package { ['zookeeper']:
+    ensure => present
+  }
+  ->
+  package { ['zookeeperd']: #init.d scripts for zookeeper
     ensure => present
   }
 
