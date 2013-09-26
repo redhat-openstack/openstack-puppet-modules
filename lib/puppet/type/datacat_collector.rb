@@ -1,6 +1,6 @@
 Puppet::Type.newtype(:datacat_collector) do
-  desc %q{Manages the merginig of data and updating a related resource parameter.
-  
+  desc %q{Manages the merging of data and updating a related resource parameter.
+
   The `datacat_collector` type deeply merges a data hash from
   the `datacat_fragment` resources that target it.
 

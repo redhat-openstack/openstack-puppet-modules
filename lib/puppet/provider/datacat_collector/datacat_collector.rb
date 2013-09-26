@@ -1,8 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'richardc', 'datacat.rb'))
 
 Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
-  mk_resource_methods
-
   def exists?
     # Find the datacat_fragments that point at this collector
     our_names = [ resource[:path], resource[:collects] ].flatten.compact
