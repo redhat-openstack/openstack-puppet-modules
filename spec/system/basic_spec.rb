@@ -43,8 +43,9 @@ describe 'basic tests:' do
     end
   end
 
-  it 'should run the example from the documentation' do
-    puppet_apply('include demo3') do |r|
+  it 'should run the example from the documentation via a master' do
+    shell 'sudo sh -c "echo include demo3 > /etc/puppet/manifests/site.pp"'
+    puppet_agent(:debug => true) do |r|
       r.exit_code.should_not == 1
       r.refresh
       r.exit_code.should be_zero
