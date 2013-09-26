@@ -34,20 +34,41 @@ Puppet::Type.type(:datacat_collector).provide(:datacat_collector) do
     end
 
     # Find the resource to modify
-    target_resource = @resource[:target_resource]
+    target_resource = resolve_resource(@resource[:target_resource])
     target_field    = @resource[:target_field].to_sym
 
-    # Resolve it to the real resource
-    if target_resource.class == Puppet::Resource
-      target_resource.catalog = resource.catalog
-      target_resource = target_resource.resolve
+    unless target_resource.is_a?(Puppet::Type)
+      raise "Failed to map #{@resource[:target_resource]} into a resource, got to #{target_resource.inspect} of class #{target_resource.class}"
     end
 
-    debug "Found resource #{target_resource.inspect} class #{target_resource.class} field #{target_field.inspect}"
+    debug "Now setting field #{target_field.inspect}"
     target_resource[target_field] = content
-    debug "Have set resource #{target_resource.inspect}"
 
     # and claim there's nothing to change about *this* resource
     true
+  end
+
+  private
+
+  def resolve_resource(reference)
+    if reference.is_a?(Puppet::Type)
+      # Probably from a unit test, use the resource as-is
+      return reference
+    end
+
+    if reference.is_a?(Puppet::Resource)
+      # Already part resolved - puppet apply?
+      # join it to the catalog where we live and ask it to resolve
+      reference.catalog = resource.catalog
+      return reference.resolve
+    end
+
+    if reference.is_a?(String)
+      # 3.3.0 catalogs you need to resolve like so
+      return resource.catalog.resource(reference)
+    end
+
+    # If we got here, panic
+    raise "Don't know how to convert '#{reference.inspect}' of class #{reference.class} into a resource"
   end
 end
