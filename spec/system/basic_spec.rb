@@ -42,4 +42,16 @@ describe 'basic tests:' do
       r.stdout.should =~ /^bar: two, foo: one/
     end
   end
+
+  it 'should run the example from the documentation' do
+    puppet_apply('include demo3') do |r|
+      r.exit_code.should_not == 1
+      r.refresh
+      r.exit_code.should be_zero
+    end
+
+    shell('cat /tmp/demo3') do |r|
+      r.stdout.should =~ /\s+name device\n\s+members foo-ilo.example.com,foo.example.com/
+    end
+  end
 end

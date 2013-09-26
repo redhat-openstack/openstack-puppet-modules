@@ -17,5 +17,6 @@ RSpec.configure do |c|
     puppet_module_install(:source => proj_root, :module_name => 'datacat')
     puppet_module_install(:source => proj_root + '/spec/fixtures/modules/demo1', :module_name => 'demo1')
     puppet_module_install(:source => proj_root + '/spec/fixtures/modules/demo2', :module_name => 'demo2')
+    puppet_module_install(:source => proj_root + '/spec/fixtures/modules/demo3', :module_name => 'demo3')
   end
 end
