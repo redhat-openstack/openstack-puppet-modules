@@ -1,3 +1,6 @@
+0.4.2 Thursday 26th September, 2013
+    Fix for catalog changes in 3.3.0 when using master/agent (Github #4)
+
 0.4.1 Thursday 8th August, 2013
     Changes `datacat` define to name the wrapped `file` resource with the
     $title of the resource itself.
