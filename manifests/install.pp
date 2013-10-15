@@ -11,9 +11,8 @@
 # Sample Usage: include zookeeper::install
 #
 class zookeeper::install {
-
-  # a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging 
-  # for Debian packaging
+# a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging
+# for Debian packaging
   package { ['zookeeper']:
     ensure => present
   }
@@ -23,11 +22,11 @@ class zookeeper::install {
   }
   ->
   cron::daily{
-   'zookeeper_log_daily':
-    minute  => '40',
-    hour    => '2',
-    user    => 'root',
-    command => '/usr/lib/zookeeper/bin/zkCleanup.sh /var/zookeeper_datastore 3';
+    'zookeeper_log_daily':
+      minute  => '40',
+      hour    => '2',
+      user    => 'root',
+      command => '/usr/lib/zookeeper/bin/zkCleanup.sh /var/zookeeper_datastore 3';
   }
 
 }

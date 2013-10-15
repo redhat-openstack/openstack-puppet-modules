@@ -19,57 +19,58 @@ class zookeeper::config(
 ) {
   require zookeeper::install
 
-  file { "$cfg_dir":
+  file { $cfg_dir:
     ensure  => directory,
     owner   => $user,
     group   => $group,
     recurse => true,
+    mode    => '0644',
   }
 
-  file { "$log_dir":
+  file { $log_dir:
+    ensure  => directory,
     owner   => $user,
     group   => $group,
     recurse => true,
-    mode    => 644,
-    ensure  => directory,
+    mode    => '0644',
   }
 
-  file { "$datastore":
+  file { $datastore:
     ensure  => directory,
     owner   => $user,
     group   => $group,
-    mode    => 644,
+    mode    => '0644',
     recurse => true,
   }
 
   file { "${cfg_dir}/myid":
     ensure  => file,
-    content => template("zookeeper/conf/myid.erb"),
+    content => template('zookeeper/conf/myid.erb'),
     owner   => $user,
     group   => $group,
-    mode    => 644,
-    require => File["${cfg_dir}"]
+    mode    => '0644',
+    require => File[$cfg_dir]
   }
 
   file { "${cfg_dir}/zoo.cfg":
     owner   => $user,
     group   => $group,
-    mode    => 644,
-    content => template("zookeeper/conf/zoo.cfg.erb"),
+    mode    => '0644',
+    content => template('zookeeper/conf/zoo.cfg.erb'),
   }
 
   file { "${cfg_dir}/environment":
     owner   => $user,
     group   => $group,
-    mode    => 644,
-    content => template("zookeeper/conf/environment.erb"),
+    mode    => '0644',
+    content => template('zookeeper/conf/environment.erb'),
   }
 
   file { "${cfg_dir}/log4j.properties":
-    owner => $user,
-    group => $group,
-    mode => 644,
-    content => template("zookeeper/conf/log4j.properties.erb"),
+    owner   => $user,
+    group   => $group,
+    mode    => '0644',
+    content => template('zookeeper/conf/log4j.properties.erb'),
   }
 
 }
