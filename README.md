@@ -44,10 +44,9 @@ For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add to `
 
     mod 'zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
     
-### submodules    
+### submodules
 
 If you are versioning your puppet conf with git just add it as submodule, from your repository root:
 
     git submodule add git://github.com/deric/puppet-zookeeper.git modules/zookeeper
 
-    

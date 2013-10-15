@@ -1,3 +1,7 @@
 *.log
 *~
 .DS_Store
+spec/fixtures/*
+*.tmp
+.librarian
+

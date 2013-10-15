@@ -1,18 +1,15 @@
-require 'pathname'
-dir = Pathname.new(__FILE__).parent
-$LOAD_PATH.unshift(dir, dir + 'lib', dir + '../lib')
-
-require 'mocha'
 require 'puppet'
-gem 'rspec', '=1.2.9'
-require 'spec/autorun'
+require 'rspec'
+require 'puppetlabs_spec_helper/module_spec_helper'
 
-Spec::Runner.configure do |config|
-    config.mock_with :mocha
+fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
+
+RSpec.configure do |c|
+  c.module_path = File.join(fixture_path, 'modules')
+  c.manifest_dir = File.join(fixture_path, 'manifests')
+  # we don't want to run tests from submodules in fixtures/cron/..
+  c.pattern = "spec/*/*_spec.rb"
 end
 
-# We need this because the RAL uses 'should' as a method.  This
-# allows us the same behaviour but with a different method name.
-class Object
-    alias :must :should
-end
+Puppet::Util::Log.level = :warning
+Puppet::Util::Log.newdestination(:console)
