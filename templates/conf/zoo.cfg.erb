@@ -2,19 +2,19 @@
 
 # The number of milliseconds of each tick
 tickTime=2000
-# The number of ticks that the initial 
+# The number of ticks that the initial
 # synchronization phase can take
 initLimit=10
-# The number of ticks that can pass between 
+# The number of ticks that can pass between
 # sending a request and getting an acknowledgement
 syncLimit=5
 # the directory where the snapshot is stored.
-dataDir=<%= scope.lookupvar('zookeeper::params::datastore') %>
+dataDir=<%= scope.lookupvar('zookeeper::datastore') %>
 # Place the dataLogDir to a separate physical disc for better performance
 # dataLogDir=/disk2/zookeeper
 
 # the port at which the clients will connect
-clientPort=<%= scope.lookupvar('zookeeper::params::client_port') %>
+clientPort=<%= scope.lookupvar('zookeeper::client_port') %>
 
 # specify all zookeeper servers
 # The fist port is used by followers to connect to the leader
@@ -22,7 +22,10 @@ clientPort=<%= scope.lookupvar('zookeeper::params::client_port') %>
 #server.1=zookeeper1:2888:3888
 #server.2=zookeeper2:2888:3888
 #server.3=zookeeper3:2888:3888
-<% scope.lookupvar('zookeeper::params::servers').each do |h| -%><%= h %>
+<% servers = scope.lookupvar('zookeeper::servers') %>
+<% if servers != nil %>
+<% scope.lookupvar('zookeeper::servers').each do |h| -%><%= h %>
+<% end -%>
 <% end -%>
 
 
@@ -40,10 +43,10 @@ clientPort=<%= scope.lookupvar('zookeeper::params::client_port') %>
 # transaction log. After snapCount transactions are written to a log file a
 # snapshot is started and a new transaction log file is started. The default
 # snapCount is 10,000.
-snapCount=<%= scope.lookupvar('zookeeper::params::snap_count') %>
+snapCount=<%= scope.lookupvar('zookeeper::snap_count') %>
 
 # If this option is defined, requests will be will logged to a trace file named
-# traceFile.year.month.day. 
+# traceFile.year.month.day.
 #traceFile=
 
 # Leader accepts client connections. Default value is "yes". The leader machine
@@ -53,12 +56,12 @@ snapCount=<%= scope.lookupvar('zookeeper::params::snap_count') %>
 #leaderServes=yes
 
 # Since 3.4.0: When enabled, ZooKeeper auto purge feature retains the autopurge.
-# snapRetainCount most recent snapshots and the corresponding transaction logs 
-# in the dataDir and dataLogDir respectively and deletes the rest. 
+# snapRetainCount most recent snapshots and the corresponding transaction logs
+# in the dataDir and dataLogDir respectively and deletes the rest.
 # Defaults to 3. Minimum value is 3.
-autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::params::snapRetainCount') %>
+autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::snapRetainCount') %>
 
-# Since 3.4.0: The time interval in hours for which the purge task has to be 
-# triggered. Set to a positive integer (1 and above) to enable the auto purging. 
+# Since 3.4.0: The time interval in hours for which the purge task has to be
+# triggered. Set to a positive integer (1 and above) to enable the auto purging.
 # Defaults to 0.
-autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::params::purgeInterval') %>
+autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::purgeInterval') %>
