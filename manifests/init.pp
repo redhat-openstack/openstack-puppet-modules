@@ -17,7 +17,6 @@ class zookeeper(
   $id          = '1',
   $datastore   = '/var/lib/zookeeper',
   $client_port = 2181,
-  $snap_count  = 10000,
   $log_dir     = '/var/log/zookeeper',
   $cfg_dir     = '/etc/zookeeper/conf',
   $user        = 'zookeeper',
@@ -29,6 +28,7 @@ class zookeeper(
   $zoo_main    = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
   $lo4j_prop   = 'INFO,ROLLINGFILE',
   $servers     = [''],
+  $snap_count        = 10000,
   # since zookeeper 3.4, for earlier version cron task might be used
   $snap_retain_count = 3,
   # interval in hours, purging enabled when >= 1
@@ -40,16 +40,28 @@ class zookeeper(
 
   anchor { 'zookeeper::start': }->
   class { 'zookeeper::install':
-    snap_retain_count  => $snap_retain_count,
-    datastore          => $datastore,
+    snap_retain_count => $snap_retain_count,
+    datastore         => $datastore,
   }->
   class { 'zookeeper::config':
-    id        => $id,
-    user      => $user,
-    group     => $group,
-    log_dir   => $log_dir,
-    cfg_dir   => $cfg_dir,
-    datastore => $datastore
+    id                    => $id,
+    datastore             => $datastore,
+    client_port           => $client_port,
+    log_dir               => $log_dir,
+    cfg_dir               => $cfg_dir,
+    user                  => $user,
+    group                 => $group,
+    java_bin              => $java_bin,
+    java_opts             => $java_opts,
+    pid_dir               => $pid_dir,
+    zoo_main              => $zoo_main,
+    log4j_prop            => $log4j_prop,
+    servers               => $servers,
+    snap_count            => $snap_count,
+    snap_retain_count     => $snap_retain_count,
+    purge_interval        => $purge_interval,
+    rollingfile_threshold => $rollingfile_threshold,
+    tracefile_threshold   => $tracefile_threshold
   }->
   anchor { 'zookeeper::end': }
 
