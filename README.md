@@ -1,9 +1,8 @@
 #puppet-zookeeper
 
+[![Build Status](https://travis-ci.org/deric/puppet-zookeeper.png?branch=master)](https://travis-ci.org/deric/puppet-zookeeper)
 
 A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper is a high-performance coordination service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
-
-Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
 
 ## Requirements
 
@@ -21,20 +20,20 @@ Tested on Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
     
 ##  Parameters
 
-   - `myid` - cluster-unique zookeeper's instance id (1-255)
+   - `id` - cluster-unique zookeeper's instance id (1-255)
    - `datastore`
    - `log_dir`
-   - `zookeeper_purgeInterval` - automatically will delete zookeeper logs (available since 3.4.0)
-   - `zookeeper_snapRetainCount` - number of snapshots that will be kept after purging (since 3.4.0)
+   - `purge_interval` - automatically will delete zookeeper logs (available since 3.4.0)
+   - `snap_retain_count` - number of snapshots that will be kept after purging (since 3.4.0)
 
-All parameters should be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
+and many others, see the `init.pp` file for more details.
 
-     myid: 1
-     client_port: 2181
-     datastore: '/var/lib/zookeeper'
+All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 
+     zookeeper::id: 1
+     zookeeper::client_port: 2181
+     zookeeper::datastore: '/var/lib/zookeeper'
 
-For more parameters see `manifests/params.pp`
 
 ## Install
 
@@ -49,4 +48,16 @@ For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add to `
 If you are versioning your puppet conf with git just add it as submodule, from your repository root:
 
     git submodule add git://github.com/deric/puppet-zookeeper.git modules/zookeeper
+
+
+## Supported platforms
+
+  * Debian/Ubuntu
+
+### Tested on:
+  
+  * Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
+  * Debian 7 Wheezy
+  * Ubuntu 12.04.03 LTS
+
 
