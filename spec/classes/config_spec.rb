@@ -69,12 +69,12 @@ describe 'zookeeper::config' do
       :snap_count    => snap_cnt,
     } }
 
-    it { should contain_file('/etc/zookeeper/conf/environment')
-        .with_content(/INFO,ROLLINGFILE/)
+    it {
+      should contain_file('/etc/zookeeper/conf/environment').with_content(/INFO,ROLLINGFILE/)
     }
 
-    it { should contain_file('/etc/zookeeper/conf/zoo.cfg')
-        .with_content(/snapCount=15000/)
+    it {
+      should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/snapCount=15000/)
     }
   end
 
