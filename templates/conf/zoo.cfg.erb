@@ -22,12 +22,8 @@ clientPort=<%= scope.lookupvar('zookeeper::config::client_port') %>
 #server.1=zookeeper1:2888:3888
 #server.2=zookeeper2:2888:3888
 #server.3=zookeeper3:2888:3888
-<% servers = scope.lookupvar('zookeeper::config::servers') %>
-<% if servers != nil %>
 <% scope.lookupvar('zookeeper::config::servers').each do |h| -%><%= h %>
 <% end -%>
-<% end -%>
-
 
 # To avoid seeks ZooKeeper allocates space in the transaction log file in
 # blocks of preAllocSize kilobytes. The default block size is 64M. One reason

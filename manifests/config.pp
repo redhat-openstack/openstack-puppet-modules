@@ -5,6 +5,14 @@
 # Parameters:
 # [* id *]  zookeeper instance id: between 1 and 255
 #
+# [* servers *] an Array - specify all zookeeper servers
+# The fist port is used by followers to connect to the leader
+# The second one is used for leader election
+#     server.1=zookeeper1:2888:3888
+#     server.2=zookeeper2:2888:3888
+#     server.3=zookeeper3:2888:3888
+#
+#
 # Actions: None
 #
 # Requires: zookeeper::install, zookeeper
