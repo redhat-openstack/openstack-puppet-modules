@@ -39,4 +39,25 @@ describe 'zookeeper::config' do
     it_behaves_like 'debian-install', 'Debian', 'wheezy'
   end
 
+  context 'custom parameters' do
+    # set custom params
+    let(:params) { {
+      :id      => '2',
+      :user    => 'zoo',
+      :group   => 'zoo',
+      :cfg_dir => '/var/lib/zookeeper/conf',
+      :log_dir => '/var/lib/zookeeper/log',
+    } }
+
+
+    let(:user)    { 'zoo' }
+    let(:group)   { 'zoo' }
+    let(:cfg_dir) { '/var/lib/zookeeper/conf' }
+    let(:log_dir) { '/var/lib/zookeeper/log' }
+    let(:id_file) { '/var/lib/zookeeper/conf/myid' }
+    let(:myid)    { /2/ }
+
+    it_behaves_like 'debian-install', 'Debian', 'wheezy'
+  end
+
 end
