@@ -33,7 +33,7 @@ class zookeeper::config(
   $pid_dir     = '/var/run/zookeeper',
   $pid_file    = '$PIDDIR/zookeeper.pid',
   $zoo_main    = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
-  $lo4j_prop   = 'INFO,ROLLINGFILE',
+  $log4j_prop   = 'INFO,ROLLINGFILE',
   $servers     = [''],
   # since zookeeper 3.4, for earlier version cron task might be used
   $snap_retain_count = 3,

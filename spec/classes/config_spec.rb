@@ -60,4 +60,22 @@ describe 'zookeeper::config' do
     it_behaves_like 'debian-install', 'Debian', 'wheezy'
   end
 
+  context 'extra parameters' do
+
+    snap_cnt = 15000
+    # set custom params
+    let(:params) { {
+      :log4j_prop    => 'INFO,ROLLINGFILE',
+      :snap_count    => snap_cnt,
+    } }
+
+    it { should contain_file('/etc/zookeeper/conf/environment')
+        .with_content(/INFO,ROLLINGFILE/)
+    }
+
+    it { should contain_file('/etc/zookeeper/conf/zoo.cfg')
+        .with_content(/snapCount=15000/)
+    }
+  end
+
 end
