@@ -63,12 +63,8 @@ class zookeeper(
     rollingfile_threshold => $rollingfile_threshold,
     tracefile_threshold   => $tracefile_threshold
   }->
+  class { 'zookeeper::service': }
+  ->
   anchor { 'zookeeper::end': }
-
-  service { 'zookeeper':
-    ensure  => 'running',
-    enable  => true,
-    require => Anchor['zookeeper::end']
-  }
 
 }

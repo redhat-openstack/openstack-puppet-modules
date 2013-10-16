@@ -75,7 +75,8 @@ class zookeeper::config(
     owner   => $user,
     group   => $group,
     mode    => '0644',
-    require => File[$cfg_dir]
+    require => File[$cfg_dir],
+    notify => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/zoo.cfg":
@@ -83,6 +84,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/zoo.cfg.erb'),
+    notify => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/environment":
@@ -90,6 +92,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/environment.erb'),
+    notify => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/log4j.properties":
@@ -97,6 +100,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/log4j.properties.erb'),
+    notify => Class['zookeeper::service'],
   }
 
 }
