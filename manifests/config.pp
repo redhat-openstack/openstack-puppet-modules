@@ -2,7 +2,8 @@
 #
 # This module manages the zookeeper configuration directories
 #
-# Parameters: None
+# Parameters:
+# [* id *]  zookeeper instance id: between 1 and 255
 #
 # Actions: None
 #
@@ -11,6 +12,7 @@
 # Sample Usage: include zookeeper::config
 #
 class zookeeper::config(
+  $id      = 1
   $user    = 'zookeeper',
   $group   = 'zookeeper',
   $log_dir = '/var/log/zookeeper',

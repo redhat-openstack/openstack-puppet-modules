@@ -10,7 +10,11 @@
 #
 # Sample Usage: include zookeeper::install
 #
-class zookeeper::install {
+class zookeeper::install(
+  $snap_retain_count = 3,
+  $cleanup_sh        = '/usr/lib/zookeeper/bin/zkCleanup.sh',
+  $datastore         = '/var/lib/zookeeper',
+) {
 # a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging
 # for Debian packaging
   package { ['zookeeper']:
@@ -26,7 +30,7 @@ class zookeeper::install {
       minute  => '40',
       hour    => '2',
       user    => 'root',
-      command => '/usr/lib/zookeeper/bin/zkCleanup.sh /var/zookeeper_datastore 3';
+      command => "${cleanup_sh} ${datastore} ${snap_retain_count}";
   }
 
 }

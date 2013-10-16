@@ -29,29 +29,34 @@ class zookeeper(
   $zoo_main    = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
   $lo4j_prop   = 'INFO,ROLLINGFILE',
   $servers     = [''],
-  $snapRetainCount = 3,
+  # since zookeeper 3.4, for earlier version cron task might be used
+  $snap_retain_count = 3,
   # interval in hours, purging enabled when >= 1
-  $purgeInterval   = 0,
+  $purge_interval   = 0,
   # log4j properties
   $rollingfile_threshold = 'ERROR',
   $tracefile_threshold    = 'TRACE',
 ) {
 
-  #anchor { 'zookeeper::start': }->
-  class { 'zookeeper::install': }->
+  anchor { 'zookeeper::start': }->
+  class { 'zookeeper::install':
+    snap_retain_count  => $snap_retain_count,
+    datastore          => $datastore,
+  }->
   class { 'zookeeper::config':
+    id        => $id,
     user      => $user,
     group     => $group,
     log_dir   => $log_dir,
     cfg_dir   => $cfg_dir,
     datastore => $datastore
-  }#->
-  #anchor { 'zookeeper::end': }
+  }->
+  anchor { 'zookeeper::end': }
 
   service { 'zookeeper':
     ensure  => 'running',
     enable  => true,
-    #require => Anchor['zookeeper::end']
+    require => Anchor['zookeeper::end']
   }
 
 }

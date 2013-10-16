@@ -59,9 +59,9 @@ snapCount=<%= scope.lookupvar('zookeeper::snap_count') %>
 # snapRetainCount most recent snapshots and the corresponding transaction logs
 # in the dataDir and dataLogDir respectively and deletes the rest.
 # Defaults to 3. Minimum value is 3.
-autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::snapRetainCount') %>
+autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::snap_retain_count') %>
 
 # Since 3.4.0: The time interval in hours for which the purge task has to be
 # triggered. Set to a positive integer (1 and above) to enable the auto purging.
 # Defaults to 0.
-autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::purgeInterval') %>
+autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::purge_interval') %>
