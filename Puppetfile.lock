@@ -1,8 +1,2 @@
-FORGE
-  remote: http://forge.puppetlabs.com
-  specs:
-    torrancew/cron (0.1.0)
-
 DEPENDENCIES
-  torrancew/cron (>= 0.0.3)
 

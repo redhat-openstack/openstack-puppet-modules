@@ -1,7 +1,8 @@
 # Class: zookeeper::service
 
-class zookeeper::service{
-
+class zookeeper::service(
+  $cfg_dir = '/etc/zookeeper/conf',
+){
   require zookeeper::install
 
   service { 'zookeeper':
@@ -9,6 +10,9 @@ class zookeeper::service{
     hasstatus  => true,
     hasrestart => true,
     enable     => true,
-    require    => Package['zookeeperd'],
+    require    => [
+      Package['zookeeperd'],
+      File["${cfg_dir}/zoo.cfg"]
+    ]
   }
 }

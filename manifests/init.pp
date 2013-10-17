@@ -42,6 +42,7 @@ class zookeeper(
   class { 'zookeeper::install':
     snap_retain_count => $snap_retain_count,
     datastore         => $datastore,
+    user              => $user,
   }->
   class { 'zookeeper::config':
     id                    => $id,
@@ -63,7 +64,9 @@ class zookeeper(
     rollingfile_threshold => $rollingfile_threshold,
     tracefile_threshold   => $tracefile_threshold
   }->
-  class { 'zookeeper::service': }
+  class { 'zookeeper::service':
+    cfg_dir => $cfg_dir,
+  }
   ->
   anchor { 'zookeeper::end': }
 
