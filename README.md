@@ -6,18 +6,19 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 
 ## Requirements
 
-  * puppet 3 (or puppet 2.7+ and hiera gem)
+  * Puppet 2.7, Puppet 3.x
+  * Ruby 1.8.7, 1.9.3, 2.0.0
   * binary package of zookeeper
-  
+
 ### Debian/Ubuntu
-  
+
   * Debian 6 Squeeze: you can get ZooKeeper package from [Wheezy](http://packages.debian.org/wheezy/zookeeper) or [Sid](http://packages.debian.org/sid/zookeeper) repo.
   * Debian 7 Wheezy: available in apt repository
 
 ## Basic Usage:
 
     class { 'zookeeper': }
-    
+
 ##  Parameters
 
    - `id` - cluster-unique zookeeper's instance id (1-255)
@@ -27,6 +28,8 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
    - `snap_retain_count` - number of snapshots that will be kept after purging (since 3.4.0)
 
 and many others, see the `init.pp` file for more details.
+
+## Hiera Support
 
 All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 
@@ -42,7 +45,7 @@ All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml
 For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add to `Puppetfile`
 
     mod 'zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
-    
+
 ### submodules
 
 If you are versioning your puppet conf with git just add it as submodule, from your repository root:
@@ -55,7 +58,7 @@ If you are versioning your puppet conf with git just add it as submodule, from y
   * Debian/Ubuntu
 
 ### Tested on:
-  
+
   * Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
   * Debian 7 Wheezy
   * Ubuntu 12.04.03 LTS
