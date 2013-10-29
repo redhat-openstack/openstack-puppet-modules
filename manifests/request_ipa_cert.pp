@@ -75,14 +75,15 @@ define certmonger::request_ipa_cert (
           owner   => $owner_id,
           group   => $group_id,
           require => [
-            Exec['get_cert_nss']
+            Exec["get_cert_nss_${title}"]
           ],
         }
-        exec {'get_cert_nss':
+        exec {"get_cert_nss_${title}":
           command => "/usr/bin/ipa-getcert request ${options} -K ${principal}",
           creates => "${basedir}/${dbname}/requested/${principal_no_slash}",
           require => [
               Package['certmonger'],
+              File["${basedir}/${dbname}/password.conf"],
           ],
         }
     }
@@ -107,7 +108,7 @@ define certmonger::request_ipa_cert (
           owner   => $owner_id,
           group   => $group_id,
         }
-        exec {'get_cert_openssl':
+        exec {"get_cert_openssl_${title}":
           command => "/usr/bin/ipa-getcert request ${options} -K ${principal}",
           creates => [
             "${key}",
@@ -120,7 +121,7 @@ define certmonger::request_ipa_cert (
               File["${key}"],
               File["${cert}"],
           ],
-          notify => Exec['wait_for_certmonger'],
+          notify => Exec["wait_for_certmonger_${title}"],
         }
 
         # We need certmonger to finish creating the key before we
@@ -129,7 +130,7 @@ define certmonger::request_ipa_cert (
         # This will call getcert to check the status of our cert
         # 5 times. This doesn't short circuit though, so all 5 will
         # always run, causing a 5-second delay.
-        exec {'wait_for_certmonger':
+        exec {"wait_for_certmonger_${title}":
           command => "true",
           onlyif => [
             "sleep 1 && getcert list -f ${cert}",
