@@ -5,11 +5,12 @@ class fluentd::packages {
       fail("RedHat and CentOS are not supported yet. Waiting for your pullrequest")
     }
     'debian': {
+
       # http://packages.treasure-data.com/debian/pool/contrib/t/td-agent/
       apt::source { 'treasure-data':
         location    => "http://packages.treasure-data.com/debian",
-        release     => "wheezy",
-        repos       => "main contrib non-free",
+        release     => "lucid",
+        repos       => "contrib",
         include_src => false,
       }->
       package{[

@@ -1,10 +1,11 @@
 <source>
   type <%= @type %>
   <% @config.each do |val| -%>
-  Some stuff with <%= val %>
-  <% end -%>
+  <%= val %>
   path /var/log/apache2/access.log
   pos_file /var/log/td-agent/apache2_access.log.pos
+  <% end -%>
+
   format <%= @format %>
   tag <%= @name %>
 </source>
