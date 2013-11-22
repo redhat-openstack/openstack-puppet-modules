@@ -214,6 +214,7 @@ class snmp (
   $rw_network              = $snmp::params::rw_network,
   $contact                 = $snmp::params::contact,
   $location                = $snmp::params::location,
+  $services                = $snmp::params::services,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
   $dlmod                   = $snmp::params::dlmod,
