@@ -1,5 +1,5 @@
 name 'saz-timezone'
-version '1.1.0'
+version '1.2.0'
 
 author 'saz'
 license 'Apache License, Version 2.0'
