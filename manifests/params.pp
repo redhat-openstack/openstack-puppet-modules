@@ -1,6 +1,6 @@
 class timezone::params {
   case $::operatingsystem {
-    /(Ubuntu|Debian|Gentoo|CentOS|Amazon)/: {
+    /(Ubuntu|Debian|Gentoo|CentOS|Amazon|OracleLinux)/: {
       $package = 'tzdata'
       $zoneinfo_dir = '/usr/share/zoneinfo/'
       $config_file = '/etc/localtime'
