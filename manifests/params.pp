@@ -1,12 +1,16 @@
 class timezone::params {
-  case $::operatingsystem {
-    /(Ubuntu|Debian|Gentoo|CentOS|Amazon|OracleLinux)/: {
+  case $::osfamily {
+    'Debian', 'RedHat': {
       $package = 'tzdata'
       $zoneinfo_dir = '/usr/share/zoneinfo/'
       $config_file = '/etc/localtime'
     }
     default: {
-      fail("Unsupported platform: ${::operatingsystem}")
+      case $::operatingsystem {
+        default: {
+          fail("Unsupported platform: ${::osfamily}/${::operatingsystem}")
+        }
+      }
     }
   }
 }
