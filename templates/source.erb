@@ -1,11 +1,8 @@
 <source>
   type <%= @type %>
-  <% @config.each do |val| -%>
-  <%= val %>
-  path /var/log/apache2/access.log
-  pos_file /var/log/td-agent/apache2_access.log.pos
-  <% end -%>
-
-  format <%= @format %>
-  tag <%= @name %>
+<% @config.each_pair do |key, val| -%>
+  <%= key %> <%= val %> 
+<% end -%>
+<% if @format != false -%>  format <%= @format %><% end %>
+<% if @tag != false -%>  tag <%= @tag %><% end %>
 </source>
