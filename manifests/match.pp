@@ -1,11 +1,12 @@
 define fluentd::match (
   $type, 
-  $format, 
-  $config = [],
+  $pattern, 
+  $config   = {},
+  $server   = {},
   ) {
 
-  concat::fragment { 'match':
-    target  => "/etc/td-agent/config.d/match.conf",
+  concat::fragment { "match_$title":
+    target  => "/etc/td-agent/config.d/$title.conf",
     require => Package['td-agent'],
     content => template('fluentd/match.erb'),
   }

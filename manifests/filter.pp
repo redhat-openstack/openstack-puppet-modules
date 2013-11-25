@@ -5,7 +5,7 @@ define fluentd::filter (
   ) {
 
   concat::fragment { 'filter':
-    target  => "/etc/td-agent/config.d/filter.conf",
+    target  => "/etc/td-agent/config.d/$::name.conf",
     require => Package['td-agent'],
     content => template('fluentd/filter.erb'),
   }
