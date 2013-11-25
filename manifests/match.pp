@@ -2,7 +2,7 @@ define fluentd::match (
   $type, 
   $pattern, 
   $config   = {},
-  $server   = {},
+  $servers  = [],
   ) {
 
   concat::fragment { "match_$title":
