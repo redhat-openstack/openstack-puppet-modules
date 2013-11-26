@@ -16,6 +16,8 @@
 #                       to '/etc/pki'. Not used with openssl.
 #   $owner_id         - owner of OpenSSL cert and key files
 #   $group_id         - group of OpenSSL cert and key files
+#   $hostname         - hostname in the subject of the certificate.
+#                       defaults to current fqdn.
 #
 # Actions:
 #   Submits a certificate request to an IPA server for a new certificate.
@@ -50,13 +52,20 @@ define certmonger::request_ipa_cert (
   $key = undef,
   $basedir = '/etc/pki',
   $owner_id = undef,
-  $group_id = undef
+  $group_id = undef,
+  $hostname = undef
 ) {
   include certmonger::server
 
   if "$ipa_client_configured" == 'true' {
   
     $principal_no_slash = regsubst($principal, '\/', '_')
+
+    if $hostname == undef {
+        $subject = ''
+    } else {
+        $subject = "-N cn=${hostname}"
+    }
 
     if $seclib == 'nss' {
         $options = "-d ${basedir}/${dbname} -n ${nickname} -p ${basedir}/${dbname}/password.conf"
@@ -79,7 +88,7 @@ define certmonger::request_ipa_cert (
           ],
         }
         exec {"get_cert_nss_${title}":
-          command => "/usr/bin/ipa-getcert request ${options} -K ${principal}",
+          command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
           creates => "${basedir}/${dbname}/requested/${principal_no_slash}",
           require => [
               Package['certmonger'],
@@ -109,7 +118,7 @@ define certmonger::request_ipa_cert (
           group   => $group_id,
         }
         exec {"get_cert_openssl_${title}":
-          command => "/usr/bin/ipa-getcert request ${options} -K ${principal}",
+          command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
           creates => [
             "${key}",
             "${cert}",
