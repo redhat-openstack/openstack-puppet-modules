@@ -1,7 +1,11 @@
 puppet-fluentd
 ==============
 
-Manage fluentd installation with Puppet
+Manage Fluentd installation and configuration with Puppet using the td-agent. 
+
+## Todo's 
+- No RedHat suport yet (feel free to send us your pullrequest) 
+- Automatic installation of td-agent Plugins
 
 ## Configuration
 
