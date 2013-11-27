@@ -42,7 +42,7 @@ How to Configure a Agent to send Data to a centralised Fluentd-Server
     pattern => '**',
     type => 'forward',
     servers => [
-      {'host' => '10.102.80.3', 'port' => '24224'}
+      {'host' => 'PUT_YOUR_HOST_HERE', 'port' => '24224'}
     ],
   }
 ```
