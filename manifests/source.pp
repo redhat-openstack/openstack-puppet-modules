@@ -1,4 +1,5 @@
 define fluentd::source (
+  $configfile,
   $type, 
   $tag      = false,
   $format   = false, 
@@ -14,7 +15,7 @@ define fluentd::source (
   #}
 
   concat::fragment { "source_$title":
-    target  => "/etc/td-agent/config.d/$title.conf",
+    target  => "/etc/td-agent/config.d/$configfile.conf",
     require => Package['td-agent'],
     content => template('fluentd/source.erb'),
   }
