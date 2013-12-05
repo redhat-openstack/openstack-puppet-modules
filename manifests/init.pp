@@ -13,8 +13,8 @@ class fluentd {
 
   file { '/etc/td-agent/config.d':
     ensure => "directory",
-    owner  => "root",
-    group  => "root",
+    owner  => "td-agent",
+    group  => "td-agent",
     mode   => 750,
     require => Package['td-agent'],
   }
