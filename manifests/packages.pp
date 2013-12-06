@@ -19,6 +19,11 @@ class fluentd::packages {
         'td-agent'
       ]:
         ensure => present,
+      }~>
+      exec {"add user td-agent to group adm":
+        unless => "grep -q 'adm\\S*td-agent' /etc/group",
+        command => "usermod -aG adm td-agent",
+        require => User['td-agent'],
       }
     }
     default: {
