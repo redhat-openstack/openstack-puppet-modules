@@ -6,6 +6,9 @@ Manage Fluentd installation and configuration with Puppet using the td-agent.
 ## Todo's 
 - No RedHat suport yet (feel free to send us your pullrequest) 
 - Automatic installation of td-agent Plugins
+- Ouput copy and roundrobin to multiple stores
+- Monitor/Restart Service
+- Logrotate td-agent logs
 
 ## Configuration
 
@@ -18,27 +21,32 @@ How to Configure a Agent to send Data to a centralised Fluentd-Server
   include ::fluentd
   
   fluentd::configfile { 'apache': }
-  fluentd::source { 'apache': 
+  fluentd::source { 'apache_main': 
+    configfile => 'apache'
     type => 'tail',
-    format => 'apache',
+    format => 'apache2',
     tag => 'apache.access_log',
     config => {
       'path' => '/var/log/apache2/access.log',
+      'pos_file' => '/var/tmp/fluentd.pos',
     }
   }
   
   fluentd::configfile { 'syslog': }
-  fluentd::source { 'syslog': 
-    type => 'syslog',
-    tag => 'system',
+  fluentd::source { 'syslog_main': 
+    configfile => 'syslog',
+    type => 'tail',
+    format => 'syslog',
+    tag => 'system.syslog',
     config => {
-      'port' => '5140',
-      'bind' => '0.0.0.0',
+      'path' => '/var/log/syslog',
+      'pos_file' => '/tmp/td-agent.syslog.pos',
     }
   }
   
   fluentd::configfile { 'forward': }
-  fluentd::match { 'forward': 
+  fluentd::match { 'forward_main': 
+    configfile => 'forward'
     pattern => '**',
     type => 'forward',
     servers => [
@@ -46,7 +54,16 @@ How to Configure a Agent to send Data to a centralised Fluentd-Server
     ],
   }
 ```
-
+#### creates on the agent side following files : 
+```
+/etc/td-agent/
+  ├── config.d
+  │   ├── collector.conf
+  │   ├── forward.conf
+  │   └── syslog.conf
+  ├── ...
+  ...
+```
 
 ### Create a Collector 
 
@@ -54,7 +71,8 @@ How to Configure a Agent to send Data to a centralised Fluentd-Server
   include ::fluentd
 
   fluentd::configfile { 'forward': }
-  fluentd::source { 'forward': 
+  fluentd::source { 'forward_collector': 
+    configfile => 'forward'
     type => 'forward',
   #  config => {
   #    'port' => '24224',
@@ -62,13 +80,21 @@ How to Configure a Agent to send Data to a centralised Fluentd-Server
   #  }
   }
 
-
-  fluentd::configfile { 'apache': }
-  fluentd::match { 'apache': 
-    pattern => 'apache.access_log',
+  fluentd::match { 'forward_apache': 
+    configfile => 'forward'
+    pattern => '**',
     type => 'elasticsearch',
     config => {
       'logstash_format' => 'true',
     }
   }
+```
+
+#### creates on the agent side following files : 
+```
+/etc/td-agent/
+  ├── config.d
+  │   └── forward.conf
+  ├── ...
+  ...
 ```
