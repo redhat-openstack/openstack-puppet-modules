@@ -5,6 +5,7 @@ define fluentd::configfile {
     owner => 'td-agent',
     group => 'td-agent',
     mode  => '0644',
+    equire => Package['td-agent'],
   }
 }
 
