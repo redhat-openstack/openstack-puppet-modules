@@ -7,12 +7,14 @@ class fluentd::packages {
     'debian': {
 
       # http://packages.treasure-data.com/debian/pool/contrib/t/td-agent/
-      apt::source { 'treasure-data':
-        location    => "http://packages.treasure-data.com/debian",
-        release     => "lucid",
-        repos       => "contrib",
-        include_src => false,
-      }->
+      # TODO: had to disable this part since the Repository does not provide a Key
+      
+      #apt::source { 'treasure-data':
+      #  location    => "http://packages.treasure-data.com/debian",
+      #  release     => "lucid",
+      #  repos       => "contrib",
+      #  include_src => false,
+      #}->
       package{[
         'libxslt1.1',
         'libyaml-0-2',
