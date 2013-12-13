@@ -20,28 +20,28 @@
 # Sample Usage: include zookeeper::config
 #
 class zookeeper::config(
-  $id          = '1',
-  $datastore   = '/var/lib/zookeeper',
-  $client_port = 2181,
-  $snap_count  = 10000,
-  $log_dir     = '/var/log/zookeeper',
-  $cfg_dir     = '/etc/zookeeper/conf',
-  $user        = 'zookeeper',
-  $group       = 'zookeeper',
-  $java_bin    = '/usr/bin/java',
-  $java_opts   = '',
-  $pid_dir     = '/var/run/zookeeper',
-  $pid_file    = '$PIDDIR/zookeeper.pid',
-  $zoo_main    = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
-  $log4j_prop   = 'INFO,ROLLINGFILE',
-  $servers     = [''],
+  $id                    = '1',
+  $datastore             = '/var/lib/zookeeper',
+  $client_port           = 2181,
+  $snap_count            = 10000,
+  $log_dir               = '/var/log/zookeeper',
+  $cfg_dir               = '/etc/zookeeper/conf',
+  $user                  = 'zookeeper',
+  $group                 = 'zookeeper',
+  $java_bin              = '/usr/bin/java',
+  $java_opts             = '',
+  $pid_dir               = '/var/run/zookeeper',
+  $pid_file              = '$PIDDIR/zookeeper.pid',
+  $zoo_main              = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
+  $log4j_prop            = 'INFO,ROLLINGFILE',
+  $servers               = [''],
   # since zookeeper 3.4, for earlier version cron task might be used
-  $snap_retain_count = 3,
+  $snap_retain_count     = 3,
   # interval in hours, purging enabled when >= 1
-  $purge_interval   = 0,
+  $purge_interval        = 0,
   # log4j properties
   $rollingfile_threshold = 'ERROR',
-  $tracefile_threshold    = 'TRACE',
+  $tracefile_threshold   = 'TRACE',
 ) {
   require zookeeper::install
 
@@ -76,7 +76,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     require => File[$cfg_dir],
-    notify => Class['zookeeper::service'],
+    notify  => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/zoo.cfg":
@@ -84,7 +84,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/zoo.cfg.erb'),
-    notify => Class['zookeeper::service'],
+    notify  => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/environment":
@@ -92,7 +92,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/environment.erb'),
-    notify => Class['zookeeper::service'],
+    notify  => Class['zookeeper::service'],
   }
 
   file { "${cfg_dir}/log4j.properties":
@@ -100,7 +100,7 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     content => template('zookeeper/conf/log4j.properties.erb'),
-    notify => Class['zookeeper::service'],
+    notify  => Class['zookeeper::service'],
   }
 
 }

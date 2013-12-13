@@ -42,11 +42,11 @@ class zookeeper(
 
   anchor { 'zookeeper::start': }->
   class { 'zookeeper::install':
+    ensure            => $ensure,
     snap_retain_count => $snap_retain_count,
     datastore         => $datastore,
     user              => $user,
     cleanup_sh        => $cleanup_sh,
-    ensure            => $ensure,
   }->
   class { 'zookeeper::config':
     id                    => $id,

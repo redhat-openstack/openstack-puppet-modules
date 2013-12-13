@@ -11,11 +11,11 @@
 # Sample Usage: include zookeeper::install
 #
 class zookeeper::install(
+  $ensure            = present,
   $snap_retain_count = 3,
   $cleanup_sh        = '/usr/lib/zookeeper/bin/zkCleanup.sh',
   $datastore         = '/var/lib/zookeeper',
   $user              = 'zookeeper',
-  $ensure            = present,
 ) {
 # a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging
 # for Debian packaging
@@ -24,7 +24,7 @@ class zookeeper::install(
   }
 
   package { ['zookeeperd']: #init.d scripts for zookeeper
-    ensure => $ensure,
+    ensure  => $ensure,
     require => Package['zookeeper']
   }
 
