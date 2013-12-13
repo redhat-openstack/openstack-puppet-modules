@@ -1,9 +1,10 @@
 require 'bundler'
 Bundler.require(:rake)
 
-require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
 require 'rspec-system/rake_task'
+require 'rubygems'
+require 'puppetlabs_spec_helper/rake_tasks'
 
 PuppetLint.configuration.ignore_paths = ["spec/fixtures/modules/cron/manifests/*.pp"]
 PuppetLint.configuration.log_format = '%{path}:%{linenumber}:%{KIND}: %{message}'
