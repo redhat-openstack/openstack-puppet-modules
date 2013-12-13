@@ -39,4 +39,27 @@ describe 'zookeeper::install' do
     it { should_not contain_package('cron') }
   end
 
+
+  context 'removing package' do
+    let(:user) { 'zookeeper' }
+    let(:group) { 'zookeeper' }
+
+    let(:params) { {
+      :ensure => 'absent',
+    } }
+
+    it {
+      should contain_package('zookeeper').with({
+      'ensure'  => 'absent',
+      })
+    }
+    it {
+      should contain_package('zookeeperd').with({
+      'ensure'  => 'absent',
+      })
+    }
+    it { should_not contain_package('cron') }
+  end
+
+
 end

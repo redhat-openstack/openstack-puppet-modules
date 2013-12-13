@@ -29,7 +29,8 @@ class zookeeper(
   $lo4j_prop   = 'INFO,ROLLINGFILE',
   $cleanup_sh  = '/usr/share/zookeeper/bin/zkCleanup.sh',
   $servers     = [''],
-  $snap_count        = 10000,
+  $ensure      = present,
+  $snap_count  = 10000,
   # since zookeeper 3.4, for earlier version cron task might be used
   $snap_retain_count = 3,
   # interval in hours, purging enabled when >= 1
@@ -45,6 +46,7 @@ class zookeeper(
     datastore         => $datastore,
     user              => $user,
     cleanup_sh        => $cleanup_sh,
+    ensure            => $ensure,
   }->
   class { 'zookeeper::config':
     id                    => $id,
