@@ -1,5 +1,5 @@
 name    'puppet-zookeeper'
-version '0.2.1'
+version '0.2.2'
 source 'https://github.com/deric/puppet-zookeeper'
 author 'Tomas Barton'
 license 'Apache License, Version 2.0'
@@ -9,3 +9,4 @@ project_page 'https://github.com/deric/puppet-zookeeper'
 
 
 ## Add dependencies, if any:
+dependency 'puppetlabs/stdlib', '>= 0.1.6'
