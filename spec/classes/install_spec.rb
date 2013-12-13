@@ -11,6 +11,17 @@ describe 'zookeeper::install' do
     it { should contain_package('zookeeper') }
     it { should contain_package('zookeeperd') }
     it { should contain_package('cron') }
+
+    it {
+      should contain_cron('zookeeper-cleanup').with({
+        'ensure'    => 'present',
+        'command'   => '/usr/lib/zookeeper/bin/zkCleanup.sh /var/lib/zookeeper 1',
+        'user'      => 'zookeeper',
+        'hour'      => '2',
+        'minute'      => '42',
+      })
+
+    }
   end
 
   context 'on debian-like system' do
@@ -49,6 +60,7 @@ describe 'zookeeper::install' do
     } }
 
     it {
+
       should contain_package('zookeeper').with({
       'ensure'  => 'absent',
       })

@@ -33,6 +33,7 @@ class zookeeper::install(
     ensure_packages(['cron'])
 
     cron { 'zookeeper-cleanup':
+        ensure  => present,
         command => "${cleanup_sh} ${datastore} ${snap_retain_count}",
         hour    => 2,
         minute  => 42,
