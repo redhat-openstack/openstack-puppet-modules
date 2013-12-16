@@ -35,3 +35,4 @@ matrix:
       env: PUPPET_GEM_VERSION="~> 3.3.0"
 notifications:
   email: gianni.carafa@srf.ch
+gemfile: .gemfile
