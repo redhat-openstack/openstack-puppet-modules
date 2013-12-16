@@ -25,8 +25,8 @@ describe 'fluentd', :type => :class do
     }
     it { should contain_file("/etc/td-agent/config.d").with(
       'ensure'  => 'directory',
-      'owner'   => 'root',
-      'group'   => 'root',
+      'owner'   => 'td-agent',
+      'group'   => 'td-agent',
       'mode'    => '750',
       'require' => 'Package[td-agent]'
       )
