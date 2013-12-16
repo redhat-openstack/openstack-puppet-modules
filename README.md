@@ -17,7 +17,7 @@ Manage Fluentd installation and configuration with Puppet using the td-agent.
 
 ## Known Issues 
 Treasure Data is not providing a key for theyr Repo (or I was not able to find it). So add the Repository wont work yet. We've added the provided .deb to your own repository. 
-(10.12.13 they are working on it)
+(10.Dec.2013 they are working on it)
 
 ## Configuration
 How to Configure a Agent to send Data to a centralised Fluentd-Server
