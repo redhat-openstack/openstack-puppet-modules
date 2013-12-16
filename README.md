@@ -1,6 +1,8 @@
 puppet-fluentd
 ==============
 
+[![Build Status](https://travis-ci.org/mmz-srf/puppet-fluentd.png?branch=master)](https://travis-ci.org/mmz-srf/puppet-fluentd)
+
 Manage Fluentd installation and configuration with Puppet using the td-agent. 
 
 ## Used Modules 
