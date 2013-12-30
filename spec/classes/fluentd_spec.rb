@@ -11,7 +11,7 @@ describe 'fluentd', :type => :class do
     end
 
     it do
-      should include_class('fluentd::packages')
+      should contain_class('fluentd::packages')
     end
 
 
