@@ -1,13 +1,14 @@
 # == class fluentd
 class fluentd {
-    include packages
+    include fluentd::packages
+    include fluentd::service
 
     file { '/etc/td-agent/td-agent.conf' :
         ensure  => file,
         owner   => 'root',
         group   => 'root',
         source  => 'puppet:///modules/fluentd/etc/fluentd/td-agent.conf',
-        #notify => Class['fluentd::service'],
+        notify  => Class['fluentd::service'],
         require => Package['td-agent'];
 
     '/etc/td-agent/config.d':
