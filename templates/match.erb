@@ -1,12 +1,12 @@
 <match <%= @pattern %>>
   type <%= @type %>
 <% @config.each_pair do |key, val| -%>
-  <%= key %> <%= val %> 
+  <%= key %> <%= val %>
 <% end -%>
 <% servers.each do |server| -%>
   <server>
 <% server.each_pair do |key, val| -%>
-    <%= key %> <%= val %> 
+    <%= key %> <%= val %>
 <% end -%>
   </server>
 <% end -%>
