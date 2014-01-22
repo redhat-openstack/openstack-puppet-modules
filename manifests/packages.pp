@@ -6,6 +6,13 @@ class fluentd::packages {
             fail('RedHat and CentOS are not supported yet. Waiting for your pullrequest')
         }
         'debian': {
+            apt::source { 'treasure-data':
+                location    => "http://packages.treasure-data.com/debian",
+                release     => "lucid",
+                repos       => "contrib",
+                include_src => false,
+            }
+
             file { '/tmp/packages.treasure-data.com.key':
                 ensure => file,
                 source => 'puppet:///modules/fluentd/packages.treasure-data.com.key'
@@ -21,11 +28,11 @@ class fluentd::packages {
                 'td-agent'
             ]:
                 ensure => present,
-                }~>
-                exec {'add user td-agent to group adm':
-                    unless  => 'grep -q "adm\S*td-agent" /etc/group',
-                    command => 'usermod -aG adm td-agent',
-                }
+            }~>
+            exec {'add user td-agent to group adm':
+                unless  => 'grep -q "adm\S*td-agent" /etc/group',
+                command => 'usermod -aG adm td-agent',
+            }
         }
         default: {
             fail("Unsupported osfamily ${::osfamily}")
