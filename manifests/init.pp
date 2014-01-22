@@ -43,12 +43,9 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class timezone (
-  $timezone = 'UTC',
   $ensure = 'present',
-  $autoupgrade = false,
-  $package = $timezone::params::package,
-  $config_file = $timezone::params::config_file,
-  $zoneinfo_dir = $timezone::params::zoneinfo_dir
+  $timezone = 'UTC',
+  $autoupgrade = false
 ) inherits timezone::params {
 
   case $ensure {
@@ -58,25 +55,32 @@ class timezone (
       } else {
         $package_ensure = 'present'
       }
-      $config_ensure = 'link'
+      $localtime_ensure = 'link'
+      $timezone_ensure = 'file'
     }
     /(absent)/: {
       # Leave package installed, as it is a system dependency
       $package_ensure = 'present'
-      $config_ensure = 'absent'
+      $localtime_ensure = 'absent'
+      $timezone_ensure = 'absent'
     }
     default: {
       fail('ensure parameter must be present or absent')
     }
   }
 
-  package { $package:
+  package { $timezone::params::package:
     ensure => $package_ensure,
   }
 
-  file { $config_file:
-    ensure  => $config_ensure,
-    target  => "${zoneinfo_dir}${timezone}",
-    require => Package[$package],
+  file { $timezone::params::timezone_file:
+    ensure  => $timezone_ensure,
+    content => "${timezone}\n",
+  }
+
+  file { $timezone::params::localtime_file:
+    ensure  => $localtime_ensure,
+    target  => "${timezone::params::zoneinfo_dir}${timezone}",
+    require => Package[$timezone::params::package],
   }
 }
