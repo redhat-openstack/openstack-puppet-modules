@@ -1,7 +1,7 @@
 <source>
   type <%= @type %>
 <% @config.each_pair do |key, val| -%>
-  <%= key %> <%= val %> 
+  <%= key %> <%= val %>
 <% end -%>
 <% if @format != false -%>  format <%= @format %><% end %>
 <% if @tag != false -%>  tag <%= @tag %><% end %>

@@ -27,7 +27,7 @@ describe 'fluentd', :type => :class do
       'ensure'  => 'directory',
       'owner'   => 'td-agent',
       'group'   => 'td-agent',
-      'mode'    => '750',
+      'mode'    => '0750',
       'require' => 'Package[td-agent]'
       )
     }

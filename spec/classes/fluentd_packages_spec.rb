@@ -10,10 +10,10 @@ describe 'fluentd::packages', :type => :class do
       }
     end
 
-#    it { should contain_apt__source("treasure-data").with(
-#      'location'  => 'http://packages.treasure-data.com/debian',
-#      )
-#    }
+    it { should contain_apt__source("treasure-data").with(
+      'location'  => 'http://packages.treasure-data.com/debian',
+      )
+    }
     it { should contain_package("libxslt1.1").with(
       'ensure'  => 'present',
       )
