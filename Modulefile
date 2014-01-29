@@ -1,4 +1,4 @@
-name    'puppet-zookeeper'
+name    'deric-zookeeper'
 version '0.2.2'
 source 'https://github.com/deric/puppet-zookeeper'
 author 'Tomas Barton'

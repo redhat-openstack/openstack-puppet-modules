@@ -17,7 +17,9 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 
 ## Basic Usage:
 
-    class { 'zookeeper': }
+```puppet
+class { 'zookeeper': }
+```
 
 ##  Parameters
 
@@ -33,10 +35,11 @@ and many others, see the `init.pp` file for more details.
 
 All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 
-     zookeeper::id: 1
-     zookeeper::client_port: 2181
-     zookeeper::datastore: '/var/lib/zookeeper'
-
+```puppet
+zookeeper::id: 1
+zookeeper::client_port: 2181
+zookeeper::datastore: '/var/lib/zookeeper'
+```
 
 ## Install
 
@@ -44,7 +47,9 @@ All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml
 
 For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add to `Puppetfile`
 
-    mod 'zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
+```ruby
+mod 'zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
+```
 
 ### submodules
 
