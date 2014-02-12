@@ -43,9 +43,6 @@
 [submodule "mongodb"]
 	path = mongodb
 	url = https://github.com/puppetlabs/puppetlabs-mongodb.git
-[submodule "puppetlabs-mysql"]
-	path = puppetlabs-mysql
-	url = https://github.com/packstack/puppetlabs-mysql.git
 [submodule "mysql"]
 	path = mysql
 	url = https://github.com/packstack/puppetlabs-mysql.git
