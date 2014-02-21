@@ -67,7 +67,7 @@ class zookeeper(
     snap_retain_count       => $snap_retain_count,
     purge_interval          => $purge_interval,
     rollingfile_threshold   => $rollingfile_threshold,
-    tracefile_threshold     => $tracefile_threshold
+    tracefile_threshold     => $tracefile_threshold,
     max_allowed_connections => $max_allowed_connections,
   }->
   class { 'zookeeper::service':
