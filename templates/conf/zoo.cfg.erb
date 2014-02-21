@@ -61,3 +61,6 @@ autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::config::snap_retain_co
 # triggered. Set to a positive integer (1 and above) to enable the auto purging.
 # Defaults to 0.
 autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::config::purge_interval') %>
+
+# Maximum allowed connections
+maxClientCnxns=<%= scope.lookupvar('zookeeper::config::max_allowed_connections') %>

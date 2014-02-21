@@ -38,6 +38,7 @@ class zookeeper(
   # log4j properties
   $rollingfile_threshold = 'ERROR',
   $tracefile_threshold    = 'TRACE',
+  $max_allowed_connections = 10,
 ) {
 
   anchor { 'zookeeper::start': }->
@@ -49,24 +50,25 @@ class zookeeper(
     cleanup_sh        => $cleanup_sh,
   }->
   class { 'zookeeper::config':
-    id                    => $id,
-    datastore             => $datastore,
-    client_port           => $client_port,
-    log_dir               => $log_dir,
-    cfg_dir               => $cfg_dir,
-    user                  => $user,
-    group                 => $group,
-    java_bin              => $java_bin,
-    java_opts             => $java_opts,
-    pid_dir               => $pid_dir,
-    zoo_main              => $zoo_main,
-    log4j_prop            => $log4j_prop,
-    servers               => $servers,
-    snap_count            => $snap_count,
-    snap_retain_count     => $snap_retain_count,
-    purge_interval        => $purge_interval,
-    rollingfile_threshold => $rollingfile_threshold,
-    tracefile_threshold   => $tracefile_threshold
+    id                      => $id,
+    datastore               => $datastore,
+    client_port             => $client_port,
+    log_dir                 => $log_dir,
+    cfg_dir                 => $cfg_dir,
+    user                    => $user,
+    group                   => $group,
+    java_bin                => $java_bin,
+    java_opts               => $java_opts,
+    pid_dir                 => $pid_dir,
+    zoo_main                => $zoo_main,
+    log4j_prop              => $log4j_prop,
+    servers                 => $servers,
+    snap_count              => $snap_count,
+    snap_retain_count       => $snap_retain_count,
+    purge_interval          => $purge_interval,
+    rollingfile_threshold   => $rollingfile_threshold,
+    tracefile_threshold     => $tracefile_threshold
+    max_allowed_connections => $max_allowed_connections,
   }->
   class { 'zookeeper::service':
     cfg_dir => $cfg_dir,
