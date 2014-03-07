@@ -11,44 +11,49 @@ the boilerplate down into the type.
 Sample Usage
 ------------
 
-    datacat { '/etc/nagios/objects/hostgroups.cfg':
-        template => "${module_name}/hostgroups.cfg.erb",
-    }
+```puppet
+datacat { '/etc/nagios/objects/hostgroups.cfg':
+  template => "${module_name}/hostgroups.cfg.erb",
+}
 
-    datacat_fragment { "${::fqdn} in device hostgroup":
-        target => '/etc/nagios/objects/hostgroups.cfg',
-        data   => {
-            device => [ $::fqdn ],
-        },
-    }
+datacat_fragment { "${::fqdn} in device hostgroup":
+  target => '/etc/nagios/objects/hostgroups.cfg',
+  data   => {
+    device => [ $::fqdn ],
+  },
+}
 
-    # fred.dc1.notreal has an ilo fred-ilo.dc1.notreal
-    $ilo_fqdn = regsubst($::fqdn, '\.', '-ilo.')
-    datacat_fragment { "${ilo_fqdn} in device hostgroup":
-        target => '/etc/nagios/objects/hostgroups.cfg',
-        data   => {
-            device => [ $ilo_fqdn ],
-        },
-    }
+# fred.dc1.notreal has an ilo fred-ilo.dc1.notreal
+$ilo_fqdn = regsubst($::fqdn, '\.', '-ilo.')
+datacat_fragment { "${ilo_fqdn} in device hostgroup":
+  target => '/etc/nagios/objects/hostgroups.cfg',
+  data   => {
+    device => [ $ilo_fqdn ],
+  },
+}
+```
 
 And then in your `hostgroups.cfg.erb`
 
-    # hostgroups.cfg.erb
-    <% @data.keys.sort.each do |hostgroup| %>
-    define hostgroup {
-        name <%= hostgroup %>
-        members <%= @data[hostgroup].sort.join(',') %>
-    }
-    <% end %>
+```erb
+# hostgroups.cfg.erb
+<% @data.keys.sort.each do |hostgroup| %>
+define hostgroup {
+    name <%= hostgroup %>
+    members <%= @data[hostgroup].sort.join(',') %>
+}
+<% end %>
+```
 
 Will produce something like:
 
-
-    # /etc/nagios/objects/hostgroups.cfg
-    define hostgroup {
-        name device
-        members fred.dc1.notreal,fred-ilo.dc1.notreal
-    }
+```
+# /etc/nagios/objects/hostgroups.cfg
+define hostgroup {
+    name device
+    members fred.dc1.notreal,fred-ilo.dc1.notreal
+}
+```
 
 There are additional samples in a blog post I wrote to describe the approach,
 http://richardc.unixbeard.net/2013/02/puppet-concat-patterns/
@@ -72,22 +77,23 @@ of the related `target_resource`.
 
 Sample usage:
 
-    datacat_collector { 'open_ports':
-      template_body => '<%= @data["ports"].sort.join(",") %>',
-      target_resource => File_line['open_ports'],
-      target_field    => 'line',
-    }
+```puppet
+datacat_collector { 'open_ports':
+  template_body   => '<%= @data["ports"].sort.join(",") %>',
+  target_resource => File_line['open_ports'],
+  target_field    => 'line',
+}
 
-    datacat_fragment { 'open webserver':
-      target => 'open_ports',
-      data   => { ports => [ 80, 443 ] },
-    }
+datacat_fragment { 'open webserver':
+  target => 'open_ports',
+  data   => { ports => [ 80, 443 ] },
+}
 
-    datacat_fragment { 'open ssh':
-      target => 'open_ports',
-      data   => { ports => [ 22 ] },
-    }
-
+datacat_fragment { 'open ssh':
+  target => 'open_ports',
+  data   => { ports => [ 22 ] },
+}
+```
 
 Caveats
 -------
