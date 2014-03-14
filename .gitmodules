@@ -97,6 +97,6 @@
 [submodule "rabbitmq"]
 	path = rabbitmq
 	url = https://github.com/puppetlabs/puppetlabs-rabbitmq.git
-[submodule "puppet-staging"]
-	path = puppet-staging
+[submodule "staging"]
+	path = staging
 	url = https://github.com/nanliu/puppet-staging.git
