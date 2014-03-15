@@ -21,6 +21,20 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 class { 'zookeeper': }
 ```
 
+If `$::ipaddress` is not your public IP (e.g. you are using Docker) make sure to setup correct IP:
+
+```puppet
+class { 'zookeeper':
+  client_ip => $::ipaddress_eth0
+}
+```
+
+or in Hiera:
+
+```yaml
+zookeeper::client_ip: "%{::ipaddress_eth0}"
+```
+
 ##  Parameters
 
    - `id` - cluster-unique zookeeper's instance id (1-255)
@@ -35,7 +49,7 @@ and many others, see the `init.pp` file for more details.
 
 All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:
 
-```puppet
+```yaml
 zookeeper::id: 1
 zookeeper::client_port: 2181
 zookeeper::datastore: '/var/lib/zookeeper'
