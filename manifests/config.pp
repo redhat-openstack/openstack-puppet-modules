@@ -24,6 +24,8 @@ class zookeeper::config(
   $datastore             = '/var/lib/zookeeper',
   $client_ip             = $::ipaddress,
   $client_port           = 2181,
+  $election_port         = 2888,
+  $leader_port           = 3888,
   $snap_count            = 10000,
   $log_dir               = '/var/log/zookeeper',
   $cfg_dir               = '/etc/zookeeper/conf',
@@ -111,7 +113,7 @@ class zookeeper::config(
 
   @@concat::fragment{ "zookeeper_${client_ip}":
     target  => "${cfg_dir}/quorum",
-    content => template("${module_name}/client.erb"),
+    content => template("${module_name}/quorum.erb"),
     tag     => 'zookeeper',
   }
 
