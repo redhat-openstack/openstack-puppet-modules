@@ -42,6 +42,7 @@ class zookeeper::config(
   # log4j properties
   $rollingfile_threshold = 'ERROR',
   $tracefile_threshold   = 'TRACE',
+  $max_allowed_connections = 10,
 ) {
   require zookeeper::install
 
