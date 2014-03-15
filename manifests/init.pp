@@ -3,12 +3,11 @@
 # This module manages zookeeper
 #
 # Parameters:
+#   id
 #   user
 #   group
 #   log_dir
 #
-# Requires:
-#   N/A
 # Sample Usage:
 #
 #   class { 'zookeeper': }
@@ -16,6 +15,8 @@
 class zookeeper(
   $id          = '1',
   $datastore   = '/var/lib/zookeeper',
+  # fact from which we get public ip address
+  $client_ip   = $::ipaddress,
   $client_port = 2181,
   $log_dir     = '/var/log/zookeeper',
   $cfg_dir     = '/etc/zookeeper/conf',
@@ -32,12 +33,12 @@ class zookeeper(
   $ensure      = present,
   $snap_count  = 10000,
   # since zookeeper 3.4, for earlier version cron task might be used
-  $snap_retain_count = 3,
+  $snap_retain_count       = 3,
   # interval in hours, purging enabled when >= 1
-  $purge_interval   = 0,
+  $purge_interval          = 0,
   # log4j properties
-  $rollingfile_threshold = 'ERROR',
-  $tracefile_threshold    = 'TRACE',
+  $rollingfile_threshold   = 'ERROR',
+  $tracefile_threshold     = 'TRACE',
   $max_allowed_connections = 10,
 ) {
 
@@ -52,6 +53,7 @@ class zookeeper(
   class { 'zookeeper::config':
     id                      => $id,
     datastore               => $datastore,
+    client_ip               => $client_ip,
     client_port             => $client_port,
     log_dir                 => $log_dir,
     cfg_dir                 => $cfg_dir,

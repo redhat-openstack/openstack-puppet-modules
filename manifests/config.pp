@@ -22,6 +22,7 @@
 class zookeeper::config(
   $id                    = '1',
   $datastore             = '/var/lib/zookeeper',
+  $client_ip             = $::ipaddress,
   $client_port           = 2181,
   $snap_count            = 10000,
   $log_dir               = '/var/log/zookeeper',
@@ -43,8 +44,12 @@ class zookeeper::config(
   $rollingfile_threshold = 'ERROR',
   $tracefile_threshold   = 'TRACE',
   $max_allowed_connections = 10,
+  $export_tag              = 'zookeeper',
 ) {
   require zookeeper::install
+  include concat::setup
+
+  Concat::Fragment <<| tag == $export_tag |>>
 
   file { $cfg_dir:
     ensure  => directory,
@@ -104,4 +109,16 @@ class zookeeper::config(
     notify  => Class['zookeeper::service'],
   }
 
+  @@concat::fragment{ "zookeer_${ip_fact}":
+    target  => "${cfg_dir}/quorum",
+    content => template("${module_name}/client.erb"),
+    tag     => 'zookeeper',
+  }
+
+  concat{ "${cfg_dir}/quorum":
+    owner   => root,
+    group   => 0,
+    mode    => '0644',
+    require => File[$cfg_dir],
+  }
 }

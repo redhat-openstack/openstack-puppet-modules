@@ -11,6 +11,10 @@ RSpec.configure do |c|
   c.manifest_dir = File.join(fixture_path, 'manifests')
   # we don't want to run tests from submodules in fixtures/cron/..
   c.pattern = "spec/*/*_spec.rb"
+  c.default_facts = {
+    :kernel          => 'Linux',
+    :concat_basedir  => '/var/lib/puppet/concat',
+  }
 end
 
 Puppet::Util::Log.level = :warning

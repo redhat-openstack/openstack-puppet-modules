@@ -88,4 +88,14 @@ describe 'zookeeper::config' do
         '/etc/zookeeper/conf/zoo.cfg'
       ).with_content(/maxClientCnxns=#{max_conn}/) }
   end
+
+  context 'quorum file' do
+    let(:facts) {{
+      :ipaddress => '192.168.1.1'
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/quorum'
+    )}
+  end
 end
