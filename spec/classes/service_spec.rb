@@ -8,6 +8,8 @@ describe 'zookeeper::service' do
   }}
 
   it { should contain_package('zookeeperd') }
-  it { should contain_service('zookeeper') }
-
+  it { should contain_service('zookeeper').with(
+    :ensure => 'running',
+    :enable => true
+  )}
 end
