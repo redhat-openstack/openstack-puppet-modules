@@ -112,12 +112,12 @@ class zookeeper::config(
   }
 
   @@concat::fragment{ "zookeeper_${client_ip}":
-    target  => "${cfg_dir}/quorum",
-    content => template("${module_name}/quorum.erb"),
+    target  => "${cfg_dir}/quorum.yml",
+    content => " - 'server.${id}=${client_ip}:${election_port}:${leader_port}'\n",
     tag     => 'zookeeper',
   }
 
-  concat{ "${cfg_dir}/quorum":
+  concat{ "${cfg_dir}/quorum.yml":
     owner   => root,
     group   => 0,
     mode    => '0644',

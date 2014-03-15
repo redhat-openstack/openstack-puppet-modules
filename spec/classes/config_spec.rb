@@ -90,12 +90,15 @@ describe 'zookeeper::config' do
   end
 
   context 'quorum file' do
+    ipaddress = '192.168.1.1'
     let(:facts) {{
-      :ipaddress => '192.168.1.1'
+      :ipaddress => ipaddress
     }}
 
     it { should contain_file(
-      '/etc/zookeeper/conf/quorum'
+      '/etc/zookeeper/conf/quorum.yml'
     )}
+
+    it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
   end
 end
