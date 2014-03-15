@@ -109,7 +109,7 @@ class zookeeper::config(
     notify  => Class['zookeeper::service'],
   }
 
-  @@concat::fragment{ "zookeer_${ip_fact}":
+  @@concat::fragment{ "zookeeper_${client_ip}":
     target  => "${cfg_dir}/quorum",
     content => template("${module_name}/client.erb"),
     tag     => 'zookeeper',
