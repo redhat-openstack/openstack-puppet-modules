@@ -61,7 +61,6 @@ describe 'zookeeper::config' do
   end
 
   context 'extra parameters' do
-
     snap_cnt = 15000
     # set custom params
     let(:params) { {
@@ -78,4 +77,15 @@ describe 'zookeeper::config' do
     }
   end
 
+  context 'max allowed connections' do
+    max_conn = 15
+
+    let(:params) {{
+      :max_allowed_connections => max_conn
+    }}
+
+    it { should contain_file(
+        '/etc/zookeeper/conf/zoo.cfg'
+      ).with_content(/maxClientCnxns=#{max_conn}/) }
+  end
 end
