@@ -1,4 +1,4 @@
-#kibana3
+#kibana3 [![Build Status](https://travis-ci.org/thejandroman/kibana3.svg?branch=master)](https://travis-ci.org/thejandroman/kibana3)
 
 ####Table of Contents
 
