@@ -125,4 +125,4 @@ Change the default port for the webserver to a custom value. Only taken into acc
  * Tested with Kibana v3.0.0.
 
 ##License
-See LICENSE file.
+See [LICENSE](https://github.com/thejandroman/kibana3/blob/master/LICENSE) file.
