@@ -1,0 +1,23 @@
+/** Managed by Puppet
+Do not modify by hand
+**/
+
+define(['settings'],
+function (Settings) {
+  "use strict";
+
+  return new Settings({
+
+    elasticsearch: "<%= @config_es_protocol %>://<%= @config_es_server %>:<%= @config_es_port %>",
+
+    default_route: '<%= @config_default_route %>',
+
+    kibana_index: "<%= @config_kibana_index %>",
+
+    panel_names: [
+    <%- @config_panel_names.each do |cpn| -%>
+      '<%= cpn %>',
+    <%- end -%>
+    ]
+  });
+});
