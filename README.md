@@ -9,8 +9,9 @@
 4. [Usage](#usage)
     * [Classes](#classes)
       * [kibana3](#class-kibana3)
-5. [Dependencies](#dependencies)
-6. [License](#license)
+5. [Limitiations](#limitations)
+6. [Contributing](#contributing)
+7. [License](#license)
 
 ##Overview
 The kibana3 puppet module allows one to setup and configure the [kibana3](http://www.elasticsearch.org/overview/kibana/) interface to Logstash and ElasticSearch.
@@ -120,9 +121,12 @@ Should the module manage the webserver.
 **Default:** _true_
 Change the default port for the webserver to a custom value. Only taken into account if `manage_ws => true`.
 
-##Dependencies
+##Limitations
  * Tested and built on Ubuntu 12.04.
  * Tested with Kibana v3.0.0.
+
+##Contributing
+Pull requests are welcome. Please document and include rspec tests.
 
 ##License
 See [LICENSE](https://github.com/thejandroman/kibana3/blob/master/LICENSE) file.
