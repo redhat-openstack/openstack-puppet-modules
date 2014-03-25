@@ -22,15 +22,6 @@ class kibana3::install {
   }
 
   if $::kibana3::manage_ws {
-    apache::vhost {
-      'kibana3':
-      port          => $::kibana3::ws_port,
-      docroot       => $::kibana3::k3_install_folder,
-      docroot_owner => $_ws_user,
-    }
-  }
-
-  if $::kibana3::manage_ws {
     vcsrepo {
       $::kibana3::k3_install_folder:
       ensure   => present,
@@ -39,6 +30,13 @@ class kibana3::install {
       revision => $::kibana3::k3_release,
       owner    => $_ws_user,
       notify   => Class['::Apache::Service'],
+    }
+    ->
+    apache::vhost {
+      'kibana3':
+      port          => $::kibana3::ws_port,
+      docroot       => "${::kibana3::k3_install_folder}/src",
+      docroot_owner => $_ws_user,
     }
   } else {
     vcsrepo {
