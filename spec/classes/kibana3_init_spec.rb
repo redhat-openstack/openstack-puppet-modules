@@ -18,6 +18,10 @@ describe 'kibana3', :type => :class do
 
     it { should contain_class('apache') }
     it { should contain_file('25-kibana3.conf') }
+    it {
+      should contain_file('15-default.conf') \
+        .with_ensure('absent')
+    }
 
     it { should have_vcsrepo_resource_count(1) }
     it { should contain_file('/opt/kibana3') }
