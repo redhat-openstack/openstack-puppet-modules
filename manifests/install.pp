@@ -7,7 +7,10 @@ class kibana3::install {
   }
 
   if $::kibana3::manage_ws {
-    include apache
+    class {
+      'apache':
+      default_vhost => false,
+    }
   }
 
   if $::kibana3::k3_folder_owner {
@@ -21,8 +24,8 @@ class kibana3::install {
   if $::kibana3::manage_ws {
     apache::vhost {
       'kibana3':
-      port    => $::kibana3::ws_port,
-      docroot => $::kibana3::k3_install_folder,
+      port          => $::kibana3::ws_port,
+      docroot       => $::kibana3::k3_install_folder,
       docroot_owner => $_ws_user,
     }
   }
