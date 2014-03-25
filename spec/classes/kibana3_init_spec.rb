@@ -22,14 +22,12 @@ describe 'kibana3', :type => :class do
       should contain_file('15-default.conf') \
         .with_ensure('absent')
     }
-
-    it { should have_vcsrepo_resource_count(1) }
-    it { should contain_file('/opt/kibana3') }
-
     it {
-      should contain_file('/opt/kibana3') \
+      should contain_file('/opt/kibana3/src') \
         .with_owner('www-data')
     }
+
+    it { should have_vcsrepo_resource_count(1) }
 
     it {
       should contain_file('/opt/kibana3/src/config.js') \
@@ -62,7 +60,7 @@ describe 'kibana3', :type => :class do
 
   context 'nonstandard install folder' do
     let (:params) {{ :k3_install_folder => '/tmp/kibana3' }}
-    it { should contain_file('/tmp/kibana3') }
+    it { should contain_file('/tmp/kibana3/src') }
     it { should contain_file('/tmp/kibana3/src/config.js') }
   end
 
@@ -70,7 +68,7 @@ describe 'kibana3', :type => :class do
     let (:params) {{ :k3_folder_owner => 'foobar' }}
 
     it {
-      should contain_file('/opt/kibana3') \
+      should contain_file('/opt/kibana3/src') \
         .with_owner('foobar')
     }
 

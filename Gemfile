@@ -6,7 +6,7 @@ if ENV.key?('PUPPET_VERSION')
   puppetversion = ['>= 3.4']
 end
 
-gem 'rake'
+gem 'rake', '~> 10.1.1'
 gem 'puppet-lint'
 gem 'puppet-syntax'
 gem 'rspec-puppet'
