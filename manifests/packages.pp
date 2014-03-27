@@ -1,41 +1,50 @@
 # == class fluentd::packages
-class fluentd::packages {
-
-    case $::osfamily {
-        'redhat': {
-            fail('RedHat and CentOS are not supported yet. Waiting for your pullrequest')
-        }
-        'debian': {
-            apt::source { 'treasure-data':
-                location    => "http://packages.treasure-data.com/debian",
-                release     => "lucid",
-                repos       => "contrib",
-                include_src => false,
+class fluentd::packages (
+    $package_name = $fluentd::package_name,
+    $install_repo = $fluentd::install_repo,
+    $package_ensure = $fluentd::package_ensure
+){
+    if $install_repo {
+        case $::osfamily {
+            "redhat": {  
+                class{'fluentd::install_repo::yum': 
+                    before => Package[$package_name],
+                }
             }
+            "debian": {
+                class{'fluentd::install_repo::apt':
+                    before => Package[$package_name],
+                }
+            }
+            default: {
+                fail("Unsupported osfamily ${::osfamily}")
+            }
+        }
+    }
+    package { "$package_name":
+        ensure => $package_ensure
+    }
 
-            file { '/tmp/packages.treasure-data.com.key':
-                ensure => file,
-                source => 'puppet:///modules/fluentd/packages.treasure-data.com.key'
-            }->
-            exec { "import gpg key Treasure Data":
-                command => "/bin/cat /tmp/packages.treasure-data.com.key | apt-key add -",
-                unless  => "/usr/bin/apt-key list | grep -q 'Treasure Data'",
-                notify  => Class['::apt::update'],
-            }->
+    # extra bits... why this is required isn't quite clear.
+    case $::osfamily {
+        'debian': {
+            
             package{[
                 'libxslt1.1',
                 'libyaml-0-2',
-                'td-agent'
             ]:
-                ensure => present,
-            }~>
+                before => Package[$package_name],
+                ensure => $package_ensure
+            }
             exec {'add user td-agent to group adm':
+                provider => shell,
                 unless  => 'grep -q "adm\S*td-agent" /etc/group',
                 command => 'usermod -aG adm td-agent',
+                subscribe => Package[$package_name],
             }
         }
         default: {
-            fail("Unsupported osfamily ${::osfamily}")
+            info("No required fluentd::packages extra bits for ${::osfamily}")
         }
     }
 
