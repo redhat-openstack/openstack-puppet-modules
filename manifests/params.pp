@@ -1,3 +1,7 @@
+# Class: timezone::params
+#
+# Defines all the variables used in the module.
+#
 class timezone::params {
   case $::osfamily {
     'Debian': {

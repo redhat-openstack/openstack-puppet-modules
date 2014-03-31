@@ -1,3 +1,7 @@
 pkg/
 *.swp
+Gemfile.lock
+spec/fixtures
+/coverage/
 metadata.json
+.vagrant
