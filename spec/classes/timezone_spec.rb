@@ -31,39 +31,81 @@ describe 'timezone' do
         param_set
       end
 
-      ['Debian', 'Redhat'].each do |osfamily|
-
-        let :facts do
-          {
-            :osfamily        => osfamily,
-          }
+      let :timezone_ensure do
+        case params[:ensure]
+        when /present/
+          "file"
+        when /absent/
+          "absent"
+        else
+          "file"
         end
+      end
 
-        describe "on supported osfamily: #{osfamily}" do
+      describe "on supported osfamily: RedHat" do
+        let(:facts) {{ :osfamily => "RedHat" }}
 
-          it { should contain_class('timezone::params') }
+        it { should contain_class('timezone::params') }
 
-          it { 
-            if not param_hash[:autoupgrade]
-              should contain_package('tzdata').with_ensure(param_hash[:ensure])
-            end
-          }
+        it {
+          if not param_hash[:autoupgrade]
+            should contain_package('tzdata').with_ensure(param_hash[:ensure])
+          end
+        }
 
-          it {
-            if param_hash[:autoupgrade]
-              should contain_package('tzdata').with_ensure('latest')
-            end
-          }
+        it {
+          if param_hash[:autoupgrade]
+            should contain_package('tzdata').with_ensure('latest')
+          end
+        }
 
-          it {
-            if param_hash[:ensure] == 'present'
-              should contain_file('/etc/localtime').with(
-                'ensure' => 'link',
-                'target' => "/usr/share/zoneinfo/#{param_hash[:timezone]}"
-              )
-            end
-          }
-        end
+       it {
+         should contain_file('/etc/sysconfig/clock').
+           with_ensure(timezone_ensure).
+           with_content(/^ZONE="#{param_hash[:timezone]}"$/)
+        }
+
+        it {
+          if param_hash[:ensure] == 'present'
+            should contain_file('/etc/localtime').with(
+              'ensure' => 'link',
+              'target' => "/usr/share/zoneinfo/#{param_hash[:timezone]}"
+            )
+          end
+        }
+      end
+
+      describe "on supported osfamily: Debian" do
+        let(:facts) {{ :osfamily => "Debian" }}
+
+        it { should contain_class('timezone::params') }
+
+        it {
+          if not param_hash[:autoupgrade]
+            should contain_package('tzdata').with_ensure(param_hash[:ensure])
+          end
+        }
+
+        it {
+          if param_hash[:autoupgrade]
+            should contain_package('tzdata').with_ensure('latest')
+          end
+        }
+
+       it {
+         should contain_file('/etc/timezone').
+           with_ensure(timezone_ensure).
+           with_content(/^#{param_hash[:timezone]}$/)
+        }
+
+        it {
+          if param_hash[:ensure] == 'present'
+            should contain_file('/etc/localtime').with(
+              'ensure' => 'link',
+              'target' => "/usr/share/zoneinfo/#{param_hash[:timezone]}"
+            )
+          end
+        }
       end
     end
   end
