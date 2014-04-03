@@ -24,7 +24,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-haproxy.git
 [submodule "heat"]
 	path = heat
-	url = https://github.com/packstack/puppet-heat.git
+	url = https://github.com/stackforge/puppet-heat.git
 [submodule "horizon"]
 	path = horizon
 	url = https://github.com/stackforge/puppet-horizon.git
