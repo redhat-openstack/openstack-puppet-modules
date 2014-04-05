@@ -1,3 +1,8 @@
+0.4.3 Saturday 5th April, 2014
+    Change the README.md back to github-flavoured markdown as the forge
+    supports this now (Github #6 - Igor Galić)
+    Fix for compatibilty with puppet 3.5.0 (Github #7 - Daniel Beyer)
+
 0.4.2 Thursday 26th September, 2013
     Fix for catalog changes in 3.3.0 when using master/agent (Github #4)
 
