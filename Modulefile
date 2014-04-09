@@ -8,4 +8,4 @@ description 'ZooKeeper is a centralized service for maintaining configuration in
 project_page 'https://github.com/deric/puppet-zookeeper'
 
 dependency 'puppetlabs/stdlib', '>= 0.1.6'
-dependency 'puppetlabs/concat', '>=1.0.0'
+dependency 'richardc/datacat', '>=0.4.0'

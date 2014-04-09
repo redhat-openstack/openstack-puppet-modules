@@ -111,16 +111,11 @@ class zookeeper::config(
     notify  => Class['zookeeper::service'],
   }
 
-  @@concat::fragment{ "zookeeper_${client_ip}":
-    target  => "${cfg_dir}/quorum.yml",
-    content => " - 'server.${id}=${client_ip}:${election_port}:${leader_port}'\n",
-    tag     => 'zookeeper',
-  }
-
-  concat{ "${cfg_dir}/quorum.yml":
-    owner   => root,
-    group   => 0,
-    mode    => '0644',
-    require => File[$cfg_dir],
+  # keep track of all hosts in a cluster
+  zookeeper::host { $client_ip:
+    id            => $id,
+    client_ip     => $client_ip,
+    election_port => $election_port,
+    leader_port   => $leader_port,
   }
 }

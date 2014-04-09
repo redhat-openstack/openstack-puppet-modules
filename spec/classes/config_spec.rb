@@ -95,10 +95,15 @@ describe 'zookeeper::config' do
       :ipaddress => ipaddress
     }}
 
-    it { should contain_file(
-      '/etc/zookeeper/conf/quorum.yml'
+    it { should create_datacat_fragment('192.168.1.1').with_data(
+      {"id"=>"1", "client_ip"=>"192.168.1.1", "election_port"=>"2888", "leader_port"=>"3888"}
     )}
 
-    it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
+  #  it { should contain_file(
+  #    '/etc/zookeeper/conf/quorum.yml'
+  #  )}
+  #it { should contain_datacat__fragment("#{ipaddress}") }
+
+  #  it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
   end
 end
