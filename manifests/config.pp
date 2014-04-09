@@ -49,9 +49,6 @@ class zookeeper::config(
   $export_tag              = 'zookeeper',
 ) {
   require zookeeper::install
-  include concat::setup
-
-  Concat::Fragment <<| tag == $export_tag |>>
 
   file { $cfg_dir:
     ensure  => directory,
