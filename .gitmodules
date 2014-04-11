@@ -99,10 +99,10 @@
 	url = https://github.com/nanliu/puppet-staging.git
 [submodule "gluster"]
 	path = gluster
-	url = https://github.com/purpleidea/puppet-gluster
+	url = https://github.com/purpleidea/puppet-gluster.git
 [submodule "common"]
 	path = common
-	url = git@github.com:purpleidea/puppet-common
+	url = https://github.com/purpleidea/puppet-common.git
 [submodule "puppet"]
 	path = puppet
-	url = git@github.com:purpleidea/puppet-puppet
+	url = https://github.com/purpleidea/puppet-puppet.git
