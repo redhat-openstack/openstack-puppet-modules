@@ -14,6 +14,12 @@ class fluentd::packages {
                 ensure  => present,
                 require => Yumrepo['treasuredata'],
             }
+
+            user { 'td-agent':
+              ensure  => present,
+              groups  => 'adm',
+              require => Package['td-agent'],
+            }
         }
         'debian': {
             apt::source { 'treasure-data':
