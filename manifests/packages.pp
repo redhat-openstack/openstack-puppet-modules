@@ -3,7 +3,17 @@ class fluentd::packages {
 
     case $::osfamily {
         'redhat': {
-            fail('RedHat and CentOS are not supported yet. Waiting for your pullrequest')
+            yumrepo { 'treasuredata':
+                descr    => 'Treasure Data',
+                baseurl  => 'http://packages.treasure-data.com/redhat/$basearch',
+                gpgkey   => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
+                gpgcheck => 1,
+            }
+
+            package { 'td-agent':
+                ensure  => present,
+                require => Yumrepo['treasuredata'],
+            }
         }
         'debian': {
             apt::source { 'treasure-data':
