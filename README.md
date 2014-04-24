@@ -11,8 +11,8 @@ Manage Fluentd installation and configuration with Puppet using the td-agent.
 - stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
 
 ## Todo's 
-- No RedHat suport yet (feel free to send us your pullrequest) 
-- Automatic installation of td-agent Plugins
+- ~~No RedHat suport yet~~ (THX to [pranav](https://github.com/pranav) ) 
+- ~~Automatic installation of td-agent Plugins~~ (THX to [darktim](https://github.com/darktim) ) 
 - Ouput copy and roundrobin to multiple stores
 - ~~Monitor/Restart Service~~ (THX to [darktim](https://github.com/darktim) ) 
 - Logrotate td-agent logs
