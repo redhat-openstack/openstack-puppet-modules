@@ -7,6 +7,7 @@ describe 'fluentd', :type => :class do
         :osfamily               => 'Debian',
         :operatingsystemrelease => '7',
         :concat_basedir         => '/tmp',
+        :lsbdistid              => 'Debian',
       }
     end
 
