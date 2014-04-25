@@ -48,6 +48,8 @@ class timezone (
   $autoupgrade = false
 ) inherits timezone::params {
 
+  validate_bool($autoupgrade)
+
   case $ensure {
     /(present)/: {
       if $autoupgrade == true {
@@ -75,7 +77,7 @@ class timezone (
 
   file { $timezone::params::timezone_file:
     ensure  => $timezone_ensure,
-    content => "${timezone}\n",
+    content => template($timezone::params::timezone_file_template),
   }
 
   file { $timezone::params::localtime_file:
