@@ -9,7 +9,7 @@ define fluentd::source (
 
     concat::fragment { "source_${title}":
         target  => "/etc/td-agent/config.d/${configfile}.conf",
-        require => Package['td-agent'],
+        require => Package["${fluentd::package_name}"],
         content => template('fluentd/source.erb'),
     }
 }

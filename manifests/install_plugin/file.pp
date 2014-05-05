@@ -19,6 +19,6 @@ define fluentd::install_plugin::file (
             group  => td-agent,
             mode   => '0640',
             source => "puppet:///fluentd/plugins/${plugin_name}",
-            notify => Service['td-agent'];
+            notify => Service["${::fluentd::service_name}"];
     }
 }

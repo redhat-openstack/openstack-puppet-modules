@@ -16,6 +16,9 @@ define fluentd::install_plugin::gem (
         'debian': {
             $fluent_gem_path = '/usr/lib/fluent/ruby/bin/fluent-gem'
         }
+        'ubuntu': {
+            $fluent_gem_path = '/usr/lib/fluent/ruby/bin/fluent-gem'
+        }
         'centos': {
             $fluent_gem_path = '/usr/lib64/fluent/ruby/bin/fluent-gem'
         }
@@ -30,7 +33,7 @@ define fluentd::install_plugin::gem (
                     command => "${fluent_gem_path} install ${plugin_name}",
                     user    => 'root',
                     unless  => "${fluent_gem_path} list --local ${plugin_name} | /bin/grep -q ${plugin_name}",
-                    notify  => Service['td-agent'];
+                    notify  => Service["${fluentd::service_name}"];
             }
         }
         absent: {
@@ -39,7 +42,7 @@ define fluentd::install_plugin::gem (
                     command => "${fluent_gem_path} uninstall ${plugin_name}",
                     user    => 'root',
                     unless  => "${fluent_gem_path} list --local ${plugin_name} | /bin/grep -qv ${plugin_name}",
-                    notify  => Service['td-agent'];
+                    notify  => Service["${fluentd::service_name}"];
             }
         }
         default: {

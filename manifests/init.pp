@@ -1,21 +1,16 @@
 # == class fluentd
-class fluentd {
-    include fluentd::packages
-    include fluentd::service
+class fluentd (
+    $package_name = $fluentd::params::package_name,
+    $install_repo = $fluentd::params::install_repo,
+    $package_ensure = $fluentd::params::package_ensure,
+    $service_enable = $fluentd::params::service_enable,
+    $service_ensure = $fluentd::params::service_ensure
+) inherits fluentd::params {
+    class{'fluentd::packages': }
+    class{'fluentd::config': }
+    class{'fluentd::service': }
 
-    file { '/etc/td-agent/td-agent.conf' :
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        source  => 'puppet:///modules/fluentd/etc/fluentd/td-agent.conf',
-        notify  => Class['fluentd::service'],
-        require => Package['td-agent'];
-
-    '/etc/td-agent/config.d':
-        ensure  => 'directory',
-        owner   => 'td-agent',
-        group   => 'td-agent',
-        mode    => '0750',
-        require => Package['td-agent'],
-    }
+    validate_bool($install_repo, $service_enable)
+    
+    Class['Fluentd::Packages'] -> Class['Fluentd::Config'] -> Class['Fluentd::Service']
 }
