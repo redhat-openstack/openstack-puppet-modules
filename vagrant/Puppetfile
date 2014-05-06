@@ -1,0 +1,10 @@
+forge 'http://forge.puppetlabs.com'
+
+mod 'puppetlabs/git', '0.0.3'
+
+mod 'puppetlabs/vcsrepo', '0.2.0'
+
+mod 'puppetlabs/apache', '1.0.1'
+mod 'puppetlabs/concat', '1.0.2'
+
+mod 'puppetlabs/stdlib', '3.2.1'
