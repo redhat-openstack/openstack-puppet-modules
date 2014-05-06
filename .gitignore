@@ -1,3 +1,4 @@
 spec/fixtures/manifests/*
 spec/fixtures/modules/*
 pkg/
+.vagrant
