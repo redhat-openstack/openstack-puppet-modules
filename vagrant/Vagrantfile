@@ -21,13 +21,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ['setextradata', :id, 'VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root', '1']
   end
 
-  #config.vm.synced_folder 'test', '/etc/puppet/local_modules'
-
   config.vm.provision :shell, :path => 'default.sh'
 
   config.vm.provision :puppet do |puppet|
-    #puppet.manifests_path = 'puppet/manifests'
-    #puppet.manifest_file  = 'main.pp'
     puppet.module_path = '../..'
     #puppet.options = '--verbose --debug'
   end
