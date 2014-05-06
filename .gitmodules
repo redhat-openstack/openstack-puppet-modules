@@ -106,3 +106,6 @@
 [submodule "puppet"]
 	path = puppet
 	url = https://github.com/purpleidea/puppet-puppet.git
+[submodule "galera"]
+	path = galera
+	url = https://github.com/rohara/puppet-galera.git
