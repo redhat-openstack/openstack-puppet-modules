@@ -32,7 +32,7 @@ class kibana3::params {
   # if $manage_ws = 'true'; $k3_folder_owner = $::apache::params::user
   $k3_folder_owner   = undef
   $k3_install_folder = '/opt/kibana3'
-  $k3_release        = 'v3.0.0'
+  $k3_release        = 'a50a913'
 
   $manage_git = true
 
