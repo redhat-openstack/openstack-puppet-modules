@@ -1,0 +1,21 @@
+<match <%= @pattern %>>
+  type <%= @type %>
+<% @config.each_pair do |key, val| -%>
+  <% if val.class == Hash && key == 'template' %> 
+    <template>
+    <% val.each_pair do |tkey, tval| -%>
+        <%= tkey %> <%= tval %>
+    <% end -%>
+    </template>
+  <% else -%>
+        <%= key %> <%= val %>
+  <% end -%>
+<% end -%>
+<% @servers.each do |server| -%>
+  <server>
+<% @server.each_pair do |key, val| -%>
+    <%= key %> <%= val %>
+<% end -%>
+  </server>
+<% end -%>
+</match>
