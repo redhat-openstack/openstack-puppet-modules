@@ -101,10 +101,10 @@ The owner of the kibana3 install located at `k3_install_folder`. If `k3_folder_o
 **Default:** _/opt/kibana3_
 The folder to install kibana3 into.
 
-#####`k3_relase`
+#####`k3_release`
 **Data Type:** _string_
-**Default:** _v3.0.0_
-A tag or branch from the [kibana3](https://github.com/elasticsearch/kibana) repo.
+**Default:** _a50a913 (v3.0.1)_
+A tag or branch from the [kibana3](https://github.com/elasticsearch/kibana) repo. Note that you should use the commit hash instead of the tag name (see [issue #5](https://github.com/thejandroman/kibana3/issues/5)) or puppet will overwrite the config.js file.
 
 #####`manage_git`
 **Data Type:** _bool_
