@@ -6,16 +6,14 @@
 class fluentd::install_repo::yum (
     $key = $fluentd::params::yum_key_url,
     ) {
-    # resources
-    file { "/etc/yum.repos.d/td.repo":
-        ensure => file,
-        content => template('fluentd/treasuredata_yum_repo.erb'),
-        mode => '0644'
+
+    # Sorry for the different naming of the Rpository between debian and redhat. 
+    # But I dont want rename it to avoid a duplication. 
+    yumrepo { 'treasuredata':
+        descr => 'Treasure Data',
+        baseurl => 'http://packages.treasure-data.com/redhat/$basearch',
+        gpgkey => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
+        gpgcheck => 1,
     }
-    exec { "import_td_yum_key":
-        command => "/bin/rpm --import ${key} && touch /var/tmp/import_td_yum_key",
-        creates => '/var/tmp/import_td_yum_key',
-        #path => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
-        refreshonly => true
-    } 
+
 }
