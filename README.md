@@ -12,7 +12,7 @@ Manage Fluentd installation, configuration and Plugin-management with Puppet usi
 - CentOS (tested on CentOS 6.4)
 
 ## Used Modules 
-- apt: "https://github.com/puppetlabs/puppetlabs-apt.git"
+- apt: "https://github.com/puppetlabs/puppetlabs-apt.git" (Only for Debian)
 - concat: "https://github.com/puppetlabs/puppetlabs-concat.git"
 - stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
 
