@@ -4,8 +4,9 @@
 #
 #
 class fluentd::install_repo::apt () {
-    # resources
-    ## Yeaah... this works on squeeze too... 
+    
+    # Sorry for the different naming of the Rpository between debian and redhat. 
+    # But I dont want rename it to avoid a duplication. 
     apt::source { 'treasure-data':
         location    => "http://packages.treasure-data.com/debian",
         release     => "lucid",
