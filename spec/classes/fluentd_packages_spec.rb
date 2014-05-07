@@ -1,3 +1,4 @@
+#!/usr/bin/env rspec
 require 'spec_helper'
 
 describe 'fluentd::packages', :type => :class do
@@ -32,53 +33,38 @@ describe 'fluentd::packages', :type => :class do
       )
     }
   end
-  context "On a Redhat OS" do
-    let :facts do
-      {
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '6.5',
-        :concat_basedir         => '/tmp',
-        :lsbdistid              => 'CentOS',
-      }
-    end
-    it { should contain_class('fluentd::packages')}
-    context "with install_repo=>true" do
-      let(:params) { {:install_repo => true} }
-      it do
-        should contain_file('/etc/yum.repos.d/td.repo').with_content(/^name=TreasureData$/)
-      end
-    end
-    it { should contain_package("td-agent").with(
-      'ensure'  => 'installed',
-      )
-    }
-  end
-
 
   context "On a RedHat/Centos OS" do
+
+    let :params  do
+      {
+        :package_name => 'td-agent',
+        :package_ensure => 'running',
+      } 
+    end
+
     let :facts do
       {
         :osfamily               => 'Redhat',
-        :operatingsystemrelease => '6',
-        :lsbdistid              => 'Redhat',
       }
     end
 
-    it { should contain_yumrepo("treasuredata").with(
-      'baseurl'  => 'http://packages.treasure-data.com/redhat/$basearch',
-      'gpgkey'   => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
-      'gpgcheck' => '1',
-      )
-    }
+    it { should contain_class('fluentd::packages')}
+    
+    context "with install_repo=>true" do
+      let(:params) { {:install_repo => true} }
+      it do
+        should contain_yumrepo('treasuredata').with(
+          'baseurl'  => 'http://packages.treasure-data.com/redhat/$basearch',
+          'gpgkey'   => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
+          'gpgcheck' => 1,
+        )
+      end
+    end
+
     it { should contain_package("td-agent").with(
-      'ensure'  => 'present',
-      )
-    }
-    it { should contain_user("td-agent").with(
-      'ensure'  => 'present',
-      'groups'  => 'adm',
+      'ensure'  => 'running',
       )
     }
   end
 end
-

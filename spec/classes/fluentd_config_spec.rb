@@ -1,3 +1,4 @@
+#!/usr/bin/env rspec
 require 'spec_helper'
 
 describe 'fluentd::config', :type => :class do

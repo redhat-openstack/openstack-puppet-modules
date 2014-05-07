@@ -1,3 +1,4 @@
+#!/usr/bin/env rspec
 require 'spec_helper'
 
 describe 'fluentd::service', :type => :class do
@@ -76,4 +77,3 @@ describe 'fluentd::service', :type => :class do
     end
   end
 end
-

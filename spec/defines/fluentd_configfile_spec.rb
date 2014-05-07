@@ -10,6 +10,7 @@ describe 'fluentd::configfile', :type => :define do
       let (:facts) {{
         :osfamily       => osfam,
         :concat_basedir => '/dne',
+        :lsbdistid      => 'Debian', # Concatlib needs this value. Works for RedHat too.
         }}
       context 'when fed no parameters' do
         let (:title) { 'MyBaconBringsAllTheBoysToTheYard'}

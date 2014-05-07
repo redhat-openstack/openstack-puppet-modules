@@ -1,3 +1,4 @@
+#!/usr/bin/env rspec
 require 'spec_helper'
 
 describe 'fluentd', :type => :class do
@@ -142,7 +143,7 @@ describe 'fluentd', :type => :class do
       should contain_class('fluentd::service')
     end
     it "the yum repo file exists" do
-      should contain_file('/etc/yum.repos.d/td.repo').with_content(/^name=TreasureData$/)
+      should contain_yumrepo('treasuredata')
     end
     it "/etc/td-agent/td-agent.conf should be in place" do
       should contain_file("/etc/td-agent/td-agent.conf").with(
@@ -234,4 +235,3 @@ describe 'fluentd', :type => :class do
     end
   end
 end
-
