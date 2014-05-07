@@ -42,7 +42,9 @@
 #   The folder to install kibana3 into.
 #
 # [*k3_release*]
-#   A tag or branch from the https://github.com/elasticsearch/kibana repo.
+#   A tag or branch from the https://github.com/elasticsearch/kibana repo. Note
+#   that you should use the commit hash instead of the tag name (see issue #5)
+#   or puppet will overwrite the config.js file.
 #
 # [*manage_git*]
 #   Should the module manage git.
