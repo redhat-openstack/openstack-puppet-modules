@@ -1,5 +1,5 @@
 name    'thejandroman-kibana3'
-version '0.0.2'
+version '0.0.3'
 source 'https://github.com/thejandroman/kibana3'
 author 'thejandroman'
 license 'Apache License, Version 2.0'
