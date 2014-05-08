@@ -22,13 +22,15 @@ define fluentd::install_plugin (
         'file': {
             fluentd::install_plugin::file {
                 [$plugin_name]:
-                    ensure => $ensure
+                    ensure => $ensure,
+                    require => Class['Fluentd::Packages']
             }
         }
         'gem': {
             fluentd::install_plugin::gem {
                 [$plugin_name]:
-                    ensure => $ensure
+                    ensure => $ensure, 
+                    require => Class['Fluentd::Packages']
             }
         }
         default: {
