@@ -17,8 +17,8 @@ describe 'kibana3', :type => :class do
         it { should contain_class('apache') \
           .with_default_vhost(false) }
         it { should contain_vcsrepo('/opt/kibana3') \
-          .with_revision('a50a913')
-          .that_notifies('Class[Apache::Service]')
+          .with_revision('a50a913') \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
@@ -34,13 +34,13 @@ describe 'kibana3', :type => :class do
         it { should contain_class('apache') \
           .with_default_vhost(false) }
         it { should contain_vcsrepo('/opt/kibana3') \
-          .with_revision('a50a913')
-          .that_notifies('Class[Apache::Service]')
+          .with_revision('a50a913') \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
             'port'    => '80',
-            'docroot' => '/opt/kibana3/src',
+            'docroot' => '/opt/kibana3/src'
           ) }
       end
 
@@ -52,7 +52,7 @@ describe 'kibana3', :type => :class do
         it { should contain_vcsrepo('/opt/kibana3') \
           .with(
             'revision' => 'a50a913',
-            'owner'    => 'root',
+            'owner'    => 'root'
           ) }
         it { should_not contain_apache__vhost('kibana3') }
       end
@@ -66,15 +66,15 @@ describe 'kibana3', :type => :class do
         it { should contain_vcsrepo('/opt/kibana3') \
           .with(
             'revision' => 'a50a913',
-            'owner'    => 'foo',
-          )
-          .that_notifies('Class[Apache::Service]')
+            'owner'    => 'foo'
+          ) \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
             'port'          => '80',
             'docroot'       => '/opt/kibana3/src',
-            'docroot_owner' => 'foo',
+            'docroot_owner' => 'foo'
           ) }
       end
 
@@ -85,13 +85,13 @@ describe 'kibana3', :type => :class do
         it { should contain_class('apache')\
           .with_default_vhost(false) }
         it { should contain_vcsrepo('/tmp/kibana3') \
-          .with_revision('a50a913')
-          .that_notifies('Class[Apache::Service]')
+          .with_revision('a50a913') \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
             'port'    => '80',
-            'docroot' => '/tmp/kibana3/src',
+            'docroot' => '/tmp/kibana3/src'
           ) }
       end
 
@@ -102,13 +102,13 @@ describe 'kibana3', :type => :class do
         it { should contain_class('apache')\
           .with_default_vhost(false) }
         it { should contain_vcsrepo('/opt/kibana3') \
-          .with_revision('3a485aa')
-          .that_notifies('Class[Apache::Service]')
+          .with_revision('3a485aa') \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
             'port'    => '80',
-            'docroot' => '/opt/kibana3/src',
+            'docroot' => '/opt/kibana3/src'
           ) }
       end
 
@@ -119,13 +119,13 @@ describe 'kibana3', :type => :class do
         it { should contain_class('apache')\
           .with_default_vhost(false) }
         it { should contain_vcsrepo('/opt/kibana3') \
-          .with_revision('a50a913')
-          .that_notifies('Class[Apache::Service]')
+          .with_revision('a50a913') \
+          .that_notifies('Class[Apache::Service]') \
           .that_comes_before('Apache::Vhost[kibana3]') }
         it { should contain_apache__vhost('kibana3') \
           .with(
             'port'    => '8080',
-            'docroot' => '/opt/kibana3/src',
+            'docroot' => '/opt/kibana3/src'
           ) }
       end
     end

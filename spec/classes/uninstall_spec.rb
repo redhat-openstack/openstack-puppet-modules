@@ -23,7 +23,7 @@ describe 'kibana3', :type => :class do
         it { should contain_apache__vhost('kibana3') \
           .with(
             'ensure'  => 'absent',
-            'docroot' => '/opt/kibana3/src',
+            'docroot' => '/opt/kibana3/src'
           ) }
         it { should contain_file('/opt/kibana3') \
           .with_ensure('absent')
@@ -43,7 +43,7 @@ describe 'kibana3', :type => :class do
         it { should contain_apache__vhost('kibana3') \
           .with(
             'ensure'  => 'absent',
-            'docroot' => '/opt/kibana3/src',
+            'docroot' => '/opt/kibana3/src'
           ) }
         it { should contain_file('/opt/kibana3') \
           .with_ensure('absent')
@@ -81,7 +81,7 @@ describe 'kibana3', :type => :class do
         it { should contain_apache__vhost('kibana3') \
           .with(
             'ensure'  => 'absent',
-            'docroot' => '/tmp/kibana3/src',
+            'docroot' => '/tmp/kibana3/src'
           ) }
         it { should contain_file('/tmp/kibana3') \
           .with_ensure('absent')
