@@ -1,4 +1,5 @@
-spec/fixtures/manifests/*
-spec/fixtures/modules/*
-pkg/
+spec/fixtures
+pkg
 .vagrant
+.rspec_system
+.*.sw?
