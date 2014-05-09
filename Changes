@@ -1,3 +1,7 @@
+0.5.0 Saturday 10th May, 2014
+    Add show_diff to the datacat define for parity with the file
+    type in puppet 3.2 and onwards (Github #10 - Sebastian Schmidt)
+
 0.4.3 Saturday 5th April, 2014
     Change the README.md back to github-flavoured markdown as the forge
     supports this now (Github #6 - Igor Galić)
