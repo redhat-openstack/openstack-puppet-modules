@@ -3,3 +3,5 @@ pkg
 .vagrant
 .rspec_system
 .*.sw?
+.bundle
+Gemfile.lock
