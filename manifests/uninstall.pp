@@ -17,7 +17,8 @@ class kibana3::uninstall {
 
     apache::vhost {
       'kibana3':
-      ensure => absent,
+      ensure  => absent,
+      docroot => "${::kibana3::k3_install_folder}/src",
     }
   }
 
