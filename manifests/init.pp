@@ -101,8 +101,10 @@ class kibana3 (
 
   case $ensure {
     'present': {
+      anchor { 'kibana3::begin': } ->
       class { 'kibana3::install': } ->
-      class { 'kibana3::config': }
+      class { 'kibana3::config': } ->
+      anchor { 'kibana3::end': }
     }
     'absent': {
       class { 'kibana3::uninstall': }
