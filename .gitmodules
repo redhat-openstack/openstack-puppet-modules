@@ -91,3 +91,6 @@
 [submodule "xinetd"]
 	path = xinetd
 	url = https://github.com/packstack/puppetlabs-xinetd.git
+[submodule "gluster"]
+	path = gluster
+	url = https://github.com/purpleidea/puppet-gluster.git
