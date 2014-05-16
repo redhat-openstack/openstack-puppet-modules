@@ -19,9 +19,6 @@
 [submodule "glance"]
 	path = glance
 	url = https://github.com/stackforge/puppet-glance.git
-[submodule "gluster"]
-	path = gluster
-	url = https://github.com/redhat-openstack/puppet-openstack-storage.git
 [submodule "haproxy"]
 	path = haproxy
 	url = https://github.com/puppetlabs/puppetlabs-haproxy.git
