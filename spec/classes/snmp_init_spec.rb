@@ -23,6 +23,7 @@ describe 'snmp', :type => 'class' do
   debianish = ['Debian']
   #debianish = ['Debian', 'Ubuntu']
   suseish = ['Suse']
+  freebsdish = ['FreeBSD']
 
   context 'on a supported osfamily, default parameters' do
     redhatish.each do |os|
@@ -339,6 +340,91 @@ describe 'snmp', :type => 'class' do
           :hasstatus  => true,
           :hasrestart => true,
           :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', 'Exec[install /etc/init.d/snmptrapd]', ]
+        )}
+      end
+    end
+
+    freebsdish.each do |os|
+      describe "for osfamily FreeBSD, operatingsystem #{os}" do
+        let(:params) {{}}
+        let :facts do {
+          :osfamily               => 'FreeBSD',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '9.2'
+        }
+        end
+        it { should contain_package('snmpd').with(
+          :ensure => 'present',
+          :name   => 'net-mgmt/net-snmp'
+        )}
+        it { should_not contain_class('snmp::client') }
+        it { should contain_file('var-net-snmp').with(
+          :ensure  => 'directory',
+          :mode    => '0600',
+          :owner   => 'root',
+          :group   => 'wheel',
+          :path    => '/var/net-snmp',
+          :require => 'Package[snmpd]'
+        )}
+
+        it { should contain_file('snmpd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0755',
+          :owner   => 'root',
+          :group   => 'wheel',
+          :path    => '/usr/local/etc/snmp/snmpd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmpd]'
+        )}
+        # TODO add more contents for File[snmpd.conf]
+        it 'should contain File[snmpd.conf] with expected contents' do
+          verify_contents(subject, 'snmpd.conf', [
+            'agentaddress udp:127.0.0.1:161',
+            '#rocommunity public 127.0.0.1',
+            'com2sec notConfigUser  default       public',
+            'group   notConfigGroup v1            notConfigUser',
+            'group   notConfigGroup v2c           notConfigUser',
+            'view    systemview    included   .1.3.6.1.2.1.1',
+            'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+            'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
+            'syslocation Unknown',
+            'syscontact Unknown',
+            'sysservices 72',
+          ])
+        end
+        it { should contain_service('snmpd').with(
+          :ensure     => 'running',
+          :name       => 'snmpd',
+          :enable     => true,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
+        )}
+
+        it { should contain_file('snmptrapd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0755',
+          :owner   => 'root',
+          :group   => 'wheel',
+          :path    => '/usr/local/etc/snmp/snmptrapd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmptrapd]'
+        )}
+        # TODO add more contents for File[snmptrapd.conf]
+        it 'should contain File[snmptrapd.conf] with correct contents' do
+          verify_contents(subject, 'snmptrapd.conf', [
+            'doNotLogTraps no',
+            'authCommunity log,execute,net public',
+            'disableAuthorization no',
+          ])
+        end
+        it { should contain_service('snmptrapd').with(
+          :ensure     => 'stopped',
+          :name       => 'snmptrapd',
+          :enable     => false,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
         )}
       end
     end
