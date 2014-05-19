@@ -26,7 +26,7 @@ describe 'fluentd::config', :type => :class do
         'ensure'  => 'directory',
         'owner'   => 'td-agent',
         'group'   => 'td-agent',
-        'mode'    => '0750',
+        'mode'    => '0750'
       )
     end
   end
@@ -53,7 +53,7 @@ describe 'fluentd::config', :type => :class do
         'ensure'  => 'directory',
         'owner'   => 'td-agent',
         'group'   => 'td-agent',
-        'mode'    => '0750',
+        'mode'    => '0750'
       )
     end
   end
