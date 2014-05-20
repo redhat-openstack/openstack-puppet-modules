@@ -19,9 +19,6 @@
 [submodule "glance"]
 	path = glance
 	url = https://github.com/stackforge/puppet-glance.git
-[submodule "gluster"]
-	path = gluster
-	url = https://github.com/redhat-openstack/puppet-openstack-storage.git
 [submodule "haproxy"]
 	path = haproxy
 	url = https://github.com/puppetlabs/puppetlabs-haproxy.git
@@ -94,3 +91,12 @@
 [submodule "xinetd"]
 	path = xinetd
 	url = https://github.com/packstack/puppetlabs-xinetd.git
+[submodule "gluster"]
+	path = gluster
+	url = https://github.com/purpleidea/puppet-gluster.git
+[submodule "common"]
+	path = common
+	url = https://github.com/purpleidea/puppet-common.git
+[submodule "puppet"]
+	path = puppet
+	url = https://github.com/purpleidea/puppet-puppet.git
