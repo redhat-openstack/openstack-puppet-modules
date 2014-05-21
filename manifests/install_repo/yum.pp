@@ -7,8 +7,8 @@ class fluentd::install_repo::yum (
     $key = $fluentd::params::yum_key_url,
     ) {
 
-    # Sorry for the different naming of the Rpository between debian and redhat. 
-    # But I dont want rename it to avoid a duplication. 
+    # Sorry for the different naming of the Repository between debian and redhat.
+    # But I dont want rename it to avoid a duplication.
     yumrepo { 'treasuredata':
         descr => 'Treasure Data',
         baseurl => 'http://packages.treasure-data.com/redhat/$basearch',
