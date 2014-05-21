@@ -30,7 +30,7 @@ describe 'fluentd', :type => :class do
       end
       it "the apt repo file exists" do
         should contain_apt__source("treasure-data").with(
-          'location'  => 'http://packages.treasure-data.com/debian',
+          'location'  => 'http://packages.treasure-data.com/debian'
         )
       end
       it "/etc/td-agent/td-agent.conf should be in place" do
@@ -47,19 +47,19 @@ describe 'fluentd', :type => :class do
           'ensure'  => 'directory',
           'owner'   => 'td-agent',
           'group'   => 'td-agent',
-          'mode'    => '0750',
+          'mode'    => '0750'
         )
       end
       it "td-agent package should be installed" do
         should contain_package("td-agent").with(
-          'ensure'  => 'installed',
+          'ensure'  => 'installed'
         )
       end
       it "td-agent is running" do
         should contain_service("td-agent").with(
           'ensure'     => 'running',
           'enable'     => 'true',
-          'hasstatus'  => 'true',
+          'hasstatus'  => 'true'
         )
       end
     end
@@ -82,7 +82,7 @@ describe 'fluentd', :type => :class do
       end
       it "the apt repo file DOES NOT exists" do
         should_not contain_apt__source("treasure-data").with(
-          'location'  => 'http://packages.treasure-data.com/debian',
+          'location'  => 'http://packages.treasure-data.com/debian'
         )
       end
       it "/etc/td-agent/td-agent.conf should be in place" do
@@ -99,19 +99,19 @@ describe 'fluentd', :type => :class do
           'ensure'  => 'directory',
           'owner'   => 'td-agent',
           'group'   => 'td-agent',
-          'mode'    => '0750',
+          'mode'    => '0750'
         )
       end
       it "td-agent package should be installed" do
         should contain_package("td-agent").with(
-          'ensure'  => 'installed',
+          'ensure'  => 'installed'
         )
       end
       it "td-agent is running" do
         should contain_service("td-agent").with(
           'ensure'     => 'running',
           'enable'     => 'true',
-          'hasstatus'  => 'true',
+          'hasstatus'  => 'true'
         )
       end
     end
@@ -159,19 +159,19 @@ describe 'fluentd', :type => :class do
         'ensure'  => 'directory',
         'owner'   => 'td-agent',
         'group'   => 'td-agent',
-        'mode'    => '0750',
+        'mode'    => '0750'
       )
     end
     it "td-agent package should be installed" do
       should contain_package("td-agent").with(
-        'ensure'  => 'installed',
+        'ensure'  => 'installed'
       )
     end
     it "td-agent is running" do
       should contain_service("td-agent").with(
         'ensure'     => 'running',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
       )
     end
   end
@@ -218,19 +218,19 @@ describe 'fluentd', :type => :class do
         'ensure'  => 'directory',
         'owner'   => 'td-agent',
         'group'   => 'td-agent',
-        'mode'    => '0750',
+        'mode'    => '0750'
       )
     end
     it "td-agent package should be installed" do
       should contain_package("td-agent").with(
-        'ensure'  => 'installed',
+        'ensure'  => 'installed'
       )
     end
     it "td-agent is running" do
       should contain_service("td-agent").with(
         'ensure'     => 'running',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
       )
     end
   end

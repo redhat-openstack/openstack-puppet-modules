@@ -16,7 +16,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'running',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
@@ -25,7 +25,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'stopped',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
@@ -34,7 +34,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'stopped',
         'enable'     => 'false',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
@@ -53,7 +53,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'running',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
@@ -62,7 +62,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'stopped',
         'enable'     => 'true',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
@@ -71,7 +71,7 @@ describe 'fluentd::service', :type => :class do
       it { should contain_service("td-agent").with(
         'ensure'     => 'stopped',
         'enable'     => 'false',
-        'hasstatus'  => 'true',
+        'hasstatus'  => 'true'
         )
       }
     end
