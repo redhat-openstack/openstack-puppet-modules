@@ -6,12 +6,12 @@ class fluentd::packages (
 ){
     if $install_repo {
         case $::osfamily {
-            "redhat": {
+            'redhat': {
                 class{'fluentd::install_repo::yum':
                     before => Package[$package_name],
                 }
             }
-            "debian": {
+            'debian': {
                 class{'fluentd::install_repo::apt':
                     before => Package[$package_name],
                 }
@@ -28,7 +28,6 @@ class fluentd::packages (
 # extra bits... why this is required isn't quite clear.
     case $::osfamily {
         'debian': {
-            
             package{[
                 'libxslt1.1',
                 'libyaml-0-2',

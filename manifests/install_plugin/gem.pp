@@ -12,18 +12,15 @@ define fluentd::install_plugin::gem (
     $plugin_name = $name,
 ) {
 
-    case $::operatingsystem {
+    case $::osfamily {
         'debian': {
             $fluent_gem_path = '/usr/lib/fluent/ruby/bin/fluent-gem'
         }
-        'ubuntu': {
-            $fluent_gem_path = '/usr/lib/fluent/ruby/bin/fluent-gem'
-        }
-        'centos': {
+        'redhat': {
             $fluent_gem_path = '/usr/lib64/fluent/ruby/bin/fluent-gem'
         }
         default: {
-            fail("${::operatingsystem} is currently not supportet by this module")
+            fail("${::osfamily} is currently not supported by this module")
         }
     }
     case $ensure {
@@ -46,7 +43,7 @@ define fluentd::install_plugin::gem (
             }
         }
         default: {
-            fail("ensure => ${ensure} is currently not supportet by this module")
+            fail("ensure => ${ensure} is currently not supported by this module")
         }
     }
 }
