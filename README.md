@@ -116,6 +116,11 @@ The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp` in
 version 3.0.0 of this module.  All of their class parameters will be made
 available in the `snmp` class.
 
+Contributing
+------------
+
+Please see DEVELOP.md for contribution information.
+
 License
 -------
 
