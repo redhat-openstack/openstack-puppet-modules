@@ -74,6 +74,9 @@ To install a SNMP version 3 user for snmpd:
       authpass => '1234auth',
       privpass => '5678priv',
     }
+    class { 'snmp':
+      snmpd_config => [ 'rouser myuser authPriv' ],
+    }
 
 To install a SNMP version 3 user for snmptrapd:
 
