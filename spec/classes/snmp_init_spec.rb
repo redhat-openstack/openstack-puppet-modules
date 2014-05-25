@@ -471,6 +471,24 @@ describe 'snmp', :type => 'class' do
       end
     end
 
+    describe 'com2sec => [ SomeString ]' do
+      let(:params) {{ :com2sec => [ 'SomeString', ] }}
+      it 'should contain File[snmpd.conf] with contents "com2sec SomeString"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'com2sec SomeString',
+        ])
+      end
+    end
+
+    describe 'groups => [ SomeString ]' do
+      let(:params) {{ :groups => [ 'SomeString', ] }}
+      it 'should contain File[snmpd.conf] with contents "groups SomeString"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'group   SomeString',
+        ])
+      end
+    end
+
     describe 'dlmod => [ SomeString ]' do
       let(:params) {{ :dlmod => [ 'SomeString', ] }}
       it 'should contain File[snmpd.conf] with contents "dlmod SomeString"' do

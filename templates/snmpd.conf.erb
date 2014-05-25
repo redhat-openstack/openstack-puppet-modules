@@ -22,11 +22,18 @@ agentaddress <%= @agentaddress.join(',') %>
 # ------------------------------------------------------------------------------
 # VACM Configuration
 #       sec.name       source        community
-com2sec notConfigUser  default       <%= @ro_community %>
+<% if @com2sec.any? -%>
+<% @com2sec.each do |com2sec| -%>
+com2sec <%= com2sec %>
+<% end -%>
+<% end -%>
 
 #       groupName      securityModel securityName
-group   notConfigGroup v1            notConfigUser
-group   notConfigGroup v2c           notConfigUser
+<% if @groups.any? -%>
+<% @groups.each do |group| -%>
+group   <%= group %>
+<% end -%>
+<% end -%>
 
 #       name          incl/excl  subtree             mask(optional)
 <% @views.each do |view| -%>

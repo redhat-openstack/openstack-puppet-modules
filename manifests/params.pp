@@ -56,6 +56,21 @@ class snmp::params {
     default => $::snmp_location,
   }
 
+  $com2sec = $::snmp_com2sec ? {
+    undef   => [
+      "notConfigUser  default       ${ro_community}",
+    ],
+    default => $::snmp_com2sec,
+  }
+
+  $groups = $::snmp_groups ? {
+    undef   => [
+      'notConfigGroup v1            notConfigUser',
+      'notConfigGroup v2c           notConfigUser',
+    ],
+    default => $::snmp_groups,
+  }
+
   $services = $::snmp_services ? {
     undef   => 72,
     default => $::snmp_services,

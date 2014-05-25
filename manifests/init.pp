@@ -37,6 +37,19 @@
 #   Location of the SNMP system.
 #   Default: Unknown
 #
+# [*com2sec*]
+#   An array of VACM com2sec mappings.
+#   Must provide SECNAME, SOURCE and COMMUNITY.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ "notConfigUser default ${ro_community}" ]
+#
+# [*groups*]
+#   An array of VACM group mappings.
+#   Must provide GROUP, {v1|v2c|usm|tsm|ksm}, SECNAME.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ 'notConfigGroup v1  notConfigUser',
+#              'notConfigGroup v2c notConfigUser' ]
+#
 # [*services*]
 #   For a host system, a good value is 72 (application + end-to-end layers).
 #   Default: 72
@@ -215,6 +228,8 @@ class snmp (
   $contact                 = $snmp::params::contact,
   $location                = $snmp::params::location,
   $services                = $snmp::params::services,
+  $com2sec                 = $snmp::params::com2sec,
+  $groups                  = $snmp::params::groups,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
   $dlmod                   = $snmp::params::dlmod,
