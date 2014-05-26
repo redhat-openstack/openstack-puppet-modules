@@ -1,6 +1,6 @@
 <source>
   type <%= @type %>
-<% @config.each_pair do |key, val| -%>
+<% @config.sort_by{|key,val|key}.each do |key, val| -%>
   <%= key %> <%= val %>
 <% end -%>
 <% if @format != false -%>  format <%= @format %><% end %>
