@@ -1,0 +1,22 @@
+# whether to allow init.d script to start a kafka broker ("yes", "no")
+KAFKA_START=yes
+
+# User and group to run as
+KAFKA_USER=kafka
+KAFKA_GROUP=kafka
+KAFKA_CONFIG=/usr/local/kafka/config
+
+# ulimit open files limit for kafka user.
+KAFKA_NOFILES_ULIMIT=8192
+
+# The default JMX_PORT for Kafka Brokers is 9999.
+# Set JMX_PORT to something else to override this.
+#JMX_PORT=9999
+#KAFKA_JMX_OPTS=${KAFKA_JMX_OPTS:="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"}
+
+# Memory sizes, and logging configuration
+#KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$KAFKA_CONFIG/log4j.properties"
+#KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:+UseCompressedOops -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC"
+#KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
+#KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${KAFKA_CONFIG}/log4j.properties"
+#KAFKA_OPTS=""

@@ -1,26 +1,8 @@
 # == Class: kafka
 #
-# Full description of class kafka here.
+# The root class of the kafka moudle. At present this does nothing. In order to install
+# kafka, you want to install a broker using `class { 'kafka::broker': }`
 #
-# === Parameters
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#
-class kafka (
-  $broker_id = $kafka::params::broker_id,
-  $hostname = $kafka::params::hostname,
-  $zookeeper_connect = $kafka::params::zookeeper_connect,
-  $mirror_url = $kafka::params::mirror_url,
-  $install_dir = $kafka::params::install_dir,
-  $version = $kafka::params::version,
-  $scala_version = $kafka::params::scala_version
-) inherits kafka::params {
+class kafka {
 
-  # validate parameters here
-
-  class { 'kafka::install': } ->
-  class { 'kafka::config': } ~>
-  class { 'kafka::service': } ->
-  Class['kafka']
 }

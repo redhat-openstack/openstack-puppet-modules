@@ -1,0 +1,202 @@
+#!/bin/sh
+#
+# /etc/init.d/kafka -- startup script for the kafka distributed publish-subscribe messaging system
+#
+# Written by Alexandros Kosiaris <akosiaris@wikimedia.org>
+#
+### BEGIN INIT INFO
+# Provides:          kafka
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Should-Start:      $named
+# Should-Stop:       $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start kafka
+# Description:       Start the kafka distributed publish-subscribe messaging system
+### END INIT INFO
+
+set -e
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+NAME=kafka
+DESC="broker"
+DEFAULT=/etc/default/$NAME
+
+if [ `id -u` -ne 0 ]; then
+	echo "You need root privileges to run this script"
+	exit 1
+fi
+
+# Make sure kafka is started with system locale
+if [ -r /etc/default/locale ]; then
+	. /etc/default/locale
+	export LANG
+fi
+
+. /lib/lsb/init-functions
+
+if [ -r /etc/default/rcS ]; then
+	. /etc/default/rcS
+fi
+
+# # The following variables can be overwritten in $DEFAULT
+#
+# Run kafka as this user ID and group ID
+KAFKA_USER=kafka
+KAFKA_GROUP=kafka
+
+KAFKA_CONFIG=/usr/local/kafka/config
+KAFKA_START=yes
+
+JDK_DIRS="/usr/lib/jvm/default-java /usr/lib/jvm/java-6-sun /usr/lib/jvm/java-1.5.0-sun /usr/lib/j2sdk1.5-sun /usr/lib/j2sdk1.5-ibm /usr/lib/jvm/java-1.7.0-openjdk-amd64"
+
+# Look for the right JVM to use
+for jdir in $JDK_DIRS; do
+	if [ -r "$jdir/bin/java" -a -z "${JAVA_HOME}" ]; then
+		JAVA_HOME="$jdir"
+	fi
+done
+export JAVA_HOME
+
+# Default Java options
+# Set java.awt.headless=true if JAVA_OPTS is not set so the
+# Xalan XSL transformer can work without X11 display on JDK 1.4+
+if [ -z "$JAVA_OPTS" ]; then
+	JAVA_OPTS="-Djava.awt.headless=true"
+fi
+
+# End of variables that can be overwritten in $DEFAULT
+
+# overwrite settings from default file
+if [ -f "$DEFAULT" ]; then
+	. "$DEFAULT"
+fi
+
+# If ulimit nofiles was set in $DEFAULT,
+# then change the limit for this process now.
+# This will not set nofiles higher than
+# system limit.
+if [ -n "$KAFKA_NOFILES_ULIMIT" ]; then
+    ulimit -n "$KAFKA_NOFILES_ULIMIT"
+fi
+
+# Define other required variables
+KAFKA_PID="/var/run/$NAME.pid"
+DAEMON="${JAVA_HOME}/bin/java"
+
+kafka_sh() {
+	# Escape any double quotes in the value of JAVA_OPTS
+	JAVA_OPTS="$(echo $JAVA_OPTS | sed 's/\"/\\\"/g')"
+	KAFKA_OPTS="${KAFKA_OPTS} ${JAVA_OPTS}"
+
+	# Export Kafka environment variables from $DEFAULT
+	export KAFKA_CONFIG JMX_PORT KAFKA_JMX_OPTS SCALA_VERSION KAFKA_JVM_PERFORMANCE_OPTS KAFKA_HEAP_OPTS KAFKA_LOG4J_OPTS KAFKA_OPTS
+
+	# Run as a daemon
+	set +e
+
+	start-stop-daemon --start -b -u "$KAFKA_USER" -g "$KAFKA_GROUP" \
+		-c "$KAFKA_USER" -m -p "$KAFKA_PID" \
+		-x "/usr/local/kafka/bin/kafka-server-start.sh" -- "${KAFKA_CONFIG}/server.properties"
+	status="$?"
+	set +a -e
+	return $status
+}
+
+case "$1" in
+  start)
+	if [ -z "$JAVA_HOME" ]; then
+		log_failure_msg "no JDK found - please set JAVA_HOME"
+		exit 1
+	fi
+
+	if [ -n "$KAFKA_START" -a "$KAFKA_START" != "yes" ]; then
+		log_failure_msg "KAFKA_START not set to 'yes' in $DEFAULT, not starting"
+		exit 0
+	fi
+
+	log_daemon_msg "Starting $DESC" "$NAME"
+	if start-stop-daemon --test --start --pidfile "$KAFKA_PID" \
+		--user $KAFKA_USER --exec "${JAVA_HOME}/bin/java" \
+		>/dev/null; then
+
+		kafka_sh start
+		sleep 5
+		if start-stop-daemon --test --start --pidfile "$KAFKA_PID" \
+			--user $KAFKA_USER --exec "${JAVA_HOME}/bin/java" \
+			>/dev/null; then
+			if [ -f "$KAFKA_PID" ]; then
+				rm -f "$KAFKA_PID"
+			fi
+			log_end_msg 1
+		else
+			log_end_msg 0
+		fi
+	else
+	        log_progress_msg "(already running)"
+		log_end_msg 0
+	fi
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "$NAME"
+
+	set +e
+	if [ -f "$KAFKA_PID" ]; then
+		start-stop-daemon --stop --pidfile "$KAFKA_PID" \
+			--user "$KAFKA_USER" \
+			--retry=TERM/20/KILL/5 >/dev/null
+		if [ $? -eq 1 ]; then
+			log_progress_msg "$DESC is not running but pid file exists, cleaning up"
+		elif [ $? -eq 3 ]; then
+			PID="`cat $KAFKA_PID`"
+			log_failure_msg "Failed to stop $NAME (pid $PID)"
+			exit 1
+		fi
+		rm -f "$KAFKA_PID"
+	else
+		log_progress_msg "(not running)"
+	fi
+	log_end_msg 0
+	set -e
+	;;
+   status)
+	set +e
+	start-stop-daemon --test --start --pidfile "$KAFKA_PID" \
+		--user $KAFKA_USER --exec "${JAVA_HOME}/bin/java" \
+		>/dev/null 2>&1
+	if [ "$?" = "0" ]; then
+
+		if [ -f "$KAFKA_PID" ]; then
+		    log_success_msg "$DESC is not running, but pid file exists."
+			exit 1
+		else
+		    log_success_msg "$DESC is not running."
+			exit 3
+		fi
+	else
+		log_success_msg "$DESC is running with pid `cat $KAFKA_PID`"
+	fi
+	set -e
+        ;;
+  restart|force-reload)
+	if [ -f "$KAFKA_PID" ]; then
+		$0 stop
+		sleep 1
+	fi
+	$0 start
+	;;
+  try-restart)
+        if start-stop-daemon --test --start --pidfile "$KAFKA_PID" \
+		--user $KAFKA_USER --exec "${JAVA_HOME}/bin/java" \
+		>/dev/null; then
+		$0 start
+	fi
+        ;;
+  *)
+	log_success_msg "Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
+	exit 1
+	;;
+esac
+
+exit 0

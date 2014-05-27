@@ -13,48 +13,83 @@
 
 ##Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves. This is your 30 second elevator pitch for your module. Consider including OS/Puppet version it works with.       
+The kafka module for managing the installation and configuration of [Apache Kafka](http://kafka.apache.org)
+
+[![Build
+Status](https://secure.travis-ci.org/opentable/puppet-kafka.png)](https://secure.travis-ci.org/opentable/puppet-kafka.png)
 
 ##Module Description
 
-If applicable, this section should have a brief description of the technology the module integrates with and what that integration enables. This section should answer the questions: "What does this module *do*?" and "Why would I use it?"
-
-If your module has a range of functionality (installation, configuration, management, etc.) this is the time to mention it.
+The kafka module for managing the installation and configuration of Apache Kafka: it's brokers, producers and consumers.
 
 ##Setup
 
 ###What kafka affects
-
-* A list of files, packages, services, or operations that the module will alter, impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form. 
-
-###Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here. 
+Installs the kafka package and creates a new service.
 
 ###Beginning with kafka
 
-The very basic steps needed for a user to get the module up and running. 
+To install a new kafka broker:
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
-
+```puppet
+   class { 'kafka::broker': }
+```
 ##Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here. 
+###Classes and Defined Types
+
+####Class: `kafka::broker`
+One of the primary classes of the kafka module. This class will install a kafka broker.
+
+**Parameters within `kafka::broker`:**
+#####`version`
+The version of kafka that should be installed.
+#####`scala_version`
+The scala version what kafka was built with.
+#####`install_dir`
+The directory to install kafka to.
+#####`mirror_url`
+The url where the kafka is downloaded from.
+#####`config`
+A hash of the configuration options.
+#####`install_java`
+Install java if it's not already installed.
 
 ##Reference
 
-Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
+###Classes
+####Public Classes
+* [`kafka::broker`](#class-kafka-broker): Guides the basic installation of a kafka broker
+####Private Classes
+* [`kafka::broker::config`]  Manages all the default configuration of the kafka application
+* [`kafka::broker::install`] Manages the installation of the kafka packages
+* [`kafka::broker::service`] Manages the kafka server service
 
 ##Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+This module is tested on the following platforms:
+
+* CentOS 5
+* CentOS 6
+* Ubuntu 10.04.4
+* Ubuntu 12.04.2
+* Ubuntu 13.10
+
+It is tested with the OSS version of Puppet only.
 
 ##Development
 
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
+###Contributing
 
-##Release Notes/Contributors/Etc **Optional**
+Please read CONTRIBUTING.md for full details on contributing to this project.
 
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+###Running tests
+
+This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker](https://github.com/puppetlabs/beaker) to verify functionality. For in-depth information please see their respective documentation.
+
+Quickstart:
+
+    gem install bundler
+    bundle install
+    bundle exec rake spec
+	BEAKER_DEBUG=yes bundle exec rspec spec/acceptance
