@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# chkconfig: 345 99 01
+# description: Kafka
+#
+# File : Kafka
+#
+# Description: Starts and stops the Kafka server
+#
+
+KAFKA_USER=kafka
+# See how we were called.
+case "$1" in
+
+start)
+  echo -n "Starting Kafka:"
+  su $KAFKA_USER -c "nohup /usr/local/kafka/bin/kafka-server-start.sh /usr/local/kafka/config/server.properties > /var/log/kafka/server.out 2> /var/log/kafka/server.err &"
+  echo " done."
+  exit 0
+;;
+
+stop)
+  echo -n "Stopping Kafka: "
+  su  $KAFKA_USER  -c "ps -ef | grep kafka.Kafka | grep -v grep | awk '{print \$2}' | xargs kill"
+  echo " done."
+  exit 0
+;;
+hardstop)
+  echo -n "Stopping (hard) Kafka: "
+  su $KAFKA_USER  -c "ps -ef | grep kafka.Kafka | grep -v grep | awk '{print \$2}' | xargs kill -9"
+  echo " done."
+  exit 0
+;;
+
+status)
+  c_pid=`ps -ef | grep kafka.Kafka | grep -v grep | awk '{print $2}'`
+  if [ "$c_pid" = "" ] ; then
+    echo "Stopped"
+    exit 3
+  else
+    echo "Running $c_pid"
+    exit 0
+  fi
+;;
+
+restart)
+  stop
+  start
+;;
+
+*)
+  echo "Usage: $0 {start|stop|hardstop|status|restart}"
+  exit 1
+;;
+
+esac

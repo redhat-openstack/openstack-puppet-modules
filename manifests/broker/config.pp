@@ -17,21 +17,14 @@ class kafka::broker::config {
     group   => 'kafka',
     mode    => '0644',
     alias   => 'kafka-cfg',
-    require => [ File['kafka-app-dir'], File['/usr/local/kafka/config'] ],
+    require => [ File['kafka-app-dir'], File['/usr/local/kafka'] ],
     content => template('kafka/server.properties.erb')
   }
 
-  file { '/usr/local/kafka/logs':
+  file { '/var/log/kafka':
     ensure => directory,
     owner  => 'kafka',
     group  => 'kafka'
   }
-
-  #file { '/etc/init/kafka.conf':
-  #  content => template('kafka/init/kafka.conf.erb'),
-  #  mode    => '0644',
-  #  alias   => 'kafka-init',
-  #  require => File[$conf_file],
-  #}
 
 }

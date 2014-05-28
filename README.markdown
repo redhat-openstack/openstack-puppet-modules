@@ -60,6 +60,7 @@ Install java if it's not already installed.
 ###Classes
 ####Public Classes
 * [`kafka::broker`](#class-kafka-broker): Guides the basic installation of a kafka broker
+
 ####Private Classes
 * [`kafka::broker::config`]  Manages all the default configuration of the kafka application
 * [`kafka::broker::install`] Manages the installation of the kafka packages

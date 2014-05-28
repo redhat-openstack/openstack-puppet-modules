@@ -37,7 +37,7 @@ describe 'kafka::broker' do
         it { should contain_file('/etc/init.d/kafka') }
 
         it { should contain_file('/usr/local/kafka/config/server.properties') }
-        it { should contain_file('/usr/local/kafka/logs').with('ensure' => 'directory') }
+        it { should contain_file('/var/log/kafka').with('ensure' => 'directory') }
 
         it { should contain_service('kafka') }
       end
