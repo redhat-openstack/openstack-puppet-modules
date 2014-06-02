@@ -52,11 +52,11 @@ describe 'fluentd::match' do
         :configfile => 'foo',
         :pattern    => 'baz',
         :type		=> 'copy',
-        :servers    => [{ 'host' => 'kelis', 'port' => '24224'}, { 'host' => 'bossy', 'port' => '24224'}],
         :config     => [
             {
                 'type'              => 'file',
                 'compress'          => 'gzip',
+                'servers'           => [{ 'host' => 'kelis', 'port' => '24224'}, { 'host' => 'bossy', 'port' => '24224'}],
             },
             {
                 'type'              => 'mongo',
@@ -66,7 +66,7 @@ describe 'fluentd::match' do
 		}}
 
 		it "should create matcher with server" do
-			should contain_concat__fragment('match_bar').with_content(/<match baz>.*type.*copy.*<store>.*compress.*gzip.*type.*file.*<\/store>.*<store>.*database.*dummy.*type.*mongo.*<\/store>.*<server>.*host.*kelis.*port.*24224.*<\/server>.*<server>.*host.*bossy.*port.*24224.*<\/server>.*<\/match>/m)
+			should contain_concat__fragment('match_bar').with_content(/<match baz>.*type.*copy.*<store>.*compress.*gzip.*<server>.*host.*kelis.*port.*24224.*<\/server>.*<server>.*host.*bossy.*port.*24224.*<\/server>.*type.*file.*<\/store>.*<store>.*database.*dummy.*type.*mongo.*<\/store>.*<\/match>/m)
 		end
 	end
 
