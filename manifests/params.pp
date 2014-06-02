@@ -10,6 +10,7 @@ class kafka::params {
   $version = '0.8.1.1'
   $scala_version = '2.8.0'
   $install_java = true
+  $install_dir = "/usr/local/kafka-${scala_version}-${version}"
 
   #http://kafka.apache.org/documentation.html#brokerconfigs
   $broker_config_defaults = {

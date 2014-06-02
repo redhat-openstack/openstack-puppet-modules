@@ -1,2 +1,5 @@
+2014-06-02 Release 0.2.0
+  - refactoring installation of kafka libraries
+
 2014-05-27 Release 0.1.0
   - initial release

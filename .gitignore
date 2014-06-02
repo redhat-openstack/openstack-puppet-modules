@@ -5,3 +5,4 @@ spec/fixtures
 .vagrant
 *.iml
 .idea/
+.bundle/

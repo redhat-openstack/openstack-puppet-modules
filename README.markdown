@@ -29,6 +29,11 @@ Installs the kafka package and creates a new service.
 
 ###Beginning with kafka
 
+To install the kafka binaries:
+```puppet
+  class { 'kafka': }
+```
+
 To install a new kafka broker:
 
 ```puppet
@@ -37,6 +42,23 @@ To install a new kafka broker:
 ##Usage
 
 ###Classes and Defined Types
+
+####Class: `kafka`
+One of the primary classes of the kafka module. This class will install the kafka binaries
+
+**Parameters within `kafka`:**
+#####`version`
+The version of kafka that should be installed.
+#####`scala_version`
+The scala version what kafka was built with.
+#####`install_dir`
+The directory to install kafka to.
+#####`mirror_url`
+The url where the kafka is downloaded from.
+#####`config`
+A hash of the configuration options.
+#####`install_java`
+Install java if it's not already installed.
 
 ####Class: `kafka::broker`
 One of the primary classes of the kafka module. This class will install a kafka broker.
@@ -59,6 +81,7 @@ Install java if it's not already installed.
 
 ###Classes
 ####Public Classes
+* [`kafka`](#class-kafka-broker): Guides the basic installation of kafka binaries
 * [`kafka::broker`](#class-kafka-broker): Guides the basic installation of a kafka broker
 
 ####Private Classes
