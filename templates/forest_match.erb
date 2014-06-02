@@ -3,7 +3,7 @@
 <% @config.sort_by{|key,val|key}.each do |key, val| -%>
   <% if val.class == Hash && key == 'template' %> 
     <template>
-    <% val.each_pair do |tkey, tval| -%>
+    <% val.sort_by{|tkey,tval|tkey}.each do |tkey, tval| -%>
         <%= tkey %> <%= tval %>
     <% end -%>
     </template>
