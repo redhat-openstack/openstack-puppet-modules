@@ -1,6 +1,6 @@
 <match <%= @pattern %>>
   type <%= @type %>
-<% @config.each_pair do |key, val| -%>
+<% @config.sort_by{|key,val|key}.each do |key, val| -%>
   <% if val.class == Hash && key == 'template' %> 
     <template>
     <% val.each_pair do |tkey, tval| -%>
@@ -13,7 +13,7 @@
 <% end -%>
 <% @servers.each do |server| -%>
   <server>
-<% @server.each_pair do |key, val| -%>
+<% @server.sort_by{|key,val|key}.each do |key, val| -%>
     <%= key %> <%= val %>
 <% end -%>
   </server>
