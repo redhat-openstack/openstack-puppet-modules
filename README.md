@@ -143,6 +143,9 @@ The Collector collects all the data from the Agents. He now stores the data in f
  
 ### copy ouput to multiple stores
 ````
+  $logger=[ { 'host' => 'logger-sample01', 'port' => '24224'},
+            { 'host' => 'logger-example01', 'port' => '24224', 'standby' => ''} ] 
+            
   fluentd::match { 'forward_to_logger':
       configfile  => 'sample_tail',
       pattern     => 'alocal',
