@@ -141,3 +141,28 @@ The Collector collects all the data from the Agents. He now stores the data in f
   ...
 ```
  
+### copy ouput to multiple stores
+````
+  fluentd::match { 'forward_to_logger':
+      configfile  => 'sample_tail',
+      pattern     => 'alocal',
+      type        => 'copy',
+      config      => [
+      {
+        'type'               => 'forward',
+        'send_timeout'       => '60s',
+        'recover_wait'       => '10s',
+        'heartbeat_interval' => '1s',
+        'phi_threshold'      => 8,
+        'hard_timeout'       => '60s',
+        'flush_interval'     => '5s',
+        'servers'            => $logger,
+      },
+      {
+        'type'              => 'stdout',
+        'output_type'       => 'json',
+      }
+      ],
+  }
+
+```
