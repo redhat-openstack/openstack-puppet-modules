@@ -74,7 +74,7 @@ class kafka (
     alias   => 'kafka-app-dir'
   }
 
-  ensure_resource('package','wget', {'ensure' => 'installed'})
+  ensure_resource('package','wget', {'ensure' => 'present'})
 
   exec { 'download-kafka-package':
     command => "wget -O ${package_dir}/${basefilename} ${package_url} 2> /dev/null",
