@@ -1,16 +1,31 @@
 aviator
 
-This is the aviator module.
+a feature module for the Aviator project
 
 License
 -------
-
+MIT License
 
 Contact
 -------
 
 
-Support
+Example Usage:
 -------
-
-Please log tickets and issues at our [Projects site](http://projects.example.com)
+    
+    $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    require 'rubygems'
+    require 'faraday'
+    require 'active_support'
+    require 'puppet/feature/aviator'
+    
+    session = Aviator::Session.new(
+      :config_file => '/etc/aviator.yml',
+      :environment => :production,
+      :log_file => '/var/log/aviator.log'
+    )
+ 
+    session.authenticate
+    keystone = session.identity_service
+    response = keystone.request(:list_tenants, :endpoint_type =>
+'admin')
