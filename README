@@ -18,10 +18,24 @@ Example Usage:
     require 'faraday'
     require 'active_support'
     require 'puppet/feature/aviator'
-    
+   
+    configuration = {
+        :provider => 'openstack',
+        :auth_service => {
+            :name      => 'identity',
+            :host_uri  => 'http://devstack:5000/v2.0',
+            :request   => 'create_token',
+            :validator => 'list_tenants'
+        },
+        :auth_credentials => {
+            :username    => 'myusername',
+            :password    => 'mypassword',
+            :tenant_name => 'myproject'
+        }
+    }
+
     session = Aviator::Session.new(
-      :config_file => '/etc/aviator.yml',
-      :environment => :production,
+      :config   =>  configuration,
       :log_file => '/var/log/aviator.log'
     )
  
