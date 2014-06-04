@@ -1,6 +1,10 @@
 Puppet Aviator
 
-a feature module for the Aviator project
+A feature module for the Aviator project.
+
+Aviator is a lightweight library for communicating with the OpenStack API
+
+See Aviator_README.md for more information on Aviator.
 
 License
 -------
