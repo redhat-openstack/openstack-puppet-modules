@@ -1,5 +1,5 @@
 name    'aimonb-aviator'
-version '0.1.0'
+version '0.3.1'
 source 'UNKNOWN'
 author 'aimonb'
 license 'Apache License, Version 2.0'
