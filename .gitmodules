@@ -31,9 +31,6 @@
 [submodule "inifile"]
 	path = inifile
 	url = https://github.com/puppetlabs/puppetlabs-inifile.git
-[submodule "keystone"]
-	path = keystone
-	url = https://github.com/stackforge/puppet-keystone.git
 [submodule "memcached"]
 	path = memcached
 	url = https://github.com/saz/puppet-memcached.git
@@ -115,3 +112,6 @@
 [submodule "sahara"]
 	path = sahara
 	url = https://github.com/stackforge/puppet-sahara.git
+[submodule "keystone"]
+	path = keystone
+	url = https://github.com/stackforge/puppet-keystone.git
