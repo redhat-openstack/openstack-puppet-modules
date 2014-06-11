@@ -64,9 +64,6 @@
 [submodule "rsync"]
 	path = rsync
 	url = https://github.com/puppetlabs/puppetlabs-rsync.git
-[submodule "sahara"]
-        path = sahara
-        url = https://github.com/stackforge/puppet-sahara.git
 [submodule "ssh"]
 	path = ssh
 	url = https://github.com/saz/puppet-ssh.git
@@ -115,3 +112,6 @@
 [submodule "module-data"]
 	path = module-data
 	url = https://github.com/ripienaar/puppet-module-data
+[submodule "sahara"]
+	path = sahara
+	url = https://github.com/stackforge/puppet-sahara.git
