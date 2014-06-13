@@ -15,6 +15,7 @@
 #  }
 #
 define datacat(
+  $ensure                  = 'file',
   $template                = undef,
   $template_body           = undef,
   $collects                = [],
@@ -41,39 +42,54 @@ define datacat(
     }
   }
 
-  file { $title:
-    path                    => $path,
-    backup                  => $backup,
-    checksum                => $checksum,
-    content                 => "To be replaced by datacat_collector[${title}]\n",
-    force                   => $force,
-    group                   => $group,
-    mode                    => $mode,
-    owner                   => $owner,
-    replace                 => $replace,
-    selinux_ignore_defaults => $selinux_ignore_defaults,
-    selrange                => $selrange,
-    selrole                 => $selrole,
-    seltype                 => $seltype,
-    seluser                 => $seluser,
+  # we could validate ensure by simply passing it to file, but unfortunately
+  # someone could try to be smart and pass 'directory', so we only allow a limited range
+  if $ensure != 'absent' and $ensure != 'present' and $ensure != 'file' {
+    fail("Datacat[${title}] invalid value for ensure")
   }
 
-  $template_real = $template ? {
-    default => $template,
-    undef   => 'inline',
-  }
+  if $ensure == 'absent' {
+    file { $title:
+      ensure                  => $ensure,
+      path                    => $path,
+      backup                  => $backup,
+      force                   => $force,
+    }
+  } else {
+    file { $title:
+      path                    => $path,
+      backup                  => $backup,
+      checksum                => $checksum,
+      content                 => "To be replaced by datacat_collector[${title}]\n",
+      force                   => $force,
+      group                   => $group,
+      mode                    => $mode,
+      owner                   => $owner,
+      replace                 => $replace,
+      selinux_ignore_defaults => $selinux_ignore_defaults,
+      selrange                => $selrange,
+      selrole                 => $selrole,
+      seltype                 => $seltype,
+      seluser                 => $seluser,
+    }
 
-  $template_body_real = $template_body ? {
-    default => $template_body,
-    undef   => template_body($template_real),
-  }
+    $template_real = $template ? {
+      default => $template,
+      undef   => 'inline',
+    }
 
-  datacat_collector { $title:
-    template        => $template_real,
-    template_body   => $template_body_real,
-    target_resource => File[$title], # when we evaluate we modify the private data of this resource
-    target_field    => 'content',
-    collects        => $collects,
-    before          => File[$title], # we want to evaluate before that resource so it can do the work
+    $template_body_real = $template_body ? {
+      default => $template_body,
+      undef   => template_body($template_real),
+    }
+
+    datacat_collector { $title:
+      template        => $template_real,
+      template_body   => $template_body_real,
+      target_resource => File[$title], # when we evaluate we modify the private data of this resource
+      target_field    => 'content',
+      collects        => $collects,
+      before          => File[$title], # we want to evaluate before that resource so it can do the work
+    }
   }
 }

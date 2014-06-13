@@ -66,6 +66,10 @@ Types and Definitions
 Wraps the `datacat_collector` and `file` types to cover the most common
 use-case, collecting data for and templating an entire file.
 
+The `ensure` parameter defaults to `file` (an alias for `present`). `ensure`
+can be set to `absent`. In that case `datacat` will make sure the file *does
+not exist* and will not collect anything with `datacat_collector`.
+
 ## Type: `datacat_collector`
 
 The `datacat_collector` type deeply merges a data hash from
