@@ -1,3 +1,6 @@
+0.6.0 Monday 16th June, 2014
+    Add ensure to the datacat define (Github #13 - Igor Galić)
+
 0.5.0 Saturday 10th May, 2014
     Add show_diff to the datacat define for parity with the file
     type in puppet 3.2 and onwards (Github #10 - Sebastian Schmidt)
