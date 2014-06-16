@@ -16,4 +16,12 @@ describe "datacat" do
     it { should contain_datacat_collector('test').with_template('inline') }
     it { should contain_datacat_collector('test').with_template_body(/Baah/) }
   end
+
+  context "specifying ensure absent" do
+    let(:title) { 'no-file' }
+    let(:params) { { :ensure => "absent" } }
+    it { should_not contain_datacat_collector('no-file') }
+    it { should contain_file('no-file') }
+    it { should contain_file('no-file').with_ensure('absent') }
+  end
 end
