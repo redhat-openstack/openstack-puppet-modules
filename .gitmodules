@@ -90,7 +90,7 @@
 	url = https://github.com/stackforge/puppet-vswitch.git
 [submodule "xinetd"]
 	path = xinetd
-	url = https://github.com/packstack/puppetlabs-xinetd.git
+	url = https://github.com/puppetlabs/puppetlabs-xinetd.git
 [submodule "rabbitmq"]
 	path = rabbitmq
 	url = https://github.com/puppetlabs/puppetlabs-rabbitmq.git
