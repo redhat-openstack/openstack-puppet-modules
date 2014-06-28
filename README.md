@@ -116,6 +116,11 @@ Should the module manage git.
 **Default:** _true_
 Should the module manage the webserver.
 
+#####`ws_servername`
+**Data Type:** _string_
+**Default:** _kibana3_
+Change the default servername for the apache vhost. Only taken into account if `manage_ws => true`.
+
 #####`ws_port`
 **Data Type:** _bool_
 **Default:** _true_

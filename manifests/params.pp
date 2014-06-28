@@ -36,6 +36,7 @@ class kibana3::params {
 
   $manage_git = true
 
-  $manage_ws = true
-  $ws_port   = '80'
+  $manage_ws     = true
+  $ws_servername = 'kibana3'
+  $ws_port       = '80'
 }

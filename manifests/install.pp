@@ -33,7 +33,7 @@ class kibana3::install {
     }
     ->
     apache::vhost {
-      'kibana3':
+      $::kibana3::ws_servername :
       port          => $::kibana3::ws_port,
       docroot       => "${::kibana3::k3_install_folder}/src",
       docroot_owner => $_ws_user,

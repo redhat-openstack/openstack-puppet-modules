@@ -52,6 +52,10 @@
 # [*manage_ws*]
 #   Should the module manage the webserver.
 #
+# [*ws_servername*]
+#   Specify the virtual host servername . Only taken
+#   into account if manage_ws => true.
+#
 # [*ws_port*]
 #   Change the default port for the webserver to a custom value. Only taken
 #   into account if manage_ws => true.
@@ -86,8 +90,9 @@ class kibana3 (
 
   $manage_git = $::kibana3::params::manage_git,
 
-  $manage_ws = $::kibana3::params::manage_ws,
-  $ws_port   = $::kibana3::params::ws_port,
+  $manage_ws     = $::kibana3::params::manage_ws,
+  $ws_servername = $::kibana3::params::ws_servername,
+  $ws_port       = $::kibana3::params::ws_port,
 
 ) inherits kibana3::params {
 
