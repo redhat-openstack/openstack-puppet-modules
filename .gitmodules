@@ -12,7 +12,7 @@
 	url = https://github.com/stackforge/puppet-cinder.git
 [submodule "concat"]
 	path = concat
-	url = https://github.com/ripienaar/puppet-concat.git
+	url = https://github.com/puppetlabs/puppet-concat.git
 [submodule "firewall"]
 	path = firewall
 	url = https://github.com/puppetlabs/puppetlabs-firewall.git
