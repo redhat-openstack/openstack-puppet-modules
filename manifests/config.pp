@@ -47,6 +47,7 @@ class zookeeper::config(
   $tracefile_threshold   = 'TRACE',
   $max_allowed_connections = 10,
   $export_tag              = 'zookeeper',
+  $peer_type               = 'UNSET',
 ) {
   require zookeeper::install
 

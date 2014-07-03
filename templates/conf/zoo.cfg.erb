@@ -64,3 +64,8 @@ autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::config::purge_interval')
 
 # Maximum allowed connections
 maxClientCnxns=<%= scope.lookupvar('zookeeper::config::max_allowed_connections') %>
+
+<% if scope.lookupvar('zookeeper::config::peer_type') != 'UNSET' -%>
+# Zookeeper peer type
+peerType=<%= scope.lookupvar('zookeeper::config::peer_type') %>
+<% end -%>
