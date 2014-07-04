@@ -7,10 +7,7 @@ class kibana3::install {
   }
 
   if $::kibana3::manage_ws {
-    class {
-      'apache':
-      default_vhost => false,
-    }
+    include ::apache
   }
 
   if $::kibana3::k3_folder_owner {
