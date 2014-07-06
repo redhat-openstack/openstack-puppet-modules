@@ -4,6 +4,7 @@ define fluentd::source (
     $type,
     $tag      = false,
     $format   = false,
+    $time_format  = false,
     $config   = {},
 ) {
 
