@@ -16,7 +16,7 @@ describe 'fluentd::packages', :type => :class do
       let(:params) { {:install_repo => true} }
       it do
         should contain_apt__source("treasure-data").with(
-          'location'  => 'http://packages.treasure-data.com/debian'
+          'location'  => 'http://packages.treasuredata.com/debian'
         )
       end
     end
