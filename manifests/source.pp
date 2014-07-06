@@ -2,9 +2,10 @@
 define fluentd::source (
     $configfile,
     $type,
-    $tag      = false,
-    $format   = false,
-    $config   = {},
+    $tag          = false,
+    $format       = false,
+    $time_format  = false,
+    $config       = {},
 ) {
 
     concat::fragment { "source_${title}":

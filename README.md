@@ -62,7 +62,8 @@ The Agent watches over your logfiles and sends its content to the Collector.
     config => {
       'path' => '/var/log/apache2/access.log',
       'pos_file' => '/var/tmp/fluentd.pos',
-    }
+    },
+    notify => Class['fluentd::service']
   }
   
   fluentd::configfile { 'syslog': }
@@ -74,7 +75,8 @@ The Agent watches over your logfiles and sends its content to the Collector.
     config => {
       'path' => '/var/log/syslog',
       'pos_file' => '/tmp/td-agent.syslog.pos',
-    }
+    },
+    notify => Class['fluentd::service']
   }
   
   fluentd::configfile { 'forward': }
@@ -85,6 +87,7 @@ The Agent watches over your logfiles and sends its content to the Collector.
     servers => [
       {'host' => 'PUT_YOUR_HOST_HERE', 'port' => '24224'}
     ],
+    notify => Class['fluentd::service']
   }
 ```
 #### creates on the Agent side following files : 
@@ -107,6 +110,7 @@ The Collector collects all the data from the Agents. He now stores the data in f
   fluentd::source { 'collector_main':
     configfile => 'collector',
     type => 'forward',
+    notify => Class['fluentd::service']
   }
   
   fluentd::match { 'collector_main':
@@ -115,7 +119,8 @@ The Collector collects all the data from the Agents. He now stores the data in f
     type => 'elasticsearch',
     config => {
       'logstash_format' => true,
-    }
+    },
+    notify => Class['fluentd::service']
   }
   
   # receive syslog messages on port 5140
@@ -128,7 +133,8 @@ The Collector collects all the data from the Agents. He now stores the data in f
     config => {
       'port' => '5140',
       'bind' => '0.0.0.0',
-    }
+    },
+    notify => Class['fluentd::service']
   }
 ```
 
@@ -166,6 +172,7 @@ The Collector collects all the data from the Agents. He now stores the data in f
         'output_type'       => 'json',
       }
       ],
+      notify => Class['fluentd::service']
   }
 
 ```

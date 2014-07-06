@@ -30,7 +30,7 @@ describe 'fluentd', :type => :class do
       end
       it "the apt repo file exists" do
         should contain_apt__source("treasure-data").with(
-          'location'  => 'http://packages.treasure-data.com/debian'
+          'location'  => 'http://packages.treasuredata.com/debian'
         )
       end
       it "/etc/td-agent/td-agent.conf should be in place" do
