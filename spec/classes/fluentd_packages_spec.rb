@@ -55,8 +55,8 @@ describe 'fluentd::packages', :type => :class do
       let(:params) { {:install_repo => true} }
       it do
         should contain_yumrepo('treasuredata').with(
-          'baseurl'  => 'http://packages.treasure-data.com/redhat/$basearch',
-          'gpgkey'   => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
+          'baseurl'  => 'http://packages.treasuredata.com/redhat/$basearch',
+          'gpgkey'   => 'http://packages.treasuredata.com/redhat/RPM-GPG-KEY-td-agent',
           'gpgcheck' => 1
         )
       end

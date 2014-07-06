@@ -11,8 +11,8 @@ class fluentd::install_repo::yum (
     # But I dont want rename it to avoid a duplication.
     yumrepo { 'treasuredata':
         descr => 'Treasure Data',
-        baseurl => 'http://packages.treasure-data.com/redhat/$basearch',
-        gpgkey => 'http://packages.treasure-data.com/redhat/RPM-GPG-KEY-td-agent',
+        baseurl => 'http://packages.treasuredata.com/redhat/$basearch',
+        gpgkey => 'http://packages.treasuredata.com/redhat/RPM-GPG-KEY-td-agent',
         gpgcheck => 1,
     }
 
