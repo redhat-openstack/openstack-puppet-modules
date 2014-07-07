@@ -14,8 +14,7 @@ describe 'kibana3', :type => :class do
       context 'with defaults' do
         it { should compile }
         it { should contain_class('git') }
-        it { should contain_class('apache') \
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/opt/kibana3') \
           .with_revision('a50a913') \
           .that_notifies('Class[Apache::Service]') \
@@ -31,8 +30,7 @@ describe 'kibana3', :type => :class do
         let (:params) {{ :manage_git => false }}
         it { should compile }
         it { should_not contain_class('git') }
-        it { should contain_class('apache') \
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/opt/kibana3') \
           .with_revision('a50a913') \
           .that_notifies('Class[Apache::Service]') \
@@ -61,8 +59,7 @@ describe 'kibana3', :type => :class do
         let (:params) {{ :k3_folder_owner => 'foo' }}
         it { should compile }
         it { should contain_class('git') }
-        it { should contain_class('apache')\
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/opt/kibana3') \
           .with(
             'revision' => 'a50a913',
@@ -82,8 +79,7 @@ describe 'kibana3', :type => :class do
         let (:params) {{ :k3_install_folder => '/tmp/kibana3' }}
         it { should compile }
         it { should contain_class('git') }
-        it { should contain_class('apache')\
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/tmp/kibana3') \
           .with_revision('a50a913') \
           .that_notifies('Class[Apache::Service]') \
@@ -99,8 +95,7 @@ describe 'kibana3', :type => :class do
         let (:params) {{ :k3_release => '3a485aa' }}
         it { should compile }
         it { should contain_class('git') }
-        it { should contain_class('apache')\
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/opt/kibana3') \
           .with_revision('3a485aa') \
           .that_notifies('Class[Apache::Service]') \
@@ -116,8 +111,7 @@ describe 'kibana3', :type => :class do
         let (:params) {{ :ws_port => '8080' }}
         it { should compile }
         it { should contain_class('git') }
-        it { should contain_class('apache')\
-          .with_default_vhost(false) }
+        it { should contain_class('apache') }
         it { should contain_vcsrepo('/opt/kibana3') \
           .with_revision('a50a913') \
           .that_notifies('Class[Apache::Service]') \
