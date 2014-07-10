@@ -43,9 +43,6 @@
 [submodule "neutron"]
 	path = neutron
 	url = https://github.com/stackforge/puppet-neutron.git
-[submodule "nova"]
-	path = nova
-	url = https://github.com/stackforge/puppet-nova.git
 [submodule "nssdb"]
 	path = nssdb
 	url = https://github.com/rcritten/puppet-nssdb.git
@@ -115,3 +112,6 @@
 [submodule "apache"]
 	path = apache
 	url = https://github.com/puppetlabs/puppetlabs-apache.git
+[submodule "nova"]
+	path = nova
+	url = https://github.com/stackforge/puppet-nova.git
