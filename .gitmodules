@@ -40,9 +40,6 @@
 [submodule "mysql"]
 	path = mysql
 	url = https://github.com/packstack/puppetlabs-mysql.git
-[submodule "neutron"]
-	path = neutron
-	url = https://github.com/stackforge/puppet-neutron.git
 [submodule "nova"]
 	path = nova
 	url = https://github.com/stackforge/puppet-nova.git
@@ -115,3 +112,6 @@
 [submodule "keystone"]
 	path = keystone
 	url = https://github.com/stackforge/puppet-keystone.git
+[submodule "neutron"]
+	path = neutron
+	url = https://github.com/stackforge/puppet-neutron.git
