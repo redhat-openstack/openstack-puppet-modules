@@ -7,9 +7,6 @@
 [submodule "certmonger"]
 	path = certmonger
 	url = https://github.com/rcritten/puppet-certmonger.git
-[submodule "cinder"]
-	path = cinder
-	url = https://github.com/stackforge/puppet-cinder.git
 [submodule "concat"]
 	path = concat
 	url = https://github.com/ripienaar/puppet-concat.git
@@ -115,3 +112,6 @@
 [submodule "keystone"]
 	path = keystone
 	url = https://github.com/stackforge/puppet-keystone.git
+[submodule "cinder"]
+	path = cinder
+	url = https://github.com/stackforge/puppet-cinder.git
