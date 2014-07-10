@@ -1,6 +1,3 @@
-[submodule "apache"]
-	path = apache
-	url = https://github.com/puppetlabs/puppetlabs-apache.git
 [submodule "ceilometer"]
 	path = ceilometer
 	url = https://github.com/stackforge/puppet-ceilometer.git
@@ -115,3 +112,6 @@
 [submodule "keystone"]
 	path = keystone
 	url = https://github.com/stackforge/puppet-keystone.git
+[submodule "apache"]
+	path = apache
+	url = https://github.com/puppetlabs/puppetlabs-apache.git
