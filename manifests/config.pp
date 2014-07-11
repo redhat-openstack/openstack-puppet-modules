@@ -6,7 +6,7 @@ class fluentd::config() {
         ensure  => file,
         owner   => 'root',
         group   => 'root',
-        source  => 'puppet:///modules/fluentd/etc/fluentd/td-agent.conf',
+        content => template('fluentd/td-agent.conf.erb'),
         notify  => Class['fluentd::service'],
     }
 
