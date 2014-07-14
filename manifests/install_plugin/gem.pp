@@ -10,6 +10,7 @@
 define fluentd::install_plugin::gem (
     $ensure      = 'present',
     $plugin_name = $name,
+    $plugin_ver  = undef,
 ) {
 
     case $::osfamily {
