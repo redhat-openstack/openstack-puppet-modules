@@ -14,16 +14,7 @@ Puppet::Type.type(:package).provide :fluentgem, :parent => Puppet::Provider::Pac
 
   has_feature :versionable, :install_options
 
-  commands :gemcmd => which(self.class.cmd)
-
-  def self.cmd
-    case Facter.value(:osfamily)
-      when "RedHat"
-        "/usr/lib64/fluent/ruby/bin/fluent-gem"
-      else
-        "/usr/lib/fluent/ruby/bin/fluent-gem"
-    end
-  end
+  commands :gemcmd => "fluent-gem"
 
   def self.gemlist(options)
     gem_list_command = [command(:gemcmd), "list"]
