@@ -4,6 +4,12 @@ Release notes for the srfmmz/puppet-fluentd module.
 
 ------------------------------------------
 
+#### 0.1.4 - 2014/07/21
+
+* added filter functionality
+* restart td-agent daemon after config change
+* configfile syntax fix for td-agent v2 
+
 #### 0.1.3 - 2014/07/06
 
 Please update to get the new repository of Treasuredata.
