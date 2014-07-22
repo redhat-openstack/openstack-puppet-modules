@@ -22,7 +22,9 @@ clientPort=<%= scope.lookupvar('zookeeper::config::client_port') %>
 #server.1=zookeeper1:2888:3888
 #server.2=zookeeper2:2888:3888
 #server.3=zookeeper3:2888:3888
-<% scope.lookupvar('zookeeper::config::servers').each do |h| -%><%= h %>
+<% i = 1 -%>
+<% scope.lookupvar('zookeeper::config::servers').each do |h| -%>
+<%= "server.#{i}=#{h}" %><% i += 1 -%>
 <% end -%>
 
 # To avoid seeks ZooKeeper allocates space in the transaction log file in
