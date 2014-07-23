@@ -12,22 +12,9 @@ define fluentd::install_plugin::gem (
     $plugin_name = $name,
 ) {
 
-    case $::osfamily {
-        'debian': {
-            $fluent_gem_path = '/usr/lib/fluent/ruby/bin'
-        }
-        'redhat': {
-            $fluent_gem_path = '/usr/lib64/fluent/ruby/bin'
-        }
-        default: {
-            fail("${::osfamily} is currently not supported by this module")
-        }
-    }
-
     package { $plugin_name:
       ensure   => $ensure,
       provider => 'fluentgem',
-      path     => "${fluent_gem_path};${::path}",
       notify   => Service["${fluentd::service_name}"];
     }
 

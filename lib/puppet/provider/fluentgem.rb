@@ -14,6 +14,8 @@ Puppet::Type.type(:package).provide :fluentgem, :parent => Puppet::Provider::Pac
 
   has_feature :versionable, :install_options
 
+  ENV['PATH'] = "#{ENV['PATH']}:/usr/lib64/fluent/ruby/bin:/usr/lib/fluent/ruby/bin"
+
   commands :gemcmd => "fluent-gem"
 
   def self.gemlist(options)
