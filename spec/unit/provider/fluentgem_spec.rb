@@ -48,17 +48,6 @@ describe provider_class do
       provider.install
     end
 
-    it "should not append install_options by default" do
-      provider.expects(:execute).with { |args| args.length == 5 }.returns ""
-      provider.install
-    end
-
-    it "should allow setting an install_options parameter" do
-      resource[:install_options] = [ '--force', {'--bindir' => '/usr/bin' } ]
-      provider.expects(:execute).with { |args| args[5] == '--force' && args[6] == '--bindir=/usr/bin' }.returns ''
-      provider.install
-    end
-
     describe "when a source is specified" do
       describe "as a normal file" do
         it "should use the file name instead of the gem name" do
