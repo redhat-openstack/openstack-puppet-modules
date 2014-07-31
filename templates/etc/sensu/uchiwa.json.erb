@@ -1,0 +1,24 @@
+module.exports = {
+  sensu: [
+  <%- scope.lookupvar("uchiwa::apis").each do | name, api | %>
+    {
+      name: '<%= name %>',
+      host: '<%= api['host'] %>',
+      ssl: <%= api['ssl'] %>,
+      port: <%= api['port'] %>,
+      user: '<%= api['user'] %>',
+      pass: '<%= api['pass'] %>',
+      path: '<%= api['path'] %>',
+      timeout: <%= api['timeout'] %> 
+    },
+  <%- end %>
+  ],
+  uchiwa: {
+    host: '<%= scope.lookupvar("uchiwa::host") %>',
+    port: <%= scope.lookupvar('uchiwa::port') %>,
+    user: '<%= scope.lookupvar("uchiwa::user") %>',
+    pass: '<%= scope.lookupvar("uchiwa::pass") %>',
+    stats: <%= scope.lookupvar('uchiwa::stats') %>,
+    refresh: <%= scope.lookupvar('uchiwa::refresh') %>
+  }
+}
