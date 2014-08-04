@@ -24,14 +24,6 @@ Manage Fluentd installation, configuration and Plugin-management with Puppet usi
 * Push to the branch (`git push origin my-new-feature`)
 * Create new Pull Request
 
-### Todo's 
-- Ouput copy and roundrobin to multiple stores
-- ~~No RedHat suport yet~~ (THX to [pranav](https://github.com/pranav) ) 
-- ~~Automatic installation of td-agent Plugins~~ (THX to [darktim](https://github.com/darktim) ) 
-- ~~Monitor/Restart Service~~ (THX to [darktim](https://github.com/darktim) ) 
-- ~~Logrotate td-agent logs~~ (Wont Fix. td-agent handels it now by it self)
-
-
 ## Configuration
 How to configure a Agent to send data to a centralised Fluentd-Server
 
@@ -175,4 +167,25 @@ The Collector collects all the data from the Agents. He now stores the data in f
       notify => Class['fluentd::service']
   }
 
+```
+
+### add a filter
+```
+    fluentd::configfile { 'myfilter': }
+    fluentd::filter { 'myfilter_main':
+      configfile          => 'myfilter',
+      pattern             => '**',
+      type                => 'grep',
+      input_key           => 'key',
+      regexp              => '/*.foo.*/',
+      exclude             => 'baar',
+      output_tag          => 'mytag',
+      add_tag_prefix      => 'pre_',
+      remove_tag_prefix   => 'remove_',
+      add_tag_suffix      => '_after',
+      remove_tag_suffix   => '_remove',
+      config     => {
+        'customvalue' => true,
+      }
+    }
 ```
