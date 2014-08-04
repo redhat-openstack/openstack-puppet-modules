@@ -24,6 +24,10 @@ Manage Fluentd installation, configuration and Plugin-management with Puppet usi
 * Push to the branch (`git push origin my-new-feature`)
 * Create new Pull Request
 
+### Branches in this module
+- **master** tested and working. Latest Version on http://forge.puppetlabs.com
+- **developmemt** includes the newewst features. works too, mostly. 
+
 ## Configuration
 How to configure a Agent to send data to a centralised Fluentd-Server
 
