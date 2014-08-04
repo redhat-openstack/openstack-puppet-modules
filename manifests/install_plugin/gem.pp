@@ -14,7 +14,7 @@ define fluentd::install_plugin::gem (
 
     package { $plugin_name:
       ensure   => $ensure,
-      provider => 'fluentgem',
+      provider => 'gem',
       notify   => Service["${fluentd::service_name}"];
     }
 
