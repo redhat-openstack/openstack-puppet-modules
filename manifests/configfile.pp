@@ -9,6 +9,7 @@ define fluentd::configfile  {
         group   => 'td-agent',
         mode    => '0644',
         require => Class['Fluentd::Packages'],
+        notify  => Class['Fluentd::Service'],
     }
 }
 

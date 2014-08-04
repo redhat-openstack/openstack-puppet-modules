@@ -17,9 +17,8 @@ describe 'fluentd::config', :type => :class do
         'ensure'  => 'file',
         'owner'   => 'root',
         'group'   => 'root',
-        'source'  => 'puppet:///modules/fluentd/etc/fluentd/td-agent.conf',
         'notify'  => 'Class[Fluentd::Service]'
-      )
+      ).with_content(/^# Include.*config.d.*/m)
     end
     it "/etc/td-agent/config.d is created" do
       should contain_file("/etc/td-agent/config.d").with(
@@ -44,9 +43,8 @@ describe 'fluentd::config', :type => :class do
         'ensure'  => 'file',
         'owner'   => 'root',
         'group'   => 'root',
-        'source'  => 'puppet:///modules/fluentd/etc/fluentd/td-agent.conf',
         'notify'  => 'Class[Fluentd::Service]'
-      )
+      ).with_content(/^# Include.*config.d.*/m)
     end
     it "/etc/td-agent/config.d is created" do
       should contain_file("/etc/td-agent/config.d").with(

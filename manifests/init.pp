@@ -1,5 +1,6 @@
 # == class fluentd
 class fluentd (
+    $version = '1',
     $package_name = $fluentd::params::package_name,
     $install_repo = $fluentd::params::install_repo,
     $package_ensure = $fluentd::params::package_ensure,
