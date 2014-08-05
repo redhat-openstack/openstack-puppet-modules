@@ -9,7 +9,7 @@ GEM
       json_pure
     json_pure (1.8.1)
     metaclass (0.0.4)
-    mocha (1.1.0)
+    mocha (0.12.10)
       metaclass (~> 0.0.1)
     puppet (3.6.2)
       facter (> 1.6, < 3)
@@ -19,13 +19,11 @@ GEM
     puppet-lint (0.3.2)
     puppet-syntax (1.2.2)
       rake
-    puppetlabs_spec_helper (0.8.0)
-      mocha
-      puppet-lint
-      puppet-syntax
+    puppetlabs_spec_helper (0.3.0)
+      mocha (>= 0.10.5)
       rake
-      rspec
-      rspec-puppet
+      rspec (>= 2.9.0)
+      rspec-puppet (>= 0.1.1)
     rake (10.3.2)
     rgen (0.6.6)
     rspec (3.0.0)
