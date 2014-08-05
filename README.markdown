@@ -24,6 +24,7 @@ See `Modulefile` for details.
     node 'uchiwa-server.foo.com' {
       class { 'uchiwa':
       }
+    }
 
 ## Advanced example using multiple APIs
 
