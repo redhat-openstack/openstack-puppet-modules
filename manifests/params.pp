@@ -35,8 +35,7 @@ class timezone::params {
       $package = 'timezone'
       $zoneinfo_dir = '/usr/share/zoneinfo/'
       $localtime_file = '/etc/localtime'
-      $timezone_file = '/etc/timezone'
-      $timezone_file_template = 'timezone/timezone.erb'
+      $timezone_file = false
     }
     default: {
       case $::operatingsystem {
