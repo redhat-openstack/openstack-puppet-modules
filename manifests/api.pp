@@ -23,7 +23,13 @@ define uchiwa::api(
   $timeout = 5000
   ) {
 
-  validate_re($name, '^[a-zA-Z0-9_ ]*$')
+
+  #Some people may want to pass an array of hostnames
+  if !$host {
+    $host = $title
+  }
+
+  validate_re($name, '^[a-zA-Z0-9_ .]*$')
   validate_re($host, '^[a-zA-Z0-9_.]*$')
   validate_bool($ssl)
   validate_re($port, '^[0-9]*$')
