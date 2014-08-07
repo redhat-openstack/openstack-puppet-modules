@@ -34,7 +34,7 @@
 #
 #  [*repo_source*]
 #    String
-#    Default: 
+#    Default:
 #    What's the url for the repo we should install?
 #
 #  [*repo_key_id*]
@@ -89,7 +89,7 @@
 #
 #  [*apis*]
 #    Hash
-#    Default: { 'API 1' => 
+#    Default: { 'API 1' =>
 #            {
 #              host    => '127.0.0.1',
 #              ssl     => false,

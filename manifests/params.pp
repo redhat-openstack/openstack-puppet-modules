@@ -35,7 +35,7 @@ class uchiwa::params {
   $refresh         =     10000
 
 
-  $apis = { 'API 1' => 
+  $apis = { 'API 1' =>
             {
               host    => '127.0.0.1',
               ssl     => false,
