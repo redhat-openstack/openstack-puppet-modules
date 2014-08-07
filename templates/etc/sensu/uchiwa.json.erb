@@ -1,24 +1,24 @@
-module.exports = {
-  sensu: [
-  <%- scope.lookupvar("uchiwa::apis").each do | name, api | %>
+{
+  "sensu": [
+<% scope.lookupvar('uchiwa::apis').each_with_index do |(name,api),index| -%>
     {
-      name: '<%= name %>',
-      host: '<%= api['host'] %>',
-      ssl: <%= api['ssl'] %>,
-      port: <%= api['port'] %>,
-      user: '<%= api['user'] %>',
-      pass: '<%= api['pass'] %>',
-      path: '<%= api['path'] %>',
-      timeout: <%= api['timeout'] %> 
-    },
-  <%- end %>
+      "name": "<%= name %>",
+      "host": "<%= api['host'] %>",
+      "port": <%= api['port'] || 4567 %>,
+      "ssl": <%= api['ssl'] || false %>,
+      "user": "<%= api['user'] %>",
+      "pass": "<%= api['pass'] %>",
+      "path": "<%= api['path'] %>",
+      "timeout": <%= api['timeout'] || 5000 %>
+    }<%= ',' if index < scope.lookupvar('uchiwa::apis').length - 1 %>
+<% end -%>
   ],
-  uchiwa: {
-    host: '<%= scope.lookupvar("uchiwa::host") %>',
-    port: <%= scope.lookupvar('uchiwa::port') %>,
-    user: '<%= scope.lookupvar("uchiwa::user") %>',
-    pass: '<%= scope.lookupvar("uchiwa::pass") %>',
-    stats: <%= scope.lookupvar('uchiwa::stats') %>,
-    refresh: <%= scope.lookupvar('uchiwa::refresh') %>
+  "uchiwa": {
+    "host": "<%= scope.lookupvar('uchiwa::host') %>",
+    "port": <%= scope.lookupvar('uchiwa::port') %>,
+    "user": "<%= scope.lookupvar('uchiwa::user') %>",
+    "pass": "<%= scope.lookupvar('uchiwa::pass') %>",
+    "stats": <%= scope.lookupvar('uchiwa::stats') %>,
+    "refresh": <%= scope.lookupvar('uchiwa::refresh') %>
   }
 }
