@@ -4,6 +4,10 @@ Tested with Travis CI
 
 [![Build Status](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa.png)](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa)
 
+## Upgrade Note
+
+Versions greater than 0.2.0 are incompatible with previous versions of the Sensu-Puppet module.
+
 ## Installation
 
     $ puppet module install pauloconnor-uchiwa
@@ -14,6 +18,7 @@ Tested with Travis CI
 ### Dependencies
 - puppetlabs/apt
 - puppetlabs/stdlib
+- richardc/datacat
 
 See `Modulefile` for details.
 
@@ -28,32 +33,35 @@ See `Modulefile` for details.
 
 ## Advanced example using multiple APIs
 
+API definitions will default to the following values:
+
+    name    => Definition Name
+    host    => ''
+    ssl     => false
+    port    => 4567
+    user    => 'sensu'
+    pass    => 'sensu'
+    path    => ''
+    timeout => 5000
+
+This is an example of a 2 API setup:
+
     node 'uchiwa-server.foo.com' {
-      class { 'uchiwa': 
-        apis => {
-          'API 1' => 
-            {
-              name    => 'API 1',
-              host    => '10.56.5.8',
-              ssl     => false,
-              port    => 4567,
-              user    => 'sensu',
-              pass    => 'sensu',
-              path    => '',
-              timeout => 5000
-            },
-          'API 2' => 
-            {
-              name    => 'API 2',
-              host    => '10.16.1.25',
-              ssl     => false,
-              port    => 4567,
-              user    => 'sensu',
-              pass    => 'sensu',
-              path    => '',
-              timeout => 5000
-            } 
-        }
+      class { 'uchiwa': }
+
+      uchiwa::api { ' API 1':
+        host    => '10.56.5.8',
+      }
+
+      uchiwa::api { 'API 2':
+        host    => '10.16.1.25',
+        ssl     => true,
+        port    => 7654,
+        user    => 'sensu',
+        pass    => 'saBEnX8PQoyz2LG',
+        path    => '/sensu',
+        timeout => 5000
+      }
     }
 
 ## License

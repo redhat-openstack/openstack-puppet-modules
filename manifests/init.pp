@@ -34,7 +34,7 @@
 #
 #  [*repo_source*]
 #    String
-#    Default:
+#    Default: undef
 #    What's the url for the repo we should install?
 #
 #  [*repo_key_id*]
@@ -87,20 +87,6 @@
 #    Default: 10000
 #    Determines the interval to pull the Sensu API, in milliseconds
 #
-#  [*apis*]
-#    Hash
-#    Default: { 'API 1' =>
-#            {
-#              host    => '127.0.0.1',
-#              ssl     => false,
-#              port    => 4567,
-#              user    => '',
-#              pass    => '',
-#              path    => '',
-#              timeout => 5000
-#            }
-#          }
-#    A Ruby Hash of APIs that the dashboard should connect to.
 #
 class uchiwa (
   $package_name    = $uchiwa::params::package_name,
@@ -118,8 +104,7 @@ class uchiwa (
   $user            = $uchiwa::params::user,
   $pass            = $uchiwa::params::pass,
   $stats           = $uchiwa::params::stats,
-  $refresh         = $uchiwa::params::refresh,
-  $apis            = $uchiwa::params::apis
+  $refresh         = $uchiwa::params::refresh
 ) inherits uchiwa::params {
 
   # validate parameters here
@@ -139,7 +124,6 @@ class uchiwa (
   validate_string($pass)
   validate_string($stats)
   validate_string($refresh)
-  validate_hash($apis)
 
   class { 'uchiwa::install': } ->
   class { 'uchiwa::config': } ~>

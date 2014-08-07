@@ -1,24 +1,18 @@
 {
   "sensu": [
-<% scope.lookupvar('uchiwa::apis').each_with_index do |(name,api),index| -%>
-    {
-      "name": "<%= name %>",
-      "host": "<%= api['host'] %>",
-      "port": <%= api['port'] || 4567 %>,
-      "ssl": <%= api['ssl'] || false %>,
-      "user": "<%= api['user'] %>",
-      "pass": "<%= api['pass'] %>",
-      "path": "<%= api['path'] %>",
-      "timeout": <%= api['timeout'] || 5000 %>
-    }<%= ',' if index < scope.lookupvar('uchiwa::apis').length - 1 %>
-<% end -%>
-  ],
+    <%- 
+    apis = Array.new
+    @data['api'].each do |a|  
+      apis << a
+    end %>
+      <%= apis.join(",\n") %>
+    ],
   "uchiwa": {
-    "host": "<%= scope.lookupvar('uchiwa::host') %>",
-    "port": <%= scope.lookupvar('uchiwa::port') %>,
-    "user": "<%= scope.lookupvar('uchiwa::user') %>",
-    "pass": "<%= scope.lookupvar('uchiwa::pass') %>",
-    "stats": <%= scope.lookupvar('uchiwa::stats') %>,
-    "refresh": <%= scope.lookupvar('uchiwa::refresh') %>
+    "host": "<%= @data['host'] %>",
+    "port": <%= @data['port'] %>,
+    "user": "<%= @data['user'] %>",
+    "pass": "<%= @data['pass'] %>",
+    "stats": <%= @data['stats'] %>,
+    "refresh": <%= @data['refresh'] %>
   }
 }

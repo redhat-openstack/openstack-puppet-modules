@@ -16,7 +16,7 @@ describe 'uchiwa' do
     context 'defaults' do
       it { should create_class('uchiwa::repo::yum') }
       it { should contain_package('uchiwa').with_ensure('latest') }
-      it { should contain_file('/etc/sensu/uchiwa.json').with_ensure('present') }
+      it { should contain_file('/etc/sensu/uchiwa.json') }
     end
 
     context 'setting version' do

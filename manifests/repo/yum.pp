@@ -22,8 +22,8 @@ class uchiwa::repo::yum {
       enabled  => 1,
       baseurl  => $url,
       gpgcheck => 0,
-      name     => 'uchiwa',
-      descr    => 'uchiwa',
+      name     => 'sensu',
+      descr    => 'sensuapp.org uchiwa repo',
       before   => Package['uchiwa'],
     }
   }

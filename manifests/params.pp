@@ -34,16 +34,4 @@ class uchiwa::params {
   $stats           =     10
   $refresh         =     10000
 
-
-  $apis = { 'API 1' =>
-            {
-              host    => '127.0.0.1',
-              ssl     => false,
-              port    => 4567,
-              user    => '',
-              pass    => '',
-              path    => '',
-              timeout => 5000
-            }
-          }
 }
