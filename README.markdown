@@ -2,7 +2,7 @@
 
 Tested with Travis CI
 
-[![Build Status](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa.png)](https://travis-ci.org/sensu/sensu-puppet)
+[![Build Status](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa.png)](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa)
 
 ## Installation
 
