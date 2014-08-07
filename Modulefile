@@ -7,5 +7,6 @@ summary       'Puppet module for installing Uchiwa'
 description   'Puppet module for installing Uchiwa'
 project_page  'https://github.com/pauloconnor/pauloconnor-uchiwa'
 
-dependency 'puppetlabs/stdlib'
 dependency 'puppetlabs/apt'
+dependency 'puppetlabs/concat'
+dependency 'puppetlabs/stdlib'

@@ -22,7 +22,7 @@ class uchiwa::repo::apt {
     }
 
     if $ensure == 'present' {
-      apt::key { 'uchiwa':
+      apt::key { 'sensu':
         key         => $uchiwa::repo_key_id,
         key_source  => $uchiwa::repo_key_source,
       }

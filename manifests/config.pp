@@ -5,6 +5,7 @@
 class uchiwa::config {
 
   file { '/etc/sensu/uchiwa.json':
+    ensure   => 'present',
     owner    => 'root',
     group    => 'root',
     mode     => '0655',

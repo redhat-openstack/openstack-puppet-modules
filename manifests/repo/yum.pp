@@ -18,7 +18,7 @@ class uchiwa::repo::yum {
       }
     }
 
-    yumrepo { 'uchiwa':
+    yumrepo { 'sensu':
       enabled  => 1,
       baseurl  => $url,
       gpgcheck => 0,

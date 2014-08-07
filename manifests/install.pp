@@ -29,7 +29,7 @@ class uchiwa::install {
   }
 
   package { $uchiwa::package_name:
-    ensure => present,
+    ensure => $uchiwa::version,
   }
 
 }
