@@ -14,7 +14,7 @@
 #  timeout => 5000
 #}
 define uchiwa::api(
-  $host,
+  $host    = $title,
   $ssl     = false,
   $port    = 4567,
   $user    = 'sensu',
@@ -23,8 +23,8 @@ define uchiwa::api(
   $timeout = 5000
   ) {
 
-  validate_re($name, '^[a-zA-Z0-9_ .]*$')
-  validate_re($host, '^[a-zA-Z0-9_.]*$')
+  validate_re($name, '^[a-zA-Z0-9_\- .]*$')
+  validate_re($host, '^[a-zA-Z0-9_\-.]*$')
   validate_bool($ssl)
   validate_re($port, '^[0-9]*$')
   validate_re($user, '^[a-zA-Z0-9_]*$')
