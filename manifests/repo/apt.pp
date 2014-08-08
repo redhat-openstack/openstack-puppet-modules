@@ -8,36 +8,37 @@ class uchiwa::repo::apt {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
-  if defined(apt::source) and defined(apt::key) {
+  if $uchiwa::install_repo {
+    if defined(apt::source) and defined(apt::key) {
 
-    $ensure = $uchiwa::install_repo ? {
-      true    => 'present',
-      default => 'absent'
-    }
-
-    if $uchiwa::repo_source {
-      $url = $uchiwa::repo_source
-    } else {
-      $url = 'http://repos.sensuapp.org/apt'
-    }
-
-    if $ensure == 'present' {
-      apt::key { 'sensu':
-        key         => $uchiwa::repo_key_id,
-        key_source  => $uchiwa::repo_key_source,
+      $ensure = $uchiwa::install_repo ? {
+        true    => 'present',
+        default => 'absent'
       }
-    }
-    apt::source { 'sensu':
-      ensure      => $ensure,
-      location    => $url,
-      release     => 'sensu',
-      repos       => $uchiwa::repo,
-      include_src => false,
-      before      => Package['uchiwa'],
-    }
 
-  } else {
-    fail('This class requires puppet-apt module')
+      if $uchiwa::repo_source {
+        $url = $uchiwa::repo_source
+      } else {
+        $url = 'http://repos.sensuapp.org/apt'
+      }
+
+      if $ensure == 'present' {
+        apt::key { 'sensu':
+          key         => $uchiwa::repo_key_id,
+          key_source  => $uchiwa::repo_key_source,
+        }
+      }
+      apt::source { 'sensu':
+        ensure      => $ensure,
+        location    => $url,
+        release     => 'sensu',
+        repos       => $uchiwa::repo,
+        include_src => false,
+        before      => Package['uchiwa'],
+      }
+
+    } else {
+      fail('This class requires puppet-apt module')
+    }
   }
-
 }

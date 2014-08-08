@@ -85,7 +85,7 @@ describe 'uchiwa' do
 
           context 'install_repo => false' do
             let(:params) { { :install_repo => false, :repo => 'main' } }
-            it { should contain_apt__source('sensu').with_ensure('absent') }
+            it { should_not contain_apt__source('sensu') }
 
             it { should_not contain_apt__key('sensu').with(
               :key         => '7580C77F',
