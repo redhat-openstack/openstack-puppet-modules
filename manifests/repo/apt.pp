@@ -22,12 +22,12 @@ class uchiwa::repo::apt {
         $url = 'http://repos.sensuapp.org/apt'
       }
 
-      if $ensure == 'present' {
-        apt::key { 'sensu':
-          key         => $uchiwa::repo_key_id,
-          key_source  => $uchiwa::repo_key_source,
-        }
+      
+      apt::key { 'sensu':
+        key         => $uchiwa::repo_key_id,
+        key_source  => $uchiwa::repo_key_source,
       }
+    
       apt::source { 'sensu':
         ensure      => $ensure,
         location    => $url,
