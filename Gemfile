@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 puppetversion = ENV['PUPPET_VERSION']
+rspecversion = ENV.key?('RSPEC_VERSION') ? "= #{ENV['RSPEC_VERSION']}" : ['>= 2.9 ', '< 3.0.0']
 gem 'puppet', puppetversion, :require => false
 gem 'puppet-lint'
 gem 'rspec-puppet'

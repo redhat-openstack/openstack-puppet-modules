@@ -55,14 +55,14 @@
       "version_requirement": "3.x"
     }
   ],
-  "name": "pauloconnor-uchiwa",
+  "name": "yelp-uchiwa",
   "version": "0.2.4",
   "author": "pauloconnor",
   "summary": "Puppet module for installing Uchiwa",
   "license": "Apache 2.0",
-  "source": "github.com/pauloconnor/pauloconnor-uchiwa",
-  "project_page": "https://github.com/pauloconnor/pauloconnor-uchiwa",
-  "issues_url": "https://github.com/pauloconnor/pauloconnor-uchiwa/issues",
+  "source": "github.com/yelp/puppet-uchiwa",
+  "project_page": "https://github.com/yelp/puppet-uchiwa",
+  "issues_url": "https://github.com/yelp/puppet-uchiwa/issues",
   "description": "Puppet module for installing Uchiwa",
   "dependencies": [
     {"name":"puppetlabs/apt"},

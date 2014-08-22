@@ -2,7 +2,7 @@
 
 Tested with Travis CI
 
-[![Build Status](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa.png)](https://travis-ci.org/pauloconnor/pauloconnor-uchiwa)
+[![Build Status](https://travis-ci.org/yelp/yelp-uchiwa.png)](https://travis-ci.org/yelp/yelp-uchiwa)
 
 ## Upgrade Note
 
@@ -10,7 +10,7 @@ Versions greater than 0.2.0 are incompatible with previous versions of the Sensu
 
 ## Installation
 
-    $ puppet module install pauloconnor-uchiwa
+    $ puppet module install yelp-uchiwa
 
 ## Prerequisites
 - One or more working Sensu installations
