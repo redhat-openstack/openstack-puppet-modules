@@ -277,6 +277,21 @@ describe 'keystone' do
     ) }
   end
 
+  describe 'with disabled service managing' do
+    let :params do
+      { :admin_token    => 'service_token',
+        :manage_service => false,
+        :enabled        => false }
+    end
+
+    it { is_expected.to contain_service('keystone').with(
+      'ensure'     => nil,
+      'enable'     => false,
+      'hasstatus'  => true,
+      'hasrestart' => true
+    ) }
+  end
+
   describe 'when configuring signing token provider' do
 
     describe 'when configuring as UUID' do
