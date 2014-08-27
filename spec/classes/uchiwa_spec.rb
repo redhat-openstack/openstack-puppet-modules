@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe 'uchiwa' do
-  let(:facts) { 
-    { 
+  let(:facts) {
+    {
       :osfamily => 'RedHat',
       :concat_basedir => '/dne',
      }
   }
-  
+
   it 'should compile' do should create_class('uchiwa') end
   it { should contain_class('uchiwa::config')}
 
@@ -32,12 +32,12 @@ describe 'uchiwa' do
     context 'repos' do
 
       context 'ubuntu' do
-        let(:facts) { 
-          { 
+        let(:facts) {
+          {
             :osfamily => 'Debian',
             :fqdn => 'testhost.domain.com',
-            :concat_basedir => '/dne' 
-          } 
+            :concat_basedir => '/dne'
+          }
         }
 
         context 'with puppet-apt installed' do
@@ -82,11 +82,16 @@ describe 'uchiwa' do
 
           context 'install_repo => false' do
             let(:params) { { :install_repo => false, :repo => 'main' } }
+
             it { should_not contain_apt__source('sensu') }
 
             it { should_not contain_apt__key('sensu').with(
               :key         => '7580C77F',
               :key_source  => 'http://repos.sensuapp.org/apt/pubkey.gpg'
+            ) }
+
+            it { should contain_package('uchiwa').with(
+              :require => nil
             ) }
           end
         end
@@ -120,7 +125,12 @@ describe 'uchiwa' do
 
         context 'install_repo => false' do
           let(:params) { { :install_repo => false } }
+
           it { should_not contain_yumrepo('sensu') }
+
+          it { should contain_package('uchiwa').with(
+            :require => nil
+          ) }
         end
       end
     end
