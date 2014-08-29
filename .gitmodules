@@ -39,7 +39,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-mongodb.git
 [submodule "mysql"]
 	path = mysql
-	url = https://github.com/packstack/puppetlabs-mysql.git
+	url = https://github.com/puppetlabs/puppetlabs-mysql.git
 [submodule "nova"]
 	path = nova
 	url = https://github.com/stackforge/puppet-nova.git
