@@ -125,8 +125,9 @@ class uchiwa (
   validate_string($stats)
   validate_string($refresh)
 
+  anchor { 'uchiwa::begin': } ->
   class { 'uchiwa::install': } ->
   class { 'uchiwa::config': } ~>
   class { 'uchiwa::service': } ->
-  Class['uchiwa']
+  anchor { 'uchiwa::end': }
 }
