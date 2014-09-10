@@ -121,3 +121,6 @@
 [submodule "openstacklib"]
 	path = openstacklib
 	url = https://github.com/stackforge/puppet-openstacklib
+[submodule "puppet-n1k-vsm"]
+	path = puppet-n1k-vsm
+	url = https://github.com/stackforge/puppet-n1k-vsm
