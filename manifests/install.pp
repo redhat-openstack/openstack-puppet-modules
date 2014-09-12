@@ -4,7 +4,7 @@ class uchiwa::install {
   case $::osfamily {
     'Debian': {
       class { 'uchiwa::repo::apt': }
-      if str2bool($uchiwa::install_repo) {
+      if ($uchiwa::install_repo) {
         $repo_require = Apt::Source['sensu']
       } else {
         $repo_require = undef
@@ -13,7 +13,7 @@ class uchiwa::install {
 
     'RedHat': {
       class { 'uchiwa::repo::yum': }
-      if str2bool($uchiwa::install_repo) {
+      if ($uchiwa::install_repo) {
         $repo_require = Yumrepo['sensu']
       } else {
         $repo_require = undef
