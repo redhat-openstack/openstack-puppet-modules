@@ -6,7 +6,7 @@ Tested with Travis CI
 
 ## Upgrade Note
 
-Versions greater than 0.2.0 are incompatible with previous versions of the Sensu-Puppet module.
+Versions greater than 0.2.0 are incompatible with previous versions of the Yelp-Uchiwa module.
 
 ## Installation
 
