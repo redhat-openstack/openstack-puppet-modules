@@ -1,11 +1,12 @@
 require 'yaml'
 require 'json'
 require 'faraday'
+require 'pathname'
 
-require "aviator/string"
 require "aviator/version"
-require "aviator/compatibility"
-require "aviator/hashish"
+require "aviator/core/utils/string"
+require "aviator/core/utils/compatibility"
+require "aviator/core/utils/hashish"
 require "aviator/core/request"
 require "aviator/core/request_builder"
 require "aviator/core/response"

@@ -21,16 +21,24 @@ module Aviator
     end
 
     class SessionDataNotProvidedError < StandardError
-      def initialize
-        super "default_session_data is not initialized and no session data was "\
-              "provided in the method call."
+      def initialize(service_name, request_name)
+        super "\n\nERROR: default_session_data is not initialized and no session data was provided in\n"\
+              "the method call. You have two ways to fix this:\n\n"\
+              "   1) Call Session#authenticate before calling Session##{service_name}_service, or\n\n"\
+              "   2) If you're really sure you don't want to authenticate beforehand,\n"\
+              "      construct the method call this way:\n\n"\
+              "          service = session.#{service_name}_service\n"\
+              "          service.request :#{request_name}, :api_version => :v2, :session_data => sessiondatavar\n\n"\
+              "      Replace :v2 with whatever available version you want to use and make sure sessiondatavar\n"\
+              "      is a hash that contains, at least, the :base_url key. Other keys, such as :service_token may\n"\
+              "      be needed depending on what the request class you are calling requires.\n\n"
       end
     end
 
 
     class UnknownRequestError < StandardError
-      def initialize(request_name)
-        super "Unknown request #{ request_name }."
+      def initialize(request_name, options)
+        super "Unknown request #{ request_name } #{ options }."
       end
     end
 
@@ -60,6 +68,7 @@ module Aviator
       @provider = opts[:provider] || (raise ProviderNotDefinedError.new)
       @service  = opts[:service]  || (raise ServiceNameNotDefinedError.new)
       @log_file = opts[:log_file]
+      @default_options = opts[:default_options] || {}
 
       @default_session_data = opts[:default_session_data]
 
@@ -68,17 +77,21 @@ module Aviator
 
 
     def request(request_name, options={}, &params)
+      if options[:api_version].nil? && @default_options[:api_version]
+        options[:api_version] = @default_options[:api_version]
+      end
+
       session_data = options[:session_data] || default_session_data
 
-      raise SessionDataNotProvidedError.new unless session_data
+      raise SessionDataNotProvidedError.new(@service, request_name) unless session_data
 
       [:base_url].each do |k|
         session_data[k] = options[k] if options[k]
       end
 
-      request_class = find_request(request_name, session_data, options[:endpoint_type])
+      request_class = provider_module.find_request(service, request_name, session_data, options)
 
-      raise UnknownRequestError.new(request_name) unless request_class
+      raise UnknownRequestError.new(request_name, options) unless request_class
 
       request  = request_class.new(session_data, &params)
 
@@ -111,71 +124,8 @@ module Aviator
     end
 
 
-    # Candidate for extraction to aviator/openstack
-    def find_request(name, session_data, endpoint_type=nil)
-      endpoint_types = if endpoint_type
-                         [endpoint_type.to_s.camelize]
-                       else
-                         ['Public', 'Admin']
-                       end
-
-      namespace = Aviator.const_get(provider.camelize) \
-                         .const_get(service.camelize)
-
-      version = infer_version(session_data, name).to_s.camelize
-
-      return nil unless version && namespace.const_defined?(version)
-
-      namespace = namespace.const_get(version, name)
-
-      endpoint_types.each do |endpoint_type|
-        name = name.to_s.camelize
-
-        next unless namespace.const_defined?(endpoint_type)
-        next unless namespace.const_get(endpoint_type).const_defined?(name)
-
-        return namespace.const_get(endpoint_type).const_get(name)
-      end
-
-      nil
-    end
-
-
-    # Candidate for extraction to aviator/openstack
-    def infer_version(session_data, request_name='sample_request')
-      if session_data.has_key?(:auth_service) && session_data[:auth_service][:api_version]
-        session_data[:auth_service][:api_version].to_sym
-
-      elsif session_data.has_key?(:auth_service) && session_data[:auth_service][:host_uri]
-        m = session_data[:auth_service][:host_uri].match(/(v\d+)\.?\d*/)
-        return m[1].to_sym unless m.nil?
-
-      elsif session_data.has_key? :base_url
-        m = session_data[:base_url].match(/(v\d+)\.?\d*/)
-        return m[1].to_sym unless m.nil?
-
-      elsif session_data.has_key? :access
-        service_spec = session_data[:access][:serviceCatalog].find{|s| s[:type] == service }
-        raise MissingServiceEndpointError.new(service.to_s, request_name) unless service_spec
-        version = service_spec[:endpoints][0][:publicURL].match(/(v\d+)\.?\d*/)
-        version ? version[1].to_sym : :v1
-      end
-    end
-
-
     def load_requests
-      # :TODO => This should be determined by a provider-specific module.
-      # e.g. Aviator::OpenStack::requests_base_dir
-      request_file_paths = Dir.glob(Pathname.new(__FILE__).join(
-                             '..',
-                             '..',
-                             provider.to_s,
-                             service.to_s,
-                             '**',
-                             '*.rb'
-                             ).expand_path
-                           )
-
+      request_file_paths = provider_module.request_file_paths(service)
       request_file_paths.each{ |path| require path }
 
       constant_parts = request_file_paths \
@@ -190,6 +140,11 @@ module Aviator
 
     def log_file
       @log_file
+    end
+
+
+    def provider_module
+      @provider_module ||= "Aviator::#{provider.camelize}::Provider".constantize
     end
 
   end
