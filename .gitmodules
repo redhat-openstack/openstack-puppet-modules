@@ -115,9 +115,6 @@
 [submodule "neutron"]
 	path = neutron
 	url = https://github.com/stackforge/puppet-neutron.git
-[submodule "nagios"]
-	path = nagios
-	url = https://github.com/gildub/puppet-nagios-openstack
 [submodule "openstacklib"]
 	path = openstacklib
 	url = https://github.com/stackforge/puppet-openstacklib
