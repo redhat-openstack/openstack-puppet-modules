@@ -60,12 +60,12 @@ define snmp::snmpv3_user (
   $daemon   = 'snmpd'
 ) {
   # Validate our regular expressions
-  $Aoptions = [ '^SHA$', '^MD5$' ]
-  validate_re($authtype, $Aoptions, '$authtype must be either SHA or MD5.')
-  $Poptions = [ '^AES$', '^DES$' ]
-  validate_re($privtype, $Poptions, '$privtype must be either AES or DES.')
-  $Doptions = [ '^snmpd$', '^snmptrapd$' ]
-  validate_re($daemon, $Doptions, '$daemon must be either snmpd or snmptrapd.')
+  $hash_options = [ '^SHA$', '^MD5$' ]
+  validate_re($authtype, $hash_options, '$authtype must be either SHA or MD5.')
+  $enc_options = [ '^AES$', '^DES$' ]
+  validate_re($privtype, $enc_options, '$privtype must be either AES or DES.')
+  $daemon_options = [ '^snmpd$', '^snmptrapd$' ]
+  validate_re($daemon, $daemon_options, '$daemon must be either snmpd or snmptrapd.')
 
   include snmp
 
