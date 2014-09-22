@@ -1,4 +1,13 @@
 {
+  "name": "razorsedge-snmp",
+  "version": "3.1.0",
+  "author": "razorsedge",
+  "summary": "Install and manage Net-SNMP services.",
+  "license": "Apache License, Version 2.0",
+  "project_page": "https://github.com/razorsedge/puppet-snmp",
+  "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
+  "tags": [ "RHEL", "rhel", "OEL", "CentOS", "snmp", "monitoring", "debian", "ubuntu", "SuSE", "OpenSUSE", "FreeBSD" ],
+  "source": "https://github.com/razorsedge/puppet-snmp.git",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
