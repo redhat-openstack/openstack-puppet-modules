@@ -340,9 +340,9 @@ class snmp (
 
   if $install_client {
     class { 'snmp::client':
-      ensure        => $ensure,
-      autoupgrade   => $autoupgrade,
-      snmp_config   => $snmp_config,
+      ensure      => $ensure,
+      autoupgrade => $autoupgrade,
+      snmp_config => $snmp_config,
     }
   }
 
