@@ -1,3 +1,6 @@
+0.6.1 Tuesday 23rd September, 2014
+    Fix usage with the future parser (Github #16 - Oscar Ferrer)
+
 0.6.0 Monday 16th June, 2014
     Add ensure to the datacat define (Github #13 - Igor Galić)
 
