@@ -74,13 +74,13 @@ define datacat(
     }
 
     $template_real = $template ? {
-      default => $template,
       undef   => 'inline',
+      default => $template,
     }
 
     $template_body_real = $template_body ? {
-      default => $template_body,
       undef   => template_body($template_real),
+      default => $template_body,
     }
 
     datacat_collector { $title:
