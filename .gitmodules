@@ -102,7 +102,7 @@
 	url = https://github.com/purpleidea/puppet-puppet.git
 [submodule "galera"]
 	path = galera
-	url = https://github.com/rohara/puppet-galera.git
+	url = https://github.com/opuk/puppet-galera.git
 [submodule "module-data"]
 	path = module-data
 	url = https://github.com/ripienaar/puppet-module-data
