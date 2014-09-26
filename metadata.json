@@ -8,6 +8,12 @@
   "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
   "tags": [ "RHEL", "rhel", "OEL", "CentOS", "snmp", "monitoring", "debian", "ubuntu", "SuSE", "OpenSUSE", "FreeBSD" ],
   "source": "https://github.com/razorsedge/puppet-snmp.git",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">=2.3.0"
+    }
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
