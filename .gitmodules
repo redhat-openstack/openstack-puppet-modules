@@ -115,3 +115,6 @@
 [submodule "neutron"]
 	path = neutron
 	url = https://github.com/stackforge/puppet-neutron.git
+[submodule "n1k-vsm"]
+	path = n1k-vsm
+	url = https://github.com/stackforge/puppet-n1k-vsm
