@@ -1,0 +1,13 @@
+#!/bin/env bash
+# virsh nodeinfo
+
+data=$(/usr/bin/virsh nodeinfo 2>&1)
+rv=$?
+
+if [ "$rv" -ne 0 ] ; then
+    echo $data
+    exit 3
+fi
+
+echo "OK - ${data}"
+exit 0

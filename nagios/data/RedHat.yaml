@@ -1,0 +1,175 @@
+---
+nagios::params::admin_group: nagios
+nagios::params::admin_user: nagios
+nagios::params::admin_name: nagiosadmin
+nagios::params::admin_password: CHANGEME
+
+nagios::params::hostgroups:
+  dbms:
+    alias: Databases
+    notes: mariadb-server
+  httpd:
+    alias: HTTP server
+    notes: httpd
+  neutron:
+    alias: Neutron Services
+    notes: neutron-db-check,neutron-dhcp-agent,neutron-l3-agent,neutron-metadata-agent,neutron-netns-cleanup,neutron-openvswitch-agent,neutron-ovs-cleanup,neutron-server
+  ceilometer:
+    alias: OpenStack Ceilometer Services
+    notes: openstack-ceilometer-alarm-evaluator,openstack-ceilometer-alarm-notifier,openstack-ceilometer-api,openstack-ceilometer-central,openstack-ceilometer-collector,openstack-ceilometer-notification
+  cinder:
+    alias: OpenStack Cinder Services
+    notes: openstack-cinder-api,openstack-cinder-backup,openstack-cinder-scheduler,openstack-cinder-volume
+  glance:
+    alias: OpenStack Glance Services
+    notes: openstack-glance-api,openstack-glance-registry,openstack-glance-scrubber
+  heat:
+    alias: OpenStack Heat Services
+    notes: openstack-heat-api,openstack-heat-api-cfn,openstack-heat-api-cloudwatch,openstack-heat-engine
+  keystone:
+    alias: Keystone Services
+    notes: openstack-keystone
+  openstack:
+    alias: OpenStack Nodes
+    notes: Default group in order to include basic checks (disk, load, etc)
+  nova:
+    alias: OpenStack Nova Services
+    notes: openstack-nova-api,openstack-nova-cert,openstack-nova-conductor,openstack-nova-console,openstack-nova-consoleauth,openstack-nova-metadata-api,openstack-nova-novncproxy,openstack-nova-scheduler,openstack-nova-spicehtml5proxy,openstack-nova-xvpvncproxy
+  compute:
+    alias: OpenStack Nova Compute
+    notes: openstack-nova-compute
+  swift:
+    alias: OpenStack Swift Services
+    notes: openstack-swift-api,openstack-swift-object-expirer
+  openvswitch:
+    alias: openvswitch Services
+    notes: openvswitch
+  amqp:
+    alias: AMQP Service
+    notes: rabbitmq,qpidd
+  dbms:
+    notes:
+      - mariadb
+    alias: Databases
+
+nagios::params::server_packages:
+  - nagios
+  - nagios-plugins-nrpe
+  - nagios-plugins-ping
+  - nagios-plugins-http
+
+nagios::server::openstack::packages:
+  - python-ceilometerclient
+  - python-cinderclient
+  - python-glanceclient
+  - python-heatclient
+  - python-keystoneclient
+  - python-neutronclient
+  - python-novaclient
+  - python-swiftclient
+
+nagios::server::nrpe::commands:
+  check_nrpe:
+    command_line: '/usr/lib64/nagios/plugins/check_nrpe -H $HOSTADDRESS$ -c $ARG1$'
+
+nagios::server::nrpe::services:
+  check_disk-var:
+    hostgroup_name: openstack
+    service_description: 'Filesystem /var usage'
+    check_command: 'check_nrpe!check_disk_var'
+    normal_check_interval: '5'
+    use: generic-service
+  check_load:
+    hostgroup_name: openstack
+    service_description: 'Load average'
+    check_command: 'check_nrpe!check_load'
+    normal_check_interval: '5'
+    use: generic-service
+
+nagios::server::openstack::commands:
+  ceilometer-list:
+    command_line: /usr/lib64/nagios/plugins/ceilometer-list
+  cinder-list:
+    command_line: /usr/lib64/nagios/plugins/cinder-list
+  glance-list:
+    command_line: /usr/lib64/nagios/plugins/glance-list
+  heat-list:
+    command_line: /usr/lib64/nagios/plugins/heat-list
+  keystone-user-list:
+    command_line: /usr/lib64/nagios/plugins/keystone-user-list
+  neutron-net-list:
+    command_line: /usr/lib64/nagios/plugins/neutron-net-list
+  neutron-network-check:
+    command_line: /usr/lib64/nagios/plugins/neutron-network-check
+  nova-list:
+    command_line: /usr/lib64/nagios/plugins/nova-list
+  swift-list:
+    command_line: /usr/lib64/nagios/plugins/swift-list
+
+nagios::server::openstack::services:
+  neutron-net-list:
+    hostgroup_name: neutron
+    service_description: Number of neutron networks
+    check_command: neutron-net-list
+    normal_check_interval: '5'
+    use: generic-service
+  neutron-network-check:
+    hostgroup_name: neutron
+    service_description: 'Neutron network check: Adds an instance and allocates a floating IP to it'
+    check_command: neutron-network-check
+    normal_check_interval: '5'
+    use: generic-service
+  ceilometer-list:
+    hostgroup_name: ceilometer
+    service_description: Number of ceilometer objects
+    check_command: ceilometer-list
+    normal_check_interval: '5'
+    use: generic-service
+  cinder-list:
+    hostgroup_name: cinder
+    service_description: Number of cinder volumes
+    check_command: cinder-list
+    normal_check_interval: '5'
+    use: generic-service
+  glance-list:
+    hostgroup_name: glance
+    service_description: Number of glance images
+    check_command: glance-list
+    normal_check_interval: '5'
+    use: generic-service
+  heat-list:
+    hostgroup_name: heat
+    service_description: Number of heat objects
+    check_command: heat-list
+    normal_check_interval: '5'
+    use: generic-service
+  keystone-user-list:
+    hostgroup_name: keystone
+    service_description: Number of keystone users
+    check_command: keystone-user-list
+    normal_check_interval: '5'
+    use: generic-service
+  nova-list:
+    hostgroup_name: nova
+    service_description: Number of nova instances
+    check_command: nova-list
+    normal_check_interval: '5'
+    use: generic-service
+  virsh_nodeinfo:
+    hostgroup_name: nova-compute
+    service_description: Virsh nodeinfo
+    check_command: check_nrpe!virsh_nodeinfo
+    normal_check_interval: '5'
+    use: generic-service
+  swift-list:
+    hostgroup_name: swift
+    service_description: Number of swift objects
+    check_command: swift-list
+    normal_check_interval: '5'
+    use: generic-service
+  dashboard:
+    hostgroup_name: web
+    service_description: Horizon dashboard HTTP check
+    check_command: check_http
+    normal_check_interval: '5'
+    use: generic-service
