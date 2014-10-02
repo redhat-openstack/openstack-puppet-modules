@@ -2,7 +2,7 @@
 
 Tested with Travis CI
 
-[![Build Status](https://travis-ci.org/Yelp/yelp-uchiwa.png)](https://travis-ci.org/yelp/yelp-uchiwa)
+[![Build Status](https://travis-ci.org/Yelp/puppet-uchiwa.svg?branch=master)](https://travis-ci.org/Yelp/puppet-uchiwa)
 
 ## Upgrade Note
 
