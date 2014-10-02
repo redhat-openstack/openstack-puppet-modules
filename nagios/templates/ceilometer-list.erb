@@ -1,0 +1,15 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+admin_id=$(keystone tenant-get admin | awk '/id / {print $4}')
+
+data=$(ceilometer resource-list -q project=${admin_id} 2>&1)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+fi
+
+echo "$data" | grep -vE '(\+-|Resource ID)' | wc -l
