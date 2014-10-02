@@ -3,7 +3,10 @@
 
 class mongodb::globals (
   $server_package_name  = undef,
+  $client_package_name  = undef,
 
+  $service_enable       = undef,
+  $service_ensure       = undef,
   $service_name         = undef,
   $service_provider     = undef,
   $service_status       = undef,
@@ -15,14 +18,12 @@ class mongodb::globals (
   $version              = undef,
 
   $manage_package_repo  = undef,
-  
 ) {
 
   # Setup of the repo only makes sense globally, so we are doing it here.
   if($manage_package_repo) {
-    class { 'mongodb::repo':
+    class { '::mongodb::repo':
       ensure  => present,
     }
   }
-
 }

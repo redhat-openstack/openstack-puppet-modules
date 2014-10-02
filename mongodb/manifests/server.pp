@@ -11,6 +11,8 @@ class mongodb::server (
 
   $service_provider = $mongodb::params::service_provider,
   $service_name     = $mongodb::params::service_name,
+  $service_enable   = $mongodb::params::service_enable,
+  $service_ensure   = $mongodb::params::service_ensure,
   $service_status   = $mongodb::params::service_status,
 
   $package_ensure  = $ensure,
@@ -51,6 +53,7 @@ class mongodb::server (
   $slowms          = undef,
   $keyfile         = undef,
   $set_parameter   = undef,
+  $syslog          = undef,
 
   # Deprecated parameters
   $master          = undef,

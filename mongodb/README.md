@@ -28,13 +28,14 @@ any feedback with regard to the APIs and patterns used in this release.
 
 ##Module Description
 
-The MongoDB module manages mongod server installation and configuration of the mongod
-daemon. For the time being it supports only a single MongoDB server instance, without
-sharding and limited replica set functionality (you can define the replica set parameter 
-in the config file, however rs.initiate() has to be done manually). Addition of
-replica set functionality is being investigated for a future release.
+The MongoDB module manages mongod server installation and configuration of the
+mongod daemon. For the time being it supports only a single MongoDB server
+instance, without sharding functionality.
 
 For the 0.5 release, the MongoDB module now supports database and user types.
+
+For the 0.6 release, the MongoDB module now supports basic replicaset features
+(initiating a replicaset and adding members, but without specific options).
 
 ## Setup
 
@@ -43,6 +44,7 @@ For the 0.5 release, the MongoDB module now supports database and user types.
 * MongoDB package.
 * MongoDB configuration files.
 * MongoDB service.
+* MongoDB client.
 * 10gen/mongodb apt/yum repository.
 
 ###Beginning with MongoDB
@@ -58,6 +60,15 @@ class {'::mongodb::server':
 }
 ```
 
+For Red Hat family systems, the client can be installed in a similar fashion:
+
+```
+puppet class {'::mongodb::client':}
+```
+
+Note that for Debian/Ubuntu family systems the client is installed with the 
+server. Using the client class will by default install the server.
+
 Although most distros come with a prepacked MongoDB server we recommend to
 use the 10gen/MongoDB software repository, because most of the current OS
 packages are outdated and not appropriate for a production environment.
@@ -67,7 +78,8 @@ To install MongoDB from 10gen repository:
 class {'::mongodb::globals':
   manage_package_repo => true,
 }->
-class {'::mongodb::server': }
+class {'::mongodb::server': }->
+class {'::mongodb::client': }
 ```
 
 ## Usage
@@ -102,6 +114,7 @@ Unsafe plain text password could be used with 'password' parameter instead of 'p
 
 ####Public classes
 * `mongodb::server`: Installs and configure MongoDB
+* `mongodb::client`: Installs the MongoDB client shell (for Red Hat family systems)
 * `mongodb::globals`: Configure main settings in a global way
 
 ####Private classes
@@ -111,6 +124,7 @@ Unsafe plain text password could be used with 'password' parameter instead of 'p
 * `mongodb::server::config`: Configures MongoDB configuration files
 * `mongodb::server::install`: Install MongoDB software packages
 * `mongodb::server::service`: Manages service
+* `mongodb::client::install`: Installs the MongoDB client software package
 
 ####Class: mongodb::globals
 *Note:* most server specific defaults should be overridden in the `mongodb::server`
@@ -170,7 +184,7 @@ For more details about configuration parameters consult the
 [MongoDB Configuration File Options](http://docs.mongodb.org/manual/reference/configuration-options/).
 
 #####`ensure`
-enable or disable the service
+Used to ensure that the package is installed and the service is running, or that the package is absent/purged and the service is stopped. Valid values are true/false/present/absent/purged.
 
 #####`config`
 Path of the config file. If not specified, the module will use the default
@@ -337,6 +351,11 @@ replication configuration. Default: False  *Note*: deprecated – use replica se
 Specify extra configuration file parameters (i.e.
 textSearchEnabled=true). Default: None
 
+#####`syslog`
+Sends all logging output to the host’s syslog system rather than to standard
+output or a log file. Default: None
+*Important*: You cannot use syslog with logpath.
+
 #####`slave`
 Set to true to configure the current instance to act as slave instance in a
 replication configuration. Default: false
@@ -412,7 +431,28 @@ Array with user roles. Default: ['dbAdmin']
 #####`tries`
 The maximum amount of two second tries to wait MongoDB startup. Default: 10
 
-## Limitation
+#### Provider: mongodb_replset
+'mongodb_replset' can be used to create and manage MongoDB replicasets.
+
+```puppet
+mongodb_replset { rsmain:
+  ensure  => present,
+  members => ['host1:27017', 'host2:27017', 'host3:27017']
+}
+```
+
+Ideally the ```mongodb_replset``` resource will be declared on the initial
+desired primary node (arbitrarily the first of the list) and this node will be
+processed once the secondary nodes are up. This will ensure all the nodes are
+in the first configuration of the replicaset, else it will require running
+puppet again to add them.
+
+#####`members`
+Array of 'host:port' of the replicaset members.
+
+It currently only adds members without options.
+
+## Limitations
 
 This module has been tested on:
 
@@ -424,6 +464,8 @@ This module has been tested on:
 * CentOS 5/6
 
 For a full list of tested operating systems please have a look at the [.nodeset.xml](https://github.com/puppetlabs/puppetlabs-mongodb/blob/master/.nodeset.yml) definition.
+
+This module should support `service_ensure` separate from the `ensure` value on `Class[mongodb::server]` but it does not yet.
 
 ## Development
 

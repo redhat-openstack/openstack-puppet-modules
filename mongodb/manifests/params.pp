@@ -1,7 +1,10 @@
 # PRIVATE CLASS: do not use directly
 class mongodb::params inherits mongodb::globals {
   $ensure           = true
+  $service_enable   = pick($service_enable, true)
+  $service_ensure   = pick($service_ensure, 'running')
   $service_status   = $service_status
+  $ensure_client    = true
 
   # Amazon Linux's OS Family is 'Linux', operating system 'Amazon'.
   case $::osfamily {
@@ -10,15 +13,17 @@ class mongodb::params inherits mongodb::globals {
       if $mongodb::globals::manage_package_repo {
         $user        = pick($user, 'mongod')
         $group       = pick($group, 'mongod')
-        if $version {
-          $server_package_name = "mongo-10gen-server-${version}"
+        if $::mongodb::globals::version {
+          $server_package_name = pick("$::mongodb::globals::server_package_name-${::mongodb::globals::version}", "mongodb-org-server-${::mongodb::globals::version}")
+          $client_package_name = pick("$::mongodb::globals::client_package_name-${::mongodb::globals::version}", "mongodb-org-shell-${::mongodb::globals::version}")
         } else {
-          $server_package_name = 'mongo-10gen-server'
+          $server_package_name = pick($::mongodb::globals::server_package_name, 'mongodb-org-server')
+          $client_package_name = pick($::mongodb::globals::client_package_name, 'mongodb-org-shell')
         }
-        $service_name = pick($service_name, "mongod")
+        $service_name = pick($::mongodb::globals::service_name, 'mongod')
         $config      = '/etc/mongod.conf'
-        $dbpath      = '/var/lib/mongo'
-        $logpath     = '/var/log/mongo/mongod.log'
+        $dbpath      = '/var/lib/mongodb'
+        $logpath     = '/var/log/mongodb/mongod.log'
         $pidfilepath = '/var/run/mongodb/mongod.pid'
         $bind_ip     = pick($bind_ip, ['127.0.0.1'])
         $fork        = true
@@ -27,7 +32,8 @@ class mongodb::params inherits mongodb::globals {
         # so we assume that you are using EPEL repository.
         $user                = pick($user, 'mongodb')
         $group               = pick($group, 'mongodb')
-        $server_package_name = pick($server_package_name, "mongodb-server")
+        $server_package_name = pick($server_package_name, 'mongodb-server')
+        $client_package_name = pick($client_package_name, 'mongodb')
 
         $service_name        = pick($service_name, 'mongod')
         $config              = '/etc/mongodb.conf'
@@ -43,13 +49,16 @@ class mongodb::params inherits mongodb::globals {
       if $mongodb::globals::manage_package_repo {
         $user  = pick($user, 'mongodb')
         $group = pick($group, 'mongodb')
-        if $version {
-          $server_package_name = "mongodb-10gen-${version}"
-        } else {
-          $server_package_name = 'mongodb-10gen'
+        if $::mongodb::globals::version {
+          $server_package_name = pick("${::mongodb::globals::server_package_name}=${::mongodb::globals::version}", "mongodb-org-server-${::mongodb::globals::version}")
+          $client_package_name = pick("${::mongodb::globals::client_package_name}=${::mongodb::globals::version}", "mongodb-org-shell-${::mongodb::globals::version}")
         }
-        $service_name = 'mongodb'
-        $config       = '/etc/mongodb.conf'
+        else {
+          $server_package_name = pick($::mongodb::globals::server_package_name, 'mongodb-org-server')
+          $client_package_name = pick($::mongodb::globals::client_package_name, 'mongodb-org-shell')
+        }
+        $service_name = pick($::mongodb::globals::service_name, 'mongod')
+        $config       = '/etc/mongod.conf'
         $dbpath       = '/var/lib/mongodb'
         $logpath      = '/var/log/mongodb/mongodb.log'
         $bind_ip      = ['127.0.0.1']
@@ -61,6 +70,7 @@ class mongodb::params inherits mongodb::globals {
         $user                = pick($user, 'mongodb')
         $group               = pick($group, 'mongodb')
         $server_package_name = pick($server_package_name, 'mongodb-server')
+        $client_package_name = $client_package_name
         $service_name        = pick($service_name, 'mongodb')
         $config              = '/etc/mongodb.conf'
         $dbpath              = '/var/lib/mongodb'
@@ -79,7 +89,7 @@ class mongodb::params inherits mongodb::globals {
   case $::operatingsystem {
     'Ubuntu': {
       $service_provider = pick($service_provider, 'upstart')
-     }
+    }
     default: {
       $service_provider = undef
     }
