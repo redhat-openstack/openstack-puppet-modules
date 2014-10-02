@@ -4,7 +4,7 @@ mod 'apache',
 
 mod 'ceilometer',
   :git    => 'https://github.com/stackforge/puppet-ceilometer.git',
-  :commit => '6e907487951a05e10319f72d11d313e18e21bb2b'
+  :commit => '08fc9d9159cd9eb0830d550abb1058bc2b9b5759'
 
 mod 'certmonger',
   :git    => 'https://github.com/rcritten/puppet-certmonger.git',
@@ -32,7 +32,7 @@ mod 'galera',
 
 mod 'glance',
   :git    => 'https://github.com/stackforge/puppet-glance.git',
-  :commit => '3c074d708c8980c47e83a80b1a4359189a1332b1'
+  :commit => 'f377c0229c006b02f43a14be4979553e983cb98e'
 
 mod 'gluster',
   :git    => 'https://github.com/purpleidea/puppet-gluster.git',
@@ -68,7 +68,7 @@ mod 'module-data',
 
 mod 'mongodb',
   :git    => 'https://github.com/puppetlabs/puppetlabs-mongodb.git',
-  :commit => '3f392925710f1758a95f1775d700b5fb787a003d'
+  :commit => '0518f864afcce2ebb79f1f2edab5de323c811af7'
 
 mod 'mysql',
   :git    => 'https://github.com/puppetlabs/puppetlabs-mysql.git',
