@@ -72,7 +72,7 @@ class rabbitmq::params {
   $management_port            = '15672'
   $package_apt_pin            = undef
   $package_gpg_key            = 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
-  $manage_repos               = undef
+  $repos_ensure               = true
   $service_ensure             = 'running'
   $service_manage             = true
   #config
