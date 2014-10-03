@@ -6,6 +6,7 @@ class rabbitmq::params {
 
   case $::osfamily {
     'Archlinux': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq'
       $service_name     = 'rabbitmq'
@@ -16,6 +17,7 @@ class rabbitmq::params {
       $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     'Debian': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -37,6 +39,7 @@ class rabbitmq::params {
       $plugin_dir       = '/usr/local/lib/rabbitmq/plugins'
     }
     'RedHat': {
+      $manage_repos     = false
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -48,6 +51,7 @@ class rabbitmq::params {
       $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     'SUSE': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -68,7 +72,6 @@ class rabbitmq::params {
   $management_port            = '15672'
   $package_apt_pin            = undef
   $package_gpg_key            = 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
-  $repos_ensure               = true
   $manage_repos               = undef
   $service_ensure             = 'running'
   $service_manage             = true
