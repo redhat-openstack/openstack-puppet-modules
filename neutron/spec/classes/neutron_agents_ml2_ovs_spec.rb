@@ -33,15 +33,15 @@ describe 'neutron::agents::ml2::ovs' do
     it { should contain_class('neutron::params') }
 
     it 'configures ovs_neutron_plugin.ini' do
-      should contain_neutron_plugin_ml2('agent/polling_interval').with_value(p[:polling_interval])
-      should contain_neutron_plugin_ml2('agent/l2_population').with_value(p[:l2_population])
-      should contain_neutron_plugin_ml2('agent/arp_responder').with_value(p[:arp_responder])
-      should contain_neutron_plugin_ml2('ovs/integration_bridge').with_value(p[:integration_bridge])
-      should contain_neutron_plugin_ml2('securitygroup/firewall_driver').\
+      should contain_neutron_plugin_ovs('agent/polling_interval').with_value(p[:polling_interval])
+      should contain_neutron_plugin_ovs('agent/l2_population').with_value(p[:l2_population])
+      should contain_neutron_plugin_ovs('agent/arp_responder').with_value(p[:arp_responder])
+      should contain_neutron_plugin_ovs('ovs/integration_bridge').with_value(p[:integration_bridge])
+      should contain_neutron_plugin_ovs('securitygroup/firewall_driver').\
         with_value(p[:firewall_driver])
-      should contain_neutron_plugin_ml2('ovs/enable_tunneling').with_value(false)
-      should contain_neutron_plugin_ml2('ovs/tunnel_bridge').with_ensure('absent')
-      should contain_neutron_plugin_ml2('ovs/local_ip').with_ensure('absent')
+      should contain_neutron_plugin_ovs('ovs/enable_tunneling').with_value(false)
+      should contain_neutron_plugin_ovs('ovs/tunnel_bridge').with_ensure('absent')
+      should contain_neutron_plugin_ovs('ovs/local_ip').with_ensure('absent')
     end
 
     it 'configures vs_bridge' do
@@ -58,18 +58,20 @@ describe 'neutron::agents::ml2::ovs' do
           :name   => platform_params[:ovs_agent_package],
           :ensure => p[:package_ensure]
         )
-        should contain_package('neutron-ovs-agent').with_before(/Neutron_plugin_ml2\[.+\]/)
+        should contain_package('neutron-ovs-agent').with_before(/Neutron_plugin_ovs\[.+\]/)
       else
       end
     end
 
-    it 'configures neutron ovs agent service' do
-      should contain_service('neutron-ovs-agent-service').with(
-        :name    => platform_params[:ovs_agent_service],
-        :enable  => true,
-        :ensure  => 'running',
-        :require => 'Class[Neutron]'
-      )
+    it 'configures neutron ovs cleanup service (if any)' do
+      if platform_params.has_key?(:ovs_cleanup_service)
+        should contain_service('ovs-cleanup-service').with(
+          :name    => platform_params[:ovs_cleanup_service],
+          :enable  => true,
+          :ensure  => 'running'
+        )
+        should contain_package('neutron-ovs-agent').with_before(/Service\[ovs-cleanup-service\]/)
+      end
     end
 
     context 'when supplying a firewall driver' do
@@ -77,7 +79,7 @@ describe 'neutron::agents::ml2::ovs' do
         params.merge!(:firewall_driver => false)
       end
       it 'should configure firewall driver' do
-        should contain_neutron_plugin_ml2('securitygroup/firewall_driver').with_ensure('absent')
+        should contain_neutron_plugin_ovs('securitygroup/firewall_driver').with_ensure('absent')
       end
     end
 
@@ -86,7 +88,7 @@ describe 'neutron::agents::ml2::ovs' do
         params.merge!(:arp_responder => true)
       end
       it 'should enable ARP responder' do
-        should contain_neutron_plugin_ml2('agent/arp_responder').with_value(true)
+        should contain_neutron_plugin_ovs('agent/arp_responder').with_value(true)
       end
     end
 
@@ -96,7 +98,7 @@ describe 'neutron::agents::ml2::ovs' do
       end
 
       it 'configures bridge mappings' do
-        should contain_neutron_plugin_ml2('ovs/bridge_mappings')
+        should contain_neutron_plugin_ovs('ovs/bridge_mappings')
       end
 
       it 'should configure bridge mappings' do
@@ -128,9 +130,9 @@ describe 'neutron::agents::ml2::ovs' do
           params.merge!(:enable_tunneling => true, :local_ip => '127.0.0.1' )
         end
         it 'should configure ovs for tunneling' do
-          should contain_neutron_plugin_ml2('ovs/enable_tunneling').with_value(true)
-          should contain_neutron_plugin_ml2('ovs/tunnel_bridge').with_value(default_params[:tunnel_bridge])
-          should contain_neutron_plugin_ml2('ovs/local_ip').with_value('127.0.0.1')
+          should contain_neutron_plugin_ovs('ovs/enable_tunneling').with_value(true)
+          should contain_neutron_plugin_ovs('ovs/tunnel_bridge').with_value(default_params[:tunnel_bridge])
+          should contain_neutron_plugin_ovs('ovs/local_ip').with_value('127.0.0.1')
           should contain_vs_bridge(default_params[:tunnel_bridge]).with(
             :ensure  => 'present',
             :before => 'Service[neutron-ovs-agent-service]'
@@ -147,8 +149,8 @@ describe 'neutron::agents::ml2::ovs' do
         end
 
         it 'should perform vxlan network configuration' do
-          should contain_neutron_plugin_ml2('agent/tunnel_types').with_value(params[:tunnel_types])
-          should contain_neutron_plugin_ml2('agent/vxlan_udp_port').with_value(params[:vxlan_udp_port])
+          should contain_neutron_plugin_ovs('agent/tunnel_types').with_value(params[:tunnel_types])
+          should contain_neutron_plugin_ovs('agent/vxlan_udp_port').with_value(params[:vxlan_udp_port])
         end
       end
     end
@@ -178,21 +180,5 @@ describe 'neutron::agents::ml2::ovs' do
     end
 
     it_configures 'neutron plugin ovs agent with ml2 plugin'
-
-    it 'configures neutron ovs cleanup service' do
-      should contain_service('ovs-cleanup-service').with(
-        :name    => platform_params[:ovs_cleanup_service],
-        :enable  => true,
-        :ensure  => 'running'
-      )
-      should contain_package('neutron-ovs-agent').with_before(/Service\[ovs-cleanup-service\]/)
-    end
-
-    it 'links from ovs config to plugin config' do
-      should contain_file('/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini').with(
-        :ensure => 'link',
-        :target => '/etc/neutron/plugin.ini'
-      )
-    end
   end
 end
