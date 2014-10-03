@@ -133,7 +133,7 @@ class openstack::all (
   $mysql_account_security  = true,
   $mysql_bind_address      = '0.0.0.0',
   $allowed_hosts           = '%',
-  $charset                 = 'latin1',
+  $charset                 = 'utf8',
   # Keystone
   $keystone_host           = '127.0.0.1',
   $keystone_db_user        = 'keystone',

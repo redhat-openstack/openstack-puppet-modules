@@ -35,7 +35,7 @@
 # [ceilometer_db_user]. Name of ceilometer DB user. Optional. Defaults to 'ceilometer'.
 # [ceilometer_db_dbname]. Name of ceilometer DB. Optional. Defaults to 'ceilometer'.
 # [allowed_hosts] List of hosts that are allowed access. Optional. Defaults to false.
-# [charset] Name of mysql charset. Optional. Defaults to 'latin1'.
+# [charset] Name of mysql charset. Optional. Defaults to 'utf8'.
 # [enabled] If the db service should be started. Optional. Defaults to true.
 #
 # === Example
@@ -94,7 +94,7 @@ class openstack::db::mysql (
     $ceilometer_db_dbname   = 'ceilometer',
     # General
     $allowed_hosts          = false,
-    $charset                = 'latin1',
+    $charset                = 'utf8',
     $enabled                = true
 ) {
 
