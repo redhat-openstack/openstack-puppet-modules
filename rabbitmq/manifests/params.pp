@@ -6,6 +6,7 @@ class rabbitmq::params {
 
   case $::osfamily {
     'Archlinux': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq'
       $service_name     = 'rabbitmq'
@@ -15,6 +16,7 @@ class rabbitmq::params {
       # This must remain at the end as we need $base_version and $version defined first
     }
     'Debian': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -23,6 +25,7 @@ class rabbitmq::params {
       $version          = '3.1.5'
     }
     'RedHat': {
+      $manage_repos     = false
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -33,6 +36,7 @@ class rabbitmq::params {
       $package_source   = "http://www.rabbitmq.com/releases/rabbitmq-server/v${base_version}/rabbitmq-server-${version}.noarch.rpm"
     }
     'SUSE': {
+      $manage_repos     = true
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
@@ -52,7 +56,6 @@ class rabbitmq::params {
   $management_port            = '15672'
   $package_apt_pin            = ''
   $package_gpg_key            = 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
-  $manage_repos               = true
   $service_ensure             = 'running'
   $service_manage             = true
   #config
