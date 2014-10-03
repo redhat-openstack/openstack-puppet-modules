@@ -62,7 +62,13 @@
 #     Toggle for token system caching. This has no effects unless 'memcache_servers' is set.
 #     Optional. Default to true.
 #
-#   [enabled] If the keystone services should be enabled. Optional. Default to true.
+#   [manage_service]
+#      (optional) If Puppet should manage service startup / shutdown.
+#      Defaults to true.
+#
+#   [enabled]
+#     (optional) If the keystone services should be enabled.
+#     Defaults to true.
 #
 #   [*database_connection*]
 #     (optional) Url used to connect to database.
@@ -312,6 +318,7 @@ class keystone(
   $cache_backend_argument = undef,
   $debug_cache_backend    = false,
   $token_caching          = true,
+  $manage_service         = true,
   $enabled                = true,
   $database_connection    = 'sqlite:////var/lib/keystone/keystone.db',
   $database_idle_timeout  = '200',
@@ -633,10 +640,12 @@ class keystone(
     }
   }
 
-  if $enabled {
-    $service_ensure = 'running'
-  } else {
-    $service_ensure = 'stopped'
+  if $manage_service {
+    if $enabled {
+      $service_ensure = 'running'
+    } else {
+      $service_ensure = 'stopped'
+    }
   }
 
   if $service_name == 'keystone' {
