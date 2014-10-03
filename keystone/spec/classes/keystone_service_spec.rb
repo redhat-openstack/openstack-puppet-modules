@@ -4,7 +4,7 @@ describe 'keystone::service' do
 
   describe "with default parameters" do
     it { should contain_service('keystone').with(
-      :ensure     => 'running',
+      :ensure     => nil,
       :enable     => true,
       :hasstatus  => true,
       :hasrestart => true
@@ -21,7 +21,7 @@ describe 'keystone::service' do
     end
 
     it { should contain_service('keystone').with(
-      :ensure     => 'running',
+      :ensure     => nil,
       :enable     => true,
       :hasstatus  => true,
       :hasrestart => true
