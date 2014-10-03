@@ -206,7 +206,7 @@ class horizon(
   $available_regions       = undef,
   $api_result_limit        = 1000,
   $log_level               = 'INFO',
-  $help_url                = 'http://docs.openstack.org',
+  $help_url                = 'http://openstack.redhat.com/Docs',
   $local_settings_template = 'horizon/local_settings.py.erb',
   $configure_apache        = true,
   $bind_address            = undef,
