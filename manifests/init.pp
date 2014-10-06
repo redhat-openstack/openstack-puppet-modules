@@ -106,7 +106,7 @@
 #   Default: []
 #
 #
-# [*install_client*]
+# [*manage_client*]
 #   Whether to install the Net-SNMP client package. (true|false)
 #   Default: false
 #
@@ -195,8 +195,8 @@
 #
 #   # Configure and run the snmp daemon and install the client:
 #   class { 'snmp':
-#     ro_community   => 'SeCrEt',
-#     install_client => true,
+#     ro_community  => 'SeCrEt',
+#     manage_client => true,
 #   }
 #
 #   # Only configure and run the snmptrap daemon:
@@ -240,6 +240,7 @@ class snmp (
   $trap_forwards           = $snmp::params::trap_forwards,
   $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
+  $manage_client           = $snmp::params::safe_manage_client,
   $snmp_config             = $snmp::params::snmp_config,
   $ensure                  = $snmp::params::ensure,
   $autoupgrade             = $snmp::params::safe_autoupgrade,
@@ -258,7 +259,7 @@ class snmp (
   $trap_service_hasrestart = $snmp::params::trap_service_hasrestart
 ) inherits snmp::params {
   # Validate our booleans
-  validate_bool($install_client)
+  validate_bool($manage_client)
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasstatus)
@@ -279,6 +280,15 @@ class snmp (
   $states = [ '^yes$', '^no$' ]
   validate_re($disable_authorization, $states, '$disable_authorization must be either yes or no.')
   validate_re($do_not_log_traps, $states, '$do_not_log_traps must be either yes or no.')
+
+  # Deprecated backwards-compatibility
+  if $install_client != undef {
+    validate_bool($install_client)
+    warning('snmp: parameter install_client is deprecated; please use manage_client')
+    $real_manage_client = $install_client
+  } else {
+    $real_manage_client = $manage_client
+  }
 
   case $ensure {
     /(present)/: {
@@ -338,7 +348,7 @@ class snmp (
     $snmptrapd_conf_notify = Service['snmpd']
   }
 
-  if $install_client {
+  if $real_manage_client {
     class { 'snmp::client':
       ensure      => $ensure,
       autoupgrade => $autoupgrade,

@@ -43,8 +43,8 @@ To install the SNMP service:
 To install the SNMP service and the client:
 
     class { 'snmp':
-      install_client => true,
-      snmp_config    => [ 'defVersion 2c', 'defCommunity public', ],
+      manage_client => true,
+      snmp_config   => [ 'defVersion 2c', 'defCommunity public', ],
     }
 
 If you just want to install the SNMP client:
@@ -119,6 +119,9 @@ Deprecation Warning
 The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp` in
 version 3.0.0 of this module.  All of their class parameters will be made
 available in the `snmp` class.
+
+The paramter `install_client` will be renamed to `manage_client` in version
+4.0.0 of this module.
 
 Contributing
 ------------
