@@ -161,13 +161,18 @@ class snmp::params {
   }
 
   $install_client = $::snmp_install_client ? {
-    undef   => false,
+    undef   => undef,
     default => $::snmp_install_client,
   }
-  if is_string($install_client) {
-    $safe_install_client = str2bool($install_client)
+
+  $manage_client = $::snmp_manage_client ? {
+    undef   => false,
+    default => $::snmp_manage_client,
+  }
+  if is_string($manage_client) {
+    $safe_manage_client = str2bool($manage_client)
   } else {
-    $safe_install_client = $install_client
+    $safe_manage_client = $manage_client
   }
 
   $service_enable = $::snmp_service_enable ? {
