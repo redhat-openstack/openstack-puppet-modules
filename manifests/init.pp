@@ -37,6 +37,10 @@
 #   Location of the SNMP system.
 #   Default: Unknown
 #
+# [*sysname*]
+#   Name of the system (hostname).
+#   Default: ${::fqdn}
+#
 # [*com2sec*]
 #   An array of VACM com2sec mappings.
 #   Must provide SECNAME, SOURCE and COMMUNITY.
@@ -227,6 +231,7 @@ class snmp (
   $rw_network              = $snmp::params::rw_network,
   $contact                 = $snmp::params::contact,
   $location                = $snmp::params::location,
+  $sysname                 = $snmp::params::sysname,
   $services                = $snmp::params::services,
   $com2sec                 = $snmp::params::com2sec,
   $groups                  = $snmp::params::groups,

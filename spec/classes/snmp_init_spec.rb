@@ -32,7 +32,8 @@ describe 'snmp', :type => 'class' do
         let :facts do {
           :osfamily               => 'RedHat',
           :operatingsystem        => os,
-          :operatingsystemrelease => '6.4'
+          :operatingsystemrelease => '6.4',
+          :fqdn                   => 'myhost.localdomain'
         }
         end
         it { should contain_package('snmpd').with(
@@ -69,9 +70,10 @@ describe 'snmp', :type => 'class' do
             'view    systemview    included   .1.3.6.1.2.1.1',
             'view    systemview    included   .1.3.6.1.2.1.25.1.1',
             'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
-            'syslocation Unknown',
-            'syscontact Unknown',
-            'sysservices 72',
+            'sysLocation Unknown',
+            'sysContact Unknown',
+            'sysServices 72',
+            'sysName myhost.localdomain',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -145,7 +147,8 @@ describe 'snmp', :type => 'class' do
         let :facts do {
           :osfamily               => 'Debian',
           :operatingsystem        => os,
-          :operatingsystemrelease => '6.0.7'
+          :operatingsystemrelease => '6.0.7',
+          :fqdn                   => 'myhost2.localdomain'
         }
         end
         it { should contain_package('snmpd').with(
@@ -182,9 +185,10 @@ describe 'snmp', :type => 'class' do
             'view    systemview    included   .1.3.6.1.2.1.1',
             'view    systemview    included   .1.3.6.1.2.1.25.1.1',
             'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
-            'syslocation Unknown',
-            'syscontact Unknown',
-            'sysservices 72',
+            'sysLocation Unknown',
+            'sysContact Unknown',
+            'sysServices 72',
+            'sysName myhost2.localdomain',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -245,7 +249,8 @@ describe 'snmp', :type => 'class' do
         let :facts do {
           :osfamily               => 'Suse',
           :operatingsystem        => os,
-          :operatingsystemrelease => '11.1'
+          :operatingsystemrelease => '11.1',
+          :fqdn                   => 'myhost3.localdomain'
         }
         end
         it { should contain_package('snmpd').with(
@@ -282,9 +287,10 @@ describe 'snmp', :type => 'class' do
             'view    systemview    included   .1.3.6.1.2.1.1',
             'view    systemview    included   .1.3.6.1.2.1.25.1.1',
             'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
-            'syslocation Unknown',
-            'syscontact Unknown',
-            'sysservices 72',
+            'sysLocation Unknown',
+            'sysContact Unknown',
+            'sysServices 72',
+            'sysName myhost3.localdomain',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -350,7 +356,8 @@ describe 'snmp', :type => 'class' do
         let :facts do {
           :osfamily               => 'FreeBSD',
           :operatingsystem        => os,
-          :operatingsystemrelease => '9.2'
+          :operatingsystemrelease => '9.2',
+          :fqdn                   => 'myhost4.localdomain'
         }
         end
         it { should contain_package('snmpd').with(
@@ -387,9 +394,10 @@ describe 'snmp', :type => 'class' do
             'view    systemview    included   .1.3.6.1.2.1.1',
             'view    systemview    included   .1.3.6.1.2.1.25.1.1',
             'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
-            'syslocation Unknown',
-            'syscontact Unknown',
-            'sysservices 72',
+            'sysLocation Unknown',
+            'sysContact Unknown',
+            'sysServices 72',
+            'sysName myhost4.localdomain',
           ])
         end
         it { should contain_service('snmpd').with(

@@ -56,6 +56,11 @@ class snmp::params {
     default => $::snmp_location,
   }
 
+  $sysname = $::snmp_sysname ? {
+    undef   => $::fqdn,
+    default => $::snmp_sysname,
+  }
+
   $com2sec = $::snmp_com2sec ? {
     undef   => [
       "notConfigUser  default       ${ro_community}",
