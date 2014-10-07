@@ -493,7 +493,6 @@ describe 'snmp', :type => 'class' do
 
     describe 'install_client => true' do
       let(:params) {{ :install_client => true }}
-#      it { should contain_warning('snmp: parameter install_client is deprecated; please use manage_client')}
       it { should contain_class('snmp::client').with(
         :ensure        => 'present',
         :autoupgrade   => 'false',
