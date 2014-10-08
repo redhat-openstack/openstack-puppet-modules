@@ -14,7 +14,7 @@
 #   Default: [ udp:127.0.0.1:162 ]
 #
 # [*ro_community*]
-#   Read-only (RO) community string.
+#   Read-only (RO) community string for snmptrap daemon.
 #   Default: public
 #
 # [*rw_community*]
@@ -41,11 +41,15 @@
 #   Name of the system (hostname).
 #   Default: ${::fqdn}
 #
+# [*services*]
+#   For a host system, a good value is 72 (application + end-to-end layers).
+#   Default: 72
+#
 # [*com2sec*]
 #   An array of VACM com2sec mappings.
 #   Must provide SECNAME, SOURCE and COMMUNITY.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ "notConfigUser default ${ro_community}" ]
+#   Default: [ "notConfigUser default public" ]
 #
 # [*groups*]
 #   An array of VACM group mappings.
@@ -53,10 +57,6 @@
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
 #   Default: [ 'notConfigGroup v1  notConfigUser',
 #              'notConfigGroup v2c notConfigUser' ]
-#
-# [*services*]
-#   For a host system, a good value is 72 (application + end-to-end layers).
-#   Default: 72
 #
 # [*views*]
 #   An array of views that are available to query.
@@ -199,7 +199,7 @@
 #
 #   # Configure and run the snmp daemon and install the client:
 #   class { 'snmp':
-#     ro_community  => 'SeCrEt',
+#     com2sec       => [ 'notConfigUser default PassW0rd' ],
 #     manage_client => true,
 #   }
 #

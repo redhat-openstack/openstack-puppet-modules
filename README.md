@@ -32,59 +32,70 @@ Examples
 
 To install the SNMP service:
 
-    class { 'snmp':
-      agentaddress => [ 'udp:161', ],
-      ro_community => 'notpublic',
-      ro_network   => '10.20.30.40/32',
-      contact      => 'root@yourdomain.org',
-      location     => 'Phoenix, AZ',
-    }
+```puppet
+class { 'snmp':
+  agentaddress => [ 'udp:161', ],
+  com2sec      => [ 'notConfigUser 10.20.30.40/32 SeCrEt' ],
+  contact      => 'root@yourdomain.org',
+  location     => 'Phoenix, AZ',
+}
+```
 
 To install the SNMP service and the client:
 
-    class { 'snmp':
-      manage_client => true,
-      snmp_config   => [ 'defVersion 2c', 'defCommunity public', ],
-    }
+```puppet
+class { 'snmp':
+  manage_client => true,
+  snmp_config   => [ 'defVersion 2c', 'defCommunity public', ],
+}
+```
 
 If you just want to install the SNMP client:
 
-    class { 'snmp::client':
-      snmp_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
-    }
+```puppet
+class { 'snmp::client':
+  snmp_config => [ 'mibdirs +/usr/local/share/snmp/mibs', ],
+}
+```
 
 Only configure and run the snmptrap daemon:
 
-    class { 'snmp':
-      snmptrapdaddr       => [ 'udp:162', ],
-      ro_community        => 'SeCrEt',
-      service_ensure      => 'stopped',
-      trap_service_ensure => 'running',
-      trap_service_enable => true,
-      trap_handlers       => [
-        'default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
-        'TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
-      ],
-      trap_forwards       => [ 'default udp:55.55.55.55:162' ],
-    }
+```puppet
+class { 'snmp':
+  snmptrapdaddr       => [ 'udp:162', ],
+  ro_community        => 'SeCrEt',
+  service_ensure      => 'stopped',
+  trap_service_ensure => 'running',
+  trap_service_enable => true,
+  trap_handlers       => [
+    'default /usr/bin/perl /usr/bin/traptoemail me@somewhere.local',
+    'TRAP-TEST-MIB::demo-trap /home/user/traptest.sh demo-trap',
+  ],
+  trap_forwards       => [ 'default udp:55.55.55.55:162' ],
+}
+```
 
 To install a SNMP version 3 user for snmpd:
 
-    snmp::snmpv3_user { 'myuser':
-      authpass => '1234auth',
-      privpass => '5678priv',
-    }
-    class { 'snmp':
-      snmpd_config => [ 'rouser myuser authPriv' ],
-    }
+```puppet
+snmp::snmpv3_user { 'myuser':
+  authpass => '1234auth',
+  privpass => '5678priv',
+}
+class { 'snmp':
+  snmpd_config => [ 'rouser myuser authPriv' ],
+}
+```
 
 To install a SNMP version 3 user for snmptrapd:
 
-    snmp::snmpv3_user { 'myuser':
-      authpass => 'SeCrEt',
-      privpass => 'PhRaSe',
-      daemon   => 'snmptrapd',
-    }
+```puppet
+snmp::snmpv3_user { 'myuser':
+  authpass => 'SeCrEt',
+  privpass => 'PhRaSe',
+  daemon   => 'snmptrapd',
+}
+```
 
 Notes
 -----
@@ -99,6 +110,13 @@ Notes
 * For security reasons, the SNMP daemons are configured to listen on the loopback
   interface (127.0.0.1).  Use `agentaddress` and `snmptrapdaddr` to change this
   configuration.
+* [Traditional Access
+  Control](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAK) is not fully
+  supported in this module.  The parameters ro_community, rw_community,
+  ro_network, and rw_network will end up commented out in the snmpd.conf.
+  Instead use [VACM
+  Configuration](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL) via
+  parameters com2sec, groups, views, and accesses.
 
 Issues
 ------
@@ -122,6 +140,10 @@ available in the `snmp` class.
 
 The paramter `install_client` will be renamed to `manage_client` in version
 4.0.0 of this module.
+
+The paramters `ro_community`, `rw_community`, `ro_network`, and `rw_network`
+will be removed in version 4.0.0 of this module.  The snmptrapd parameter name
+will become `authcommunity`.
 
 Contributing
 ------------
