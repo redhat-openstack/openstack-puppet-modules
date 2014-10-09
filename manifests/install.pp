@@ -19,16 +19,18 @@ class kibana3::install {
   }
 
   if $::kibana3::manage_ws {
-    vcsrepo {
-      $::kibana3::k3_install_folder:
-      ensure   => present,
-      provider => git,
-      source   => 'https://github.com/elasticsearch/kibana.git',
-      revision => $::kibana3::k3_release,
-      owner    => $_ws_user,
-      notify   => Class['::Apache::Service'],
+    if $::kibana3::manage_git_repository {
+      vcsrepo {
+        $::kibana3::k3_install_folder:
+        ensure   => present,
+        provider => git,
+        source   => 'https://github.com/elasticsearch/kibana.git',
+        revision => $::kibana3::k3_release,
+        owner    => $_ws_user,
+        notify   => Class['::Apache::Service'],
+        before   => Apache::Vhost[$::kibana3::ws_servername],
+      }
     }
-    ->
     apache::vhost {
       $::kibana3::ws_servername :
       port          => $::kibana3::ws_port,
@@ -36,13 +38,15 @@ class kibana3::install {
       docroot_owner => $_ws_user,
     }
   } else {
-    vcsrepo {
-      $::kibana3::k3_install_folder:
-      ensure   => present,
-      provider => git,
-      source   => 'https://github.com/elasticsearch/kibana.git',
-      revision => $::kibana3::k3_release,
-      owner    => $_ws_user,
+    if $::kibana3::manage_git_repository {
+      vcsrepo {
+        $::kibana3::k3_install_folder:
+        ensure   => present,
+        provider => git,
+        source   => 'https://github.com/elasticsearch/kibana.git',
+        revision => $::kibana3::k3_release,
+        owner    => $_ws_user,
+      }
     }
   }
 }
