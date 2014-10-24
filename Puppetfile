@@ -19,8 +19,8 @@ mod 'common',
   :git => 'https://github.com/purpleidea/puppet-common.git'
 
 mod 'concat',
-  :commit => '644fb1b6dc8b64accc4d1208d6127b79a08a38b7'
-  :git    => 'https://github.com/puppetlabs/puppetlabs-concat.git',
+  :commit => '644fb1b6dc8b64accc4d1208d6127b79a08a38b7',
+  :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'firewall',
   :commit => 'd5a10f5a52d84b9fcfb8fc65ef505685a07d5799',
@@ -53,6 +53,10 @@ mod 'horizon',
 mod 'inifile',
   :commit => 'fe9b0d5229ea37179a08c4b49239da9bc950acd1',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
+
+mod 'ipa',
+  :commit => '2cbd870b0dba2b8f588d74fc5ff8aa9cd0dc9ccf',
+  :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
   :commit => '605161f3d4b7bbcffc657c86b367159701dfdcbe',
