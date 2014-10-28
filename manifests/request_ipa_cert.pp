@@ -77,7 +77,7 @@ define certmonger::request_ipa_cert (
         onlyif  => "${onlyif}",
         unless  => "${unless}",
         require => [
-            Package['certmonger'],
+            Service['certmonger'],
             File["${basedir}/${dbname}/password.conf"],
         ],
       }
@@ -92,7 +92,7 @@ define certmonger::request_ipa_cert (
         onlyif  => "${onlyif}",
         unless  => "${unless}",
         require => [
-            Package['certmonger'],
+            Service['certmonger'],
         ],
         notify => Exec["wait_for_certmonger_${title}"],
       }
