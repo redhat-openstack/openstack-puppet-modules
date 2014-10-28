@@ -57,108 +57,65 @@ define certmonger::request_ipa_cert (
 ) {
   include certmonger::server
 
-  if "$ipa_client_configured" == 'true' {
-  
-    $principal_no_slash = regsubst($principal, '\/', '_')
+  $principal_no_slash = regsubst($principal, '\/', '_')
 
-    if $hostname == undef {
-        $subject = ''
-    } else {
-        $subject = "-N cn=${hostname}"
-    }
+  # Only execute certmonger if IPA client is configured
+  $onlyif = "/usr/bin/test -s /etc/ipa/default.conf"
 
-    if $seclib == 'nss' {
-        $options = "-d ${basedir}/${dbname} -n ${nickname} -p ${basedir}/${dbname}/password.conf"
-
-        file {"${basedir}/${dbname}/requested":
-          ensure  => directory,
-          mode    => 0600,
-          owner   => 0,
-          group   => 0,
-        }
-  
-        # Semaphore file to determine if we've already requested a certificate.
-        file {"${basedir}/${dbname}/requested/${principal_no_slash}":
-          ensure  => file,
-          mode    => 0600,
-          owner   => $owner_id,
-          group   => $group_id,
-          require => [
-            Exec["get_cert_nss_${title}"]
-          ],
-        }
-        exec {"get_cert_nss_${title}":
-          command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
-          creates => "${basedir}/${dbname}/requested/${principal_no_slash}",
-          require => [
-              Package['certmonger'],
-              File["${basedir}/${dbname}/password.conf"],
-          ],
-        }
-    }
-    elsif $seclib == 'openssl' {
-
-        $options = "-k ${key} -f ${cert}"
-
-        # NOTE: Order is extremely important here. If the key file exists
-        # (content doesn't matter) then certmonger will attempt to use that
-        # as the key. You could end up in a NEWLY_ADDED_NEED_KEYINFO_READ_PIN
-        # state if the key file doesn't actually contain a key.
-
-        file {"${cert}":
-          ensure  => file,
-          mode    => 0444,
-          owner   => $owner_id,
-          group   => $group_id,
-        }
-        file {"${key}":
-          ensure  => file,
-          mode    => 0440,
-          owner   => $owner_id,
-          group   => $group_id,
-        }
-        exec {"get_cert_openssl_${title}":
-          command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
-          creates => [
-            "${key}",
-            "${cert}",
-          ],
-          require => [
-              Package['certmonger'],
-          ],
-          before => [
-              File["${key}"],
-              File["${cert}"],
-          ],
-          notify => Exec["wait_for_certmonger_${title}"],
-        }
-
-        # We need certmonger to finish creating the key before we
-        # can proceed. Use onlyif as a way to execute multiple
-        # commands without restorting to shipping a shell script.
-        # This will call getcert to check the status of our cert
-        # 5 times. This doesn't short circuit though, so all 5 will
-        # always run, causing a 5-second delay.
-        exec {"wait_for_certmonger_${title}":
-          command => "true",
-          onlyif => [
-            "sleep 1 && getcert list -f ${cert}",
-            "sleep 1 && getcert list -f ${cert}",
-            "sleep 1 && getcert list -f ${cert}",
-            "sleep 1 && getcert list -f ${cert}",
-            "sleep 1 && getcert list -f ${cert}",
-          ],
-          path => "/usr/bin:/bin",
-          before => [
-              File["${key}"],
-              File["${cert}"],
-          ],
-          refreshonly => true,
-        }
-    } else {
-      fail("Unrecognized security library: ${seclib}")
-    }
+  if $hostname == undef {
+      $subject = ''
   } else {
-    fail("ipa not configured")
+      $subject = "-N cn=${hostname}"
+  }
+
+  if $seclib == 'nss' {
+      $options = "-d ${basedir}/${dbname} -n ${nickname} -p ${basedir}/${dbname}/password.conf"
+      $unless = "/usr/bin/getcert list -d ${basedir}/${dbname} -n ${nickname}"
+
+      exec {"get_cert_nss_${title}":
+        command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
+        onlyif  => "${onlyif}",
+        unless  => "${unless}",
+        require => [
+            Package['certmonger'],
+            File["${basedir}/${dbname}/password.conf"],
+        ],
+      }
+  }
+  elsif $seclib == 'openssl' {
+
+      $options = "-k ${key} -f ${cert}"
+      $unless = "/usr/bin/getcert list -f ${cert}"
+
+      exec {"get_cert_openssl_${title}":
+        command => "/usr/bin/ipa-getcert request ${options} -K ${principal} ${subject}",
+        onlyif  => "${onlyif}",
+        unless  => "${unless}",
+        require => [
+            Package['certmonger'],
+        ],
+        notify => Exec["wait_for_certmonger_${title}"],
+      }
+
+      # We need certmonger to finish creating the key before we
+      # can proceed. Use onlyif as a way to execute multiple
+      # commands without restorting to shipping a shell script.
+      # This will call getcert to check the status of our cert
+      # 5 times. This doesn't short circuit though, so all 5 will
+      # always run, causing a 5-second delay.
+      exec {"wait_for_certmonger_${title}":
+        command => "true",
+        onlyif => [
+          "sleep 1 && getcert list -f ${cert}",
+          "sleep 1 && getcert list -f ${cert}",
+          "sleep 1 && getcert list -f ${cert}",
+          "sleep 1 && getcert list -f ${cert}",
+          "sleep 1 && getcert list -f ${cert}",
+        ],
+        path => "/usr/bin:/bin",
+        refreshonly => true,
+      }
+  } else {
+    fail("Unrecognized security library: ${seclib}")
   }
 }
