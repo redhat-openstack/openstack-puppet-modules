@@ -123,7 +123,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => 'cbda1ced336f9768ebd442415b4d9c7c4ddb48c7',
+  :commit => '4832bd61b5b1bfea7c9cc985508e65cd10081652',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'rsync',
