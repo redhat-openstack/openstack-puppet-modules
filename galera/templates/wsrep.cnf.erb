@@ -49,7 +49,7 @@ wsrep_cluster_name="<%= @wsrep_cluster_name %>"
 # Group communication system handle
 <% if @bootstrap -%>
 wsrep_cluster_address="gcomm://"
-<% else -%>
+<% elsif !@wsrep_cluster_members.empty? -%>
 wsrep_cluster_address="gcomm://<%= @wsrep_cluster_members.join ',' %>"
 <% end -%>
 
@@ -59,7 +59,11 @@ wsrep_cluster_address="gcomm://<%= @wsrep_cluster_members.join ',' %>"
 # Base replication <address|hostname>[:port] of the node.
 # The values supplied will be used as defaults for state transfer receiving,
 # listening ports and so on. Default: address of the first network interface.
+<% if @wsrep_node_address -%>
+wsrep_node_address=<%= @wsrep_node_address %>
+<% else -%>
 #wsrep_node_address=
+<% end -%>
 
 # Address for incoming client connections. Autodetect by default.
 #wsrep_node_incoming_address=

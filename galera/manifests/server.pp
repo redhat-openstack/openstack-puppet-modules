@@ -13,6 +13,7 @@
 #  [*service_ensure*]        - Defaults to running, needed to set root password.
 #  [*service_provider*]      - What service provider to use.
 #  [*wsrep_bind_address*]    - Address to bind galera service.
+#  [*wsrep_node_address*]    - Address of local galera node.
 #  [*wsrep_provider*]        - Full path to wsrep provider library or 'none'.
 #  [*wsrep_cluster_name*]    - Logical cluster name. Should be the same for all nodes.
 #  [*wsrep_cluster_members*] - List of cluster members, IP addresses or hostnames.
@@ -51,6 +52,7 @@ class galera::server (
   $service_ensure        = 'running',
   $service_provider      = $mysql::params::service_provider,
   $wsrep_bind_address    = '0.0.0.0',
+  $wsrep_node_address    = undef,
   $wsrep_provider        = '/usr/lib64/galera/libgalera_smm.so',
   $wsrep_cluster_name    = 'galera_cluster',
   $wsrep_cluster_members = [ $::ipaddress ],
