@@ -119,7 +119,7 @@ mod 'puppet',
   :git => 'https://github.com/purpleidea/puppet-puppet.git'
 
 mod 'qpid',
-  :commit => '1f0c32b39ad17e7acbd440b50fb6f0875971f5e1',
+  :commit => '9ffb2788c536f1694980e07a43e8133ff85fa28c',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
