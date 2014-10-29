@@ -128,6 +128,7 @@ To add custom MySQL configuration, drop additional files into
 * `mysql::server::providers`: Creates users, grants, and databases.
 * `mysql::bindings::java`: Installs Java bindings.
 * `mysql::bindings::perl`: Installs Perl bindings.
+* `mysql::bindings::php`: Installs PHP bindings.
 * `mysql::bindings::python`: Installs Python bindings.
 * `mysql::bindings::ruby`: Installs Ruby bindings.
 * `mysql::client::install`:  Installs MySQL client.
@@ -461,6 +462,23 @@ Then collect it on the remote DB server.
     Mysql::Db <<| tag == $domain |>>
 ```
 
+If you set the sql param to a file when creating a database,
+the file gets imported into the new database.
+
+For large sql files you should raise the $import_timeout parameter,
+set by default to 300 seconds
+
+```puppet
+    mysql::db { 'mydb':
+      user     => 'myuser',
+      password => 'mypass',
+      host     => 'localhost',
+      grant    => ['SELECT', 'UPDATE'],
+      sql      => '/path/to/sqlfile',
+      import_timeout => 900,
+    }
+```
+
 ###Providers
 
 ####mysql_database
@@ -506,6 +524,16 @@ mysql_grant { 'root@localhost/*.*':
   options    => ['GRANT'],
   privileges => ['ALL'],
   table      => '*.*',
+  user       => 'root@localhost',
+}
+```
+
+It is possible to specify privileges down to the column level:
+```puppet
+mysql_grant { 'root@localhost/mysql.user':
+  ensure     => 'present',
+  privileges => ['SELECT (Host, User)'],
+  table      => 'mysql.user',
   user       => 'root@localhost',
 }
 ```
