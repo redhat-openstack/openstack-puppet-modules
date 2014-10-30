@@ -186,6 +186,11 @@
 #   Service has restart command.
 #   Default: true
 #
+# [*openmanage_enable*]
+#   Adds the smuxpeer directive to the snmpd.conf file to allow net-snmp to
+#   talk with Dell's OpenManage
+#   Default: false
+#
 # === Actions:
 #
 # Installs the Net-SNMP daemon package, service, and configuration.
@@ -261,7 +266,8 @@ class snmp (
   $trap_service_name       = $snmp::params::trap_service_name,
   $trap_service_enable     = $snmp::params::trap_service_enable,
   $trap_service_hasstatus  = $snmp::params::trap_service_hasstatus,
-  $trap_service_hasrestart = $snmp::params::trap_service_hasrestart
+  $trap_service_hasrestart = $snmp::params::trap_service_hasrestart,
+  $openmanage_enable       = $snmp::params::openmanage_enable,
 ) inherits snmp::params {
   # Validate our booleans
   validate_bool($manage_client)
