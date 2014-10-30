@@ -61,7 +61,7 @@ class snmp::params {
     default => $::snmp_rw_network,
   }
   
-  $rw_network = $::snmp_rw_network6 ? {
+  $rw_network6 = $::snmp_rw_network6 ? {
     undef   => '::1',
     default => $::snmp_rw_network6,
   }
