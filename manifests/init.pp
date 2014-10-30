@@ -67,6 +67,12 @@
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
 #   Default: [ "notConfigUser default public" ]
 #
+# [*com2sec6*]
+#   An array of VACM com2sec6 mappings.
+#   Must provide SECNAME, SOURCE and COMMUNITY.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ "notConfigUser default ${ro_community}" ]
+#
 # [*groups*]
 #   An array of VACM group mappings.
 #   Must provide GROUP, {v1|v2c|usm|tsm|ksm}, SECNAME.
@@ -254,6 +260,7 @@ class snmp (
   $sysname                 = $snmp::params::sysname,
   $services                = $snmp::params::services,
   $com2sec                 = $snmp::params::com2sec,
+  $com2sec6                = $snmp::params::com2sec6,
   $groups                  = $snmp::params::groups,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,

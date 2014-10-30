@@ -32,6 +32,12 @@ com2sec <%= com2sec %>
 <% end -%>
 <% end -%>
 
+<% if @com2sec6.any? -%>
+<% @com2sec6.each do |com2sec6| -%>
+com2sec6 <%= com2sec6 %>
+<% end -%>
+<% end -%>
+
 #       groupName      securityModel securityName
 <% if @groups.any? -%>
 <% @groups.each do |group| -%>
