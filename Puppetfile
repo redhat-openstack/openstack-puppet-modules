@@ -7,7 +7,7 @@ mod 'ceilometer',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
 
 mod 'certmonger',
-  :commit => '5fbf10fbbff4aed4db30e839c63c99b195e8425a',
+  :commit => '3f86b9973fc30c14a066b0f215023d5f1398b874',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
