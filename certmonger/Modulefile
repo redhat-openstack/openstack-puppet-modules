@@ -1,5 +1,5 @@
 name    'rcritten/certmonger'
-version '1.0.2'
+version '1.0.3'
 source 'git://github.com/rcritten/puppet-certmonger.git'
 author 'Rob Crittenden <rcritten@redhat.com>'
 license 'Apache'
