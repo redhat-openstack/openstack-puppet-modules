@@ -111,6 +111,11 @@ class snmp::params {
     default => $::snmp_do_not_log_traps,
   }
 
+  $do_not_log_tcpwrappers = $::snmp_do_not_log_tcpwrappers ? {
+    undef   => 'no',
+    default => $::snmp_do_not_log_tcpwrappers,
+  }
+
   $trap_handlers = $::snmp_trap_handlers ? {
     undef   => [],
     default => $::snmp_trap_handlers,
