@@ -30,7 +30,7 @@
 #     Defaults to 'keystone.token.providers.uuid.Provider'
 #     Supports PKI and UUID.
 #   [token_driver] Driver to use for managing tokens.
-#     Optional.  Defaults to 'keystone.token.backends.sql.Token'
+#     Optional.  Defaults to 'keystone.token.persistence.backends.sql.Token'
 #   [token_expiration] Amount of time a token should remain valid (seconds).
 #     Optional.  Defaults to 3600 (1 hour).
 #   [token_format] Deprecated: Use token_provider instead.
@@ -70,6 +70,14 @@
 #     signing pki tokens and revocation lists. Optional. Default: /etc/keystone/ssl/certs/ca.pem
 #   [signing_ca_key] Use this CA key file along with signing_certfile/signing_keyfile for signing
 #     pki tokens and revocation lists. Optional. Default: /etc/keystone/ssl/private/cakey.pem
+#
+#   [*signing_cert_subject*]
+#   (optional) Certificate subject (auto generated certificate) for token signing.
+#   Defaults to '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com'
+#
+#   [*signing_key_size*]
+#   (optional) Key size (in bits) for token signing cert (auto generated certificate)
+#   Defaults to 2048
 #
 #   [rabbit_host] Location of rabbitmq installation. Optional. Defaults to localhost.
 #   [rabbit_port] Port for rabbitmq instance. Optional. Defaults to 5672.
@@ -261,7 +269,7 @@ class keystone(
   $catalog_template_file = '/etc/keystone/default_catalog.templates',
   $token_format          = false,
   $token_provider        = 'keystone.token.providers.uuid.Provider',
-  $token_driver          = 'keystone.token.backends.sql.Token',
+  $token_driver          = 'keystone.token.persistence.backends.sql.Token',
   $token_expiration      = 3600,
   $public_endpoint       = false,
   $admin_endpoint        = false,
@@ -281,6 +289,8 @@ class keystone(
   $signing_keyfile       = '/etc/keystone/ssl/private/signing_key.pem',
   $signing_ca_certs      = '/etc/keystone/ssl/certs/ca.pem',
   $signing_ca_key        = '/etc/keystone/ssl/private/cakey.pem',
+  $signing_cert_subject  = '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com',
+  $signing_key_size      = 2048,
   $rabbit_host           = 'localhost',
   $rabbit_hosts          = false,
   $rabbit_password       = 'guest',
@@ -514,10 +524,12 @@ class keystone(
 
   # Set the signing key/cert configuration values.
   keystone_config {
-    'signing/certfile': value => $signing_certfile;
-    'signing/keyfile':  value => $signing_keyfile;
-    'signing/ca_certs': value => $signing_ca_certs;
-    'signing/ca_key':   value => $signing_ca_key;
+    'signing/certfile':     value => $signing_certfile;
+    'signing/keyfile':      value => $signing_keyfile;
+    'signing/ca_certs':     value => $signing_ca_certs;
+    'signing/ca_key':       value => $signing_ca_key;
+    'signing/cert_subject': value => $signing_cert_subject;
+    'signing/key_size':     value => $signing_key_size;
   }
 
   # Create cache directory used for signing.

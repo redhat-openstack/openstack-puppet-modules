@@ -4,7 +4,7 @@
 class qpid::server(
   $config_file = '/etc/qpidd.conf',
   $package_name = 'qpid-cpp-server',
-  $package_ensure = present,
+  $package_ensure = latest,
   $service_name = 'qpidd',
   $service_ensure = running,
   $service_enable = true,
