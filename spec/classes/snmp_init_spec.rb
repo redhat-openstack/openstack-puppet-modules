@@ -74,6 +74,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -189,6 +190,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost2.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -291,6 +293,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost3.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -398,6 +401,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost4.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_service('snmpd').with(
