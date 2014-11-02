@@ -69,6 +69,17 @@ dlmod <%= mod %>
 <% end -%>
 
 <% end -%>
+
+###############################################################################
+## Logging
+##
+
+## We do not want annoying "Connection from UDP: " messages in syslog.
+## If the following option is set to 'no', snmpd will print each incoming
+## connection, which can be useful for debugging.
+
+dontLogTCPWrappersConnects <%= @do_not_log_tcpwrappers %>
+
 ################################################################################
 # OTHER CONFIGURATION
 

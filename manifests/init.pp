@@ -92,6 +92,11 @@
 #   Disable the logging of notifications altogether. (yes|no)
 #   Default: no
 #
+# [*do_not_log_tcpwrappers*]
+#   Disable the logging of tcpwrappers messages, e.g. "Connection from UDP: "
+#   messages in syslog. (yes|no)
+#   Default: no
+#
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
 #   Must provide OID and PROGRAM (ex. "IF-MIB::linkDown /bin/traps down").
@@ -241,6 +246,7 @@ class snmp (
   $snmpd_config            = $snmp::params::snmpd_config,
   $disable_authorization   = $snmp::params::disable_authorization,
   $do_not_log_traps        = $snmp::params::do_not_log_traps,
+  $do_not_log_tcpwrappers  = $snmp::params::do_not_log_tcpwrappers,
   $trap_handlers           = $snmp::params::trap_handlers,
   $trap_forwards           = $snmp::params::trap_forwards,
   $snmptrapd_config        = $snmp::params::snmptrapd_config,
@@ -285,6 +291,7 @@ class snmp (
   $states = [ '^yes$', '^no$' ]
   validate_re($disable_authorization, $states, '$disable_authorization must be either yes or no.')
   validate_re($do_not_log_traps, $states, '$do_not_log_traps must be either yes or no.')
+  validate_re($do_not_log_tcpwrappers, $states, '$do_not_log_tcpwrappers must be either yes or no.')
 
   # Deprecated backwards-compatibility
   if $install_client != undef {

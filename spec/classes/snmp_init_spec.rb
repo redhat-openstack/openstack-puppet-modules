@@ -74,6 +74,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -189,6 +190,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost2.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -291,6 +293,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost3.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_file('snmpd.sysconfig').with(
@@ -398,6 +401,7 @@ describe 'snmp', :type => 'class' do
             'sysContact Unknown',
             'sysServices 72',
             'sysName myhost4.localdomain',
+            'dontLogTCPWrappersConnects no',
           ])
         end
         it { should contain_service('snmpd').with(
@@ -608,6 +612,15 @@ describe 'snmp', :type => 'class' do
           'agentaddress 1.2.3.4,8.6.7.5:222',
         ])
       end
+    end
+
+    describe 'do_not_log_tcpwrappers => "yes"' do
+        let(:params) {{:do_not_log_tcpwrappers => 'yes'}}
+        it 'should contain File[snmpd.conf] with contents "dontLogTCPWrappersConnects yes' do
+            verify_contents(subject, 'snmpd.conf', [
+                'dontLogTCPWrappersConnects yes',
+            ])
+        end
     end
 
     describe 'snmptrapdaddr => [ "5.6.7.8", "2.3.4.5:3333" ]' do
