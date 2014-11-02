@@ -601,6 +601,15 @@ describe 'snmp', :type => 'class' do
       end
     end
 
+    describe 'openmanage_enable => true' do
+        let(:params) {{ :openmanage_enable => true }}
+        it 'should contain File[snmpd.conf] with contents "smuxpeer .1.3.6.1.4.1.674.10892.1"' do
+            verify_contents(subject, 'snmpd.conf', [
+                'smuxpeer .1.3.6.1.4.1.674.10892.1',
+            ])
+        end
+    end
+
     describe 'agentaddress => [ "1.2.3.4", "8.6.7.5:222" ]' do
       let(:params) {{ :agentaddress => ['1.2.3.4','8.6.7.5:222'] }}
       it 'should contain File[snmpd.conf] with contents "agentaddress 1.2.3.4,8.6.7.5:222"' do
