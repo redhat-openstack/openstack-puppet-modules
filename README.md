@@ -138,10 +138,10 @@ The classes `snmp::server` and `snmp::trapd` will be merged into class `snmp` in
 version 3.0.0 of this module.  All of their class parameters will be made
 available in the `snmp` class.
 
-The paramter `install_client` will be renamed to `manage_client` in version
+The parameter `install_client` will be renamed to `manage_client` in version
 4.0.0 of this module.
 
-The paramters `ro_community`, `rw_community`, `ro_network`, and `rw_network`
+The parameters `ro_community`, `rw_community`, `ro_network`, and `rw_network`
 will be removed in version 4.0.0 of this module.  The snmptrapd parameter name
 will become `authcommunity`.
 
