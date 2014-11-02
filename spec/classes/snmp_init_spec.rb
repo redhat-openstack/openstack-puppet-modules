@@ -614,6 +614,15 @@ describe 'snmp', :type => 'class' do
       end
     end
 
+    describe 'do_not_log_tcpwrappers => "yes"' do
+        let(:params) {{:do_not_log_tcpwrappers => 'yes'}}
+        it 'should contain File[snmpd.conf] with contents "dontLogTCPWrappersConnects yes' do
+            verify_contents(subject, 'snmpd.conf', [
+                'dontLogTCPWrappersConnects yes',
+            ])
+        end
+    end
+
     describe 'snmptrapdaddr => [ "5.6.7.8", "2.3.4.5:3333" ]' do
       let(:params) {{ :snmptrapdaddr => ['5.6.7.8','2.3.4.5:3333'] }}
       it 'should contain File[snmptrapd.conf] with contents "snmpTrapdAddr 5.6.7.8,2.3.4.5:3333"' do
