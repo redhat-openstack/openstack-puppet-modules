@@ -90,7 +90,7 @@ class snmp::params {
 
   $com2sec6 = $::snmp_com2sec6 ? {
     undef   => [
-      "notConfigUser  default       ${ro_community}",
+      "notConfigUser  default       public",
     ],
     default => $::snmp_com2sec6,
   }

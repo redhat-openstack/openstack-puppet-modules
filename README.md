@@ -30,12 +30,13 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
-To install the SNMP service:
+To install the SNMP service listening on all IPv4 and IPv6 interfaces:
 
 ```puppet
 class { 'snmp':
-  agentaddress => [ 'udp:161', ],
+  agentaddress => [ 'udp:161', 'udp6:161' ],
   com2sec      => [ 'notConfigUser 10.20.30.40/32 SeCrEt' ],
+  come2sec6    => [ 'notConfiguser fd48:45d7:f49b:cb0f::1/128 SeCrEt' ],
   contact      => 'root@yourdomain.org',
   location     => 'Phoenix, AZ',
 }
@@ -100,15 +101,17 @@ snmp::snmpv3_user { 'myuser':
 Notes
 -----
 
-* Only tested on CentOS 5.9, CentOS 6.4, Ubuntu 12.04.2 LTS, Debian squeeze, and
-  Debian wheezy x86_64.
+* By default the SNMP service now listens on BOTH the IPv4 and IPv6 loopback
+  addresses.
+* Only tested on CentOS 5.9, CentOS 6.6, CentOS 7.0, Ubuntu 12.04.2 LTS, Debian
+  squeeze, and Debian wheezy x86_64.
 * SNMPv3 user auth is not yet tested on Debian or Suse osfamilies.
 * There is a bug on Debian squeeze of net-snmp's status script. If snmptrapd is
   not running the status script returns 'not running' so puppet restarts the
   snmpd service. The following is a workaround: `class { 'snmp':
   service_hasstatus => false, trap_service_hasstatus => false, }`
 * For security reasons, the SNMP daemons are configured to listen on the loopback
-  interface (127.0.0.1).  Use `agentaddress` and `snmptrapdaddr` to change this
+  interfaces (127.0.0.1 and [::1]).  Use `agentaddress` and `snmptrapdaddr` to change this
   configuration.
 * [Traditional Access
   Control](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAK) is not fully
