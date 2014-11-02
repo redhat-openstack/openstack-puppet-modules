@@ -275,6 +275,7 @@ class snmp (
   validate_bool($service_enable)
   validate_bool($service_hasstatus)
   validate_bool($service_hasrestart)
+  validate_bool($openmanage_enable)
 
   # Validate our arrays
   validate_array($snmptrapdaddr)
