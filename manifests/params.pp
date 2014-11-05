@@ -34,7 +34,8 @@ class kibana3::params {
   $k3_install_folder = '/opt/kibana3'
   $k3_release        = 'a50a913'
 
-  $manage_git = true
+  $manage_git            = true
+  $manage_git_repository = true
 
   $manage_ws     = true
   $ws_servername = 'kibana3'

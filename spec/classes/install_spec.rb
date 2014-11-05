@@ -122,6 +122,11 @@ describe 'kibana3', :type => :class do
             'docroot' => '/opt/kibana3/src'
           ) }
       end
+
+      context 'with manage_git_repository set to false' do
+        let (:params) {{ :manage_git_repository => false }}
+        it { should_not contain_vcsrepo('/opt/kibana3') }
+      end
     end
 
   end

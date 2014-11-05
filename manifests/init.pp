@@ -49,6 +49,9 @@
 # [*manage_git*]
 #   Should the module manage git.
 #
+# [*manage_git_repository*]
+#   Should the module manage the kibana3 git repository.
+#
 # [*manage_ws*]
 #   Should the module manage the webserver.
 #
@@ -88,7 +91,8 @@ class kibana3 (
   $k3_install_folder = $::kibana3::params::k3_install_folder,
   $k3_release        = $::kibana3::params::k3_release,
 
-  $manage_git = $::kibana3::params::manage_git,
+  $manage_git            = $::kibana3::params::manage_git,
+  $manage_git_repository = $::kibana3::params::manage_git_repository,
 
   $manage_ws     = $::kibana3::params::manage_ws,
   $ws_servername = $::kibana3::params::ws_servername,
@@ -100,7 +104,7 @@ class kibana3 (
     $config_es_protocol,$config_es_server,$config_kibana_index,
     $k3_folder_owner,$k3_install_folder,$k3_release,$ws_port)
 
-  validate_bool($manage_git,$manage_ws)
+  validate_bool($manage_git,$manage_ws,$manage_git_repository)
 
   validate_array($config_panel_names)
 

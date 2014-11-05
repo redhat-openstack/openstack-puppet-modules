@@ -116,6 +116,11 @@ Should the module manage git.
 **Default:** _true_
 Should the module manage the webserver.
 
+#####`manage_git_repository`
+**Data Type:** _bool_
+**Default:** _true_
+Should the module manage kibana3 git repository.
+
 #####`ws_servername`
 **Data Type:** _string_
 **Default:** _kibana3_
