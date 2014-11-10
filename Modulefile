@@ -1,5 +1,5 @@
 name          'pauloconnor-uchiwa'
-version       '0.2.5'
+version       '0.2.6'
 source        'github.com/pauloconnor/pauloconnor-uchiwa'
 author        'pauloconnor'
 license       'Apache 2.0'
