@@ -37,9 +37,9 @@ RSpec.configure do |c|
       shell('/bin/touch /etc/puppet/hiera.yaml')
       shell('puppet module install puppetlabs-stdlib --version 3.2.0', { :acceptable_exit_codes => [0] })
       shell('puppet module install maestrodev/wget --version 1.4.5', { :acceptable_exit_codes => [0] })
+      shell('puppet module install puppetlabs/apt --version 1.6.0', { :acceptable_exit_codes => [0] })
       shell('puppet module install puppetlabs-rabbitmq --version 4.1.0', { :acceptable_exit_codes => [0] })
       shell('puppet module install fsalum-redis --version 1.0.0', { :acceptable_exit_codes => [0] })
-      shell('puppet module install puppetlabs/apt --version 1.6.0', { :acceptable_exit_codes => [0] })
       shell('puppet module install sensu-sensu', { :acceptable_exit_codes => [0] })
       shell('puppet module install richardc/datacat', { :acceptable_exit_codes => [0] })
     end
