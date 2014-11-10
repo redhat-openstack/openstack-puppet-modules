@@ -56,8 +56,8 @@
     }
   ],
   "name": "yelp-uchiwa",
-  "version": "0.2.6",
-  "author": "pauloconnor",
+  "version": "0.2.7",
+  "author": "yelp",
   "summary": "Puppet module for installing Uchiwa",
   "license": "Apache 2.0",
   "source": "github.com/yelp/puppet-uchiwa",
