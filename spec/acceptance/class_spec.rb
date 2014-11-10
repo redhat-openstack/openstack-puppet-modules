@@ -7,6 +7,7 @@ describe 'sensu class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily
       it 'should work with no errors' do
         pp = <<-EOS
         class { 'rabbitmq':
+          package_ensure    => installed,
           ssl               => false,
           delete_guest_user => true,
         }
