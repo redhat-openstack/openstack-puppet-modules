@@ -14,13 +14,14 @@
 #  timeout => 5000
 #}
 define uchiwa::api(
-  $host    = $title,
-  $ssl     = false,
-  $port    = 4567,
-  $user    = 'sensu',
-  $pass    = 'sensu',
-  $path    = '',
-  $timeout = 5000
+  $host     = $title,
+  $ssl      = false,
+  $insecure = false,
+  $port     = 4567,
+  $user     = 'sensu',
+  $pass     = 'sensu',
+  $path     = '',
+  $timeout  = 5000
   ) {
 
   validate_re($name, '^[a-zA-Z0-9_\- .]*$')
@@ -29,6 +30,7 @@ define uchiwa::api(
   validate_re($port, '^[0-9]*$')
   validate_re($user, '^[a-zA-Z0-9_]*$')
   validate_re($path, '^[a-zA-Z0-9_/]*$')
+  validate_bool($insecure)
   validate_re($timeout, '^[0-9]*$')
 
   datacat_fragment { "uchiwa-api-${name}":
@@ -39,6 +41,7 @@ define uchiwa::api(
       \"host\": \"${host}\",
       \"port\": ${port},
       \"ssl\": ${ssl},
+      \"insecure\": $insecure,
       \"user\": \"${user}\",
       \"pass\": \"${pass}\",
       \"path\": \"${path}\",

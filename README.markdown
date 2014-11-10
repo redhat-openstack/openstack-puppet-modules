@@ -35,14 +35,15 @@ See `Modulefile` for details.
 
 API definitions will default to the following values:
 
-    name    => Definition Name
-    host    => ''
-    ssl     => false
-    port    => 4567
-    user    => 'sensu'
-    pass    => 'sensu'
-    path    => ''
-    timeout => 5000
+    name     => Definition Name
+    host     => ''
+    ssl      => false
+    insecure => false
+    port     => 4567
+    user     => 'sensu'
+    pass     => 'sensu'
+    path     => ''
+    timeout  => 5000
 
 This is an example of a 2 API setup:
 
@@ -54,13 +55,14 @@ This is an example of a 2 API setup:
       }
 
       uchiwa::api { 'API 2':
-        host    => '10.16.1.25',
-        ssl     => true,
-        port    => 7654,
-        user    => 'sensu',
-        pass    => 'saBEnX8PQoyz2LG',
-        path    => '/sensu',
-        timeout => 5000
+        host     => '10.16.1.25',
+        ssl      => true,
+        insecure => true,
+        port     => 7654,
+        user     => 'sensu',
+        pass     => 'saBEnX8PQoyz2LG',
+        path     => '/sensu',
+        timeout  => 5000
       }
     }
 
