@@ -9,4 +9,3 @@ project_page  'https://github.com/yelp/puppet-uchiwa'
 
 dependency 'puppetlabs/apt'
 dependency 'puppetlabs/stdlib'
-dependency 'richardc/datacat'

@@ -67,6 +67,5 @@
   "dependencies": [
     {"name":"puppetlabs/apt"},
     {"name":"puppetlabs/stdlib"},
-    {"name":"richardc/datacat"}
   ]
 }

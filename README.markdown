@@ -18,7 +18,6 @@ Versions greater than 0.2.6 are incompatible with previous versions of the Yelp-
 ### Dependencies
 - puppetlabs/apt
 - puppetlabs/stdlib
-- richardc/datacat
 
 See `Modulefile` for details.
 
