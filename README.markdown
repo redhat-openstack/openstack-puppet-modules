@@ -6,7 +6,7 @@ Tested with Travis CI
 
 ## Upgrade Note
 
-Versions greater than 0.2.0 are incompatible with previous versions of the Yelp-Uchiwa module.
+Versions greater than 0.2.6 are incompatible with previous versions of the Yelp-Uchiwa module.
 
 ## Installation
 
@@ -35,8 +35,8 @@ See `Modulefile` for details.
 
 API definitions will default to the following values:
 
-    name     => Definition Name
-    host     => ''
+    name     => 'sensu'
+    host     => '127.0.0.1'
     ssl      => false
     insecure => false
     port     => 4567
@@ -48,21 +48,23 @@ API definitions will default to the following values:
 This is an example of a 2 API setup:
 
     node 'uchiwa-server.foo.com' {
-      class { 'uchiwa': }
 
-      uchiwa::api { ' API 1':
-        host    => '10.56.5.8',
-      }
+      $uchiwa_api_config = [{
+                              host  => '10.56.5.8',
+                            },
+                            {
+                              host      => '10.16.1.25',
+                              ssl       => true,
+                              insecure  => true,
+                              port      => 7654,
+                              user      => 'sensu',
+                              pass      => 'saBEnX8PQoyz2LG',
+                              path      => '/sensu',
+                              timeout   => 5000
+                            }]
 
-      uchiwa::api { 'API 2':
-        host     => '10.16.1.25',
-        ssl      => true,
-        insecure => true,
-        port     => 7654,
-        user     => 'sensu',
-        pass     => 'saBEnX8PQoyz2LG',
-        path     => '/sensu',
-        timeout  => 5000
+      class { 'uchiwa':
+        sensu_api_endpoints => $uchiwa_api_config,
       }
     }
 
