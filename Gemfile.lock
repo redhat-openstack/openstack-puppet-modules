@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: https://rubygems.org/
   specs:
     CFPropertyList (2.2.8)
     addressable (2.3.6)
