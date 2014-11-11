@@ -27,8 +27,7 @@ See `Modulefile` for details.
 ### Sensu server
 
     node 'uchiwa-server.foo.com' {
-      class { 'uchiwa':
-      }
+      include ::uchiwa
     }
 
 ## Advanced example using multiple APIs
