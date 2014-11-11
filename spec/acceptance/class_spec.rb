@@ -54,7 +54,7 @@ describe 'sensu class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily
           expect(curl.stdout).to include '<html lang="en" ng-app="uchiwa" ng-controller="init">'
         end
       end
-      it 'should produce consistent uchiwa.conf file' do
+      it 'should produce consistent uchiwa.json file' do
 
         uchiwa_json = "{\n\"sensu\": [\n    {\n      \"name\": \"Main Server\",\n      \"host\": \"127.0.0.1\",\n      \"ssl\": false,\n      \"insecure\": false,\n      \"port\": 4567,\n      \"user\": \"sensu\",\n      \"pass\": \"secret\",\n      \"path\": \"\",\n      \"timeout\": 5000\n    }\n  ],\n  \"uchiwa\": {\n    \"host\": \"0.0.0.0\",\n    \"port\": 3000,\n    \"user\": \"\",\n    \"pass\": \"\",\n    \"stats\": 10,\n    \"refresh\": 10000\n  }\n}\n"
 
@@ -62,6 +62,25 @@ describe 'sensu class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily
           expect(cat.stdout).to eq (uchiwa_json)
         end
       end
-    end
+
+      it 'rerun puppet with default params' do
+        
+        pp = <<-EOS
+
+        include ::uchiwa
+
+        EOS
+        expect(apply_manifest(pp, :catch_failures => true).exit_code)
+      end
+
+      it 'should produce a uchiwa.json file from defaults' do
+
+        uchiwa_json = "{\n\"sensu\": [\n    {\n      \"name\": \"sensu\",\n      \"host\": \"127.0.0.1\",\n      \"ssl\": false,\n      \"insecure\": false,\n      \"port\": 4567,\n      \"user\": \"sensu\",\n      \"pass\": \"sensu\",\n      \"path\": \"\",\n      \"timeout\": 5000\n    }\n  ],\n  \"uchiwa\": {\n    \"host\": \"0.0.0.0\",\n    \"port\": 3000,\n    \"user\": \"\",\n    \"pass\": \"\",\n    \"stats\": 10,\n    \"refresh\": 10000\n  }\n}\n"
+
+        shell('cat /etc/sensu/uchiwa.json') do |cat|
+          expect(cat.stdout).to eq (uchiwa_json)
+        end
+      end
+    end   
   end
 end
