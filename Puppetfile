@@ -3,7 +3,7 @@ mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'ceilometer',
-  :commit => '065a353aae3fb869395908289be5d61840d5d38b',
+  :commit => 'c0bf61c0d70a04f77b9c7fdf2211bf36bda12a78',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
 
 mod 'certmonger',

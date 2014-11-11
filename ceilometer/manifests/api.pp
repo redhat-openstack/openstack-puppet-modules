@@ -47,10 +47,15 @@
 #    (optional) The ceilometer api port.
 #    Defaults to 8777
 #
+#  [*package_ensure*]
+#    (optional) ensure state for package.
+#    Defaults to 'present'
+#
 
 class ceilometer::api (
   $manage_service             = true,
   $enabled                    = true,
+  $package_ensure             = 'present',
   $keystone_host              = '127.0.0.1',
   $keystone_port              = '35357',
   $keystone_auth_admin_prefix = false,
@@ -64,15 +69,18 @@ class ceilometer::api (
 ) {
 
   include ceilometer::params
+  include ceilometer::policy
 
   validate_string($keystone_password)
 
   Ceilometer_config<||> ~> Service['ceilometer-api']
+  Class['ceilometer::policy'] ~> Service['ceilometer-api']
 
   Package['ceilometer-api'] -> Ceilometer_config<||>
   Package['ceilometer-api'] -> Service['ceilometer-api']
+  Package['ceilometer-api'] -> Class['ceilometer::policy']
   package { 'ceilometer-api':
-    ensure => installed,
+    ensure => $package_ensure,
     name   => $::ceilometer::params::api_package_name,
   }
 
