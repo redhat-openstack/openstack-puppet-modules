@@ -28,19 +28,19 @@ describe 'sensu class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily
         }
 
         class { 'uchiwa':
-          install_repo  => false,
-          require       => Class['sensu'],
-        }
-
-        uchiwa::api { 'Main Server':
-          host     => '192.168.50.4',
-          ssl      => false,
-          insecure => false,
-          port     => 4567,
-          user     => 'sensu',
-          pass     => 'secret',
-          path     => '',
-          timeout  => 5000
+          install_repo        => false,
+          sensu_api_endpoints =>  [{
+                                    name      => 'Main Server',
+                                    host      => '127.0.0.1',
+                                    ssl       => false,
+                                    insecure  => false,
+                                    port      => 4567,
+                                    user      => 'sensu',
+                                    pass      => 'secret',
+                                    path      => '',
+                                    timeout   => 5000
+                                    }],
+          require             => Class['sensu'],
         }
 
         EOS
