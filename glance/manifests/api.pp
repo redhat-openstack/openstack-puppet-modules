@@ -162,6 +162,9 @@
 #   (optional) Base directory that the Image Cache uses.
 #    Defaults to '/var/lib/glance/image-cache'.
 #
+# [*os_region_name*]
+#   (optional) Sets the keystone region to use.
+#   Defaults to 'RegionOne'.
 class glance::api(
   $keystone_password,
   $verbose                  = false,
@@ -198,12 +201,14 @@ class glance::api(
   $database_connection      = 'sqlite:///var/lib/glance/glance.sqlite',
   $database_idle_timeout    = 3600,
   $image_cache_dir          = '/var/lib/glance/image-cache',
+  $os_region_name           = 'RegionOne',
   # DEPRECATED PARAMETERS
   $mysql_module             = undef,
   $sql_idle_timeout         = false,
   $sql_connection           = false,
 ) inherits glance {
 
+  include glance::policy
   require keystone::python
 
   if $mysql_module {
@@ -215,6 +220,7 @@ class glance::api(
   }
 
   Package[$glance::params::api_package_name] -> File['/etc/glance/']
+  Package[$glance::params::api_package_name] -> Class['glance::policy']
   Package[$glance::params::api_package_name] -> Glance_api_config<||>
   Package[$glance::params::api_package_name] -> Glance_cache_config<||>
 
@@ -225,6 +231,7 @@ class glance::api(
   Exec<| title == 'glance-manage db_sync' |> ~> Service['glance-api']
   Glance_api_config<||>   ~> Service['glance-api']
   Glance_cache_config<||> ~> Service['glance-api']
+  Class['glance::policy'] ~> Service['glance-api']
 
   File {
     ensure  => present,
@@ -276,6 +283,7 @@ class glance::api(
     'DEFAULT/workers':               value => $workers;
     'DEFAULT/show_image_direct_url': value => $show_image_direct_url;
     'DEFAULT/image_cache_dir':       value => $image_cache_dir;
+    'DEFAULT/os_region_name':        value => $os_region_name;
   }
 
   # known_stores config
@@ -290,8 +298,9 @@ class glance::api(
   }
 
   glance_cache_config {
-    'DEFAULT/verbose':   value => $verbose;
-    'DEFAULT/debug':     value => $debug;
+    'DEFAULT/verbose':        value => $verbose;
+    'DEFAULT/debug':          value => $debug;
+    'DEFAULT/os_region_name': value => $os_region_name;
   }
 
   # configure api service to connect registry service
