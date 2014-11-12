@@ -95,7 +95,7 @@
 #               path      => '',
 #               timeout   => 5000
 #             }]
-#     An array of API endpoints to connect uchiwa to one or multiple sensu servers. 
+#     An array of API endpoints to connect uchiwa to one or multiple sensu servers.
 #
 class uchiwa (
   $package_name         = $uchiwa::params::package_name,
