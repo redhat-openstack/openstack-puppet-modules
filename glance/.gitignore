@@ -1,0 +1,4 @@
+spec/fixtures/modules/*
+spec/fixtures/manifests/*
+*swp
+pkg

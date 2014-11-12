@@ -1,0 +1,16 @@
+volume management
+    type mgmt/glusterd
+    option working-directory /var/lib/glusterd
+    option transport-type socket,rdma
+    option transport.socket.keepalive-time 10
+    option transport.socket.keepalive-interval 2
+    option transport.socket.read-fail-log off
+<% if @valid_rpcauthallowinsecure -%>
+    option rpc-auth-allow-insecure on
+<% end -%>
+<% if @valid_baseport.to_i > 0 -%>
+    option base-port <%= @valid_baseport %>
+<% else -%>
+#   option base-port 49152
+<% end -%>
+end-volume

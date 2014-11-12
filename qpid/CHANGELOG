@@ -1,0 +1,9 @@
+2013-7-23 1.0.2
+- Allow custer configuration to be optional (ggillies)
+
+2013-7-8 1.0.1
+- Use correct mechanism option (mmagr)
+- Update saslpasswd2 exists? to handle errors.
+
+2012-4-08 1.0.0
+- Initial Release. Manage the package, file and service.
