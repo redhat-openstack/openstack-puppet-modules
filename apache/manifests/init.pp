@@ -53,8 +53,8 @@ class apache (
   $log_level            = $::apache::params::log_level,
   $ports_file           = $::apache::params::ports_file,
   $apache_version       = $::apache::version::default,
-  $server_tokens        = 'OS',
-  $server_signature     = 'On',
+  $server_tokens        = 'Prod',
+  $server_signature     = 'Off',
   $trace_enable         = 'On',
   $package_ensure       = 'installed',
 ) inherits ::apache::params {
