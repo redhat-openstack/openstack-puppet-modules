@@ -32,6 +32,6 @@ class uchiwa::params {
   $user            =     ''
   $pass            =     ''
   $stats           =     10
-  $refresh         =     10000
+  $refresh         =     5
 
 }
