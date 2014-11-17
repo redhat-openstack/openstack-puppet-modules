@@ -85,15 +85,13 @@
 #  [*sensu_api_endpoints*]
 #    Array of hashes
 #    Default: [{
-#               name      => 'sensu',
-#               host      => 'false,
-#               ssl       => false,
-#               insecure  => false,
-#               port      => 4567,
-#               user      => 'sensu',
-#               pass      => 'sensu',
-#               path      => '',
-#               timeout   => 5000
+#               name    => 'sensu',
+#               ssl     => false,
+#               port    => 4567,
+#               user    => 'sensu',
+#               pass    => 'sensu',
+#               path    => '',
+#               timeout => 5,
 #             }]
 #     An array of API endpoints to connect uchiwa to one or multiple sensu servers.
 #
