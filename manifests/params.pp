@@ -31,7 +31,5 @@ class uchiwa::params {
   $port            =     3000
   $user            =     ''
   $pass            =     ''
-  $stats           =     10
   $refresh         =     5
-
 }
