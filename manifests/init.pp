@@ -77,11 +77,6 @@
 #    Default: ''
 #    The password of the Uchiwa dashboard. Leave empty for none.
 #
-#  [*stats*]
-#    String
-#    Default: 10
-#    Determines the retention, in minutes, of graphics data
-#
 #  [*refresh*]
 #    String
 #    Default: 5
@@ -103,7 +98,6 @@ class uchiwa (
   $port            = $uchiwa::params::port,
   $user            = $uchiwa::params::user,
   $pass            = $uchiwa::params::pass,
-  $stats           = $uchiwa::params::stats,
   $refresh         = $uchiwa::params::refresh
 ) inherits uchiwa::params {
 
@@ -122,7 +116,6 @@ class uchiwa (
   validate_string($port)
   validate_string($user)
   validate_string($pass)
-  validate_string($stats)
   validate_string($refresh)
 
   anchor { 'uchiwa::begin': } ->
