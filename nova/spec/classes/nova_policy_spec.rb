@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe 'glance::policy' do
+describe 'nova::policy' do
 
-  shared_examples_for 'glance policies' do
+  shared_examples_for 'nova policies' do
     let :params do
       {
-        :policy_path => '/etc/glance/policy.json',
+        :policy_path => '/etc/nova/policy.json',
         :policies    => {
           'context_is_admin' => {
             'key'   => 'context_is_admin',
@@ -28,7 +28,7 @@ describe 'glance::policy' do
       { :osfamily => 'Debian' }
     end
 
-    it_configures 'glance policies'
+    it_configures 'nova policies'
   end
 
   context 'on RedHat platforms' do
@@ -36,6 +36,6 @@ describe 'glance::policy' do
       { :osfamily => 'RedHat' }
     end
 
-    it_configures 'glance policies'
+    it_configures 'nova policies'
   end
 end
