@@ -59,7 +59,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
-  :commit => '38518cbcb3ef8ad3bb068730a21d790b27a29b74',
+  :commit => 'a0e8e9a393aef8b61c0452a7d917d5af22c5271d',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
