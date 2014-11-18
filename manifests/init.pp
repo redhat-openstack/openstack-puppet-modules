@@ -84,8 +84,8 @@
 #
 #  [*refresh*]
 #    String
-#    Default: 10000
-#    Determines the interval to pull the Sensu API, in milliseconds
+#    Default: 5
+#    Determines the interval to pull the Sensu API, in seconds
 #
 #
 class uchiwa (
