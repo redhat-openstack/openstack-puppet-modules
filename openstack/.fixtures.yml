@@ -1,0 +1,50 @@
+fixtures:
+  repositories:
+    'cinder': 
+      repo: 'git://github.com/stackforge/puppet-cinder'
+      ref:  'stable/havana'
+    "keystone": 
+      repo: "git://github.com/stackforge/puppet-keystone.git"
+      ref:  'stable/havana'
+    "nova": 
+      repo: "git://github.com/stackforge/puppet-nova.git"
+      ref:  'stable/havana'
+    "glance": 
+      repo: "git://github.com/stackforge/puppet-glance.git"
+      ref:  'stable/havana'
+    'horizon': 
+      repo: 'git://github.com/stackforge/puppet-horizon'
+      ref:  'stable/havana'
+    'swift' : 
+      repo: 'git://github.com/stackforge/puppet-swift'
+      ref:  'stable/havana'
+    'neutron': 
+      repo: 'git://github.com/stackforge/puppet-neutron'
+      ref:  'stable/havana'
+    'ceilometer' : 
+      repo: 'git://github.com/stackforge/puppet-ceilometer'
+      ref:  'stable/havana'
+    'heat' : 
+      repo: 'git://github.com/stackforge/puppet-heat'
+      ref:  'stable/havana'
+    "apt": "git://github.com/puppetlabs/puppetlabs-apt.git"
+    "apache":
+      repo: "git://github.com/puppetlabs/puppetlabs-apache.git"
+      ref: 'origin/0.x'
+    "concat": "git://github.com/puppetlabs/puppetlabs-concat.git"
+    "firewall": "git://github.com/puppetlabs/puppetlabs-firewall.git"
+    "mysql":
+      repo: "git://github.com/puppetlabs/puppetlabs-mysql.git"
+      ref: "origin/0.x"
+    "rabbitmq":
+      repo: "git://github.com/puppetlabs/puppetlabs-rabbitmq"
+      ref: "origin/2.x"
+    'memcached': 'git://github.com/saz/puppet-memcached'
+    "stdlib": "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+    "sysctl": "git://github.com/duritong/puppet-sysctl.git"
+    'inifile':  'git://github.com/puppetlabs/puppetlabs-inifile'
+    'vswitch': 'git://github.com/bodepd/puppet-vswitch'
+    'tempest': 'git://github.com/stackforge/puppet-tempest'
+    'vcsrepo': 'git://github.com/puppetlabs/puppetlabs-vcsrepo'
+  symlinks:
+    "openstack": "#{source_dir}"
