@@ -39,10 +39,13 @@ class apache::params inherits ::apache::version {
     $conf_dir             = "${httpd_dir}/conf"
     $confd_dir            = "${httpd_dir}/conf.d"
     $mod_dir              = "${httpd_dir}/conf.d"
+    $mod_enable_dir       = undef
     $vhost_dir            = "${httpd_dir}/conf.d"
+    $vhost_enable_dir     = undef
     $conf_file            = 'httpd.conf'
     $ports_file           = "${conf_dir}/ports.conf"
     $logroot              = '/var/log/httpd'
+    $logroot_mode         = undef
     $lib_path             = 'modules'
     $mpm_module           = 'prefork'
     $dev_packages         = 'httpd-devel'
@@ -53,6 +56,7 @@ class apache::params inherits ::apache::version {
     $passenger_conf_package_file = 'passenger.conf'
     $passenger_root       = undef
     $passenger_ruby       = undef
+    $passenger_default_ruby = undef
     $suphp_addhandler     = 'php5-script'
     $suphp_engine         = 'off'
     $suphp_configpath     = undef
@@ -61,9 +65,10 @@ class apache::params inherits ::apache::version {
       'authnz_ldap' => 'mod_authz_ldap',
       'fastcgi'     => 'mod_fastcgi',
       'fcgid'       => 'mod_fcgid',
+      'pagespeed'   => 'mod-pagespeed-stable',
       'passenger'   => 'mod_passenger',
       'perl'        => 'mod_perl',
-      'php5'        => $distrelease ? {
+      'php5'        => $::apache::version::distrelease ? {
         '5'     => 'php53',
         default => 'php',
       },
@@ -84,45 +89,49 @@ class apache::params inherits ::apache::version {
     $conf_template        = 'apache/httpd.conf.erb'
     $keepalive            = 'Off'
     $keepalive_timeout    = 15
+    $max_keepalive_requests = 100
     $fastcgi_lib_path     = undef
     $mime_support_package = 'mailcap'
     $mime_types_config    = '/etc/mime.types'
+    if $::osfamily == "RedHat" {
+      $wsgi_socket_prefix = '/var/run/wsgi'
+    } else {
+      $wsgi_socket_prefix = undef
+    }
   } elsif $::osfamily == 'Debian' {
-    $user             = 'www-data'
-    $group            = 'www-data'
-    $root_group       = 'root'
-    $apache_name      = 'apache2'
-    $service_name     = 'apache2'
-    $httpd_dir        = '/etc/apache2'
-    $server_root      = '/etc/apache2'
-    $conf_dir         = $httpd_dir
-    $confd_dir        = "${httpd_dir}/conf.d"
-    $mod_dir          = "${httpd_dir}/mods-available"
-    $mod_enable_dir   = "${httpd_dir}/mods-enabled"
-    $vhost_dir        = "${httpd_dir}/sites-available"
-    $vhost_enable_dir = "${httpd_dir}/sites-enabled"
-    $conf_file        = 'apache2.conf'
-    $ports_file       = "${conf_dir}/ports.conf"
-    $logroot          = '/var/log/apache2'
-    $lib_path         = '/usr/lib/apache2/modules'
-    $mpm_module       = 'worker'
-    $dev_packages     = ['libaprutil1-dev', 'libapr1-dev', 'apache2-prefork-dev']
-    $default_ssl_cert = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
-    $default_ssl_key  = '/etc/ssl/private/ssl-cert-snakeoil.key'
-    $ssl_certs_dir    = '/etc/ssl/certs'
-    $passenger_conf_file = 'passenger.conf'
-    $passenger_conf_package_file = undef
-    $passenger_root   = '/usr'
-    $passenger_ruby   = '/usr/bin/ruby'
-    $suphp_addhandler  = 'x-httpd-php'
-    $suphp_engine      = 'off'
-    $suphp_configpath  = '/etc/php5/apache2'
-    $mod_packages     = {
+    $user                = 'www-data'
+    $group               = 'www-data'
+    $root_group          = 'root'
+    $apache_name         = 'apache2'
+    $service_name        = 'apache2'
+    $httpd_dir           = '/etc/apache2'
+    $server_root         = '/etc/apache2'
+    $conf_dir            = $httpd_dir
+    $confd_dir           = "${httpd_dir}/conf.d"
+    $mod_dir             = "${httpd_dir}/mods-available"
+    $mod_enable_dir      = "${httpd_dir}/mods-enabled"
+    $vhost_dir           = "${httpd_dir}/sites-available"
+    $vhost_enable_dir    = "${httpd_dir}/sites-enabled"
+    $conf_file           = 'apache2.conf'
+    $ports_file          = "${conf_dir}/ports.conf"
+    $logroot             = '/var/log/apache2'
+    $logroot_mode        = undef
+    $lib_path            = '/usr/lib/apache2/modules'
+    $mpm_module          = 'worker'
+    $dev_packages        = ['libaprutil1-dev', 'libapr1-dev', 'apache2-prefork-dev']
+    $default_ssl_cert    = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+    $default_ssl_key     = '/etc/ssl/private/ssl-cert-snakeoil.key'
+    $ssl_certs_dir       = '/etc/ssl/certs'
+    $suphp_addhandler    = 'x-httpd-php'
+    $suphp_engine        = 'off'
+    $suphp_configpath    = '/etc/php5/apache2'
+    $mod_packages        = {
       'auth_kerb'   => 'libapache2-mod-auth-kerb',
       'dav_svn'     => 'libapache2-svn',
       'fastcgi'     => 'libapache2-mod-fastcgi',
       'fcgid'       => 'libapache2-mod-fcgid',
       'nss'         => 'libapache2-mod-nss',
+      'pagespeed'   => 'mod-pagespeed-stable',
       'passenger'   => 'libapache2-mod-passenger',
       'perl'        => 'libapache2-mod-perl2',
       'php5'        => 'libapache2-mod-php5',
@@ -133,15 +142,64 @@ class apache::params inherits ::apache::version {
       'wsgi'        => 'libapache2-mod-wsgi',
       'xsendfile'   => 'libapache2-mod-xsendfile',
     }
-    $mod_libs         = {
+    $mod_libs             = {
       'php5' => 'libphp5.so',
     }
-    $conf_template     = 'apache/httpd.conf.erb'
-    $keepalive         = 'Off'
-    $keepalive_timeout = 15
-    $fastcgi_lib_path  = '/var/lib/apache2/fastcgi'
+    $conf_template          = 'apache/httpd.conf.erb'
+    $keepalive              = 'Off'
+    $keepalive_timeout      = 15
+    $max_keepalive_requests = 100
+    $fastcgi_lib_path       = '/var/lib/apache2/fastcgi'
     $mime_support_package = 'mime-support'
-    $mime_types_config = '/etc/mime.types'
+    $mime_types_config    = '/etc/mime.types'
+
+    #
+    # Passenger-specific settings
+    #
+
+    $passenger_conf_file         = 'passenger.conf'
+    $passenger_conf_package_file = undef
+
+    case $::operatingsystem {
+      'Ubuntu': {
+        case $::lsbdistrelease {
+          '12.04': {
+            $passenger_root         = '/usr'
+            $passenger_ruby         = '/usr/bin/ruby'
+            $passenger_default_ruby = undef
+          }
+          '14.04': {
+            $passenger_root         = '/usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini'
+            $passenger_ruby         = undef
+            $passenger_default_ruby = '/usr/bin/ruby'
+          }
+          default: {
+            # The following settings may or may not work on Ubuntu releases not
+            # supported by this module.
+            $passenger_root         = '/usr'
+            $passenger_ruby         = '/usr/bin/ruby'
+            $passenger_default_ruby = undef
+          }
+        }
+      }
+      'Debian': {
+        case $::lsbdistcodename {
+          'wheezy': {
+            $passenger_root         = '/usr'
+            $passenger_ruby         = '/usr/bin/ruby'
+            $passenger_default_ruby = undef
+          }
+          default: {
+            # The following settings may or may not work on Debian releases not
+            # supported by this module.
+            $passenger_root         = '/usr'
+            $passenger_ruby         = '/usr/bin/ruby'
+            $passenger_default_ruby = undef
+          }
+        }
+      }
+    }
+    $wsgi_socket_prefix = undef
   } elsif $::osfamily == 'FreeBSD' {
     $user             = 'www'
     $group            = 'www'
@@ -159,6 +217,7 @@ class apache::params inherits ::apache::version {
     $conf_file        = 'httpd.conf'
     $ports_file       = "${conf_dir}/ports.conf"
     $logroot          = '/var/log/apache22'
+    $logroot_mode     = undef
     $lib_path         = '/usr/local/libexec/apache22'
     $mpm_module       = 'prefork'
     $dev_packages     = undef
@@ -169,6 +228,7 @@ class apache::params inherits ::apache::version {
     $passenger_conf_package_file = undef
     $passenger_root   = '/usr/local/lib/ruby/gems/1.9/gems/passenger-4.0.10'
     $passenger_ruby   = '/usr/bin/ruby'
+    $passenger_default_ruby = undef
     $suphp_addhandler = 'php5-script'
     $suphp_engine     = 'off'
     $suphp_configpath = undef
@@ -197,9 +257,11 @@ class apache::params inherits ::apache::version {
     $conf_template        = 'apache/httpd.conf.erb'
     $keepalive            = 'Off'
     $keepalive_timeout    = 15
+    $max_keepalive_requests = 100
     $fastcgi_lib_path     = undef # TODO: revisit
     $mime_support_package = 'misc/mime-support'
     $mime_types_config    = '/usr/local/etc/mime.types'
+    $wsgi_socket_prefix   = undef
   } else {
     fail("Class['apache::params']: Unsupported osfamily: ${::osfamily}")
   }
