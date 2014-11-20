@@ -3,16 +3,25 @@
   ## Proxy rules
   ProxyRequests Off
 <%- end -%>
-<% [@proxy_pass].flatten.compact.each do |proxy| %>
+<% if @proxy_preserve_host -%>
+  ProxyPreserveHost On
+<%- end -%>
+<%- [@proxy_pass].flatten.compact.each do |proxy| -%>
   ProxyPass <%= proxy['path'] %> <%= proxy['url'] %>
   <Location <%= proxy['path']%>>
+  <%- if proxy['reverse_urls'].nil? -%>
     ProxyPassReverse <%= proxy['url'] %>
+  <%- else -%>
+    <%- Array(proxy['reverse_urls']).each do |reverse_url| -%>
+    ProxyPassReverse <%= reverse_url %>
+    <%- end -%>
+  <%- end -%>
   </Location>
-<% end %>
+<% end -%>
 <% if @proxy_dest -%>
-<% Array(@no_proxy_uris).each do |uri| %>
+<%- Array(@no_proxy_uris).each do |uri| -%>
   ProxyPass        <%= uri %> !
-<% end %>
+<% end -%>
   ProxyPass          / <%= @proxy_dest %>/
   <Location          />
     ProxyPassReverse <%= @proxy_dest %>/
