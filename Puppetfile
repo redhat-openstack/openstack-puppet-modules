@@ -1,180 +1,195 @@
-mod 'apache',
-  :commit => '769ff363a8a3c51e24f63a2494217d2d029289c6',
-  :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
+#
+# Copyright 2014 eNovance SAS <licensing@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Puppetfile
+forge 'http://forge.puppetlabs.com'
 
-mod 'ceilometer',
-  :commit => '1d78470e5023e2ca6adef47c904d14d046dd87d1',
-  :git => 'https://github.com/stackforge/puppet-ceilometer.git'
-
-mod 'certmonger',
-  :commit => '3f86b9973fc30c14a066b0f215023d5f1398b874',
-  :git => 'https://github.com/rcritten/puppet-certmonger.git'
-
-mod 'cinder',
-  :commit => 'b5dce39754ed6857d6dc87b3ae29ed38057a487e',
-  :git => 'https://github.com/stackforge/puppet-cinder.git'
-
-mod 'common',
-  :commit => '2c0ed2844c606fd806bde0c02e47e79c88fab4a9',
-  :git => 'https://github.com/purpleidea/puppet-common.git'
-
-mod 'concat',
-  :commit => '644fb1b6dc8b64accc4d1208d6127b79a08a38b7',
-  :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
-
-mod 'firewall',
-  :commit => '6b308177c3d279083078955942969c92b145eba0',
-  :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
-
-mod 'galera',
-  :commit => 'a63ab112aabdc9faa5e66fc095ef9dcc865d6999',
-  :git => 'https://github.com/rohara/puppet-galera.git'
-
-mod 'glance',
-  :commit => '916a90ebdc3e9fafe956b12dcaa0e0ce3e7e3f04',
-  :git => 'https://github.com/stackforge/puppet-glance.git'
-
-mod 'gluster',
-  :commit => '6c962083d8b100dcaeb6f11dbe61e6071f3d13f0',
-  :git => 'https://github.com/purpleidea/puppet-gluster.git'
-
-mod 'haproxy',
-  :commit => 'f381510e940ee11feb044c1c728ba2e5af807c79',
-  :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
-
-mod 'heat',
-  :commit => '45a35dc2ec5f01bd79189ada881d083e1a51413b',
-  :git => 'https://github.com/stackforge/puppet-heat.git'
-
-mod 'horizon',
-  :commit => '351c711004ccd9815e9a0d153bc5452461f7852d',
-  :git => 'https://github.com/stackforge/puppet-horizon.git'
-
-mod 'inifile',
-  :commit => 'fe9b0d5229ea37179a08c4b49239da9bc950acd1',
-  :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
-
-mod 'ipa',
-  :commit => '08e51e96ac2c9265499deec3485e396b792587d3',
-  :git => 'https://github.com/xbezdick/puppet-ipa.git'
-
-mod 'keystone',
-  :commit => '38518cbcb3ef8ad3bb068730a21d790b27a29b74',
-  :git => 'https://github.com/stackforge/puppet-keystone.git'
-
-mod 'memcached',
-  :commit => '49dbf102fb6eee90297b2ed6a1fa463a8c5ccee7',
-  :git => 'https://github.com/saz/puppet-memcached.git'
-
-mod 'module-data',
-  :commit => '159fc5e0e21ce9df96c777f0064b5eca88e29cae',
-  :git => 'https://github.com/ripienaar/puppet-module-data.git'
-
-mod 'mongodb',
-  :commit => '0518f864afcce2ebb79f1f2edab5de323c811af7',
-  :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
-
-mod 'mysql',
-  :commit => '40dd1805886aee56dc02860565f161c6e3b4c7e5',
-  :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
-
-mod 'n1k-vsm',
-  :commit => '69ff094069506f98431182c6097b3b6b9ea6fdb9',
-  :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
-
-mod 'nagios',
-  :commit => '56a1eee350c4600bb12e017d64238fb3f876abd4',
-  :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
-
-mod 'neutron',
-  :commit => '663b4b16d22f78dbbb89c58170690a3c0a1e0ff2',
-  :git => 'https://github.com/stackforge/puppet-neutron.git'
-
-mod 'nova',
-  :commit => '261ae911fc5c325f6dd739a9b05f508a80a25034',
-  :git => 'https://github.com/stackforge/puppet-nova.git'
-
-mod 'nssdb',
-  :commit => 'b3799a9a7c62c3b5b7968f9860220a885b45fb8a',
-  :git => 'https://github.com/rcritten/puppet-nssdb.git'
-
-mod 'ntp',
-  :commit => '8f697e32bc279b36ada752273e6c788716b95315',
-  :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
-
-mod 'openstack',
-  :commit => 'd81d2d86280d5739cc896a48b68d7309e765047a',
-  :git => 'https://github.com/stackforge/puppet-openstack.git'
-
+# OpenStack projects
 mod 'openstacklib',
-  :commit => '2fc2e5504de7c298263a1d63af92974a7779d5c9',
-  :git => 'https://github.com/stackforge/puppet-openstacklib.git'
-
-mod 'pacemaker',
-  :commit => '0ed9ee8a29c0f27e86727d415b39d2715332df7d',
-  :git => 'https://github.com/radez/puppet-pacemaker.git'
-
-mod 'puppet',
-  :commit => 'bd467cae15eba9ca44274034d2593b0eaf30518d',
-  :git => 'https://github.com/purpleidea/puppet-puppet.git'
-
-mod 'qpid',
-  :commit => '9ffb2788c536f1694980e07a43e8133ff85fa28c',
-  :git => 'https://github.com/dprince/puppet-qpid'
-
-mod 'rabbitmq',
-  :commit => '4832bd61b5b1bfea7c9cc985508e65cd10081652',
-  :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
-
-mod 'redis',
-  :commit => '31ecbcace3cacf26ad85d90abc2409da8973e788',
-  :git => 'https://github.com/arioch/puppet-redis.git'
-
-mod 'rsync',
-  :commit => '357d51f3a6a22bc3da842736176c3510e507b4fb',
-  :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
-
-mod 'sahara',
-  :commit => '6b696cffcba6692975dbcfee144e81b6e90e5ecf',
-  :git => 'https://github.com/stackforge/puppet-sahara.git'
-
-mod 'ssh',
-  :commit => 'd6571f8c43ac55d20a6afd8a8ce3f86ac4b0d7a4',
-  :git => 'https://github.com/saz/puppet-ssh.git'
-
-mod 'staging',
-  :commit => '887275d8fb20e148c6f9eb327f1f6c8ea5ee280f',
-  :git => 'https://github.com/nanliu/puppet-staging.git'
-
-mod 'stdlib',
-  :commit => '62e8c1d76902e6f22cb9f7b3abd43e757b4130a3',
-  :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
-
+  :git => 'git://github.com/enovance/puppet-openstacklib.git',
+  :ref => 'c374bed10f8af6000601fa407ebaef0833e1999c'
+mod 'ceilometer',
+  :git => 'git://github.com/enovance/puppet-ceilometer.git',
+  :ref => '957c2120d0ee0b9db08bfddcce996686ba61d97d'
+mod 'cinder',
+  :git => 'git://github.com/enovance/puppet-cinder.git',
+  :ref => 'c9271e02d0d5a317ab390cfce9928601208f6073'
+mod 'glance',
+  :git => 'git://github.com/enovance/puppet-glance.git',
+  :ref => '78042d76c0854e16a55aaf05c03696d4d422e3c5'
+mod 'heat',
+  :git => 'git://github.com/enovance/puppet-heat.git',
+  :ref => '0e6d7eacecd70819384ac61ea3b9df38b90411b0'
+mod 'horizon',
+  :git => 'git://github.com/enovance/puppet-horizon.git',
+  :ref => '16b482ea21a70d8dd06ab4c98ac5a218399b0213'
+mod 'keystone',
+  :git => 'git://github.com/enovance/puppet-keystone.git',
+  :ref => '45ac386600c0e79942834da8b69bf09a4809d7bd'
+mod 'neutron',
+  :git => 'git://github.com/enovance/puppet-neutron.git',
+  :ref => 'cefbdc897d70fd1c1fc44e372f05336674efd940'
+mod 'nova',
+  :git => 'git://github.com/enovance/puppet-nova.git',
+  :ref => '3ffc5a263113232230b69e621e1b6167f2148390'
 mod 'swift',
-  :commit => '2193831dd787e9b24382c588dfa49917bcf47262',
-  :git => 'https://github.com/stackforge/puppet-swift.git'
+  :git => 'git://github.com/enovance/puppet-swift.git',
+  :ref => '3ea00440361ff2452561d2cce808d938e39cce56'
+mod 'trove',
+  :git => 'git://github.com/enovance/puppet-trove.git',
+  :ref => '7d9db32423b25dcc227ea6a6d43c90c63fde0d58'
 
-mod 'sysctl',
-  :commit => 'c4486acc2d66de857dbccd8b4b945ea803226705',
-  :git => 'https://github.com/puppetlabs/puppetlabs-sysctl.git'
-
-mod 'tempest',
-  :commit => '7a3369949fc8af41e190dd8115391354a7575ecb',
-  :git => 'https://github.com/stackforge/puppet-tempest.git'
-
+# Dependency
+mod 'apache',
+  :git => 'git://github.com/enovance/puppetlabs-apache.git',
+  :ref => '58682faf74cdfc6c8d921d2be9322368c8a96cf9'
+mod 'apt',
+  :git => 'git://github.com/enovance/puppetlabs-apt.git',
+  :ref => '9b001af8775c7231ea2656b7eb43d6141b536f49'
+mod 'boolean',
+  :git => 'git://github.com/enovance/puppet-boolean.git',
+  :ref => '157011a4eaa27f1202a9d94335ee4876b26d377e'
+mod 'ceph',
+  :git => 'git://github.com/enovance/puppet-ceph.git',
+  :ref => 'c50d91a6f790058a2b6975d6e1d6189f7c8b6687'
+#FIXME
+mod 'cloud',
+  :git => 'git://github.com/enovance/puppet-openstack-cloud.git',
+  :ref => 'master'
+mod 'common',
+  :git => 'git://github.com/enovance/puppet-module-common.git',
+  :ref => '2d0606fce1078222dd483e731ec32807f5b4ca53'
+mod 'concat',
+  :git => 'git://github.com/enovance/puppet-concat.git',
+  :ref => '04356974f72b90a1d0f57346a00e95a717924e43'
+mod 'corosync',
+  :git => 'git://github.com/enovance/puppetlabs-corosync.git',
+  :ref => '79b61302b07fef30b65a42f3b55229616018aacf'
+mod 'dnsclient',
+  :git => 'git://github.com/enovance/puppet-module-dnsclient.git',
+  :ref => '4158b30f4660623f98dcdbd1ce9b482556180b57'
+mod 'datacat',
+  :git => 'git://github.com/enovance/puppet-datacat.git',
+  :ref => '6a2017b31a8808de35b89d90b9e2b681ef9a0918'
+mod 'elasticsearch',
+  :git => 'git://github.com/enovance/puppet-elasticsearch.git',
+  :ref => '6d08442e8382f0f47388d4185122992c2d73cd9b'
+mod 'gcc',
+  :git => 'git://github.com/enovance/puppetlabs-gcc.git',
+  :ref => '272e6595a2f4824dafa71a2b751960659c05c35d'
+mod 'git',
+  :git => 'git://github.com/enovance/puppetlabs-git.git',
+  :ref => '0df1f62130a7752c728efb7555f2b07ca178ee5b'
+mod 'firewall',
+  :git => 'git://github.com/enovance/puppetlabs-firewall.git',
+  :ref => '4ed1b43e1629c1b6108133b0fc3be603d03ffe6c'
+mod 'fluentd',
+  :git => 'git://github.com/enovance/puppet-fluentd.git',
+  :ref => 'd073a97002c569d8bfc38ac814ee33ed2cb13ca6'
+mod 'haproxy',
+  :git => 'git://github.com/enovance/puppetlabs-haproxy.git',
+  :ref => 'fc1166f28d411dfd4f59d4bfd6936595c014a11b'
+mod 'inifile',
+  :git => 'git://github.com/enovance/puppetlabs-inifile.git',
+  :ref => 'ae23a4db97d2815ec305d0529912685f07746d3c'
+mod 'keepalived',
+  :git => 'git://github.com/enovance/puppet-module-keepalived.git',
+  :ref => 'eb345b6d3b25106cbe166028f2b8dd9974a10230'
+mod 'kibana3',
+  :git => 'git://github.com/enovance/kibana3.git',
+  :ref => '64fb5f898a0f062ebf188e53ba613b3b13e9d829'
 mod 'vcsrepo',
-  :commit => '6f7507a2a48ff0a58c7db026760a2eb84e382a77',
-  :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
-
-mod 'vlan',
-  :commit => 'c937de75c28e63fba8d8738ad6a5f2ede517e53d',
-  :git => 'https://github.com/derekhiggins/puppet-vlan.git'
-
+  :git => 'git://github.com/enovance/puppetlabs-vcsrepo.git',
+  :ref => '4592bfd59cd5d4795069798a14b483e16c98c1ff'
+mod 'kmod',
+  :git => 'git://github.com/enovance/puppet-kmod.git',
+  :ref => 'accc40093e6f8ee9cc472e9eb6ba3bab4bad3a1f'
+mod 'kwalify',
+  :git => 'git://github.com/puppetlabs/puppetlabs-kwalify.git',
+  :ref => 'e0079c6485d7cbfc846d956e650913e1b3ccfb6d'
+mod 'libvirt',
+  :git => 'git://github.com/enovance/puppetlabs-libvirt.git',
+  :ref => '05808874715ca3e899861a0af139e6a48255d3cb'
+mod 'logrotate',
+  :git => 'git://github.com/enovance/puppet-logrotate.git',
+  :ref => 'f4d12356301fa2992f51dc7225037bb07556cb28'
+mod 'memcached',
+  :git => 'git://github.com/enovance/puppet-memcached.git',
+  :ref => 'd009260de3c7623003318555ec5ca61217ea3ca1'
+mod 'mongodb',
+  :git => 'git://github.com/enovance/puppetlabs-mongodb.git',
+  :ref => 'e3cc9a0ea895f6e01801e4620799c66c2337b7ed'
+mod 'mysql',
+  :git => 'git://github.com/enovance/puppetlabs-mysql.git',
+  :ref => '8b814d4d2cb5786a15e8e37fb3b7444d5d5f0d3f'
+# TODO(EmilienM) Come back to upstream after
+# https://github.com/ghoneycutt/puppet-module-nfs/pull/43 got merged.
+mod 'nfs',
+  :git => 'git://github.com/enovance/puppet-module-nfs.git',
+  :ref => '6f840a522679c6a8ebe340d86f9c4325a2103629'
+mod 'ntp',
+  :git => 'git://github.com/enovance/puppetlabs-ntp.git',
+  :ref => 'eb02ba2937ce86fb609ae41499767244b78ec58d'
+mod 'pacemaker',
+  :git => 'git://github.com/enovance/puppet-pacemaker.git',
+  :ref => '56bbb3580bb7fa62bf57c2ed7a30b938e42b8cc3'
+mod 'puppetdbquery',
+  :git => 'git://github.com/enovance/puppet-puppetdbquery.git',
+  :ref =>  '89194917744f929bb600c31d7d6f822b529f5f03'
+mod 'rabbitmq',
+  :git => 'git://github.com/enovance/puppetlabs-rabbitmq.git',
+  :ref => '25420cb3c26c9a8432ab519d43c094d614d4fec4'
+mod 'redis',
+  :git => 'git://github.com/enovance/puppet-redis.git',
+  :ref => '1b2b2cea8c9acc08cfa01b42e47fad17f3c4d03d'
+mod 'rhnreg_ks',
+  :git => 'git://github.com/enovance/puppet-rhnreg_ks.git',
+  :ref => '8fdc051992b44a09f39d3b510d7cd6db5ed5ff66'
+mod 'rpcbind',
+  :git => 'git://github.com/enovance/puppet-module-rpcbind.git',
+  :ref => 'da943d26f09f9658159c1190e058bf1af88f465d'
+mod 'rsync',
+  :git => 'git://github.com/enovance/puppetlabs-rsync.git',
+  :ref => '7122983d89bf68bc4170415cc03212f6a8a4636e'
+mod 'sensu',
+  :git => 'git://github.com/enovance/sensu-puppet.git',
+  :ref => '4a16ebf3503bfc9ae6192ae3120cb29b9e5c8445'
+mod 'ssh',
+  :git => 'git://github.com/enovance/puppet-ssh.git',
+  :ref => '10675c0d80511a8cdd514af67b695887fa97ec40'
+mod 'rsyslog',
+  :git => 'git://github.com/enovance/puppet-rsyslog.git',
+  :ref => '67c7c501b916ebd1a27a8a218d49602339526c4f'
+mod 'stdlib',
+  :git => 'git://github.com/enovance/puppetlabs-stdlib.git',
+  :ref => 'fb42396c75d90ce3a9473e2a7ed22682266ea03f'
+mod 'sysctl',
+  :git => 'git://github.com/enovance/puppet-sysctl.git',
+  :ref => '4a463384e844f51b270428643a5b8beb3628e854'
+mod 'types',
+  :git => 'git://github.com/enovance/puppet-module-types.git',
+  :ref => '4c58ae8b6cdb1a9da3da9654a35375e274019dfb'
+mod 'uchiwa',
+  :git => 'git://github.com/enovance/yelp-uchiwa.git',
+  :ref =>  '8eafd8167ff7d4f1cd696e4d098e3e1497c28279'
 mod 'vswitch',
-  :commit => '51fd30c22b79d927fb0329e6e2b58fe67217ecee',
-  :git => 'https://github.com/stackforge/puppet-vswitch.git'
-
+  :git => 'git://github.com/enovance/puppet-vswitch.git',
+  :ref => '49dbaff15e8f017dbe365ebf08eb505472b695a1'
+mod 'wget',
+  :git => 'git://github.com/enovance/puppet-wget.git',
+  :ref => '1c3ea6f1c822a99b52defb87305ea5977cba4293'
 mod 'xinetd',
-  :commit => '6b02de8d4f30a819eb404048e4258e3a5e8023c8',
-  :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
-
+  :git => 'git://github.com/enovance/puppetlabs-xinetd.git',
+  :ref => '0740f5343b54523d9ed27f65c05f6c9f045f022b'
