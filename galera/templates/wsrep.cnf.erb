@@ -25,7 +25,7 @@ innodb_autoinc_lock_mode=2
 innodb_locks_unsafe_for_binlog=1
 
 # Query Cache is not supported with wsrep
-query_cache_size=0
+#### query_cache_size=0 now in server.cnf
 query_cache_type=0
 
 # Override bind-address
@@ -45,13 +45,6 @@ wsrep_provider_options="<%= @wsrep_provider_options.join '; ' %>"
 
 # Logical cluster name. Should be the same for all nodes.
 wsrep_cluster_name="<%= @wsrep_cluster_name %>"
-
-# Group communication system handle
-<% if @bootstrap -%>
-wsrep_cluster_address="gcomm://"
-<% elsif !@wsrep_cluster_members.empty? -%>
-wsrep_cluster_address="gcomm://<%= @wsrep_cluster_members.join ',' %>"
-<% end -%>
 
 # Human-readable node name (non-unique). Hostname by default.
 #wsrep_node_name=
@@ -125,6 +118,7 @@ wsrep_sst_method=<%= @wsrep_sst_method %>
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
+# Below is ignored if using rsync for wsrep_sst_method
 wsrep_sst_auth=<%= @wsrep_sst_username %>:<%= @wsrep_sst_password %>
 
 # Desired SST donor name.
@@ -135,3 +129,5 @@ wsrep_sst_auth=<%= @wsrep_sst_username %>:<%= @wsrep_sst_password %>
 
 # Protocol version to use
 # wsrep_protocol_version=
+
+skip-name-resolve=1
