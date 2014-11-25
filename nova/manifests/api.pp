@@ -120,6 +120,26 @@
 #   (optional) Enable or not Nova API v3
 #   Defaults to false
 #
+# [*validate*]
+#   (optional) Whether to validate the service is working after any service refreshes
+#   Defaults to false
+#
+# [*validation_options*]
+#   (optional) Service validation options
+#   Should be a hash of options defined in openstacklib::service_validation
+#   If empty, defaults values are taken from openstacklib function.
+#   Default command list nova flavors.
+#   Require validate set at True.
+#   Example:
+#   nova::api::validation_options:
+#     nova-api:
+#       command: check_nova.py
+#       path: /usr/bin:/bin:/usr/sbin:/sbin
+#       provider: shell
+#       tries: 5
+#       try_sleep: 10
+#   Defaults to {}
+#
 class nova::api(
   $admin_password,
   $enabled               = false,
@@ -149,6 +169,8 @@ class nova::api(
   $ratelimits            = undef,
   $ratelimits_factory    =
     'nova.api.openstack.compute.limits:RateLimitingMiddleware.factory',
+  $validate              = false,
+  $validation_options    = {},
   # DEPRECATED PARAMETER
   $workers               = undef,
   $conductor_workers     = undef,
@@ -209,22 +231,23 @@ class nova::api(
 
   if ($neutron_metadata_proxy_shared_secret){
     nova_config {
-      'DEFAULT/service_neutron_metadata_proxy': value => true;
-      'DEFAULT/neutron_metadata_proxy_shared_secret':
+      'neutron/service_metadata_proxy': value => true;
+      'neutron/metadata_proxy_shared_secret':
         value => $neutron_metadata_proxy_shared_secret;
     }
   } else {
     nova_config {
-      'DEFAULT/service_neutron_metadata_proxy':       value  => false;
-      'DEFAULT/neutron_metadata_proxy_shared_secret': ensure => absent;
+      'neutron/service_metadata_proxy':       value  => false;
+      'neutron/metadata_proxy_shared_secret': ensure => absent;
     }
   }
 
   if $auth_uri {
-    nova_config { 'keystone_authtoken/auth_uri': value => $auth_uri; }
+    $auth_uri_real = $auth_uri
   } else {
-    nova_config { 'keystone_authtoken/auth_uri': value => "${auth_protocol}://${auth_host}:5000/"; }
+    $auth_uri_real = "${auth_protocol}://${auth_host}:5000/"
   }
+  nova_config { 'keystone_authtoken/auth_uri': value => $auth_uri_real; }
 
   if $auth_version {
     nova_config { 'keystone_authtoken/auth_version': value => $auth_version; }
@@ -310,6 +333,16 @@ class nova::api(
     'filter:authtoken/admin_user':        ensure => absent;
     'filter:authtoken/admin_password':    ensure => absent;
     'filter:authtoken/auth_admin_prefix': ensure => absent;
+  }
+
+  if $validate {
+    $defaults = {
+      'nova-api' => {
+        'command'  => "nova --os-auth-url ${auth_uri_real} --os-tenant-name ${admin_tenant_name} --os-username ${admin_user} --os-password ${admin_password} flavor-list",
+      }
+    }
+    $validation_options_hash = merge ($defaults, $validation_options)
+    create_resources('openstacklib::service_validation', $validation_options_hash, {'subscribe' => 'Service[nova-api]'})
   }
 
 }
