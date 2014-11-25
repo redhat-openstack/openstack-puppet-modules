@@ -20,16 +20,15 @@
 # }
 #
 class galera::monitor (
-  $mysql_username = 'monitor_user',
-  $mysql_password = 'monitor_pass',
-  $mysql_host     = '127.0.0.1',
-  $mysql_port     = '3306',
-  $monitor_port   = '9200',
-  $monitor_script = '/usr/bin/clustercheck',
-  $enabled        = true,
+  $mysql_username    = 'monitor_user',
+  $mysql_password    = 'monitor_pass',
+  $mysql_host        = '127.0.0.1',
+  $mysql_port        = '3306',
+  $monitor_port      = '9200',
+  $monitor_script    = '/usr/bin/clustercheck',
+  $enabled           = true,
+  $create_mysql_user = false,
 ) {
-
-  Class['galera::server'] -> Class['galera::monitor']
 
   if $enabled {
     $monitor_disable = 'no'
@@ -57,9 +56,11 @@ class galera::monitor (
     log_on_failure_operator => '=',
   }
 
-  database_user { "${mysql_username}@${mysql_host}":
-    ensure        => present, 
-    password_hash => mysql_password($mysql_password),
-    require       => [File['/root/.my.cnf'],Service['galera']],
+  if $create_mysql_user {
+    mysql_user { "${mysql_username}@${mysql_host}":
+      ensure        => present, 
+      password_hash => mysql_password($mysql_password),
+      require       => [File['/root/.my.cnf'],Service['galera']],
+    }
   }
 }
