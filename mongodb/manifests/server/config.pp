@@ -4,6 +4,7 @@ class mongodb::server::config {
   $user            = $mongodb::server::user
   $group           = $mongodb::server::group
   $config          = $mongodb::server::config
+  $config_content  = $mongodb::server::config_content
 
   $dbpath          = $mongodb::server::dbpath
   $pidfilepath     = $mongodb::server::pidfilepath
@@ -39,6 +40,7 @@ class mongodb::server::config {
   $source          = $mongodb::server::source
   $replset         = $mongodb::server::replset
   $rest            = $mongodb::server::rest
+  $quiet           = $mongodb::server::quiet
   $slowms          = $mongodb::server::slowms
   $keyfile         = $mongodb::server::keyfile
   $bind_ip         = $mongodb::server::bind_ip
@@ -64,8 +66,17 @@ class mongodb::server::config {
       $noauth = true
     }
 
+    #Pick which config content to use
+    if $config_content {
+      $cfg_content = $config_content
+    } elsif (versioncmp($mongodb::globals::version, '2.6.0') >= 0) {
+      $cfg_content = template('mongodb/mongodb.conf.2.6.erb')
+    } else {
+      $cfg_content = template('mongodb/mongodb.conf.erb')
+    }
+
     file { $config:
-      content => template('mongodb/mongodb.conf.erb'),
+      content => $cfg_content,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
