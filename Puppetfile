@@ -31,7 +31,7 @@ mod 'galera',
   :git => 'https://github.com/rohara/puppet-galera.git'
 
 mod 'glance',
-  :commit => '916a90ebdc3e9fafe956b12dcaa0e0ce3e7e3f04',
+  :commit => '24d5c3425f6016e9eb6447a4041a7419eada3d31',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
@@ -43,11 +43,11 @@ mod 'haproxy',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => '45a35dc2ec5f01bd79189ada881d083e1a51413b',
+  :commit => 'd1479219e946bc9cc7fb08d60de9f3ec85cb7176',
   :git => 'https://github.com/stackforge/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '351c711004ccd9815e9a0d153bc5452461f7852d',
+  :commit => '353c372d582167d5635b1b2ee9474cf6822db032',
   :git => 'https://github.com/stackforge/puppet-horizon.git'
 
 mod 'inifile',
@@ -87,11 +87,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '663b4b16d22f78dbbb89c58170690a3c0a1e0ff2',
+  :commit => 'bbecaab2ff2d755e8c19e50458bbbd1b7e43fb2a',
   :git => 'https://github.com/stackforge/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '261ae911fc5c325f6dd739a9b05f508a80a25034',
+  :commit => '0d1a71f4f6f59c7ec87d571dc63707e200f753b2',
   :git => 'https://github.com/stackforge/puppet-nova.git'
 
 mod 'nssdb',
@@ -151,7 +151,7 @@ mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',
-  :commit => '2193831dd787e9b24382c588dfa49917bcf47262',
+  :commit => '54fdb8474245deebc7f4a04cd74caf061a4e90f2',
   :git => 'https://github.com/stackforge/puppet-swift.git'
 
 mod 'sysctl',
