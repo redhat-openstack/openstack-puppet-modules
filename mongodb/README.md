@@ -62,8 +62,8 @@ class {'::mongodb::server':
 
 For Red Hat family systems, the client can be installed in a similar fashion:
 
-```
-puppet class {'::mongodb::client':}
+```puppet
+class {'::mongodb::client':}
 ```
 
 Note that for Debian/Ubuntu family systems the client is installed with the 
@@ -335,6 +335,14 @@ set name as an argument to this set. All hosts must have the same set name.
 #####`rest`
 Set to true to enable a simple REST interface. Default: false
 
+#####`quiet`
+Runs the mongod or mongos instance in a quiet mode that attempts to limit the 
+amount of output. This option suppresses : "output from database commands, including drop, dropIndexes, diagLogging, validate, and clean", "replication activity", "connection accepted events" and "connection closed events".
+Default: false
+
+> For production systems this option is **not** recommended as it may make tracking 
+problems during particular connections much more difficult.
+
 #####`slowms`
 Sets the threshold for mongod to consider a query “slow” for the database profiler.
 Default: 100 ms
@@ -411,6 +419,7 @@ The maximum amount of two second tries to wait MongoDB startup. Default: 10
 
 ```puppet
 mongodb_user { testuser:
+  username      => 'testuser',
   ensure        => present,
   password_hash => mongodb_password('testuser', 'p@ssw0rd'),
   database      => testdb,
@@ -419,6 +428,9 @@ mongodb_user { testuser:
   require       => Class['mongodb::server'],
 }
 ```
+#####`username`
+Name of the mongodb user.
+
 #####`password_hash`
 Hex encoded md5 hash of "$username:mongo:$password".
 
