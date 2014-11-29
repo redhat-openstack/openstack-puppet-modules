@@ -10,16 +10,16 @@ class zookeeper::os::debian(
   $ensure_cron       = true,
   # cloudera package is called zookeeper-server
   $service_package   = 'zookeeperd',
+  $packages          = ['zookeeper']
 ) {
 
-  package { ['zookeeper']:
-    ensure => $ensure
-  }
+  # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
+  ensure_resource('package', $packages, {'ensure' => $ensure})
 
   if ($start_with == 'init.d') {
     package { [$service_package]: #init.d scripts for zookeeper
       ensure  => $ensure,
-      require => Package[$service_package]
+      require => Package['zookeeper']
     }
   }
 

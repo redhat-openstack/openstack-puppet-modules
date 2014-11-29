@@ -43,6 +43,10 @@ class zookeeper(
   $tracefile_threshold     = 'TRACE',
   $max_allowed_connections = 10,
   $peer_type               = 'UNSET',
+  $start_with              = 'init.d',
+  $ensure_cron             = true,
+  $service_package         = 'zookeeperd',
+  $packages                = ['zookeeper']
 ) {
 
   anchor { 'zookeeper::start': }->
@@ -52,6 +56,10 @@ class zookeeper(
     datastore         => $datastore,
     user              => $user,
     cleanup_sh        => $cleanup_sh,
+    start_with        => $start_with,
+    ensure_cron       => $ensure_cron,
+    service_package   => $service_package,
+    packages          => $packages,
   }->
   class { 'zookeeper::config':
     id                      => $id,

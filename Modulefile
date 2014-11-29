@@ -7,5 +7,5 @@ summary 'Module for managing Apache Zookeeper'
 description 'ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.'
 project_page 'https://github.com/deric/puppet-zookeeper'
 
-dependency 'puppetlabs/stdlib', '>= 0.1.6'
+dependency 'puppetlabs/stdlib', '>= 2.3.3'
 dependency 'richardc/datacat'

@@ -48,6 +48,17 @@ describe 'zookeeper::os::debian', :type => :class do
       it { should_not contain_package('zookeeperd') }
     end
 
+    context 'allow installing multiple packages' do
+      let(:user) { 'zookeeper' }
+      let(:group) { 'zookeeper' }
+
+      let(:params) { {
+        :packages => [ 'zookeeper', 'zookeeper-bin' ],
+      } }
+
+      it { should contain_package('zookeeper') }
+      it { should contain_package('zookeeper-bin') }
+    end
 
     context 'removing package' do
       let(:user) { 'zookeeper' }

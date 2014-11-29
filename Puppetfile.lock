@@ -5,6 +5,6 @@ FORGE
     richardc/datacat (0.4.3)
 
 DEPENDENCIES
-  puppetlabs/stdlib (>= 0.1.6)
+  puppetlabs/stdlib (>= 2.3.3)
   richardc/datacat (>= 0)
 

@@ -6,9 +6,8 @@
 #
 # Actions: None
 #
-# Requires:
 #
-# Sample Usage: include zookeeper::install
+# Should not be included directly
 #
 class zookeeper::install(
   $ensure            = present,
@@ -16,9 +15,13 @@ class zookeeper::install(
   $cleanup_sh        = '/usr/lib/zookeeper/bin/zkCleanup.sh',
   $datastore         = '/var/lib/zookeeper',
   $user              = 'zookeeper',
+  $start_with        = 'init.d',
+  $ensure_cron       = true,
+  $service_package   = 'zookeeperd',
+  $packages          = ['zookeeper']
 ) {
   anchor { 'zookeeper::install::begin': }
-  anchor { 'zookeeper::install:end': }
+  anchor { 'zookeeper::install::end': }
 
   case $::osfamily {
     Debian: {
@@ -28,6 +31,10 @@ class zookeeper::install(
         cleanup_sh        => $cleanup_sh,
         datastore         => $datastore,
         user              => $user,
+        start_with        => $start_with,
+        ensure_cron       => $ensure_cron,
+        service_package   => $service_package,
+        packages          => $packages,
         before            => Anchor['zookeeper::install::end'],
         require           => Anchor['zookeeper::install::begin'],
       }

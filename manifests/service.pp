@@ -11,7 +11,7 @@ class zookeeper::service(
     hasrestart => true,
     enable     => true,
     require    => [
-      Anchor['zookeeper::install::end'],
+      Class['zookeeper::install'],
       File["${cfg_dir}/zoo.cfg"]
     ]
   }

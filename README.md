@@ -71,6 +71,9 @@ If you are versioning your puppet conf with git just add it as submodule, from y
 
     git submodule add git://github.com/deric/puppet-zookeeper.git modules/zookeeper
 
+## Dependencies
+
+  * stdlib `> 2.3.3` - function `ensure_resources` is required
 
 ## Supported platforms
 
