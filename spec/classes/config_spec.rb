@@ -26,6 +26,56 @@ describe 'zookeeper::config' do
       'group'   => group,
     }).with_content(myid) }
 
+    context 'extra parameters' do
+      snap_cnt = 15000
+      # set custom params
+      let(:params) { {
+        :log4j_prop    => 'INFO,ROLLINGFILE',
+        :snap_count    => snap_cnt,
+      } }
+
+      it {
+        should contain_file('/etc/zookeeper/conf/environment').with_content(/INFO,ROLLINGFILE/)
+      }
+
+      it {
+        should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/snapCount=15000/)
+      }
+    end
+
+    context 'max allowed connections' do
+      max_conn = 15
+
+      let(:params) {{
+        :max_allowed_connections => max_conn
+      }}
+
+      it { should contain_file(
+          '/etc/zookeeper/conf/zoo.cfg'
+        ).with_content(/maxClientCnxns=#{max_conn}/) }
+    end
+
+    context 'quorum file' do
+      ipaddress = '192.168.1.1'
+      let(:facts) {{
+        :operatingsystem => os,
+        :osfamily => 'Debian',
+        :lsbdistcodename => codename,
+        :ipaddress => ipaddress
+      }}
+
+      it { should create_datacat_fragment('192.168.1.1').with_data(
+        {"id"=>myid, "client_ip"=>"192.168.1.1", "election_port"=>"2888", "leader_port"=>"3888"}
+      )}
+
+    #  it { should contain_file(
+    #    '/etc/zookeeper/conf/quorum.yml'
+    #  )}
+    #it { should contain_datacat__fragment("#{ipaddress}") }
+
+    #  it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
+    end
+
   end
 
   context 'on debian-like system' do
@@ -60,50 +110,5 @@ describe 'zookeeper::config' do
     it_behaves_like 'debian-install', 'Debian', 'wheezy'
   end
 
-  context 'extra parameters' do
-    snap_cnt = 15000
-    # set custom params
-    let(:params) { {
-      :log4j_prop    => 'INFO,ROLLINGFILE',
-      :snap_count    => snap_cnt,
-    } }
 
-    it {
-      should contain_file('/etc/zookeeper/conf/environment').with_content(/INFO,ROLLINGFILE/)
-    }
-
-    it {
-      should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/snapCount=15000/)
-    }
-  end
-
-  context 'max allowed connections' do
-    max_conn = 15
-
-    let(:params) {{
-      :max_allowed_connections => max_conn
-    }}
-
-    it { should contain_file(
-        '/etc/zookeeper/conf/zoo.cfg'
-      ).with_content(/maxClientCnxns=#{max_conn}/) }
-  end
-
-  context 'quorum file' do
-    ipaddress = '192.168.1.1'
-    let(:facts) {{
-      :ipaddress => ipaddress
-    }}
-
-    it { should create_datacat_fragment('192.168.1.1').with_data(
-      {"id"=>"1", "client_ip"=>"192.168.1.1", "election_port"=>"2888", "leader_port"=>"3888"}
-    )}
-
-  #  it { should contain_file(
-  #    '/etc/zookeeper/conf/quorum.yml'
-  #  )}
-  #it { should contain_datacat__fragment("#{ipaddress}") }
-
-  #  it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
-  end
 end

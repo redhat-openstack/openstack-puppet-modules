@@ -17,31 +17,34 @@ class zookeeper::install(
   $datastore         = '/var/lib/zookeeper',
   $user              = 'zookeeper',
 ) {
-# a debian (or other binary package) must be available, see https://github.com/deric/zookeeper-deb-packaging
-# for Debian packaging
-  package { ['zookeeper']:
-    ensure => $ensure
-  }
+  anchor { 'zookeeper::install::begin': }
+  anchor { 'zookeeper::install:end': }
 
-  package { ['zookeeperd']: #init.d scripts for zookeeper
-    ensure  => $ensure,
-    require => Package['zookeeper']
-  }
-
-  # if !$cleanup_count, then ensure this cron is absent.
-  if ($snap_retain_count > 0 and $ensure != 'absent') {
-    
-    ensure_resource('package', 'cron', {
-      ensure => 'installed',
-    })
-    
-    cron { 'zookeeper-cleanup':
-        ensure  => present,
-        command => "${cleanup_sh} ${datastore} ${snap_retain_count}",
-        hour    => 2,
-        minute  => 42,
-        user    => $user,
-        require => Package['zookeeper'],
+  case $::osfamily {
+    Debian: {
+      class { 'zookeeper::os::debian':
+        ensure            => $ensure,
+        snap_retain_count => $snap_retain_count,
+        cleanup_sh        => $cleanup_sh,
+        datastore         => $datastore,
+        user              => $user,
+        before            => Anchor['zookeeper::install::end'],
+        require           => Anchor['zookeeper::install::begin'],
+      }
+    }
+    RedHat: {
+      class { 'zookeeper::os::redhat':
+        ensure            => $ensure,
+        snap_retain_count => $snap_retain_count,
+        cleanup_sh        => $cleanup_sh,
+        datastore         => $datastore,
+        user              => $user,
+        require => Anchor['zookeeper::install::begin'],
+        before  => Anchor['zookeeper::install::end'],
+      }
+    }
+    default: {
+      fail("Module '${module_name}' is not supported on OS: '${::operatingsystem}', family: '${::osfamily}'")
     }
   }
 }
