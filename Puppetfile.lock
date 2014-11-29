@@ -1,5 +1,5 @@
 FORGE
-  remote: http://forge.puppetlabs.com
+  remote: https://forgeapi.puppetlabs.com
   specs:
     puppetlabs/stdlib (4.1.0)
     richardc/datacat (0.4.3)
