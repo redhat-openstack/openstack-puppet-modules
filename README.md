@@ -41,6 +41,15 @@ zookeeper::client_ip: "%{::ipaddress_eth0}"
 
 and many others, see the `init.pp` file for more details.
 
+If your distribution has multiple packages for ZooKeeper, you can provide all package names
+as an array.
+
+```puppet
+class { 'zookeeper':
+  packages => ['zookeeper', 'zookeeper-java']
+}
+```
+
 ## Hiera Support
 
 All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml` or `zookeeper.yaml`:

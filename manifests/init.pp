@@ -49,6 +49,9 @@ class zookeeper(
   $packages                = ['zookeeper']
 ) {
 
+  validate_array($packages)
+  validate_bool($ensure_cron)
+
   anchor { 'zookeeper::start': }->
   class { 'zookeeper::install':
     ensure            => $ensure,
