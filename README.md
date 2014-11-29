@@ -8,13 +8,8 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 ## Requirements
 
   * Puppet 2.7, Puppet 3.x
-  * Ruby 1.8.7, 1.9.3, 2.0.0
-  * binary package of zookeeper
-
-### Debian/Ubuntu
-
-  * Debian 6 Squeeze: you can get ZooKeeper package from [Wheezy](http://packages.debian.org/wheezy/zookeeper) or [Sid](http://packages.debian.org/sid/zookeeper) repo.
-  * Debian 7 Wheezy: available in apt repository
+  * Ruby 1.8.7, 1.9.3, 2.0.0, 2.1.x
+  * binary package of ZooKeeper
 
 ## Basic Usage:
 
@@ -79,11 +74,12 @@ If you are versioning your puppet conf with git just add it as submodule, from y
 ## Supported platforms
 
   * Debian/Ubuntu
+    * Debian 6 Squeeze: you can get ZooKeeper package from [Wheezy](http://packages.debian.org/wheezy/zookeeper) or [Sid](http://packages.debian.org/sid/zookeeper) repo.
+    * Debian 7 Wheezy: available in apt repository
+  * RedHat/CentOS/Fedora
 
 ### Tested on:
 
-  * Debian 6 Squeeze, Puppet 3.1.0, Zookeeper 3.3.5
-  * Debian 7 Wheezy
-  * Ubuntu 12.04.03 LTS
-
+  * Debian 6 Squeeze, 7 Wheezy
+  * Ubuntu 12.04.03 LTS, 14.04
 

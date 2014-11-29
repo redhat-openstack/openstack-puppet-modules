@@ -46,6 +46,8 @@ class zookeeper::install(
         cleanup_sh        => $cleanup_sh,
         datastore         => $datastore,
         user              => $user,
+        ensure_cron       => $ensure_cron,
+        packages          => $packages,
         require           => Anchor['zookeeper::install::begin'],
         before            => Anchor['zookeeper::install::end'],
       }
