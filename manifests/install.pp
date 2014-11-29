@@ -39,8 +39,8 @@ class zookeeper::install(
         cleanup_sh        => $cleanup_sh,
         datastore         => $datastore,
         user              => $user,
-        require => Anchor['zookeeper::install::begin'],
-        before  => Anchor['zookeeper::install::end'],
+        require           => Anchor['zookeeper::install::begin'],
+        before            => Anchor['zookeeper::install::end'],
       }
     }
     default: {

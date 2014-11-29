@@ -27,7 +27,7 @@ class zookeeper(
   $pid_dir                 = '/var/run/zookeeper',
   $pid_file                = '$PIDDIR/zookeeper.pid',
   $zoo_main                = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
-  $lo4j_prop               = 'INFO,ROLLINGFILE',
+  $log4j_prop               = 'INFO,ROLLINGFILE',
   $cleanup_sh              = '/usr/share/zookeeper/bin/zkCleanup.sh',
   $servers                 = [''],
   $ensure                  = present,
