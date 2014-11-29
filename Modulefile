@@ -1,5 +1,5 @@
 name    'deric-zookeeper'
-version '0.2.5'
+version '0.3.0'
 source 'https://github.com/deric/puppet-zookeeper'
 author 'Tomas Barton'
 license 'Apache License, Version 2.0'
