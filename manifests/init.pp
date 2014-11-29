@@ -18,6 +18,8 @@ class zookeeper(
   # fact from which we get public ip address
   $client_ip               = $::ipaddress,
   $client_port             = 2181,
+  $election_port           = 2888,
+  $leader_port             = 3888,
   $log_dir                 = '/var/log/zookeeper',
   $cfg_dir                 = '/etc/zookeeper/conf',
   $user                    = 'zookeeper',
@@ -56,6 +58,8 @@ class zookeeper(
     datastore               => $datastore,
     client_ip               => $client_ip,
     client_port             => $client_port,
+    election_port           => $election_port,
+    leader_port             => $leader_port,
     log_dir                 => $log_dir,
     cfg_dir                 => $cfg_dir,
     user                    => $user,

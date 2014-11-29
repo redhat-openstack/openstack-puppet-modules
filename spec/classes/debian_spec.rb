@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'zookeeper::os::debian' do
+describe 'zookeeper::os::debian', :type => :class do
   shared_examples 'debian-install' do |os, codename|
     let(:facts) {{
       :operatingsystem => os,
@@ -33,6 +33,19 @@ describe 'zookeeper::os::debian' do
       it { should contain_package('zookeeper') }
       it { should contain_package('zookeeperd') }
       it { should_not contain_package('cron') }
+    end
+
+    context 'allow changing service package name' do
+      let(:user) { 'zookeeper' }
+      let(:group) { 'zookeeper' }
+
+      let(:params) { {
+        :service_package => 'zookeeper-server',
+      } }
+
+      it { should contain_package('zookeeper') }
+      it { should contain_package('zookeeper-server') }
+      it { should_not contain_package('zookeeperd') }
     end
 
 
@@ -71,6 +84,26 @@ describe 'zookeeper::os::debian' do
     it_behaves_like 'debian-install', 'Debian', 'squeeze'
     it_behaves_like 'debian-install', 'Debian', 'wheezy'
     it_behaves_like 'debian-install', 'Ubuntu', 'precise'
+  end
+
+  context 'does not install cron script on trusty' do
+    let(:facts) {{
+      :operatingsystem => 'Ubuntu',
+      :osfamily => 'Debian',
+      :lsbdistcodename => 'trusty',
+    }}
+
+    it { should_not contain_package('cron') }
+
+    it 'installs cron script' do
+      should_not contain_cron('zookeeper-cleanup').with({
+        'ensure'    => 'present',
+        'command'   => '/usr/lib/zookeeper/bin/zkCleanup.sh /var/lib/zookeeper 1',
+        'user'      => 'zookeeper',
+        'hour'      => '2',
+        'minute'      => '42',
+      })
+    end
   end
 
 end

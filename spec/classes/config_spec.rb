@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'zookeeper::config' do
+describe 'zookeeper::config', :type => :class do
   shared_examples 'debian-install' do |os, codename|
     let(:facts) {{
       :operatingsystem => os,
@@ -30,12 +30,12 @@ describe 'zookeeper::config' do
       snap_cnt = 15000
       # set custom params
       let(:params) { {
-        :log4j_prop    => 'INFO,ROLLINGFILE',
+        :log4j_prop    => 'ERROR',
         :snap_count    => snap_cnt,
       } }
 
       it {
-        should contain_file('/etc/zookeeper/conf/environment').with_content(/INFO,ROLLINGFILE/)
+        should contain_file('/etc/zookeeper/conf/environment').with_content(/ERROR/)
       }
 
       it {
