@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe 'zookeeper::config', :type => :class do
-  shared_examples 'debian-install' do |os, codename|
+
+  shared_examples 'common' do |os, codename|
     let(:facts) {{
       :operatingsystem => os,
       :osfamily => 'Debian',
@@ -74,8 +75,18 @@ describe 'zookeeper::config', :type => :class do
     #it { should contain_datacat__fragment("#{ipaddress}") }
 
     #  it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
-    end
 
+      context 'setting tick time' do
+        tick_time = 3000
+        let(:params) { {
+          :tick_time => tick_time,
+        } }
+
+        it {
+          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/tickTime=#{tick_time}/)
+        }
+      end
+    end
   end
 
   context 'on debian-like system' do
@@ -86,7 +97,7 @@ describe 'zookeeper::config', :type => :class do
     let(:id_file) { '/etc/zookeeper/conf/myid' }
     let(:myid)    { /1/ }
 
-    it_behaves_like 'debian-install', 'Debian', 'wheezy'
+    it_behaves_like 'common', 'Debian', 'wheezy'
   end
 
   context 'custom parameters' do
@@ -107,8 +118,7 @@ describe 'zookeeper::config', :type => :class do
     let(:id_file) { '/var/lib/zookeeper/conf/myid' }
     let(:myid)    { /2/ }
 
-    it_behaves_like 'debian-install', 'Debian', 'wheezy'
+    it_behaves_like 'common', 'Debian', 'wheezy'
   end
-
 
 end
