@@ -51,7 +51,11 @@ snapCount=<%= @snap_count %>
 # coordinates updates. For higher update throughput at thes slight expense of
 # read throughput the leader can be configured to not accept clients and focus
 # on coordination.
-#leaderServes=yes
+<% if @leader -%>
+leaderServes=yes
+<% else -%>
+leaderServes=no
+<% end -%>
 
 # Since 3.4.0: When enabled, ZooKeeper auto purge feature retains the autopurge.
 # snapRetainCount most recent snapshots and the corresponding transaction logs

@@ -103,6 +103,16 @@ describe 'zookeeper::config', :type => :class do
           should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/syncLimit=#{sync_limit}/)
         }
       end
+
+      context 'setting leader' do
+        let(:params) { {
+          :leader => false,
+        } }
+
+        it {
+          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/leaderServes=no/)
+        }
+      end
     end
   end
 

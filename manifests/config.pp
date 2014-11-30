@@ -51,6 +51,7 @@ class zookeeper::config(
   $tick_time               = 2000,
   $init_limit              = 10,
   $sync_limit              = 5,
+  $leader                  = true,
 ) {
   require zookeeper::install
 
