@@ -9,12 +9,12 @@ initLimit=10
 # sending a request and getting an acknowledgement
 syncLimit=5
 # the directory where the snapshot is stored.
-dataDir=<%= scope.lookupvar('zookeeper::config::datastore') %>
+dataDir=<%= @datastore %>
 # Place the dataLogDir to a separate physical disc for better performance
 # dataLogDir=/disk2/zookeeper
 
 # the port at which the clients will connect
-clientPort=<%= scope.lookupvar('zookeeper::config::client_port') %>
+clientPort=<%= @client_port %>
 
 # specify all zookeeper servers
 # The fist port is used by followers to connect to the leader
@@ -23,7 +23,7 @@ clientPort=<%= scope.lookupvar('zookeeper::config::client_port') %>
 #server.2=zookeeper2:2888:3888
 #server.3=zookeeper3:2888:3888
 <% i = 1 -%>
-<% scope.lookupvar('zookeeper::config::servers').each do |h| -%>
+<% @servers.each do |h| -%>
 <%= "server.#{i}=#{h}" %><% i += 1 %>
 <% end -%>
 
@@ -41,7 +41,7 @@ clientPort=<%= scope.lookupvar('zookeeper::config::client_port') %>
 # transaction log. After snapCount transactions are written to a log file a
 # snapshot is started and a new transaction log file is started. The default
 # snapCount is 10,000.
-snapCount=<%= scope.lookupvar('zookeeper::config::snap_count') %>
+snapCount=<%= @snap_count %>
 
 # If this option is defined, requests will be will logged to a trace file named
 # traceFile.year.month.day.
@@ -57,17 +57,17 @@ snapCount=<%= scope.lookupvar('zookeeper::config::snap_count') %>
 # snapRetainCount most recent snapshots and the corresponding transaction logs
 # in the dataDir and dataLogDir respectively and deletes the rest.
 # Defaults to 3. Minimum value is 3.
-autopurge.snapRetainCount=<%= scope.lookupvar('zookeeper::config::snap_retain_count') %>
+autopurge.snapRetainCount=<%= @snap_retain_count %>
 
 # Since 3.4.0: The time interval in hours for which the purge task has to be
 # triggered. Set to a positive integer (1 and above) to enable the auto purging.
 # Defaults to 0.
-autopurge.purgeInterval=<%= scope.lookupvar('zookeeper::config::purge_interval') %>
+autopurge.purgeInterval=<%= @purge_interval %>
 
 # Maximum allowed connections
-maxClientCnxns=<%= scope.lookupvar('zookeeper::config::max_allowed_connections') %>
+maxClientCnxns=<%= @max_allowed_connections %>
 
-<% if scope.lookupvar('zookeeper::config::peer_type') != 'UNSET' -%>
+<% if @peer_type != 'UNSET' -%>
 # Zookeeper peer type
-peerType=<%= scope.lookupvar('zookeeper::config::peer_type') %>
+peerType=<%= @peer_type %>
 <% end -%>
