@@ -49,6 +49,8 @@ class zookeeper::config(
   $export_tag              = 'zookeeper',
   $peer_type               = 'UNSET',
   $tick_time               = 2000,
+  $init_limit              = 10,
+  $sync_limit              = 5,
 ) {
   require zookeeper::install
 

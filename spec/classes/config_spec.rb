@@ -86,6 +86,23 @@ describe 'zookeeper::config', :type => :class do
           should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/tickTime=#{tick_time}/)
         }
       end
+
+      context 'setting init and sync limit' do
+        init_limit = 15
+        sync_limit = 10
+        let(:params) { {
+          :init_limit => init_limit,
+          :sync_limit => sync_limit,
+        } }
+
+        it {
+          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/initLimit=#{init_limit}/)
+        }
+
+        it {
+          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/syncLimit=#{sync_limit}/)
+        }
+      end
     end
   end
 
