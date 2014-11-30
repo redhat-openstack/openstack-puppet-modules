@@ -1,9 +1,0 @@
-Gemfile.lock
-spec/fixtures/modules/*
-spec/fixtures/manifests/site.pp
-*.swp
-pkg
-.bundle
-vendor
-.vagrant
-.project
