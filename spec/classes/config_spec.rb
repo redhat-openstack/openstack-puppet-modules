@@ -68,6 +68,7 @@ describe 'zookeeper::config', :type => :class do
       it { should create_datacat_fragment('192.168.1.1').with_data(
         {"id"=>myid, "client_ip"=>"192.168.1.1", "election_port"=>"2888", "leader_port"=>"3888"}
       )}
+    end
 
     #  it { should contain_file(
     #    '/etc/zookeeper/conf/quorum.yml'
@@ -76,43 +77,42 @@ describe 'zookeeper::config', :type => :class do
 
     #  it { should contain_concat__fragment("zookeeper_#{ipaddress}") }
 
-      context 'setting tick time' do
-        tick_time = 3000
-        let(:params) { {
-          :tick_time => tick_time,
-        } }
+    context 'setting tick time' do
+      tick_time = 3000
+      let(:params) { {
+        :tick_time => tick_time,
+      } }
 
-        it {
-          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/tickTime=#{tick_time}/)
-        }
-      end
+      it {
+        should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/tickTime=#{tick_time}/)
+      }
+    end
 
-      context 'setting init and sync limit' do
-        init_limit = 15
-        sync_limit = 10
-        let(:params) { {
-          :init_limit => init_limit,
-          :sync_limit => sync_limit,
-        } }
+    context 'setting init and sync limit' do
+      init_limit = 15
+      sync_limit = 10
+      let(:params) { {
+        :init_limit => init_limit,
+        :sync_limit => sync_limit,
+      } }
 
-        it {
-          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/initLimit=#{init_limit}/)
-        }
+      it {
+        should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/initLimit=#{init_limit}/)
+      }
 
-        it {
-          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/syncLimit=#{sync_limit}/)
-        }
-      end
+      it {
+        should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/syncLimit=#{sync_limit}/)
+      }
+    end
 
-      context 'setting leader' do
-        let(:params) { {
-          :leader => false,
-        } }
+    context 'setting leader' do
+      let(:params) { {
+        :leader => false,
+      } }
 
-        it {
-          should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/leaderServes=no/)
-        }
-      end
+      it {
+        should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/leaderServes=no/)
+      }
     end
   end
 
@@ -136,7 +136,6 @@ describe 'zookeeper::config', :type => :class do
       :cfg_dir => '/var/lib/zookeeper/conf',
       :log_dir => '/var/lib/zookeeper/log',
     } }
-
 
     let(:user)    { 'zoo' }
     let(:group)   { 'zoo' }
