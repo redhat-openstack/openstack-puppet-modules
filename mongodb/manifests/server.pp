@@ -15,7 +15,7 @@ class mongodb::server (
   $service_ensure   = $mongodb::params::service_ensure,
   $service_status   = $mongodb::params::service_status,
 
-  $package_ensure  = $ensure,
+  $package_ensure  = $mongodb::params::package_ensure,
   $package_name    = $mongodb::params::server_package_name,
 
   $logpath         = $mongodb::params::logpath,
@@ -50,10 +50,13 @@ class mongodb::server (
   $mms_interval    = undef,
   $replset         = undef,
   $rest            = undef,
+  $quiet           = undef,
   $slowms          = undef,
   $keyfile         = undef,
   $set_parameter   = undef,
   $syslog          = undef,
+  
+  $config_content  = undef,
 
   # Deprecated parameters
   $master          = undef,

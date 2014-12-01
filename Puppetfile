@@ -71,7 +71,7 @@ mod 'module-data',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
 
 mod 'mongodb',
-  :commit => '0518f864afcce2ebb79f1f2edab5de323c811af7',
+  :commit => 'fe562b86f388a6d107bb1f3cb3b32a3978f59c2a',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
 
 mod 'mysql',
