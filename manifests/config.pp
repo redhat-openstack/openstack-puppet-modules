@@ -4,7 +4,7 @@
 #
 class uchiwa::config {
 
-  datacat { '/etc/sensu/uchiwa.json':
-    template => 'uchiwa/etc/sensu/uchiwa.json.erb',
+  file { '/etc/sensu/uchiwa.json':
+    content => template('uchiwa/etc/sensu/uchiwa.json.erb'),
   }
 }

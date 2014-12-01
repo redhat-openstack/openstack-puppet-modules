@@ -1,17 +1,26 @@
 {
-  "sensu": [
-    <%- 
-    apis = Array.new
-    @data['api'].each do |a|  
-      apis << a
-    end %>
-      <%= apis.join(",\n") %>
-    ],
+"sensu": [
+  <%- default_endpoint = scope['uchiwa::params::sensu_api_endpoints'][0] -%>
+  <%- @sensu_api_endpoints.each_with_index do |endpoint, i| -%>
+    {
+      "name": "<%= endpoint['name'] || default_endpoint['name'] %>",
+      "host": "<%= endpoint['host'] || default_endpoint['host'] %>",
+      "ssl": <%= endpoint['ssl'] || default_endpoint['ssl'] %>,
+      "insecure": <%= endpoint['insecure'] || default_endpoint['insecure']%>,
+      "port": <%= endpoint['port'] || default_endpoint['port'] %>,
+      "user": "<%= endpoint['user'] || default_endpoint['user'] %>",
+      "pass": "<%= endpoint['pass'] || default_endpoint['pass'] %>",
+      "path": "<%= endpoint['path'] || default_endpoint['path'] %>",
+      "timeout": <%= endpoint['timeout'] || default_endpoint['timeout'] %>
+    }<%= ',' if i < (@sensu_api_endpoints.size - 1) %>
+    <%- end -%>
+  ],
   "uchiwa": {
-    "host": "<%= @data['host'] %>",
-    "port": <%= @data['port'] %>,
-    "user": "<%= @data['user'] %>",
-    "pass": "<%= @data['pass'] %>",
-    "refresh": <%= @data['refresh'] %>
+    "host": "<%= @host %>",
+    "port": <%= @port %>,
+    "user": "<%= @user %>",
+    "pass": "<%= @pass %>",
+    "stats": <%= @stats %>,
+    "refresh": <%= @refresh %>
   }
 }

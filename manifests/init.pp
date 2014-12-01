@@ -6,7 +6,7 @@
 #
 # [*sample_parameter*]
 #   Explanation of what this parameter affects and what it defaults to.
-
+#
 #  [*package_name*]
 #    String
 #    Default: uchiwa
@@ -82,23 +82,37 @@
 #    Default: 5
 #    Determines the interval to pull the Sensu API, in seconds
 #
+#  [*sensu_api_endpoints*]
+#    Array of hashes
+#    Default: [{
+#               name    => 'sensu',
+#               ssl     => false,
+#               port    => 4567,
+#               user    => 'sensu',
+#               pass    => 'sensu',
+#               path    => '',
+#               timeout => 5,
+#             }]
+#     An array of API endpoints to connect uchiwa to one or multiple sensu servers.
 #
 class uchiwa (
-  $package_name    = $uchiwa::params::package_name,
-  $service_name    = $uchiwa::params::service_name,
-  $version         = $uchiwa::params::version,
-  $install_repo    = $uchiwa::params::install_repo,
-  $repo            = $uchiwa::params::repo,
-  $repo_source     = $uchiwa::params::repo_source,
-  $repo_key_id     = $uchiwa::params::repo_key_id,
-  $repo_key_source = $uchiwa::params::repo_key_source,
-  $manage_services = $uchiwa::params::manage_services,
-  $manage_user     = $uchiwa::params::manage_user,
-  $host            = $uchiwa::params::host,
-  $port            = $uchiwa::params::port,
-  $user            = $uchiwa::params::user,
-  $pass            = $uchiwa::params::pass,
-  $refresh         = $uchiwa::params::refresh
+  $package_name         = $uchiwa::params::package_name,
+  $service_name         = $uchiwa::params::service_name,
+  $version              = $uchiwa::params::version,
+  $install_repo         = $uchiwa::params::install_repo,
+  $repo                 = $uchiwa::params::repo,
+  $repo_source          = $uchiwa::params::repo_source,
+  $repo_key_id          = $uchiwa::params::repo_key_id,
+  $repo_key_source      = $uchiwa::params::repo_key_source,
+  $manage_services      = $uchiwa::params::manage_services,
+  $manage_user          = $uchiwa::params::manage_user,
+  $host                 = $uchiwa::params::host,
+  $port                 = $uchiwa::params::port,
+  $user                 = $uchiwa::params::user,
+  $pass                 = $uchiwa::params::pass,
+  $stats                = $uchiwa::params::stats,
+  $refresh              = $uchiwa::params::refresh,
+  $sensu_api_endpoints  = $uchiwa::params::sensu_api_endpoints,
 ) inherits uchiwa::params {
 
   # validate parameters here
@@ -117,6 +131,7 @@ class uchiwa (
   validate_string($user)
   validate_string($pass)
   validate_string($refresh)
+  validate_array($sensu_api_endpoints)
 
   anchor { 'uchiwa::begin': } ->
   class { 'uchiwa::install': } ->
