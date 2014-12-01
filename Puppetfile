@@ -54,7 +54,7 @@ mod 'trove',
 # Dependency
 mod 'apache',
   :git => 'git://github.com/enovance/puppetlabs-apache.git',
-  :ref => '58682faf74cdfc6c8d921d2be9322368c8a96cf9'
+  :ref => '173967ab8dd21a93d6f2b47ff2641d0092f729b1'
 mod 'apt',
   :git => 'git://github.com/enovance/puppetlabs-apt.git',
   :ref => '9b001af8775c7231ea2656b7eb43d6141b536f49'
@@ -73,7 +73,7 @@ mod 'common',
   :ref => '2d0606fce1078222dd483e731ec32807f5b4ca53'
 mod 'concat',
   :git => 'git://github.com/enovance/puppet-concat.git',
-  :ref => '04356974f72b90a1d0f57346a00e95a717924e43'
+  :ref => 'ab06c2b8c09d9da82b53a62a5389427720519cd5'
 mod 'corosync',
   :git => 'git://github.com/enovance/puppetlabs-corosync.git',
   :ref => '79b61302b07fef30b65a42f3b55229616018aacf'
@@ -92,6 +92,12 @@ mod 'gcc',
 mod 'git',
   :git => 'git://github.com/enovance/puppetlabs-git.git',
   :ref => '0df1f62130a7752c728efb7555f2b07ca178ee5b'
+mod 'hiera',
+  :git => 'git://github.com/enovance/puppet-hiera.git',
+  :ref => '1d407be61d800034409e4595a6fb73004b10f70f'
+mod 'java',
+  :git => 'git://github.com/enovance/puppetlabs-java.git',
+  :ref => '5f60d5e2c041848b4c3e71c0aa6ba99b87774d4a'
 mod 'firewall',
   :git => 'git://github.com/enovance/puppetlabs-firewall.git',
   :ref => '4ed1b43e1629c1b6108133b0fc3be603d03ffe6c'
@@ -145,6 +151,12 @@ mod 'ntp',
 mod 'pacemaker',
   :git => 'git://github.com/enovance/puppet-pacemaker.git',
   :ref => '56bbb3580bb7fa62bf57c2ed7a30b938e42b8cc3'
+mod 'postgresql',
+  :git => 'git://github.com/enovance/puppetlabs-postgresql.git',
+  :ref => '0b483a2796e77d670e326a01fce57465d2c08774'
+mod 'puppetdb',
+  :git => 'git://github.com/enovance/puppetlabs-puppetdb.git',
+  :ref => 'ed6579b6eaf2c98c8220c41990850949e48b86b4'
 mod 'puppetdbquery',
   :git => 'git://github.com/enovance/puppet-puppetdbquery.git',
   :ref =>  '89194917744f929bb600c31d7d6f822b529f5f03'
