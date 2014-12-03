@@ -1,0 +1,22 @@
+2013-07-30 Release 1.2.0
+Features:
+- Add `confdir`, `conffile`, `package_name`, and `service_name` parameters to
+`Class['xinetd']`
+- Add support for FreeBSD and Suse.
+- Add `log_on_failure`, `service_name`, `groups`, `no_access`, `access_times`,
+`log_type`, `only_from`, and `xtype` parameters to `Xinetd::Service` define
+
+Bugfixes:
+- Redesign for `xinetd::params` pattern
+- Add validation
+- Add unit testing
+
+* 2012-06-07 1.1.0
+- Add port and bind options to services
+- make services deletable
+
+1.0.1 - 20100812
+    * added documentation
+
+1.0.0 - 20100624
+    * initial release

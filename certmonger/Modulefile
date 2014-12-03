@@ -1,0 +1,10 @@
+name    'rcritten/certmonger'
+version '1.0.2'
+source 'git://github.com/rcritten/puppet-certmonger.git'
+author 'Rob Crittenden <rcritten@redhat.com>'
+license 'Apache'
+summary 'Certmonger Puppet Module'
+description 'This module tracks certificates using certmonger.'
+project_page 'https://github.com/rcritten/puppet-certmonger'
+
+dependency 'puppetlabs/stdlib', '>= 0.0.1'
