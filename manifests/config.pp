@@ -22,6 +22,7 @@
 class zookeeper::config(
   $id                      = '1',
   $datastore               = '/var/lib/zookeeper',
+  $initialize_datastore    = false,
   $client_ip               = $::ipaddress,
   $client_port             = 2181,
   $election_port           = 2888,
@@ -119,5 +120,15 @@ class zookeeper::config(
     client_ip     => $client_ip,
     election_port => $election_port,
     leader_port   => $leader_port,
+  }
+
+  # Initialize the datastore if required
+  if $initialize_datastore {
+    exec { "initialize_datastore":
+      command => "/usr/bin/zookeeper-server-initialize --myid=$id",
+      user    => $user,
+      creates => "$datastore/myid",
+      require => File[$datastore],
+    }
   }
 }
