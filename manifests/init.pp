@@ -15,6 +15,7 @@
 class zookeeper(
   $id                      = '1',
   $datastore               = '/var/lib/zookeeper',
+  $initialize_datastore    = false,
   # fact from which we get public ip address
   $client_ip               = $::ipaddress,
   $client_port             = 2181,
@@ -46,6 +47,7 @@ class zookeeper(
   $start_with              = 'init.d',
   $ensure_cron             = true,
   $service_package         = 'zookeeperd',
+  $service_name            = 'zookeeper',
   $packages                = ['zookeeper']
 ) {
 
@@ -67,6 +69,7 @@ class zookeeper(
   class { 'zookeeper::config':
     id                      => $id,
     datastore               => $datastore,
+    initialize_datastore    => $initialize_datastore,
     client_ip               => $client_ip,
     client_port             => $client_port,
     election_port           => $election_port,
@@ -90,7 +93,8 @@ class zookeeper(
     peer_type               => $peer_type,
   }->
   class { 'zookeeper::service':
-    cfg_dir => $cfg_dir,
+    cfg_dir      => $cfg_dir,
+    service_name => $service_name,
   }
   ->
   anchor { 'zookeeper::end': }
