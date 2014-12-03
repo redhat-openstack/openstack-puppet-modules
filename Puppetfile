@@ -28,7 +28,7 @@ mod 'firewall',
 
 mod 'galera',
   :commit => 'f7d4110886b643eb63dc5c347a0e8a06b09642e7',
-  :git => 'https://github.com/rohara/puppet-galera.git'
+  :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
 mod 'glance',
   :commit => '24d5c3425f6016e9eb6447a4041a7419eada3d31',
