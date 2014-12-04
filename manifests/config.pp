@@ -124,10 +124,10 @@ class zookeeper::config(
 
   # Initialize the datastore if required
   if $initialize_datastore {
-    exec { "initialize_datastore":
-      command => "/usr/bin/zookeeper-server-initialize --myid=$id",
+    exec { 'initialize_datastore':
+      command => "/usr/bin/zookeeper-server-initialize --myid=${id}",
       user    => $user,
-      creates => "$datastore/myid",
+      creates => "${datastore}/myid",
       require => File[$datastore],
     }
   }

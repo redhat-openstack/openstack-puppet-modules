@@ -1,14 +1,14 @@
 # Class: zookeeper::service
 
 class zookeeper::service(
-  $cfg_dir = '/etc/zookeeper/conf',
-  $service_name = 'zookeeper',
+  $cfg_dir        = '/etc/zookeeper/conf',
+  $service_name   = 'zookeeper',
+  $service_ensure = 'running',
 ){
   require zookeeper::install
 
-  service { 'zookeeper':
-    name       => "$service_name",
-    ensure     => 'running',
+  service { $service_name:
+    ensure     => $service_ensure,
     hasstatus  => true,
     hasrestart => true,
     enable     => true,

@@ -25,6 +25,8 @@ describe 'zookeeper', :type => :class do
     it { should contain_package('zookeeper') }
     it { should contain_package('zookeeper-bin') }
     it { should contain_service('zookeeper') }
+    # datastore exec is not included by default
+    it { should_not contain_exec('initialize_datastore') }
   end
 
   context 'Cloudera packaging' do
@@ -39,6 +41,7 @@ describe 'zookeeper', :type => :class do
 
     it { should contain_package('zookeeper-server') }
     it { should contain_service('zookeeper-server') }
+    it { should contain_exec('initialize_datastore') }
   end
 
 
