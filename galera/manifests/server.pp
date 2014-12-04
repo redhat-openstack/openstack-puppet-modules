@@ -1,34 +1,77 @@
-# Class: galera::server
+# == Class: galera::server
 #
 # manages the installation of the galera server.
 # manages the package, service, galera.cnf
 #
-# Parameters:
-#  [*msyql_server_hash*]     - Hash of mysql server parameters.
-#  [*bootstrap*]             - Defaults to false, boolean to set cluster boostrap.
-#  [*package_name*]          - The name of the galera package.
-#  [*package_ensure*]        - Ensure state for package. Can be specified as version.
-#  [*service_name*]          - The name of the galera service.
-#  [*service_enable*]        - Defaults to true, boolean to set service enable.
-#  [*service_ensure*]        - Defaults to running, needed to set root password.
-#  [*service_provider*]      - What service provider to use.
-#  [*wsrep_bind_address*]    - Address to bind galera service.
-#  [*wsrep_node_address*]    - Address of local galera node.
-#  [*wsrep_provider*]        - Full path to wsrep provider library or 'none'.
-#  [*wsrep_cluster_name*]    - Logical cluster name. Should be the same for all nodes.
-#  [*wsrep_cluster_members*] - List of cluster members, IP addresses or hostnames.
-#  [*wsrep_sst_method*]      - State snapshot transfer method.
-#  [*wsrep_sst_username*]    - Username used by the wsrep_sst_auth authentication string.
-#  [*wsrep_sst_password*]    - Password used by the wsrep_sst_auth authentication string.
-#  [*wsrep_ssl*]             - Boolean to disable SSL even if certificate and key are configured.
-#  [*wsrep_ssl_key*]         - Private key for the certificate above, unencrypted, in PEM format.
-#  [*wsrep_ssl_cert*]        - Certificate file in PEM format.
+# === Parameters:
 #
-# Actions:
+#  [*mysql_server_hash*]
+#   Hash of mysql server parameters.
 #
-# Requires:
+#  [*bootstrap*]
+#   Defaults to false, boolean to set cluster boostrap.
 #
-# Sample Usage:
+#  [*package_name*]
+#   The name of the galera package.
+#
+#  [*package_ensure*]
+#   Ensure state for package. Can be specified as version.
+#
+#  [*service_name*]
+#   The name of the galera service.
+#
+#  [*service_enable*]
+#   Defaults to true, boolean to set service enable.
+#
+#  [*service_ensure*]
+#   Defaults to running, needed to set root password.
+#
+#  [*service_provider*]
+#   What service provider to use.
+#
+#  [*wsrep_bind_address*]
+#   Address to bind galera service.
+#
+#  [*wsrep_node_address*]
+#   Address of local galera node.
+#
+#  [*wsrep_provider*]
+#   Full path to wsrep provider library or 'none'.
+#
+#  [*wsrep_cluster_name*]
+#   Logical cluster name.  be the same for all nodes.
+#
+#  [*wsrep_cluster_members*]
+#   List of cluster members, IP addresses or hostnames.
+#
+#  [*wsrep_sst_method*]
+#   State snapshot transfer method.
+#
+#  [*wsrep_sst_username*]
+#   Username used by the wsrep_sst_auth authentication string.
+#
+#  [*wsrep_sst_password*]
+#   Password used by the wsrep_sst_auth authentication string.
+#
+#  [*wsrep_ssl*]
+#   Boolean to disable SSL even if certificate and key are configured.
+#
+#  [*wsrep_ssl_key*]
+#   Private key for the certificate above, unencrypted, in PEM format.
+#
+#  [*wsrep_ssl_cert*]
+#   Certificate file in PEM format.
+#
+#  [*debug*]
+#
+#  [*manage_service*]
+#   State of the service.
+#
+# === Actions:
+#
+# === Requires:
+#
+# === Sample Usage:
 # class { 'galera::server':
 #   config_hash => {
 #     bind_address   => '0.0.0.0',
@@ -85,10 +128,9 @@ class galera::server (
 
   if $manage_service {
     service { 'galera':
-      name     => $service_name,
-      name     => 'mysqld', # short-term hack to see if it works
-      enable   => $service_enable,
-      ensure   => $service_ensure,
+      ensure => $service_ensure,
+      name   => $service_name,
+      enable => $service_enable,
     }
   }
 }
