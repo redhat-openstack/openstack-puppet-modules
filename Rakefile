@@ -2,7 +2,7 @@ task(:default).clear
 task :default => :test
 
 desc 'Run Puppetfile Validation'
-task :test => [:validate_puppetfile,:all_modules]
+task :test => [:validate_puppetfile,:test_modules]
 
 desc "Validate the Puppetfile syntax"
 task :validate_puppetfile do
@@ -10,9 +10,10 @@ task :validate_puppetfile do
   sh "r10k puppetfile check"
 end
 
-desc "Run rspec tests for each modules"
-task :all_modules do
-  FileList["*/Rakefile"].each do |project|
+desc "Run rspec test on specified modules"
+task :test_modules, [:modules] do |t, args|
+  args.with_defaults(:modules => FileList["*/Rakefile"])
+  Array(args[:modules]).each do |project|
     dir = project.pathmap("%d")
     Dir.chdir(dir) do
       puts "======"
