@@ -60,6 +60,19 @@ zookeeper::client_port: 2181
 zookeeper::datastore: '/var/lib/zookeeper'
 ```
 
+## Cloudera package
+
+In Cloudera distribution ZooKeeper package is called `zookeeper-server` and the service as well. Moreover
+there's initialization script which should be called after installation.
+
+```puppet
+class { 'zookeeper':
+  packages            => ['zookeeper-server'],
+  service_name        => 'zookeeper-server',
+  intialize_datastore => true
+}
+```
+
 ## Install
 
 ### librarian (recommended)
@@ -97,4 +110,5 @@ If you are versioning your puppet conf with git just add it as submodule, from y
 
   * Debian 6 Squeeze, 7 Wheezy
   * Ubuntu 12.04.03 LTS, 14.04
+  * CentOS 6
 
