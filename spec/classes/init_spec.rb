@@ -24,6 +24,21 @@ describe 'zookeeper', :type => :class do
 
     it { should contain_package('zookeeper') }
     it { should contain_package('zookeeper-bin') }
+    it { should contain_service('zookeeper') }
+  end
+
+  context 'Cloudera packaging' do
+    let(:user) { 'zookeeper' }
+    let(:group) { 'zookeeper' }
+
+    let(:params) { {
+      :packages             => ['zookeeper-server'],
+      :service_name         => 'zookeeper-server',
+      :initialize_datastore => true
+    } }
+
+    it { should contain_package('zookeeper-server') }
+    it { should contain_service('zookeeper-server') }
   end
 
 

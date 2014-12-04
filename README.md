@@ -67,9 +67,9 @@ there's initialization script which should be called after installation.
 
 ```puppet
 class { 'zookeeper':
-  packages            => ['zookeeper-server'],
-  service_name        => 'zookeeper-server',
-  intialize_datastore => true
+  packages             => ['zookeeper-server'],
+  service_name         => 'zookeeper-server',
+  initialize_datastore => true
 }
 ```
 
