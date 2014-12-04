@@ -62,12 +62,13 @@ zookeeper::datastore: '/var/lib/zookeeper'
 
 ## Cloudera package
 
-In Cloudera distribution ZooKeeper package is called `zookeeper-server` and the service as well. Moreover
-there's initialization script which should be called after installation.
+In Cloudera distribution ZooKeeper package does not provide init scripts (same as in Debian). Package containing init scripts
+is called `zookeeper-server` and the service as well. Moreover there's initialization script which should be called after installation.
+So, the configuration might look like this:
 
 ```puppet
 class { 'zookeeper':
-  packages             => ['zookeeper-server'],
+  packages             => ['zookeeper', 'zookeeper-server'],
   service_name         => 'zookeeper-server',
   initialize_datastore => true
 }

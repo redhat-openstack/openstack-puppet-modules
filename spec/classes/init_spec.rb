@@ -22,9 +22,9 @@ describe 'zookeeper', :type => :class do
       :packages => [ 'zookeeper', 'zookeeper-bin' ],
     } }
 
-    it { should contain_package('zookeeper') }
-    it { should contain_package('zookeeper-bin') }
-    it { should contain_service('zookeeper') }
+    it { should contain_package('zookeeper').with({:ensure => 'present'}) }
+    it { should contain_package('zookeeper-bin').with({:ensure => 'present'}) }
+    it { should contain_service('zookeeper').with({:ensure => 'running'}) }
     # datastore exec is not included by default
     it { should_not contain_exec('initialize_datastore') }
   end
@@ -34,13 +34,14 @@ describe 'zookeeper', :type => :class do
     let(:group) { 'zookeeper' }
 
     let(:params) { {
-      :packages             => ['zookeeper-server'],
+      :packages             => ['zookeeper','zookeeper-server'],
       :service_name         => 'zookeeper-server',
       :initialize_datastore => true
     } }
 
-    it { should contain_package('zookeeper-server') }
-    it { should contain_service('zookeeper-server') }
+    it { should contain_package('zookeeper').with({:ensure => 'present'}) }
+    it { should contain_package('zookeeper-server').with({:ensure => 'present'}) }
+    it { should contain_service('zookeeper-server').with({:ensure => 'running'})  }
     it { should contain_exec('initialize_datastore') }
   end
 
