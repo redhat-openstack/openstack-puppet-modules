@@ -27,9 +27,9 @@
 <%= scope.function_template(['apache/vhost/_directories.erb']) -%>
 
   ## Load additional static includes
-<% Array(@additional_includes).each do |include| %>
+<% Array(@additional_includes).each do |include| -%>
   Include "<%= include %>"
-<% end %>
+<% end -%>
 
   ## Logging
 <% if @error_log -%>
@@ -44,6 +44,7 @@
 <% elsif @access_log -%>
   CustomLog "<%= @access_log_destination %>" <%= @_access_log_format %>
 <% end -%>
+<%= scope.function_template(['apache/vhost/_action.erb']) -%>
 <%= scope.function_template(['apache/vhost/_block.erb']) -%>
 <%= scope.function_template(['apache/vhost/_error_document.erb']) -%>
 <%= scope.function_template(['apache/vhost/_proxy.erb']) -%>
@@ -61,4 +62,5 @@
 <%= scope.function_template(['apache/vhost/_wsgi.erb']) -%>
 <%= scope.function_template(['apache/vhost/_custom_fragment.erb']) -%>
 <%= scope.function_template(['apache/vhost/_fastcgi.erb']) -%>
+<%= scope.function_template(['apache/vhost/_suexec.erb']) -%>
 </VirtualHost>
