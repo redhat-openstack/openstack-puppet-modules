@@ -1,0 +1,12 @@
+language: ruby
+install:
+script: "./.travis.sh"
+rvm:
+  - 2.0.0
+matrix:
+  fast_finish: true
+env:
+  matrix:
+    - PUPPET_GEM_VERSION="~> 3.7.0"
+notifications:
+  email: false
