@@ -2,6 +2,10 @@ mod 'apache',
   :commit => '769ff363a8a3c51e24f63a2494217d2d029289c6',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
+mod 'aviator',
+  :commit => '5f1429fecf755692d6056fce3f3af08d1d97e763',
+  :git => 'https://github.com/aimonb/puppet_aviator.git'
+
 mod 'ceilometer',
   :commit => 'ee2f3cd4498b2ef3a6633991206b7185c1d32897',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
