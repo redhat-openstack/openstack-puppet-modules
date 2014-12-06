@@ -1,5 +1,5 @@
 name    'aimonb-aviator'
-version '0.4.2'
+version '0.4.3'
 source 'https://github.com/aimonb/puppet_aviator'
 author 'aimonb'
 license 'MIT License'
