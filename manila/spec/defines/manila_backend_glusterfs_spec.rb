@@ -1,0 +1,43 @@
+require 'spec_helper'
+
+describe 'manila::backend::glusterfs' do
+
+  shared_examples_for 'glusterfs share driver' do
+    let(:title) {'mygluster'}
+
+    let :params do
+      {
+        :glusterfs_volumes_config    => '/etc/manila/glusterfs_volumes',
+        :glusterfs_mount_point_base  => '$state_path/mnt',
+      }
+    end
+
+    it 'configures glusterfs share driver' do
+      should contain_manila_config('mygluster/share_backend_name').with_value(
+        'mygluster')
+      should contain_manila_config('mygluster/share_driver').with_value(
+        'manila.share.drivers.glusterfs.GlusterfsShareDriver')
+      should contain_manila_config('mygluster/glusterfs_volumes_config').with_value(
+        '/etc/manila/glusterfs_volumes')
+      should contain_manila_config('mygluster/glusterfs_mount_point_base').with_value(
+        '$state_path/mnt')
+    end
+  end
+
+  context 'on Debian platforms' do
+    let :facts do
+      { :osfamily => 'Debian' }
+    end
+
+    it_configures 'glusterfs share driver'
+  end
+
+  context 'on RedHat platforms' do
+    let :facts do
+      { :osfamily => 'RedHat' }
+    end
+
+    it_configures 'glusterfs share driver'
+  end
+
+end
