@@ -15,7 +15,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => 'b5dce39754ed6857d6dc87b3ae29ed38057a487e',
+  :commit => 'b5dce35754ed6857d6dc87b3ae29ed38057a487e',
   :git => 'https://github.com/stackforge/puppet-cinder.git'
 
 mod 'common',
@@ -35,7 +35,7 @@ mod 'galera',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
 mod 'glance',
-  :commit => '24d5c3425f6016e9eb6447a4041a7419eada3d31',
+  :commit => '24d5c3925f6016e9eb6447a4041a7419eada3d31',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
