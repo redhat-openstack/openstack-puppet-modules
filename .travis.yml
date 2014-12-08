@@ -1,5 +1,4 @@
 language: ruby
-install:
 script: "./.travis.sh"
 rvm:
   - 2.0.0
@@ -16,7 +15,7 @@ notifications:
       - "Change view : %{compare_url}"
       - "Build details : %{build_url}"
     channels:
-        - "chat.freenode.net#packstack-dev"
+        - "irc.freenode.org#packstack-dev"
     on_success: always
     on_failure: always
     use_notice: true
