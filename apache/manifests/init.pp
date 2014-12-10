@@ -13,6 +13,7 @@
 # Sample Usage:
 #
 class apache (
+  $apache_name          = $::apache::params::apache_name,
   $service_name         = $::apache::params::service_name,
   $default_mods         = true,
   $default_vhost        = true,
@@ -28,13 +29,14 @@ class apache (
   $service_enable       = true,
   $service_ensure       = 'running',
   $purge_configs        = true,
-  $purge_vdir           = false,
+  $purge_vhost_dir      = undef,
   $serveradmin          = 'root@localhost',
   $sendfile             = 'On',
   $error_documents      = false,
   $timeout              = '120',
   $httpd_dir            = $::apache::params::httpd_dir,
   $server_root          = $::apache::params::server_root,
+  $conf_dir             = $::apache::params::conf_dir,
   $confd_dir            = $::apache::params::confd_dir,
   $vhost_dir            = $::apache::params::vhost_dir,
   $vhost_enable_dir     = $::apache::params::vhost_enable_dir,
@@ -49,8 +51,11 @@ class apache (
   $group                = $::apache::params::group,
   $keepalive            = $::apache::params::keepalive,
   $keepalive_timeout    = $::apache::params::keepalive_timeout,
+  $max_keepalive_requests = $apache::params::max_keepalive_requests,
   $logroot              = $::apache::params::logroot,
+  $logroot_mode         = $::apache::params::logroot_mode,
   $log_level            = $::apache::params::log_level,
+  $log_formats          = {},
   $ports_file           = $::apache::params::ports_file,
   $apache_version       = $::apache::version::default,
   $server_tokens        = 'OS',
@@ -65,7 +70,7 @@ class apache (
   validate_bool($service_enable)
 
   $valid_mpms_re = $apache_version ? {
-    2.4     => '(event|itk|peruser|prefork|worker)',
+    '2.4'   => '(event|itk|peruser|prefork|worker)',
     default => '(event|itk|prefork|worker)'
   }
 
@@ -81,7 +86,7 @@ class apache (
   if $::osfamily != 'FreeBSD' {
     package { 'httpd':
       ensure => $package_ensure,
-      name   => $::apache::params::apache_name,
+      name   => $apache_name,
       notify => Class['Apache::Service'],
     }
   }
@@ -116,12 +121,11 @@ class apache (
     service_ensure => $service_ensure,
   }
 
-  # Deprecated backwards-compatibility
-  if $purge_vdir {
-    warning('Class[\'apache\'] parameter purge_vdir is deprecated in favor of purge_configs')
-    $purge_confd = $purge_vdir
+  # Set purge vhostd appropriately
+  if $purge_vhost_dir == undef {
+    $_purge_vhost_dir = $purge_configs
   } else {
-    $purge_confd = $purge_configs
+    $_purge_vhost_dir = $purge_vhost_dir
   }
 
   Exec {
@@ -135,7 +139,7 @@ class apache (
   file { $confd_dir:
     ensure  => directory,
     recurse => true,
-    purge   => $purge_confd,
+    purge   => $purge_configs,
     notify  => Class['Apache::Service'],
     require => Package['httpd'],
   }
@@ -181,7 +185,7 @@ class apache (
     file { $vhost_dir:
       ensure  => directory,
       recurse => true,
-      purge   => $purge_configs,
+      purge   => $_purge_vhost_dir,
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
     }
@@ -196,7 +200,7 @@ class apache (
     file { $vhost_enable_dir:
       ensure  => directory,
       recurse => true,
-      purge   => $purge_configs,
+      purge   => $_purge_vhost_dir,
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
     }
@@ -212,15 +216,16 @@ class apache (
     require => Package['httpd'],
   }
   concat::fragment { 'Apache ports header':
+    ensure  => present,
     target  => $ports_file,
     content => template('apache/ports_header.erb')
   }
 
-  if $::apache::params::conf_dir and $::apache::params::conf_file {
+  if $::apache::conf_dir and $::apache::params::conf_file {
     case $::osfamily {
       'debian': {
         $docroot              = '/var/www'
-        $pidfile              = '${APACHE_PID_FILE}'
+        $pidfile              = "\${APACHE_PID_FILE}"
         $error_log            = 'error.log'
         $error_documents_path = '/usr/share/apache2/error'
         $scriptalias          = '/usr/lib/cgi-bin'
@@ -268,11 +273,12 @@ class apache (
     # - $apxs_workaround
     # - $keepalive
     # - $keepalive_timeout
+    # - $max_keepalive_requests
     # - $server_root
     # - $server_tokens
     # - $server_signature
     # - $trace_enable
-    file { "${::apache::params::conf_dir}/${::apache::params::conf_file}":
+    file { "${::apache::conf_dir}/${::apache::params::conf_file}":
       ensure  => file,
       content => template($conf_template),
       notify  => Class['Apache::Service'],
@@ -316,6 +322,7 @@ class apache (
       access_log_file => $access_log_file,
       priority        => '15',
       ip              => $ip,
+      logroot_mode    => $logroot_mode,
     }
     $ssl_access_log_file = $::osfamily ? {
       'freebsd' => $access_log_file,
@@ -331,6 +338,7 @@ class apache (
       access_log_file => $ssl_access_log_file,
       priority        => '15',
       ip              => $ip,
+      logroot_mode    => $logroot_mode,
     }
   }
 }

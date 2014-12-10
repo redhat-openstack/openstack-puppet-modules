@@ -1,7 +1,7 @@
 class apache::package (
   $ensure     = 'present',
   $mpm_module = $::apache::params::mpm_module,
-) {
+) inherits ::apache::params {
   case $::osfamily {
     'freebsd' : {
       $all_mpms = [
@@ -26,7 +26,7 @@ class apache::package (
         ensure => $ensure,
         path   => '/etc/make.conf',
         line   => "APACHE_PORT=${apache_package}",
-        match  => '^\\s*#?\\s*APACHE_PORT\\s*=\\s*',
+        match  => '^\s*#?\s*APACHE_PORT\s*=\s*',
         before => Package['httpd'],
       }
       # remove other packages
