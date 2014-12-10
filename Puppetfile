@@ -51,7 +51,7 @@ mod 'heat',
   :git => 'https://github.com/stackforge/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '353c372d582167d5635b1b2ee9474cf6822db032',
+  :commit => '168c206dfefa35abec48d7bce33ed469bf98cefb',
   :git => 'https://github.com/stackforge/puppet-horizon.git'
 
 mod 'inifile',
