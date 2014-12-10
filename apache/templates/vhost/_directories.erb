@@ -47,6 +47,9 @@
     Require all granted
       <%- end -%>
     <%- else -%>
+      <%- if directory['auth_require'] -%>
+    Require <%= directory['auth_require'] %>
+      <%- end -%>
       <%- if directory['order'] and directory['order'] != '' -%>
     Order <%= Array(directory['order']).join(',') %>
       <%- else -%>
@@ -190,6 +193,24 @@
     RewriteRule <%= command %>
           <%- end -%>
         <%- end -%>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['setenv'] -%>
+      <%- Array(directory['setenv']).each do |setenv| -%>
+    SetEnv <%= setenv %>
+      <%- end -%>
+    <%- end -%>
+    <%- if @shibboleth_enabled -%>
+      <%- if directory['shib_require_session'] and ! directory['shib_require_session'].empty? -%>
+    ShibRequireSession <%= directory['shib_require_session'] %>
+      <%- end -%>
+      <%- if directory['shib_request_settings'] and ! directory['shib_request_settings'].empty? -%>
+        <%- directory['shib_request_settings'].each do |key,value| -%>
+    ShibRequestSetting <%= key %> <%= value %>
+        <%- end -%>
+      <%- end -%>
+      <%- if directory['shib_use_headers'] and ! directory['shib_use_headers'].empty? -%>
+    ShibUseHeaders <%= directory['shib_use_headers'] %>
       <%- end -%>
     <%- end -%>
     <%- if directory['custom_fragment'] -%>

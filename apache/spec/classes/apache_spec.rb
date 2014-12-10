@@ -23,6 +23,10 @@ describe 'apache', :type => :class do
     it { is_expected.to contain_user("www-data") }
     it { is_expected.to contain_group("www-data") }
     it { is_expected.to contain_class("apache::service") }
+    it { is_expected.to contain_file("/var/www").with(
+      'ensure'  => 'directory'
+      )
+    }
     it { is_expected.to contain_file("/etc/apache2/sites-enabled").with(
       'ensure'  => 'directory',
       'recurse' => 'true',
@@ -94,6 +98,14 @@ describe 'apache', :type => :class do
       it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^IncludeOptional "/etc/apache2/conf\.d/\*\.conf"$} }
     end
 
+    context "when specifying slash encoding behaviour" do
+      let :params do
+        { :allow_encoded_slashes => 'nodecode' }
+      end
+
+      it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^AllowEncodedSlashes nodecode$} }
+    end
+
     # Assert that both load files and conf files are placed and symlinked for these mods
     [
       'alias',
@@ -156,7 +168,7 @@ describe 'apache', :type => :class do
         end
 
         it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common\n} }
-        it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^LogFormat "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined\n} }
+        it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^LogFormat "%v %h %l %u %t \"%r\" %>s %b \"%\{Referer\}i\" \"%\{User-agent\}i\"" vhost_combined\n} }
       end
     end
 
@@ -217,6 +229,10 @@ describe 'apache', :type => :class do
     it { is_expected.to contain_user("apache") }
     it { is_expected.to contain_group("apache") }
     it { is_expected.to contain_class("apache::service") }
+    it { is_expected.to contain_file("/var/www/html").with(
+      'ensure'  => 'directory'
+      )
+    }
     it { is_expected.to contain_file("/etc/httpd/conf.d").with(
       'ensure'  => 'directory',
       'recurse' => 'true',
@@ -303,6 +319,14 @@ describe 'apache', :type => :class do
         end
 
         it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^IncludeOptional "/etc/httpd/conf\.d/\*\.conf"$} }
+      end
+
+      context "when specifying slash encoding behaviour" do
+        let :params do
+          { :allow_encoded_slashes => 'nodecode' }
+        end
+
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^AllowEncodedSlashes nodecode$} }
       end
 
       it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^Include "/etc/httpd/site\.d/\*"$} }
@@ -482,6 +506,10 @@ describe 'apache', :type => :class do
     it { is_expected.to contain_user("www") }
     it { is_expected.to contain_group("www") }
     it { is_expected.to contain_class("apache::service") }
+    it { is_expected.to contain_file("/usr/local/www/apache22/data").with(
+      'ensure'  => 'directory'
+      )
+    }
     it { is_expected.to contain_file("/usr/local/etc/apache22/Vhosts").with(
       'ensure'  => 'directory',
       'recurse' => 'true',

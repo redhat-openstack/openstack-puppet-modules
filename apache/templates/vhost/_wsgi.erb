@@ -13,12 +13,15 @@
   WSGIProcessGroup <%= @wsgi_process_group %>
 <% end -%>
 <% if @wsgi_script_aliases and ! @wsgi_script_aliases.empty? -%>
-  <%- @wsgi_script_aliases.each do |a, p| -%>
-    <%- if a != '' and p != ''-%>
-  WSGIScriptAlias <%= a %> "<%= p %>"
+  <%- @wsgi_script_aliases.keys.sort.each do |key| -%>
+    <%- if key != '' and @wsgi_script_aliases[key] != ''-%>
+  WSGIScriptAlias <%= key %> "<%= @wsgi_script_aliases[key] %>"
     <%- end -%>
   <%- end -%>
 <% end -%>
 <% if @wsgi_pass_authorization -%>
   WSGIPassAuthorization <%= @wsgi_pass_authorization %>
+<% end -%>
+<% if @wsgi_chunked_request -%>
+  WSGIChunkedRequest <%= @wsgi_chunked_request %>
 <% end -%>

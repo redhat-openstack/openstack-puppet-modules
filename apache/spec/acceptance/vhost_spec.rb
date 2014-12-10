@@ -298,7 +298,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       end
     end
 
-    describe 'Satisfy and Auth directive' do
+    describe 'Satisfy and Auth directive', :unless => $apache_version == '2.4' do
       it 'should configure a vhost with Satisfy and Auth directive' do
         pp = <<-EOS
           class { 'apache': }
@@ -768,7 +768,10 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
         host { 'test.server': ip => '127.0.0.1' }
         apache::vhost { 'test.server':
           docroot    => '/tmp',
-          aliases => [{ alias => '/image', path => '/ftp/pub/image' }],
+          aliases => [
+            { alias       => '/image'    , path => '/ftp/pub/image' }   ,
+            { scriptalias => '/myscript' , path => '/usr/share/myscript' }
+          ],
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
@@ -777,6 +780,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
     describe file("#{$vhost_dir}/25-test.server.conf") do
       it { is_expected.to be_file }
       it { is_expected.to contain 'Alias /image "/ftp/pub/image"' }
+      it { is_expected.to contain 'ScriptAlias /myscript "/usr/share/myscript"' }
     end
   end
 
@@ -987,6 +991,9 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       pp = <<-EOS
         class { 'apache': }
         host { 'test.server': ip => '127.0.0.1' }
+        if ! defined(Class['apache::mod::rewrite']) {
+          include ::apache::mod::rewrite
+        }
         apache::vhost { 'test.server':
           docroot      => '/tmp',
           directories  => [
@@ -1074,7 +1081,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
           wsgi_daemon_process_options => {processes => '2'},
           wsgi_process_group          => 'nobody',
           wsgi_script_aliases         => { '/test' => '/test1' },
-    wsgi_pass_authorization     => 'On',
+          wsgi_pass_authorization     => 'On',
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
@@ -1094,7 +1101,8 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
           wsgi_import_script_options  => { application-group => '%{GLOBAL}', process-group => 'wsgi' },
           wsgi_process_group          => 'nobody',
           wsgi_script_aliases         => { '/test' => '/test1' },
-    wsgi_pass_authorization     => 'On',
+          wsgi_pass_authorization     => 'On',
+          wsgi_chunked_request        => 'On',
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
@@ -1108,6 +1116,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       it { is_expected.to contain 'WSGIProcessGroup nobody' }
       it { is_expected.to contain 'WSGIScriptAlias /test "/test1"' }
       it { is_expected.to contain 'WSGIPassAuthorization On' }
+      it { is_expected.to contain 'WSGIChunkedRequest On' }
     end
   end
 
