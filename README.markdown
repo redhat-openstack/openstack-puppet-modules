@@ -6,7 +6,7 @@ Tested with Travis CI
 
 ## Upgrade Note
 
-Versions greater than 0.2.6 are incompatible with previous versions of the Yelp-Uchiwa module.
+Versions greater than 0.3.0 are incompatible with previous versions of the Yelp-Uchiwa module.
 
 ## Installation
 
@@ -41,7 +41,7 @@ API definitions will default to the following values:
     user     => 'sensu'
     pass     => 'sensu'
     path     => ''
-    timeout  => 5000
+    timeout  => 5
 
 This is an example of a 2 API setup:
 
@@ -58,7 +58,7 @@ This is an example of a 2 API setup:
                               user      => 'sensu',
                               pass      => 'saBEnX8PQoyz2LG',
                               path      => '/sensu',
-                              timeout   => 5000
+                              timeout   => 5
                             }]
 
       class { 'uchiwa':
