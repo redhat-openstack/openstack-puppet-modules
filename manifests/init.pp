@@ -110,7 +110,6 @@ class uchiwa (
   $port                 = $uchiwa::params::port,
   $user                 = $uchiwa::params::user,
   $pass                 = $uchiwa::params::pass,
-  $stats                = $uchiwa::params::stats,
   $refresh              = $uchiwa::params::refresh,
   $sensu_api_endpoints  = $uchiwa::params::sensu_api_endpoints,
 ) inherits uchiwa::params {
