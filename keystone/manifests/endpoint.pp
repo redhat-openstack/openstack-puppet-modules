@@ -6,30 +6,21 @@
 #
 # [*public_url*]
 #   (optional) Public url for keystone endpoint. (Defaults to 'http://127.0.0.1:5000')
+#   This url should *not* contain any version or trailing '/'.
 #
 # [*internal_url*]
 #   (optional) Internal url for keystone endpoint. (Defaults to $public_url)
+#   This url should *not* contain any version or trailing '/'.
 #
 # [*admin_url*]
 #   (optional) Admin url for keystone endpoint. (Defaults to 'http://127.0.0.1:35357')
+#   This url should *not* contain any version or trailing '/'.
 #
 # [*region*]
 #   (optional) Region for endpoint. (Defaults to 'RegionOne')
 #
 # [*version*]
 #   (optional) API version for endpoint. Appended to all endpoint urls. (Defaults to 'v2.0')
-#
-# [*public_url*]
-#   (optional) The endpoint's public url. (Defaults to 'http://127.0.0.1:5000')
-#   This url should *not* contain any version or trailing '/'.
-#
-# [*admin_url*]
-#   (optional) The endpoint's admin url. (Defaults to 'http://127.0.0.1:5000')
-#   This url should *not* contain any version or trailing '/'.
-#
-# [*internal_url*]
-#   (optional) The endpoint's internal url. (Defaults to 'http://127.0.0.1:35357')
-#   This url should *not* contain any version or trailing '/'.
 #
 # [*public_protocol*]
 #   (optional) DEPRECATED: Use public_url instead.
@@ -95,6 +86,8 @@ class keystone::endpoint (
   $admin_port        = undef,
 ) {
 
+  warning('keystone::endpoint class is deprecated, use keystone::resource::service_identity instead.')
+
   if $public_port {
     warning('The public_port parameter is deprecated, use public_url instead.')
   }
@@ -153,17 +146,15 @@ class keystone::endpoint (
       "#{@admin_url}/#{@version}"
     end %>')
 
-  keystone_service { 'keystone':
-    ensure      => present,
-    type        => 'identity',
-    description => 'OpenStack Identity Service',
+  keystone::resource::service_identity { 'keystone':
+    configure_user      => false,
+    configure_user_role => false,
+    service_type        => 'identity',
+    service_description => 'OpenStack Identity Service',
+    public_url          => $public_url_real,
+    admin_url           => $admin_url_real,
+    internal_url        => $internal_url_real,
+    region              => $region,
   }
 
-  keystone_endpoint { "${region}/keystone":
-    ensure       => present,
-    public_url   => $public_url_real,
-    admin_url    => $admin_url_real,
-    internal_url => $internal_url_real,
-    region       => $region,
-  }
 }

@@ -172,8 +172,13 @@ describe 'apache::vhost', :type => :define do
           'proxy_dest'                  => '/',
           'proxy_pass'                  => [
             {
-              'path' => '/a',
-              'url'  => 'http://backend-a/'
+              'path'     => '/a',
+              'url'      => 'http://backend-a/',
+              'keywords' => ['noquery', 'interpolate'],
+              'params'   => {
+                      'retry'   => '0',
+                      'timeout' => '5'
+              }
             }
           ],
           'suphp_addhandler'            => 'foo',
@@ -188,6 +193,7 @@ describe 'apache::vhost', :type => :define do
           'redirect_status'             => 'temp',
           'redirectmatch_status'        => ['404'],
           'redirectmatch_regexp'        => ['\.git$'],
+          'redirectmatch_dest'          => ['http://www.example.com'],
           'rack_base_uris'              => ['/rackapp1'],
           'headers'                     => 'Set X-Robots-Tag "noindex, noarchive, nosnippet"',
           'request_headers'             => ['append MirrorID "mirror 12"'],
@@ -224,6 +230,7 @@ describe 'apache::vhost', :type => :define do
             'user'  => 'someuser',
             'group' => 'somegroup'
           },
+          'wsgi_chunked_request'        => 'On',
           'action'                      => 'foo',
           'fastcgi_server'              => 'localhost',
           'fastcgi_socket'              => '/tmp/fastcgi.socket',
@@ -231,6 +238,13 @@ describe 'apache::vhost', :type => :define do
           'additional_includes'         => '/custom/path/includes',
           'apache_version'              => '2.4',
           'suexec_user_group'           => 'root root',
+          'allow_encoded_slashes'       => 'nodecode',
+          'passenger_app_root'          => '/usr/share/myapp',
+          'passenger_ruby'              => '/usr/bin/ruby1.9.1',
+          'passenger_min_instances'     => '1',
+          'passenger_start_timeout'     => '600',
+          'passenger_pre_start'         => 'http://localhost/myapp',
+          'add_default_charset'         => 'UTF-8',
         }
       end
       let :facts do
@@ -253,6 +267,7 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_class('apache::mod::vhost_alias') }
       it { is_expected.to contain_class('apache::mod::wsgi') }
       it { is_expected.to contain_class('apache::mod::suexec') }
+      it { is_expected.to contain_class('apache::mod::passenger') }
       it { is_expected.to contain_file('/var/www/logs').with({
         'ensure' => 'directory',
         'mode'   => '0600',
@@ -286,7 +301,12 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-action') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-block') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-error_document') }
-      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /retry=0/) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /timeout=5/) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /noquery interpolate/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-rack') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-redirect') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-rewrite') }
@@ -302,6 +322,9 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-custom_fragment') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-fastcgi') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-suexec') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-allow_encoded_slashes') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-passenger') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-charsets') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-file_footer') }
     end
     context 'not everything can be set together...' do
@@ -334,6 +357,7 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to_not contain_class('apache::mod::mime') }
       it { is_expected.to_not contain_class('apache::mod::vhost_alias') }
       it { is_expected.to_not contain_class('apache::mod::wsgi') }
+      it { is_expected.to_not contain_class('apache::mod::passenger') }
       it { is_expected.to_not contain_class('apache::mod::suexec') }
       it { is_expected.to_not contain_class('apache::mod::rewrite') }
       it { is_expected.to contain_class('apache::mod::alias') }
@@ -379,6 +403,7 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-custom_fragment') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-fastcgi') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-suexec') }
+      it { is_expected.to_not contain_concat__fragment('rspec.example.com-charsets') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-file_footer') }
     end
   end

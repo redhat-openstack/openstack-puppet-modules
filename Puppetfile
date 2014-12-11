@@ -1,5 +1,5 @@
 mod 'apache',
-  :commit => '8d09ecd81ce1001d9461570716d20898fe336f4a',
+  :commit => '1417312b493ea79f88f22cc8b961d8db08cb9273',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',
@@ -51,7 +51,7 @@ mod 'heat',
   :git => 'https://github.com/stackforge/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '353c372d582167d5635b1b2ee9474cf6822db032',
+  :commit => '168c206dfefa35abec48d7bce33ed469bf98cefb',
   :git => 'https://github.com/stackforge/puppet-horizon.git'
 
 mod 'inifile',
@@ -63,7 +63,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
-  :commit => '38518cbcb3ef8ad3bb068730a21d790b27a29b74',
+  :commit => '821cc4ada1f50b5a6c6244cd5c689a467d06d736',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
@@ -111,7 +111,7 @@ mod 'openstack',
   :git => 'https://github.com/stackforge/puppet-openstack.git'
 
 mod 'openstacklib',
-  :commit => 'e64e9c2a44833b25b602138b53a3187db49eaef8',
+  :commit => '999f7849a3e0653f46f7336ee0fa9c2e38630b7b',
   :git => 'https://github.com/stackforge/puppet-openstacklib.git'
 
 mod 'pacemaker',
