@@ -32,7 +32,7 @@ class zookeeper(
   $zoo_main                = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
   $log4j_prop               = 'INFO,ROLLINGFILE',
   $cleanup_sh              = '/usr/share/zookeeper/bin/zkCleanup.sh',
-  $servers                 = [''],
+  $servers                 = [],
   $ensure                  = present,
   $snap_count              = 10000,
   # since zookeeper 3.4, for earlier version cron task might be used
