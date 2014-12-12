@@ -55,7 +55,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'keystone',
-  :commit => 'e61e4c2ab5c67150237e59dab25679ec739d3ebf',
+  :commit => 'bab7304c88a065aa3f4d3a970d82abdb65cb9169',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
@@ -157,3 +157,4 @@ mod 'vswitch',
 mod 'xinetd',
   :commit => '6b02de8d4f30a819eb404048e4258e3a5e8023c8',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
+

@@ -11,8 +11,9 @@ describe 'keystone::wsgi::apache' do
   end
 
   let :pre_condition do
-    'include apache
-     class { keystone: admin_token => "dummy" }'
+    [
+     'class { keystone: admin_token => "dummy", service_name => "httpd", enable_ssl => true }'
+    ]
   end
 
   shared_examples_for 'apache serving keystone with mod_wsgi' do
@@ -38,7 +39,7 @@ describe 'keystone::wsgi::apache' do
         'owner'   => 'keystone',
         'group'   => 'keystone',
         'mode'    => '0644',
-        'require' => "File[#{platform_parameters[:wsgi_script_path]}]"
+        'require' => ["File[#{platform_parameters[:wsgi_script_path]}]", "Package[keystone]"]
       )}
 
       it { should contain_file('keystone_wsgi_main').with(
@@ -48,7 +49,7 @@ describe 'keystone::wsgi::apache' do
         'owner'   => 'keystone',
         'group'   => 'keystone',
         'mode'    => '0644',
-        'require' => "File[#{platform_parameters[:wsgi_script_path]}]"
+        'require' => ["File[#{platform_parameters[:wsgi_script_path]}]", "Package[keystone]"]
       )}
 
       it { should contain_apache__vhost('keystone_wsgi_admin').with(
@@ -59,9 +60,10 @@ describe 'keystone::wsgi::apache' do
         'docroot_owner'               => 'keystone',
         'docroot_group'               => 'keystone',
         'ssl'                         => 'true',
-        'wsgi_process_group'          => 'keystone',
+        'wsgi_daemon_process'         => 'keystone_admin',
+        'wsgi_process_group'          => 'keystone_admin',
         'wsgi_script_aliases'         => { '/' => "#{platform_parameters[:wsgi_script_path]}/admin" },
-        'require'                     => ['Class[Apache::Mod::Wsgi]', 'File[keystone_wsgi_admin]']
+        'require'                     => 'File[keystone_wsgi_admin]'
       )}
 
       it { should contain_apache__vhost('keystone_wsgi_main').with(
@@ -72,16 +74,11 @@ describe 'keystone::wsgi::apache' do
         'docroot_owner'               => 'keystone',
         'docroot_group'               => 'keystone',
         'ssl'                         => 'true',
-        'wsgi_daemon_process'         => 'keystone',
-        'wsgi_process_group'          => 'keystone',
+        'wsgi_daemon_process'         => 'keystone_main',
+        'wsgi_process_group'          => 'keystone_main',
         'wsgi_script_aliases'         => { '/' => "#{platform_parameters[:wsgi_script_path]}/main" },
-        'require'                     => ['Class[Apache::Mod::Wsgi]', 'File[keystone_wsgi_main]']
+        'require'                     => 'File[keystone_wsgi_main]'
       )}
-      it "should set keystone wsgi options" do
-        contain_file('25-keystone_wsgi_main.conf').with_content(
-          /^  WSGIDaemonProcess keystone group=keystone processes=1 threads=1 user=keystone$/
-        )
-      end
     end
 
     describe 'when overriding parameters using different ports' do
@@ -104,9 +101,10 @@ describe 'keystone::wsgi::apache' do
         'docroot_owner'               => 'keystone',
         'docroot_group'               => 'keystone',
         'ssl'                         => 'false',
-        'wsgi_process_group'          => 'keystone',
+        'wsgi_daemon_process'         => 'keystone_admin',
+        'wsgi_process_group'          => 'keystone_admin',
         'wsgi_script_aliases'         => { '/' => "#{platform_parameters[:wsgi_script_path]}/admin" },
-        'require'                     => ['Class[Apache::Mod::Wsgi]', 'File[keystone_wsgi_admin]']
+        'require'                     => 'File[keystone_wsgi_admin]'
       )}
 
       it { should contain_apache__vhost('keystone_wsgi_main').with(
@@ -117,16 +115,11 @@ describe 'keystone::wsgi::apache' do
         'docroot_owner'               => 'keystone',
         'docroot_group'               => 'keystone',
         'ssl'                         => 'false',
-        'wsgi_daemon_process'         => 'keystone',
-        'wsgi_process_group'          => 'keystone',
+        'wsgi_daemon_process'         => 'keystone_main',
+        'wsgi_process_group'          => 'keystone_main',
         'wsgi_script_aliases'         => { '/' => "#{platform_parameters[:wsgi_script_path]}/main" },
-        'require'                     => ['Class[Apache::Mod::Wsgi]', 'File[keystone_wsgi_main]']
+        'require'                     => 'File[keystone_wsgi_main]'
       )}
-      it "should set keystone wsgi options" do
-        contain_file('25-keystone_wsgi_main.conf').with_content(
-          /^  WSGIDaemonProcess keystone group=keystone processes=37 threads=1 user=keystone$/
-        )
-      end
     end
 
     describe 'when overriding parameters using same port' do
@@ -152,19 +145,14 @@ describe 'keystone::wsgi::apache' do
         'docroot_owner'               => 'keystone',
         'docroot_group'               => 'keystone',
         'ssl'                         => 'true',
-        'wsgi_daemon_process'         => 'keystone',
-        'wsgi_process_group'          => 'keystone',
+        'wsgi_daemon_process'         => 'keystone_main',
+        'wsgi_process_group'          => 'keystone_main',
         'wsgi_script_aliases'         => {
         '/main/endpoint'  => "#{platform_parameters[:wsgi_script_path]}/main",
         '/admin/endpoint' => "#{platform_parameters[:wsgi_script_path]}/admin"
-      },
-        'require'                     => ['Class[Apache::Mod::Wsgi]', 'File[keystone_wsgi_main]']
+        },
+        'require'                     => 'File[keystone_wsgi_main]'
       )}
-      it "should set keystone wsgi options" do
-        contain_file('25-keystone_wsgi_main.conf').with_content(
-          /^  WSGIDaemonProcess keystone group=keystone processes=37 threads=1 user=keystone$/
-        )
-      end
     end
 
     describe 'when overriding parameters using same port and same path' do
@@ -195,8 +183,9 @@ describe 'keystone::wsgi::apache' do
     let :platform_parameters do
       {
         :httpd_service_name => 'httpd',
+        :httpd_ports_file   => '/etc/httpd/conf/ports.conf',
         :wsgi_script_path   => '/var/www/cgi-bin/keystone',
-        :wsgi_script_source => 'puppet:///modules/keystone/httpd/keystone.py'
+        :wsgi_script_source => '/usr/share/keystone/keystone.wsgi'
       }
     end
 
@@ -215,6 +204,7 @@ describe 'keystone::wsgi::apache' do
     let :platform_parameters do
       {
         :httpd_service_name => 'apache2',
+        :httpd_ports_file   => '/etc/apache2/ports.conf',
         :wsgi_script_path   => '/usr/lib/cgi-bin/keystone',
         :wsgi_script_source => '/usr/share/keystone/wsgi.py'
       }
