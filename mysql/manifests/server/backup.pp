@@ -15,7 +15,6 @@ class mysql::server::backup (
   $ensure = 'present',
   $time = ['23', '5'],
   $postscript = false,
-  $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
 
   mysql_user { "${backupuser}@localhost":
@@ -26,10 +25,10 @@ class mysql::server::backup (
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
-    ensure     => $ensure,
+    ensure     => present,
     user       => "${backupuser}@localhost",
     table      => '*.*',
-    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
+    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW' ],
     require    => Mysql_user["${backupuser}@localhost"],
   }
 

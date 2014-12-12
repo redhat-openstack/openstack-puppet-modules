@@ -1,716 +1,206 @@
 require 'spec_helper'
 
-describe 'redis', :type => :class do
-  let (:facts) { debian_facts }
+describe 'redis', :type => 'class' do
 
-  describe 'without parameters' do
-    it { should create_class('redis') }
-    it { should contain_class('redis::preinstall') }
-    it { should contain_class('redis::install') }
-    it { should contain_class('redis::config') }
-    it { should contain_class('redis::service') }
-
-    it { should contain_package('redis-server').with_ensure('present') }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'ensure' => 'present'
-      )
+  let :facts do
+    {
+      :osfamily  => 'Debian'
     }
+  end # let
 
-    it { should contain_service('redis-server').with(
-        'ensure'     => 'running',
-        'enable'     => 'true',
-        'hasrestart' => 'true',
-        'hasstatus'  => 'false'
-      )
-    }
-  end
+  context "On a Debian OS with default params" do
+    it do
+      should compile.with_all_deps
 
-  describe 'with parameter activerehashing' do
-    let (:params) {
+      should contain_class('gcc')
+      should contain_class('wget')
+
+      should contain_file('/opt/redis-src').with(:ensure => 'directory',
+                                                 :owner => 'root',
+                                                 :group => 'root')
+      should contain_file('/etc/redis').with(:ensure => 'directory',
+                                             :owner => 'root',
+                                             :group => 'root')
+      should contain_file('redis-lib').with(:ensure => 'directory',
+                                            :path   => '/var/lib/redis',
+                                            :owner => 'root',
+                                            :group => 'root')
+      should contain_file("redis-lib-port-6379").with(:ensure => 'directory',
+                                                      :path   => '/var/lib/redis/6379',
+                                                      :owner => 'root',
+                                                      :group => 'root')
+      should contain_exec('get-redis-pkg').with_command(/http:\/\/download\.redis\.io\/releases\/redis-2\.8\.12\.tar\.gz/)
+      should contain_file('redis-cli-link').with(:ensure => 'link',
+                                                 :path   => '/usr/local/bin/redis-cli',
+                                                 :target => '/opt/redis/bin/redis-cli')
+
+      should contain_exec('unpack-redis').with(:cwd  => '/opt/redis-src',
+                                               :path => '/bin:/usr/bin')
+      should contain_exec('install-redis').with(:cwd   => '/opt/redis-src',
+                                                :path  => '/bin:/usr/bin')
+
+      should contain_service('redis-6379').with(:ensure => 'running',
+                                           :name   => 'redis_6379',
+                                           :enable => true)
+
+      should contain_file('redis-init-6379').with(:ensure => 'present',
+                                             :path   => '/etc/init.d/redis_6379',
+                                             :mode   => '0755',
+                                             :owner => 'root',
+                                             :group => 'root')
+      should contain_file('redis-init-6379').with_content(/^REDIS_BIND_ADDRESS="127.0.0.1"$/)
+      should contain_file('redis-init-6379').with_content(/^CLIEXEC="\/opt\/redis\/bin\/redis-cli -h \$REDIS_BIND_ADDRESS -p \$REDIS_PORT/)
+
+      # These values were changed in 2.6.
+      should_not contain_file('redis_port_6379.conf').with_content(/maxclients 0/)
+      should_not contain_file('redis_port_6379.conf').with_content(/hash-max-zipmap-entries 512/)
+      should_not contain_file('redis_port_6379.conf').with_content(/hash-max-zipmap-value 64/)
+      should contain_file('redis_port_6379.conf').with_content(/hash-max-ziplist-entries 512/)
+      should contain_file('redis_port_6379.conf').with_content(/hash-max-ziplist-value 64/)
+
+      # The bind config should not be present by default.
+      should_not contain_file('redis_port_6379.conf').with_content(/bind \d+\.\d+\.\d+\.\d+/)
+    end # it
+  end # context
+
+  context "On a Debian OS with non-default src and bin locations" do
+    let :params do
       {
-        :activerehashing => true
+        :redis_src_dir => '/fake/path/to/redis-src',
+        :redis_bin_dir => '/fake/path/to/redis'
       }
-    }
+    end # let
 
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /activerehashing.*yes/
-      )
-    }
-  end
+    it do
+      should compile.with_all_deps
 
-  describe 'with parameter appendfsync' do
-    let (:params) {
+      should contain_class('gcc')
+      should contain_class('wget')
+
+      should contain_file('/fake/path/to/redis-src').with(:ensure => 'directory')
+      should contain_file('/etc/redis').with(:ensure => 'directory')
+      should contain_file('redis-lib').with(:ensure => 'directory',
+                                            :path   => '/var/lib/redis')
+      should contain_file('redis-lib-port-6379').with(:ensure => 'directory',
+                                                 :path   => '/var/lib/redis/6379')
+      should contain_file('redis-init-6379').with(:ensure => 'present',
+                                             :path   => '/etc/init.d/redis_6379',
+                                             :mode   => '0755')
+      should contain_file('redis-cli-link').with(:ensure => 'link',
+                                                 :path   => '/usr/local/bin/redis-cli',
+                                                 :target => '/fake/path/to/redis/bin/redis-cli')
+
+      should contain_exec('unpack-redis').with(:cwd  => '/fake/path/to/redis-src',
+                                               :path => '/bin:/usr/bin')
+      should contain_exec('install-redis').with(:cwd   => '/fake/path/to/redis-src',
+                                                :path  => '/bin:/usr/bin')
+
+      should contain_service('redis-6379').with(:ensure => 'running',
+                                           :name   => 'redis_6379',
+                                           :enable => true)
+    end # it
+  end # context
+
+  context "On a Debian OS with version 2.6 param" do
+    let :params do
       {
-        :appendfsync => '_VALUE_'
+        :version => '2.6.4'
       }
-    }
+    end # let
 
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /appendfsync.*_VALUE_/
-      )
-    }
-  end
+    it do
+      should compile.with_all_deps
 
-  describe 'with parameter appendonly' do
-    let (:params) {
+      should_not contain_file('redis-pkg')
+      should contain_exec('get-redis-pkg').with_command(/http:\/\/download\.redis\.io\/releases\/redis-2\.6\.4\.tar\.gz/)
+
+      # Maxclients is left out for 2.6 unless it is explicitly set.
+      should_not contain_file('redis_port_6379.conf').with_content(/maxclients 0/)
+
+      # These params were renamed b/w 2.4 and 2.6.
+      should contain_file('redis_port_6379.conf').with_content(/hash-max-ziplist-entries 512/)
+      should contain_file('redis_port_6379.conf').with_content(/hash-max-ziplist-value 64/)
+      should_not contain_file('redis_port_6379.conf').with_content(/hash-max-zipmap-entries 512/)
+      should_not contain_file('redis_port_6379.conf').with_content(/hash-max-zipmap-value 64/)
+    end # it
+  end # context
+
+  context "With an invalid version param." do
+    let :params do
       {
-        :appendonly => true
+        :version => 'bad version'
       }
-    }
+    end # let
 
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /appendonly.*yes/
-      )
-    }
-  end
+    it do
+      expect { should raise_error(Puppet::Error) }
+    end # it
+  end # context
 
-  describe 'with parameter auto_aof_rewrite_min_size' do
-    let (:params) {
-      {
-        :auto_aof_rewrite_min_size => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /auto-aof-rewrite-min-size.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter auto_aof_rewrite_percentage' do
-    let (:params) {
-      {
-        :auto_aof_rewrite_percentage => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /auto-aof-rewrite-percentage.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter bind' do
-    let (:params) {
-      {
-        :bind => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /bind.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter: config_dir' do
-    let (:params) { { :config_dir => '_VALUE_' } }
-
-    it { should contain_file('_VALUE_').with_ensure('directory') }
-  end
-
-  describe 'with parameter: config_dir_mode' do
-    let (:params) { { :config_dir_mode => '_VALUE_' } }
-
-    it { should contain_file('/etc/redis').with_mode('_VALUE_') }
-  end
-
-  describe 'with parameter: config_file' do
-    let (:params) { { :config_file => '_VALUE_' } }
-
-    it { should contain_file('_VALUE_') }
-  end
-
-  describe 'with parameter: config_file_mode' do
-    let (:params) { { :config_file_mode => '_VALUE_' } }
-
-    it { should contain_file('/etc/redis/redis.conf').with_mode('_VALUE_') }
-  end
-
-  describe 'with parameter: config_group' do
-    let (:params) { { :config_group => '_VALUE_' } }
-
-    it { should contain_file('/etc/redis').with_group('_VALUE_') }
-  end
-
-  describe 'with parameter: config_owner' do
-    let (:params) { { :config_owner => '_VALUE_' } }
-
-    it { should contain_file('/etc/redis').with_owner('_VALUE_') }
-  end
-
-  describe 'with parameter daemonize' do
-    let (:params) {
-      {
-        :daemonize => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /daemonize.*yes/
-      )
-    }
-  end
-
-  describe 'with parameter databases' do
-    let (:params) {
-      {
-        :databases => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /databases.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter dbfilename' do
-    let (:params) {
-      {
-        :dbfilename => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /dbfilename.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter hash_max_ziplist_entries' do
-    let (:params) {
-      {
-        :hash_max_ziplist_entries => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /hash-max-ziplist-entries.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter hash_max_ziplist_value' do
-    let (:params) {
-      {
-        :hash_max_ziplist_value => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /hash-max-ziplist-value.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter list_max_ziplist_entries' do
-    let (:params) {
-      {
-        :list_max_ziplist_entries => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /list-max-ziplist-entries.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter list_max_ziplist_value' do
-    let (:params) {
-      {
-        :list_max_ziplist_value => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /list-max-ziplist-value.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter log_dir' do
-    let (:params) {
-      {
-        :log_dir => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('_VALUE_').with(
-        'ensure' => 'directory'
-      )
-    }
-  end
-
-  describe 'with parameter log_file' do
-    let (:params) {
-      {
-        :log_file => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /logfile.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter log_level' do
-    let (:params) {
-      {
-        :log_level => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /loglevel.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter: manage_repo' do
-    let (:params) { { :manage_repo => true } }
-
-    context 'on Debian' do
-      let (:facts) {
-        {
-          :lsbdistcodename => 'wheezy',
-          :lsbdistid       => 'Debian',
-          :operatingsystem => 'Debian',
-          :osfamily        => 'Debian'
-        }
-      }
-
-      it { should create_apt__key('dotdeb') }
-      it { should create_apt__source('dotdeb') }
+  context "On a Debian system with a non-default user specified" do
+    let :params do
+      { :redis_user => 'my_user' }
     end
 
-    context 'on Ubuntu' do
-      let (:facts) {
-        {
-          :lsbdistcodename => 'raring',
-          :lsbdistid       => 'Ubuntu',
-          :operatingsystem => 'Ubuntu',
-          :osfamily        => 'Debian'
-        }
-      }
+    it do
+      should compile.with_all_deps
+      should contain_file('/opt/redis-src').with(:owner => 'my_user')
+      should contain_file('/etc/redis').with(:owner => 'my_user')
+      should contain_file('redis-lib').with(:owner => 'my_user')
+      should contain_file('redis-lib-port-6379').with(:owner => 'my_user')
+      should contain_file('redis-init-6379').with(:owner => 'my_user')
+      should_not contain_file('redis-pkg')
+    end # it
+  end # context
 
-      it { should create_apt__ppa('ppa:chris-lea/redis-server') }
+  context "On a Debian system with a non-default group specified" do
+    let :params do
+      { :redis_group => 'my_group' }
     end
 
-    context 'on RHEL 6' do
-      let (:facts) {
-        {
-          :osfamily => 'RedHat',
-          :operatingsystem => 'RedHat',
-          :operatingsystemrelease => '6'
-        }
-      }
+    it do
+      should compile.with_all_deps
+      should contain_file('/opt/redis-src').with(:group => 'my_group')
+      should contain_file('/etc/redis').with(:group => 'my_group')
+      should contain_file('redis-lib').with(:group => 'my_group')
+      should contain_file('redis-lib-port-6379').with(:group => 'my_group')
+      should contain_file('redis-init-6379').with(:group => 'my_group')
+      should_not contain_file('redis-pkg')
+    end # it
+  end # context
 
-      it { should create_yumrepo('powerstack').with_enabled(1) }
-    end
-  end
-
-  describe 'with parameter masterauth' do
-    let (:params) {
+  context "On a Debian system with instance parameters specified" do
+    let :params do
       {
-        :masterauth => '_VALUE_'
+        :redis_port                    => '8000',
+        :redis_bind_address            => '10.1.2.3',
+        :redis_max_memory              => '64gb',
+        :redis_max_clients             => '10000',
+        :redis_timeout                 => '15',
+        :redis_loglevel                => 'warning',
+        :redis_databases               => '64',
+        :redis_slowlog_log_slower_than => '5000',
+        :redis_slowlog_max_len         => '4096',
+        :redis_password                => 'sekrit',
+        :redis_saves                   => ['save 17 42', 'save 1 2']
       }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /masterauth.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter maxclients' do
-    let (:params) {
-      {
-        :maxclients => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /maxclients.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter maxmemory' do
-    let (:params) {
-      {
-        :maxmemory => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /maxmemory.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter maxmemory_policy' do
-    let (:params) {
-      {
-        :maxmemory_policy => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /maxmemory-policy.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter maxmemory_samples' do
-    let (:params) {
-      {
-        :maxmemory_samples => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /maxmemory-samples.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter notify_service' do
-    let (:params) {
-      {
-        :notify_service => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').that_notifies('Service[redis-server]'
-      )
-    }
-  end
-
-  describe 'with parameter no_appendfsync_on_rewrite' do
-    let (:params) {
-      {
-        :no_appendfsync_on_rewrite => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /no-appendfsync-on-rewrite.*yes/
-      )
-    }
-  end
-
-  describe 'with parameter: package_ensure' do
-    let (:params) { { :package_ensure => '_VALUE_' } }
-
-    it { should contain_package('redis-server').with(
-        'ensure' => '_VALUE_'
-      )
-    }
-  end
-
-  describe 'with parameter: package_name' do
-    let (:params) { { :package_name => '_VALUE_' } }
-
-    it { should contain_package('_VALUE_') }
-  end
-
-  describe 'with parameter pid_file' do
-    let (:params) {
-      {
-        :pid_file => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /pidfile.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter port' do
-    let (:params) {
-      {
-        :port => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /port.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter rdbcompression' do
-    let (:params) {
-      {
-        :rdbcompression => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /rdbcompression.*yes/
-      )
-    }
-  end
-
-  describe 'with parameter repl_ping_slave_period' do
-    let (:params) {
-      {
-        :repl_ping_slave_period => 1
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /repl-ping-slave-period.*1/
-      )
-    }
-  end
-
-  describe 'with parameter repl_timeout' do
-    let (:params) {
-      {
-        :repl_timeout => 1
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /repl-timeout.*1/
-      )
-    }
-  end
-
-  describe 'with parameter requirepass' do
-    let (:params) {
-      {
-        :requirepass => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /requirepass.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter: service_enable' do
-    let (:params) { { :service_enable => true } }
-
-    it { should contain_service('redis-server').with_enable(true) }
-  end
-
-  describe 'with parameter: service_ensure' do
-    let (:params) { { :service_ensure => '_VALUE_' } }
-
-    it { should contain_service('redis-server').with_ensure('_VALUE_') }
-  end
-
-  describe 'with parameter: service_group' do
-    let (:params) { { :service_group => '_VALUE_' } }
-
-    it { should contain_file('/var/log/redis').with_group('_VALUE_') }
-  end
-
-  describe 'with parameter: service_hasrestart' do
-    let (:params) { { :service_hasrestart => true } }
-
-    it { should contain_service('redis-server').with_hasrestart(true) }
-  end
-
-  describe 'with parameter: service_hasstatus' do
-    let (:params) { { :service_hasstatus => true } }
-
-    it { should contain_service('redis-server').with_hasstatus(true) }
-  end
-
-  describe 'with parameter: service_name' do
-    let (:params) { { :service_name => '_VALUE_' } }
-
-    it { should contain_service('_VALUE_').with_name('_VALUE_') }
-  end
-
-  describe 'with parameter: service_user' do
-    let (:params) { { :service_user => '_VALUE_' } }
-
-    it { should contain_file('/var/log/redis').with_owner('_VALUE_') }
-  end
-
-  describe 'with parameter set_max_intset_entries' do
-    let (:params) {
-      {
-        :set_max_intset_entries => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /set-max-intset-entries.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter slave_read_only' do
-    let (:params) {
-      {
-        :slave_read_only => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /slave-read-only.*yes/
-      )
-    }
-  end
-
-  describe 'with parameter slave_serve_stale_data' do
-    let (:params) {
-      {
-        :slave_serve_stale_data => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /slave-serve-stale-data.*yes/
-      )
-    }
-  end
-
-  describe 'with parameter: slaveof' do
-    context 'binding to localhost' do
-      let (:params) {
-        {
-          :bind    => '127.0.0.1',
-          :slaveof => '_VALUE_'
-        }
-      }
-
-      it do
-        expect {
-          should create_class('redis')
-        }.to raise_error(Puppet::Error, /Replication is not possible/)
-      end
-    end
-
-    context 'binding to external ip' do
-      let (:params) {
-        {
-          :bind    => '10.0.0.1',
-          :slaveof => '_VALUE_'
-        }
-      }
-
-      it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /^slaveof _VALUE_/
-      )
-    }
-    end
-  end
-
-  describe 'with parameter slowlog_log_slower_than' do
-    let (:params) {
-      {
-        :slowlog_log_slower_than => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /slowlog-log-slower-than.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter slowlog_max_len' do
-    let (:params) {
-      {
-        :slowlog_max_len => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /slowlog-max-len.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter syslog_enabled' do
-    let (:params) {
-      {
-        :syslog_enabled => true
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /syslog-enabled yes/
-      )
-    }
-  end
-
-  describe 'with parameter syslog_facility' do
-    let (:params) {
-      {
-        :syslog_enabled => true,
-        :syslog_facility => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /syslog-facility.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter timeout' do
-    let (:params) {
-      {
-        :timeout => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /timeout.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter workdir' do
-    let (:params) {
-      {
-        :workdir => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /dir.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter zset_max_ziplist_entries' do
-    let (:params) {
-      {
-        :zset_max_ziplist_entries => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /zset-max-ziplist-entries.*_VALUE_/
-      )
-    }
-  end
-
-  describe 'with parameter zset_max_ziplist_value' do
-    let (:params) {
-      {
-        :zset_max_ziplist_value => '_VALUE_'
-      }
-    }
-
-    it { should contain_file('/etc/redis/redis.conf').with(
-        'content' => /zset-max-ziplist-value.*_VALUE_/
-      )
-    }
-  end
-end
-
+    end # let
+
+    it do
+      should compile.with_all_deps
+      should contain_file('redis_port_8000.conf').with_ensure('present')
+      should contain_file('redis_port_8000.conf').with_content(/^port 8000$/)
+      should contain_file('redis_port_8000.conf').with_content(/^bind 10\.1\.2\.3$/)
+      should contain_file('redis_port_8000.conf').with_content(/^maxmemory 64gb$/)
+      should contain_file('redis_port_8000.conf').with_content(/^maxclients 10000$/)
+      should contain_file('redis_port_8000.conf').with_content(/^timeout 15$/)
+      should contain_file('redis_port_8000.conf').with_content(/^loglevel warning$/)
+      should contain_file('redis_port_8000.conf').with_content(/^databases 64$/)
+      should contain_file('redis_port_8000.conf').with_content(/^slowlog-log-slower-than 5000$/)
+      should contain_file('redis_port_8000.conf').with_content(/^slowlog-max-len 4096$/)
+      should contain_file('redis_port_8000.conf').with_content(/^requirepass sekrit$/)
+      should contain_file('redis_port_8000.conf').with_content(/^save 17 42$/)
+      should contain_file('redis_port_8000.conf').with_content(/^save 1 2$/)
+    end # it
+  end # context
+end # describe

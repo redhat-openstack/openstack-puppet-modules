@@ -4,8 +4,6 @@ Puppet::Type.newtype(:mysql_user) do
 
   ensurable
 
-  autorequire(:file) { '/root/.my.cnf' }
-
   newparam(:name, :namevar => true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
@@ -16,11 +14,6 @@ Puppet::Type.newtype(:mysql_user) do
       if username.size > 16
         raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
       end
-    end
-
-    munge do |value|
-      user_part, host_part = value.split('@')
-      "#{user_part}@#{host_part.downcase}"
     end
   end
 

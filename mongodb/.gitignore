@@ -7,4 +7,3 @@ tmp/
 pkg/
 spec/fixtures/manifests
 .rspec_system/
-.vagrant/

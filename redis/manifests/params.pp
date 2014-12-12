@@ -1,100 +1,34 @@
-# = Class: redis::params
+# == Class: redis::params
 #
-# This class provides a number of parameters.
+# Redis params.
+#
+# === Parameters
+#
+# === Authors
+#
+# Thomas Van Doren
+#
+# === Copyright
+#
+# Copyright 2012 Thomas Van Doren, unless otherwise noted.
 #
 class redis::params {
-  # Generic
-  $manage_repo = false
 
-  # redis.conf.erb
-  $activerehashing             = true
-  $appendfsync                 = 'everysec'
-  $appendonly                  = false
-  $auto_aof_rewrite_min_size   = '64min'
-  $auto_aof_rewrite_percentage = 100
-  $bind                        = '127.0.0.1'
-  $conf_template               = 'redis/redis.conf.erb'
-  $daemonize                   = true
-  $databases                   = 16
-  $dbfilename                  = 'dump.rdb'
-  $extra_config_file           = undef
-  $hash_max_ziplist_entries    = 512
-  $hash_max_ziplist_value      = 64
-  $list_max_ziplist_entries    = 512
-  $list_max_ziplist_value      = 64
-  $log_dir                     = '/var/log/redis'
-  $log_file                    = '/var/log/redis/redis.log'
-  $log_level                   = 'notice'
-  $maxclients                  = 10000
-  $maxmemory                   = undef
-  $maxmemory_policy            = undef
-  $maxmemory_samples           = undef
-  $no_appendfsync_on_rewrite   = false
-  $notify_service              = true
-  $pid_file                    = '/var/run/redis/redis-server.pid'
-  $port                        = 6379
-  $rdbcompression              = true
-  $requirepass                 = undef
-  $set_max_intset_entries      = 512
-  $slowlog_log_slower_than     = 10000
-  $slowlog_max_len             = 1024
-  $syslog_enabled              = undef
-  $syslog_facility             = undef
-  $timeout                     = 0
-  $ulimit                      = 65536
-  $workdir                     = '/var/lib/redis/'
-  $zset_max_ziplist_entries    = 128
-  $zset_max_ziplist_value      = 64
+  $redis_port = '6379'
+  $redis_bind_address = false
+  $version = '2.8.12'
+  $redis_src_dir = '/opt/redis-src'
+  $redis_bin_dir = '/opt/redis'
+  $redis_max_memory = '4gb'
+  $redis_max_clients = false
+  $redis_timeout = 300         # 0 = disabled
+  $redis_loglevel = 'notice'
+  $redis_databases = 16
+  $redis_slowlog_log_slower_than = 10000 # microseconds
+  $redis_slowlog_max_len = 1024
+  $redis_password = false
+  $redis_saves = ['save 900 1', 'save 300 10', 'save 60 10000']
+  $redis_user = 'root'
+  $redis_group = 'root'
 
-  # redis.conf.erb - replication
-  $masterauth             = undef
-  $repl_ping_slave_period = 10
-  $repl_timeout           = 60
-  $slave_read_only        = true
-  $slave_serve_stale_data = true
-  $slaveof                = undef
-
-  case $::osfamily {
-    'Debian': {
-      $config_dir         = '/etc/redis'
-      $config_dir_mode    = '0755'
-      $config_file        = '/etc/redis/redis.conf'
-      $config_file_mode   = '0644'
-      $config_group       = 'root'
-      $config_owner       = 'root'
-      $package_ensure     = 'present'
-      $package_name       = 'redis-server'
-      $service_enable     = true
-      $service_ensure     = 'running'
-      $service_group      = 'redis'
-      $service_hasrestart = true
-      $service_hasstatus  = false
-      $service_name       = 'redis-server'
-      $service_user       = 'redis'
-      $ppa_repo           = 'ppa:chris-lea/redis-server'
-    }
-
-    'RedHat': {
-      $config_dir         = '/etc/redis'
-      $config_dir_mode    = '0755'
-      $config_file        = '/etc/redis.conf'
-      $config_file_mode   = '0644'
-      $config_group       = 'root'
-      $config_owner       = 'root'
-      $package_ensure     = 'present'
-      $package_name       = 'redis'
-      $service_enable     = true
-      $service_ensure     = 'running'
-      $service_group      = 'redis'
-      $service_hasrestart = true
-      $service_hasstatus  = true
-      $service_name       = 'redis'
-      $service_user       = 'redis'
-    }
-
-    default: {
-      fail "Operating system ${::operatingsystem} is not supported yet."
-    }
-  }
 }
-

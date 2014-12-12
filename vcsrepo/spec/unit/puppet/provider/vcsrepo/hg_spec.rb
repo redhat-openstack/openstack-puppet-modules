@@ -1,30 +1,60 @@
 require 'spec_helper'
 
-describe_provider :vcsrepo, :hg, :resource => {:path => '/tmp/vcsrepo'} do
+describe Puppet::Type.type(:vcsrepo).provider(:hg) do
+
+  let(:resource) { Puppet::Type.type(:vcsrepo).new({
+    :name     => 'test',
+    :ensure   => :present,
+    :provider => :hg,
+    :path     => '/tmp/vcsrepo',
+  })}
+
+  let(:provider) { resource.provider }
+
+  before :each do
+    Puppet::Util.stubs(:which).with('hg').returns('/usr/bin/hg')
+  end
 
   describe 'creating' do
-    resource_with :source do
-      resource_with :revision do
-        it "should execute 'hg clone -u' with the revision" do
-          provider.expects(:hg).with('clone', '-u',
-                                      resource.value(:revision),
-                                      resource.value(:source),
-                                      resource.value(:path))
-          provider.create
-        end
+    context 'with source and revision' do
+      it "should execute 'hg clone -u' with the revision" do
+        resource[:source] = 'something'
+        resource[:revision] = '1'
+        provider.expects(:hg).with('clone', '-u',
+          resource.value(:revision),
+          resource.value(:source),
+          resource.value(:path))
+        provider.create
       end
+    end
 
-      resource_without :revision do
-        it "should just execute 'hg clone' without a revision" do
-          provider.expects(:hg).with('clone', resource.value(:source), resource.value(:path))
-          provider.create
-        end
+    context 'without revision' do
+      it "should just execute 'hg clone' without a revision" do
+        resource[:source] = 'something'
+        provider.expects(:hg).with('clone', resource.value(:source), resource.value(:path))
+        provider.create
       end
     end
 
     context "when a source is not given" do
       it "should execute 'hg init'" do
         provider.expects(:hg).with('init', resource.value(:path))
+        provider.create
+      end
+    end
+
+    context "when basic auth is used" do
+      it "should execute 'hg clone'" do
+        resource[:source] = 'something'
+        resource[:basic_auth_username] = 'user'
+        resource[:basic_auth_password] = 'pass'
+        provider.expects(:hg).with('clone',
+          resource.value(:source),
+          resource.value(:path),
+            "--config","\"auth.x.prefix=" + resource.value(:source) + "\"",
+            "--config","\"auth.x.username=" + resource.value(:basic_auth_username) + "\"",
+            "--config","\"auth.x.password=" + resource.value(:basic_auth_password) + "\"",
+            "--config","\"auth.x.schemes=http https" + "\"")
         provider.create
       end
     end
@@ -55,14 +85,16 @@ describe_provider :vcsrepo, :hg, :resource => {:path => '/tmp/vcsrepo'} do
         provider.expects(:hg).with('tags').returns(fixture(:hg_tags))
       end
 
-      context "when its SHA is not different than the current SHA", :resource => {:revision => '0.6'} do
+      context "when its SHA is not different than the current SHA" do
         it "should return the ref" do
+          resource[:revision] = '0.6'
           provider.revision.should == '0.6'
         end
       end
 
-      context "when its SHA is different than the current SHA", :resource => {:revision => '0.5.3'} do
+      context "when its SHA is different than the current SHA" do
         it "should return the current SHA" do
+          resource[:revision] = '0.5.3'
           provider.revision.should == '34e6012c783a'
         end
       end
@@ -74,6 +106,7 @@ describe_provider :vcsrepo, :hg, :resource => {:path => '/tmp/vcsrepo'} do
 
       context "when it is the same as the current SHA", :resource => {:revision => '34e6012c783a'} do
         it "should return it" do
+          resource[:revision] = '34e6012c783a'
           provider.expects(:hg).with('tags').returns(fixture(:hg_tags))
           provider.revision.should == resource.value(:revision)
         end
@@ -81,6 +114,7 @@ describe_provider :vcsrepo, :hg, :resource => {:path => '/tmp/vcsrepo'} do
 
       context "when it is not the same as the current SHA", :resource => {:revision => 'not-the-same'} do
         it "should return the current SHA" do
+          resource[:revision] = 'not-the-same'
           provider.expects(:hg).with('tags').returns(fixture(:hg_tags))
           provider.revision.should == '34e6012c783a'
         end

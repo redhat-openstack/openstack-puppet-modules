@@ -6,18 +6,18 @@ class { 'mysql::server':
   }
 }
 
-mysql_user{ 'redmine@localhost':
+database_user{ 'redmine@localhost':
   ensure        => present,
   password_hash => mysql_password('redmine'),
   require       => Class['mysql::server'],
 }
 
-mysql_user{ 'dan@localhost':
+database_user{ 'dan@localhost':
   ensure        => present,
   password_hash => mysql_password('blah')
 }
 
-mysql_user{ 'dan@%':
+database_user{ 'dan@%':
   ensure        => present,
   password_hash => mysql_password('blah'),
 }

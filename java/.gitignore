@@ -1,0 +1,6 @@
+pkg/
+.DS_Store
+spec/fixtures
+*.idea
+*.swp
+*.tmp

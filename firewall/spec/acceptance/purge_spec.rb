@@ -130,7 +130,7 @@ describe "purge tests:", :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamil
       expect(shell('iptables-save').stdout).to match(/-A INPUT -s 1\.2\.1\.1(\/32)? -p tcp\s?\n-A INPUT -s 1\.2\.1\.1(\/32)? -p udp/)
     end
   end
-  context 'ipv6 chain purge', :unless => (fact('osfamily') == 'RedHat' and fact('operatingsystemmajrelease') == '5') do
+  context('ipv6 chain purge') do
     after(:all) do
       ip6tables_flush_all_tables
     end
@@ -166,10 +166,9 @@ describe "purge tests:", :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamil
           purge => true,
         }
         firewall { '010 output-1::50':
-          chain    => 'OUTPUT',
-          proto    => 'all',
-          source   => '1::50',
-          provider => 'ip6tables',
+          chain  => 'OUTPUT',
+          proto  => 'all',
+          source => '1::50',
         }
       EOS
 

@@ -1,43 +1,35 @@
-# == Class: heat::db::mysql
-#
 # The heat::db::mysql class creates a MySQL database for heat.
 # It must be used on the MySQL server
 #
-# === Parameters
+# == Parameters
 #
-# [*password*]
-#   (Mandatory) Password to connect to the database.
-#   Defaults to 'false'.
+#  [*password*]
+#    password to connect to the database. Mandatory.
 #
-# [*dbname*]
-#   (Optional) Name of the database.
-#   Defaults to 'heat'.
+#  [*dbname*]
+#    name of the database. Optional. Defaults to heat.
 #
-# [*user*]
-#   (Optional) User to connect to the database.
-#   Defaults to 'heat'.
+#  [*user*]
+#    user to connect to the database. Optional. Defaults to heat.
 #
-# [*host*]
-#   (Optional) The default source host user is allowed to connect from.
-#   Defaults to '127.0.0.1'
+#  [*host*]
+#    the default source host user is allowed to connect from.
+#    Optional. Defaults to 'localhost'
 #
-# [*allowed_hosts*]
-#   (Optional) Other hosts the user is allowed to connect from.
-#   Defaults to 'undef'.
+#  [*allowed_hosts*]
+#    other hosts the user is allowd to connect from.
+#    Optional. Defaults to undef.
 #
-# [*charset*]
-#   (Optional) The database charset.
-#   Defaults to 'utf8'
+#  [*charset*]
+#    the database charset. Optional. Defaults to 'utf8'
 #
-# [*collate*]
-#   (Optional) The database collate.
-#   Only used with mysql modules >= 2.2.
-#   Defaults to 'utf8_unicode_ci'
+#  [*collate*]
+#    the database collate. Optional. Only used with mysql modules
+#    >=  2.2
+#    Defaults to 'utf8_unicode_ci'
 #
-# === Deprecated Parameters
-#
-# [*mysql_module*]
-#   (Optional) Does nothing.
+#  [*mysql_module*]
+#   (optional) Deprecated. Does nothing.
 #
 class heat::db::mysql(
   $password      = false,

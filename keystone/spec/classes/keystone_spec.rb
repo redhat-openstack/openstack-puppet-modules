@@ -2,24 +2,12 @@ require 'spec_helper'
 
 describe 'keystone' do
 
-  let :global_facts do
-    {
-      :processorcount => 42,
-      :concat_basedir => '/var/lib/puppet/concat',
-      :fqdn           => 'some.host.tld'
-    }
-  end
-
   let :facts do
-    global_facts.merge({
-      :osfamily               => 'Debian',
-      :operatingsystem        => 'Debian',
-      :operatingsystemrelease => '7.0'
-    })
+    {:osfamily => 'Debian'}
   end
 
-  default_params = {
-      'admin_token'           => 'service_token',
+  let :default_params do
+    {
       'package_ensure'        => 'present',
       'public_bind_host'      => '0.0.0.0',
       'admin_bind_host'       => '0.0.0.0',
@@ -31,8 +19,8 @@ describe 'keystone' do
       'debug'                 => false,
       'catalog_type'          => 'sql',
       'catalog_driver'        => false,
-      'token_provider'        => 'keystone.token.providers.uuid.Provider',
-      'token_driver'          => 'keystone.token.persistence.backends.sql.Token',
+      'token_provider'        => 'keystone.token.providers.pki.Provider',
+      'token_driver'          => 'keystone.token.backends.sql.Token',
       'cache_dir'             => '/var/cache/keystone',
       'enable_ssl'            => false,
       'ssl_certfile'          => '/etc/keystone/ssl/certs/keystone.pem',
@@ -52,8 +40,10 @@ describe 'keystone' do
       'rabbit_password'       => 'guest',
       'rabbit_userid'         => 'guest',
     }
+  end
 
-  override_params = {
+  [{'admin_token'     => 'service_token'},
+   {
       'package_ensure'        => 'latest',
       'public_bind_host'      => '0.0.0.0',
       'admin_bind_host'       => '0.0.0.0',
@@ -86,107 +76,44 @@ describe 'keystone' do
       'rabbit_password'       => 'openstack',
       'rabbit_userid'         => 'admin',
     }
+  ].each do |param_set|
 
-  httpd_params = {'service_name' => 'httpd'}.merge(default_params)
-
-  shared_examples_for 'core keystone examples' do |param_hash|
-    it { should contain_class('keystone::params') }
-
-    it { should contain_package('keystone').with(
-      'ensure' => param_hash['package_ensure']
-    ) }
-
-    it { should contain_group('keystone').with(
-      'ensure' => 'present',
-      'system' => true
-    ) }
-
-    it { should contain_user('keystone').with(
-      'ensure' => 'present',
-      'gid'    => 'keystone',
-      'system' => true
-    ) }
-
-    it 'should contain the expected directories' do
-      ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone'].each do |d|
-        should contain_file(d).with(
-          'ensure'     => 'directory',
-          'owner'      => 'keystone',
-          'group'      => 'keystone',
-          'mode'       => '0750',
-          'require'    => 'Package[keystone]'
-        )
+    describe "when #{param_set == {} ? "using default" : "specifying"} class parameters" do
+      let :param_hash do
+        default_params.merge(param_set)
       end
-    end
-
-    it 'should only synchronize the db if $enabled is true' do
-      if param_hash['enabled']
-        should contain_exec('keystone-manage db_sync').with(
-          :user        => 'keystone',
-          :refreshonly => true,
-          :subscribe   => ['Package[keystone]', 'Keystone_config[database/connection]'],
-          :require     => 'User[keystone]'
-        )
-      end
-    end
-
-    it 'should contain correct config' do
-      [
-       'public_bind_host',
-       'admin_bind_host',
-       'public_port',
-       'admin_port',
-       'compute_port',
-       'verbose',
-       'debug'
-      ].each do |config|
-        should contain_keystone_config("DEFAULT/#{config}").with_value(param_hash[config])
-      end
-    end
-
-    it 'should contain correct admin_token config' do
-      should contain_keystone_config('DEFAULT/admin_token').with_value(param_hash['admin_token']).with_secret(true)
-    end
-
-    it 'should contain correct mysql config' do
-      should contain_keystone_config('database/idle_timeout').with_value(param_hash['database_idle_timeout'])
-      should contain_keystone_config('database/connection').with_value(param_hash['database_connection']).with_secret(true)
-    end
-
-    it { should contain_keystone_config('token/provider').with_value(
-      param_hash['token_provider']
-    ) }
-
-    it 'should contain correct token driver' do
-      should contain_keystone_config('token/driver').with_value(param_hash['token_driver'])
-    end
-
-    it 'should ensure proper setting of admin_endpoint and public_endpoint' do
-      if param_hash['admin_endpoint']
-        should contain_keystone_config('DEFAULT/admin_endpoint').with_value(param_hash['admin_endpoint'])
-      else
-        should contain_keystone_config('DEFAULT/admin_endpoint').with_ensure('absent')
-      end
-      if param_hash['public_endpoint']
-        should contain_keystone_config('DEFAULT/public_endpoint').with_value(param_hash['public_endpoint'])
-      else
-        should contain_keystone_config('DEFAULT/public_endpoint').with_ensure('absent')
-      end
-    end
-
-    it 'should contain correct rabbit_password' do
-      should contain_keystone_config('DEFAULT/rabbit_password').with_value(param_hash['rabbit_password']).with_secret(true)
-    end
-  end
-
-  [default_params, override_params].each do |param_hash|
-    describe "when #{param_hash == default_params ? "using default" : "specifying"} class parameters for service" do
 
       let :params do
-        param_hash
+        param_set
       end
 
-      it_configures 'core keystone examples', param_hash
+      it { should contain_class('keystone::params') }
+
+      it { should contain_package('keystone').with(
+        'ensure' => param_hash['package_ensure']
+      ) }
+
+      it { should contain_group('keystone').with(
+          'ensure' => 'present',
+          'system' => true
+      ) }
+      it { should contain_user('keystone').with(
+        'ensure' => 'present',
+        'gid'    => 'keystone',
+        'system' => true
+      ) }
+
+      it 'should contain the expected directories' do
+        ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone'].each do |d|
+          should contain_file(d).with(
+            'ensure'     => 'directory',
+            'owner'      => 'keystone',
+            'group'      => 'keystone',
+            'mode'       => '0750',
+            'require'    => 'Package[keystone]'
+          )
+        end
+      end
 
       it { should contain_service('keystone').with(
         'ensure'     => param_hash['enabled'] ? 'running' : 'stopped',
@@ -195,26 +122,65 @@ describe 'keystone' do
         'hasrestart' => true
       ) }
 
+      it 'should only migrate the db if $enabled is true' do
+        if param_hash['enabled']
+          should contain_exec('keystone-manage db_sync').with(
+            :user        => 'keystone',
+            :refreshonly => true,
+            :subscribe   => ['Package[keystone]', 'Keystone_config[database/connection]'],
+            :require     => 'User[keystone]'
+          )
+        end
+      end
+
+      it 'should contain correct config' do
+        [
+          'public_bind_host',
+          'admin_bind_host',
+          'public_port',
+          'admin_port',
+          'compute_port',
+          'verbose',
+          'debug'
+        ].each do |config|
+          should contain_keystone_config("DEFAULT/#{config}").with_value(param_hash[config])
+        end
+      end
+
+      it 'should contain correct admin_token config' do
+        should contain_keystone_config('DEFAULT/admin_token').with_value(param_hash['admin_token']).with_secret(true)
+      end
+
+      it 'should contain correct mysql config' do
+        should contain_keystone_config('database/idle_timeout').with_value(param_hash['database_idle_timeout'])
+        should contain_keystone_config('database/connection').with_value(param_hash['database_connection']).with_secret(true)
+      end
+
+      it { should contain_keystone_config('token/provider').with_value(
+        param_hash['token_provider']
+      ) }
+
+      it 'should contain correct token driver' do
+        should contain_keystone_config('token/driver').with_value(param_hash['token_driver'])
+      end
+
+      it 'should ensure proper setting of admin_endpoint and public_endpoint' do
+        if param_hash['admin_endpoint']
+          should contain_keystone_config('DEFAULT/admin_endpoint').with_value(param_hash['admin_endpoint'])
+        else
+          should contain_keystone_config('DEFAULT/admin_endpoint').with_ensure('absent')
+        end
+        if param_hash['public_endpoint']
+          should contain_keystone_config('DEFAULT/public_endpoint').with_value(param_hash['public_endpoint'])
+        else
+          should contain_keystone_config('DEFAULT/public_endpoint').with_ensure('absent')
+        end
+      end
+
+      it 'should contain correct rabbit_password' do
+        should contain_keystone_config('DEFAULT/rabbit_password').with_value(param_hash['rabbit_password']).with_secret(true)
+      end
     end
-  end
-
-  describe "when using default class parameters for httpd" do
-    let :params do
-      httpd_params
-    end
-
-    let :pre_condition do
-      'include ::apache'
-    end
-
-    it_configures 'core keystone examples', httpd_params
-
-    it do
-      expect {
-        should contain_service('keystone')
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /expected that the catalogue would contain Service\[keystone\]/)
-    end
-
   end
 
   describe 'with deprecated sql_connection parameter' do
@@ -244,24 +210,7 @@ describe 'keystone' do
           'token_provider' => 'keystone.token.providers.uuid.Provider'
         }
       end
-      it { should contain_exec('keystone-manage pki_setup').with(
-        :creates => '/etc/keystone/ssl/private/signing_key.pem'
-      ) }
-      it { should contain_file('/var/cache/keystone').with_ensure('directory') }
-
-      describe 'when overriding the cache dir' do
-        before do
-          params.merge!(:cache_dir => '/var/lib/cache/keystone')
-        end
-        it { should contain_file('/var/lib/cache/keystone') }
-      end
-
-      describe 'when disable pki_setup' do
-        before do
-          params.merge!(:enable_pki_setup => false)
-        end
-        it { should_not contain_exec('keystone-manage pki_setup') }
-      end
+      it { should_not contain_exec('keystone-manage pki_setup') }
     end
 
     describe 'when configuring as PKI' do
@@ -291,60 +240,16 @@ describe 'keystone' do
       end
     end
 
-    describe 'when configuring PKI signing cert paths with UUID and with pki_setup disabled' do
-      let :params do
-        {
-          'admin_token'          => 'service_token',
-          'token_provider'       => 'keystone.token.providers.uuid.Provider',
-          'enable_pki_setup'     => false,
-          'signing_certfile'     => 'signing_certfile',
-          'signing_keyfile'      => 'signing_keyfile',
-          'signing_ca_certs'     => 'signing_ca_certs',
-          'signing_ca_key'       => 'signing_ca_key',
-          'signing_cert_subject' => 'signing_cert_subject',
-          'signing_key_size'     => 2048
-        }
-      end
-
-      it { should_not contain_exec('keystone-manage pki_setup') }
-
-      it 'should contain correct PKI certfile config' do
-        should contain_keystone_config('signing/certfile').with_value('signing_certfile')
-      end
-
-      it 'should contain correct PKI keyfile config' do
-        should contain_keystone_config('signing/keyfile').with_value('signing_keyfile')
-      end
-
-      it 'should contain correct PKI ca_certs config' do
-        should contain_keystone_config('signing/ca_certs').with_value('signing_ca_certs')
-      end
-
-      it 'should contain correct PKI ca_key config' do
-        should contain_keystone_config('signing/ca_key').with_value('signing_ca_key')
-      end
-
-      it 'should contain correct PKI cert_subject config' do
-        should contain_keystone_config('signing/cert_subject').with_value('signing_cert_subject')
-      end
-
-      it 'should contain correct PKI key_size config' do
-        should contain_keystone_config('signing/key_size').with_value('2048')
-      end
-    end
-
     describe 'when configuring PKI signing cert paths with pki_setup disabled' do
       let :params do
         {
-          'admin_token'          => 'service_token',
-          'token_provider'       => 'keystone.token.providers.pki.Provider',
-          'enable_pki_setup'     => false,
-          'signing_certfile'     => 'signing_certfile',
-          'signing_keyfile'      => 'signing_keyfile',
-          'signing_ca_certs'     => 'signing_ca_certs',
-          'signing_ca_key'       => 'signing_ca_key',
-          'signing_cert_subject' => 'signing_cert_subject',
-          'signing_key_size'     => 2048
+          'admin_token'       => 'service_token',
+          'token_provider'    => 'keystone.token.providers.pki.Provider',
+          'enable_pki_setup'  => false,
+          'signing_certfile'  => 'signing_certfile',
+          'signing_keyfile'   => 'signing_keyfile',
+          'signing_ca_certs'  => 'signing_ca_certs',
+          'signing_ca_key'    => 'signing_ca_key'
         }
       end
 
@@ -364,14 +269,6 @@ describe 'keystone' do
 
       it 'should contain correct PKI ca_key config' do
         should contain_keystone_config('signing/ca_key').with_value('signing_ca_key')
-      end
-
-      it 'should contain correct PKI cert_subject config' do
-        should contain_keystone_config('signing/cert_subject').with_value('signing_cert_subject')
-      end
-
-      it 'should contain correct PKI key_size config' do
-        should contain_keystone_config('signing/key_size').with_value('2048')
       end
     end
 
@@ -393,49 +290,14 @@ describe 'keystone' do
       it { should contain_keystone_config('catalog/driver').with_value(params[:catalog_driver]) }
     end
 
-    describe 'when configuring deprecated token_format as UUID with enable_pki_setup' do
+    describe 'when configuring deprecated token_format as UUID' do
       let :params do
         {
           'admin_token'    => 'service_token',
           'token_format'   => 'UUID'
         }
       end
-      it { should contain_exec('keystone-manage pki_setup').with(
-        :creates => '/etc/keystone/ssl/private/signing_key.pem'
-      ) }
-      it { should contain_file('/var/cache/keystone').with_ensure('directory') }
-      describe 'when overriding the cache dir' do
-        let :params do
-          {
-            'admin_token'    => 'service_token',
-            'token_provider' => 'keystone.token.providers.pki.Provider',
-            'cache_dir'      => '/var/lib/cache/keystone'
-          }
-        end
-        it { should contain_file('/var/lib/cache/keystone') }
-      end
-    end
-
-    describe 'when configuring deprecated token_format as UUID without enable_pki_setup' do
-      let :params do
-        {
-          'admin_token'      => 'service_token',
-          'token_format'     => 'UUID',
-          'enable_pki_setup' => false
-        }
-      end
       it { should_not contain_exec('keystone-manage pki_setup') }
-      it { should contain_file('/var/cache/keystone').with_ensure('directory') }
-      describe 'when overriding the cache dir' do
-        let :params do
-          {
-            'admin_token'    => 'service_token',
-            'token_provider' => 'keystone.token.providers.uuid.Provider',
-            'cache_dir'      => '/var/lib/cache/keystone'
-          }
-        end
-        it { should contain_file('/var/lib/cache/keystone') }
-      end
     end
 
     describe 'when configuring deprecated token_format as PKI with enable_pki_setup' do
@@ -613,6 +475,28 @@ describe 'keystone' do
     it { should contain_keystone_config('DEFAULT/admin_bind_host').with_value('10.0.0.2') }
   end
 
+  describe 'when configuring as SSL' do
+    let :params do
+      {
+        'admin_token' => 'service_token',
+        'enable_ssl'  => true
+      }
+    end
+    it { should contain_exec('keystone-manage pki_setup').with(
+      :creates => '/etc/keystone/ssl/private/signing_key.pem'
+    ) }
+    it { should contain_file('/var/cache/keystone').with_ensure('directory') }
+    describe 'when overriding the cache dir' do
+      let :params do
+        {
+          'admin_token' => 'service_token',
+          'enable_ssl'  => true,
+          'cache_dir'   => '/var/lib/cache/keystone'
+        }
+      end
+      it { should contain_file('/var/lib/cache/keystone') }
+    end
+  end
   describe 'when enabling SSL' do
     let :params do
       {
@@ -773,10 +657,7 @@ describe 'keystone' do
 
   describe 'setting service_provider' do
     let :facts do
-      global_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '6.0'
-      })
+      {:osfamily => 'RedHat'}
     end
 
     describe 'with default service_provider' do

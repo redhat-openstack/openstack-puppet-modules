@@ -50,7 +50,7 @@ usvn_user@localhost
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
-      expect(parsed_users).to match_array(usernames)
+      parsed_users.should match_array(usernames)
     end
   end
 
@@ -65,7 +65,7 @@ usvn_user@localhost
     it 'makes a user' do
       provider.expects(:mysql).with([defaults_file, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10"])
       provider.expects(:exists?).returns(true)
-      expect(provider.create).to be_truthy
+      provider.create.should be_true
     end
   end
 
@@ -73,30 +73,30 @@ usvn_user@localhost
     it 'removes a user if present' do
       provider.expects(:mysql).with([defaults_file, '-e', "DROP USER 'joe'@'localhost'"])
       provider.expects(:exists?).returns(false)
-      expect(provider.destroy).to be_truthy
+      provider.destroy.should be_true
     end
   end
 
   describe 'exists?' do
     it 'checks if user exists' do
-      expect(instance.exists?).to be_truthy
+      instance.exists?.should be_true
     end
   end
 
   describe 'self.defaults_file' do
     it 'sets --defaults-extra-file' do
       File.stubs(:file?).with('/root/.my.cnf').returns(true)
-      expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
+      provider.defaults_file.should eq '--defaults-extra-file=/root/.my.cnf'
     end
     it 'fails if file missing' do
       File.expects(:file?).with('/root/.my.cnf').returns(false)
-      expect(provider.defaults_file).to be_nil
+      provider.defaults_file.should be_nil
     end
   end
 
   describe 'password_hash' do
     it 'returns a hash' do
-      expect(instance.password_hash).to eq('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
+      instance.password_hash.should == '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'
     end
   end
 
@@ -114,7 +114,7 @@ usvn_user@localhost
 
     describe property do
       it "returns #{property}" do
-        expect(instance.send("#{property}".to_sym)).to eq('10')
+        instance.send("#{property}".to_sym).should == '10'
       end
     end
 

@@ -21,10 +21,6 @@
 #
 # === Parameters
 #
-# [*backup_driver*]
-#   (optional) Which cinder backup driver to use
-#   Defaults to 'cinder.backup.drivers.ceph'
-#
 # [*backup_ceph_conf*]
 #   (optional) Ceph config file to use.
 #   Should be a valid ceph configuration file
@@ -58,7 +54,7 @@
 #
 
 class cinder::backup::ceph (
-  $backup_driver            = 'cinder.backup.drivers.ceph',
+  $backup_driver            = 'cinder.backup.driver.ceph',
   $backup_ceph_conf         = '/etc/ceph/ceph.conf',
   $backup_ceph_user         = 'cinder',
   $backup_ceph_chunk_size   = '134217728',

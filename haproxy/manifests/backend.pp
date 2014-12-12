@@ -16,20 +16,19 @@
 # === Parameters
 #
 # [*name*]
-#    The namevar of the defined resource type is the backend service's name.
-#     This name goes right after the 'backend' statement in haproxy.cfg
+#   The namevar of the defined resource type is the backend service's name.
+#    This name goes right after the 'backend' statement in haproxy.cfg
 #
 # [*options*]
-#    A hash of options that are inserted into the backend configuration block.
+#   A hash of options that are inserted into the backend configuration block.
 #
 # [*collect_exported*]
-#    Boolean, default 'true'. True means 'collect exported @@balancermember
-#     resources' (for the case when every balancermember node exports itself),
-#     false means 'rely on the existing declared balancermember resources' (for
-#     the case when you know the full set of balancermember in advance and use
-#     haproxy::balancermember with array arguments, which allows you to deploy
-#     everything in 1 run)
-#
+#   Boolean, default 'true'. True means 'collect exported @@balancermember
+#    resources' (for the case when every balancermember node exports itself),
+#    false means 'rely on the existing declared balancermember resources' (for
+#    the case when you know the full set of balancermember in advance and use
+#    haproxy::balancermember with array arguments, which allows you to deploy
+#    everything in 1 run)
 #
 # === Examples
 #
@@ -69,7 +68,7 @@ define haproxy::backend (
   }
 
   if $collect_exported {
-    Haproxy::Balancermember <<| listening_service == $name |>>
+    haproxy::balancermember::collect_exported { $name: }
   }
   # else: the resources have been created and they introduced their
   # concat fragments. We don't have to do anything about them.

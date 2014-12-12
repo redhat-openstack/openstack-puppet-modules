@@ -1,0 +1,7 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+# Nothing Here. Place a file in modules/nfs/files/exports.${::fqdn}
+#
+# Read nfs::data for more info.
+#

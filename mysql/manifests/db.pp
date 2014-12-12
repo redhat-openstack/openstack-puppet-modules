@@ -2,31 +2,29 @@
 define mysql::db (
   $user,
   $password,
-  $dbname      = $name,
   $charset     = 'utf8',
   $collate     = 'utf8_general_ci',
   $host        = 'localhost',
   $grant       = 'ALL',
-  $sql         = undef,
+  $sql         = '',
   $enforce_sql = false,
-  $ensure      = 'present',
-  $import_timeout = 300,
+  $ensure      = 'present'
 ) {
   #input validation
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-  $table = "${dbname}.*"
+  $table = "${name}.*"
 
   include '::mysql::client'
 
-  $db_resource = {
+  mysql_database { $name:
     ensure   => $ensure,
     charset  => $charset,
     collate  => $collate,
     provider => 'mysql',
     require  => [ Class['mysql::server'], Class['mysql::client'] ],
+    before   => Mysql_user["${user}@${host}"],
   }
-  ensure_resource('mysql_database', $dbname, $db_resource)
 
   $user_resource = {
     ensure        => $ensure,
@@ -42,20 +40,19 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
-      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"], Class['mysql::server'] ],
+      require    => [ Mysql_user["${user}@${host}"], Class['mysql::server'] ],
     }
 
     $refresh = ! $enforce_sql
 
     if $sql {
-      exec{ "${dbname}-import":
-        command     => "/usr/bin/mysql ${dbname} < ${sql}",
+      exec{ "${name}-import":
+        command     => "/usr/bin/mysql ${name} < ${sql}",
         logoutput   => true,
         environment => "HOME=${::root_home}",
         refreshonly => $refresh,
         require     => Mysql_grant["${user}@${host}/${table}"],
-        subscribe   => Mysql_database[$dbname],
-        timeout     => $import_timeout,
+        subscribe   => Mysql_database[$name],
       }
     }
   }

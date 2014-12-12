@@ -1,46 +1,13 @@
-# == Class: heat::api
-#
 # Installs & configure the heat API service
 #
-# === Parameters
-# [*enabled*]
-#   (optional) Should the service be enabled.
-#   Defaults to 'true'.
+# == Parameters
+#  [*enabled*]
+#    (optional) Should the service be enabled.
+#    Defaults to true
 #
-# [*manage_service*]
-#   (optional) Whether the service should be managed by Puppet.
-#   Defaults to 'true'.
-#
-# [*bind_host*]
-#   (Optional) Address to bind the server. Useful when
-#   selecting a particular network interface.
-#   Defaults to '0.0.0.0'.
-#
-# [*bind_port*]
-#   (Optional) The port on which the server will listen.
-#   Defaults to '8004'.
-#
-# [*workers*]
-#   (Optional) The port on which the server will listen.
-#   Defaults to '0'.
-#
-# [*use_ssl*]
-#   (Optional) Whether to use ssl or not.
-#   Defaults to 'false'.
-#
-# [*cert_file*]
-#   (Optional) Location of the SSL certificate file to use for SSL mode.
-#   Required when $use_ssl is set to 'true'.
-#   Defaults to 'false'.
-#
-# [*key_file*]
-#   (Optional) Location of the SSL key file to use for enabling SSL mode.
-#   Required when $use_ssl is set to 'true'.
-#   Defaults to 'false'.
-#
-# === Deprecated Parameters
-#
-# No Deprecated Parameters.
+#  [*manage_service*]
+#    (optional) Whether the service should be managed by Puppet.
+#    Defaults to true.
 #
 class heat::api (
   $manage_service    = true,
@@ -55,13 +22,10 @@ class heat::api (
 
   include heat
   include heat::params
-  include heat::policy
 
   Heat_config<||> ~> Service['heat-api']
-  Class['heat::policy'] -> Service['heat-api']
 
   Package['heat-api'] -> Heat_config<||>
-  Package['heat-api'] -> Class['heat::policy']
   Package['heat-api'] -> Service['heat-api']
 
   if $use_ssl {

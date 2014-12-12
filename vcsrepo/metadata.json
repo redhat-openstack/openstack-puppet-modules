@@ -1,0 +1,69 @@
+{
+    "name": "puppetlabs-vcsrepo",
+    "version": "1.0.1",
+    "source": "https://github.com/puppetlabs/puppetlabs-vcsrepo",
+    "author": "Puppet Labs",
+    "license": "GPLv2",
+    "project_page": "https://github.com/puppetlabs/puppetlabs-vcsrepo",
+    "summary": "Puppet module providing a type to manage repositories from various version control systems",
+    "operatingsystem_support": [
+      {
+        "operatingsystem": "RedHat",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "CentOS",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "OracleLinux",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "Scientific",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "SLES",
+        "operatingsystemrelease": [
+          "11 SP1"
+        ]
+      },
+      {
+        "operatingsystem": "Debian",
+        "operatingsystemrelease": [
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "Ubuntu",
+        "operatingsystemrelease": [
+          "10.04",
+          "12.04",
+          "14.04"
+        ]
+      }
+    ],
+    "requirements": [
+      { "name": "pe", "version_requirement": ">= 3.2.0 < 3.4.0" },
+      { "name": "puppet", "version_requirement": "3.x" }
+    ],
+    "dependencies": []
+}

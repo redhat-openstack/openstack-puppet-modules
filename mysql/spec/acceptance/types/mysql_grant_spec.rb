@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_grant' do
+describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
 
   describe 'setup' do
     it 'setup mysql::server' do
@@ -67,21 +67,6 @@ describe 'mysql_grant' do
         expect(r.stdout).to match(/GRANT SELECT, UPDATE.*TO 'test2'@'tester'/)
         expect(r.stderr).to be_empty
       end
-    end
-  end
-
-  describe 'adding privileges with invalid name' do
-    it 'should fail' do
-      pp = <<-EOS
-        mysql_grant { 'test':
-          ensure     => 'present',
-          table      => 'test.*',
-          user       => 'test2@tester',
-          privileges => ['SELECT', 'UPDATE'],
-        }
-      EOS
-
-      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/name must match user and table parameters/)
     end
   end
 
@@ -320,75 +305,4 @@ describe 'mysql_grant' do
       end
     end
   end
-
-  describe 'grants with skip-name-resolve specified' do
-    it 'setup mysql::server' do
-      pp = <<-EOS
-        class { 'mysql::server':
-          override_options => {
-            'mysqld' => {'skip-name-resolve' => true}
-          },
-          restart          => true,
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-    end
-
-    it 'should apply' do
-      pp = <<-EOS
-        mysql_grant { 'test@fqdn.com/test.*':
-          ensure     => 'present',
-          table      => 'test.*',
-          user       => 'test@fqdn.com',
-          privileges => 'ALL',
-        }
-        mysql_grant { 'test@192.168.5.7/test.*':
-          ensure     => 'present',
-          table      => 'test.*',
-          user       => 'test@192.168.5.7',
-          privileges => 'ALL',
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-    end
-
-    it 'should fail with fqdn' do
-      expect(shell("mysql -NBe \"SHOW GRANTS FOR test@fqdn.com\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'test' on host 'fqdn.com'/)
-    end
-    it 'finds ipv4' do
-      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
-        expect(r.stdout).to match(/GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.7'/)
-        expect(r.stderr).to be_empty
-      end
-    end
-
-    it 'should fail to execute while applying' do
-      pp = <<-EOS
-        mysql_grant { 'test@fqdn.com/test.*':
-          ensure     => 'present',
-          table      => 'test.*',
-          user       => 'test@fqdn.com',
-          privileges => 'ALL',
-        }
-      EOS
-
-      mysql_cmd = shell('which mysql').stdout.chomp
-      shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
-      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Command mysql is missing/)
-      shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
-    end
-
-    it 'reset mysql::server config' do
-      pp = <<-EOS
-        class { 'mysql::server':
-          restart          => true,
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-    end
-  end
-
 end

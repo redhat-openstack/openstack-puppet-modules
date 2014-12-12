@@ -1,0 +1,18 @@
+{
+  "sensu": [
+    <%- 
+    apis = Array.new
+    @data['api'].each do |a|  
+      apis << a
+    end %>
+      <%= apis.join(",\n") %>
+    ],
+  "uchiwa": {
+    "host": "<%= @data['host'] %>",
+    "port": <%= @data['port'] %>,
+    "user": "<%= @data['user'] %>",
+    "pass": "<%= @data['pass'] %>",
+    "stats": <%= @data['stats'] %>,
+    "refresh": <%= @data['refresh'] %>
+  }
+}

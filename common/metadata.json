@@ -1,0 +1,53 @@
+{
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.2.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "OracleLinux"
+    },
+    {
+      "operatingsystem": "Scientific"
+    },
+    {
+      "operatingsystem": "Solaris"
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "SLED"
+    },
+    {
+      "operatingsystem": "Ubuntu"
+    }
+  ],
+  "name": "ghoneycutt-common",
+  "version": "1.2.0",
+  "author": "ghoneycutt",
+  "summary": "common module to be applied to all nodes",
+  "license": "Apache License, Version 2.0",
+  "source": "git://github.com/ghoneycutt/puppet-module-common.git",
+  "project_page": "https://github.com/ghoneycutt/puppet-module-common",
+  "issues_url": "https://github.com/ghoneycutt/puppet-module-common/issues",
+  "description": "Provide ability to include modules that are common to all nodes.",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"}
+  ]
+}

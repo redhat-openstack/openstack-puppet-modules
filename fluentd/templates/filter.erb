@@ -1,0 +1,30 @@
+<match <%= @pattern %>>
+    type <%= @type %>
+<%- if @input_key != '' -%>
+    input_key <%= @input_key %>
+<%- if @regexp != '' -%>
+    regexp <%= @regexp %>
+<%- end -%>
+<%- if @exclude != '' -%> 
+    exclude <%= @exclude %>
+<%- end -%>
+<%- end -%>
+<%- @config.sort_by{|key,val|key}.each do |key, val| -%>
+    <%= key %> <%= val %>
+<%- end -%>
+<%- if @output_tag != '' -%> 
+    tag <%= @output_tag %>
+<%- end -%>
+<%- if @add_tag_prefix != '' -%> 
+    add_tag_prefix <%= @add_tag_prefix %>
+<%- end -%>
+<%- if @remove_tag_prefix != '' -%> 
+    remove_tag_prefix <%= @remove_tag_prefix %>
+<%- end -%>
+<%- if @add_tag_suffix != '' -%> 
+    add_tag_suffix <%= @add_tag_suffix %>
+<%- end -%>
+<%- if @remove_tag_suffix != '' -%> 
+    remove_tag_suffix <%= @remove_tag_suffix %>
+<%- end -%>
+</match>

@@ -12,7 +12,7 @@ describe 'firewall::linux::redhat', :type => :class do
           :operatingsystemrelease => osrel
         }}
 
-        it { should_not contain_service('firewalld') }
+        it { should_not contain_package('firewalld') }
         it { should_not contain_package('iptables-services') }
       end
     end
@@ -24,9 +24,8 @@ describe 'firewall::linux::redhat', :type => :class do
           :operatingsystemrelease => osrel
         }}
 
-        it { should contain_service('firewalld').with(
-          :ensure => 'stopped',
-          :enable => false,
+        it { should contain_package('firewalld').with(
+          :ensure => 'absent',
           :before => 'Package[iptables-services]'
         )}
 

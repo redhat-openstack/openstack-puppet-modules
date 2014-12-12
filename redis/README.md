@@ -1,60 +1,58 @@
-# Puppet Redis
+redis puppet module
+===================
 
-## Build status
+[![Build Status](https://secure.travis-ci.org/thomasvandoren/puppet-redis.png)](http://travis-ci.org/thomasvandoren/puppet-redis)
 
-[![Build Status](https://travis-ci.org/arioch/puppet-redis.png?branch=master)](https://travis-ci.org/arioch/puppet-redis)
+Install and configure redis.
 
-## Example usage
+Usage
+-----
+Installs redis server and client with reasonable defaults.
 
-### Standalone
+```puppet
+include redis
+```
 
-    class { 'redis':;
-    }
+Installs redis server and client with version 2.6.5.
 
-### Master node
+```puppet
+class { 'redis':
+  version => '2.6.5',
+}
+```
 
-    class { 'redis':
-      bind        => '10.0.1.1';
-      #masterauth  => 'secret';
-    }
+Installs version 2.4.17, listens on default port 6379 with default settings.
+Sets up 2nd instance on port 6900, binds to address 10.1.2.3 (instead of all 
+available interfaces), sets max memory to 1 gigabyte, and sets a password from 
+hiera.
 
-### Slave node
+```puppet
+class { 'redis':
+  version            => '2.4.17',
+}
+redis::instance { 'redis-6900':
+  redis_port         => '6900',
+  redis_bind_address => '10.1.2.3',
+  redis_password     => hiera('redis_password'),
+  redis_max_memory   => '1gb',
+}
+```
 
-    class { 'redis':
-      bind        => '10.0.1.2',
-      slaveof     => '10.0.1.1 6379';
-      #masterauth  => 'secret';
-    }
+Development
+-----------
 
-### Manage repositories
+To run the linter and spec tests locally:
 
-Disabled by default but if you really want the module to manage the required
-repositories you can use this snippet:
+```bash
+bundle install --gemfile .gemfile
+rake lint
+rake spec
+```
 
-    class { 'redis':
-      manage_repo => true,
-    }
+Authors
+-------
+Thomas Van Doren
 
-On Ubuntu, "chris-lea/redis-server" ppa repo will be added. You can change it by using ppa_repo parameter: 
-
-    class { 'redis':
-      manage_repo => true,
-      ppa_repo    => 'ppa:rwky/redis',
-    }
-
-## Unit testing
-
-Plain RSpec:
-
-    $ rake spec
-
-Using bundle:
-
-    $ bundle exec rake spec
-
-Test against a specific Puppet or Facter version:
-
-    $ PUPPET_VERSION=3.2.1  bundle update && bundle exec rake spec
-    $ PUPPET_VERSION=2.7.19 bundle update && bundle exec rake spec
-    $ FACTER_VERSION=1.6.8  bundle update && bundle exec rake spec
-
+License
+-------
+BSD

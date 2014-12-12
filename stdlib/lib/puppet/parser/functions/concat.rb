@@ -23,12 +23,12 @@ Would result in:
     a = arguments[0]
     b = arguments[1]
 
-    # Check that both args are arrays.
-    unless a.is_a?(Array) and b.is_a?(Array)
+    # Check that the first parameter is an array
+    unless a.is_a?(Array)
       raise(Puppet::ParseError, 'concat(): Requires array to work with')
     end
 
-    result = a.concat(b)
+    result = a + Array(b)
 
     return result
   end

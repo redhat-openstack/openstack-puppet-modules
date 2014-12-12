@@ -11,7 +11,6 @@
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
-   * [RedHat module dependencies](#redhat-module-dependecies)
 6. [Development - Guide for contributing to the module](#development)
 
 ##Overview
@@ -53,26 +52,9 @@ disabling puppet support of the service:
 
 ```puppet
 class { '::rabbitmq':
-  service_manage    => false,
+  service_manage    => false
   port              => '5672',
   delete_guest_user => true,
-}
-```
-
-Or such as offline installation from intranet or local mirrors:
-
-```puppet
-class { '::rabbitmq':
-   key_content      => template('openstack/rabbit.pub.key'),
-   package_gpg_key  => '/tmp/rabbit.pub.key',
-}
-```
-
-And this one will use external package key source for any (apt/rpm) package provider:
-
-```puppet
-class { '::rabbitmq':
-   package_gpg_key  => 'http://www.some_site.some_domain/some_key.pub.key',
 }
 ```
 
@@ -103,28 +85,29 @@ class { 'rabbitmq':
 }
 ```
 
-To change Erlang Kernel Config Variables in rabbitmq.config, use the parameters
-`config_kernel_variables` e.g.:
+### Clustering
+To use RabbitMQ clustering and H/A facilities, use the rabbitmq::server
+parameters `config_cluster`, `cluster_nodes`, and `cluster_node_type`, e.g.:
 
 ```puppet
 class { 'rabbitmq':
-  port              => '5672',
-  config_kernel_variables  => {
-    'inet_dist_listen_min' => 9100,
-    'inet_dist_listen_max' => 9105,
-  }
+  config_cluster    => true, 
+  cluster_nodes     => ['rabbit1', 'rabbit2'],
+  cluster_node_type => 'ram',
 }
 ```
 
-### Clustering
-To use RabbitMQ clustering facilities, use the rabbitmq parameters
-`config_cluster`, `cluster_nodes`, and `cluster_node_type`, e.g.:
+**NOTE:** You still need to use `x-ha-policy: all` in your client 
+applications for any particular queue to take advantage of H/A.
+
+You should set the 'config_mirrored_queues' parameter if you plan
+on using RabbitMQ Mirrored Queues within your cluster:
 
 ```puppet
 class { 'rabbitmq':
-  config_cluster    => true,
-  cluster_nodes     => ['rabbit1', 'rabbit2'],
-  cluster_node_type => 'ram',
+  config_cluster         => true,
+  config_mirrored_queues => true,
+  cluster_nodes          => ['rabbit1', 'rabbit2'],
 }
 ```
 
@@ -144,7 +127,7 @@ class { 'rabbitmq':
 
 ####`admin_enable`
 
-Boolean, if enabled sets up the management interface/plugin for RabbitMQ.
+If enabled sets up the management interface/plugin for RabbitMQ.
 
 ####`cluster_disk_nodes`
 
@@ -158,10 +141,6 @@ Choose between disk and ram nodes.
 
 An array of nodes for clustering.
 
-####`cluster_partition_handling`
-
-Value to set for `cluster_partition_handling` RabbitMQ configuration variable.
-
 ####`config`
 
 The file to use as the rabbitmq.config template.
@@ -170,17 +149,9 @@ The file to use as the rabbitmq.config template.
 
 Boolean to enable or disable clustering support.
 
-####`config_kernel_variables`
-
-Hash of Erlang kernel configuration variables to set (see [Variables Configurable in rabbitmq.config](#variables-configurable-in-rabbitmq.config)).
-
 ####`config_mirrored_queues`
 
-DEPRECATED
-
-Configuring queue mirroring should be done by setting the according policy for
-the queue. You can read more about it
-[here](http://www.rabbitmq.com/ha.html#genesis)
+Boolean to enable or disable mirrored queues.
 
 ####`config_path`
 
@@ -189,18 +160,6 @@ The path to write the RabbitMQ configuration file to.
 ####`config_stomp`
 
 Boolean to enable or disable stomp.
-
-####`config_variables`
-
-To set config variables in rabbitmq.config
-
-####`default_user`
-
-Username to set for the `default_user` in rabbitmq.config.
-
-####`default_pass`
-
-Password to set for the `default_user` in rabbitmq.config.
 
 ####`delete_guest_user`
 
@@ -214,66 +173,30 @@ The template file to use for rabbitmq_env.config.
 
 The path to write the rabbitmq_env.config file to.
 
-####`environment_variables`
-
-RabbitMQ Environment Variables in rabbitmq_env.config
-
 ####`erlang_cookie`
 
 The erlang cookie to use for clustering - must be the same between all nodes.
 
-###`key_content`
+####`erlang_enable`
 
-Uses content method for Debian OS family. Should be a template for apt::source
-class. Overrides `package_gpg_key` behavior, if enabled. Undefined by default.
+If true then we include an erlang module.
 
-####`ldap_auth`
+####`config_variables`
 
-Boolean, set to true to enable LDAP auth.
-
-####`ldap_server`
-
-LDAP server to use for auth.
-
-####`ldap_user_dn_pattern`
-
-User DN pattern for LDAP auth.
-
-####`ldap_use_ssl`
-
-Boolean, set to true to use SSL for the LDAP server.
-
-####`ldap_port`
-
-Numeric port for LDAP server.
-
-####`ldap_log`
-
-Boolean, set to true to log LDAP auth.
-
-####`manage_repos`
-
-Boolean, whether or not to manage package repositories.
-
-####`management_port`
-
-The port for the RabbitMQ management interface.
+To set config variables in rabbitmq.config
 
 ####`node_ip_address`
 
 The value of RABBITMQ_NODE_IP_ADDRESS in rabbitmq_env.config
 
+####`environment_variables`
+
+RabbitMQ Environment Variables in rabbitmq_env.config
+
 ####`package_ensure`
 
 Determines the ensure state of the package.  Set to installed by default, but could
 be changed to latest.
-
-####`package_gpg_key`
-
-RPM package GPG key to import. Uses source method. Should be a URL for Debian/RedHat
-OS family, or a file name for RedHat OS family. 
-Set to http://www.rabbitmq.com/rabbitmq-signing-key-public.asc by default.
-Note, that `key_content`, if specified, would override this parameter for Debian OS family.
 
 ####`package_name`
 
@@ -295,6 +218,10 @@ Location of RabbitMQ plugins.
 
 The RabbitMQ port.
 
+####`management_port`
+
+The port for the RabbitMQ management interface.
+
 ####`service_ensure`
 
 The state of the service.
@@ -307,62 +234,17 @@ Determines if the service is managed.
 
 The name of the service to manage.
 
-####`ssl`
-
-Configures the service for using SSL.
-
-####`ssl_only`
-
-Configures the service to only use SSL.  No cleartext TCP listeners will be created.
-Requires that ssl => true also.
-
-####`ssl_cacert`
-
-CA cert path to use for SSL.
-
-####`ssl_cert`
-
-Cert to use for SSL.
-
-####`ssl_key`
-
-Key to use for SSL.
-
-####`ssl_management_port`
-
-SSL management port.
-
-####`ssl_stomp_port`
-
-SSL stomp port.
-
-####`ssl_verify`
-
-rabbitmq.config SSL verify setting.
-
-####`ssl_fail_if_no_peer_cert`
-
-rabbitmq.config `fail_if_no_peer_cert` setting.
-
 ####`stomp_port`
 
 The port to use for Stomp.
 
-####`stomp_ensure`
+####`wipe_db_on_cookie_change`
 
-Boolean to install the stomp plugin.
-
-####`tcp_keepalive`
-
-Boolean to enable TCP connection keepalive for RabbitMQ service.
+Boolean to determine if we should DESTROY AND DELETE the RabbitMQ database.
 
 ####`version`
 
 Sets the version to install.
-
-####`wipe_db_on_cookie_change`
-
-Boolean to determine if we should DESTROY AND DELETE the RabbitMQ database.
 
 ##Native Types
 
@@ -376,16 +258,6 @@ rabbitmq_user { 'dan':
   password => 'bar',
 }
 ```
-Optional parameter tags will set further rabbitmq tags like monitoring, policymaker, etc.
-To set the administrator tag use admin-flag.
-```puppet
-rabbitmq_user { 'dan':
-  admin    => true,
-  password => 'bar',
-  tags     => ['monitoring', 'tag1'],
-}
-```
-
 
 ### rabbitmq\_vhost
 
@@ -394,17 +266,6 @@ query all current vhosts: `$ puppet resource rabbitmq_vhost`
 ```puppet
 rabbitmq_vhost { 'myhost':
   ensure => present,
-}
-```
-
-### rabbitmq\_exchange
-
-```puppet
-rabbitmq_exchange { 'myexchange@myhost':
-  user     => 'dan',
-  password => 'bar',
-  type     => 'topic',
-  ensure   => present,
 }
 ```
 
@@ -440,38 +301,6 @@ The module has been tested on:
 * Ubuntu 12.04
 
 Testing on other platforms has been light and cannot be guaranteed.
-
-### Module dependencies
-To have a suitable erlang version installed on RedHat and Debian systems,
-you have to install another puppet module from http://forge.puppetlabs.com/garethr/erlang with:
-
-    puppet module install garethr-erlang
-
-This module handles the packages for erlang.
-To use the module, add the following snippet to your site.pp or an appropriate profile class:
-
-For RedHat systems:
-
-    include 'erlang'
-    class { 'erlang': epel_enable => true}
-
-For Debian systems:
-
-    include 'erlang'
-    package { 'erlang-base':
-      ensure => 'latest',
-    }
-
-### Downgrade Issues
-
-Be advised that there were configuration file syntax and other changes made between RabbitMQ
-versions 2 and 3. In order to downgrade from 3 to 2 (not that this is a terribly good idea)
-you will need to manually remove all RabbitMQ configuration files (``/etc/rabbitmq``) and
-the mnesia directory (usually ``/var/lib/rabbitmq/mnesia``). The latter action will delete
-any and all messages stored to disk.
-
-Failure to do this will result in RabbitMQ failing to start with a cryptic error message about
-"init terminating in do_boot", containing "rabbit_upgrade,maybe_upgrade_mnesia".
 
 ##Development
 

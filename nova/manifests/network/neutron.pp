@@ -82,10 +82,6 @@
 #   notification is not being used.
 #   Defaults to '300'
 #
-# [*dhcp_domain*]
-#   (optional) domain to use for building the hostnames
-#   Defaults to 'novalocal'
-#
 class nova::network::neutron (
   $neutron_admin_password,
   $neutron_auth_strategy           = 'keystone',
@@ -102,8 +98,7 @@ class nova::network::neutron (
   $security_group_api              = 'neutron',
   $firewall_driver                 = 'nova.virt.firewall.NoopFirewallDriver',
   $vif_plugging_is_fatal           = true,
-  $vif_plugging_timeout            = '300',
-  $dhcp_domain                     = 'novalocal',
+  $vif_plugging_timeout            = '300'
 ) {
 
   nova_config {
@@ -123,7 +118,6 @@ class nova::network::neutron (
     'DEFAULT/firewall_driver':                 value => $firewall_driver;
     'DEFAULT/vif_plugging_is_fatal':           value => $vif_plugging_is_fatal;
     'DEFAULT/vif_plugging_timeout':            value => $vif_plugging_timeout;
-    'DEFAULT/dhcp_domain':                     value => $dhcp_domain;
   }
 
   if ! $neutron_ca_certificates_file {

@@ -23,13 +23,10 @@
 # file with the OVS plugin if both are on the same machine.
 #
 # === Parameters
-# [*enabled*]
-#   (optional) Should the service be enabled.
-#   Defaults to true.
 #
-# [*manage_service*]
-#   (optional)  Whether the service should be managed by Puppet.
-#   Defaults to true.
+# [*enabled*]
+#   (optional) Should the service be started or not
+#   Defaults to true
 #
 # [*ack_on_event_error*]
 #   (optional) Acknowledge message when event persistence fails.
@@ -39,36 +36,24 @@
 #   (optional) Save event details.
 #   Defaults to false
 #
-#  [*package_ensure*]
-#    (optional) ensure state for package.
-#    Defaults to 'present'
-#
 
 class ceilometer::agent::notification (
-  $manage_service     = true,
   $enabled            = true,
   $ack_on_event_error = true,
-  $store_events       = false,
-  $package_ensure     = 'present',
+  $store_events       = false
 ) {
 
   include ceilometer::params
 
   Ceilometer_config<||> ~> Service['ceilometer-agent-notification']
 
-  Package[$::ceilometer::params::agent_notification_package_name] ->
-  Service['ceilometer-agent-notification']
+  Package[$::ceilometer::params::agent_notification_package_name] -> Service['ceilometer-agent-notification']
+  ensure_packages([$::ceilometer::params::agent_notification_package_name])
 
-  ensure_resource('package', [$::ceilometer::params::agent_notification_package_name],
-    { ensure => $package_ensure }
-  )
-
-  if $manage_service {
-    if $enabled {
-      $service_ensure = 'running'
-    } else {
-      $service_ensure = 'stopped'
-    }
+  if $enabled {
+    $service_ensure = 'running'
+  } else {
+    $service_ensure = 'stopped'
   }
 
   Package['ceilometer-common'] -> Service['ceilometer-agent-notification']

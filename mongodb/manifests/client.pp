@@ -12,5 +12,15 @@ class mongodb::client (
   $ensure       = $mongodb::params::ensure_client,
   $package_name = $mongodb::params::client_package_name,
 ) inherits mongodb::params {
-  class { 'mongodb::client::install': }
+  case $::osfamily {
+    'RedHat', 'Linux': {
+      class { 'mongodb::client::install': }
+    }
+    'Debian': {
+      warning ('Debian client is included by default with server. Please use ::mongodb::server to install the mongo client for Debian family systems.')
+    }
+    default: {
+      # no action taken, failure happens in params.pp
+    }
+  }
 }

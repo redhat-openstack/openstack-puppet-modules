@@ -18,12 +18,11 @@ class neutron::policy (
   $policy_path = '/etc/neutron/policy.json',
 ) {
 
-  validate_hash($policies)
-
   Openstacklib::Policy::Base {
     file_path => $policy_path,
   }
-
-  create_resources('openstacklib::policy::base', $policies)
+  class { 'openstacklib::policy' :
+    policies => $policies,
+  }
 
 }

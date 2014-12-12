@@ -1,0 +1,84 @@
+# THIS FILE IS AUTOMATICALLY DISTRIBUTED BY PUPPET.  ANY CHANGES WILL BE
+# OVERWRITTEN.
+
+<%
+  opts = []
+
+  if @path.kind_of?(Array)
+    rpath = @path.join(' ')
+  else
+    rpath = @path
+  end
+
+  if scope.to_hash.has_key?('sane_create')
+    if @sane_create == 'create'
+      opts << [@sane_create, @create_mode, @create_owner, @create_group].reject { |r|
+        r == 'undef'
+      }.join(' ')
+    else
+      opts << @sane_create
+    end
+  end
+
+  if scope.to_hash.has_key?('sane_su')
+    if @sane_su == 'su'
+      opts << [@sane_su, @su_owner, @su_group].reject { |r|
+        r == 'undef'
+      }.join(' ')
+    end
+  end
+
+  [
+    'compress', 'copy', 'copytruncate', 'delaycompress', 'dateext',
+    'mail', 'missingok', 'olddir', 'sharedscripts', 'ifempty', 'maillast',
+    'mailfirst', 'shred', 'rotate_every'
+  ].each do |bool|
+    opts << scope.to_hash["sane_#{bool}"] if scope.to_hash.has_key?("sane_#{bool}")
+  end
+
+  [
+    'compresscmd', 'compressext', 'compressoptions', 'dateformat', 'extension',
+    'maxage', 'minsize', 'rotate', 'size', 'shredcycles', 'start',
+    'uncompresscmd'
+  ].each do |key|
+    value = scope.to_hash[key]
+    opts << "#{key} #{value}" if value != 'undef'
+  end
+-%>
+<%= rpath %> {
+<% opts.sort_by{|key,value| key}.each do |opt| -%>
+  <%= opt %>
+<% end -%>
+<% if @postrotate != 'undef' -%>
+  postrotate
+  <%- @postrotate = [@postrotate] unless @postrotate.is_a?(Array) -%>
+  <%- @postrotate.each do |val| -%>
+    <%= val %>
+  <%- end -%>
+  endscript
+<% end -%>
+<% if @prerotate != 'undef' -%>
+  prerotate
+  <%- @prerotate = [@prerotate] unless @prerotate.is_a?(Array) -%>
+  <%- @prerotate.each do |val| -%>
+    <%= val %>
+  <%- end -%>
+  endscript
+<% end -%>
+<% if @firstaction != 'undef' -%>
+  firstaction
+  <%- @firstaction = [@firstaction] unless @firstaction.is_a?(Array) -%>
+  <%- @firstaction.each do |val| -%>
+    <%= val %>
+  <%- end -%>
+  endscript
+<% end -%>
+<% if @lastaction != 'undef' -%>
+  lastaction
+  <%- @lastaction = [@lastaction] unless @lastaction.is_a?(Array) -%>
+  <%- @lastaction.each do |val| -%>
+    <%= val %>
+  <%- end -%>
+  endscript
+<% end -%>
+}

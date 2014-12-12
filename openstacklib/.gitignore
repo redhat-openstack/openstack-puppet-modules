@@ -1,5 +1,4 @@
 *.swp
-spec/fixtures/*
-!spec/fixtures/vcr/
+spec/fixtures/
 pkg
 Gemfile.lock

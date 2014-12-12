@@ -35,25 +35,19 @@ describe Puppet::Provider::Glance do
                'admin_tenant_name' => 'foo',
                'admin_user'        => 'user',
                'admin_password'    => 'pass'
-            },
-                'DEFAULT' =>
-            {
-                'os_region_name' => 'SomeRegion',
             }
           }
           Puppet::Util::IniConfig::File.expects(:new).returns(mock)
           mock.expects(:read).with('/etc/glance/glance-api.conf')
           klass.expects(:sleep).with(10).returns(nil)
           klass.expects(:glance).twice.with(
-            '--os-tenant-name',
+            '-T',
             'foo',
-            '--os-username',
+            '-I',
             'user',
-            '--os-password',
+            '-K',
             'pass',
-            '--os-region-name',
-            'SomeRegion',
-            '--os-auth-url',
+            '-N',
             'http://127.0.0.1:35357/v2.0/',
             ['test_retries']
           ).raises(Exception, valid_message).then.returns('')

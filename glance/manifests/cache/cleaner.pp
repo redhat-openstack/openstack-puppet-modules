@@ -19,24 +19,18 @@
 #  [*weekday*]
 #    (optional) Defaults to '*'.
 #
-#  [*command_options*]
-#    command options to add to the cronjob
-#    (eg. point to config file, or redirect output)
-#    (optional) Defaults to ''.
-#
 class glance::cache::cleaner (
-  $minute           = 1,
-  $hour             = 0,
-  $monthday         = '*',
-  $month            = '*',
-  $weekday          = '*',
-  $command_options  = '',
+  $minute   = 1,
+  $hour     = 0,
+  $monthday = '*',
+  $month    = '*',
+  $weekday  = '*',
 ) {
 
   include glance::params
 
   cron { 'glance-cache-cleaner':
-    command     => "${glance::params::cache_cleaner_command} ${command_options}",
+    command     => $glance::params::cache_cleaner_command,
     environment => 'PATH=/bin:/usr/bin:/usr/sbin',
     user        => 'glance',
     minute      => $minute,

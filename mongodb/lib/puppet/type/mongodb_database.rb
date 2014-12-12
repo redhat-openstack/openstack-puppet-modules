@@ -17,11 +17,4 @@ Puppet::Type.newtype(:mongodb_database) do
     end
   end
 
-  autorequire(:package) do
-    'mongodb_client'
-  end
-
-  autorequire(:service) do
-    'mongodb'
-  end
 end

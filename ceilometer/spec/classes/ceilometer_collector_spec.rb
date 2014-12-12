@@ -16,9 +16,7 @@ describe 'ceilometer::collector' do
       it { should contain_class('ceilometer::params') }
 
       it 'installs ceilometer-collector package' do
-        should contain_package(platform_params[:collector_package_name]).with(
-          :ensure => 'present'
-        )
+        should contain_package(platform_params[:collector_package_name])
       end
 
       it 'configures ceilometer-collector service' do
@@ -44,33 +42,6 @@ describe 'ceilometer::collector' do
 
       # Catalog compilation does not crash for lack of ceilometer::db
       it { should compile }
-
-      it 'configures ceilometer-collector service' do
-        should contain_service('ceilometer-collector').with(
-          :ensure     => 'stopped',
-          :name       => platform_params[:collector_service_name],
-          :enable     => false,
-          :hasstatus  => true,
-          :hasrestart => true
-        )
-      end
-    end
-
-    context 'when service management is disabled' do
-      let :params do
-        { :enabled        => false,
-          :manage_service => false }
-      end
-
-      it 'configures ceilometer-collector service' do
-        should contain_service('ceilometer-collector').with(
-          :ensure     => nil,
-          :name       => platform_params[:collector_service_name],
-          :enable     => false,
-          :hasstatus  => true,
-          :hasrestart => true
-        )
-      end
     end
   end
 

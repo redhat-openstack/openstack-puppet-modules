@@ -1,49 +1,36 @@
 {
-  "name": "puppetlabs-mysql",
-  "version": "3.0.0",
-  "author": "Puppet Labs",
-  "summary": "Mysql module",
-  "license": "Apache 2.0",
-  "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
-  "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-mysql/issues",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "5",
-        "6",
-        "7"
+        "6"
       ]
     },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "5",
-        "6",
-        "7"
+        "6"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "5",
-        "6",
-        "7"
+        "6"
       ]
     },
     {
       "operatingsystem": "Scientific",
       "operatingsystemrelease": [
         "5",
-        "6",
-        "7"
+        "6"
       ]
     },
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
-        "10 SP4",
         "11 SP1"
       ]
     },
@@ -58,22 +45,28 @@
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "10.04",
-        "12.04",
-        "14.04"
+        "12.04"
       ]
     }
   ],
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "3.x"
+      "version_requirement": "3.2.x"
     },
     {
       "name": "puppet",
       "version_requirement": "3.x"
     }
   ],
+  "name": "puppetlabs-mysql",
+  "version": "2.2.3",
+  "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
+  "author": "Puppet Labs",
+  "license": "Apache 2.0",
+  "summary": "Mysql module",
   "description": "Mysql module",
+  "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",

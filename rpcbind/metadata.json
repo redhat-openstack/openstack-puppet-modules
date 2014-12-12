@@ -1,0 +1,72 @@
+{
+  "name": "ghoneycutt-rpcbind",
+  "version": "1.3.0",
+  "author": "ghoneycutt",
+  "summary": "Manage rpcbind",
+  "license": "Apache License, Version 2.0",
+  "source": "git://github.com/ghoneycutt/puppet-module-rpcbind.git",
+  "project_page": "https://github.com/ghoneycutt/puppet-module-rpcbind",
+  "issues_url": "https://github.com/ghoneycutt/puppet-module-rpcbind/issues",
+  "description": "Manages rpcbind",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"}
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.2.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "SLED"
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "12.04"
+      ]
+    }
+  ]
+}

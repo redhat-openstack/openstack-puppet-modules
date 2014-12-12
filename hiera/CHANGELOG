@@ -1,0 +1,27 @@
+2014-05-01 Release 1.0.2
+- Remove swap files from package
+
+2014-03-25 Release 1.0.1
+Bugfixes:
+- Readme tweak
+- Use template instance variables to remove warnings
+
+2014-02-27 Release 1.0.0
+
+Features:
+- `backends` parameter for an array of hiera backends
+- `extra_config` parameter for a string of extra yaml config
+
+Bugfixes:
+- Correct the yaml formatting
+
+2013-06-17 Release 0.3.1
+Bugfixes:
+- Docs!
+
+2013-06-17 Release 0.3.0
+Features:
+- PE + POSS support
+
+Bugfixes:
+- Only ensure datadir if it does not have %{.*}

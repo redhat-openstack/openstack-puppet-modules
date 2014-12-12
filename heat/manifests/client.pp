@@ -1,11 +1,9 @@
-# == Class: heat::client
 #
 # Installs the heat python library.
 #
-# === Parameters
-#
-# [*ensure*]
-#   (Optional) Ensure state for package.
+# == parameters
+#  [*ensure*]
+#    ensure state for pachage.
 #
 class heat::client (
   $ensure = 'present'

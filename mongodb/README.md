@@ -184,7 +184,7 @@ For more details about configuration parameters consult the
 [MongoDB Configuration File Options](http://docs.mongodb.org/manual/reference/configuration-options/).
 
 #####`ensure`
-Used to ensure that the package is installed and the service is running, or that the package is absent/purged and the service is stopped. Valid values are true/false/present/absent/purged.
+enable or disable the service
 
 #####`config`
 Path of the config file. If not specified, the module will use the default
@@ -351,11 +351,6 @@ replication configuration. Default: False  *Note*: deprecated – use replica se
 Specify extra configuration file parameters (i.e.
 textSearchEnabled=true). Default: None
 
-#####`syslog`
-Sends all logging output to the host’s syslog system rather than to standard
-output or a log file. Default: None
-*Important*: You cannot use syslog with logpath.
-
 #####`slave`
 Set to true to configure the current instance to act as slave instance in a
 replication configuration. Default: false
@@ -452,7 +447,7 @@ Array of 'host:port' of the replicaset members.
 
 It currently only adds members without options.
 
-## Limitations
+## Limitation
 
 This module has been tested on:
 
@@ -464,8 +459,6 @@ This module has been tested on:
 * CentOS 5/6
 
 For a full list of tested operating systems please have a look at the [.nodeset.xml](https://github.com/puppetlabs/puppetlabs-mongodb/blob/master/.nodeset.yml) definition.
-
-This module should support `service_ensure` separate from the `ensure` value on `Class[mongodb::server]` but it does not yet.
 
 ## Development
 

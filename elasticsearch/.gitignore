@@ -1,0 +1,8 @@
+*.swp
+spec/fixtures
+.bundle
+.vendor
+.gemfiles/Gemfile.*.lock
+.vagrant
+.ruby-version
+pkg/

@@ -15,7 +15,7 @@
 #
 # [*san_thin_provision*]
 #   (optional) Whether or not to use thin provisioning for volumes.
-#   Defaults to true
+#   Defaults to false
 #
 # [*volume_backend_name*]
 #   (optional) The backend name.
@@ -53,7 +53,7 @@ define cinder::backend::eqlx (
   $san_ip,
   $san_login,
   $san_password,
-  $san_thin_provision   = true,
+  $san_thin_provision   = false,
   $volume_backend_name  = $name,
   $eqlx_group_name      = 'group-0',
   $eqlx_pool            = 'default',

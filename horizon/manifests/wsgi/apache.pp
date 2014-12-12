@@ -142,8 +142,7 @@ class horizon::wsgi::apache (
     require      => [ File[$::horizon::params::logdir], Package['horizon'] ],
   }
 
-  $default_vhost_conf = {
-    ip                   => $bind_address,
+  $default_vhost_conf_no_ip = {
     servername           => $servername,
     serveraliases        => os_any2array($final_server_aliases),
     docroot              => '/var/www/',
@@ -170,8 +169,19 @@ class horizon::wsgi::apache (
     redirectmatch_status => 'permanent',
   }
 
+  # Only add the 'ip' element to the $default_vhost_conf hash if it was explicitly
+  # specified in the instantiation of the class.  This is because ip => undef gets
+  # changed to ip => '' via the Puppet function API when ensure_resource is called.
+  # See https://bugs.launchpad.net/puppet-horizon/+bug/1371345
+  if $bind_address {
+    $default_vhost_conf = merge($default_vhost_conf_no_ip, { ip => $bind_address })
+  } else {
+    $default_vhost_conf = $default_vhost_conf_no_ip
+  }
+
   ensure_resource('apache::vhost', $vhost_conf_name, merge ($default_vhost_conf, $extra_params, {
-    redirectmatch_regexp => "${redirect_match} ${redirect_url}",
+    redirectmatch_regexp => $redirect_match,
+    redirectmatch_dest   => $redirect_url,
   }))
   ensure_resource('apache::vhost', $vhost_ssl_conf_name, merge ($default_vhost_conf, $extra_params, {
     access_log_file      => 'horizon_ssl_access.log',
@@ -182,7 +192,8 @@ class horizon::wsgi::apache (
     ensure               => $ensure_ssl_vhost,
     wsgi_daemon_process  => 'horizon-ssl',
     wsgi_process_group   => 'horizon-ssl',
-    redirectmatch_regexp => "^/$ ${::horizon::params::root_url}"
+    redirectmatch_regexp => '^/$',
+    redirectmatch_dest   => $::horizon::params::root_url,
   }))
 
 }

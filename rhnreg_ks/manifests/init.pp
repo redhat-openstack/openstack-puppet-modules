@@ -1,0 +1,2 @@
+class rhnreg_ks {
+}

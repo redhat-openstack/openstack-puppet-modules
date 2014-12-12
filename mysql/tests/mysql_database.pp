@@ -10,8 +10,3 @@ database{ 'test4':
   ensure  => present,
   charset => 'latin1',
 }
-database{ 'test5':
-  ensure  => present,
-  charset => 'binary',
-  collate => 'binary',
-}

@@ -31,7 +31,7 @@ describe 'keystone::roles::admin' do
     )}
     it { should contain_keystone_role('admin').with_ensure('present') }
     it { should contain_keystone_user_role('admin@openstack').with(
-      :roles  => ['admin'],
+      :roles  => 'admin',
       :ensure => 'present'
     )}
 
@@ -45,7 +45,6 @@ describe 'keystone::roles::admin' do
         :email                  => 'foo@baz',
         :password               => 'foo',
         :admin_tenant           => 'admin',
-        :admin_roles            => ['admin', 'heat_stack_owner'],
         :service_tenant         => 'foobar',
         :ignore_default_tenant  => 'true',
         :admin_tenant_desc      => 'admin something else',
@@ -72,37 +71,10 @@ describe 'keystone::roles::admin' do
       :ignore_default_tenant  => 'true'
     )}
     it { should contain_keystone_user_role('admin@admin').with(
-      :roles  => ['admin', 'heat_stack_owner'],
+      :roles  => 'admin',
       :ensure => 'present'
     )}
 
-  end
-
-  describe 'when disabling user configuration' do
-    before do
-      let :params do
-        {
-          :configure_user => false
-        }
-      end
-
-      it { should_not contain_keystone_user('keystone') }
-      it { should contain_keystone_user_role('keystone@openstack') }
-    end
-  end
-
-  describe 'when disabling user and role configuration' do
-    before do
-      let :params do
-        {
-          :configure_user       => false,
-          :configure_user_role  => false
-        }
-      end
-
-      it { should_not contain_keystone_user('keystone') }
-      it { should_not contain_keystone_user_role('keystone@openstack') }
-    end
   end
 
 end

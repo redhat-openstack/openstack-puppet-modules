@@ -1,0 +1,7 @@
+fixtures:
+  repositories:
+    apt: git://github.com/puppetlabs/puppetlabs-apt.git
+    datacat: git://github.com/richardc/puppet-datacat.git
+    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+  symlinks:
+    uchiwa: "#{source_dir}"

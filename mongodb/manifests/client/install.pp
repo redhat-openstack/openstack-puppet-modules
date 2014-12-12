@@ -18,11 +18,9 @@ class mongodb::client::install {
     }
   }
 
-  if $package_name {
-    package { 'mongodb_client':
-      ensure  => $my_package_ensure,
-      name    => $package_name,
-      tag     => 'mongodb',
-    }
+  package { 'mongodb_client':
+    ensure  => $my_package_ensure,
+    name    => $package_name,
+    tag     => 'mongodb',
   }
 }

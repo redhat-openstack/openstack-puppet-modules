@@ -2,32 +2,18 @@
 #
 # == Params
 #  [*enabled*]
-#    (optional) Should the service be enabled.
-#    Defaults to true.
-#
-#  [*manage_service*]
-#    (optional) Whether the service should be managed by Puppet.
-#    Defaults to true.
-#
+#    should the service be enabled
 #  [*evaluation_interval*]
-#    (optional) Define the time interval for the alarm evaluator
-#    Defaults to 60.
-#
+#    define the time interval for the alarm evaluator
 #  [*evaluation_service*]
-#    (optional) Define which service use for the evaluator
-#    Defaults to 'ceilometer.alarm.service.SingletonAlarmService'.
-#
+#    define which service use for the evaluator
 #  [*partition_rpc_topic*]
-#    (optional) Define which topic the alarm evaluator should access
-#    Defaults to 'alarm_partition_coordination'.
-#
+#    define which topic the alarm evaluator should access
 #  [*record_history*]
-#    (optional) Record alarm change events
-#    Defaults to true.
+#    Record alarm change events
 #
 class ceilometer::alarm::evaluator (
-  $manage_service      = true,
-  $enabled             = true,
+  $enabled = true,
   $evaluation_interval = 60,
   $evaluation_service  = 'ceilometer.alarm.service.SingletonAlarmService',
   $partition_rpc_topic = 'alarm_partition_coordination',
@@ -36,7 +22,7 @@ class ceilometer::alarm::evaluator (
 
   include ceilometer::params
 
-  validate_re("${evaluation_interval}",'^(\d+)$')
+  validate_re($evaluation_interval,'^(\d+)$')
 
   Ceilometer_config<||> ~> Service['ceilometer-alarm-evaluator']
 
@@ -44,12 +30,10 @@ class ceilometer::alarm::evaluator (
   Package[$::ceilometer::params::alarm_package_name] -> Package<| title == 'ceilometer-alarm' |>
   ensure_packages($::ceilometer::params::alarm_package_name)
 
-  if $manage_service {
-    if $enabled {
-      $service_ensure = 'running'
-    } else {
-      $service_ensure = 'stopped'
-    }
+  if $enabled {
+    $service_ensure = 'running'
+  } else {
+    $service_ensure = 'stopped'
   }
 
   Package['ceilometer-common'] -> Service['ceilometer-alarm-evaluator']

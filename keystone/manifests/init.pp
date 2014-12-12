@@ -27,10 +27,10 @@
 #   [catalog_template_file] Path to the catalog used if catalog_type equals 'template'.
 #     Defaults to '/etc/keystone/default_catalog.templates'
 #   [token_provider] Format keystone uses for tokens. Optional.
-#     Defaults to 'keystone.token.providers.uuid.Provider'
+#     Defaults to 'keystone.token.providers.pki.Provider'
 #     Supports PKI and UUID.
 #   [token_driver] Driver to use for managing tokens.
-#     Optional.  Defaults to 'keystone.token.persistence.backends.sql.Token'
+#     Optional.  Defaults to 'keystone.token.backends.sql.Token'
 #   [token_expiration] Amount of time a token should remain valid (seconds).
 #     Optional.  Defaults to 3600 (1 hour).
 #   [token_format] Deprecated: Use token_provider instead.
@@ -54,30 +54,22 @@
 #   [*idle_timeout*]
 #     (optional) Deprecated. Use database_idle_timeout instead.
 #
-#   [enable_pki_setup] Enable call to pki_setup to generate the cert for signing pki tokens and
-#     revocation lists if it doesn't already exist. This generates a cert and key stored in file
-#     locations based on the signing_certfile and signing_keyfile paramters below. If you are
-#     providing your own signing cert, make this false.
-#   [signing_certfile] Location of the cert file for signing pki tokens and revocation lists.
-#     Optional. Note that if this file already exists (i.e. you are providing your own signing cert),
-#     the file will not be overwritten, even if enable_pki_setup is set to true.
+#   [enable_pki_setup] Enable call to pki_setup to generate the cert for signing pki tokens,
+#     if it doesn't already exist. This generates a cert and key stored in file locations
+#     based on the signing_certfile and signing_keyfile paramters below. If you are providing
+#     your own signing cert, make this false.
+#   [signing_certfile] Location of the cert file for signing pki tokens. Optional. Note that if
+#     this file already exists (i.e. you are providing your own signing cert), the file will
+#     not be overwritten, even if enable_pki_setup is set to true.
 #     Default: /etc/keystone/ssl/certs/signing_cert.pem
-#   [signing_keyfile] Location of the key file for signing pki tokens and revocation lists. Optional.
-#     Note that if this file already exists (i.e. you are providing your own signing cert), the file
-#     will not be overwritten, even if enable_pki_setup is set to true.
+#   [signing_keyfile] Location of the key file for signing pki tokens. Optional. Note that if
+#     this file already exists (i.e. you are providing your own signing cert), the file will not
+#     be overwritten, even if enable_pki_setup is set to true.
 #     Default: /etc/keystone/ssl/private/signing_key.pem
 #   [signing_ca_certs] Use this CA certs file along with signing_certfile/signing_keyfile for
-#     signing pki tokens and revocation lists. Optional. Default: /etc/keystone/ssl/certs/ca.pem
+#     signing pki tokens. Optional. Default: /etc/keystone/ssl/certs/ca.pem
 #   [signing_ca_key] Use this CA key file along with signing_certfile/signing_keyfile for signing
-#     pki tokens and revocation lists. Optional. Default: /etc/keystone/ssl/private/cakey.pem
-#
-#   [*signing_cert_subject*]
-#   (optional) Certificate subject (auto generated certificate) for token signing.
-#   Defaults to '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com'
-#
-#   [*signing_key_size*]
-#   (optional) Key size (in bits) for token signing cert (auto generated certificate)
-#   Defaults to 2048
+#     pki tokens. Optional. Default: /etc/keystone/ssl/private/cakey.pem
 #
 #   [rabbit_host] Location of rabbitmq installation. Optional. Defaults to localhost.
 #   [rabbit_port] Port for rabbitmq instance. Optional. Defaults to 5672.
@@ -203,23 +195,6 @@
 #   custom service provider for changing start/stop/status behavior of service,
 #   and set it here.
 #
-#   [*service_name*]
-#   (optional) Name of the service that will be providing the
-#   server functionality of keystone.  For example, the default
-#   is just 'keystone', which means keystone will be run as a
-#   standalone eventlet service, and will able to be managed
-#   separately by the operating system's service manager.  For
-#   example, you will be able to use
-#   service openstack-keystone restart
-#   to restart the service.
-#   If the value is 'httpd', this means keystone will be a web
-#   service, and you must use another class to configure that
-#   web service.  For example, after calling class {'keystone'...}
-#   use class { 'keystone::wsgi::apache'...} to make keystone be
-#   a web app using apache mod_wsgi.
-#   Defaults to 'keystone'
-#   NOTE: validate_service only applies if the value is 'keystone'
-#
 # == Dependencies
 #  None
 #
@@ -228,17 +203,6 @@
 #   class { 'keystone':
 #     log_verbose => 'True',
 #     admin_token => 'my_special_token',
-#   }
-#
-#   OR
-#
-#   class { 'keystone':
-#      ...
-#      service_name => 'httpd',
-#      ...
-#   }
-#   class { 'keystone::wsgi::apache':
-#      ...
 #   }
 #
 # == Authors
@@ -268,8 +232,8 @@ class keystone(
   $catalog_driver        = false,
   $catalog_template_file = '/etc/keystone/default_catalog.templates',
   $token_format          = false,
-  $token_provider        = 'keystone.token.providers.uuid.Provider',
-  $token_driver          = 'keystone.token.persistence.backends.sql.Token',
+  $token_provider        = 'keystone.token.providers.pki.Provider',
+  $token_driver          = 'keystone.token.backends.sql.Token',
   $token_expiration      = 3600,
   $public_endpoint       = false,
   $admin_endpoint        = false,
@@ -289,8 +253,6 @@ class keystone(
   $signing_keyfile       = '/etc/keystone/ssl/private/signing_key.pem',
   $signing_ca_certs      = '/etc/keystone/ssl/certs/ca.pem',
   $signing_ca_key        = '/etc/keystone/ssl/private/cakey.pem',
-  $signing_cert_subject  = '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com',
-  $signing_key_size      = 2048,
   $rabbit_host           = 'localhost',
   $rabbit_hosts          = false,
   $rabbit_password       = 'guest',
@@ -310,12 +272,11 @@ class keystone(
   $validate_auth_url     = false,
   $validate_cacert       = undef,
   $service_provider      = $::keystone::params::service_provider,
-  $service_name          = 'keystone',
   # DEPRECATED PARAMETERS
   $mysql_module          = undef,
   $sql_connection        = undef,
   $idle_timeout          = undef,
-) inherits keystone::params {
+) {
 
   if ! $catalog_driver {
     validate_re($catalog_type, 'template|sql')
@@ -347,6 +308,12 @@ class keystone(
     warning('Version string /v2.0/ should not be included in keystone::public_endpoint')
   }
 
+  File['/etc/keystone/keystone.conf'] -> Keystone_config<||> ~> Service['keystone']
+  Keystone_config<||> ~> Exec<| title == 'keystone-manage db_sync'|>
+  Keystone_config<||> ~> Exec<| title == 'keystone-manage pki_setup'|>
+
+  include keystone::params
+
   if $rabbit_use_ssl {
     if !$kombu_ssl_ca_certs {
       fail('The kombu_ssl_ca_certs parameter is required when rabbit_use_ssl is set to true')
@@ -359,10 +326,13 @@ class keystone(
     }
   }
 
-  File['/etc/keystone/keystone.conf'] -> Keystone_config<||> ~> Service[$service_name]
-  Keystone_config<||> ~> Exec<| title == 'keystone-manage db_sync'|>
-  Keystone_config<||> ~> Exec<| title == 'keystone-manage pki_setup'|>
-  include ::keystone::params
+  File {
+    ensure  => present,
+    owner   => 'keystone',
+    group   => 'keystone',
+    require => Package['keystone'],
+    notify  => Service['keystone'],
+  }
 
   package { 'keystone':
     ensure => $package_ensure,
@@ -385,19 +355,10 @@ class keystone(
   file { ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone']:
     ensure  => directory,
     mode    => '0750',
-    owner   => 'keystone',
-    group   => 'keystone',
-    require => Package['keystone'],
-    notify  => Service[$service_name],
   }
 
   file { '/etc/keystone/keystone.conf':
-    ensure  => present,
     mode    => '0600',
-    owner   => 'keystone',
-    group   => 'keystone',
-    require => Package['keystone'],
-    notify  => Service[$service_name],
   }
 
   if $bind_host {
@@ -522,38 +483,31 @@ class keystone(
   # remove the old format in case of an upgrade
   keystone_config { 'signing/token_format': ensure => absent }
 
-  # Set the signing key/cert configuration values.
-  keystone_config {
-    'signing/certfile':     value => $signing_certfile;
-    'signing/keyfile':      value => $signing_keyfile;
-    'signing/ca_certs':     value => $signing_ca_certs;
-    'signing/ca_key':       value => $signing_ca_key;
-    'signing/cert_subject': value => $signing_cert_subject;
-    'signing/key_size':     value => $signing_key_size;
-  }
-
-  # Create cache directory used for signing.
-  file { $cache_dir:
-    ensure => directory,
-  }
-
-  # Only do pki_setup if we were asked to do so.  This is needed
-  # regardless of the token provider since token revocation lists
-  # are always signed.
-  if $enable_pki_setup {
-    exec { 'keystone-manage pki_setup':
-      path        => '/usr/bin',
-      user        => 'keystone',
-      refreshonly => true,
-      creates     => $signing_keyfile,
-      notify      => Service[$service_name],
-      subscribe   => Package['keystone'],
-      require     => User['keystone'],
-    }
-  }
-
   if ($token_format == false and $token_provider == 'keystone.token.providers.pki.Provider') or $token_format == 'PKI' {
-    keystone_config { 'token/provider': value => 'keystone.token.providers.pki.Provider' }
+    file { $cache_dir:
+      ensure => directory,
+    }
+
+    keystone_config {
+      'token/provider':   value => $token_provider;
+      'signing/certfile': value => $signing_certfile;
+      'signing/keyfile':  value => $signing_keyfile;
+      'signing/ca_certs': value => $signing_ca_certs;
+      'signing/ca_key':   value => $signing_ca_key;
+    }
+
+    # Only do pki_setup if we were asked to do so
+    if $enable_pki_setup {
+      exec { 'keystone-manage pki_setup':
+        path        => '/usr/bin',
+        user        => 'keystone',
+        refreshonly => true,
+        creates     => $signing_keyfile,
+        notify      => Service['keystone'],
+        subscribe   => Package['keystone'],
+        require     => User['keystone'],
+      }
+    }
   } elsif $token_format == 'UUID' {
     keystone_config { 'token/provider': value => 'keystone.token.providers.uuid.Provider' }
   } else {
@@ -615,43 +569,42 @@ class keystone(
     $service_ensure = 'stopped'
   }
 
-  if $service_name == 'keystone' {
-    if $validate_service {
-      if $validate_auth_url {
-        $v_auth_url = $validate_auth_url
-      } else {
-        $v_auth_url = $admin_endpoint
-      }
+  if $validate_service {
 
-      class { 'keystone::service':
-        ensure         => $service_ensure,
-        service_name   => $::keystone::params::service_name,
-        enable         => $enabled,
-        hasstatus      => true,
-        hasrestart     => true,
-        provider       => $service_provider,
-        validate       => true,
-        admin_endpoint => $v_auth_url,
-        admin_token    => $admin_token,
-        insecure       => $validate_insecure,
-        cacert         => $validate_cacert,
-      }
+    if $validate_auth_url {
+      $v_auth_url = $validate_auth_url
     } else {
-      class { 'keystone::service':
-        ensure       => $service_ensure,
-        service_name => $::keystone::params::service_name,
-        enable       => $enabled,
-        hasstatus    => true,
-        hasrestart   => true,
-        provider     => $service_provider,
-        validate     => false,
-      }
+      $v_auth_url = $admin_endpoint
+    }
+
+    class { 'keystone::service':
+      ensure         => $service_ensure,
+      service_name   => $::keystone::params::service_name,
+      enable         => $enabled,
+      hasstatus      => true,
+      hasrestart     => true,
+      provider       => $service_provider,
+      validate       => true,
+      admin_endpoint => $v_auth_url,
+      admin_token    => $admin_token,
+      insecure       => $validate_insecure,
+      cacert         => $validate_cacert,
+    }
+  } else {
+    class { 'keystone::service':
+      ensure       => $service_ensure,
+      service_name => $::keystone::params::service_name,
+      enable       => $enabled,
+      hasstatus    => true,
+      hasrestart   => true,
+      provider     => $service_provider,
+      validate     => false,
     }
   }
 
   if $enabled {
-    include ::keystone::db::sync
-    Class['::keystone::db::sync'] ~> Service[$service_name]
+    include keystone::db::sync
+    Class['keystone::db::sync'] ~> Service['keystone']
   }
 
   # Syslog configuration

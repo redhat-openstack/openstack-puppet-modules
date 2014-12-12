@@ -1,5 +1,4 @@
 require 'puppet'
-require 'set'
 Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
 
   if Puppet::PUPPETVERSION.to_f < 3
@@ -14,7 +13,7 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
 
   def self.instances
     rabbitmqctl('list_users').split(/\n/)[1..-2].collect do |line|
-      if line =~ /^(\S+)(\s+\[.*?\]|)$/
+      if line =~ /^(\S+)(\s+\S+|)$/
         new(:name => $1)
       else
         raise Puppet::Error, "Cannot parse invalid user line: #{line}"
@@ -27,9 +26,6 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
     if resource[:admin] == :true
       make_user_admin()
     end
-    if !resource[:tags].nil?
-      set_user_tags(resource[:tags])
-    end
   end
 
   def destroy
@@ -38,25 +34,18 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
 
   def exists?
     rabbitmqctl('list_users').split(/\n/)[1..-2].detect do |line|
-      line.match(/^#{Regexp.escape(resource[:name])}(\s+(\[.*?\]|\S+)|)$/)
+      line.match(/^#{Regexp.escape(resource[:name])}(\s+\S+|)$/)
     end
   end
 
- 
-  def tags
-    get_user_tags.entries.sort
-  end
-
-
-  def tags=(tags)
-    if ! tags.nil?
-      set_user_tags(tags)
-    end
-  end
-
+  # def password
+  # def password=()
   def admin
-    if usertags = get_user_tags
-      (:true if usertags.include?('administrator')) || :false
+    match = rabbitmqctl('list_users').split(/\n/)[1..-2].collect do |line|
+      line.match(/^#{Regexp.escape(resource[:name])}\s+\[(administrator)?\]/)
+    end.compact.first
+    if match
+      (:true if match[1].to_s == 'administrator') || :false
     else
       raise Puppet::Error, "Could not match line '#{resource[:name]} (true|false)' from list_users (perhaps you are running on an older version of rabbitmq that does not support admin users?)"
     end
@@ -66,33 +55,12 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
     if state == :true
       make_user_admin()
     else
-      usertags = get_user_tags
-      usertags.delete('administrator')
-      rabbitmqctl('set_user_tags', resource[:name], usertags.entries.sort)
+      rabbitmqctl('set_user_tags', resource[:name])
     end
-  end
-
-  def set_user_tags(tags)
-    is_admin = get_user_tags().member?("administrator") \
-               || resource[:admin] == :true
-    usertags = Set.new(tags)
-    if is_admin
-      usertags.add("administrator")
-    end
-    rabbitmqctl('set_user_tags', resource[:name], usertags.entries.sort)
   end
 
   def make_user_admin
-    usertags = get_user_tags
-    usertags.add('administrator')
-    rabbitmqctl('set_user_tags', resource[:name], usertags.entries.sort)
+    rabbitmqctl('set_user_tags', resource[:name], 'administrator')
   end
 
-  private
-  def get_user_tags
-    match = rabbitmqctl('list_users').split(/\n/)[1..-2].collect do |line|
-      line.match(/^#{Regexp.escape(resource[:name])}\s+\[(.*?)\]/)
-    end.compact.first
-    Set.new(match[1].split(/, /)) if match
-  end
 end

@@ -76,6 +76,8 @@ class keystone::ldap(
   $group_allow_update                  = undef,
   $group_allow_delete                  = undef,
   $group_additional_attribute_mapping  = undef,
+  $tenant_tree_dn                      = undef,
+  $role_tree_dn                        = undef,
   $use_tls                             = undef,
   $tls_cacertdir                       = undef,
   $tls_cacertfile                      = undef,
@@ -84,8 +86,7 @@ class keystone::ldap(
   $assignment_driver                   = undef,
 ) {
 
-  $ldap_packages = ['python-ldap', 'python-ldappool']
-  package { $ldap_packages:
+  package { 'python-ldap':
       ensure => present,
   }
 
