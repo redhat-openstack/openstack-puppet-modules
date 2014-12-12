@@ -70,6 +70,10 @@ mod 'memcached',
   :commit => '49dbf102fb6eee90297b2ed6a1fa463a8c5ccee7',
   :git => 'https://github.com/saz/puppet-memcached.git'
 
+mod 'module-collectd',
+  :commit => 'cf79540be4623eb9da287f6d579ec4a4f4ddc39b',
+  :git => 'https://github.com/pdxcat/puppet-module-collectd.git'
+
 mod 'module-data',
   :commit => '159fc5e0e21ce9df96c777f0064b5eca88e29cae',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
