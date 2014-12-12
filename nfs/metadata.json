@@ -1,0 +1,122 @@
+{
+  "name": "ghoneycutt-nfs",
+  "version": "1.7.0",
+  "author": "ghoneycutt",
+  "summary": "Manage NFS",
+  "license": "Apache License, Version 2.0",
+  "source": "git://github.com/ghoneycutt/puppet-module-nfs.git",
+  "project_page": "https://github.com/ghoneycutt/puppet-module-nfs",
+  "issues_url": "https://github.com/ghoneycutt/puppet-module-nfs/issues",
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.2.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Solaris",
+      "operatingsystemrelease": [
+        "10",
+        "11"
+      ]
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "SLED"
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "12.04"
+      ]
+    }
+  ],
+  "description": "Manage NFS for client and server, including idmap",
+  "types": [
+  
+  ],
+  "checksums": {
+    "Gemfile": "6992d521994d948eb6e48acd733a07bf",
+    "LICENSE": "7adbf0cac6bb2f12810260eabee41039",
+    "Modulefile": "8af9a1da94ea06817aacd976cd266ad7",
+    "README.md": "408f2e5593e5af70b550efb119dec265",
+    "Rakefile": "1cb426d5b98cd8d27b9147563a78ab7c",
+    "ext/fstabnfs2yaml.rb": "d555378a78688b4955a7b7f628c6fbb7",
+    "files/exports": "db18ce51706eec657a3042d037e05356",
+    "files/exports.puppetmaster.example": "4a32af3bd3cb1013589255da0cf0fd56",
+    "manifests/idmap.pp": "099f7430da6d69c653a0f6ff2a631957",
+    "manifests/init.pp": "12f14a3f33ba1cba9e45ace278bdb72f",
+    "manifests/server.pp": "3c6ffecda036786fe2a50152d1c064ac",
+    "spec/classes/idmap_spec.rb": "c8cb1653346685e123a299ceb7214c3a",
+    "spec/classes/init_spec.rb": "e332b0a9349ea0d35db53e234ff5fd00",
+    "spec/classes/server_spec.rb": "56a61884ce3251fedc6b0b7816e36677",
+    "spec/spec_helper.rb": "0db89c9a486df193c0e40095422e19dc",
+    "templates/idmapd.conf.erb": "6b15261cde24ad9202efcac967ea5807",
+    "tests/init.pp": "8bb0f344a9a30a5e3601d448f10025e2"
+  },
+  "dependencies": [
+    {
+      "name": "ghoneycutt/common",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "ghoneycutt/rpcbind",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "ghoneycutt/types",
+      "version_requirement": ">= 1.1.0"
+    },
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 3.2.0"
+    },
+    {"name":"ghoneycutt/common","version_requirement":">= 1.0.0"},
+    {"name":"ghoneycutt/rpcbind","version_requirement":">= 1.0.0"},
+    {"name":"ghoneycutt/types","version_requirement":">= 1.1.0"},
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"}
+  ]
+}

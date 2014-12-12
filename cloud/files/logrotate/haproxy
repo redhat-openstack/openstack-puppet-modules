@@ -1,0 +1,12 @@
+# Managed by Puppet
+# Module cloud::loadbalancer
+/var/log/haproxy.log {
+  rotate 7
+  daily
+  missingok
+  notifempty
+  delaycompress
+  compress
+  postrotate
+  endscript
+}

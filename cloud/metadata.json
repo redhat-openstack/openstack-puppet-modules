@@ -1,0 +1,33 @@
+{
+  "name": "eNovance-cloud",
+  "version": "2.2.0",
+  "author": "eNovance",
+  "summary": "eNovance Openstack Module",
+  "license": "Apache License 2.0",
+  "source": "https://github.com/enovance/puppet-openstack-cloud",
+  "project_page": "https://github.com/enovance/puppet-openstack-cloud",
+  "issues_url": "https://github.com/enovance/puppet-openstack-cloud/issues",
+  "operatingsystem_support": [
+    {"operatingsystem": "Debian"},
+    {"operatingsystem": "Ubuntu"},
+    {"operatingsystem": "CentOS"},
+    {"operatingsystem": "RedHat"}
+  ],
+  "requirements": [
+    {"name": "pe","version_requirement": "3.x"},
+    {"name": "puppet","version_requirement": "3.x"}
+  ],
+  "description": "Puppet module that pulls together all the individual components of Openstack, resulting is a complete and functional stack",
+  "dependencies": [
+    {"name":"puppetlabs/glance","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/horizon","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/keystone","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/nova","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/cinder","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/swift","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/neutron","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/ceilometer","version_requirement":">=4.0.0"},
+    {"name":"puppetlabs/heat","version_requirement":">=4.0.0"},
+    {"name":"eNovance/ceph", "version_requirement":">=1.1.0"}
+  ]
+}

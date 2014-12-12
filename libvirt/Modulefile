@@ -1,0 +1,8 @@
+name 'puppetlabs-libvirt'
+version '0.0.1'
+source 'git://github.com/puppetlabs/puppetlabs-libvirt.git'
+author 'puppetlabs'
+license 'ASL 2.0'
+summary 'libvirt Module'
+description 'Manages and configures libvirt'
+project_page 'https://github.com/puppetlabs/puppetlabs-libvirt'

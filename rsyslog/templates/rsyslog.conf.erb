@@ -1,0 +1,38 @@
+# file is managed by puppet
+
+#################
+#### MODULES ####
+#################
+
+<% scope.lookupvar('rsyslog::modules').each do |module_row| -%>
+<%= module_row %>
+<% end -%>
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+
+#
+# Set the default permissions for all log files.
+#
+<% if scope.lookupvar('rsyslog::preserve_fqdn') -%>
+$PreserveFQDN on
+<% end -%>
+$FileOwner <%= scope.lookupvar('rsyslog::log_user') %>
+$FileGroup <%= scope.lookupvar('rsyslog::log_group') %>
+$FileCreateMode <%= scope.lookupvar('rsyslog::perm_file') %>
+$DirOwner <%= scope.lookupvar('rsyslog::log_user') %>
+$DirGroup <%= scope.lookupvar('rsyslog::log_group') %>
+$DirCreateMode <%= scope.lookupvar('rsyslog::perm_dir') %>
+$PrivDropToUser <%= scope.lookupvar('rsyslog::run_user') %>
+$PrivDropToGroup <%= scope.lookupvar('rsyslog::run_group') %>
+
+#
+# Include all config files in <%= scope.lookupvar('rsyslog::rsyslog_d') %>
+#
+$IncludeConfig <%= scope.lookupvar('rsyslog::rsyslog_d') -%>*.conf
+
+#
+# Emergencies are sent to everybody logged in.
+#
+*.emerg				*

@@ -1,0 +1,9 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+#
+# exports to other puppet masters
+#
+/var/lib/hiera 10.2.3.4(ro)
+/etc/puppet 10.2.3.4(ro,no_root_squash)
+/var/lib/puppet/clientbucket 10.2.3.4(rw,no_root_squash)
+/var/lib/puppet/yaml 10.2.3.4(rw,no_root_squash)

@@ -1,0 +1,1 @@
+<%= name %>=<% if value.kind_of?(Array) %>["<%= value.join("\",\"") %>"]<% elsif value.match(/^[1-9]\d*/) %><%=value%><% else %>"<%= value %>"<% end %><%= "\n" %>

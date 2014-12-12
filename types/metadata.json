@@ -1,0 +1,81 @@
+{
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">= 3.0.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "AIX"
+    },
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "OracleLinux"
+    },
+    {
+      "operatingsystem": "Scientific"
+    },
+    {
+      "operatingsystem": "Solaris"
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "SLED"
+    },
+    {
+      "operatingsystem": "Ubuntu"
+    }
+  ],
+  "name": "ghoneycutt-types",
+  "version": "1.5.0",
+  "source": "git://github.com/ghoneycutt/puppet-module-types.git",
+  "author": "ghoneycutt",
+  "license": "Apache License, Version 2.0",
+  "summary": "Puppet module to manage default types through hashes in Hiera",
+  "description": "Puppet module to manage default types through hashes in Hiera with the\ncreate_resources() function. This module adds validation and helper functions,\nsuch as ensuring directories. Without specifying any hashes, this module will take no action.",
+  "project_page": "https://github.com/ghoneycutt/puppet-module-types",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 3.2.0"
+    },
+    {
+      "name": "ghoneycutt/common",
+      "version_requirement": ">= 1.0.2"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "Gemfile": "6992d521994d948eb6e48acd733a07bf",
+    "LICENSE": "d2794c0df5b907fdace235a619d80314",
+    "Modulefile": "d3fdab1ed1548349679e623e042a1608",
+    "README.md": "e9b44cacb0903a2345f1c9791c5665a7",
+    "Rakefile": "8ff6a0f7db638421d1742c5d365d0266",
+    "manifests/cron.pp": "04ace5b7aaaff42241c5db08d98b56c5",
+    "manifests/file.pp": "7feaecbc30b2e7ad2cd200132f5c5945",
+    "manifests/init.pp": "deab1914ee0787f6c1eabd607657e440",
+    "manifests/mount.pp": "6ca441a466850696a6573851b12849ae",
+    "spec/classes/init_spec.rb": "4d474ab99a5eae1777578309b593774b",
+    "spec/defines/cron_spec.rb": "52857f94c4f746c9233261629105c4f2",
+    "spec/defines/file_spec.rb": "396c1676adaed77bdbf66b826b564a2a",
+    "spec/defines/mount_spec.rb": "bd584c5c7a2f3d152ccc2c0be626d8ff",
+    "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0"
+  }
+}

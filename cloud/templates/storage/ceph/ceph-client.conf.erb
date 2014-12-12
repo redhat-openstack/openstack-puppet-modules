@@ -1,0 +1,8 @@
+<% if @clients %>
+<% @clients.each do |client| %>
+
+[client.<%= client %>]
+    keyring = /etc/ceph/ceph.client.<%= client %>.keyring
+
+<% end %>
+<% end %>

@@ -1,0 +1,67 @@
+[global]
+<% if @auth_type -%>
+  auth cluster required = <%= @auth_type %>
+  auth service required = <%= @auth_type %>
+  auth client required = <%= @auth_type %>
+<% end -%>
+<% if @signatures_require -%>
+  cephx require signatures = <%= @signatures_require %>
+<% end -%>
+<% if @signatures_cluster -%>
+  cephx cluster require signatures = <%= @signatures_cluster %>
+<% end -%>
+<% if @signatures_service -%>
+  cephx service require signatures = <%= @signatures_service %>
+<% end -%>
+<% if @signatures_sign_msgs -%>
+  cephx sign messages = <%= @signatures_sign_msgs %>
+<% end -%>
+  keyring = /etc/ceph/keyring
+<% if @cluster_network && @public_network -%>
+  cluster network = <%= @cluster_network %>
+  public network = <%= @public_network %>
+<% end -%>
+<% if @pool_default_pg_num -%>
+  osd pool default pg num = <%= @pool_default_pg_num %>
+<% end -%>
+<% if @pool_default_pgp_num -%>
+  osd pool default pgp num = <%= @pool_default_pgp_num %>
+<% end -%>
+<% if @pool_default_size -%>
+  osd pool default size = <%= @pool_default_size %>
+<% end -%>
+<% if @pool_default_min_size -%>
+  osd pool default min size = <%= @pool_default_min_size %>
+<% end -%>
+<% if @pool_default_crush_rule -%>
+  osd pool default crush rule = <%= @pool_default_crush_rule %>
+<% end -%>
+<% @config.sort.each do |key, value| -%>
+  <%= key %> = <%= value %>
+<% end %>
+
+  fsid = <%= @fsid %>
+
+[mon]
+<% if @mon_init_members -%>
+  mon initial members = <%= @mon_init_members %>
+<% end -%>
+  mon data = <%= @mon_data %>
+
+[osd]
+  osd journal size = <%= @journal_size_mb %>
+  filestore flusher = false
+  osd data = <%= @osd_data %>
+  osd journal = <%= @osd_journal_real %>
+  osd mkfs type = xfs
+  keyring = <%= @osd_data %>/keyring
+
+  # reduce recovery priority (less CPU impact)
+  osd recovery max active = <%= @osd_recovery_max_active %>
+  osd max backfills = <%= @osd_max_backfills %>
+  osd recovery op priority = <%= @osd_recovery_op_priority %>
+
+[mds]
+  mds data = <%= @mds_data %>
+  keyring = <%= @mds_data %>/keyring
+

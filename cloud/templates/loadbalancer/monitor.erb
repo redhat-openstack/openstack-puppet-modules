@@ -1,0 +1,79 @@
+<%- if @swift_api -%>
+acl swift_api_dead nbsrv(swift_api_cluster) lt 1
+monitor fail if swift_api_dead
+<%- end -%>
+<%- if @keystone_api -%>
+acl keystone_api_dead nbsrv(keystone_api_cluster) lt 1
+monitor fail if keystone_api_dead
+<% end -%>
+<%- if @keystone_api_admin -%>
+acl keystone_api_admin_dead nbsrv(keystone_api_admin_cluster) lt 1
+monitor fail if keystone_api_admin_dead
+<% end -%>
+<%- if @galera -%>
+acl galera_dead nbsrv(galera_cluster) lt 1
+monitor fail if galera_dead
+<%- end -%>
+<%- if @neutron_api -%>
+acl neutron_api_dead nbsrv(neutron_api_cluster) lt 1
+monitor fail if neutron_api_dead
+<%- end -%>
+<%- if @cinder_api -%>
+acl cinder_api_dead nbsrv(cinder_api_cluster) lt 1
+monitor fail if cinder_api_dead
+<%- end -%>
+<%- if @nova_api -%>
+acl nova_api_dead nbsrv(nova_api_cluster) lt 1
+monitor fail if nova_api_dead
+<%- end -%>
+<%- if @ec2_api -%>
+acl ec2_api_dead nbsrv(ec2_api_cluster) lt 1
+monitor fail if ec2_api_dead
+<%- end -%>
+<%- if @metadata_api -%>
+acl metadata_api_dead nbsrv(metadata_api_cluster) lt 1
+monitor fail if metadata_api_dead
+<%- end -%>
+<%- if @spice -%>
+acl spice_dead nbsrv(spice_cluster) lt 1
+monitor fail if spice_dead
+<%- end -%>
+<%- if @rabbitmq -%>
+acl rabbitmq_dead nbsrv(rabbitmq_cluster) lt 1
+monitor fail if rabbitmq_dead
+<%- end -%>
+<%- if @glance_api -%>
+acl glance_api_dead nbsrv(glance_api_cluster) lt 1
+monitor fail if glance_api_dead
+<%- end -%>
+<%- if @glance_registry -%>
+acl glance_registry_dead nbsrv(glance_registry_cluster) lt 1
+monitor fail if glance_registry_dead
+<%- end -%>
+<%- if @ceilometer_api -%>
+acl ceilometer_api_dead nbsrv(ceilometer_api_cluster) lt 1
+monitor fail if ceilometer_api_dead
+<%- end -%>
+<%- if @heat_api -%>
+acl heat_api_dead nbsrv(heat_api_cluster) lt 1
+monitor fail if heat_api_dead
+<%- end -%>
+<%- if @heat_cfn_api -%>
+acl heat_cfn_api_dead nbsrv(heat_cfn_api_cluster) lt 1
+monitor fail if heat_cfn_api_dead
+<%- end -%>
+<%- if @heat_cloudwatch_api -%>
+acl heat_cloudwatch_api_dead nbsrv(heat_cloudwatch_api_cluster) lt 1
+monitor fail if heat_cloudwatch_api_dead
+<%- end -%>
+<%- if @horizon -%>
+acl horizon_dead nbsrv(horizon_cluster) lt 1
+monitor fail if horizon_dead
+<%- end -%>
+<%- if @trove_api -%>
+acl trove_api_dead nbsrv(trove_api_cluster) lt 1
+monitor fail if trove_api_dead
+<%- end -%>
+
+# Used when forwarding SSL in http headers
+acl is-ssl dst_port 443

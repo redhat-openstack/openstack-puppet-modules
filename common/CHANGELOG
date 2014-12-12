@@ -1,0 +1,22 @@
+1.0.0 - 2013-05-24
+
+Add spec tests and become viable for first major release.
+
+Albin Gustavsson
+  2ef8ddb Removed some commented out code from the spec tests
+  d8fd795 Added spec testing for functions and defines
+  558a99f Added spec testing for common::mkuser
+
+Garrett Honeycutt
+  21c7d9a Ensure all modules are listed in README
+  49f726d Add facter to .gemfile
+  fd2a905 Test for both attributes of mkdir_p with a variable
+  81067a2 Travis - fix allowed failure for 2.7.x
+  556d1be Travis - test against Puppet 3.2.1 and display graphic in README
+  676bdeb Travis - remove 2.6.9 testing and test 3.x
+  c64244c Add travis-ci.org support
+  419e530 Split mkuser testing into its own file and clarify usernames.
+  93beb4f Add spec tests
+
+0.0.1 - 2013-05-12 Garrett Honeycutt <code@garretthoneycutt.com>
+* Rework of some old code such that no action is taken by default
