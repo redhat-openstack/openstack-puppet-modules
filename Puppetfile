@@ -19,34 +19,37 @@ forge 'http://forge.puppetlabs.com'
 # OpenStack projects
 mod 'openstacklib',
   :git => 'git://github.com/enovance/puppet-openstacklib.git',
-  :ref => '5ecdc92222b0e433478abcab711ea283abdfaf34'
+  :ref => '999f7849a3e0653f46f7336ee0fa9c2e38630b7b'
 mod 'ceilometer',
   :git => 'git://github.com/enovance/puppet-ceilometer.git',
-  :ref => '957c2120d0ee0b9db08bfddcce996686ba61d97d'
+  :ref => '953ce5032cb332bf8a15e78358ee8af6f14dd7f0'
 mod 'cinder',
   :git => 'git://github.com/enovance/puppet-cinder.git',
-  :ref => 'c9271e02d0d5a317ab390cfce9928601208f6073'
+  :ref => '1ee8a6cab39da6beebf7a0b39207f0002368196f'
 mod 'glance',
   :git => 'git://github.com/enovance/puppet-glance.git',
-  :ref => '78042d76c0854e16a55aaf05c03696d4d422e3c5'
+  :ref => 'a243f89a52f7dd2dc16b36d1c9b79ec1616c6596'
 mod 'heat',
   :git => 'git://github.com/enovance/puppet-heat.git',
-  :ref => '0e6d7eacecd70819384ac61ea3b9df38b90411b0'
+  :ref => 'b1e9e9bd48c3da15be69c0797fb05e7ce0f6698f'
 mod 'horizon',
   :git => 'git://github.com/enovance/puppet-horizon.git',
-  :ref => '512ff352eb4dbdc01cd40529b9ca9ea7e5b1db7c'
+  :ref => '168c206dfefa35abec48d7bce33ed469bf98cefb'
 mod 'keystone',
   :git => 'git://github.com/enovance/puppet-keystone.git',
-  :ref => '45ac386600c0e79942834da8b69bf09a4809d7bd'
+  :ref => '71a9df884b7a81bf86b6e897c16171bf556f1ea4'
 mod 'neutron',
   :git => 'git://github.com/enovance/puppet-neutron.git',
-  :ref => '340abcde440038d166e0fc3dd5d11f74f478f5d6'
+  :ref => 'c3dc52023dfdf7649080c1b5bc5eae3b43991db1'
 mod 'nova',
   :git => 'git://github.com/enovance/puppet-nova.git',
-  :ref => '3ffc5a263113232230b69e621e1b6167f2148390'
+  :ref => '2a5c1eac6b34ea29bbd3e28d7ee56839f10d83d9'
 mod 'swift',
   :git => 'git://github.com/enovance/puppet-swift.git',
-  :ref => '3ea00440361ff2452561d2cce808d938e39cce56'
+  :ref => '68a9e8eecba4a280ea1ec18fba67069a8c7dfce4'
+mod 'tempest',
+  :git => 'git://github.com/enovance/puppet-tempest.git',
+  :ref => '8631ec5df1c050bc4c3f1cba983e5aadd1c0e4d5'
 mod 'trove',
   :git => 'git://github.com/enovance/puppet-trove.git',
   :ref => '7d9db32423b25dcc227ea6a6d43c90c63fde0d58'
