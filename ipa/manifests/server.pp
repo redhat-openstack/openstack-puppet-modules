@@ -18,7 +18,7 @@
 class ipa::server(
 	$hostname = $::hostname,
 	$domain = $::domain,
-	$ipa_ipaddress = '',
+	$ipaddress = '',
 	$realm = '',			# defaults to upcase($domain)
 	$vip = '',			# virtual ip of the replica master host
 	$peers = {},			# specify the peering topology by fqdns
@@ -77,29 +77,10 @@ class ipa::server(
 	include ipa::server::replica::peering
 	include ipa::server::replica::master
 	include ipa::common
+	include ipa::params
 	include ipa::vardir
 	#$vardir = $::ipa::vardir::module_vardir	# with trailing slash
 	$vardir = regsubst($::ipa::vardir::module_vardir, '\/$', '')
-
-	case $::osfamily {
-		'RedHat': {
-			if $::operatingsystem == 'Fedora' {
-				$ipa_server_pkgname = 'freeipa-server'
-			} else {
-				$ipa_server_pkgname = 'ipa-server'
-				package { 'python-argparse':		# used by diff.py
-					ensure => present,
-					before => [
-						Package['ipa-server'],
-						File["${vardir}/diff.py"],
-					],
-				}
-			}
-		}
-		default: {
-			fail('Unsupported OS')
-		}
-	}
 
 	if "${vip}" != '' {
 		if ! ($vip =~ /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/) {
@@ -216,19 +197,29 @@ class ipa::server(
 	$valid_fqdn = "${valid_hostname}.${valid_domain}"
 
 	if $dns {
-		package { ['bind', 'bind-dyndb-ldap']:
+		package { $::ipa::params::package_bind:
 			ensure => present,
-			before => Package['ipa-server'],
+			before => Package["${::ipa::params::package_ipa_server}"],
+		}
+	}
+	if "${::ipa::params::package_python_argparse}" != '' {
+		# used by diff.py
+		package { "${::ipa::params::package_python_argparse}":
+			ensure => present,
+			before => [
+				Package["${::ipa::params::package_ipa_server}"],
+				File["${vardir}/diff.py"],
+			],
 		}
 	}
 
-	package { 'pwgen':			# used to generate passwords
+	# used to generate passwords
+	package { "${::ipa::params::package_pwgen}":
 		ensure => present,
-		before => Package['ipa-server'],
+		before => Package["${::ipa::params::package_ipa_server}"],
 	}
 
-	package { 'ipa-server':
-		name => $ipa_server_pkgname,
+	package { "${::ipa::params::package_ipa_server}":
 		ensure => present,
 	}
 
@@ -240,7 +231,7 @@ class ipa::server(
 		backup => false,		# don't backup to filebucket
 		ensure => present,
 		require => [
-			Package['ipa-server'],
+			Package["${::ipa::params::package_ipa_server}"],
 			File["${vardir}/"],
 		],
 	}
@@ -509,11 +500,12 @@ class ipa::server(
 		},
 	}
 
-	$args12 = $ipa_ipaddress ? {
+	# NOTE: this $ipaddress variable is not the fact (facts start with $::)
+	$args12 = $ipaddress ? {
 		'' => '',
 		default => $dns ? {
-			true => "--ip-address=${ipa_ipaddress} --no-host-dns",
-			default => "--ip-address=${ipa_ipaddress}",
+			true => "--ip-address=${ipaddress} --no-host-dns",
+			default => "--ip-address=${ipaddress}",
 		},
 	}
 
@@ -538,7 +530,7 @@ class ipa::server(
 	# as bash, and also so that it's available to run manually and inspect!
 	# if this installs successfully, tag it so we know which host was first
 	file { "${vardir}/ipa-server-install.sh":
-		content => inline_template("#!/bin/bash\n/usr/sbin/ipa-server-install ${args} --unattended && /bin/echo '${::fqdn}' > ${vardir}/ipa_server_replica_master\n"),
+		content => inline_template("#!/bin/bash\n${::ipa::params::program_ipa_server_install} ${args} --unattended && /bin/echo '${::fqdn}' > ${vardir}/ipa_server_replica_master\n"),
 		owner => root,
 		group => root,
 		mode => 700,
@@ -553,7 +545,7 @@ class ipa::server(
 			unless => "${::ipa::common::ipa_installed}",	# can't install if installed...
 			timeout => 3600,	# hope it doesn't take more than 1 hour
 			require => [
-				Package['ipa-server'],
+				Package["${::ipa::params::package_ipa_server}"],
 				File["${vardir}/ipa-server-install.sh"],
 			],
 			alias => 'ipa-install',	# same alias as client to prevent both!
@@ -625,7 +617,7 @@ class ipa::server(
 			logoutput => on_failure,
 			# thanks to 'ab' in #freeipa for help with the ipa api!
 			onlyif => "/usr/bin/python -c 'import sys,ipalib;ipalib.api.bootstrap_with_global_options(context=\"puppet\");ipalib.api.finalize();(ipalib.api.Backend.ldap2.connect(ccache=ipalib.api.Backend.krb.default_ccname()) if ipalib.api.env.in_server else ipalib.api.Backend.xmlclient.connect());sys.exit(0 if ipalib.api.Command.dns_is_enabled().get(\"result\") else 1)'",
-			require => Package['ipa-server'],
+			require => Package["${::ipa::params::package_ipa_server}"],
 			alias => 'ipa-dns-check',
 		}
 	}

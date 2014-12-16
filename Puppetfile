@@ -59,7 +59,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ipa',
-  :commit => '08e51e96ac2c9265499deec3485e396b792587d3',
+  :commit => '4a30eb72d5e6025429dbc65dc1b35567c0def5fe',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',

@@ -16,14 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ipa::vardir {	# module vardir snippet
-	$module_vardir = sprintf("%s/ipa/", regsubst($tmp, '\/$', ''))
-	file { "${module_vardir}":		# /var/lib/puppet/tmp/ipa/
-		ensure => directory,		# make sure this is a directory
-		recurse => true,		# recursively manage directory
-		purge => true,			# purge all unmanaged files
-		force => true,			# also purge subdirs and links
-		owner => root, group => nobody, mode => 600, backup => false,
-	}
 	if "${::puppet_vardirtmp}" == '' {
 		if "${::puppet_vardir}" == '' {
 			# here, we require that the puppetlabs fact exist!
@@ -40,11 +32,20 @@ class ipa::vardir {	# module vardir snippet
 			group => nobody,
 			mode => 600,
 			backup => false,	# don't backup to filebucket
-			before => File["${module_vardir}"],
+			#before => File["${module_vardir}"],	# redundant
 			#require => Package['puppet'],	# no puppet module seen
 		}
 	} else {
 		$tmp = sprintf("%s/", regsubst($::puppet_vardirtmp, '\/$', ''))
+	}
+	$module_vardir = sprintf("%s/ipa/", regsubst($tmp, '\/$', ''))
+	file { "${module_vardir}":		# /var/lib/puppet/tmp/ipa/
+		ensure => directory,		# make sure this is a directory
+		recurse => true,		# recursively manage directory
+		purge => true,			# purge all unmanaged files
+		force => true,			# also purge subdirs and links
+		owner => root, group => nobody, mode => 600, backup => false,
+		require => File["${tmp}"],	# File['/var/lib/puppet/tmp/']
 	}
 }
 
