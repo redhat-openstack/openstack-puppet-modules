@@ -63,7 +63,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
-  :commit => '38518cbcb3ef8ad3bb068730a21d790b27a29b74',
+  :commit => 'caf97ba886ee097661677e984485c8cc08897f12',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'manila',
