@@ -7,7 +7,7 @@
   <%- if @ssl_chain -%>
   SSLCertificateChainFile "<%= @ssl_chain %>"
   <%- end -%>
-  <%- if @ssl_certs_dir -%>
+  <%- if @ssl_certs_dir && @ssl_certs_dir != '' -%>
   SSLCACertificatePath    "<%= @ssl_certs_dir %>"
   <%- end -%>
   <%- if @ssl_ca -%>
@@ -18,6 +18,9 @@
   <%- end -%>
   <%- if @ssl_crl -%>
   SSLCARevocationFile     "<%= @ssl_crl %>"
+  <%- end -%>
+  <%- if @ssl_crl_check && scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+  SSLCARevocationCheck    "<%= @ssl_crl_check %>"
   <%- end -%>
   <%- if @ssl_proxyengine -%>
   SSLProxyEngine On

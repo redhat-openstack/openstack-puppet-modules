@@ -28,6 +28,11 @@ class apache::params inherits ::apache::version {
   # The default error log level
   $log_level = 'warn'
 
+  if $::operatingsystem == 'Ubuntu' and $::lsbdistrelease == '10.04' {
+    $verify_command = '/usr/sbin/apache2ctl -t'
+  } else {
+    $verify_command = '/usr/sbin/apachectl -t'
+  }
   if $::osfamily == 'RedHat' or $::operatingsystem == 'amazon' {
     $user                 = 'apache'
     $group                = 'apache'
@@ -60,9 +65,13 @@ class apache::params inherits ::apache::version {
     $suphp_addhandler     = 'php5-script'
     $suphp_engine         = 'off'
     $suphp_configpath     = undef
+    # NOTE: The module for Shibboleth is not available to RH/CentOS without an additional repository. http://wiki.aaf.edu.au/tech-info/sp-install-guide
     $mod_packages         = {
       'auth_kerb'   => 'mod_auth_kerb',
-      'authnz_ldap' => 'mod_authz_ldap',
+      'authnz_ldap' => $::apache::version::distrelease ? {
+        '7'     => 'mod_ldap',
+        default => 'mod_authz_ldap',
+      },
       'fastcgi'     => 'mod_fastcgi',
       'fcgid'       => 'mod_fcgid',
       'pagespeed'   => 'mod-pagespeed-stable',
@@ -81,6 +90,7 @@ class apache::params inherits ::apache::version {
       'suphp'       => 'mod_suphp',
       'xsendfile'   => 'mod_xsendfile',
       'nss'         => 'mod_nss',
+      'shib2'       => 'shibboleth',
     }
     $mod_libs             = {
       'php5' => 'libphp5.so',
@@ -93,6 +103,7 @@ class apache::params inherits ::apache::version {
     $fastcgi_lib_path     = undef
     $mime_support_package = 'mailcap'
     $mime_types_config    = '/etc/mime.types'
+    $docroot              = '/var/www/html'
     if $::osfamily == "RedHat" {
       $wsgi_socket_prefix = '/var/run/wsgi'
     } else {
@@ -141,6 +152,7 @@ class apache::params inherits ::apache::version {
       'suphp'       => 'libapache2-mod-suphp',
       'wsgi'        => 'libapache2-mod-wsgi',
       'xsendfile'   => 'libapache2-mod-xsendfile',
+      'shib2'       => 'libapache2-mod-shib2',
     }
     $mod_libs             = {
       'php5' => 'libphp5.so',
@@ -152,6 +164,7 @@ class apache::params inherits ::apache::version {
     $fastcgi_lib_path       = '/var/lib/apache2/fastcgi'
     $mime_support_package = 'mime-support'
     $mime_types_config    = '/etc/mime.types'
+    $docroot              = '/var/www'
 
     #
     # Passenger-specific settings
@@ -238,7 +251,6 @@ class apache::params inherits ::apache::version {
       # NOTE: 'php' needs to enable APACHE option in make config
       # NOTE: 'dav_svn' needs to enable MOD_DAV_SVN make config
       # NOTE: not sure where the shibboleth should come from
-      # NOTE: don't know where the shibboleth module should come from
       'auth_kerb'  => 'www/mod_auth_kerb2',
       'fcgid'      => 'www/mod_fcgid',
       'passenger'  => 'www/rubygem-passenger',
@@ -249,7 +261,8 @@ class apache::params inherits ::apache::version {
       'wsgi'       => 'www/mod_wsgi',
       'dav_svn'    => 'devel/subversion',
       'xsendfile'  => 'www/mod_xsendfile',
-      'rpaf'       => 'www/mod_rpaf2'
+      'rpaf'       => 'www/mod_rpaf2',
+      'shib2'      => 'security/shibboleth2-sp',
     }
     $mod_libs         = {
       'php5' => 'libphp5.so',
@@ -262,6 +275,7 @@ class apache::params inherits ::apache::version {
     $mime_support_package = 'misc/mime-support'
     $mime_types_config    = '/usr/local/etc/mime.types'
     $wsgi_socket_prefix   = undef
+    $docroot              = '/usr/local/www/apache22/data'
   } else {
     fail("Class['apache::params']: Unsupported osfamily: ${::osfamily}")
   }
