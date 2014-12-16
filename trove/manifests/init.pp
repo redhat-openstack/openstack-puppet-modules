@@ -139,6 +139,9 @@
 # [*control_exchange*]
 #   (optional) Control exchange.
 #   Defaults to 'trove'.
+# [*use_neutron*]
+#   (optional) Use Neutron
+#   Defaults to true
 #
 # [*use_neutron*]
 #   (optional) Use Neutron
@@ -171,6 +174,7 @@ class trove(
   $use_neutron                  = true,
   # DEPRECATED PARAMETERS
   $mysql_module                 = undef,
+  $use_neutron                  = true,
 ) {
   include trove::params
 
