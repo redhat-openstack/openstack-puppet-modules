@@ -178,6 +178,10 @@ mod 'timezone',
   :commit => 'e82cd1b32f395217056df492e5a7dac8dc5c683a',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
+mod 'trove',
+  :commit => '4fe79ee6c333e74c8d3986185ef87c1d1720b5b3',
+  :git => 'https://github.com/directxman12/puppet-trove.git'
+
 mod 'vcsrepo',
   :commit => '6f7507a2a48ff0a58c7db026760a2eb84e382a77',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
