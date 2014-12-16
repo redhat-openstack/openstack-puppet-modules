@@ -139,6 +139,9 @@
 # [*control_exchange*]
 #   (optional) Control exchange.
 #   Defaults to 'trove'.
+# [*use_neutron*]
+#   (optional) Use Neutron
+#   Defaults to true
 #
 class trove(
   $nova_proxy_admin_pass,
@@ -166,6 +169,7 @@ class trove(
   $swift_url                    = false,
   # DEPRECATED PARAMETERS
   $mysql_module                 = undef,
+  $use_neutron                  = true,
 ) {
   include trove::params
 
