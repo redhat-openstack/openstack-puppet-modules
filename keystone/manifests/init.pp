@@ -39,8 +39,21 @@
 #   [memcache_servers] List of memcache servers/ports. Optional. Used with
 #     token_driver keystone.token.backends.memcache.Token.  Defaults to false.
 #   [enabled] If the keystone services should be enabled. Optional. Default to true.
-#   [sql_connection] Url used to connect to database.
-#   [idle_timeout] Timeout when db connections should be reaped.
+#
+#   [*database_connection*]
+#     (optional) Url used to connect to database.
+#     Defaults to sqlite:////var/lib/keystone/keystone.db
+#
+#   [*sql_connection*]
+#     (optional) Deprecated. Use database_connection instead.
+#
+#   [*database_idle_timeout*]
+#     (optional) Timeout when db connections should be reaped.
+#     Defaults to 200.
+#
+#   [*idle_timeout*]
+#     (optional) Deprecated. Use database_idle_timeout instead.
+#
 #   [enable_pki_setup] Enable call to pki_setup.
 #   [rabbit_host] Location of rabbitmq installation. Optional. Defaults to localhost.
 #   [rabbit_port] Port for rabbitmq instance. Optional. Defaults to 5672.
@@ -118,6 +131,22 @@
 #   Tested versions include 0.9 and 2.2
 #   Default to '0.9'
 #
+#   [*service_name*]
+#   (optional) Name of the service that will be providing the
+#   server functionality of keystone.  For example, the default
+#   is just 'keystone', which means keystone will be run as a
+#   standalone eventlet service, and will able to be managed
+#   separately by the operating system's service manager.  For
+#   example, you will be able to use
+#   service openstack-keystone restart
+#   to restart the service.
+#   If the value is 'httpd', this means keystone will be a web
+#   service, and you must use another class to configure that
+#   web service.  For example, after calling class {'keystone'...}
+#   use class { 'keystone::wsgi::apache'...} to make keystone be
+#   a web app using apache mod_wsgi.
+#   Defaults to 'keystone'
+#
 # == Dependencies
 #  None
 #
@@ -126,6 +155,17 @@
 #   class { 'keystone':
 #     log_verbose => 'True',
 #     admin_token => 'my_special_token',
+#   }
+#
+#   OR
+#
+#   class { 'keystone':
+#      ...
+#      service_name => 'httpd',
+#      ...
+#   }
+#   class { 'keystone::wsgi::apache':
+#      ...
 #   }
 #
 # == Authors
@@ -169,8 +209,8 @@ class keystone(
   $cache_dir             = '/var/cache/keystone',
   $memcache_servers      = false,
   $enabled               = true,
-  $sql_connection        = 'sqlite:////var/lib/keystone/keystone.db',
-  $idle_timeout          = '200',
+  $database_connection   = 'sqlite:////var/lib/keystone/keystone.db',
+  $database_idle_timeout = '200',
   $enable_pki_setup      = true,
   $mysql_module          = '0.9',
   $rabbit_host           = 'localhost',
@@ -181,26 +221,35 @@ class keystone(
   $rabbit_virtual_host   = '/',
   $notification_driver   = false,
   $notification_topics   = false,
-  $control_exchange      = false
+  $control_exchange      = false,
+  $service_name          = 'keystone',
+  # DEPRECATED PARAMETERS
+  $sql_connection        = undef,
+  $idle_timeout          = undef,
 ) {
 
   if ! $catalog_driver {
     validate_re($catalog_type, 'template|sql')
   }
 
-  File['/etc/keystone/keystone.conf'] -> Keystone_config<||> ~> Service['keystone']
+  if $sql_connection {
+    warning('The sql_connection parameter is deprecated, use database_connection instead.')
+    $database_connection_real = $sql_connection
+  } else {
+    $database_connection_real = $database_connection
+  }
+
+  if $idle_timeout {
+    warning('The idle_timeout parameter is deprecated, use database_idle_timeout instead.')
+    $database_idle_timeout_real = $idle_timeout
+  } else {
+    $database_idle_timeout_real = $database_idle_timeout
+  }
+
+  File['/etc/keystone/keystone.conf'] -> Keystone_config<||> ~> Service[$service_name]
   Keystone_config<||> ~> Exec<| title == 'keystone-manage db_sync'|>
   Keystone_config<||> ~> Exec<| title == 'keystone-manage pki_setup'|>
-
-  include keystone::params
-
-  File {
-    ensure  => present,
-    owner   => 'keystone',
-    group   => 'keystone',
-    require => Package['keystone'],
-    notify  => Service['keystone'],
-  }
+  include ::keystone::params
 
   package { 'keystone':
     ensure => $package_ensure,
@@ -223,10 +272,19 @@ class keystone(
   file { ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone']:
     ensure  => directory,
     mode    => '0750',
+    owner   => 'keystone',
+    group   => 'keystone',
+    require => Package['keystone'],
+    notify  => Service[$service_name],
   }
 
   file { '/etc/keystone/keystone.conf':
+    ensure  => present,
     mode    => '0600',
+    owner   => 'keystone',
+    group   => 'keystone',
+    require => Package['keystone'],
+    notify  => Service[$service_name],
   }
 
   if $bind_host {
@@ -292,19 +350,19 @@ class keystone(
     }
   }
 
-  if($sql_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
+  if($database_connection_real =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
     if ($mysql_module >= 2.2) {
       require 'mysql::bindings'
       require 'mysql::bindings::python'
     } else {
       require 'mysql::python'
     }
-  } elsif($sql_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
+  } elsif($database_connection_real =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
 
-  } elsif($sql_connection =~ /sqlite:\/\//) {
+  } elsif($database_connection_real =~ /sqlite:\/\//) {
 
   } else {
-    fail("Invalid db connection ${sql_connection}")
+    fail("Invalid db connection ${database_connection_real}")
   }
 
   # memcache connection config
@@ -321,8 +379,8 @@ class keystone(
 
   # db connection config
   keystone_config {
-    'database/connection':   value => $sql_connection, secret => true;
-    'database/idle_timeout': value => $idle_timeout;
+    'database/connection':   value => $database_connection_real, secret => true;
+    'database/idle_timeout': value => $database_idle_timeout_real;
   }
 
   # configure based on the catalog backend
@@ -360,7 +418,7 @@ class keystone(
         user        => 'keystone',
         refreshonly => true,
         creates     => '/etc/keystone/ssl/private/signing_key.pem',
-        notify      => Service['keystone'],
+        notify      => Service[$service_name],
         subscribe   => Package['keystone'],
         require     => User['keystone'],
       }
@@ -388,7 +446,7 @@ class keystone(
   }
 
   keystone_config {
-    'DEFAULT/rabbit_password':     value => $rabbit_password;
+    'DEFAULT/rabbit_password':     value => $rabbit_password, secret => true;
     'DEFAULT/rabbit_userid':       value => $rabbit_userid;
     'DEFAULT/rabbit_virtual_host': value => $rabbit_virtual_host;
   }
@@ -409,18 +467,20 @@ class keystone(
     $service_ensure = 'stopped'
   }
 
-  service { 'keystone':
-    ensure     => $service_ensure,
-    name       => $::keystone::params::service_name,
-    enable     => $enabled,
-    hasstatus  => true,
-    hasrestart => true,
-    provider   => $::keystone::params::service_provider,
+  if $service_name == 'keystone' {
+    service { 'keystone':
+      ensure     => $service_ensure,
+      name       => $::keystone::params::service_name,
+      enable     => $enabled,
+      hasstatus  => true,
+      hasrestart => true,
+      provider   => $::keystone::params::service_provider,
+    }
   }
 
   if $enabled {
-    include keystone::db::sync
-    Class['keystone::db::sync'] ~> Service['keystone']
+    include ::keystone::db::sync
+    Class['::keystone::db::sync'] ~> Service[$service_name]
   }
 
   # Syslog configuration
