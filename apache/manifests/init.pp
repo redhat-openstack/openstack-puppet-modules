@@ -13,55 +13,59 @@
 # Sample Usage:
 #
 class apache (
-  $apache_name          = $::apache::params::apache_name,
-  $service_name         = $::apache::params::service_name,
-  $default_mods         = true,
-  $default_vhost        = true,
-  $default_confd_files  = true,
-  $default_ssl_vhost    = false,
-  $default_ssl_cert     = $::apache::params::default_ssl_cert,
-  $default_ssl_key      = $::apache::params::default_ssl_key,
-  $default_ssl_chain    = undef,
-  $default_ssl_ca       = undef,
-  $default_ssl_crl_path = undef,
-  $default_ssl_crl      = undef,
-  $ip                   = undef,
-  $service_enable       = true,
-  $service_ensure       = 'running',
-  $purge_configs        = true,
-  $purge_vhost_dir      = undef,
-  $serveradmin          = 'root@localhost',
-  $sendfile             = 'On',
-  $error_documents      = false,
-  $timeout              = '120',
-  $httpd_dir            = $::apache::params::httpd_dir,
-  $server_root          = $::apache::params::server_root,
-  $conf_dir             = $::apache::params::conf_dir,
-  $confd_dir            = $::apache::params::confd_dir,
-  $vhost_dir            = $::apache::params::vhost_dir,
-  $vhost_enable_dir     = $::apache::params::vhost_enable_dir,
-  $mod_dir              = $::apache::params::mod_dir,
-  $mod_enable_dir       = $::apache::params::mod_enable_dir,
-  $mpm_module           = $::apache::params::mpm_module,
-  $conf_template        = $::apache::params::conf_template,
-  $servername           = $::apache::params::servername,
-  $manage_user          = true,
-  $manage_group         = true,
-  $user                 = $::apache::params::user,
-  $group                = $::apache::params::group,
-  $keepalive            = $::apache::params::keepalive,
-  $keepalive_timeout    = $::apache::params::keepalive_timeout,
+  $apache_name            = $::apache::params::apache_name,
+  $service_name           = $::apache::params::service_name,
+  $default_mods           = true,
+  $default_vhost          = true,
+  $default_confd_files    = true,
+  $default_ssl_vhost      = false,
+  $default_ssl_cert       = $::apache::params::default_ssl_cert,
+  $default_ssl_key        = $::apache::params::default_ssl_key,
+  $default_ssl_chain      = undef,
+  $default_ssl_ca         = undef,
+  $default_ssl_crl_path   = undef,
+  $default_ssl_crl        = undef,
+  $default_ssl_crl_check  = undef,
+  $ip                     = undef,
+  $service_enable         = true,
+  $service_ensure         = 'running',
+  $purge_configs          = true,
+  $purge_vhost_dir        = undef,
+  $purge_vdir             = false,
+  $serveradmin            = 'root@localhost',
+  $sendfile               = 'On',
+  $error_documents        = false,
+  $timeout                = '120',
+  $httpd_dir              = $::apache::params::httpd_dir,
+  $server_root            = $::apache::params::server_root,
+  $conf_dir               = $::apache::params::conf_dir,
+  $confd_dir              = $::apache::params::confd_dir,
+  $vhost_dir              = $::apache::params::vhost_dir,
+  $vhost_enable_dir       = $::apache::params::vhost_enable_dir,
+  $mod_dir                = $::apache::params::mod_dir,
+  $mod_enable_dir         = $::apache::params::mod_enable_dir,
+  $mpm_module             = $::apache::params::mpm_module,
+  $conf_template          = $::apache::params::conf_template,
+  $servername             = $::apache::params::servername,
+  $manage_user            = true,
+  $manage_group           = true,
+  $user                   = $::apache::params::user,
+  $group                  = $::apache::params::group,
+  $keepalive              = $::apache::params::keepalive,
+  $keepalive_timeout      = $::apache::params::keepalive_timeout,
   $max_keepalive_requests = $apache::params::max_keepalive_requests,
-  $logroot              = $::apache::params::logroot,
-  $logroot_mode         = $::apache::params::logroot_mode,
-  $log_level            = $::apache::params::log_level,
-  $log_formats          = {},
-  $ports_file           = $::apache::params::ports_file,
-  $apache_version       = $::apache::version::default,
-  $server_tokens        = 'OS',
-  $server_signature     = 'On',
-  $trace_enable         = 'On',
-  $package_ensure       = 'installed',
+  $logroot                = $::apache::params::logroot,
+  $logroot_mode           = $::apache::params::logroot_mode,
+  $log_level              = $::apache::params::log_level,
+  $log_formats            = {},
+  $ports_file             = $::apache::params::ports_file,
+  $docroot                = $::apache::params::docroot,
+  $apache_version         = $::apache::version::default,
+  $server_tokens          = 'OS',
+  $server_signature       = 'On',
+  $trace_enable           = 'On',
+  $allow_encoded_slashes  = undef,
+  $package_ensure         = 'installed',
 ) inherits ::apache::params {
   validate_bool($default_vhost)
   validate_bool($default_ssl_vhost)
@@ -76,6 +80,10 @@ class apache (
 
   if $mpm_module {
     validate_re($mpm_module, $valid_mpms_re)
+  }
+
+  if $allow_encoded_slashes {
+    validate_re($allow_encoded_slashes, '(^on$|^off$|^nodecode$)', "${allow_encoded_slashes} is not permitted for allow_encoded_slashes. Allowed values are 'on', 'off' or 'nodecode'.")
   }
 
   # NOTE: on FreeBSD it's mpm module's responsibility to install httpd package.
@@ -121,11 +129,19 @@ class apache (
     service_ensure => $service_ensure,
   }
 
+  # Deprecated backwards-compatibility
+  if $purge_vdir {
+    warning('Class[\'apache\'] parameter purge_vdir is deprecated in favor of purge_configs')
+    $purge_confd = $purge_vdir
+  } else {
+    $purge_confd = $purge_configs
+  }
+
   # Set purge vhostd appropriately
   if $purge_vhost_dir == undef {
-    $_purge_vhost_dir = $purge_configs
+    $purge_vhostd = $purge_confd
   } else {
-    $_purge_vhost_dir = $purge_vhost_dir
+    $purge_vhostd = $purge_vhost_dir
   }
 
   Exec {
@@ -139,7 +155,7 @@ class apache (
   file { $confd_dir:
     ensure  => directory,
     recurse => true,
-    purge   => $purge_configs,
+    purge   => $purge_confd,
     notify  => Class['Apache::Service'],
     require => Package['httpd'],
   }
@@ -185,7 +201,7 @@ class apache (
     file { $vhost_dir:
       ensure  => directory,
       recurse => true,
-      purge   => $_purge_vhost_dir,
+      purge   => $purge_vhostd,
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
     }
@@ -200,7 +216,7 @@ class apache (
     file { $vhost_enable_dir:
       ensure  => directory,
       recurse => true,
-      purge   => $_purge_vhost_dir,
+      purge   => $purge_vhostd,
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
     }
@@ -224,7 +240,6 @@ class apache (
   if $::apache::conf_dir and $::apache::params::conf_file {
     case $::osfamily {
       'debian': {
-        $docroot              = '/var/www'
         $pidfile              = "\${APACHE_PID_FILE}"
         $error_log            = 'error.log'
         $error_documents_path = '/usr/share/apache2/error'
@@ -232,7 +247,6 @@ class apache (
         $access_log_file      = 'access.log'
       }
       'redhat': {
-        $docroot              = '/var/www/html'
         $pidfile              = 'run/httpd.pid'
         $error_log            = 'error_log'
         $error_documents_path = '/var/www/error'
@@ -240,7 +254,6 @@ class apache (
         $access_log_file      = 'access_log'
       }
       'freebsd': {
-        $docroot              = '/usr/local/www/apache22/data'
         $pidfile              = '/var/run/httpd.pid'
         $error_log            = 'httpd-error.log'
         $error_documents_path = '/usr/local/www/apache22/error'

@@ -153,14 +153,6 @@ AVAILABLE_REGIONS = [
 ]
 <% end -%>
 
-<%
-if (!@keystone_scheme.nil?) || (!@keystone_host.nil?) || (!@keystone_port.nil?)
-    @keystone_scheme ||= "http"
-    @keystone_host ||= "127.0.0.1"
-    @keystone_port ||= "5000"
-    @keystone_url = "#{@keystone_scheme}://#{@keystone_host}:#{@keystone_port}/v2.0"
-end
--%>
 OPENSTACK_KEYSTONE_URL = "<%= @keystone_url %>"
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "<%= @keystone_default_role %>"
 
@@ -191,6 +183,13 @@ OPENSTACK_HYPERVISOR_FEATURES = {
     <%- @hypervisor_options = @hypervisor_defaults.merge(@hypervisor_options) -%>
     'can_set_mount_point': <%= @hypervisor_options['can_set_mount_point'].to_s.capitalize %>,
     'can_set_password': <%= @hypervisor_options['can_set_password'].to_s.capitalize %>,
+}
+
+# The OPENSTACK_CINDER_FEATURES settings can be used to enable optional
+# # services provided by cinder that is not exposed by its extension API.
+OPENSTACK_CINDER_FEATURES = {
+    <%- @cinder_options = @cinder_defaults.merge(@cinder_options) -%>
+    'enable_backup': <%= @cinder_options['enable_backup'].to_s.capitalize %>,
 }
 
 # The OPENSTACK_NEUTRON_NETWORK settings can be used to enable optional

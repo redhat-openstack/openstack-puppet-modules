@@ -19,6 +19,7 @@ describe 'keystone::ldap' do
         :user_enabled_attribute => 'UserAccountControl',
         :user_enabled_mask => '2',
         :user_enabled_default => '512',
+        :user_enabled_invert => 'False',
         :user_attribute_ignore => '',
         :user_default_project_id_attribute => 'defaultProject',
         :user_allow_create => 'False',
@@ -34,7 +35,7 @@ describe 'keystone::ldap' do
         :tenant_id_attribute => 'ou',
         :tenant_member_attribute => 'member',
         :tenant_desc_attribute => 'description',
-        :tenant_name_attribute => 'ou', 
+        :tenant_name_attribute => 'ou',
         :tenant_enabled_attribute => 'enabled',
         :tenant_domain_id_attribute => 'businessCategory',
         :tenant_attribute_ignore => '',
@@ -94,6 +95,7 @@ describe 'keystone::ldap' do
       should contain_keystone_config('ldap/user_enabled_attribute').with_value('UserAccountControl')
       should contain_keystone_config('ldap/user_enabled_mask').with_value('2')
       should contain_keystone_config('ldap/user_enabled_default').with_value('512')
+      should contain_keystone_config('ldap/user_enabled_invert').with_value('False')
       should contain_keystone_config('ldap/user_attribute_ignore').with_value('')
       should contain_keystone_config('ldap/user_default_project_id_attribute').with_value('defaultProject')
       should contain_keystone_config('ldap/user_tree_dn').with_value('cn=users,dc=example,dc=com')
@@ -105,22 +107,22 @@ describe 'keystone::ldap' do
       should contain_keystone_config('ldap/user_enabled_emulation_dn').with_value('cn=openstack-enabled,cn=groups,cn=accounts,dc=example,dc=com')
       should contain_keystone_config('ldap/user_additional_attribute_mapping').with_value('description:name, gecos:name')
 
-      should contain_keystone_config('ldap/tenant_tree_dn').with_value('ou=projects,ou=openstack,dc=example,dc=com')
-      should contain_keystone_config('ldap/tenant_filter').with_value('')
-      should contain_keystone_config('ldap/tenant_objectclass').with_value('organizationalUnit')
-      should contain_keystone_config('ldap/tenant_id_attribute').with_value('ou')
-      should contain_keystone_config('ldap/tenant_member_attribute').with_value('member')
-      should contain_keystone_config('ldap/tenant_desc_attribute').with_value('description')
-      should contain_keystone_config('ldap/tenant_name_attribute').with_value('ou')
-      should contain_keystone_config('ldap/tenant_enabled_attribute').with_value('enabled')
-      should contain_keystone_config('ldap/tenant_domain_id_attribute').with_value('businessCategory')
-      should contain_keystone_config('ldap/tenant_attribute_ignore').with_value('')
-      should contain_keystone_config('ldap/tenant_allow_create').with_value('True')
-      should contain_keystone_config('ldap/tenant_allow_update').with_value('True')
-      should contain_keystone_config('ldap/tenant_allow_delete').with_value('True')
-      should contain_keystone_config('ldap/tenant_enabled_emulation').with_value('False')
-      should contain_keystone_config('ldap/tenant_enabled_emulation_dn').with_value('True')
-      should contain_keystone_config('ldap/tenant_additional_attribute_mapping').with_value('cn=enabled,ou=openstack,dc=example,dc=com')
+      should contain_keystone_config('ldap/project_tree_dn').with_value('ou=projects,ou=openstack,dc=example,dc=com')
+      should contain_keystone_config('ldap/project_filter').with_value('')
+      should contain_keystone_config('ldap/project_objectclass').with_value('organizationalUnit')
+      should contain_keystone_config('ldap/project_id_attribute').with_value('ou')
+      should contain_keystone_config('ldap/project_member_attribute').with_value('member')
+      should contain_keystone_config('ldap/project_desc_attribute').with_value('description')
+      should contain_keystone_config('ldap/project_name_attribute').with_value('ou')
+      should contain_keystone_config('ldap/project_enabled_attribute').with_value('enabled')
+      should contain_keystone_config('ldap/project_domain_id_attribute').with_value('businessCategory')
+      should contain_keystone_config('ldap/project_attribute_ignore').with_value('')
+      should contain_keystone_config('ldap/project_allow_create').with_value('True')
+      should contain_keystone_config('ldap/project_allow_update').with_value('True')
+      should contain_keystone_config('ldap/project_allow_delete').with_value('True')
+      should contain_keystone_config('ldap/project_enabled_emulation').with_value('False')
+      should contain_keystone_config('ldap/project_enabled_emulation_dn').with_value('True')
+      should contain_keystone_config('ldap/project_additional_attribute_mapping').with_value('cn=enabled,ou=openstack,dc=example,dc=com')
       should contain_keystone_config('ldap/role_tree_dn').with_value('ou=roles,ou=openstack,dc=example,dc=com')
       should contain_keystone_config('ldap/role_filter').with_value('')
       should contain_keystone_config('ldap/role_objectclass').with_value('organizationalRole')

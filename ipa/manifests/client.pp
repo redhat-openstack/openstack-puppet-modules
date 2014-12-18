@@ -35,23 +35,8 @@ class ipa::client(
 	$debug = false,
 	$ensure = present		# TODO: support uninstall with 'absent'
 ) {
+	include ipa::params
 	include ipa::vardir
-
-	case $::osfamily {
-		'RedHat': {
-			if $::operatingsystem == 'Fedora' {
-				$ipa_client_pkgname = 'freeipa-client'
-				$ipa_admintools_pkgname = 'freeipa-admintools'
-			} else {
-				$ipa_client_pkgname = 'ipa-client'
-				$ipa_admintools_pkgname = 'ipa-admintools'
-			}
-		}
-		default: {
-			fail('Unsupported OS')
-		}
-	}
-
 	#$vardir = $::ipa::vardir::module_vardir	# with trailing slash
 	$vardir = regsubst($::ipa::vardir::module_vardir, '\/$', '')
 
@@ -88,19 +73,17 @@ class ipa::client(
 		}
 	}
 
-	package { 'ipa-client':
-		name => $ipa_client_pkgname,
+	package { "${::ipa::params::package_ipa_client}":
 		ensure => present,
 	}
 
 	# an administrator machine requires the ipa-admintools package as well:
-	package { 'ipa-admintools':
+	package { "${::ipa::params::package_ipa_admintools}":
 		ensure => $admin ? {
 			true => present,
 			false => absent,
 		},
-		name => $ipa_admintools_pkgname,
-		require => Package['ipa-client'],
+		require => Package["${::ipa::params::package_ipa_client}"],
 	}
 
 	# store the passwords in text files instead of having them on cmd line!
@@ -164,7 +147,7 @@ class ipa::client(
 		onlyif => "${onlyif}",	# needs a password or authentication...
 		unless => "${unless}",	# can't install if already installed...
 		require => [
-			Package['ipa-client'],
+			Package["${::ipa::params::package_ipa_client}"],
 			File["${vardir}/password"],
 		],
 		alias => 'ipa-install',	# same alias as server to prevent both!

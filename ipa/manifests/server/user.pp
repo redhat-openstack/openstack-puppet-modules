@@ -149,6 +149,10 @@ define ipa::server::user(	# $login or principal as a unique id
 		default => '',
 	}
 
+	# TODO: user @abraverm asked about if we could just $watch, but instead of
+	# modifying, just alert the admin, so they could update their own data
+	# storage, or alternatively send them a hiera data patch with the change...
+	# well, yes this could be possible, but i'm not writing the patch right now
 	if $watch and (! $modify) {
 		fail('You must be able to $modify to be able to $watch.')
 	}
@@ -529,7 +533,7 @@ define ipa::server::user(	# $login or principal as a unique id
 			# bash -c is needed because this command uses bashisms!
 			command => "/bin/bash -c \"/usr/bin/ipa user-mod '${valid_login}' --raw --random | /usr/bin/tr -d ' ' | /bin/grep '^randompassword:' | /bin/cut -b 16- | /usr/bin/tee /dev/null ${progs}\"",
 			logoutput => on_failure,
-			onlyif => "/usr/bin/test \"`/usr/bin/ipa user-show '${valid_login}' --raw | /usr/bin/tr -d ' ' | /bin/grep '^has_password:' | /bin/cut -b 14-`\" = 'False'",
+			onlyif => "/usr/bin/test \"`/usr/bin/ipa user-show '${valid_login}' --raw | /usr/bin/tr -d ' ' | /bin/grep '^has_password:' | /bin/cut -b 14- | /usr/bin/tr '[:upper:]' '[:lower:]'`\" = 'false'",
 			require => [
 				Exec['ipa-server-kinit'],
 				Exec["ipa-server-user-add-${name}"],

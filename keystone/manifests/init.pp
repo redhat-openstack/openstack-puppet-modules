@@ -33,26 +33,44 @@
 #     Optional.  Defaults to 'keystone.token.persistence.backends.sql.Token'
 #   [token_expiration] Amount of time a token should remain valid (seconds).
 #     Optional.  Defaults to 3600 (1 hour).
-#   [token_format] Deprecated: Use token_provider instead.
 #   [cache_dir] Directory created when token_provider is pki. Optional.
 #     Defaults to /var/cache/keystone.
-#   [memcache_servers] List of memcache servers/ports. Optional. Used with
-#     token_driver keystone.token.backends.memcache.Token.  Defaults to false.
+#
+#   [memcache_servers]
+#     List of memcache servers in format of server:port.
+#     Used with token_driver 'keystone.token.backends.memcache.Token'.
+#     Optional. Defaults to false. Example: ['localhost:11211']
+#
+#   [cache_backend]
+#     Dogpile.cache backend module. It is recommended that Memcache with pooling
+#     (keystone.cache.memcache_pool) or Redis (dogpile.cache.redis) be used in production.
+#     This has no effects unless 'memcache_servers' is set.
+#     Optional. Defaults to 'keystone.common.cache.noop'
+#
+#   [cache_backend_argument]
+#     List of arguments in format of argname:value supplied to the backend module.
+#     Specify this option once per argument to be passed to the dogpile.cache backend.
+#     This has no effects unless 'memcache_servers' is set.
+#     Optional. Default to undef.
+#
+#   [debug_cache_backend]
+#     Extra debugging from the cache backend (cache keys, get/set/delete calls).
+#     This has no effects unless 'memcache_servers' is set.
+#     Optional. Default to false.
+#
+#   [token_caching]
+#     Toggle for token system caching. This has no effects unless 'memcache_servers' is set.
+#     Optional. Default to true.
+#
 #   [enabled] If the keystone services should be enabled. Optional. Default to true.
 #
 #   [*database_connection*]
 #     (optional) Url used to connect to database.
 #     Defaults to sqlite:////var/lib/keystone/keystone.db
 #
-#   [*sql_connection*]
-#     (optional) Deprecated. Use database_connection instead.
-#
 #   [*database_idle_timeout*]
 #     (optional) Timeout when db connections should be reaped.
 #     Defaults to 200.
-#
-#   [*idle_timeout*]
-#     (optional) Deprecated. Use database_idle_timeout instead.
 #
 #   [enable_pki_setup] Enable call to pki_setup to generate the cert for signing pki tokens and
 #     revocation lists if it doesn't already exist. This generates a cert and key stored in file
@@ -251,70 +269,71 @@
 #
 class keystone(
   $admin_token,
-  $package_ensure        = 'present',
-  $bind_host             = false,
-  $public_bind_host      = '0.0.0.0',
-  $admin_bind_host       = '0.0.0.0',
-  $public_port           = '5000',
-  $admin_port            = '35357',
-  $compute_port          = '8774',
-  $verbose               = false,
-  $debug                 = false,
-  $log_dir               = '/var/log/keystone',
-  $log_file              = false,
-  $use_syslog            = false,
-  $log_facility          = 'LOG_USER',
-  $catalog_type          = 'sql',
-  $catalog_driver        = false,
-  $catalog_template_file = '/etc/keystone/default_catalog.templates',
-  $token_format          = false,
-  $token_provider        = 'keystone.token.providers.uuid.Provider',
-  $token_driver          = 'keystone.token.persistence.backends.sql.Token',
-  $token_expiration      = 3600,
-  $public_endpoint       = false,
-  $admin_endpoint        = false,
-  $enable_ssl            = false,
-  $ssl_certfile          = '/etc/keystone/ssl/certs/keystone.pem',
-  $ssl_keyfile           = '/etc/keystone/ssl/private/keystonekey.pem',
-  $ssl_ca_certs          = '/etc/keystone/ssl/certs/ca.pem',
-  $ssl_ca_key            = '/etc/keystone/ssl/private/cakey.pem',
-  $ssl_cert_subject      = '/C=US/ST=Unset/L=Unset/O=Unset/CN=localhost',
-  $cache_dir             = '/var/cache/keystone',
-  $memcache_servers      = false,
-  $enabled               = true,
-  $database_connection   = 'sqlite:////var/lib/keystone/keystone.db',
-  $database_idle_timeout = '200',
-  $enable_pki_setup      = true,
-  $signing_certfile      = '/etc/keystone/ssl/certs/signing_cert.pem',
-  $signing_keyfile       = '/etc/keystone/ssl/private/signing_key.pem',
-  $signing_ca_certs      = '/etc/keystone/ssl/certs/ca.pem',
-  $signing_ca_key        = '/etc/keystone/ssl/private/cakey.pem',
-  $signing_cert_subject  = '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com',
-  $signing_key_size      = 2048,
-  $rabbit_host           = 'localhost',
-  $rabbit_hosts          = false,
-  $rabbit_password       = 'guest',
-  $rabbit_port           = '5672',
-  $rabbit_userid         = 'guest',
-  $rabbit_virtual_host   = '/',
-  $rabbit_use_ssl        = false,
-  $kombu_ssl_ca_certs    = undef,
-  $kombu_ssl_certfile    = undef,
-  $kombu_ssl_keyfile     = undef,
-  $kombu_ssl_version     = 'SSLv3',
-  $notification_driver   = false,
-  $notification_topics   = false,
-  $control_exchange      = false,
-  $validate_service      = false,
-  $validate_insecure     = false,
-  $validate_auth_url     = false,
-  $validate_cacert       = undef,
-  $service_provider      = $::keystone::params::service_provider,
-  $service_name          = 'keystone',
+  $package_ensure         = 'present',
+  $bind_host              = false,
+  $public_bind_host       = '0.0.0.0',
+  $admin_bind_host        = '0.0.0.0',
+  $public_port            = '5000',
+  $admin_port             = '35357',
+  $compute_port           = '8774',
+  $verbose                = false,
+  $debug                  = false,
+  $log_dir                = '/var/log/keystone',
+  $log_file               = false,
+  $use_syslog             = false,
+  $log_facility           = 'LOG_USER',
+  $catalog_type           = 'sql',
+  $catalog_driver         = false,
+  $catalog_template_file  = '/etc/keystone/default_catalog.templates',
+  $token_provider         = 'keystone.token.providers.uuid.Provider',
+  $token_driver           = 'keystone.token.persistence.backends.sql.Token',
+  $token_expiration       = 3600,
+  $public_endpoint        = false,
+  $admin_endpoint         = false,
+  $enable_ssl             = false,
+  $ssl_certfile           = '/etc/keystone/ssl/certs/keystone.pem',
+  $ssl_keyfile            = '/etc/keystone/ssl/private/keystonekey.pem',
+  $ssl_ca_certs           = '/etc/keystone/ssl/certs/ca.pem',
+  $ssl_ca_key             = '/etc/keystone/ssl/private/cakey.pem',
+  $ssl_cert_subject       = '/C=US/ST=Unset/L=Unset/O=Unset/CN=localhost',
+  $cache_dir              = '/var/cache/keystone',
+  $memcache_servers       = false,
+  $cache_backend          = 'keystone.common.cache.noop',
+  $cache_backend_argument = undef,
+  $debug_cache_backend    = false,
+  $token_caching          = true,
+  $enabled                = true,
+  $database_connection    = 'sqlite:////var/lib/keystone/keystone.db',
+  $database_idle_timeout  = '200',
+  $enable_pki_setup       = true,
+  $signing_certfile       = '/etc/keystone/ssl/certs/signing_cert.pem',
+  $signing_keyfile        = '/etc/keystone/ssl/private/signing_key.pem',
+  $signing_ca_certs       = '/etc/keystone/ssl/certs/ca.pem',
+  $signing_ca_key         = '/etc/keystone/ssl/private/cakey.pem',
+  $signing_cert_subject   = '/C=US/ST=Unset/L=Unset/O=Unset/CN=www.example.com',
+  $signing_key_size       = 2048,
+  $rabbit_host            = 'localhost',
+  $rabbit_hosts           = false,
+  $rabbit_password        = 'guest',
+  $rabbit_port            = '5672',
+  $rabbit_userid          = 'guest',
+  $rabbit_virtual_host    = '/',
+  $rabbit_use_ssl         = false,
+  $kombu_ssl_ca_certs     = undef,
+  $kombu_ssl_certfile     = undef,
+  $kombu_ssl_keyfile      = undef,
+  $kombu_ssl_version      = 'SSLv3',
+  $notification_driver    = false,
+  $notification_topics    = false,
+  $control_exchange       = false,
+  $validate_service       = false,
+  $validate_insecure      = false,
+  $validate_auth_url      = false,
+  $validate_cacert        = undef,
+  $service_provider       = $::keystone::params::service_provider,
+  $service_name           = 'keystone',
   # DEPRECATED PARAMETERS
-  $mysql_module          = undef,
-  $sql_connection        = undef,
-  $idle_timeout          = undef,
+  $mysql_module           = undef,
 ) inherits keystone::params {
 
   if ! $catalog_driver {
@@ -323,20 +342,6 @@ class keystone(
 
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
-  }
-
-  if $sql_connection {
-    warning('The sql_connection parameter is deprecated, use database_connection instead.')
-    $database_connection_real = $sql_connection
-  } else {
-    $database_connection_real = $database_connection
-  }
-
-  if $idle_timeout {
-    warning('The idle_timeout parameter is deprecated, use database_idle_timeout instead.')
-    $database_idle_timeout_real = $idle_timeout
-  } else {
-    $database_idle_timeout_real = $database_idle_timeout
   }
 
   if ($admin_endpoint and 'v2.0' in $admin_endpoint) {
@@ -400,20 +405,10 @@ class keystone(
     notify  => Service[$service_name],
   }
 
-  if $bind_host {
-    warning('The bind_host parameter is deprecated, use public_bind_host and admin_bind_host instead.')
-    $public_bind_host_real = $bind_host
-    $admin_bind_host_real  = $bind_host
-  } else {
-    $public_bind_host_real = $public_bind_host
-    $admin_bind_host_real  = $admin_bind_host
-  }
-
-  # default config
   keystone_config {
     'DEFAULT/admin_token':      value => $admin_token, secret => true;
-    'DEFAULT/public_bind_host': value => $public_bind_host_real;
-    'DEFAULT/admin_bind_host':  value => $admin_bind_host_real;
+    'DEFAULT/public_bind_host': value => $public_bind_host;
+    'DEFAULT/admin_bind_host':  value => $admin_bind_host;
     'DEFAULT/public_port':      value => $public_port;
     'DEFAULT/admin_port':       value => $admin_port;
     'DEFAULT/compute_port':     value => $compute_port;
@@ -470,33 +465,53 @@ class keystone(
     }
   }
 
-  if($database_connection_real =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
+  if($database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
     require 'mysql::bindings'
     require 'mysql::bindings::python'
-  } elsif($database_connection_real =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
+  } elsif($database_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
 
-  } elsif($database_connection_real =~ /sqlite:\/\//) {
+  } elsif($database_connection =~ /sqlite:\/\//) {
 
   } else {
-    fail("Invalid db connection ${database_connection_real}")
+    fail("Invalid db connection ${database_connection}")
   }
 
   # memcache connection config
   if $memcache_servers {
     validate_array($memcache_servers)
+    Service<| title == 'memcached' |> -> Service['keystone']
     keystone_config {
-      'memcache/servers': value => join($memcache_servers, ',');
+      'cache/enabled':              value => true;
+      'cache/backend':              value => $cache_backend;
+      'cache/debug_cache_backend':  value => $debug_cache_backend;
+      'token/caching':              value => $token_caching;
+      'memcache/servers':           value => join($memcache_servers, ',');
+    }
+    if $cache_backend_argument {
+      validate_array($cache_backend_argument)
+      keystone_config {
+        'cache/backend_argument':   value => join($cache_backend_argument, ',');
+      }
+    } else {
+      keystone_config {
+        'cache/backend_argument':  ensure => absent;
+      }
     }
   } else {
     keystone_config {
-      'memcache/servers': ensure => absent;
+      'cache/enabled':             ensure => absent;
+      'cache/backend':             ensure => absent;
+      'cache/backend_argument':    ensure => absent;
+      'cache/debug_cache_backend': ensure => absent;
+      'token/caching':             ensure => absent;
+      'memcache/servers':          ensure => absent;
     }
   }
 
   # db connection config
   keystone_config {
-    'database/connection':   value => $database_connection_real, secret => true;
-    'database/idle_timeout': value => $database_idle_timeout_real;
+    'database/connection':   value => $database_connection, secret => true;
+    'database/idle_timeout': value => $database_idle_timeout;
   }
 
   # configure based on the catalog backend
@@ -514,13 +529,6 @@ class keystone(
     'catalog/driver':        value => $catalog_driver_real;
     'catalog/template_file': value => $catalog_template_file;
   }
-
-  if $token_format {
-    warning('token_format parameter is deprecated. Use token_provider instead.')
-  }
-
-  # remove the old format in case of an upgrade
-  keystone_config { 'signing/token_format': ensure => absent }
 
   # Set the signing key/cert configuration values.
   keystone_config {
@@ -552,13 +560,7 @@ class keystone(
     }
   }
 
-  if ($token_format == false and $token_provider == 'keystone.token.providers.pki.Provider') or $token_format == 'PKI' {
-    keystone_config { 'token/provider': value => 'keystone.token.providers.pki.Provider' }
-  } elsif $token_format == 'UUID' {
-    keystone_config { 'token/provider': value => 'keystone.token.providers.uuid.Provider' }
-  } else {
-    keystone_config { 'token/provider': value => $token_provider }
-  }
+  keystone_config { 'token/provider': value => $token_provider }
 
   if $notification_driver {
     keystone_config { 'DEFAULT/notification_driver': value => $notification_driver }

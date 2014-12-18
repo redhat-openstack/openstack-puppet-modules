@@ -41,9 +41,6 @@
 #  [*cache_server_port*]
 #    (optional) Memcached port. Defaults to '11211'.
 #
-#  [*swift*]
-#    (optional) Enable Swift interface extension. Defaults to false.
-#
 #  [*horizon_app_links*]
 #    (optional) Array of arrays that can be used to add call-out links
 #    to the dashboard for other apps. There is no specific requirement
@@ -53,22 +50,6 @@
 #
 #  [*keystone_url*]
 #    (optional) Full url of keystone public endpoint. (Defaults to 'http://127.0.0.1:5000/v2.0')
-#    Use this parameter in favor of keystone_host, keystone_port and keystone_scheme.
-#
-#  [*keystone_scheme*]
-#    (optional) DEPRECATED: Use keystone_url instead.
-#    Scheme of the Keystone service. (Defaults to 'http')
-#    Setting this parameter overrides keystone_url parameter.
-#
-#  [*keystone_host*]
-#    (optional) DEPRECATED: Use keystone_url instead.
-#    IP address of the Keystone service. (Defaults to '127.0.0.1')
-#    Setting this parameter overrides keystone_url parameter.
-#
-#  [*keystone_port*]
-#    (optional) DEPRECATED: Use keystone_url instead.
-#    Port of the Keystone service. (Defaults to 5000)
-#    Setting this parameter overrides keystone_url parameter.
 #
 #  [*keystone_default_role*]
 #    (optional) Default Keystone role for new users. Defaults to '_member_'.
@@ -117,6 +98,12 @@
 #    'can_set_password': Boolean to enable or disable VM password setting.
 #      Works only with Xen Hypervisor.
 #      Defaults to 'False'.
+#
+#  [*cinder_options*]
+#    (optional) A hash of parameters to enable features specific to
+#    Cinder.  These include:
+#    'enable_backup': Boolean to enable or disable Cinders's backup feature.
+#      Defaults to False.
 #
 #  [*neutron_options*]
 #    (optional) A hash of parameters to enable features specific to
@@ -177,16 +164,10 @@
 #    (optional) Selects the session engine for Django to use.
 #    Defaults to undefined - will not add entry to local settings.
 #
-# === Deprecation notes
-#
-# If any value is provided for keystone_scheme, keystone_host, or
-# keystone_port parameters; keystone_url will be completely ignored. Also
-# can_set_mount_point is deprecated.
-#
 # === Examples
 #
 #  class { 'horizon':
-#    secret       => 's3cr3t',
+#    secret_key       => 's3cr3t',
 #    keystone_url => 'https://10.0.0.10:5000/v2.0',
 #    available_regions => [
 #      ['http://region-1.example.com:5000/v2.0', 'Region-1'],
@@ -200,7 +181,6 @@ class horizon(
   $package_ensure          = 'present',
   $cache_server_ip         = '127.0.0.1',
   $cache_server_port       = '11211',
-  $swift                   = false,
   $horizon_app_links       = false,
   $keystone_url            = 'http://127.0.0.1:5000/v2.0',
   $keystone_default_role   = '_member_',
@@ -224,15 +204,13 @@ class horizon(
   $horizon_ca              = undef,
   $compress_offline        = true,
   $hypervisor_options      = {},
+  $cinder_options          = {},
   $neutron_options         = {},
   $file_upload_temp_dir    = '/tmp',
   $policy_files_path       = undef,
   $policy_files            = undef,
   # DEPRECATED PARAMETERS
   $can_set_mount_point     = undef,
-  $keystone_host           = undef,
-  $keystone_port           = undef,
-  $keystone_scheme         = undef,
   $vhost_extra_params      = undef,
   $secure_cookies          = false,
   $django_session_engine   = undef,
@@ -240,36 +218,9 @@ class horizon(
 
   include ::horizon::params
 
-  if $swift {
-    warning('swift parameter is deprecated and has no effect.')
-  }
-
-  if $keystone_scheme {
-    warning('The keystone_scheme parameter is deprecated, use keystone_url instead.')
-  }
-
-  if $keystone_host {
-    warning('The keystone_host parameter is deprecated, use keystone_url instead.')
-  }
-
-  if $keystone_port {
-    warning('The keystone_port parameter is deprecated, use keystone_url instead.')
-  }
-
-  # Default options for the OPENSTACK_HYPERVISOR_FEATURES section. These will
-  # be merged with user-provided options when the local_settings.py.erb
-  # template is interpolated. Also deprecates can_set_mount_point.
-  if $can_set_mount_point {
-    warning('The can_set_mount_point parameter is deprecated, use hypervisor_options instead.')
-    $hypervisor_defaults = {
-      'can_set_mount_point' => $can_set_mount_point,
-      'can_set_password'    => false
-    }
-  } else {
-    $hypervisor_defaults = {
-      'can_set_mount_point' => true,
-      'can_set_password'    => false
-    }
+  $hypervisor_defaults = {
+    'can_set_mount_point' => true,
+    'can_set_password'    => false
   }
 
   if $fqdn {
@@ -281,6 +232,12 @@ class horizon(
     $final_server_aliases = $server_aliases
   }
 
+  # Default options for the OPENSTACK_CINDER_FEATURES section. These will
+  # be merged with user-provided options when the local_settings.py.erb
+  # template is interpolated.
+  $cinder_defaults = {
+    'enable_backup'         => false,
+  }
 
   # Default options for the OPENSTACK_NEUTRON_NETWORK section.  These will
   # be merged with user-provided options when the local_settings.py.erb

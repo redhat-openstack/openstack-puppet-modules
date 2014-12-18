@@ -1,7 +1,7 @@
 {
   "name": "puppet-galera",
   "version": "0.0.2",
-  "author": "Ryan O\'Hara",
+  "author": "Ryan O'Hara",
   "summary": "Install/Configure MariaDB with galera",
   "license": "Apache 2.0",
   "source": "git://github.com/redhat-openstack/puppet-galera.git",
@@ -30,7 +30,7 @@
         "6",
         "7"
       ]
-    },
+    }
   ],
   "requirements": [
     {
