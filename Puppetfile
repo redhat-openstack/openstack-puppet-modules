@@ -91,7 +91,7 @@ mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k-vsm',
-  :commit => '69ff094069506f98431182c6097b3b6b9ea6fdb9',
+  :commit => '6ac71df4aa2bf806e35b83bd18ae9ea6b5605bc0',
   :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
 
 mod 'nagios',
