@@ -1,6 +1,5 @@
 #!/usr/bin/python
-import shutil, tempfile, os, optparse, logging
-import sys
+import shutil, tempfile, os, optparse, logging, sys
 
 usage = "usage: %prog [options]"
 parser = optparse.OptionParser(usage=usage)
@@ -71,6 +70,8 @@ def createOvfEnvXmlFile(domain, gateway, hostname, ip, subnet, password, vsm_mod
         st += '<Property oe:key="SvsMode" oe:value="L3" /> \n'
         st += '<Property oe:key="Password" oe:value="%s" /> \n' % (password)
         st += '<Property oe:key="HARole" oe:value="%s" /> \n' % (vsm_mode)
+        st += '<Property oe:key="EnableOpenStack" oe:value="True" /> \n'
+        st += '<Property oe:key="SaveBootVars" oe:value="True" /> \n'
         #if vsm_mode == "primary":
         #    st += '<Property oe:key="HARole" oe:value="%s" /> \n' % (vsm_mode)
         #else:
@@ -100,25 +101,24 @@ def main():
     cret = Command('/bin/mount -o loop -t iso9660 %s %s' % (isoimg, mntdir)).run()
     #logger.info("%s %s" % (cret.output, cret.error))
     if cret.failed: 
-        print(sys.argv[0], "1 ", cret.output, cret.error)
+        print(sys.argv[0], "Error: Unable to mount disk ", cret.output, cret.error)
         sys.exit(1)
     cret = Command('/bin/cp -r %s/* %s' % (mntdir, ddir)).run()
-    print(sys.argv[0], "2 cwchang X", cret.output, "X", cret.error,"X")
+    print(sys.argv[0], "Copying files ", cret.output, "X", cret.error,"X")
     if cret.failed: 
-        print(sys.argv[0], "2 ", cret.output, cret.error)
+        print(sys.argv[0], "Error: Unable to copy files ", cret.output, cret.error)
         sys.exit(1)
     #logger.info("%s %s" % (cret.output, cret.error))
 
     cret = Command('/bin/umount %s' % (mntdir)).run()
     if cret.failed: 
-        print(sys.argv[0], "3 ", cret.output, cret.error)
+        print(sys.argv[0], "Error: Unable to unmont dir ", cret.output, cret.error)
         sys.exit(1)
-    #logger.info("%s %s" % (cret.output, cret.error))
     #logger.info("%s %s" % (cret.output, cret.error))
 
     cret = Command('/bin/cp %s %s/ovf-env.xml' % (ovf_f.name, ddir)).run()
     if cret.failed:
-        print(sys.argv[0], "4 ", cret.output, cret.error)
+        print(sys.argv[0], "Error: Unable to copy ovf file ", cret.output, cret.error)
         sys.exit(1)
     #logger.info("%s %s" % (cret.output, cret.error))
 
@@ -126,13 +126,13 @@ def main():
     if os.path.exists('%s/isolinux/isolinux.bin' % (ddir)):
         cret = Command('cd %s; /usr/bin/mkisofs -uid 0 -gid 0 -J -R -A Cisco_Nexus_1000V_VSM -b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -o %s .' % (ddir, repackediso)).run()
         if cret.failed: 
-            print(sys.argv[0],"5 ", cret.output, cret.error)
+            print(sys.argv[0],"Error: Unable to create isofs ", cret.output, cret.error)
             sys.exit(1)
         #logger.info("%s %s" % (cret.output, cret.error))
     else:
         cret = Command('cd %s; /usr/bin/mkisofs -uid 0 -gid 0 -J -R -A Cisco_Nexus_1000V_VSM -b boot/grub/iso9660_stage1_5 -no-emul-boot -boot-load-size 4 -boot-info-table -o %s .' % (ddir, repackediso)).run()
         if cret.failed: 
-            print(sys.argv[0], "6 ", cret.output, cret.error)
+            print(sys.argv[0], "Error: Unable to create isofs grub ", cret.output, cret.error)
             sys.exit(1)
         #logger.info("%s %s" % (cret.output, cret.error))
 
