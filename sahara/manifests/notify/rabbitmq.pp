@@ -63,16 +63,15 @@
 #
 # [*kombu_ssl_keyfile*]
 #   (Optional) SSL key file (valid only if SSL enabled).
-#   Defaults to undef.
+#   Defaults to ''.
 #
 # [*kombu_ssl_certfile*]
 #   (Optional) SSL cert file (valid only if SSL enabled).
-#   Defaults to undef.
+#   Defaults to ''.
 #
 # [*kombu_ssl_ca_certs*]
-#   (Optional) SSL certification authority file (valid only if SSL enabled).
-#   Defaults to undef
-#
+#   (optional) SSL certification authority file (valid only if SSL enabled).
+#   Defaults to ''.
 # [*kombu_reconnect_delay*]
 #   (Optional) Backoff on cancel notification (valid only if SSL enabled).
 #   Defaults to '1.0'; floating-point value.
@@ -92,21 +91,12 @@ class sahara::notify::rabbitmq(
   $rabbit_max_retries    = 0,
   $notification_topics   = 'notifications',
   $control_exchange      = 'openstack',
-  $kombu_ssl_keyfile     = undef,
-  $kombu_ssl_certfile    = undef,
-  $kombu_ssl_ca_certs    = undef,
+  $kombu_ssl_keyfile     = '',
+  $kombu_ssl_certfile    = '',
+  $kombu_ssl_ca_certs    = '',
   $kombu_reconnect_delay = '1.0',
 ) {
   if $rabbit_use_ssl {
-    if !$kombu_ssl_keyfile {
-      fail('kombu_ssl_keyfile must be set when using SSL in rabbit')
-    }
-    if !$kombu_ssl_certfile {
-      fail('kombu_ssl_certfile must be set when using SSL in rabbit')
-    }
-    if !$kombu_ssl_ca_certs {
-      fail('kombu_ssl_ca_certs must be set when using SSL in rabbit')
-    }
     sahara_config {
       'DEFAULT/kombu_ssl_version': value => 'TLSv1';
       'DEFAULT/kombu_ssl_keyfile': value => $kombu_ssl_keyfile;
