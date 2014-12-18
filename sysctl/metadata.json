@@ -1,0 +1,14 @@
+{
+  "name": "puppetlabs-sysctl",
+  "version": "1.0.0",
+  "author": "mh <mh@immerda.ch>",
+  "summary": "This modules allows to configure sysctl",
+  "license": "GPL v2",
+  "source": "https://github.com/puppetlabs/puppetlabs-sysctl/tree/master",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-sysctl/tree/master",
+  "issues_url": "",
+  "description": "This modules allows to configure sysctl",
+  "dependencies": [
+  
+  ]
+}
