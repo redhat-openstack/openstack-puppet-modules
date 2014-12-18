@@ -58,15 +58,15 @@
 #
 # [*kombu_ssl_keyfile*]
 #   (Optional) SSL key file (valid only if SSL enabled).
-#   Defaults to undef.
+#   Defaults to ''.
 #
 # [*kombu_ssl_certfile*]
 #   (Optional) SSL cert file (valid only if SSL enabled).
-#   Defaults to undef.
+#   Defaults to ''.
 #
 # [*kombu_ssl_ca_certs*]
 #   (optional) SSL certification authority file (valid only if SSL enabled).
-#   Defaults to undef.
+#   Defaults to ''.
 #
 # [*kombu_reconnect_delay*]
 #   (Optional) Backoff on cancel notification (valid only if SSL enabled).
@@ -86,21 +86,12 @@ class sahara::notify::qpid(
   $qpid_topology_version  = 2,
   $notification_topics    = 'notifications',
   $control_exchange       = 'openstack',
-  $kombu_ssl_keyfile      = undef,
-  $kombu_ssl_certfile     = undef,
-  $kombu_ssl_ca_certs     = undef,
+  $kombu_ssl_keyfile      = '',
+  $kombu_ssl_certfile     = '',
+  $kombu_ssl_ca_certs     = '',
   $kombu_reconnect_delay  = '1.0',
 ) {
   if $qpid_protocol == 'ssl' {
-    if !$kombu_ssl_keyfile {
-      fail('kombu_ssl_keyfile must be set when using SSL in qpid')
-    }
-    if !$kombu_ssl_certfile {
-      fail('kombu_ssl_certfile must be set when using SSL in qpid')
-    }
-    if !$kombu_ssl_ca_certs {
-      fail('kombu_ca_certs must be set when using SSL in qpid')
-    }
     sahara_config {
       'DEFAULT/kombu_ssl_version': value => 'TLSv1';
       'DEFAULT/kombu_ssl_keyfile': value => $kombu_ssl_keyfile;
