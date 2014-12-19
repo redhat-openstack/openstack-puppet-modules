@@ -3,7 +3,7 @@
   "version": "3.2.0",
   "author": "razorsedge",
   "summary": "Install and manage Net-SNMP services.",
-  "license": "Apache License, Version 2.0",
+  "license": "Apache-2.0",
   "project_page": "https://github.com/razorsedge/puppet-snmp",
   "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
   "source": "https://github.com/razorsedge/puppet-snmp.git",
@@ -11,7 +11,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">=2.3.0"
+      "version_requirement": ">=2.3.0 <5.0.0"
     }
   ],
   "operatingsystem_support": [
