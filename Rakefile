@@ -12,3 +12,8 @@ PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
 
 PuppetSyntax.exclude_paths = ["pkg/**/*"]
 PuppetSyntax.hieradata_paths = ["**/data/**/*.yaml", "hieradata/**/*.yaml", "hiera*.yaml"]
+
+desc "Check puppet metadata.json with metadata-json-lint."
+task :metadata do
+  sh "metadata-json-lint metadata.json"
+end
