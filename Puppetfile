@@ -7,7 +7,7 @@ mod 'aviator',
   :git => 'https://github.com/aimonb/puppet_aviator.git'
 
 mod 'ceilometer',
-  :commit => 'ee2f3cd4498b2ef3a6633991206b7185c1d32897',
+  :commit => '953ce5032cb332bf8a15e78358ee8af6f14dd7f0',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
 
 mod 'certmonger',
@@ -63,7 +63,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
-  :commit => '821cc4ada1f50b5a6c6244cd5c689a467d06d736',
+  :commit => '71a9df884b7a81bf86b6e897c16171bf556f1ea4',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
@@ -83,7 +83,7 @@ mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k-vsm',
-  :commit => '69ff094069506f98431182c6097b3b6b9ea6fdb9',
+  :commit => '6ac71df4aa2bf806e35b83bd18ae9ea6b5605bc0',
   :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
 
 mod 'nagios',
@@ -91,7 +91,7 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '67abde86d53969329bce37725627c2c661e49765',
+  :commit => 'c3dc52023dfdf7649080c1b5bc5eae3b43991db1',
   :git => 'https://github.com/stackforge/puppet-neutron.git'
 
 mod 'nova',
@@ -166,6 +166,10 @@ mod 'tempest',
   :commit => '7a3369949fc8af41e190dd8115391354a7575ecb',
   :git => 'https://github.com/stackforge/puppet-tempest.git'
 
+mod 'trove',
+  :commit => '2ef93e8e90978915d166ed21fd53dab67f820fe7',
+  :git => 'https://github.com/stackforge/puppet-trove'
+
 mod 'vcsrepo',
   :commit => '6f7507a2a48ff0a58c7db026760a2eb84e382a77',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
@@ -175,7 +179,7 @@ mod 'vlan',
   :git => 'https://github.com/derekhiggins/puppet-vlan.git'
 
 mod 'vswitch',
-  :commit => '51fd30c22b79d927fb0329e6e2b58fe67217ecee',
+  :commit => 'a36332da0ddb9d419e1d3f9d170058284b144f06',
   :git => 'https://github.com/stackforge/puppet-vswitch.git'
 
 mod 'xinetd',
