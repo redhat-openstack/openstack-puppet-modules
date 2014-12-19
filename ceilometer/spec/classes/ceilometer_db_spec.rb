@@ -34,12 +34,11 @@ describe 'ceilometer::db' do
     end
   end
 
-  # Fedora > 18 has python-pymongo too
   context 'on Redhat platforms' do
     let :facts do
       { :osfamily => 'Redhat',
         :operatingsystem => 'Fedora',
-        :operatingsystemrelease => 18
+        :operatingsystemrelease => 21
       }
     end
 

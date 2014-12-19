@@ -27,15 +27,7 @@ class ceilometer::params {
       $pymongo_package_name            = 'python-pymongo'
       $psycopg_package_name            = 'python-psycopg2'
       $agent_notification_service_name = 'openstack-ceilometer-notification'
-
-      # db packages
-      if $::operatingsystem == 'Fedora' and $::operatingsystemrelease >= 18 {
-        # fallback to stdlib version, not provided on fedora
-        $sqlite_package_name      = undef
-      } else {
-        $sqlite_package_name      = 'python-sqlite2'
-      }
-
+      $sqlite_package_name             = 'python-sqlite2'
     }
     'Debian': {
       # package names
