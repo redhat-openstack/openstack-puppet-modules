@@ -6,28 +6,44 @@
 #
 # [*agentaddress*]
 #   An array of addresses, on which snmpd will listen for queries.
-#   Default: [ udp:127.0.0.1:161 ]
+#   Default: [ udp:127.0.0.1:161, udp6:[::1]:161 ]
 #
 # [*snmptrapdaddr*]
 #   An array of addresses, on which snmptrapd will listen to receive incoming
 #   SNMP notifications.
-#   Default: [ udp:127.0.0.1:162 ]
+#   Default: [ udp:127.0.0.1:162, udp6:[::1]:162 ]
 #
 # [*ro_community*]
 #   Read-only (RO) community string for snmptrap daemon.
+#   Default: public
+#
+# [*ro_community6*]
+#   Read-only (RO) community string for IPv6.
 #   Default: public
 #
 # [*rw_community*]
 #   Read-write (RW) community string.
 #   Default: none
 #
+# [*rw_community6*]
+#   Read-write (RW) community string for IPv6.
+#   Default: none
+#
 # [*ro_network*]
 #   Network that is allowed to RO query the daemon.
 #   Default: 127.0.0.1
 #
+# [*ro_network6*]
+#   Network that is allowed to RO query the daemon via IPv6.
+#   Default: ::1/128
+#
 # [*rw_network*]
 #   Network that is allowed to RW query the daemon.
 #   Default: 127.0.0.1
+#
+# [*rw_network6*]
+#   Network that is allowed to RW query the daemon via IPv6.
+#   Default: ::1/128
 #
 # [*contact*]
 #   Responsible person for the SNMP system.
@@ -50,6 +66,12 @@
 #   Must provide SECNAME, SOURCE and COMMUNITY.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
 #   Default: [ "notConfigUser default public" ]
+#
+# [*com2sec6*]
+#   An array of VACM com2sec6 mappings.
+#   Must provide SECNAME, SOURCE and COMMUNITY.
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: [ "notConfigUser default ${ro_community}" ]
 #
 # [*groups*]
 #   An array of VACM group mappings.
@@ -231,14 +253,19 @@ class snmp (
   $agentaddress            = $snmp::params::agentaddress,
   $snmptrapdaddr           = $snmp::params::snmptrapdaddr,
   $ro_community            = $snmp::params::ro_community,
+  $ro_community6           = $snmp::params::ro_community6,
   $rw_community            = $snmp::params::rw_community,
+  $rw_community6           = $snmp::params::rw_community6,
   $ro_network              = $snmp::params::ro_network,
+  $ro_network6             = $snmp::params::ro_network6,
   $rw_network              = $snmp::params::rw_network,
+  $rw_network6             = $snmp::params::rw_network6,
   $contact                 = $snmp::params::contact,
   $location                = $snmp::params::location,
   $sysname                 = $snmp::params::sysname,
   $services                = $snmp::params::services,
   $com2sec                 = $snmp::params::com2sec,
+  $com2sec6                = $snmp::params::com2sec6,
   $groups                  = $snmp::params::groups,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
