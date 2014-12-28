@@ -108,6 +108,11 @@ class snmp::params {
     default => $::snmp_services,
   }
 
+  $openmanage_enable = $::openmanage_enable ? {
+    undef   => false,
+    default => $::openmanage_enable
+  }
+
   $views = $::snmp_views ? {
     undef   => [
       'systemview    included   .1.3.6.1.2.1.1',

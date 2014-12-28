@@ -93,6 +93,10 @@ dontLogTCPWrappersConnects <%= @do_not_log_tcpwrappers %>
 ################################################################################
 # OTHER CONFIGURATION
 
+<% if @openmanage_enable -%>
+#Allow Systems Management Data Engine SNMP to connect to snmpd using SMUX
+smuxpeer .1.3.6.1.4.1.674.10892.1
+<% end -%>
 <% @snmpd_config.each do |line| -%>
 <%= line %>
 <% end -%>
