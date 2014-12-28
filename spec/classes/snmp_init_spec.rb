@@ -62,9 +62,11 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
-            'agentaddress udp:127.0.0.1:161',
+            'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
             '#rocommunity public 127.0.0.1',
+            '#rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
+            'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
             'group   notConfigGroup v2c           notConfigUser',
             'view    systemview    included   .1.3.6.1.2.1.1',
@@ -178,9 +180,11 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
-            'agentaddress udp:127.0.0.1:161',
+            'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
             '#rocommunity public 127.0.0.1',
+            '#rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
+            'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
             'group   notConfigGroup v2c           notConfigUser',
             'view    systemview    included   .1.3.6.1.2.1.1',
@@ -281,9 +285,11 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
-            'agentaddress udp:127.0.0.1:161',
+            'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
             '#rocommunity public 127.0.0.1',
+            '#rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
+            'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
             'group   notConfigGroup v2c           notConfigUser',
             'view    systemview    included   .1.3.6.1.2.1.1',
@@ -389,9 +395,11 @@ describe 'snmp', :type => 'class' do
         # TODO add more contents for File[snmpd.conf]
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
-            'agentaddress udp:127.0.0.1:161',
+            'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
             '#rocommunity public 127.0.0.1',
+            '#rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
+            'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
             'group   notConfigGroup v2c           notConfigUser',
             'view    systemview    included   .1.3.6.1.2.1.1',
@@ -583,6 +591,15 @@ describe 'snmp', :type => 'class' do
       it 'should contain File[snmpd.conf] with contents "com2sec SomeString"' do
         verify_contents(subject, 'snmpd.conf', [
           'com2sec SomeString',
+        ])
+      end
+    end
+
+    describe 'com2sec6 => [ SomeString ]' do
+      let(:params) {{ :com2sec6 => [ 'SomeString', ] }}
+      it 'should contain File[snmpd.conf] with contents "com2sec6 SomeString"' do
+        verify_contents(subject, 'snmpd.conf', [
+          'com2sec6 SomeString',
         ])
       end
     end
