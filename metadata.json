@@ -2,12 +2,12 @@
   "name": "razorsedge-snmp",
   "version": "3.3.0",
   "author": "razorsedge",
-  "summary": "Install and manage Net-SNMP services.",
+  "summary": "Simple Network Management Protocol (SNMP) is a widely used protocol for monitoring the health and welfare of network and computer equipment. Net-SNMP implements SNMP v1, SNMP v2c, and SNMP v3 using both IPv4 and IPv6.",
   "license": "Apache-2.0",
   "project_page": "https://github.com/razorsedge/puppet-snmp",
   "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
   "source": "https://github.com/razorsedge/puppet-snmp.git",
-  "tags": [ "RHEL", "rhel", "OEL", "CentOS", "snmp", "monitoring", "debian", "ubuntu", "SuSE", "OpenSUSE", "FreeBSD" ],
+  "tags": [ "snmp", "net-snmp", "monitoring", "RHEL", "rhel", "OEL", "CentOS", "debian", "ubuntu", "SuSE", "OpenSUSE", "FreeBSD" ],
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
@@ -17,15 +17,15 @@
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
-      "operatingsystemrelease": [ "5", "6" ]
+      "operatingsystemrelease": [ "5", "6", "7" ]
     },
     {
       "operatingsystem": "CentOS",
-      "operatingsystemrelease": [ "5", "6" ]
+      "operatingsystemrelease": [ "5", "6", "7" ]
     },
     {
       "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [ "5", "6" ]
+      "operatingsystemrelease": [ "5", "6", "7" ]
     },
     {
       "operatingsystem": "FreeBSD",
