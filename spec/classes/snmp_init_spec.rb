@@ -63,8 +63,8 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
-            '#rocommunity public 127.0.0.1',
-            '#rocommunity6 public ::1',
+            'rocommunity public 127.0.0.1',
+            'rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
             'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
@@ -181,8 +181,8 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
-            '#rocommunity public 127.0.0.1',
-            '#rocommunity6 public ::1',
+            'rocommunity public 127.0.0.1',
+            'rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
             'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
@@ -286,8 +286,8 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
-            '#rocommunity public 127.0.0.1',
-            '#rocommunity6 public ::1',
+            'rocommunity public 127.0.0.1',
+            'rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
             'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',
@@ -396,8 +396,8 @@ describe 'snmp', :type => 'class' do
         it 'should contain File[snmpd.conf] with expected contents' do
           verify_contents(subject, 'snmpd.conf', [
             'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
-            '#rocommunity public 127.0.0.1',
-            '#rocommunity6 public ::1',
+            'rocommunity public 127.0.0.1',
+            'rocommunity6 public ::1',
             'com2sec notConfigUser  default       public',
             'com2sec6 notConfigUser  default       public',
             'group   notConfigGroup v1            notConfigUser',

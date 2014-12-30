@@ -113,13 +113,10 @@ Notes
 * For security reasons, the SNMP daemons are configured to listen on the loopback
   interfaces (127.0.0.1 and [::1]).  Use `agentaddress` and `snmptrapdaddr` to change this
   configuration.
-* [Traditional Access
-  Control](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAK) is not fully
-  supported in this module.  The parameters ro_community, rw_community,
-  ro_network, and rw_network will end up commented out in the snmpd.conf.
-  Instead use [VACM
-  Configuration](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL) via
-  parameters com2sec, groups, views, and accesses.
+* Not all parts of [Traditional Access
+  Control](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAK) or [VACM
+  Configuration](http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL) are
+  fully supported in this module.  
 
 Issues
 ------
