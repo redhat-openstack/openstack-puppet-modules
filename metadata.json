@@ -1,0 +1,16 @@
+{
+  "name": "dfarrell07-opendaylight",
+  "version": "0.0.1",
+  "author": "Daniel Farrell",
+  "summary": "Puppet module to deploy OpenDaylight SDN controller",
+  "license": "BSD two-clause",
+  "source": "https://github.com/dfarrell07/dfarrell07-opendaylight",
+  "project_page": "https://github.com/dfarrell07/dfarrell07-opendaylight",
+  "issues_url": "https://github.com/dfarrell07/dfarrell07-opendaylight/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 1.0.0"
+    }
+  ]
+}
