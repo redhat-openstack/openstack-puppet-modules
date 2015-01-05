@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dfarrell07/dfarrell07-opendaylight.svg)](https://travis-ci.org/dfarrell07/dfarrell07-opendaylight)
+
 #### Table of Contents
 
 1. [Overview](#overview)
