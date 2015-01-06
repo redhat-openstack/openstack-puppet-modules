@@ -1,6 +1,6 @@
 # == Class: opendaylight
 #
-# Full description of class opendaylight here.
+# OpenDaylight SDN Controller
 #
 # === Parameters
 #
