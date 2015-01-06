@@ -10,11 +10,9 @@ rvm:
 script: bundle exec rake test
 env:
   - PUPPET_VERSION="~> 2.7.0"
-# TODO: Test these if strange bug (below) is ever understood and fixed
-# https://travis-ci.org/dfarrell07/dfarrell07-opendaylight/builds/46128605
-#  - PUPPET_VERSION="~> 3.2.0"
-#  - PUPPET_VERSION="~> 3.3.0"
-#  - PUPPET_VERSION="~> 3.4.0"
+  - PUPPET_VERSION="~> 3.2.0"
+  - PUPPET_VERSION="~> 3.3.0"
+  - PUPPET_VERSION="~> 3.4.0"
   - PUPPET_VERSION="~> 3.5.0" STRICT_VARIABLES=yes
   - PUPPET_VERSION="~> 3.6.0" STRICT_VARIABLES=yes
   - PUPPET_VERSION="~> 3.7.0" STRICT_VARIABLES=yes
