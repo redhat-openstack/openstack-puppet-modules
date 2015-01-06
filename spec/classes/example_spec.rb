@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'opendaylight' do
   context 'supported operating systems' do
-    ['Debian', 'RedHat'].each do |osfamily|
+    ['RedHat'].each do |osfamily|
       describe "opendaylight class without any parameters on #{osfamily}" do
         let(:params) {{ }}
         let(:facts) {{

@@ -5,11 +5,7 @@
 #
 class opendaylight::params {
   case $::osfamily {
-    'Debian': {
-      $package_name = 'opendaylight'
-      $service_name = 'opendaylight'
-    }
-    'RedHat', 'Amazon': {
+    'RedHat': {
       $package_name = 'opendaylight'
       $service_name = 'opendaylight'
     }
