@@ -1,61 +1,42 @@
 {
+    "name": "thejandroman-kibana3",
+    "version": "0.0.4",
+    "author": "thejandroman",
+    "license": "Apache License, Version 2.0",
+    "summary": "Installs and configures kibana3.",
+    "source": "https://github.com/thejandroman/puppet-kibana3",
+    "dependencies": [
+        {
+            "name": "puppetlabs/git",
+            "version_requirement": ">= 0.0.3"
+        },
+        {
+            "name": "puppetlabs/vcsrepo",
+            "version_requirement": ">= 0.2.0"
+        },
+        {
+            "name": "puppetlabs/apache",
+            "version_requirement": ">= 1.0.1"
+        },
+        {
+            "name": "puppetlabs/stdlib",
+            "version_requirement": ">= 3.2.1"
+        }
+    ],
+    "project_page": "https://github.com/thejandroman/puppet-kibana3",
+    "issues_url": "https://github.com/thejandroman/puppet-kibana3/issues",
     "operatingsystem_support": [
-    {
-      "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [
-        "12.04"
-      ]
-    }
-  ],
-  "requirements": [
-    {
-      "name": "puppet",
-      "version_requirement": "3.x"
-    }
-  ],
-  "name": "thejandroman-kibana3",
-  "version": "0.0.3",
-  "source": "https://github.com/thejandroman/kibana3",
-  "author": "thejandroman",
-  "license": "Apache License, Version 2.0",
-  "summary": "Installs and configures kibana3.",
-  "description": "The kibana3 puppet module allows one to setup and configure the kibana3 interface to Logstash and ElasticSearch.",
-  "project_page": "https://github.com/thejandroman/kibana3",
-  "dependencies": [
-    {
-      "name": "puppetlabs/git",
-      "version_requirement": ">= 0.0.3"
-    },
-    {
-      "name": "puppetlabs/vcsrepo",
-      "version_requirement": ">= 0.2.0"
-    },
-    {
-      "name": "puppetlabs/apache",
-      "version_requirement": ">= 1.0.1"
-    },
-    {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 3.2.1"
-    }
-  ],
-  "types": [
-
-  ],
-  "checksums": {
-    "Gemfile": "bbaaccead6becc002a74caafda1babe8",
-    "LICENSE": "b1b1222427797ff2583a958e2f32e9ef",
-    "Modulefile": "464335b5a25bbf4378d9d04569342b5c",
-    "README.md": "48525ed0bbaf2620e08cfdb38b8dbbd5",
-    "Rakefile": "d884be2a35803faeeead87cb61a64647",
-    "manifests/config.pp": "61ea33cec8d30b5efa320a3e453f7419",
-    "manifests/init.pp": "fcc1858f8078d12760656cde6f7c1aae",
-    "manifests/install.pp": "52781d5febae418d77f1fe10acf5cb08",
-    "manifests/params.pp": "50801b9db7a6eaeb80e90248228f0bed",
-    "manifests/uninstall.pp": "0f044aefcbf3e97b8eb88feed710433a",
-    "spec/classes/kibana3_init_spec.rb": "39204446eacdcf9d3f94908f1f857592",
-    "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
-    "templates/config.js.erb": "74fd6df7467defc5fe2493ee4135a0b2",
-    "tests/init.pp": "5a0f09e3fbda7c532e0b763733bc0094"
-  }
+        {
+            "operatingsystem": "Ubuntu",
+            "operatingsystemrelease": [
+                "12.04"
+            ]
+        }
+    ],
+    "requirements": [
+        {
+            "name": "puppet",
+            "version_requirement": "3.x"
+        }
+    ]
 }
