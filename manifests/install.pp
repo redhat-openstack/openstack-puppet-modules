@@ -4,7 +4,7 @@
 #
 class opendaylight::install {
   yumrepo { 'opendaylight':
-    ensure   => present,
+    ensure   => 'present',
     descr    => 'OpenDaylight SDN controller',
     baseurl  => 'http://104.131.189.230/repository/',
     gpgcheck => False,
@@ -13,6 +13,7 @@ class opendaylight::install {
   }
 
   package { 'opendaylight':
+    ensure  => 'latest',
     require => Yumrepo['opendaylight'],
   }
 }
