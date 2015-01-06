@@ -13,7 +13,7 @@ class opendaylight::install {
   }
 
   package { 'opendaylight':
-    ensure  => present,
+    ensure  => installed,
     require => Yumrepo['opendaylight'],
   }
 }
