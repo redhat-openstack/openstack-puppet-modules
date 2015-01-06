@@ -9,8 +9,8 @@ class opendaylight::install {
     #ensure   => 'present',
     descr    => 'OpenDaylight SDN controller',
     baseurl  => 'http://104.131.189.230/repository/',
-    gpgcheck => False,
-    enabled  => True,
+    gpgcheck => 0,
+    enabled  => 1,
   }
 
   package { $::opendaylight::package_name:
