@@ -5,7 +5,8 @@
 class opendaylight::install {
 
   yumrepo { 'opendaylight':
-    ensure   => 'present',
+    # 'ensure' isn't supported with Puppet <3.5
+    #ensure   => 'present',
     descr    => 'OpenDaylight SDN controller',
     baseurl  => 'http://104.131.189.230/repository/',
     gpgcheck => False,
