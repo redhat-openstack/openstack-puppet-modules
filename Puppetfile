@@ -167,8 +167,8 @@ mod 'rabbitmq',
   :git => 'git://github.com/enovance/puppetlabs-rabbitmq.git',
   :ref => '25420cb3c26c9a8432ab519d43c094d614d4fec4'
 mod 'redis',
-  :git => 'git://github.com/enovance/puppet-redis.git',
-  :ref => '1b2b2cea8c9acc08cfa01b42e47fad17f3c4d03d'
+  :git => 'git://github.com/arioch/puppet-redis.git',
+  :ref => '0e5bd1e5f0000fd2d1fa63936e2e013021dbadc4'
 mod 'rhnreg_ks',
   :git => 'git://github.com/enovance/puppet-rhnreg_ks.git',
   :ref => '8fdc051992b44a09f39d3b510d7cd6db5ed5ff66'
