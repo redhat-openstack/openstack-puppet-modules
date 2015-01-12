@@ -31,7 +31,6 @@ class ironic::params {
       $conductor_package   = 'openstack-ironic-conductor'
       $conductor_service   = 'openstack-ironic-conductor'
       $client_package      = 'python-ironicclient'
-      $pbr_package         = 'python-pbr'
     }
     'Debian': {
       $common_package_name = 'ironic-common'
@@ -40,7 +39,6 @@ class ironic::params {
       $conductor_service   = 'ironic-conductor'
       $conductor_package   = 'ironic-conductor'
       $client_package      = 'python-ironicclient'
-      $pbr_package         = 'python-pbr'
     }
     default: {
       fail("Unsupported osfamily ${::osfamily}")
