@@ -16,7 +16,7 @@ class zookeeper::repo(
             $cdhver = '4'
             $osrel = $::operatingsystemmajrelease
 
-            case $::harwaremodel {
+            case $::hardwaremodel {
               'i386', 'x86_64': {
                 $repourl = "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/cloudera-cdh${cdhver}.repo"
               }
