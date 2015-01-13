@@ -27,7 +27,7 @@ class zookeeper::repo(
             case $osrel {
               '6': {
                 exec{ 'retrieve_clouderakey':
-                  command => "/usr/bin/curl -q http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera -O /etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera",
+                  command => "/usr/bin/curl -q http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera -o /etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera",
                   creates => '/etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera',
                 }
 
@@ -41,7 +41,7 @@ class zookeeper::repo(
                   descr => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
                   baseurl => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
                   gpgkey => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
-                  gpgcheck => 'Yes'
+                  gpgcheck => 1
                 }
               }
               default: {
