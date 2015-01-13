@@ -19,44 +19,51 @@ Puppet module for deploying the OpenDaylight Software Defined Networking (SDN) c
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology the module integrates with and what that integration enables. This section should answer the questions: "What does this module *do*?" and "Why would I use it?"
-
-If your module has a range of functionality (installation, configuration, management, etc.) this is the time to mention it.
+Stands up the OpenDaylight SDN controller from an RPM, including systemd configuration.
 
 ## Setup
 
 ### What opendaylight affects
 
-* A list of files, packages, services, or operations that the module will alter, impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form. 
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here. 
+* Installs OpenDaylight archive in /opt/
+* Installs a systemd unit file for OpenDaylight
+* Creates an `odl` group if it doesn't exist
 
 ### Beginning with opendaylight
 
+TODO: Update
+
+```
 The very basic steps needed for a user to get the module up and running. 
 
 If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+```
 
 ## Usage
 
+TODO: Update
+
+```
 Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here. 
+```
 
 ## Reference
 
+TODO: Update
+
+```
 Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
+```
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+* The target OS must use systemd (Fedora 15+, CentOS 7+).
+* Currently only supports RPM-based installs.
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
+See [CONTRIBUTING.md](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CONTRIBUTING.md) for details about how to contribute to this OpenDaylight Puppet module.
 
-## Release Notes/Contributors/Etc **Optional**
+## Release Notes/Contributors
 
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+See the [CHANGELOG](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CHANGELOG) for information about releases and [CONTRIBUTORS](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CONTRIBUTORS) file for a list of folks who have contributed.
