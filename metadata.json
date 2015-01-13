@@ -3,7 +3,7 @@
   "version": "0.3.3",
   "author": "Tomas Barton",
   "summary": "Module for managing Apache Zookeeper",
-  "license": "Apache License, Version 2.0",
+  "license": "Apache-2.0",
   "source": "https://github.com/deric/puppet-zookeeper",
   "project_page": "https://github.com/deric/puppet-zookeeper",
   "issues_url": "https://github.com/deric/puppet-zookeeper/issues",
