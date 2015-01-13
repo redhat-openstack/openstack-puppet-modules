@@ -15,7 +15,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => '1ee8a6cab39da6beebf7a0b39207f0002368196f',
+  :commit => 'f6af237764cca3319594e731b6b808a7c557cd4c',
   :git => 'https://github.com/stackforge/puppet-cinder.git'
 
 mod 'common',
@@ -35,7 +35,7 @@ mod 'galera',
   :git => 'https://github.com/rohara/puppet-galera.git'
 
 mod 'glance',
-  :commit => 'a243f89a52f7dd2dc16b36d1c9b79ec1616c6596',
+  :commit => '9fb3db4a693b6839c2caa45df4cd37f9c21451de',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
@@ -63,7 +63,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
 mod 'keystone',
-  :commit => '71a9df884b7a81bf86b6e897c16171bf556f1ea4',
+  :commit => 'b65ddba19f5d89fe13bd0264e988ef702ba2b5c9',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
