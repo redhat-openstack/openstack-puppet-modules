@@ -32,7 +32,7 @@ class zookeeper::repo(
                 }
 
                 file{ '/etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera':
-                  mode => 0755,
+                  mode => 0644,
                   require => Exec["retrieve_clouderakey"],
                 }
 
