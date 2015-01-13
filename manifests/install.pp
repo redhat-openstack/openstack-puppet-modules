@@ -42,7 +42,7 @@ class zookeeper::install(
     }
     'RedHat': {
 
-      class {'zookeeper::repo':
+      class { 'zookeeper::repo':
         source => $repo_source,
       }
 
