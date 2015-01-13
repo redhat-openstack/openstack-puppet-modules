@@ -38,9 +38,9 @@ class zookeeper::repo(
 
                 yumrepo { "cloudera-cdh${cdhver}":
                   ensure   => present,
-                  descr => "Cloudera's Distribution for Hadoop, Version ${cdhver}"
-                  baseurl => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/"
-                  gpgkey => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera"
+                  descr => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
+                  baseurl => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
+                  gpgkey => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
                   gpgcheck => 'Yes'
                 }
               }
