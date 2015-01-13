@@ -24,7 +24,7 @@ class zookeeper::install(
   anchor { 'zookeeper::install::end': }
 
   case $::osfamily {
-    Debian: {
+    'Debian': {
       class { 'zookeeper::os::debian':
         ensure            => $ensure,
         snap_retain_count => $snap_retain_count,
@@ -39,7 +39,7 @@ class zookeeper::install(
         require           => Anchor['zookeeper::install::begin'],
       }
     }
-    RedHat: {
+    'RedHat': {
       class { 'zookeeper::os::redhat':
         ensure            => $ensure,
         snap_retain_count => $snap_retain_count,
