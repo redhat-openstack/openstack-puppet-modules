@@ -20,9 +20,9 @@ class zookeeper::repo(
               'i386', 'x86_64': {
                 $repourl = "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/cloudera-cdh${cdhver}.repo"
               }
-            }
-            default: {
-              fail { "Yum repository '${source}' is not supported for architecture ${hardwaremodel}": }
+              default: {
+                fail { "Yum repository '${source}' is not supported for architecture ${hardwaremodel}": }
+              }
             }
             case $osrel {
               '6': {
