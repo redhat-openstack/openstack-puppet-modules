@@ -2,11 +2,15 @@ require 'spec_helper'
 
 describe 'opendaylight' do
   context 'supported operating systems' do
-    ['RedHat'].each do |osfamily|
-      describe "opendaylight class without any parameters on #{osfamily}" do
+    ['19', '20', '21'].each do |lsbmajdistrelease|
+      osfamily = 'RedHat'
+      operatingsystem = 'Fedora'
+      describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
         let(:params) {{ }}
         let(:facts) {{
           :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :lsbmajdistrelease => lsbmajdistrelease,
         }}
 
         it { should compile.with_all_deps }
@@ -29,7 +33,7 @@ describe 'opendaylight' do
         :operatingsystem => 'Nexenta',
       }}
 
-      it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Nexenta not supported/) }
+      it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
     end
   end
 end
