@@ -48,42 +48,42 @@ describe 'opendaylight' do
   end
 
   context 'unsupported operating system' do
-    osfamily = 'RedHat'
     ['18', '22'].each do |lsbmajdistrelease|
+      osfamily = 'RedHat'
       operatingsystem = 'Fedora'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
-        let(:params) {{ }}
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :lsbmajdistrelease => lsbmajdistrelease,
         }}
 
-        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
+        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{lsbmajdistrelease}/) }
       end
     end
 
     ['5', '6', '8'].each do |lsbmajdistrelease|
+      osfamily = 'RedHat'
       operatingsystem = 'CentOS'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
-        let(:params) {{ }}
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :lsbmajdistrelease => lsbmajdistrelease,
         }}
 
-        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
+        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{lsbmajdistrelease}/) }
       end
     end
 
-    describe 'opendaylight class without any parameters on Solaris/Nexenta' do
-      let(:facts) {{
-        :osfamily        => 'Solaris',
-        :operatingsystem => 'Nexenta',
-      }}
+    ['Debian', 'Suse', 'Solaris'].each do |osfamily|
+      describe "opendaylight class without any params on #{osfamily}" do
+        let(:facts) {{
+          :osfamily => osfamily,
+        }}
 
-      it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
+        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+      end
     end
   end
 end
