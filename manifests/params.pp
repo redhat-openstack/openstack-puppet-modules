@@ -8,13 +8,15 @@ class opendaylight::params {
   case $::operatingsystem {
     centos, redhat: {
       unless $::lsbmajdistrelease == 7 {
-        fail('RHEL/CentOS versions < 7 not supported as they lack systemd')
+        # RHEL/CentOS versions < 7 not supported as they lack systemd
+        fail("Unsupported OS: ${::operatingsystem} ${::lsbmajdistrelease}")
       }
     }
     fedora: {
       # TODO: Only need >= 15 for systemd if move to tarball or full yum repo
-      unless $::lsbmajdistrelease >= 19 {
-        fail('Fedora versions < 19 not supported as not buildable on Copr')
+      unless $::lsbmajdistrelease in [19, 20, 21] {
+        # Fedora versions < 19 can't be build on Copr, >21 don't exist
+        fail("Unsupported OS: ${::operatingsystem} ${::lsbmajdistrelease}")
       }
     }
     default: {

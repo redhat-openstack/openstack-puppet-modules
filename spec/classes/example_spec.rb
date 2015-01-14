@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'opendaylight' do
   context 'supported operating systems' do
+    osfamily = 'RedHat'
     ['19', '20', '21'].each do |lsbmajdistrelease|
-      osfamily = 'RedHat'
       operatingsystem = 'Fedora'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
         let(:params) {{ }}
@@ -25,7 +25,6 @@ describe 'opendaylight' do
       end
     end
     ['7'].each do |lsbmajdistrelease|
-      osfamily = 'RedHat'
       operatingsystem = 'CentOS'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
         let(:params) {{ }}
@@ -49,6 +48,35 @@ describe 'opendaylight' do
   end
 
   context 'unsupported operating system' do
+    osfamily = 'RedHat'
+    ['18', '22'].each do |lsbmajdistrelease|
+      operatingsystem = 'Fedora'
+      describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
+        let(:params) {{ }}
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :lsbmajdistrelease => lsbmajdistrelease,
+        }}
+
+        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
+      end
+    end
+
+    ['5', '6', '8'].each do |lsbmajdistrelease|
+      operatingsystem = 'CentOS'
+      describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{lsbmajdistrelease}" do
+        let(:params) {{ }}
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :lsbmajdistrelease => lsbmajdistrelease,
+        }}
+
+        it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS/) }
+      end
+    end
+
     describe 'opendaylight class without any parameters on Solaris/Nexenta' do
       let(:facts) {{
         :osfamily        => 'Solaris',
