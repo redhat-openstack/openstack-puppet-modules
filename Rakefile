@@ -1,6 +1,6 @@
-# Added to fix this issue:
+# Necessary when running Beaker tests, but breaks Puppet <= 3.5
 # https://github.com/maestrodev/puppet-blacksmith/issues/14
-require 'puppet/vendor/semantic/lib/semantic'
+#require 'puppet/vendor/semantic/lib/semantic'
 
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
