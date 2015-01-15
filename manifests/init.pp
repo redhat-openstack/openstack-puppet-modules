@@ -50,6 +50,8 @@ class zookeeper(
   $service_name            = 'zookeeper',
   $packages                = ['zookeeper'],
   $repo                    = undef,
+  $install_java            = false,
+  $java_package            = undef
 ) {
 
   validate_array($packages)
@@ -67,6 +69,8 @@ class zookeeper(
     service_package   => $service_package,
     packages          => $packages,
     repo_source       => $repo,
+    install_java      => $install_java,
+    java_package      => $java_package
   }->
   class { 'zookeeper::config':
     id                      => $id,

@@ -8,12 +8,23 @@ class zookeeper::os::redhat(
   $user              = 'zookeeper',
   $ensure_cron       = true,
   $packages          = ['zookeeper'],
-  $manual_clean      = false
+  $manual_clean      = false,
+  $install_java      = false,
+  $java_package      = undef
 ) {
+
+  validate_bool($install_java)
 
   # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
   ensure_resource('package', $packages, {'ensure' => $ensure})
 
+  # if $install_java, try to make sure a JDK package is installed
+  if ($install_java){
+    package{ $java_package:
+      ensure => present,
+      allow_virtual => true
+    }
+  }
 
   # if !$cleanup_count, then ensure this cron is absent.
   if ($manual_clean and $snap_retain_count > 0 and $ensure != 'absent') {
