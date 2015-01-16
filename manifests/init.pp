@@ -48,7 +48,8 @@ class zookeeper(
   $ensure_cron             = true,
   $service_package         = 'zookeeperd',
   $service_name            = 'zookeeper',
-  $packages                = ['zookeeper']
+  $packages                = ['zookeeper'],
+  $repo                    = undef,
 ) {
 
   validate_array($packages)
@@ -65,6 +66,7 @@ class zookeeper(
     ensure_cron       => $ensure_cron,
     service_package   => $service_package,
     packages          => $packages,
+    repo_source       => $repo,
   }->
   class { 'zookeeper::config':
     id                      => $id,

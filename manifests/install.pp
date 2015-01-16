@@ -18,7 +18,8 @@ class zookeeper::install(
   $start_with        = 'init.d',
   $ensure_cron       = true,
   $service_package   = 'zookeeperd',
-  $packages          = ['zookeeper']
+  $packages          = ['zookeeper'],
+  $repo_source       = undef,
 ) {
   anchor { 'zookeeper::install::begin': }
   anchor { 'zookeeper::install::end': }
@@ -40,6 +41,11 @@ class zookeeper::install(
       }
     }
     'RedHat': {
+
+      class { 'zookeeper::repo':
+        source => $repo_source,
+      }
+
       class { 'zookeeper::os::redhat':
         ensure            => $ensure,
         snap_retain_count => $snap_retain_count,
