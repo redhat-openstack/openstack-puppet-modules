@@ -1,6 +1,6 @@
 {
   "name": "deric-zookeeper",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "author": "Tomas Barton",
   "summary": "Module for managing Apache Zookeeper",
   "license": "Apache-2.0",
@@ -9,8 +9,13 @@
   "issues_url": "https://github.com/deric/puppet-zookeeper/issues",
   "description": "ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 2.3.3"},
-    {"name":"richardc/datacat"}
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 2.3.3"
+    },
+    {
+      "name": "richardc/datacat"
+    }
   ],
   "operatingsystem_support": [
     {
