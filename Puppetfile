@@ -22,22 +22,22 @@ mod 'openstacklib',
   :ref => '999f7849a3e0653f46f7336ee0fa9c2e38630b7b'
 mod 'ceilometer',
   :git => 'git://github.com/enovance/puppet-ceilometer.git',
-  :ref => '953ce5032cb332bf8a15e78358ee8af6f14dd7f0'
+  :ref => 'c5c7f4a6a7afd4b9c558e17e5a755e836e182dbe'
 mod 'cinder',
   :git => 'git://github.com/enovance/puppet-cinder.git',
-  :ref => '1ee8a6cab39da6beebf7a0b39207f0002368196f'
+  :ref => 'f6af237764cca3319594e731b6b808a7c557cd4c'
 mod 'glance',
   :git => 'git://github.com/enovance/puppet-glance.git',
-  :ref => 'a243f89a52f7dd2dc16b36d1c9b79ec1616c6596'
+  :ref => '9fb3db4a693b6839c2caa45df4cd37f9c21451de'
 mod 'heat',
   :git => 'git://github.com/enovance/puppet-heat.git',
   :ref => 'b1e9e9bd48c3da15be69c0797fb05e7ce0f6698f'
 mod 'horizon',
   :git => 'git://github.com/enovance/puppet-horizon.git',
-  :ref => '168c206dfefa35abec48d7bce33ed469bf98cefb'
+  :ref => '72e83fa859c4224fcf7772654bdc7464a0bbedde'
 mod 'keystone',
   :git => 'git://github.com/enovance/puppet-keystone.git',
-  :ref => '71a9df884b7a81bf86b6e897c16171bf556f1ea4'
+  :ref => 'abbb8e249743b6339ec77622170f2eb80463ae14'
 mod 'neutron',
   :git => 'git://github.com/enovance/puppet-neutron.git',
   :ref => 'c3dc52023dfdf7649080c1b5bc5eae3b43991db1'
@@ -49,10 +49,10 @@ mod 'swift',
   :ref => '68a9e8eecba4a280ea1ec18fba67069a8c7dfce4'
 mod 'tempest',
   :git => 'git://github.com/enovance/puppet-tempest.git',
-  :ref => '8631ec5df1c050bc4c3f1cba983e5aadd1c0e4d5'
+  :ref => 'f5e87cad5de119bd483006f06efcd22a34d8bdc4'
 mod 'trove',
   :git => 'git://github.com/enovance/puppet-trove.git',
-  :ref => '7d9db32423b25dcc227ea6a6d43c90c63fde0d58'
+  :ref => '9e5b82fcdacc07b0f1028cb2928292f8d68ae075'
 
 # Dependency
 mod 'apache',
@@ -66,7 +66,7 @@ mod 'boolean',
   :ref => '157011a4eaa27f1202a9d94335ee4876b26d377e'
 mod 'ceph',
   :git => 'git://github.com/enovance/puppet-ceph.git',
-  :ref => 'c50d91a6f790058a2b6975d6e1d6189f7c8b6687'
+  :ref => '3b58acf9fdf567bf40d17b3c803c940f1ddc70d1'
 #FIXME
 mod 'cloud',
   :git => 'git://github.com/stackforge/puppet-openstack-cloud.git',
@@ -168,7 +168,7 @@ mod 'rabbitmq',
   :ref => '25420cb3c26c9a8432ab519d43c094d614d4fec4'
 mod 'redis',
   :git => 'git://github.com/arioch/puppet-redis.git',
-  :ref => '0e5bd1e5f0000fd2d1fa63936e2e013021dbadc4'
+  :ref => '6d0aafdaaf3dbb1dbb5ac8082ad4f5c404e50f90'
 mod 'rhnreg_ks',
   :git => 'git://github.com/enovance/puppet-rhnreg_ks.git',
   :ref => '8fdc051992b44a09f39d3b510d7cd6db5ed5ff66'
