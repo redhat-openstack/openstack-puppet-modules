@@ -21,16 +21,16 @@ class zookeeper::repo(
                 $repourl = "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/cloudera-cdh${cdhver}.repo"
               }
               default: {
-                fail { "Yum repository '${source}' is not supported for architecture ${hardwaremodel}": }
+                fail { "Yum repository '${source}' is not supported for architecture ${::hardwaremodel}": }
               }
             }
             case $osrel {
               '6': {
                 yumrepo { "cloudera-cdh${cdhver}":
                   ensure   => present,
-                  descr => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
-                  baseurl => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
-                  gpgkey => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
+                  descr    => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
+                  baseurl  => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
+                  gpgkey   => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
                   gpgcheck => 1
                 }
               }
