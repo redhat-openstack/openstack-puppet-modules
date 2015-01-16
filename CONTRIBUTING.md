@@ -76,7 +76,12 @@ tests with:
 
     bundle exec rake acceptance
 
-By default, this will run the tests on an CentOS 7 virtual machine.
+This will use the host described in `spec/acceptance/nodeset/default.yml`
+by default. To run against another host, set the `RS_SET` environment
+variable to the name of a host described by a `.yml` file in the
+`nodeset` directory. For example, to run against Fedora 20:
+
+    RS_SET=fedora-20-x64 bundle exec rake acceptance
 
 If you don't want to have to recreate the virtual machine every time you
 can use `BEAKER_DESTROY=no` and `BEAKER_PROVISION=no`. On the first run you will
