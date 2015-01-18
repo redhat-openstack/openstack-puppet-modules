@@ -40,8 +40,6 @@ class zookeeper::install(
         packages          => $packages,
         before            => Anchor['zookeeper::install::end'],
         require           => Anchor['zookeeper::install::begin'],
-        install_java      => $install_java,
-        java_package      => $java_package
       }
     }
     'RedHat': {
@@ -60,6 +58,8 @@ class zookeeper::install(
         packages          => $packages,
         require           => Anchor['zookeeper::install::begin'],
         before            => Anchor['zookeeper::install::end'],
+        install_java      => $install_java,
+        java_package      => $java_package
       }
     }
     default: {
