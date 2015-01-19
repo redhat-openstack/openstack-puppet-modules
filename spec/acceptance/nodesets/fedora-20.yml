@@ -1,10 +1,10 @@
 HOSTS:
-  centos-7-x64:
+  fedora-20:
     roles:
       - master
     platform: el-7-x86_64
-    box: chef/centos-7.0
-    box_url: https://vagrantcloud.com/chef/boxes/centos-7.0
+    box: chef/fedora-20
+    box_url: https://vagrantcloud.com/chef/boxes/fedora-20
     hypervisor: vagrant
 
 CONFIG:
