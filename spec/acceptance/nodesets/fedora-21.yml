@@ -1,0 +1,16 @@
+HOSTS:
+  fedora-21:
+    roles:
+      - master
+    # TODO: Update to F21 once RPM is created by Puppet folks
+    # See: https://github.com/dfarrell07/dfarrell07-opendaylight/issues/10#issuecomment-70542612
+    platform: fedora-20-x86_64
+    # TODO: Move to an offical-ish F21 box once one goes on Vagrantcloud
+    # See: https://github.com/opscode/bento/issues/312
+    box: TFDuesing/Fedora-21
+    box_url: https://vagrantcloud.com/TFDuesing/boxes/Fedora-21
+    hypervisor: vagrant
+
+CONFIG:
+  log_level: verbose
+  type: foss
