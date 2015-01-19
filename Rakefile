@@ -52,17 +52,17 @@ task :test => [
   :metadata,
 ]
 
-desc "Run Baker tests CentOS 7 node."
+desc "Run Beaker tests CentOS 7 node."
 task :beaker_centos7 do
   sh "RS_SET=centos-7 bundle exec rake beaker"
 end
 
-desc "Run Baker tests Fedora 20 node."
+desc "Run Beaker tests Fedora 20 node."
 task :beaker_fedora20 do
   sh "RS_SET=fedora-20 bundle exec rake beaker"
 end
 
-desc "Run Baker tests against all nodes."
+desc "Run Beaker tests against all nodes."
 task :beaker_all => [
   :beaker_centos7,
   :beaker_fedora20,
