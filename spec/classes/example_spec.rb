@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'opendaylight' do
   context 'supported operating systems' do
     osfamily = 'RedHat'
-    ['19', '20', '21'].each do |operatingsystemmajrelease|
+    ['20', '21'].each do |operatingsystemmajrelease|
       operatingsystem = 'Fedora'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
         let(:params) {{ }}
@@ -47,8 +47,8 @@ describe 'opendaylight' do
     end
   end
 
-  context 'unsupported operating system' do
-    ['18', '22'].each do |operatingsystemmajrelease|
+  context 'unsupported operating systems' do
+    ['18', '19', '22'].each do |operatingsystemmajrelease|
       osfamily = 'RedHat'
       operatingsystem = 'Fedora'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do

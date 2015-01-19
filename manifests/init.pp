@@ -21,8 +21,8 @@ class opendaylight (
       }
     }
     fedora: {
-      # TODO: Only need >= 15 for systemd if move to tarball or full yum repo
-      if ! ($::operatingsystemmajrelease in [19, 20, 21]) {
+      # Fedora distros < 20 are EOL as of Jan 6th 2015
+      if ! ($::operatingsystemmajrelease in [20, 21]) {
         # Fedora versions < 19 can't be build on Copr, >21 don't exist
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
