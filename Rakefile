@@ -35,11 +35,6 @@ exclude_paths = [
 PuppetLint.configuration.ignore_paths = exclude_paths
 PuppetSyntax.exclude_paths = exclude_paths
 
-desc "Run acceptance tests"
-RSpec::Core::RakeTask.new(:acceptance) do |t|
-  t.pattern = 'spec/acceptance'
-end
-
 task :metadata do
   sh "metadata-json-lint metadata.json"
 end
@@ -53,17 +48,18 @@ task :test => [
 ]
 
 desc "Run Beaker tests CentOS 7 node."
-task :beaker_centos7 do
+task :centos do
   sh "RS_SET=centos-7 bundle exec rake beaker"
 end
 
 desc "Run Beaker tests Fedora 20 node."
-task :beaker_fedora20 do
+task :fedora do
   sh "RS_SET=fedora-20 bundle exec rake beaker"
 end
 
-desc "Run Beaker tests against all nodes."
-task :beaker_all => [
-  :beaker_centos7,
-  :beaker_fedora20,
+desc "All tests, including Beaker tests against all nodes."
+task :acceptance => [
+  :test,
+  :centos,
+  :fedora,
 ]
