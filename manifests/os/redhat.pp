@@ -25,7 +25,7 @@ class zookeeper::os::redhat(
 
     package{ $java_package:
       ensure        => present,
-      allow_virtual => true
+      allow_virtual => true,
       before        => Anchor['zookeeper::install::package::begin'],
     }
   }
