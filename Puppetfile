@@ -62,6 +62,10 @@ mod 'ipa',
   :commit => '4a30eb72d5e6025429dbc65dc1b35567c0def5fe',
   :git => 'https://github.com/xbezdick/puppet-ipa.git'
 
+mod 'ironic',
+  :commit => '9aab12eab342b313881de6af9cd0d4e7c7dcdcd6',
+  :git => 'https://github.com/stackforge/puppet-ironic.git'
+
 mod 'keystone',
   :commit => 'caf97ba886ee097661677e984485c8cc08897f12',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
