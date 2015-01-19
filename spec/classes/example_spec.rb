@@ -21,6 +21,7 @@ describe 'opendaylight' do
         it { should contain_class('opendaylight::service').that_subscribes_to('opendaylight::config') }
 
         it { should contain_service('opendaylight') }
+        it { should contain_yumrepo('opendaylight') }
         it { should contain_package('opendaylight').with_ensure('present') }
       end
     end
@@ -42,6 +43,7 @@ describe 'opendaylight' do
         it { should contain_class('opendaylight::service').that_subscribes_to('opendaylight::config') }
 
         it { should contain_service('opendaylight') }
+        it { should contain_yumrepo('opendaylight') }
         it { should contain_package('opendaylight').with_ensure('present') }
       end
     end
