@@ -15,9 +15,6 @@ class zookeeper::os::redhat(
 
   validate_bool($install_java)
 
-  # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
-  ensure_resource('package', $packages, {'ensure' => $ensure})
-
   # if $install_java, try to make sure a JDK package is installed
   if ($install_java){
     if !$java_package {
@@ -27,10 +24,17 @@ class zookeeper::os::redhat(
     validate_string($java_package)
 
     package{ $java_package:
-      ensure => present,
+      ensure        => present,
       allow_virtual => true
+      before        => Anchor['zookeeper::install::package::begin'],
     }
   }
+
+  anchor { 'zookeeper::install::package::begin': }->
+  package { $packages:
+    ensure => present
+  }->
+  anchor { 'zookeeper::install::package::end': }
 
   # if !$cleanup_count, then ensure this cron is absent.
   if ($manual_clean and $snap_retain_count > 0 and $ensure != 'absent') {
