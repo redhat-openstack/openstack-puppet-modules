@@ -37,7 +37,16 @@ describe 'opendaylight class' do
     describe user('odl') do
       it { should exist }
       it { should belong_to_group 'odl' }
-      it { should_not have_home_directory '/home/odl' }
+      # This dir will not be created because of -M switch in ODL's RPM.
+      #   Should really be called a `login_dir` by serverspec, as it's
+      #   checking `getent passwd odl` for a login dir vs looking at
+      #   `/home/` to see if `odl/` exists.
+      it { should have_home_directory '/home/odl' }
+    end
+
+    describe file('/home/odl') do
+      # Home dir shouldn't be created for odl user
+      it { should_not be_directory }
     end
   end
 end
