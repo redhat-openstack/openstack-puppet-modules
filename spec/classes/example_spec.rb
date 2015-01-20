@@ -42,20 +42,11 @@ describe 'opendaylight' do
         it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
         # Confirm properties of other resources
-        # There's a more elegant way to do this with multi-line hashes
-        #   but it breaks in Ruby 1.8.7
+        # There's a more elegant way to do these long sets of checks
+        #   using multi-line hashes, but it breaks in Ruby 1.8.7
         it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
         it { should contain_package('opendaylight').with_ensure('present') }
-
-        # TODO: If single-line style above works, convert this to it for 1.8.7
-        it {
-          should contain_service('opendaylight').with(
-            'ensure'      => 'running',
-            'enable'      => 'true',
-            'hasstatus'   => 'true',
-            'hasrestart'  => 'true',
-          )
-        }
+        it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
       end
     end
     ['7'].each do |operatingsystemmajrelease|
@@ -96,26 +87,12 @@ describe 'opendaylight' do
         it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
         it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
-        # TODO: If single-line style above works, convert this to it for 1.8.7
         # Confirm properties of other resources
-        it {
-          should contain_yumrepo('opendaylight').with(
-            'enabled'   => '1',
-            'gpgcheck'  => '0',
-            'descr'     => 'OpenDaylight SDN controller',
-            'baseurl'   => 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
-          )
-        }
+        # There's a more elegant way to do these long sets of checks
+        #   using multi-line hashes, but it breaks in Ruby 1.8.7
+        it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/') }
         it { should contain_package('opendaylight').with_ensure('present') }
-        # TODO: If single-line style above works, convert this to it for 1.8.7
-        it {
-          should contain_service('opendaylight').with(
-            'ensure'      => 'running',
-            'enable'      => 'true',
-            'hasstatus'   => 'true',
-            'hasrestart'  => 'true',
-          )
-        }
+        it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
       end
     end
   end
