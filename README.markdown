@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dfarrell07/dfarrell07-opendaylight.svg)](https://travis-ci.org/dfarrell07/dfarrell07-opendaylight)
+[![Build Status](https://travis-ci.org/dfarrell07/puppet-opendaylight.svg)](https://travis-ci.org/dfarrell07/puppet-opendaylight)
 
 #### Table of Contents
 
