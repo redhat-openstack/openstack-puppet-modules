@@ -25,6 +25,7 @@ describe 'opendaylight class' do
 
     describe service('opendaylight') do
       it { should be_enabled }
+      it { should be_enabled.with_level(3) }
       it { should be_running }
     end
 
