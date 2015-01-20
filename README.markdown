@@ -62,8 +62,8 @@ Here, list the classes, types, providers, facts, etc contained in your module. T
 
 ## Development
 
-See [CONTRIBUTING.md](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CONTRIBUTING.md) for details about how to contribute to this OpenDaylight Puppet module.
+See [CONTRIBUTING.md](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.md) for details about how to contribute to this OpenDaylight Puppet module.
 
 ## Release Notes/Contributors
 
-See the [CHANGELOG](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CHANGELOG) for information about releases and [CONTRIBUTORS](https://github.com/dfarrell07/dfarrell07-opendaylight/blob/master/CONTRIBUTORS) file for a list of folks who have contributed.
+See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG) for information about releases and [CONTRIBUTORS](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTORS) file for a list of folks who have contributed.

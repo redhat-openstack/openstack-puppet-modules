@@ -1,6 +1,6 @@
 # Temporary fix for error caused by third party gems. See:
 # https://github.com/maestrodev/puppet-blacksmith/issues/14
-# https://github.com/dfarrell07/dfarrell07-opendaylight/issues/6
+# https://github.com/dfarrell07/puppet-opendaylight/issues/6
 require 'puppet/version'
 require 'puppet/vendor/semantic/lib/semantic' unless Puppet.version.to_f <3.6
 

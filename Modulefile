@@ -1,10 +1,10 @@
 name          'dfarrell07-opendaylight'
 version       '0.1.0'
-source        'https://github.com/dfarrell07/dfarrell07-opendaylight'
+source        'https://github.com/dfarrell07/puppet-opendaylight'
 author        'Daniel Farrell'
 license       'BSD two-clause'
 summary       'Puppet module to deploy OpenDaylight SDN controller'
 description   ''
-project_page  'https://github.com/dfarrell07/dfarrell07-opendaylight'
+project_page  'https://github.com/dfarrell07/puppet-opendaylight'
 
 dependency 'puppetlabs/stdlib'
