@@ -34,10 +34,6 @@ describe 'opendaylight class' do
       it { should be_running }
     end
 
-    describe package('java') do
-      it { should be_installed }
-    end
-
     describe user('odl') do
       it { should exist }
       it { should belong_to_group 'odl' }
