@@ -33,5 +33,11 @@ describe 'opendaylight class' do
     describe process('java') do
       it { should be_running }
     end
+
+    describe user('odl') do
+      it { should exist }
+      it { should belong_to_group 'odl' }
+      it { should_not have_home_directory '/home/odl' }
+    end
   end
 end
