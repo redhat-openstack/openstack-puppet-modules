@@ -10,10 +10,9 @@ class opendaylight::install {
 
   yumrepo { 'opendaylight':
     # 'ensure' isn't supported with Puppet <3.5
-    # hopfully it defaults to present, but docs don't say
+    # Seems to default to present, but docs don't say
     # https://docs.puppetlabs.com/references/3.4.0/type.html#yumrepo
     # https://docs.puppetlabs.com/references/3.5.0/type.html#yumrepo
-    #ensure  => 'present',
     baseurl  => $base_url,
     descr    => 'OpenDaylight SDN controller',
     gpgcheck => 0,
