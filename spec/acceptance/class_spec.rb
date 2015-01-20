@@ -20,12 +20,17 @@ describe 'opendaylight class' do
     end
 
     describe package('opendaylight') do
-      it { is_expected.to be_installed }
+      it { should be_installed }
     end
 
     describe service('opendaylight') do
-      it { is_expected.to be_enabled }
-      it { is_expected.to be_running }
+      it { should be_enabled }
+      it { should be_running }
+    end
+
+    # OpenDaylight will appear as a Java process
+    describe process('java') do
+      it { should be_running }
     end
   end
 end
