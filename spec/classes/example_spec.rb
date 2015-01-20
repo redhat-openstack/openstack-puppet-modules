@@ -42,15 +42,12 @@ describe 'opendaylight' do
         it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
         # Confirm properties of other resources
-        it {
-          should contain_yumrepo('opendaylight').with(
-            'enabled'   => '1',
-            'gpgcheck'  => '0',
-            'descr'     => 'OpenDaylight SDN controller',
-            'baseurl'   => 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/',
-          )
-        }
+        # There's a more elegant way to do this with multi-line hashes
+        #   but it breaks in Ruby 1.8.7
+        it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
         it { should contain_package('opendaylight').with_ensure('present') }
+
+        # TODO: If single-line style above works, convert this to it for 1.8.7
         it {
           should contain_service('opendaylight').with(
             'ensure'      => 'running',
@@ -99,6 +96,7 @@ describe 'opendaylight' do
         it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
         it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
+        # TODO: If single-line style above works, convert this to it for 1.8.7
         # Confirm properties of other resources
         it {
           should contain_yumrepo('opendaylight').with(
@@ -109,6 +107,7 @@ describe 'opendaylight' do
           )
         }
         it { should contain_package('opendaylight').with_ensure('present') }
+        # TODO: If single-line style above works, convert this to it for 1.8.7
         it {
           should contain_service('opendaylight').with(
             'ensure'      => 'running',
