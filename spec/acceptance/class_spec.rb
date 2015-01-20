@@ -14,6 +14,11 @@ describe 'opendaylight class' do
       apply_manifest(pp, :catch_changes  => true)
     end
 
+    describe yumrepo('opendaylight') do
+      it { should exist }
+      it { should be_enabled }
+    end
+
     describe package('opendaylight') do
       it { is_expected.to be_installed }
     end
