@@ -23,7 +23,6 @@ class opendaylight (
     fedora: {
       # Fedora distros < 20 are EOL as of Jan 6th 2015
       if ! ($::operatingsystemmajrelease in [20, 21]) {
-        # Fedora versions < 19 can't be build on Copr, >21 don't exist
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
     }
