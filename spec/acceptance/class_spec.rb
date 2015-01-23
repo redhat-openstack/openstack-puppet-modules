@@ -1,5 +1,7 @@
 require 'spec_helper_acceptance'
 
+# Note that helpers (`should`, `be_running`...) are documented here:
+# http://serverspec.org/resource_types.html
 describe 'opendaylight class' do
 
   context 'default parameters' do
