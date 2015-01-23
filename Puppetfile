@@ -79,7 +79,7 @@ mod 'concat',
   :ref => 'ab06c2b8c09d9da82b53a62a5389427720519cd5'
 mod 'corosync',
   :git => 'git://github.com/enovance/puppetlabs-corosync.git',
-  :ref => '79b61302b07fef30b65a42f3b55229616018aacf'
+  :ref => '68a061a6b9a3eaa026744dbae7e324a62dcde429'
 mod 'dnsclient',
   :git => 'git://github.com/enovance/puppet-module-dnsclient.git',
   :ref => '4158b30f4660623f98dcdbd1ce9b482556180b57'
@@ -211,3 +211,6 @@ mod 'wget',
 mod 'xinetd',
   :git => 'git://github.com/enovance/puppetlabs-xinetd.git',
   :ref => '0740f5343b54523d9ed27f65c05f6c9f045f022b'
+mod 'openstack_extras',
+  :git => 'git://github.com/enovance/puppet-openstack_extras.git',
+  :ref => '537ed9e3750178fcfffa3ae476727cb1f4e65fb9'
