@@ -23,22 +23,6 @@ describe 'nova' do
         )
       end
 
-      it 'does not create user and group' do
-        should_not contain_group('nova').with(
-          :ensure  => 'present',
-          :system  => true,
-          :before  => 'User[nova]'
-        )
-        should_not contain_user('nova').with(
-          :ensure     => 'present',
-          :system     => true,
-          :groups     => 'nova',
-          :home       => '/var/lib/nova',
-          :managehome => false,
-          :shell      => '/bin/false'
-        )
-      end
-
       it 'creates various files and folders' do
         should contain_file('/var/log/nova').with(
           :ensure  => 'directory',
@@ -64,11 +48,6 @@ describe 'nova' do
         :refreshonly => true
       )}
 
-      it 'configures database' do
-        should_not contain_nova_config('database/connection')
-        should_not contain_nova_config('database/idle_timeout').with_value('3600')
-      end
-
       it 'configures image service' do
         should contain_nova_config('DEFAULT/image_service').with_value('nova.image.glance.GlanceImageService')
         should contain_nova_config('glance/api_servers').with_value('localhost:9292')
@@ -80,7 +59,7 @@ describe 'nova' do
       end
 
       it 'configures rabbit' do
-        should contain_nova_config('DEFAULT/rpc_backend').with_value('nova.openstack.common.rpc.impl_kombu')
+        should contain_nova_config('DEFAULT/rpc_backend').with_value('rabbit')
         should contain_nova_config('DEFAULT/rabbit_host').with_value('localhost')
         should contain_nova_config('DEFAULT/rabbit_password').with_value('guest').with_secret(true)
         should contain_nova_config('DEFAULT/rabbit_port').with_value('5672')
@@ -112,9 +91,7 @@ describe 'nova' do
     context 'with overridden parameters' do
 
       let :params do
-        { :database_connection      => 'mysql://user:pass@db/db',
-          :database_idle_timeout    => '30',
-          :verbose                  => true,
+        { :verbose                  => true,
           :debug                    => true,
           :log_dir                  => '/var/log/nova2',
           :image_service            => 'nova.image.local.LocalImageService',
@@ -133,41 +110,13 @@ describe 'nova' do
           :notification_driver      => 'ceilometer.compute.nova_notifier',
           :notification_topics      => 'openstack',
           :notify_api_faults        => true,
-          :nova_user_id             => '499',
-          :nova_group_id            => '499',
           :report_interval          => '60',
-          :nova_shell               => '/bin/bash',
           :os_region_name           => 'MyRegion' }
-      end
-
-      it 'creates user and group' do
-        should contain_group('nova').with(
-          :ensure  => 'present',
-          :system  => true,
-          :gid     => '499',
-          :before  => 'Package[nova-common]'
-        )
-        should contain_user('nova').with(
-          :ensure     => 'present',
-          :system     => true,
-          :groups     => 'nova',
-          :home       => '/var/lib/nova',
-          :managehome => false,
-          :shell      => '/bin/bash',
-          :uid        => '499',
-          :gid        => '499',
-          :require    => 'Group[nova]'
-        )
       end
 
       it 'installs packages' do
         should contain_package('nova-common').with('ensure' => '2012.1.1-15.el6')
         should contain_package('python-nova').with('ensure' => '2012.1.1-15.el6')
-      end
-
-      it 'configures database' do
-        should contain_nova_config('database/connection').with_value('mysql://user:pass@db/db').with_secret(true)
-        should contain_nova_config('database/idle_timeout').with_value('30')
       end
 
       it 'configures image service' do
@@ -181,7 +130,7 @@ describe 'nova' do
       end
 
       it 'configures rabbit' do
-        should contain_nova_config('DEFAULT/rpc_backend').with_value('nova.openstack.common.rpc.impl_kombu')
+        should contain_nova_config('DEFAULT/rpc_backend').with_value('rabbit')
         should contain_nova_config('DEFAULT/rabbit_host').with_value('rabbit')
         should contain_nova_config('DEFAULT/rabbit_password').with_value('password').with_secret(true)
         should contain_nova_config('DEFAULT/rabbit_port').with_value('5673')
@@ -243,18 +192,6 @@ describe 'nova' do
 
       it 'configures database' do
         should contain_nova_config('DEFAULT/notify_on_state_change').with_value('vm_state')
-      end
-    end
-
-    context 'with deprecated sql parameters' do
-      let :params do
-        { :sql_connection   => 'mysql://user:pass@db/db',
-          :sql_idle_timeout => '30' }
-      end
-
-      it 'configures database' do
-        should contain_nova_config('database/connection').with_value('mysql://user:pass@db/db').with_secret(true)
-        should contain_nova_config('database/idle_timeout').with_value('30')
       end
     end
 
@@ -375,7 +312,7 @@ describe 'nova' do
         should contain_nova_config('DEFAULT/kombu_ssl_ca_certs').with_ensure('absent')
         should contain_nova_config('DEFAULT/kombu_ssl_certfile').with_ensure('absent')
         should contain_nova_config('DEFAULT/kombu_ssl_keyfile').with_ensure('absent')
-        should contain_nova_config('DEFAULT/kombu_ssl_version').with_value('SSLv3')
+        should contain_nova_config('DEFAULT/kombu_ssl_version').with_value('TLSv1')
       end
     end
 
@@ -384,7 +321,7 @@ describe 'nova' do
         {
           :rabbit_password    => 'pass',
           :rabbit_use_ssl     => false,
-          :kombu_ssl_version  => 'SSLv3',
+          :kombu_ssl_version  => 'TLSv1',
         }
       end
 
@@ -399,12 +336,12 @@ describe 'nova' do
 
     context 'with qpid rpc_backend' do
       let :params do
-        { :rpc_backend => 'nova.openstack.common.rpc.impl_qpid' }
+        { :rpc_backend => 'qpid' }
       end
 
       context 'with default parameters' do
         it 'configures qpid' do
-          should contain_nova_config('DEFAULT/rpc_backend').with_value('nova.openstack.common.rpc.impl_qpid')
+          should contain_nova_config('DEFAULT/rpc_backend').with_value('qpid')
           should contain_nova_config('DEFAULT/qpid_hostname').with_value('localhost')
           should contain_nova_config('DEFAULT/qpid_port').with_value('5672')
           should contain_nova_config('DEFAULT/qpid_username').with_value('guest')
@@ -441,6 +378,22 @@ describe 'nova' do
         end
         it { should contain_nova_config('DEFAULT/qpid_sasl_mechanisms').with_value('DIGEST-MD5 GSSAPI PLAIN') }
       end
+    end
+
+    context 'with qpid rpc_backend with old parameter' do
+      let :params do
+        { :rpc_backend => 'nova.openstack.common.rpc.impl_qpid' }
+      end
+
+      it { should contain_nova_config('DEFAULT/rpc_backend').with_value('nova.openstack.common.rpc.impl_qpid') }
+    end
+
+    context 'with rabbitmq rpc_backend with old parameter' do
+      let :params do
+        { :rpc_backend => 'nova.openstack.common.rpc.impl_kombu' }
+      end
+
+      it { should contain_nova_config('DEFAULT/rpc_backend').with_value('nova.openstack.common.rpc.impl_kombu') }
     end
 
     context 'with ssh public key' do

@@ -73,27 +73,59 @@
 #   (optional) Force backing images to raw format.
 #   Defaults to true
 #
+#  [*reserved_host_memory*]
+#   Reserved host memory
+#   The amount of memory in MB reserved for the host.
+#   Defaults to '512'
+#
+#  [*compute_manager*]
+#   Compute manager
+#   The driver that will manage the running instances.
+#   Defaults to nova.compute.manager.ComputeManager
+#
+#  [*default_availability_zone*]
+#   (optional) Default compute node availability zone.
+#   Defaults to nova
+#
+#  [*default_schedule_zone*]
+#   (optional) Availability zone to use when user doesn't specify one.
+#   Defaults to undef
+#
+#  [*internal_service_availability_zone*]
+#   (optional) The availability zone to show internal services under.
+#   Defaults to internal
+#
 class nova::compute (
-  $enabled                       = false,
-  $manage_service                = true,
-  $ensure_package                = 'present',
-  $vnc_enabled                   = true,
-  $vncserver_proxyclient_address = '127.0.0.1',
-  $vncproxy_host                 = false,
-  $vncproxy_protocol             = 'http',
-  $vncproxy_port                 = '6080',
-  $vncproxy_path                 = '/vnc_auto.html',
-  $vnc_keymap                    = 'en-us',
-  $force_config_drive            = false,
-  $virtio_nic                    = false,
-  $neutron_enabled               = true,
-  $network_device_mtu            = undef,
-  $instance_usage_audit          = false,
-  $instance_usage_audit_period   = 'month',
-  $force_raw_images              = true,
+  $enabled                            = false,
+  $manage_service                     = true,
+  $ensure_package                     = 'present',
+  $vnc_enabled                        = true,
+  $vncserver_proxyclient_address      = '127.0.0.1',
+  $vncproxy_host                      = false,
+  $vncproxy_protocol                  = 'http',
+  $vncproxy_port                      = '6080',
+  $vncproxy_path                      = '/vnc_auto.html',
+  $vnc_keymap                         = 'en-us',
+  $force_config_drive                 = false,
+  $virtio_nic                         = false,
+  $neutron_enabled                    = true,
+  $network_device_mtu                 = undef,
+  $instance_usage_audit               = false,
+  $instance_usage_audit_period        = 'month',
+  $force_raw_images                   = true,
+  $reserved_host_memory               = '512',
+  $compute_manager                    = 'nova.compute.manager.ComputeManager',
+  $default_availability_zone          = 'nova',
+  $default_schedule_zone              = undef,
+  $internal_service_availability_zone = 'internal',
 ) {
 
   include nova::params
+
+  nova_config {
+    'DEFAULT/reserved_host_memory_mb':  value => $reserved_host_memory;
+    'DEFAULT/compute_manager':          value => $compute_manager;
+  }
 
   if ($vnc_enabled) {
     if ($vncproxy_host) {
@@ -167,5 +199,16 @@ class nova::compute (
 
   nova_config {
     'DEFAULT/force_raw_images': value => $force_raw_images;
+  }
+
+  nova_config {
+    'DEFAULT/default_availability_zone':          value => $default_availability_zone;
+    'DEFAULT/internal_service_availability_zone': value => $internal_service_availability_zone;
+  }
+
+  if $default_schedule_zone {
+    nova_config {
+      'DEFAULT/default_schedule_zone': value => $default_schedule_zone;
+    }
   }
 }

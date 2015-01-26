@@ -9,18 +9,6 @@
 #   (optional) The state of nova packages
 #   Defaults to 'present'
 #
-# [*nova_cluster_id*]
-#   (optional) Deprecated. This parameter does nothing and will be removed.
-#   Defaults to 'localcluster'
-#
-# [*sql_connection*]
-#   (optional) Deprecated. Use database_connection instead.
-#   Defaults to false
-#
-# [*sql_idle_timeout*]
-#   (optional) Deprecated. Use database_idle_timeout instead
-#   Defaults to false
-#
 # [*database_connection*]
 #   (optional) Connection url to connect to nova database.
 #   Defaults to false
@@ -31,9 +19,10 @@
 #
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
-#     nova.openstack.common.rpc.impl_kombu (for rabbitmq)
-#     nova.openstack.common.rpc.impl_qpid  (for qpid)
-#   Defaults to 'nova.openstack.common.rpc.impl_kombu'
+#     rabbit (for rabbitmq)
+#     qpid (for qpid)
+#     zmq (for zeromq)
+#   Defaults to 'rabbit'
 #
 # [*image_service*]
 #   (optional) Service used to search for and retrieve images.
@@ -91,7 +80,7 @@
 #   (optional) SSL version to use (valid only if SSL enabled).
 #   Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #   available on some distributions.
-#   Defaults to 'SSLv3'
+#   Defaults to 'TLSv1'
 #
 # [*amqp_durable_queues*]
 #   (optional) Define queues as "durable" to rabbitmq.
@@ -132,10 +121,6 @@
 # [*service_down_time*]
 #   (optional) Maximum time since last check-in for up service.
 #   Defaults to 60
-#
-# [*logdir*]
-#   (optional) Deprecated. Use log_dir instead.
-#   Defaults to false
 #
 # [*log_dir*]
 #   (optional) Directory where logs should be stored.
@@ -196,28 +181,6 @@
 #   (optional) CA certificate file to use to verify connecting clients
 #   Defaults to false, not set_
 #
-# [*nova_user_id*]
-#   (optional) Create the nova user with the specified gid.
-#   Changing to a new uid after specifying a different uid previously,
-#   or using this option after the nova account already exists will break
-#   the ownership of all files/dirs owned by nova. It is strongly encouraged
-#   not to use this option and instead create user before nova class or
-#   for network shares create netgroup into which you'll put nova on all the
-#   nodes. If undef no user will be created and user creation will standardly
-#   happen in nova-common package.
-#   Defaults to undef.
-#
-# [*nova_group_id*]
-#   (optional) Create the nova user with the specified gid.
-#   Changing to a new uid after specifying a different uid previously,
-#   or using this option after the nova account already exists will break
-#   the ownership of all files/dirs owned by nova. It is strongly encouraged
-#   not to use this option and instead create group before nova class or for
-#   network shares create netgroup into which you'll put nova on all the
-#   nodes. If undef no user or group will be created and creation will
-#   happen in nova-common package.
-#   Defaults to undef.
-#
 # [*nova_public_key*]
 #   (optional) Install public key in .ssh/authorized_keys for the 'nova' user.
 #   Expects a hash of the form { type => 'key-type', key => 'key-data' } where
@@ -229,10 +192,6 @@
 #   for key type).  Expects a hash of the form { type => 'key-type', key =>
 #   'key-data' }, where 'key-type' is one of (ssh-rsa, ssh-dsa, ssh-ecdsa) and
 #   'key-data' is the contents of the private key file.
-#
-# [*nova_shell*]
-#   (optional) Set shell for 'nova' user to the specified value.
-#   Defaults to '/bin/false'.
 #
 # [*mysql_module*]
 #   (optional) Deprecated. Does nothing.
@@ -269,7 +228,7 @@ class nova(
   $ensure_package           = 'present',
   $database_connection      = false,
   $database_idle_timeout    = 3600,
-  $rpc_backend              = 'nova.openstack.common.rpc.impl_kombu',
+  $rpc_backend              = 'rabbit',
   $image_service            = 'nova.image.glance.GlanceImageService',
   # these glance params should be optional
   # this should probably just be configured as a glance client
@@ -286,7 +245,7 @@ class nova(
   $kombu_ssl_ca_certs       = undef,
   $kombu_ssl_certfile       = undef,
   $kombu_ssl_keyfile        = undef,
-  $kombu_ssl_version        = 'SSLv3',
+  $kombu_ssl_version        = 'TLSv1',
   $amqp_durable_queues      = false,
   $qpid_hostname            = 'localhost',
   $qpid_port                = '5672',
@@ -311,14 +270,8 @@ class nova(
   $ca_file                  = false,
   $cert_file                = false,
   $key_file                 = false,
-  $nova_user_id             = undef,
-  $nova_group_id            = undef,
   $nova_public_key          = undef,
   $nova_private_key         = undef,
-  $nova_shell               = '/bin/false',
-  # deprecated in folsom
-  #$root_helper = $::nova::params::root_helper,
-  $monitoring_notifications = false,
   $use_syslog               = false,
   $log_facility             = 'LOG_USER',
   $install_utilities        = true,
@@ -328,20 +281,14 @@ class nova(
   $notify_on_state_change   = undef,
   # DEPRECATED PARAMETERS
   $mysql_module             = undef,
-  # this is how to query all resources from our clutser
-  $nova_cluster_id          = undef,
-  $sql_connection           = false,
-  $sql_idle_timeout         = false,
-  $logdir                   = false,
   $os_region_name           = undef,
 ) inherits nova::params {
 
+  # maintain backward compatibility
+  include nova::db
+
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
-  }
-
-  if $nova_cluster_id {
-    warning('The nova_cluster_id parameter is deprecated and has no effect.')
   }
 
   validate_array($enabled_ssl_apis)
@@ -369,31 +316,6 @@ class nova(
   }
   if ($kombu_ssl_certfile and !$kombu_ssl_keyfile) or ($kombu_ssl_keyfile and !$kombu_ssl_certfile) {
     fail('The kombu_ssl_certfile and kombu_ssl_keyfile parameters must be used together')
-  }
-
-  if $nova_group_id {
-    warning('The nova_group_id will be deprecated, please create group manually')
-    group { 'nova':
-      ensure  => present,
-      system  => true,
-      gid     => $nova_group_id,
-      before  => Package['nova-common'],
-    }
-  }
-  if $nova_user_id {
-    warning('The nova_user_id will be deprecated, please create user manually')
-    user { 'nova':
-      ensure     => present,
-      system     => true,
-      groups     => 'nova',
-      home       => '/var/lib/nova',
-      managehome => false,
-      shell      => $nova_shell,
-      uid        => $nova_user_id,
-      gid        => $nova_group_id,
-      before     => Package['nova-common'],
-      require    => Group['nova'],
-    }
   }
 
   if $nova_public_key or $nova_private_key {
@@ -498,39 +420,6 @@ class nova(
     refreshonly => true,
   }
 
-  if $sql_connection {
-    warning('The sql_connection parameter is deprecated, use database_connection instead.')
-    $database_connection_real = $sql_connection
-  } else {
-    $database_connection_real = $database_connection
-  }
-
-  if $sql_idle_timeout {
-    warning('The sql_idle_timeout parameter is deprecated, use database_idle_timeout instead.')
-    $database_idle_timeout_real = $sql_idle_timeout
-  } else {
-    $database_idle_timeout_real = $database_idle_timeout
-  }
-
-  # both the database_connection and rabbit_host are things
-  # that may need to be collected from a remote host
-  if $database_connection_real {
-    if($database_connection_real =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
-      require 'mysql::bindings'
-      require 'mysql::bindings::python'
-    } elsif($database_connection_real =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
-
-    } elsif($database_connection_real =~ /sqlite:\/\//) {
-
-    } else {
-      fail("Invalid db connection ${database_connection_real}")
-    }
-    nova_config {
-      'database/connection':   value => $database_connection_real, secret => true;
-      'database/idle_timeout': value => $database_idle_timeout_real;
-    }
-  }
-
   nova_config { 'DEFAULT/image_service': value => $image_service }
 
   if $image_service == 'nova.image.glance.GlanceImageService' {
@@ -547,7 +436,9 @@ class nova(
     nova_config { 'DEFAULT/memcached_servers': ensure => absent }
   }
 
-  if $rpc_backend == 'nova.openstack.common.rpc.impl_kombu' {
+  # we keep "nova.openstack.common.rpc.impl_kombu" for backward compatibility
+  # but since Icehouse, "rabbit" is enough.
+  if $rpc_backend == 'nova.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
     # I may want to support exporting and collecting these
     nova_config {
       'DEFAULT/rabbit_password':     value => $rabbit_password, secret => true;
@@ -610,7 +501,9 @@ class nova(
     }
   }
 
-  if $rpc_backend == 'nova.openstack.common.rpc.impl_qpid' {
+  # we keep "nova.openstack.common.rpc.impl_qpid" for backward compatibility
+  # but since Icehouse, "qpid" is enough.
+  if $rpc_backend == 'nova.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
     nova_config {
       'DEFAULT/qpid_hostname':               value => $qpid_hostname;
       'DEFAULT/qpid_port':                   value => $qpid_port;
@@ -662,34 +555,22 @@ class nova(
     }
   }
 
-  if $logdir {
-    warning('The logdir parameter is deprecated, use log_dir instead.')
-    $log_dir_real = $logdir
-  } else {
-    $log_dir_real = $log_dir
-  }
-
-  if $log_dir_real {
-    file { $log_dir_real:
+  if $log_dir {
+    file { $log_dir:
       ensure  => directory,
       mode    => '0750',
       owner   => 'nova',
       group   => 'nova',
       require => Package['nova-common'],
     }
-    nova_config { 'DEFAULT/log_dir': value => $log_dir_real;}
+    nova_config { 'DEFAULT/log_dir': value => $log_dir;}
   } else {
     nova_config { 'DEFAULT/log_dir': ensure => absent;}
   }
 
-  if $monitoring_notifications {
-    warning('The monitoring_notifications parameter is deprecated, use notification_driver instead.')
-    $notification_driver_real = 'nova.openstack.common.notifier.rpc_notifier'
-  } else {
-    $notification_driver_real = is_string($notification_driver) ? {
-      true    => $notification_driver,
-      default => join($notification_driver, ',')
-    }
+  $notification_driver_real = is_string($notification_driver) ? {
+    true    => $notification_driver,
+    default => join($notification_driver, ',')
   }
 
   nova_config {
