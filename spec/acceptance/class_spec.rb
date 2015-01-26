@@ -16,6 +16,11 @@ describe 'opendaylight class' do
       apply_manifest(pp, :catch_changes  => true)
     end
 
+    describe file('/opt/opendaylight-0.2.1/etc/org.apache.karaf.features.cfg') do
+      it { should be_file }
+      it { should contain 'featuresBoot' }
+    end
+
     describe yumrepo('opendaylight') do
       it { should exist }
       it { should be_enabled }
