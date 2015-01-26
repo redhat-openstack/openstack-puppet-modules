@@ -1,6 +1,6 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
-def valid_os_tests()
+def supported_os_tests()
   # Confirm that module compiles
   it { should compile }
   it { should compile.with_all_deps }
@@ -39,3 +39,17 @@ def valid_os_tests()
   it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/opendaylight-0.2.1/etc/org.apache.karaf.features.cfg') }
 end
 
+
+def unsupported_os_tests(operatingsystem, operatingsystemmajrelease)
+  # Confirm that classes fail on unsupported OSs
+  it { expect { should contain_class('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_class('opendaylight::install') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_class('opendaylight::config') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_class('opendaylight::service') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+
+  # Confirm that other resources fail on unsupported OSs
+  it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+  it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+end
