@@ -137,7 +137,7 @@
 #   (optional) SSL version to use (valid only if SSL enabled).
 #   Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #   available on some distributions.
-#   Defaults to 'SSLv3'
+#   Defaults to 'TLSv1'
 #
 # [*kombu_reconnect_delay*]
 #   (optional) The amount of time to wait before attempting to reconnect
@@ -194,6 +194,16 @@
 #   If set to boolean false, it will not log to any directory
 #   Defaults to /var/log/neutron
 #
+# [*state_path*]
+#   (optional) Where to store state files. This directory must be writable
+#   by the user executing the agent
+#   Defaults to: /var/lib/neutron
+#
+# [*lock_path*]
+#   (optional) Where to store lock files. This directory must be writeable
+#   by the user executing the agent
+#   Defaults to: /var/lib/neutron/lock
+#
 class neutron (
   $enabled                     = true,
   $package_ensure              = 'present',
@@ -229,7 +239,7 @@ class neutron (
   $kombu_ssl_ca_certs          = undef,
   $kombu_ssl_certfile          = undef,
   $kombu_ssl_keyfile           = undef,
-  $kombu_ssl_version           = 'SSLv3',
+  $kombu_ssl_version           = 'TLSv1',
   $kombu_reconnect_delay       = '1.0',
   $qpid_hostname               = 'localhost',
   $qpid_port                   = '5672',
@@ -252,6 +262,8 @@ class neutron (
   $log_facility                = 'LOG_USER',
   $log_file                    = false,
   $log_dir                     = '/var/log/neutron',
+  $state_path                  = '/var/lib/neutron',
+  $lock_path                   = '/var/lib/neutron/lock',
 ) {
 
   include neutron::params
@@ -323,6 +335,8 @@ class neutron (
     'DEFAULT/control_exchange':        value => $control_exchange;
     'DEFAULT/rpc_backend':             value => $rpc_backend;
     'DEFAULT/api_extensions_path':     value => $api_extensions_path;
+    'DEFAULT/state_path':              value => $state_path;
+    'DEFAULT/lock_path':               value => $lock_path;
     'agent/root_helper':               value => $root_helper;
     'agent/report_interval':           value => $report_interval;
   }
