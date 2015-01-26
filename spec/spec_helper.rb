@@ -53,3 +53,17 @@ def unsupported_os_tests(operatingsystem, operatingsystemmajrelease)
   it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
   it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
 end
+
+def unsupported_os_family_tests(osfamily)
+  # Confirm that classes fail on unsupported OS families
+  it { expect { should contain_class('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_class('opendaylight::install') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_class('opendaylight::config') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_class('opendaylight::service') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+
+  # Confirm that other resources fail on unsupported OS families
+  it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+  it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+end
