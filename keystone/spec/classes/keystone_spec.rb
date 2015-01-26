@@ -177,6 +177,10 @@ describe 'keystone' do
     it 'should contain correct rabbit_password' do
       should contain_keystone_config('DEFAULT/rabbit_password').with_value(param_hash['rabbit_password']).with_secret(true)
     end
+
+    it 'should remove max_token_size param by default' do
+      should contain_keystone_config('DEFAULT/max_token_size').with_ensure('absent')
+    end
   end
 
   [default_params, override_params].each do |param_hash|
@@ -551,7 +555,7 @@ describe 'keystone' do
         :kombu_ssl_ca_certs => '/path/to/ssl/ca/certs',
         :kombu_ssl_certfile => '/path/to/ssl/cert/file',
         :kombu_ssl_keyfile  => '/path/to/ssl/keyfile',
-        :kombu_ssl_version  => 'SSLv3'
+        :kombu_ssl_version  => 'TLSv1'
       })
     end
 
@@ -560,7 +564,7 @@ describe 'keystone' do
       should contain_keystone_config('DEFAULT/kombu_ssl_ca_certs').with_value('/path/to/ssl/ca/certs')
       should contain_keystone_config('DEFAULT/kombu_ssl_certfile').with_value('/path/to/ssl/cert/file')
       should contain_keystone_config('DEFAULT/kombu_ssl_keyfile').with_value('/path/to/ssl/keyfile')
-      should contain_keystone_config('DEFAULT/kombu_ssl_version').with_value('SSLv3')
+      should contain_keystone_config('DEFAULT/kombu_ssl_version').with_value('TLSv1')
     end
   end
 
@@ -571,7 +575,7 @@ describe 'keystone' do
         :kombu_ssl_ca_certs => 'undef',
         :kombu_ssl_certfile => 'undef',
         :kombu_ssl_keyfile  => 'undef',
-        :kombu_ssl_version  => 'SSLv3'
+        :kombu_ssl_version  => 'TLSv1'
       })
     end
 
@@ -582,6 +586,14 @@ describe 'keystone' do
       should contain_keystone_config('DEFAULT/kombu_ssl_keyfile').with_ensure('absent')
       should contain_keystone_config('DEFAULT/kombu_ssl_version').with_ensure('absent')
     end
+  end
+
+  describe 'when configuring max_token_size' do
+    let :params do
+      default_params.merge({:max_token_size => '16384' })
+    end
+
+    it { should contain_keystone_config('DEFAULT/max_token_size').with_value(params[:max_token_size]) }
   end
 
   describe 'setting notification settings' do
@@ -691,6 +703,44 @@ describe 'keystone' do
 
       it { should contain_service('keystone').with(
         :provider => 'pacemaker'
+      )}
+    end
+  end
+
+  describe 'when configuring paste_deploy' do
+    describe 'with default paste config on Debian' do
+      let :params do
+        default_params
+      end
+
+      it { should contain_keystone_config('paste_deploy/config_file').with_ensure('absent')}
+    end
+
+    describe 'with default paste config on RedHat' do
+      let :facts do
+        global_facts.merge({
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '6.0'
+        })
+      end
+      let :params do
+        default_params
+      end
+
+      it { should contain_keystone_config('paste_deploy/config_file').with_value(
+          '/usr/share/keystone/keystone-dist-paste.ini'
+      )}
+    end
+
+    describe 'with overrided paste_deploy' do
+      let :params do
+        default_params.merge({
+          'paste_config'    => '/usr/share/keystone/keystone-paste.ini',
+        })
+      end
+
+      it { should contain_keystone_config('paste_deploy/config_file').with_value(
+          '/usr/share/keystone/keystone-paste.ini'
       )}
     end
   end

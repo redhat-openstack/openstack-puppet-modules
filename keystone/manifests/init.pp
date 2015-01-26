@@ -124,7 +124,7 @@
 #     (optional) SSL version to use (valid only if SSL enabled).
 #     Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #     available on some distributions.
-#     Defaults to 'SSLv3'
+#     Defaults to 'TLSv1'
 #
 #   [notification_driver] RPC driver. Not enabled by default
 #   [notification_topics] AMQP topics to publish to when using the RPC notification driver.
@@ -238,6 +238,16 @@
 #   Defaults to 'keystone'
 #   NOTE: validate_service only applies if the value is 'keystone'
 #
+#   [*paste_config*]
+#   (optional) Name of the paste configuration file that defines the
+#   available pipelines. (string value)
+#   Defaults to '/usr/share/keystone/keystone-dist-paste.ini' on RedHat and
+#   undef on other platforms.
+#
+#   [*max_token_size*]
+#     (optional) maximum allowable Keystone token size
+#     Defaults to undef
+#
 # == Dependencies
 #  None
 #
@@ -322,7 +332,7 @@ class keystone(
   $kombu_ssl_ca_certs     = undef,
   $kombu_ssl_certfile     = undef,
   $kombu_ssl_keyfile      = undef,
-  $kombu_ssl_version      = 'SSLv3',
+  $kombu_ssl_version      = 'TLSv1',
   $notification_driver    = false,
   $notification_topics    = false,
   $control_exchange       = false,
@@ -330,8 +340,10 @@ class keystone(
   $validate_insecure      = false,
   $validate_auth_url      = false,
   $validate_cacert        = undef,
+  $paste_config           = $::keystone::params::paste_config,
   $service_provider       = $::keystone::params::service_provider,
   $service_name           = 'keystone',
+  $max_token_size         = undef,
   # DEPRECATED PARAMETERS
   $mysql_module           = undef,
 ) inherits keystone::params {
@@ -372,6 +384,10 @@ class keystone(
   package { 'keystone':
     ensure => $package_ensure,
     name   => $::keystone::params::package_name,
+  }
+  # TODO: Move this to openstacklib::openstackclient in Kilo
+  package { 'python-openstackclient':
+    ensure => present,
   }
 
   group { 'keystone':
@@ -562,6 +578,12 @@ class keystone(
 
   keystone_config { 'token/provider': value => $token_provider }
 
+  if $max_token_size {
+    keystone_config { 'DEFAULT/max_token_size': value => $max_token_size }
+  } else {
+    keystone_config { 'DEFAULT/max_token_size': ensure => absent }
+  }
+
   if $notification_driver {
     keystone_config { 'DEFAULT/notification_driver': value => $notification_driver }
   } else {
@@ -684,6 +706,16 @@ class keystone(
         'DEFAULT/log_dir':  ensure => absent;
         'DEFAULT/log_file': ensure => absent;
       }
+    }
+  }
+
+  if $paste_config {
+    keystone_config {
+        'paste_deploy/config_file':   value => $paste_config;
+    }
+  } else {
+    keystone_config {
+        'paste_deploy/config_file':   ensure => absent;
     }
   }
 
