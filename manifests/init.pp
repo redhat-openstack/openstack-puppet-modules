@@ -3,14 +3,18 @@
 # OpenDaylight SDN Controller
 #
 # === Parameters
-#
+# TODO: Update these param docs
 # [*sample_parameter*]
 #   Explanation of what this parameter affects and what it defaults to.
 #
 class opendaylight (
-  $package_name = $::opendaylight::params::package_name,
-  $service_name = $::opendaylight::params::service_name,
+  $features = $::opendaylight::params::features,
 ) inherits ::opendaylight::params {
+
+  # Validate OS family
+  if $::osfamily != 'RedHat' {
+    fail("Unsupported OS family: ${::osfamily}")
+  }
 
   # Validate OS
   case $::operatingsystem {

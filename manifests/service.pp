@@ -4,11 +4,11 @@
 # It ensure the service is running.
 #
 class opendaylight::service {
-  service { $::opendaylight::service_name:
+  service { 'opendaylight':
     ensure     => running,
     enable     => true,
     hasstatus  => true,
-    # TODO: Confirm this is actuall supported by ODL service
+    # TODO: Confirm this is actually supported by ODL service
     hasrestart => true,
   }
 }

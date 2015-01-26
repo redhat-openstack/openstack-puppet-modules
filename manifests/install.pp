@@ -20,7 +20,7 @@ class opendaylight::install {
     before   => Package['opendaylight'],
   }
 
-  package { $::opendaylight::package_name:
+  package { 'opendaylight':
     ensure  => present,
     require => Yumrepo['opendaylight'],
   }
