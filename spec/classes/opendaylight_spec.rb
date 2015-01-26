@@ -56,7 +56,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all unsupported OSs
         # Note that this function is defined in spec_helper
-        unsupported_os_tests(operatingsystem, operatingsystemmajrelease)
+        unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
 
       end
     end
@@ -74,7 +74,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all unsupported OSs
         # Note that this function is defined in spec_helper
-        unsupported_os_tests(operatingsystem, operatingsystemmajrelease)
+        unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
 
       end
     end
@@ -86,9 +86,9 @@ describe 'opendaylight' do
           :osfamily => osfamily,
         }}
 
-        # Run shared tests applicable to all unsupported OS families
+        # Run shared tests applicable to all unsupported OSs
         # Note that this function is defined in spec_helper
-        unsupported_os_family_tests(osfamily)
+        unsupported_os_tests("Unsupported OS family: #{osfamily}")
 
       end
     end
