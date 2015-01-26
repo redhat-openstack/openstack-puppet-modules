@@ -36,6 +36,7 @@ describe 'opendaylight' do
         it { should contain_service('opendaylight') }
         it { should contain_yumrepo('opendaylight') }
         it { should contain_package('opendaylight') }
+        it { should contain_file('org.apache.karaf.features.cfg') }
 
         # Confirm relationships between other resources
         it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
@@ -47,6 +48,7 @@ describe 'opendaylight' do
         it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
         it { should contain_package('opendaylight').with_ensure('present') }
         it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
+        it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/etc/org.apache.karaf.features.cfg') }
       end
     end
     ['7'].each do |operatingsystemmajrelease|
@@ -82,6 +84,7 @@ describe 'opendaylight' do
         it { should contain_service('opendaylight') }
         it { should contain_yumrepo('opendaylight') }
         it { should contain_package('opendaylight') }
+        it { should contain_file('org.apache.karaf.features.cfg') }
 
         # Confirm relationships between other resources
         it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
@@ -93,6 +96,7 @@ describe 'opendaylight' do
         it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/') }
         it { should contain_package('opendaylight').with_ensure('present') }
         it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
+        it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/etc/org.apache.karaf.features.cfg') }
       end
     end
   end
@@ -119,6 +123,7 @@ describe 'opendaylight' do
         it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
         it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
         it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+        it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
       end
     end
 
@@ -143,6 +148,7 @@ describe 'opendaylight' do
         it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
         it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
         it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
+        it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}/) }
       end
     end
 
@@ -163,6 +169,7 @@ describe 'opendaylight' do
         it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
         it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
         it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
+        it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /Unsupported OS family: #{osfamily}/) }
       end
     end
   end
