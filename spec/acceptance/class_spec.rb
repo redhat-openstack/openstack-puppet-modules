@@ -16,8 +16,20 @@ describe 'opendaylight class' do
       apply_manifest(pp, :catch_changes  => true)
     end
 
+    # TODO: It'd be nice to do this independently of install dir name
+    describe file('/opt/opendaylight-0.2.1/') do
+      it { should be_directory }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      it { should be_mode '775' }
+    end
+
+    # TODO: It'd be nice to do this independently of install dir name
     describe file('/opt/opendaylight-0.2.1/etc/org.apache.karaf.features.cfg') do
       it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      it { should be_mode '775' }
       it { should contain 'featuresBoot' }
     end
 
