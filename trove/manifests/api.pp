@@ -183,6 +183,7 @@ class trove::api(
     'DEFAULT/nova_proxy_admin_user':        value => $::trove::nova_proxy_admin_user;
     'DEFAULT/nova_proxy_admin_pass':        value => $::trove::nova_proxy_admin_pass;
     'DEFAULT/nova_proxy_admin_tenant_name': value => $::trove::nova_proxy_admin_tenant_name;
+    'DEFAULT/control_exchange':             value => $::trove::control_exchange;
   }
 
   if $auth_url {
@@ -192,13 +193,13 @@ class trove::api(
   }
 
   # auth config
-  trove_api_paste_ini {
-    'filter:authtoken/auth_host':         value => $auth_host;
-    'filter:authtoken/auth_port':         value => $auth_port;
-    'filter:authtoken/auth_protocol':     value => $auth_protocol;
-    'filter:authtoken/admin_tenant_name': value => $keystone_tenant;
-    'filter:authtoken/admin_user'       : value => $keystone_user;
-    'filter:authtoken/admin_password'   : value => $keystone_password;
+  trove_config {
+    'keystone_authtoken/auth_host':         value => $auth_host;
+    'keystone_authtoken/auth_port':         value => $auth_port;
+    'keystone_authtoken/auth_protocol':     value => $auth_protocol;
+    'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
+    'keystone_authtoken/admin_user':        value => $keystone_user;
+    'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
   }
 
   # SSL Options

@@ -183,7 +183,7 @@ mod 'timezone',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
 mod 'trove',
-  :commit => '2ef93e8e90978915d166ed21fd53dab67f820fe7',
+  :commit => 'c345e128c7fec585acf00b5a275a78cd1ae89f03',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'vcsrepo',
