@@ -2,11 +2,12 @@
   "name": "dfarrell07-opendaylight",
   "version": "0.0.1",
   "author": "Daniel Farrell",
-  "summary": "Puppet module to deploy OpenDaylight SDN controller",
+  "summary": "Puppet module to deploy the OpenDaylight SDN controller",
   "license": "BSD-2-Clause",
   "source": "https://github.com/dfarrell07/puppet-opendaylight",
   "project_page": "https://github.com/dfarrell07/puppet-opendaylight",
   "issues_url": "https://github.com/dfarrell07/puppet-opendaylight/issues",
+  "tags": ["OpenDaylight", "ODL", "SDN", "networking", "controller"],
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
@@ -16,15 +17,21 @@
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
-      "operatingsystemrelease": [ "7.0" ]
+      "operatingsystemrelease": [ "7" ]
     },
     {
       "operatingsystem": "CentOS",
-      "operatingsystemrelease": [ "7.0" ]
+      "operatingsystemrelease": [ "7" ]
     },
     {
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [ "20", "21" ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">=2.7.0 <4.0.0"
     }
   ]
 }
