@@ -79,7 +79,7 @@ mod 'concat',
   :ref => 'ab06c2b8c09d9da82b53a62a5389427720519cd5'
 mod 'corosync',
   :git => 'git://github.com/enovance/puppetlabs-corosync.git',
-  :ref => '68a061a6b9a3eaa026744dbae7e324a62dcde429'
+  :ref => '7bbdcd8c57beab6ba24b06ef5aaee2462f8d3d24'
 mod 'dnsclient',
   :git => 'git://github.com/enovance/puppet-module-dnsclient.git',
   :ref => '4158b30f4660623f98dcdbd1ce9b482556180b57'
