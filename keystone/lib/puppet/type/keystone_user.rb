@@ -1,14 +1,9 @@
+# LP#1408531
+File.expand_path('../..', File.dirname(__FILE__)).tap { |dir| $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include?(dir) }
+require 'puppet/util/openstack'
 Puppet::Type.newtype(:keystone_user) do
 
-  desc <<-EOT
-    This is currently used to model the creation of
-    keystone users.
-
-    It currently requires that both the password
-    as well as the tenant are specified.
-  EOT
-
-# TODO support description??
+  desc 'Type for managing keystone users.'
 
   ensurable
 
@@ -16,16 +11,19 @@ Puppet::Type.newtype(:keystone_user) do
     newvalues(/\S+/)
   end
 
-  newparam(:ignore_default_tenant, :boolean => true) do
-    newvalues(:true, :false)
-    defaultto false
+  newparam(:ignore_default_tenant) do
+    newvalues(/(t|T)rue/, /(f|F)alse/, true, false)
+    defaultto(false)
+    munge do |value|
+      value.to_s.downcase.to_sym
+    end
   end
 
   newproperty(:enabled) do
-    newvalues(/(t|T)rue/, /(f|F)alse/)
-    defaultto('True')
+    newvalues(/(t|T)rue/, /(f|F)alse/, true, false)
+    defaultto(true)
     munge do |value|
-      value.to_s.capitalize
+      value.to_s.downcase.to_sym
     end
   end
 
@@ -71,4 +69,9 @@ Puppet::Type.newtype(:keystone_user) do
     ['keystone']
   end
 
+  auth_param_doc=<<EOT
+If no other credentials are present, the provider will search in
+/etc/keystone/keystone.conf for an admin token and auth url.
+EOT
+  Puppet::Util::Openstack.add_openstack_type_methods(self, auth_param_doc)
 end

@@ -144,6 +144,7 @@ class cinder::api (
     Package['cinder-api'] -> Cinder_config<||>
     Package['cinder-api'] -> Cinder_api_paste_ini<||>
     Package['cinder-api'] -> Service['cinder-api']
+    Package['cinder-api'] ~> Exec<| title == 'cinder-manage db_sync' |>
     package { 'cinder-api':
       ensure => $package_ensure,
       name   => $::cinder::params::api_package,
@@ -151,7 +152,6 @@ class cinder::api (
   }
 
   if $enabled {
-
     Cinder_config<||> ~> Exec['cinder-manage db_sync']
 
     exec { 'cinder-manage db_sync':
@@ -160,7 +160,8 @@ class cinder::api (
       user        => 'cinder',
       refreshonly => true,
       logoutput   => 'on_failure',
-      require     => Package['cinder'],
+      subscribe   => Package['cinder'],
+      before      => Service['cinder-api'],
     }
     if $manage_service {
       $ensure = 'running'

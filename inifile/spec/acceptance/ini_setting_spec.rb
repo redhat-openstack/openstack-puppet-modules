@@ -72,13 +72,7 @@ describe 'ini_setting resource' do
         apply_manifest(pp, :catch_changes => true)
       end
 
-      describe file("#{tmpdir}/ini_setting.ini") do
-        it { should be_file }
-        #XXX Solaris 10 doesn't support multi-line grep
-        it("should contain four = five\n[one]\ntwo = three", :unless => fact('osfamily') == 'Solaris') {
-          should contain("four = five\n[one]\ntwo = three")
-        }
-      end
+      it_behaves_like 'has_content', "#{tmpdir}/ini_setting.ini", pp, "four = five\n[one]\ntwo = three"
     end
 
     context '=> absent for key/value' do
@@ -109,40 +103,6 @@ describe 'ini_setting resource' do
         it { should be_file }
         it { should contain('four = five') }
         it { should contain('[one]') }
-        it { should_not contain('two = three') }
-      end
-    end
-
-    context '=> absent for section', :pending => "cannot ensure absent on a section"  do
-      before :all do
-        if fact('osfamily') == 'Darwin'
-          shell("echo \"four = five\n[one]\ntwo = three\" > #{tmpdir}/ini_setting.ini")
-        else
-          shell("echo -e \"four = five\n[one]\ntwo = three\" > #{tmpdir}/ini_setting.ini")
-        end
-      end
-      after :all do
-        shell("cat #{tmpdir}/ini_setting.ini", :acceptable_exit_codes => [0,1,2])
-        shell("rm #{tmpdir}/ini_setting.ini", :acceptable_exit_codes => [0,1,2])
-      end
-
-      pp = <<-EOS
-      ini_setting { 'ensure => absent for section':
-        ensure  => absent,
-        path    => "#{tmpdir}/ini_setting.ini",
-        section => 'one',
-      }
-      EOS
-
-      it 'applies the manifest twice' do
-        apply_manifest(pp, :catch_failures => true)
-        apply_manifest(pp, :catch_changes  => true)
-      end
-
-      describe file("#{tmpdir}/ini_setting.ini") do
-        it { should be_file }
-        it { should contain('four = five') }
-        it { should_not contain('[one]') }
         it { should_not contain('two = three') }
       end
     end
@@ -280,28 +240,6 @@ describe 'ini_setting resource' do
         EOS
 
         it_behaves_like 'has_content', "#{tmpdir}/key_val_separator.ini", pp, content
-      end
-    end
-
-    {
-      "key_val_separator => '',"      => /must contain exactly one/,
-      "key_val_separator => ',',"     => /must contain exactly one/,
-      "key_val_separator => '   ',"   => /must contain exactly one/,
-      "key_val_separator => ' ==  '," => /must contain exactly one/,
-    }.each do |parameter, error|
-      context "with \"#{parameter}\" raises \"#{error}\"" do
-        pp = <<-EOS
-        ini_setting { "with #{parameter} raises #{error}":
-          ensure  => present,
-          section => 'one',
-          setting => 'two',
-          value   => 'three',
-          path    => "#{tmpdir}/key_val_separator.ini",
-          #{parameter}
-        }
-        EOS
-
-        it_behaves_like 'has_error', "#{tmpdir}/key_val_separator.ini", pp, error
       end
     end
   end
