@@ -18,17 +18,21 @@ class zookeeper::os::redhat(
   # if $install_java, try to make sure a JDK package is installed
   if ($install_java){
     if !$java_package {
-      fail { "Java installation is required, but no java package was provided.": }
+      fail { 'Java installation is required, but no java package was provided.': }
     }
 
     validate_string($java_package)
 
     # make sure the Java package is only installed once.
-    anchor { 'zookeeper::install::package::begin': }
-    ensure_resource('package', $java_package, {'ensure' => $ensure, 'allow_virtual' => true})
-    anchor { 'zookeeper::install::package::end': }
+    anchor { 'zookeeper::os::redhat::java': }
+    ensure_resource('package', $java_package,
+      {'ensure' => $ensure, 'allow_virtual' => true,
+      'before' => Anchor['zookeeper::os::redhat::java']}
+    )
 
-    ensure_resource('package', $packages, {'ensure' => $ensure, 'require' => Anchor['zookeeper::install::package::end']})
+    ensure_resource('package', $packages,
+      {'ensure' => $ensure, 'require' => Anchor['zookeeper::os::redhat::java']}
+    )
   } else {
     # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
     ensure_resource('package', $packages, {'ensure' => $ensure})
