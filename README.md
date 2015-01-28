@@ -84,6 +84,20 @@ class { 'zookeeper':
 }
 ```
 
+
+## Java installation
+
+Default: `false`
+
+By changing these two parameters you can ensure, that given Java package will be installed before ZooKeeper packages.
+
+```puppet
+class { 'zookeeper':
+  install_java => true,
+  java_package => 'openjdk-7-jre-headless'
+}
+```
+
 ## Install
 
 ### librarian (recommended)

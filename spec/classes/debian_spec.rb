@@ -81,7 +81,6 @@ describe 'zookeeper::os::debian', :type => :class do
       }
       it { should_not contain_package('cron') }
     end
-
   end
 
   context 'on debian-like system' do
@@ -115,6 +114,26 @@ describe 'zookeeper::os::debian', :type => :class do
         'minute'      => '42',
       })
     end
+  end
+
+  context 'with java installation' do
+    let(:facts) {{
+      :operatingsystem => 'Ubuntu',
+      :osfamily => 'Debian',
+      :lsbdistcodename => 'trusty',
+    }}
+
+    let(:params) { {
+      :install_java => true,
+      :java_package => 'openjdk-7-jre-headless',
+    } }
+
+    it { should contain_package('openjdk-7-jre-headless').with({
+      'ensure'  => 'present',
+      }) }
+    it { should contain_package('zookeeper').with({
+      'ensure'  => 'present',
+      }) }
   end
 
 end

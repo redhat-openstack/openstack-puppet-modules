@@ -10,11 +10,35 @@ class zookeeper::os::debian(
   $ensure_cron       = true,
   # cloudera package is called zookeeper-server
   $service_package   = 'zookeeperd',
-  $packages          = ['zookeeper']
+  $packages          = ['zookeeper'],
+  $install_java      = false,
+  $java_package      = undef
 ) {
 
-  # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
-  ensure_resource('package', $packages, {'ensure' => $ensure})
+  validate_bool($install_java)
+
+  # if $install_java, try to make sure a JDK package is installed
+  if ($install_java){
+    if !$java_package {
+      fail { 'Java installation is required, but no java package was provided.': }
+    }
+
+    validate_string($java_package)
+
+    # make sure the Java package is only installed once.
+    anchor { 'zookeeper::os::debian::java': }
+    ensure_resource('package', $java_package,
+      {'ensure' => $ensure, 'allow_virtual' => true,
+      'before' => Anchor['zookeeper::os::debian::java']}
+    )
+
+    ensure_resource('package', $packages,
+      {'ensure' => $ensure, 'require' => Anchor['zookeeper::os::debian::java']}
+    )
+  } else {
+    # allow installing multiple packages, like zookeeper, zookeeper-bin etc.
+    ensure_resource('package', $packages, {'ensure' => $ensure})
+  }
 
   if ($start_with == 'init.d') {
     package { [$service_package]: #init.d scripts for zookeeper
