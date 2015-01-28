@@ -74,6 +74,16 @@ class { 'zookeeper':
 }
 ```
 
+### Managing repository
+
+For RedHat family curretly we support also managing an yum repo. It can be enabled with `repo` parameter:
+
+```puppet
+class { 'zookeeper':
+  repo => 'cloudera'
+}
+```
+
 ## Install
 
 ### librarian (recommended)
