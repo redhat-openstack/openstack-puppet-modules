@@ -183,7 +183,7 @@ mod 'sensu',
   :ref => '4a16ebf3503bfc9ae6192ae3120cb29b9e5c8445'
 mod 'ssh',
   :git => 'git://github.com/enovance/puppet-ssh.git',
-  :ref => '10675c0d80511a8cdd514af67b695887fa97ec40'
+  :ref => '3906425ff06bcabc4d677a3f01372d8a26f93e94'
 mod 'rsyslog',
   :git => 'git://github.com/enovance/puppet-rsyslog.git',
   :ref => '67c7c501b916ebd1a27a8a218d49602339526c4f'
