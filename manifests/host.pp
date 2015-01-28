@@ -1,6 +1,6 @@
 # zookeeper host
 
-define zookeeper::host($hostname = $title, $id, $client_ip, $election_port, $leader_port) {
+define zookeeper::host($id, $client_ip, $election_port, $leader_port, $hostname = $title) {
   datacat_fragment { $hostname:
         target => '/etc/zookeeper/conf/quorum.conf',
         data   => {
