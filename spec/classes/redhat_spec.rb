@@ -68,6 +68,22 @@ describe 'zookeeper::os::redhat', :type => :class do
       it { should_not contain_package('cron') }
     end
 
+    context 'with java installation' do
+      let(:user) { 'zookeeper' }
+      let(:group) { 'zookeeper' }
+
+      let(:params) { {
+        :install_java => true,
+        :java_package => 'java-1.7.0-openjdk',
+      } }
+
+      it { should contain_package('java-1.7.0-openjdk').with({
+        'ensure'  => 'present',
+        }) }
+      it { should contain_package('zookeeper').with({
+        'ensure'  => 'present',
+        }) }
+    end
   end
 
   context 'on RedHat-like system' do
