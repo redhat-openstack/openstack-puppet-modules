@@ -20,6 +20,8 @@ class zookeeper::install(
   $service_package   = 'zookeeperd',
   $packages          = ['zookeeper'],
   $repo_source       = undef,
+  $install_java      = false,
+  $java_package      = undef
 ) {
   anchor { 'zookeeper::install::begin': }
   anchor { 'zookeeper::install::end': }
@@ -56,6 +58,8 @@ class zookeeper::install(
         packages          => $packages,
         require           => Anchor['zookeeper::install::begin'],
         before            => Anchor['zookeeper::install::end'],
+        install_java      => $install_java,
+        java_package      => $java_package
       }
     }
     default: {
