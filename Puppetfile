@@ -46,7 +46,7 @@ mod 'nova',
   :ref => '2a5c1eac6b34ea29bbd3e28d7ee56839f10d83d9'
 mod 'swift',
   :git => 'git://github.com/enovance/puppet-swift.git',
-  :ref => '68a9e8eecba4a280ea1ec18fba67069a8c7dfce4'
+  :ref => '499386a89d2b5059445c887ff383655610f3fcb9'
 mod 'tempest',
   :git => 'git://github.com/enovance/puppet-tempest.git',
   :ref => 'f5e87cad5de119bd483006f06efcd22a34d8bdc4'
