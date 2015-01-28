@@ -25,7 +25,7 @@ class zookeeper::os::debian(
 
   # since ZooKeeper 3.4 there's no need for purging snapshots with cron
   case $::operatingsystem {
-    Debian: {
+    'Debian': {
       case $::lsbdistcodename {
         'wheezy', 'squeeze': { # 3.3.5
           $manual_clean = true
@@ -35,7 +35,7 @@ class zookeeper::os::debian(
         }
       }
     }
-    Ubuntu: {
+    'Ubuntu': {
       case $::lsbdistcodename {
         'precise': { # 3.3.5
           $manual_clean = true
