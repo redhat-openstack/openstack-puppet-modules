@@ -90,6 +90,12 @@ class zookeeper::config(
     notify  => Class['zookeeper::service'],
   }
 
+  file { "${datastore}/myid":
+    ensure  => 'link',
+    target  => "${cfg_dir}/myid",
+    require => File["${cfg_dir}/myid"]
+  }
+
   file { "${cfg_dir}/zoo.cfg":
     owner   => $user,
     group   => $group,

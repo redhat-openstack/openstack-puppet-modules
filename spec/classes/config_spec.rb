@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'zookeeper::config', :type => :class do
 
+  let(:facts) {{
+    :operatingsystem => 'Debian',
+    :osfamily => 'Debian',
+    :lsbdistcodename => 'wheezy',
+  }}
+
   shared_examples 'common' do |os, codename|
     let(:facts) {{
       :operatingsystem => os,
@@ -145,6 +151,16 @@ describe 'zookeeper::config', :type => :class do
     let(:myid)    { /2/ }
 
     it_behaves_like 'common', 'Debian', 'wheezy'
+  end
+
+  context 'myid link' do
+
+    it { should contain_file(
+      '/var/lib/zookeeper/myid'
+    ).with({
+      'ensure' => 'link',
+      'target' => '/etc/zookeeper/conf/myid',
+    })}
   end
 
 end
