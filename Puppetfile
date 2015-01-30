@@ -139,7 +139,7 @@ mod 'memcached',
   :ref => 'd009260de3c7623003318555ec5ca61217ea3ca1'
 mod 'mongodb',
   :git => 'git://github.com/enovance/puppetlabs-mongodb.git',
-  :ref => 'fc5cb212f19d52a308c633d5075bc55f5a96b9da'
+  :ref => '5f72aff22be51498aa253ac7139c165007a94cb7'
 mod 'mysql',
   :git => 'git://github.com/enovance/puppetlabs-mysql.git',
   :ref => '8b814d4d2cb5786a15e8e37fb3b7444d5d5f0d3f'
