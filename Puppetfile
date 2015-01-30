@@ -159,7 +159,7 @@ mod 'postgresql',
   :ref => '0b483a2796e77d670e326a01fce57465d2c08774'
 mod 'puppetdb',
   :git => 'git://github.com/enovance/puppetlabs-puppetdb.git',
-  :ref => 'ed6579b6eaf2c98c8220c41990850949e48b86b4'
+  :ref => '0744ed4dd4e1d104c66cd414b68c6aa770f9ddcc'
 mod 'puppetdbquery',
   :git => 'git://github.com/enovance/puppet-puppetdbquery.git',
   :ref =>  '89194917744f929bb600c31d7d6f822b529f5f03'
