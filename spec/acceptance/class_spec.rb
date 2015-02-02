@@ -17,7 +17,7 @@ describe 'opendaylight class' do
     end
 
     # TODO: It'd be nice to do this independently of install dir name
-    describe file('/opt/opendaylight-0.2.1/') do
+    describe file('/opt/opendaylight-0.2.2/') do
       it { should be_directory }
       it { should be_owned_by 'odl' }
       it { should be_grouped_into 'odl' }
@@ -25,7 +25,7 @@ describe 'opendaylight class' do
     end
 
     # TODO: It'd be nice to do this independently of install dir name
-    describe file('/opt/opendaylight-0.2.1/etc/org.apache.karaf.features.cfg') do
+    describe file('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') do
       it { should be_file }
       it { should be_owned_by 'odl' }
       it { should be_grouped_into 'odl' }
@@ -53,15 +53,23 @@ describe 'opendaylight class' do
       it { should be_running }
     end
 
+    # TODO: It'd be nice to do this independently of install dir name
     describe user('odl') do
       it { should exist }
       it { should belong_to_group 'odl' }
-      it { should have_home_directory '/opt/opendaylight-0.2.1' }
+      it { should have_home_directory '/opt/opendaylight-0.2.2' }
     end
 
     describe file('/home/odl') do
       # Home dir shouldn't be created for odl user
       it { should_not be_directory }
+    end
+
+    describe file('/usr/lib/systemd/system/opendaylight.service') do
+      it { should be_file }
+      it { should be_owned_by 'root' }
+      it { should be_grouped_into 'root' }
+      it { should be_mode '644' }
     end
   end
 end

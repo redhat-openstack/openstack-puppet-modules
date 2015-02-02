@@ -7,7 +7,7 @@ class opendaylight::config {
   # Updated ODL versions will break it, as will changes to the file upstream.
   file { 'org.apache.karaf.features.cfg':
     ensure  => file,
-    path    => '/opt/opendaylight-0.2.1/etc/org.apache.karaf.features.cfg',
+    path    => '/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg',
     content => template('opendaylight/org.apache.karaf.features.cfg.erb'),
   }
 }
