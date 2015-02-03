@@ -5,21 +5,22 @@ describe 'opendaylight' do
     osfamily = 'RedHat'
     ['20', '21'].each do |operatingsystemmajrelease|
       operatingsystem = 'Fedora'
+      # This is the Fedora Yum repo URL
+      yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/'
       describe "opendaylight class on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
+        # Facts that are shared by both with- and without-param tests
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :operatingsystemmajrelease => operatingsystemmajrelease,
         }}
+
         describe "without any params" do
           let(:params) {{ }}
 
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          supported_os_tests
-
-          # The yum repo URLs for Fedora and CentOS are different, so check here
-          it { should contain_yumrepo('opendaylight').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
+          supported_os_tests yum_repo
         end
 
         describe "with params" do
@@ -28,15 +29,17 @@ describe 'opendaylight' do
           let(:params) {{
             :features => features,
           }}
+
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          supported_os_tests features
+          supported_os_tests(yum_repo, features)
         end
-
       end
     end
     ['7'].each do |operatingsystemmajrelease|
       operatingsystem = 'CentOS'
+      # This is the CentOS 7 Yum repo URL
+      yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
         let(:params) {{ }}
         let(:facts) {{
@@ -47,10 +50,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all supported OSs
         # Note that this function is defined in spec_helper
-        supported_os_tests
-
-        # The yum repo URLs for Fedora and CentOS are different, so check here
-        it { should contain_yumrepo('opendaylight').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/') }
+        supported_os_tests yum_repo
       end
     end
   end
