@@ -5,20 +5,33 @@ describe 'opendaylight' do
     osfamily = 'RedHat'
     ['20', '21'].each do |operatingsystemmajrelease|
       operatingsystem = 'Fedora'
-      describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
-        let(:params) {{ }}
+      describe "opendaylight class on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :operatingsystemmajrelease => operatingsystemmajrelease,
         }}
+        describe "without any params" do
+          let(:params) {{ }}
 
-        # Run shared tests applicable to all supported OSs
-        # Note that this function is defined in spec_helper
-        supported_os_tests
+          # Run shared tests applicable to all supported OSs
+          # Note that this function is defined in spec_helper
+          supported_os_tests
 
-        # The yum repo URLs for Fedora and CentOS are different, so check here
-        it { should contain_yumrepo('opendaylight').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
+          # The yum repo URLs for Fedora and CentOS are different, so check here
+          it { should contain_yumrepo('opendaylight').with_baseurl('https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/') }
+        end
+
+        describe "with params" do
+          # These are real but arbitrarily chosen features
+          features = ["odl-base-all", "odl-ovsdb-all"]
+          let(:params) {{
+            :features => features,
+          }}
+          # Run shared tests applicable to all supported OSs
+          # Note that this function is defined in spec_helper
+          supported_os_tests features
+        end
 
       end
     end

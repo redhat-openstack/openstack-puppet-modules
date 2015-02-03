@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
 # Shared tests for supported OSs
-def supported_os_tests()
+def supported_os_tests(features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
   # Confirm that module compiles
   it { should compile }
   it { should compile.with_all_deps }
@@ -37,7 +37,7 @@ def supported_os_tests()
   it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller') }
   it { should contain_package('opendaylight').with_ensure('present') }
   it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
-  it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') }
+  it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg').with_content(/^featuresBoot=#{features.join(",")}/) }
 end
 
 # Shared tests for unsupported OSs
