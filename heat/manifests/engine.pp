@@ -40,17 +40,6 @@
 #   Can be "password" or "trusts".
 #   Defaults to 'trusts'
 #
-# === Deprecated Parameters
-#
-# [*trusts_delegated_roles*]
-#   (optional) Array of trustor roles to be delegated to heat.
-#   Defaults to ['heat_stack_owner']
-#   Deprecated: Moved to heat::keystone::auth, will be removed in a future release.
-#
-# [*configure_delegated_roles*]
-#   (optional) Whether to configure the delegated roles.
-#   Defaults to true
-#   Deprecated: Moved to heat::keystone::auth, will be removed in a future release.
 #
 class heat::engine (
   $auth_encryption_key,
@@ -62,8 +51,6 @@ class heat::engine (
   $heat_watch_server_url         = 'http://127.0.0.1:8003',
   $engine_life_check_timeout     = '2',
   $deferred_auth_method          = 'trusts',
-  $trusts_delegated_roles        = ['heat_stack_owner'],  #DEPRECATED
-  $configure_delegated_roles     = true,                  #DEPRECATED
 ) {
 
   include heat::params
@@ -111,7 +98,5 @@ class heat::engine (
     'DEFAULT/heat_waitcondition_server_url': value => $heat_waitcondition_server_url;
     'DEFAULT/heat_watch_server_url'        : value => $heat_watch_server_url;
     'DEFAULT/engine_life_check_timeout'    : value => $engine_life_check_timeout;
-    'DEFAULT/trusts_delegated_roles'       : value => $trusts_delegated_roles;
-    'DEFAULT/deferred_auth_method'         : value => $deferred_auth_method;
   }
 }
