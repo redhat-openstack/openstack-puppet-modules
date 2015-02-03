@@ -118,7 +118,7 @@ mod 'keepalived',
   :ref => 'eb345b6d3b25106cbe166028f2b8dd9974a10230'
 mod 'kibana3',
   :git => 'git://github.com/enovance/kibana3.git',
-  :ref => 'b07fef273c965ae53c1a096bed1348c4b91b1c93'
+  :ref => 'd6cc4ca101996f454e484bcd4a3940066ceea1f7'
 mod 'vcsrepo',
   :git => 'git://github.com/enovance/puppetlabs-vcsrepo.git',
   :ref => '4592bfd59cd5d4795069798a14b483e16c98c1ff'
