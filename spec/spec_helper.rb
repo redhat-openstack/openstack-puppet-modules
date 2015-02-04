@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
 # Shared tests for supported OSs
-def supported_os_tests(yum_repo, features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
+def supported_os_tests(yum_repo, features)
   # Confirm that module compiles
   it { should compile }
   it { should compile.with_all_deps }

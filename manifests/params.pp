@@ -4,5 +4,6 @@
 # It sets variables according to platform.
 #
 class opendaylight::params {
-  $features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+  $default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+  $extra_features = []
 }

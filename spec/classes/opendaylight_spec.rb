@@ -8,31 +8,63 @@ describe 'opendaylight' do
       # This is the Fedora Yum repo URL
       yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/'
       describe "opendaylight class on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
-        # Facts that are shared by both with- and without-param tests
+        # Facts that are shared by all Fedora tests
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :operatingsystemmajrelease => operatingsystemmajrelease,
         }}
 
-        describe "without any params" do
-          let(:params) {{ }}
+        describe "using default features" do
+          # NB: This list should be the same as the one in opendaylight::params
+          default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+          describe "and not passing extra features" do
+            #extra_features = []
+            let(:params) {{ }}
 
-          # Run shared tests applicable to all supported OSs
-          # Note that this function is defined in spec_helper
-          supported_os_tests yum_repo
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features)
+          end
+
+          describe "and passing extra features" do
+            # These are real but arbitrarily chosen features
+            extra_features = ["odl-base-all", "odl-ovsdb-all"]
+            let(:params) {{
+              :extra_features => extra_features,
+            }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features + extra_features)
+          end
         end
 
-        describe "with params" do
-          # These are real but arbitrarily chosen features
-          features = ["odl-base-all", "odl-ovsdb-all"]
-          let(:params) {{
-            :features => features,
-          }}
+        describe "overriding default features" do
+          default_features = ["standard", "ssh"]
+          describe "and not passing extra features" do
+            extra_features = []
+            let(:params) {{
+              :default_features => default_features,
+            }}
 
-          # Run shared tests applicable to all supported OSs
-          # Note that this function is defined in spec_helper
-          supported_os_tests(yum_repo, features)
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features)
+          end
+
+          describe "and passing extra features" do
+            # These are real but arbitrarily chosen features
+            extra_features = ["odl-base-all", "odl-ovsdb-all"]
+            let(:params) {{
+              :default_features => default_features,
+              :extra_features => extra_features,
+            }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features + extra_features)
+          end
         end
       end
     end
@@ -41,16 +73,64 @@ describe 'opendaylight' do
       # This is the CentOS 7 Yum repo URL
       yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
       describe "opendaylight class without any params on #{osfamily}:#{operatingsystem} #{operatingsystemmajrelease}" do
-        let(:params) {{ }}
+        # Facts that are shared by all Fedora tests
         let(:facts) {{
           :osfamily => osfamily,
           :operatingsystem => operatingsystem,
           :operatingsystemmajrelease => operatingsystemmajrelease,
         }}
 
-        # Run shared tests applicable to all supported OSs
-        # Note that this function is defined in spec_helper
-        supported_os_tests yum_repo
+        describe "using default features" do
+          # NB: This list should be the same as the one in opendaylight::params
+          default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+          describe "and not passing extra features" do
+            #extra_features = []
+            let(:params) {{ }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features)
+          end
+
+          describe "and passing extra features" do
+            # These are real but arbitrarily chosen features
+            extra_features = ["odl-base-all", "odl-ovsdb-all"]
+            let(:params) {{
+              :extra_features => extra_features,
+            }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features + extra_features)
+          end
+        end
+
+        describe "overriding default features" do
+          default_features = ["standard", "ssh"]
+          describe "and not passing extra features" do
+            extra_features = []
+            let(:params) {{
+              :default_features => default_features,
+            }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features)
+          end
+
+          describe "and passing extra features" do
+            # These are real but arbitrarily chosen features
+            extra_features = ["odl-base-all", "odl-ovsdb-all"]
+            let(:params) {{
+              :default_features => default_features,
+              :extra_features => extra_features,
+            }}
+
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            supported_os_tests(yum_repo, default_features + extra_features)
+          end
+        end
       end
     end
   end

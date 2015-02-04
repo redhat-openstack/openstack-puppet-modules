@@ -8,7 +8,8 @@
 #   Explanation of what this parameter affects and what it defaults to.
 #
 class opendaylight (
-  $features = $::opendaylight::params::features,
+  $default_features = $::opendaylight::params::default_features,
+  $extra_features = $::opendaylight::params::extra_features,
 ) inherits ::opendaylight::params {
 
   # Validate OS family
@@ -34,6 +35,9 @@ class opendaylight (
       fail("Unsupported OS: ${::operatingsystem}")
     }
   }
+
+  # Build full list of features to install
+  $features = union($default_features, $extra_features)
 
   class { '::opendaylight::install': } ->
   class { '::opendaylight::config': } ~>
