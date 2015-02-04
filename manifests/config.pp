@@ -3,7 +3,7 @@
 # This class is called from opendaylight for service config.
 #
 class opendaylight::config (
-   $odl_rest_port = $::opendaylight::params::odl_rest_port
+  $odl_rest_port = $::opendaylight::params::odl_rest_port
 ) inherits ::opendaylight::params {
   # This is very fragile, but I don't know of a better way to do it.
   # Updated ODL versions will break it, as will changes to the file upstream.
@@ -17,8 +17,8 @@ class opendaylight::config (
   $myline= "    <Connector port=\"${odl_rest_port}\" protocol=\"HTTP/1.1\""
   file_line { 'tomcatport':
     ensure => present,
-    path => '/opt/opendaylight-0.2.2/configuration/tomcat-server.xml',
-    line => $myline,
-    match => '^\s*<Connector\s*port=\"[0-9]+\"\s*protocol=\"HTTP\/1.1\"$',
+    path   => '/opt/opendaylight-0.2.2/configuration/tomcat-server.xml',
+    line   => $myline,
+    match  => '^\s*<Connector\s*port=\"[0-9]+\"\s*protocol=\"HTTP\/1.1\"$',
   }
 }
