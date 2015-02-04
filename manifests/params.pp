@@ -4,6 +4,6 @@
 # It sets variables according to platform.
 #
 class opendaylight::params {
-  $default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
-  $extra_features = []
+  $features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+  $odl_rest_port = '8080'
 }
