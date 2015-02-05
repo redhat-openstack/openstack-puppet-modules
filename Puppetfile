@@ -195,7 +195,7 @@ mod 'vlan',
   :git => 'https://github.com/derekhiggins/puppet-vlan.git'
 
 mod 'vswitch',
-  :commit => 'fd49af3de8ab156e9680d42b6309c79d4e68e9cb',
+  :commit => '331726326a275da158a62cafdd49fb961a71d3e2',
   :git => 'https://github.com/stackforge/puppet-vswitch.git'
 
 mod 'xinetd',
