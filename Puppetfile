@@ -214,3 +214,6 @@ mod 'xinetd',
 mod 'openstack_extras',
   :git => 'git://github.com/enovance/puppet-openstack_extras.git',
   :ref => '537ed9e3750178fcfffa3ae476727cb1f4e65fb9'
+mod 'staging',
+  :git => 'git://github.com/enovance/puppet-staging.git',
+  :ref => 'bc434a71e19aae54223d57c274e2e1a7f9546d5e'
