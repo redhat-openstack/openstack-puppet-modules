@@ -32,12 +32,36 @@ def supported_os_tests(yum_repo, features)
   it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
   # Confirm properties of other resources
-  # There's a more elegant way to do these long sets of checks
-  #   using multi-line hashes, but it breaks in Ruby 1.8.7
-  it { should contain_yumrepo('opendaylight').with_enabled('1').with_gpgcheck('0').with_descr('OpenDaylight SDN controller').with_baseurl(yum_repo) }
-  it { should contain_package('opendaylight').with_ensure('present') }
-  it { should contain_service('opendaylight').with_ensure('running').with_enable('true').with_hasstatus('true').with_hasrestart('true') }
-  it { should contain_file('org.apache.karaf.features.cfg').with_ensure('file').with_path('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg').with_content(/^featuresBoot=#{features.join(",")}/) }
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
+  it {
+    should contain_yumrepo('opendaylight').with(
+      'enabled'     => '1',
+      'gpgcheck'    => '0',
+      'descr'       => 'OpenDaylight SDN controller',
+      'baseurl'     => yum_repo,
+    )
+  }
+  it {
+    should contain_package('opendaylight').with(
+      'ensure'      => 'present',
+    )
+  }
+  it {
+    should contain_service('opendaylight').with(
+      'ensure'      => 'running',
+      'enable'      => 'true',
+      'hasstatus'   => 'true',
+      'hasrestart'  => 'true',
+    )
+  }
+  it {
+    should contain_file('org.apache.karaf.features.cfg').with(
+      'ensure'      => 'file',
+      'path'        => '/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg',
+      'content'     => /^featuresBoot=#{features.join(",")}/
+    )
+  }
 end
 
 # Shared tests for unsupported OSs
