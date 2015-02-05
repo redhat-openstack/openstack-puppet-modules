@@ -40,12 +40,13 @@
 #   Can be "password" or "trusts".
 #   Defaults to 'trusts'
 #
-# === Deprecated Parameters
-#
 # [*trusts_delegated_roles*]
 #   (optional) Array of trustor roles to be delegated to heat.
+#   This value is also used by heat::keystone::auth if it is set to
+#   configure the keystone roles.
 #   Defaults to ['heat_stack_owner']
-#   Deprecated: Moved to heat::keystone::auth, will be removed in a future release.
+#
+# === Deprecated Parameters
 #
 # [*configure_delegated_roles*]
 #   (optional) Whether to configure the delegated roles.
@@ -75,6 +76,7 @@ class heat::engine (
   package { 'heat-engine':
     ensure => installed,
     name   => $::heat::params::engine_package_name,
+    notify => Exec['heat-dbsync'],
   }
 
   if $manage_service {
@@ -86,7 +88,7 @@ class heat::engine (
   }
 
   if $configure_delegated_roles {
-    warning('configure_delegated_roles and trusts_delegated_roles are deprecated in this class')
+    warning ('configure_delegated_roles is deprecated in this class, use heat::keystone::auth')
     keystone_role { $trusts_delegated_roles:
       ensure => present,
     }
