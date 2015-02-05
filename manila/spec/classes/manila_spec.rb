@@ -191,16 +191,32 @@ describe 'manila' do
         :kombu_ssl_ca_certs => '/path/to/ssl/ca/certs',
         :kombu_ssl_certfile => '/path/to/ssl/cert/file',
         :kombu_ssl_keyfile  => '/path/to/ssl/keyfile',
-        :kombu_ssl_version  => 'SSLv3'
+        :kombu_ssl_version  => 'TLSv1'
       })
     end
 
     it do
-      should contain_manila_config('DEFAULT/rabbit_use_ssl').with_value('true')
+      should contain_manila_config('DEFAULT/rabbit_use_ssl').with_value(true)
       should contain_manila_config('DEFAULT/kombu_ssl_ca_certs').with_value('/path/to/ssl/ca/certs')
       should contain_manila_config('DEFAULT/kombu_ssl_certfile').with_value('/path/to/ssl/cert/file')
       should contain_manila_config('DEFAULT/kombu_ssl_keyfile').with_value('/path/to/ssl/keyfile')
-      should contain_manila_config('DEFAULT/kombu_ssl_version').with_value('SSLv3')
+      should contain_manila_config('DEFAULT/kombu_ssl_version').with_value('TLSv1')
+    end
+  end
+
+  describe 'with SSL enabled without kombu' do
+    let :params do
+      req_params.merge!({
+        :rabbit_use_ssl     => true,
+      })
+    end
+
+    it do
+      should contain_manila_config('DEFAULT/rabbit_use_ssl').with_value(true)
+      should contain_manila_config('DEFAULT/kombu_ssl_ca_certs').with_ensure('absent')
+      should contain_manila_config('DEFAULT/kombu_ssl_certfile').with_ensure('absent')
+      should contain_manila_config('DEFAULT/kombu_ssl_keyfile').with_ensure('absent')
+      should contain_manila_config('DEFAULT/kombu_ssl_version').with_value('TLSv1')
     end
   end
 
@@ -208,15 +224,12 @@ describe 'manila' do
     let :params do
       req_params.merge!({
         :rabbit_use_ssl     => false,
-        :kombu_ssl_ca_certs => 'undef',
-        :kombu_ssl_certfile => 'undef',
-        :kombu_ssl_keyfile  => 'undef',
-        :kombu_ssl_version  => 'SSLv3'
+        :kombu_ssl_version  => 'TLSv1'
       })
     end
 
     it do
-      should contain_manila_config('DEFAULT/rabbit_use_ssl').with_value('false')
+      should contain_manila_config('DEFAULT/rabbit_use_ssl').with_value(false)
       should contain_manila_config('DEFAULT/kombu_ssl_ca_certs').with_ensure('absent')
       should contain_manila_config('DEFAULT/kombu_ssl_certfile').with_ensure('absent')
       should contain_manila_config('DEFAULT/kombu_ssl_keyfile').with_ensure('absent')
