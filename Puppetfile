@@ -118,7 +118,7 @@ mod 'keepalived',
   :ref => 'eb345b6d3b25106cbe166028f2b8dd9974a10230'
 mod 'kibana3',
   :git => 'git://github.com/enovance/kibana3.git',
-  :ref => 'd6cc4ca101996f454e484bcd4a3940066ceea1f7'
+  :ref => '66b814290d06e7f4e7008266afcfa1ad503fd393'
 mod 'vcsrepo',
   :git => 'git://github.com/enovance/puppetlabs-vcsrepo.git',
   :ref => '4592bfd59cd5d4795069798a14b483e16c98c1ff'
@@ -159,7 +159,7 @@ mod 'postgresql',
   :ref => '0b483a2796e77d670e326a01fce57465d2c08774'
 mod 'puppetdb',
   :git => 'git://github.com/enovance/puppetlabs-puppetdb.git',
-  :ref => '0744ed4dd4e1d104c66cd414b68c6aa770f9ddcc'
+  :ref => 'b482ad8efa94283099cee0aaedd194f50753f7b0'
 mod 'puppetdbquery',
   :git => 'git://github.com/enovance/puppet-puppetdbquery.git',
   :ref =>  '89194917744f929bb600c31d7d6f822b529f5f03'
