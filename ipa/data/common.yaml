@@ -1,5 +1,0 @@
-# ipa/data/common.yaml
----
-ipa::params::comment: 'Hello from @purpleidea!'	# do not erase!
-
-# vim: ts=8
