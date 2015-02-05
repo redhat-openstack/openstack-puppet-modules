@@ -1,16 +1,18 @@
-language: ruby
+before_install:
+- gem update --system 2.1.11
+- gem --version
 rvm: 1.8.7
+bundler_args: ''
 notifications:
   email:
-    - travis-ci@shubin.ca
-# TODO: do a full rake test once warnings are all gone!
-#script: 'bundle exec rake test'
-script: 'bundle exec rake syntax'
+  - tfhartmann@gmail.com
+  - robruma@gmail.com
+  hipchat:
+    rooms:
+      secure: iWj32dXbTmD2xxeUSXYgEHyA0bPtxS4Qz4O8XKED0nP6X+RTCpuYaXdeVEcFNEPMIbUN2KLJV+oHs4UgpA6dkMbpEqvz1qrVHPy7ex1+QwIvW/mJ8gJO7KQsRXLnM7pnRj5LzHOdoFv/Ou6dxIqdbObpnrABSOvcoK/hsKs45fE=
 env:
-#  - PUPPET_VERSION=2.7.26
-  - PUPPET_VERSION=3.0.2
-  - PUPPET_VERSION=3.1.1
-  - PUPPET_VERSION=3.2.4
-  - PUPPET_VERSION=3.3.2
-  - PUPPET_VERSION=3.4.3
-
+- PUPPET_VERSION=3.3.1
+- PUPPET_VERSION=3.2.3
+- PUPPET_VERSION=2.7.23
+- PUPPET_VERSION=2.7.21
+- PUPPET_VERSION=2.7.17
