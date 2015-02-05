@@ -29,7 +29,7 @@
 #   (optional) SSL version to use (valid only if SSL enabled).
 #   Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #   available on some distributions.
-#   Defaults to 'SSLv3'
+#   Defaults to 'TLSv1'
 #
 # [amqp_durable_queues]
 #   Use durable queues in amqp.
@@ -87,7 +87,7 @@ class manila (
   $kombu_ssl_ca_certs          = undef,
   $kombu_ssl_certfile          = undef,
   $kombu_ssl_keyfile           = undef,
-  $kombu_ssl_version           = 'SSLv3',
+  $kombu_ssl_version           = 'TLSv1',
   $amqp_durable_queues         = false,
   $qpid_hostname               = 'localhost',
   $qpid_port                   = '5672',
@@ -132,16 +132,17 @@ class manila (
     }
   }
 
-  if $rabbit_use_ssl {
-    if !$kombu_ssl_ca_certs {
-      fail('The kombu_ssl_ca_certs parameter is required when rabbit_use_ssl is set to true')
-    }
-    if !$kombu_ssl_certfile {
-      fail('The kombu_ssl_certfile parameter is required when rabbit_use_ssl is set to true')
-    }
-    if !$kombu_ssl_keyfile {
-      fail('The kombu_ssl_keyfile parameter is required when rabbit_use_ssl is set to true')
-    }
+  if $kombu_ssl_ca_certs and !$rabbit_use_ssl {
+    fail('The kombu_ssl_ca_certs parameter requires rabbit_use_ssl to be set to true')
+  }
+  if $kombu_ssl_certfile and !$rabbit_use_ssl {
+    fail('The kombu_ssl_certfile parameter requires rabbit_use_ssl to be set to true')
+  }
+  if $kombu_ssl_keyfile and !$rabbit_use_ssl {
+    fail('The kombu_ssl_keyfile parameter requires rabbit_use_ssl to be set to true')
+  }
+  if ($kombu_ssl_certfile and !$kombu_ssl_keyfile) or ($kombu_ssl_keyfile and !$kombu_ssl_certfile) {
+    fail('The kombu_ssl_certfile and kombu_ssl_keyfile parameters must be used together')
   }
 
   # this anchor is used to simplify the graph between manila components by
@@ -196,12 +197,31 @@ class manila (
     }
 
     if $rabbit_use_ssl {
-      manila_config {
-        'DEFAULT/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs;
-        'DEFAULT/kombu_ssl_certfile': value => $kombu_ssl_certfile;
-        'DEFAULT/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
-        'DEFAULT/kombu_ssl_version':  value => $kombu_ssl_version;
+
+      if $kombu_ssl_ca_certs {
+        manila_config { 'DEFAULT/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
+      } else {
+        manila_config { 'DEFAULT/kombu_ssl_ca_certs': ensure => absent; }
       }
+
+      if $kombu_ssl_certfile or $kombu_ssl_keyfile {
+        manila_config {
+          'DEFAULT/kombu_ssl_certfile': value => $kombu_ssl_certfile;
+          'DEFAULT/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
+        }
+      } else {
+        manila_config {
+          'DEFAULT/kombu_ssl_certfile': ensure => absent;
+          'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
+        }
+      }
+
+      if $kombu_ssl_version {
+        manila_config { 'DEFAULT/kombu_ssl_version':  value => $kombu_ssl_version; }
+      } else {
+        manila_config { 'DEFAULT/kombu_ssl_version':  ensure => absent; }
+      }
+
     } else {
       manila_config {
         'DEFAULT/kombu_ssl_ca_certs': ensure => absent;
