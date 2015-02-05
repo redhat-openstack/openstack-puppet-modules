@@ -118,10 +118,6 @@ mod 'ntp',
   :commit => '8f697e32bc279b36ada752273e6c788716b95315',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
-mod 'openstack',
-  :commit => 'd81d2d86280d5739cc896a48b68d7309e765047a',
-  :git => 'https://github.com/stackforge/puppet-openstack.git'
-
 mod 'openstacklib',
   :commit => '210980fa019a5fe87fb3ac416abf2a99b35a683c',
   :git => 'https://github.com/stackforge/puppet-openstacklib.git'
@@ -201,4 +197,3 @@ mod 'vswitch',
 mod 'xinetd',
   :commit => '6b02de8d4f30a819eb404048e4258e3a5e8023c8',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
-
