@@ -123,7 +123,7 @@ mod 'openstack',
   :git => 'https://github.com/stackforge/puppet-openstack.git'
 
 mod 'openstacklib',
-  :commit => '210980fa019a5fe87fb3ac416abf2a99b35a683c',
+  :commit => 'b7d3c8eaaf47ffbddb50cd942f8654e1aa8fe2f2',
   :git => 'https://github.com/stackforge/puppet-openstacklib.git'
 
 mod 'pacemaker',
