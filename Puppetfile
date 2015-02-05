@@ -165,7 +165,7 @@ mod 'puppetdbquery',
   :ref =>  '89194917744f929bb600c31d7d6f822b529f5f03'
 mod 'rabbitmq',
   :git => 'git://github.com/enovance/puppetlabs-rabbitmq.git',
-  :ref => '25420cb3c26c9a8432ab519d43c094d614d4fec4'
+  :ref => '1cc2e54731a7456123cc05c40d9565e9d2f3fa99'
 mod 'redis',
   :git => 'git://github.com/arioch/puppet-redis.git',
   :ref => '2c4d81b0e9e5f93a1732de3e169b7d036bb8b24b'
