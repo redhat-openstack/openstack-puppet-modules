@@ -20,7 +20,7 @@ class zookeeper::os::debian(
   # if $install_java, try to make sure a JDK package is installed
   if ($install_java){
     if !$java_package {
-      fail { 'Java installation is required, but no java package was provided.': }
+      fail ( 'Java installation is required, but no java package was provided.' )
     }
 
     validate_string($java_package)
