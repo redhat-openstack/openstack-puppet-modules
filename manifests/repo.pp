@@ -21,7 +21,7 @@ class zookeeper::repo(
                 $repourl = "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/cloudera-cdh${cdhver}.repo"
               }
               default: {
-                fail { "Yum repository '${source}' is not supported for architecture ${::hardwaremodel}": }
+                fail("Yum repository '${source}' is not supported for architecture ${::hardwaremodel}")
               }
             }
             case $osrel {
@@ -35,7 +35,7 @@ class zookeeper::repo(
                 }
               }
               default: {
-                fail { "Yum repository '${source}' is not supported for redhat version ${::osrel}": }
+                fail("Yum repository '${source}' is not supported for redhat version ${::osrel}")
               }
             }
           }

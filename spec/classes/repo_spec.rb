@@ -30,4 +30,35 @@ describe 'zookeeper::repo', :type => :class do
 
     it_behaves_like 'redhat-install', 'RedHat', '6'
   end
+
+  context 'fail when architecture not supported' do
+    let(:facts) {{
+      :osfamily => 'RedHat',
+      :hardwaremodel => 'arc',
+    }}
+
+    let(:params) { {
+      :source => 'cloudera',
+    } }
+
+    it { expect {
+        should compile
+    }.to raise_error(/is not supported for architecture/) }
+  end
+
+  context 'fail when release not supported' do
+    let(:facts) {{
+      :osfamily => 'RedHat',
+      :operatingsystemmajrelease => '7',
+      :hardwaremodel => 'x86_64',
+    }}
+
+    let(:params) { {
+      :source => 'cloudera',
+    } }
+
+    it { expect {
+        should compile
+    }.to raise_error(/is not supported for redhat version/) }
+  end
 end
