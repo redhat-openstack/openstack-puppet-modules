@@ -1,3 +1,8 @@
+# Required for coverage reporting
+# See: https://coveralls.zendesk.com/hc/en-us/articles/201769485-Ruby-Rails
+require 'coveralls'
+Coveralls.wear!
+
 require 'puppetlabs_spec_helper/module_spec_helper'
 
 # Shared tests for supported OSs
