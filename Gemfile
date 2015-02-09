@@ -6,7 +6,6 @@ group :test do
   gem "rspec-puppet", :git => 'https://github.com/logicminds/rspec-puppet'
   gem "puppetlabs_spec_helper"
   gem "metadata-json-lint"
-  gem 'coveralls', require: false
 end
 
 group :development do
