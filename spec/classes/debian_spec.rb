@@ -136,4 +136,20 @@ describe 'zookeeper::os::debian', :type => :class do
       }) }
   end
 
+  context 'fail when no packge provided' do
+    let(:facts) {{
+      :operatingsystem => 'Ubuntu',
+      :osfamily => 'Debian',
+      :lsbdistcodename => 'trusty',
+    }}
+
+    let(:params) { {
+      :install_java => true,
+    } }
+
+    it { expect {
+        should compile
+    }.to raise_error(/Java installation is required/) }
+  end
+
 end
