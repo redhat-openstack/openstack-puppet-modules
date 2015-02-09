@@ -19,7 +19,6 @@ describe 'opendaylight' do
           # NB: This list should be the same as the one in opendaylight::params
           default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
           describe "and not passing extra features" do
-            #extra_features = []
             let(:params) {{ }}
 
             # Run shared tests applicable to all supported OSs
@@ -84,7 +83,6 @@ describe 'opendaylight' do
           # NB: This list should be the same as the one in opendaylight::params
           default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
           describe "and not passing extra features" do
-            #extra_features = []
             let(:params) {{ }}
 
             # Run shared tests applicable to all supported OSs
