@@ -43,7 +43,7 @@ featuresRepositories = mvn:org.apache.karaf.features/standard/3.0.1/xml/features
 # Default features:
 # config,standard,region,package,kar,ssh,management
 #
-featuresBoot=<%= @features.join(",") %>
+featuresBoot=<%= scope.lookupvar('opendaylight::features').join(",") %>
 
 #
 # Defines if the boot features are started in asynchronous mode (in a dedicated thread)
