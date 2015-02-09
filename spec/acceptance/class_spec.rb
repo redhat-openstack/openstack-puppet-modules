@@ -4,7 +4,7 @@ require 'spec_helper_acceptance'
 # http://serverspec.org/resource_types.html
 describe 'opendaylight class' do
 
-  context 'default parameters' do
+  context 'passing no params' do
     # Using puppet_apply as a helper
     it 'should work idempotently with no errors' do
       pp = <<-EOS
@@ -22,15 +22,6 @@ describe 'opendaylight class' do
       it { should be_owned_by 'odl' }
       it { should be_grouped_into 'odl' }
       it { should be_mode '775' }
-    end
-
-    # TODO: It'd be nice to do this independently of install dir name
-    describe file('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') do
-      it { should be_file }
-      it { should be_owned_by 'odl' }
-      it { should be_grouped_into 'odl' }
-      it { should be_mode '775' }
-      it { should contain 'featuresBoot' }
     end
 
     describe yumrepo('opendaylight') do
@@ -70,6 +61,90 @@ describe 'opendaylight class' do
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
       it { should be_mode '644' }
+    end
+  end
+
+  context "testing Karaf config file" do
+    context "using default features" do
+      # NB: This list should be the same as the one in opendaylight::params
+      default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+      context "and not passing extra features" do
+        # Using puppet_apply as a helper
+        it 'should work idempotently with no errors' do
+          pp = <<-EOS
+          class { 'opendaylight':
+          }
+          EOS
+
+          # Run it twice and test for idempotency
+          apply_manifest(pp, :catch_failures => true)
+          apply_manifest(pp, :catch_changes  => true)
+        end
+
+        # Punt validations to shared fn in spec_helper_acceptance
+        validate_karaf_config(default_features)
+      end
+
+      context "and passing extra features" do
+      # Using puppet_apply as a helper
+        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        it 'should work idempotently with no errors' do
+          pp = <<-EOS
+          class { 'opendaylight':
+            extra_features => #{extra_features},
+          }
+          EOS
+
+          # Run it twice and test for idempotency
+          apply_manifest(pp, :catch_failures => true)
+          apply_manifest(pp, :catch_changes  => true)
+        end
+
+        # Punt validations to shared fn in spec_helper_acceptance
+        validate_karaf_config(default_features + extra_features)
+      end
+    end
+
+    context "overriding default features" do
+      default_features = ["standard", "ssh"]
+      context "and not passing extra features" do
+        # Using puppet_apply as a helper
+        it 'should work idempotently with no errors' do
+          pp = <<-EOS
+          class { 'opendaylight':
+            default_features => #{default_features},
+          }
+          EOS
+
+          # Run it twice and test for idempotency
+          apply_manifest(pp, :catch_failures => true)
+          apply_manifest(pp, :catch_changes  => true)
+        end
+
+        # Punt validations to shared fn in spec_helper_acceptance
+        validate_karaf_config(default_features)
+      end
+
+      context "and passing extra features" do
+        # These are real but arbitrarily chosen features
+        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        # Using puppet_apply as a helper
+        it 'should work idempotently with no errors' do
+          pp = <<-EOS
+          class { 'opendaylight':
+            default_features => #{default_features},
+            extra_features => #{extra_features},
+          }
+          EOS
+
+          # Run it twice and test for idempotency
+          apply_manifest(pp, :catch_failures => true)
+          apply_manifest(pp, :catch_changes  => true)
+        end
+
+        # Punt validations to shared fn in spec_helper_acceptance
+        validate_karaf_config(default_features + extra_features)
+      end
     end
   end
 end

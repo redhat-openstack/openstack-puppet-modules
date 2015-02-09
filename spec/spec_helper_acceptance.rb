@@ -28,3 +28,15 @@ RSpec.configure do |c|
     end
   end
 end
+
+# Shared function that validates Karaf config file
+def validate_karaf_config(features)
+  # TODO: It'd be nice to do this independently of install dir name
+  describe file('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+    it { should be_mode '775' }
+    its(:content) { should match /^featuresBoot=#{features.join(",")}/ }
+  end
+end
