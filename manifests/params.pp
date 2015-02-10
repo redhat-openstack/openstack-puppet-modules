@@ -6,6 +6,6 @@
 class opendaylight::params {
   $default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
   $extra_features = []
-  # TODO: Consider making an install_method param that defaults to 'rpm'
-  $tarball_url = ''
+  $install_method = 'rpm'
+  $tarball_url = 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.2-Helium-SR2/distribution-karaf-0.2.2-Helium-SR2.tar.gz'
 }

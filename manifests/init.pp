@@ -10,6 +10,7 @@
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
   $extra_features = $::opendaylight::params::extra_features,
+  $install_method = $::opendaylight::params::install_method,
   $tarball_url = $::opendaylight::params::tarball_url,
 ) inherits ::opendaylight::params {
 
