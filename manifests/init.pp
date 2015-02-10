@@ -10,7 +10,12 @@
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
   $extra_features = $::opendaylight::params::extra_features,
+  $tarball_url = $::opendaylight::params::tarball_url,
 ) inherits ::opendaylight::params {
+
+  # NB: This is a work-around for a bug in gini/puppet-archive
+  # See: https://github.com/bfraser/puppet-grafana/issues/5#issuecomment-59269431
+  include archive::prerequisites
 
   # Validate OS family
   if $::osfamily != 'RedHat' {
