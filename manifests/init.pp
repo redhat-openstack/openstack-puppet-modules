@@ -12,6 +12,7 @@ class opendaylight (
   $extra_features = $::opendaylight::params::extra_features,
   $install_method = $::opendaylight::params::install_method,
   $tarball_url = $::opendaylight::params::tarball_url,
+  $unitfile_url = $::opendaylight::params::unitfile_url,
 ) inherits ::opendaylight::params {
 
   # NB: This is a work-around for a bug in gini/puppet-archive

@@ -41,6 +41,17 @@ class opendaylight::install {
     }
 
     # TODO: Download ODL systemd .service file and put in right location
+    archive { 'opendaylight-systemd':
+      ensure           => present,
+      url              => $opendaylight::unitfile_url,
+      target           => '/usr/lib/systemd/system/',
+      root_dir         => '.',
+      checksum         => false,
+      # This discards top-level dir of extracted tarball
+      # Required to get proper /opt/opendaylight-<version> path
+      # Ideally, camptocamp/puppet-archive would support this. PR later?
+      strip_components => 1,
+    }
   }
   else {
     fail("Unknown install method: ${opendaylight::install_method}")
