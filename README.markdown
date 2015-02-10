@@ -71,7 +71,6 @@ class { 'opendaylight':
 
 * `opendaylight::params`: Manages default param values.
 * `opendaylight::config`: Manages the Karaf config file via a template.
-* `opendaylight::init`: Does OS validation, builds full features list, sets ordering relationships between other classes.
 * `opendaylight::install`: Chooses the correct Yum repo URL based on OS, installs the OpenDaylight Yum repo, installs the OpenDaylight RPM.
 * `opendaylight::service`: Configures and starts the OpenDaylight service.
 
