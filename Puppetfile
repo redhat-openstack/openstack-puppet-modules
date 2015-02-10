@@ -67,7 +67,7 @@ mod 'ironic',
   :git => 'https://github.com/stackforge/puppet-ironic.git'
 
 mod 'keystone',
-  :commit => 'b65ddba19f5d89fe13bd0264e988ef702ba2b5c9',
+  :commit => 'dfb8eb21f6bf8f81888491c2a3248a9d2207594d',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
