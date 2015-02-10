@@ -1,8 +1,5 @@
 [![Build Status](https://travis-ci.org/dfarrell07/puppet-opendaylight.svg)](https://travis-ci.org/dfarrell07/puppet-opendaylight) [![Dependency Status](https://gemnasium.com/dfarrell07/puppet-opendaylight.svg)](https://gemnasium.com/dfarrell07/puppet-opendaylight) [![Join the chat at https://gitter.im/dfarrell07/puppet-opendaylight](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dfarrell07/puppet-opendaylight?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-#### Table of Contents
-
-
+#### Table of Contents 
 1. [Overview](#overview)
 2. [Module Description - What the module does and why it is useful](#module-description)
 3. [Setup - The basics of getting started with opendaylight](#setup)
@@ -22,43 +19,66 @@ Puppet module for deploying the OpenDaylight Software Defined Networking (SDN) c
 
 Stands up the OpenDaylight SDN controller from an RPM, including systemd configuration.
 
+The currently supported OpenDaylight version is Helium SR2 (0.2.2).
+
 ## Setup
 
 ### What opendaylight affects
 
-* Installs OpenDaylight archive in /opt/
-* Installs a systemd unit file for OpenDaylight
-* Creates an `odl` group if it doesn't exist
+* Installs OpenDaylight archive in /opt/ (may change as RPM matures).
+* Installs a [systemd unit file](https://github.com/dfarrell07/opendaylight-systemd/) for OpenDaylight.
+* Creates `odl:odl` user:group if they don't already exist.
 
 ### Beginning with opendaylight
 
-TODO: Update
-
-```
-The very basic steps needed for a user to get the module up and running. 
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
-```
+To install and start OpenDaylight, include the `opendaylight` class: `include opendaylight`.
 
 ## Usage
 
-TODO: Update
+The most basic usage, passing no parameters to the OpenDaylight class, will install and start OepnDaylight with a default configuration.
 
 ```
-Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here. 
+class { 'opendaylight':
+}
+```
+
+To set extra Karaf features to be installed at OpenDaylight start time, pass them in a list to the `extra_features` param.
+
+```
+class { 'opendaylight':
+  extra_features => ['odl-ovsdb-plugin', 'odl-ovsdb-openstack'],
+}
+```
+
+A set of default Karaf features will be set to be installed at ODL start automatically. To override them, pass replacement defaults to the `default_features` param.
+
+```
+class { 'opendaylight':
+  extra_features => ['odl-ovsdb-plugin', 'odl-ovsdb-openstack'],
+  default_features => ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'],
+}
 ```
 
 ## Reference
 
-TODO: Update
+### Classes
 
-```
-Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
-```
+#### Public classes
+
+* `opendaylight`: This is the modules main class. It installs and configures OpenDaylight.
+
+#### Private classes
+
+* `opendaylight::params`: Manages default param values.
+* `opendaylight::config`: Manages the Karaf config file via a template.
+* `opendaylight::init`: Does OS validation, builds full features list, sets ordering relationships between other classes.
+* `opendaylight::install`: Chooses the correct Yum repo URL based on OS, installs the OpenDaylight Yum repo, installs the OpenDaylight RPM.
+* `opendaylight::service`: Configures and starts the OpenDaylight service.
 
 ## Limitations
 
 * The target OS must use systemd (Fedora 15+, CentOS 7+).
+* Only tested on Fedora 20, 21 and CentOS 7.
 * Currently only supports RPM-based installs.
 
 ## Development
