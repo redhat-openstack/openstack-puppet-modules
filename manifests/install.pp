@@ -32,7 +32,9 @@ class opendaylight::install {
     archive { 'opendaylight-0.2.2':
       ensure           => present,
       url              => $opendaylight::tarball_url,
+      # Will end up installing in /opt/opendaylight-<version>
       target           => '/opt/',
+      # Install will break if this is true and no chksum in expected path
       checksum         => false,
       # This discards top-level dir of extracted tarball
       # Required to get proper /opt/opendaylight-<version> path
@@ -40,12 +42,14 @@ class opendaylight::install {
       strip_components => 1,
     }
 
-    # TODO: Download ODL systemd .service file and put in right location
+    # Download ODL systemd .service file and put in right location
     archive { 'opendaylight-systemd':
       ensure           => present,
       url              => $opendaylight::unitfile_url,
       target           => '/usr/lib/systemd/system/',
+      # This prevents an opendaylight-systemd/ in the system/ dir
       root_dir         => '.',
+      # Install will break if this is true and no chksum in expected path
       checksum         => false,
       # This discards top-level dir of extracted tarball
       # Required to get proper /opt/opendaylight-<version> path
