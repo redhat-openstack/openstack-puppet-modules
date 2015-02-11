@@ -10,6 +10,7 @@
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
   $extra_features = $::opendaylight::params::extra_features,
+  $odl_rest_port = $::opendaylight::params::odl_rest_port,
 ) inherits ::opendaylight::params {
 
   # Validate OS family
@@ -35,12 +36,11 @@ class opendaylight (
       fail("Unsupported OS: ${::operatingsystem}")
     }
   }
-
   # Build full list of features to install
   $features = union($default_features, $extra_features)
 
   class { '::opendaylight::install': } ->
-  class { '::opendaylight::config': } ~>
+  class { '::opendaylight::config': odl_rest_port => $odl_rest_port} ~>
   class { '::opendaylight::service': } ->
   Class['::opendaylight']
 }
