@@ -12,6 +12,10 @@
     {
       "name": "puppetlabs-stdlib",
       "version_requirement": "4.x"
+    },
+    {
+      "name": "gini-archive",
+      "version_requirement": "0.x"
     }
   ],
   "operatingsystem_support": [

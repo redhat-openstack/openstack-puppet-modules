@@ -59,6 +59,15 @@ class { 'opendaylight':
 }
 ```
 
+The `install_method` param, and the associated `tarball_url` and `unitfile_url` params, are intended for use by developers who need to install a custom-built version of OpenDaylight. It's recommended that most folks use the default RPM-based install. If you do need to install from a tarball, simply pass `tarball` as the value for `install_method` and optionally pass the URL to your tarball via the `tarball_url` param. The default value for `tarball_url` points at the latest released version of OpenDaylight. The `unitfile_url` param points at the OpenDaylight systemd .service file used by the RPM and should (very likely) not need to be overridden.
+
+```
+class { 'opendaylight':
+  install_method => 'tarball',
+  tarball_url => '<URL to your custom tarball>'
+}
+```
+
 ## Reference
 
 ### Classes
