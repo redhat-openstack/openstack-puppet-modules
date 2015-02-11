@@ -3,9 +3,16 @@
 # OpenDaylight SDN Controller
 #
 # === Parameters
-# TODO: Update these param docs
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
+# [*default_features*]
+#   Features that should normally be installed by default, but can be overridden.
+# [*extra_features*]
+#   List of features to install in addition to the default ones.
+# [*install_method *]
+#   How to install OpenDaylight. Current options are "rpm" and "tarball", default is RPM.
+# [*tarball_url*]
+#   If installing from a tarball, use this one. Defaults to latest ODL.
+# [*unitfile_url*]
+#   OpenDaylight .service file to use for tarball installs. Defaults to one used by ODL RPM.
 #
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
