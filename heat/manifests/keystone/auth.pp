@@ -78,6 +78,15 @@
 #   (Optional) Protocol for internal endpoint
 #   Defaults to 'http'
 #
+# [*trusts_delegated_roles*]
+#    (optional) Array of trustor roles to be delegated to heat.
+#    Defaults to ['heat_stack_owner']
+#
+# [*configure_delegated_roles*]
+#    (optional) Whether to configure the delegated roles.
+#    Defaults to false until the deprecated parameters in heat::engine
+#    are removed after Kilo.
+#
 class heat::keystone::auth (
   $password             = false,
   $email                = 'heat@localhost',
@@ -97,6 +106,8 @@ class heat::keystone::auth (
   $configure_endpoint   = true,
   $configure_user       = true,
   $configure_user_role  = true,
+  $trusts_delegated_roles    = ['heat_stack_owner'],
+  $configure_delegated_roles = false,
 ) {
 
   validate_string($password)
@@ -141,6 +152,20 @@ class heat::keystone::auth (
       public_url   => "${public_protocol}://${public_address}:${port}/${version}/%(tenant_id)s",
       admin_url    => "${admin_protocol}://${admin_address}:${port}/${version}/%(tenant_id)s",
       internal_url => "${internal_protocol}://${internal_address}:${port}/${version}/%(tenant_id)s",
+    }
+  }
+
+  if $configure_delegated_roles {
+    # Sanity check - remove after we remove the deprecated item
+    if $heat::engine::configure_delegated_roles {
+      fail('both heat::engine and heat::keystone::auth are both trying to configure delegated roles')
+    }
+    # if this is a keystone only node, we configure the role here
+    # but let engine.pp set the config file. A keystone only node
+    # will not have a heat.conf file. We will use the value in
+    # engine.pp as the one source of truth for the delegated role list.
+    keystone_role { $trusts_delegated_roles:
+      ensure => present,
     }
   }
 }
