@@ -1,7 +1,6 @@
 # == Class opendaylight::params
 #
-# This class is meant to be called from opendaylight.
-# It sets variables according to platform.
+# This class manages the default params for the ODL class.
 #
 class opendaylight::params {
   $default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']

@@ -1,6 +1,6 @@
 # == Class opendaylight::install
 #
-# This class is called from opendaylight for install.
+# Manages the installation of OpenDaylight.
 #
 class opendaylight::install {
   if $opendaylight::install_method == 'rpm' {

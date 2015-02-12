@@ -7,6 +7,8 @@
 #   Features that should normally be installed by default, but can be overridden.
 # [*extra_features*]
 #   List of features to install in addition to the default ones.
+# [*odl_rest_port *]
+#   Port for ODL northbound REST interface to listen on.
 # [*install_method *]
 #   How to install OpenDaylight. Current options are "rpm" and "tarball", default is RPM.
 # [*tarball_url*]
