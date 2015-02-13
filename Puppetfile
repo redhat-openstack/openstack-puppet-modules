@@ -170,7 +170,7 @@ mod 'rabbitmq',
   :ref => '77a79e46f0de3ae10869ccf1b5873fe0bc67e8eb'
 mod 'redis',
   :git => 'git://github.com/arioch/puppet-redis.git',
-  :ref => '2c4d81b0e9e5f93a1732de3e169b7d036bb8b24b'
+  :ref => '51e35cc9a743dd8f992effae25d92e18aafe8b46'
 mod 'rhnreg_ks',
   :git => 'git://github.com/enovance/puppet-rhnreg_ks.git',
   :ref => '8fdc051992b44a09f39d3b510d7cd6db5ed5ff66'
