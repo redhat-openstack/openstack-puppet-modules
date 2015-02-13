@@ -90,4 +90,88 @@ describe 'opendaylight' do
       end
     end
   end
+
+  # All Karaf feature tests
+  describe 'Karaf feature tests' do
+    # All Karaf feature tests assume CentOS 7
+    osfamily = 'RedHat'
+    operatingsystem = 'CentOS'
+    operatingsystemmajrelease = '7'
+    # This is the CentOS 7 Yum repo URL
+    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
+    describe "using default features" do
+      # NB: This list should be the same as the one in opendaylight::params
+      default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
+      context "and not passing extra features" do
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :operatingsystemmajrelease => operatingsystemmajrelease,
+        }}
+
+        let(:params) {{ }}
+
+        # Run shared tests applicable to all supported OSs
+        # Note that this function is defined in spec_helper
+        supported_os_tests(yum_repo, default_features)
+      end
+
+      context "and passing extra features" do
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :operatingsystemmajrelease => operatingsystemmajrelease,
+        }}
+
+        # These are real but arbitrarily chosen features
+        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        let(:params) {{
+          :extra_features => extra_features,
+        }}
+
+        # Run shared tests applicable to all supported OSs
+        # Note that this function is defined in spec_helper
+        supported_os_tests(yum_repo, default_features + extra_features)
+      end
+    end
+
+    describe "overriding default features" do
+      default_features = ["standard", "ssh"]
+      context "and not passing extra features" do
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :operatingsystemmajrelease => operatingsystemmajrelease,
+        }}
+
+        extra_features = []
+        let(:params) {{
+          :default_features => default_features,
+        }}
+
+        # Run shared tests applicable to all supported OSs
+        # Note that this function is defined in spec_helper
+        supported_os_tests(yum_repo, default_features)
+      end
+
+      context "and passing extra features" do
+        let(:facts) {{
+          :osfamily => osfamily,
+          :operatingsystem => operatingsystem,
+          :operatingsystemmajrelease => operatingsystemmajrelease,
+        }}
+
+        # These are real but arbitrarily chosen features
+        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        let(:params) {{
+          :default_features => default_features,
+          :extra_features => extra_features,
+        }}
+
+        # Run shared tests applicable to all supported OSs
+        # Note that this function is defined in spec_helper
+        supported_os_tests(yum_repo, default_features + extra_features)
+      end
+    end
+  end
 end
