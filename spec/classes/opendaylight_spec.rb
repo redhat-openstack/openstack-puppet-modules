@@ -250,6 +250,79 @@ describe 'opendaylight' do
           # Note that this function is defined in spec_helper
           install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
         end
+
+        context 'overriding default unitfile_url' do
+          # Doesn't matter if this is valid, just that it honors what we pass
+          unitfile_url = 'fake_unitfile'
+          let(:facts) {{
+            :osfamily => osfamily,
+            :operatingsystem => operatingsystem,
+            :operatingsystemmajrelease => operatingsystemmajrelease,
+          }}
+
+          let(:params) {{
+              :install_method => 'tarball',
+              :unitfile_url => unitfile_url,
+          }}
+
+          # Run shared tests applicable to all supported OSs
+          # Note that this function is defined in spec_helper
+          generic_tests(yum_repo)
+
+          # Run test that specialize in checking Karaf feature installs
+          # Note that this function is defined in spec_helper
+          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+        end
+      end
+
+      describe 'overriding default tarball_url' do
+        # Doesn't matter if this is valid, just that it honors what we pass
+        tarball_url = 'fake_tarball'
+        context 'using default unitfile_url' do
+          unitfile_url = 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz'
+          let(:facts) {{
+            :osfamily => osfamily,
+            :operatingsystem => operatingsystem,
+            :operatingsystemmajrelease => operatingsystemmajrelease,
+          }}
+
+          let(:params) {{
+              :install_method => 'tarball',
+              :tarball_url => tarball_url,
+          }}
+
+          # Run shared tests applicable to all supported OSs
+          # Note that this function is defined in spec_helper
+          generic_tests(yum_repo)
+
+          # Run test that specialize in checking Karaf feature installs
+          # Note that this function is defined in spec_helper
+          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+        end
+
+        context 'overriding default unitfile_url' do
+          # Doesn't matter if this is valid, just that it honors what we pass
+          unitfile_url = 'fake_unitfile'
+          let(:facts) {{
+            :osfamily => osfamily,
+            :operatingsystem => operatingsystem,
+            :operatingsystemmajrelease => operatingsystemmajrelease,
+          }}
+
+          let(:params) {{
+              :install_method => 'tarball',
+              :tarball_url => tarball_url,
+              :unitfile_url => unitfile_url,
+          }}
+
+          # Run shared tests applicable to all supported OSs
+          # Note that this function is defined in spec_helper
+          generic_tests(yum_repo)
+
+          # Run test that specialize in checking Karaf feature installs
+          # Note that this function is defined in spec_helper
+          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+        end
       end
     end
   end
