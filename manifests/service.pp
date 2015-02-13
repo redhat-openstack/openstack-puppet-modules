@@ -1,7 +1,6 @@
 # == Class opendaylight::service
 #
-# This class is meant to be called from opendaylight.
-# It ensure the service is running.
+# Starts the OpenDaylight systemd service.
 #
 class opendaylight::service {
   service { 'opendaylight':

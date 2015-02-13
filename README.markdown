@@ -42,7 +42,9 @@ class { 'opendaylight':
 }
 ```
 
-To set extra Karaf features to be installed at OpenDaylight start time, pass them in a list to the `extra_features` param.
+### Karaf Features
+
+To set extra Karaf features to be installed at OpenDaylight start time, pass them in a list to the `extra_features` param. The extra features you pass will typically be driven by the requirements of your ODL install. You'll almost certainly need to pass some.
 
 ```
 class { 'opendaylight':
@@ -50,21 +52,38 @@ class { 'opendaylight':
 }
 ```
 
-A set of default Karaf features will be set to be installed at ODL start automatically. To override them, pass replacement defaults to the `default_features` param.
+OpenDaylight normally installs a default set of Karaf features at boot. They are recommended, so the ODL Puppet mod defaults to installing them. This can be customized by overriding the `default_features` param. You shouldn't normally need to do so.
 
 ```
 class { 'opendaylight':
-  extra_features => ['odl-ovsdb-plugin', 'odl-ovsdb-openstack'],
   default_features => ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'],
 }
 ```
 
-The `install_method` param, and the associated `tarball_url` and `unitfile_url` params, are intended for use by developers who need to install a custom-built version of OpenDaylight. It's recommended that most folks use the default RPM-based install. If you do need to install from a tarball, simply pass `tarball` as the value for `install_method` and optionally pass the URL to your tarball via the `tarball_url` param. The default value for `tarball_url` points at the latest released version of OpenDaylight. The `unitfile_url` param points at the OpenDaylight systemd .service file used by the RPM and should (very likely) not need to be overridden.
+### Install Method
+
+The `install_method` param, and the associated `tarball_url` and `unitfile_url` params, are intended for use by developers who need to install a custom-built version of OpenDaylight.
+
+It's recommended that most people use the default RPM-based install.
+
+If you do need to install from a tarball, simply pass `tarball` as the value for `install_method` and optionally pass the URL to your tarball via the `tarball_url` param. The default value for `tarball_url` points at OpenDaylight's latest release. The `unitfile_url` param points at the OpenDaylight systemd .service file used by the RPM and should (very likely) not need to be overridden.
 
 ```
 class { 'opendaylight':
   install_method => 'tarball',
   tarball_url => '<URL to your custom tarball>'
+  unitfile_url => '<URL to your custom unitfile>'
+}
+```
+
+### Ports
+
+To change the port OpenDaylight's northbound listens on for REST API calls, use the `odl_rest_port` param. This was added because OpenStack's Swift project uses a conflicting port.
+
+
+```
+class { 'opendaylight':
+  odl_rest_port => '8080',
 }
 ```
 

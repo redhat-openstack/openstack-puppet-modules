@@ -7,6 +7,8 @@
 #   Features that should normally be installed by default, but can be overridden.
 # [*extra_features*]
 #   List of features to install in addition to the default ones.
+# [*odl_rest_port *]
+#   Port for ODL northbound REST interface to listen on.
 # [*install_method *]
 #   How to install OpenDaylight. Current options are "rpm" and "tarball", default is RPM.
 # [*tarball_url*]
@@ -17,6 +19,7 @@
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
   $extra_features = $::opendaylight::params::extra_features,
+  $odl_rest_port = $::opendaylight::params::odl_rest_port,
   $install_method = $::opendaylight::params::install_method,
   $tarball_url = $::opendaylight::params::tarball_url,
   $unitfile_url = $::opendaylight::params::unitfile_url,
@@ -49,12 +52,11 @@ class opendaylight (
       fail("Unsupported OS: ${::operatingsystem}")
     }
   }
-
   # Build full list of features to install
   $features = union($default_features, $extra_features)
 
   class { '::opendaylight::install': } ->
-  class { '::opendaylight::config': } ~>
+  class { '::opendaylight::config': odl_rest_port => $odl_rest_port} ~>
   class { '::opendaylight::service': } ->
   Class['::opendaylight']
 }
