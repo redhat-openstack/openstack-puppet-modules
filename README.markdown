@@ -68,6 +68,15 @@ class { 'opendaylight':
 }
 ```
 
+To change the port OpenDaylight's northbound listens on for REST API calls, use the `odl_rest_port` param. This was added because OpenStack's Swift project uses a conflicting port.
+
+
+```
+class { 'opendaylight':
+  odl_rest_port => '8080',
+}
+```
+
 ## Reference
 
 ### Classes
