@@ -94,6 +94,8 @@ describe 'opendaylight' do
   # All Karaf feature tests
   describe 'Karaf feature tests' do
     # All Karaf feature tests assume CentOS 7
+    #   See issue #43 for reasoning:
+    #   https://github.com/dfarrell07/puppet-opendaylight/issues/43#issue-57343159
     osfamily = 'RedHat'
     operatingsystem = 'CentOS'
     operatingsystemmajrelease = '7'
@@ -144,7 +146,6 @@ describe 'opendaylight' do
           :operatingsystemmajrelease => operatingsystemmajrelease,
         }}
 
-        extra_features = []
         let(:params) {{
           :default_features => default_features,
         }}
