@@ -42,6 +42,10 @@ mod 'gluster',
   :commit => '6c962083d8b100dcaeb6f11dbe61e6071f3d13f0',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
+mod 'gnocchi',
+  :commit => '9d7e2042282a893da08aa4715a220516036fcc1e',
+  :git => 'https://github.com/stackforge/puppet-gnocchi.git'
+
 mod 'haproxy',
   :commit => 'f381510e940ee11feb044c1c728ba2e5af807c79',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
