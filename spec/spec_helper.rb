@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
-# Shared tests for supported OSs
-def supported_os_tests(yum_repo, features)
+# Tests that are common to all possible configurations
+def generic_tests(yum_repo)
   # Confirm that module compiles
   it { should compile }
   it { should compile.with_all_deps }
@@ -55,6 +55,16 @@ def supported_os_tests(yum_repo, features)
       'hasrestart'  => 'true',
     )
   }
+  it {
+    should contain_file('org.apache.karaf.features.cfg').with(
+      'ensure'      => 'file',
+      'path'        => '/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg',
+    )
+  }
+end
+
+# Shared tests that specialize in testing Karaf feature installs
+def karaf_feature_tests(features)
   it {
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
