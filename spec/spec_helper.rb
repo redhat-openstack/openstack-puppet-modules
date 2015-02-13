@@ -21,32 +21,13 @@ def generic_tests(yum_repo)
   it { should contain_class('opendaylight::service').that_comes_before('opendaylight') }
   it { should contain_class('opendaylight').that_requires('opendaylight::service') }
 
-  # Confirm presense of other resources
+  # Confirm presense of generic resources
   it { should contain_service('opendaylight') }
-  it { should contain_yumrepo('opendaylight') }
-  it { should contain_package('opendaylight') }
   it { should contain_file('org.apache.karaf.features.cfg') }
 
-  # Confirm relationships between other resources
-  it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
-  it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
-
-  # Confirm properties of other resources
+  # Confirm properties of generic resources
   # NB: These hashes don't work with Ruby 1.8.7, but we
   #   don't support 1.8.7 so that's okay. See issue #36.
-  it {
-    should contain_yumrepo('opendaylight').with(
-      'enabled'     => '1',
-      'gpgcheck'    => '0',
-      'descr'       => 'OpenDaylight SDN controller',
-      'baseurl'     => yum_repo,
-    )
-  }
-  it {
-    should contain_package('opendaylight').with(
-      'ensure'      => 'present',
-    )
-  }
   it {
     should contain_service('opendaylight').with(
       'ensure'      => 'running',
@@ -65,6 +46,9 @@ end
 
 # Shared tests that specialize in testing Karaf feature installs
 def karaf_feature_tests(features)
+  # Confirm properties of other resources
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
   it {
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
@@ -72,6 +56,71 @@ def karaf_feature_tests(features)
       'content'     => /^featuresBoot=#{features.join(",")}/
     )
   }
+end
+
+def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
+  case method
+  when 'rpm'
+    # Confirm presense of RPM-related resources
+    it { should contain_yumrepo('opendaylight') }
+    it { should contain_package('opendaylight') }
+    it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
+    it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
+
+    # Confirm properties of RPM-related resources
+    # NB: These hashes don't work with Ruby 1.8.7, but we
+    #   don't support 1.8.7 so that's okay. See issue #36.
+    it {
+      should contain_yumrepo('opendaylight').with(
+        'enabled'     => '1',
+        'gpgcheck'    => '0',
+        'descr'       => 'OpenDaylight SDN controller',
+        'baseurl'     => yum_repo,
+      )
+    }
+    it {
+      should contain_package('opendaylight').with(
+        'ensure'      => 'present',
+      )
+    }
+  when 'tarball'
+    if tarball_url == ''
+      fail('Expected tarball_url param')
+    end
+
+    if unitfile_url == ''
+      fail('Expected unitfile_url param')
+    end
+
+    # Confirm presense of tarball-related resources
+    it { should contain_archive('opendaylight-0.2.2') }
+    it { should contain_archive('opendaylight-systemd') }
+
+    # Confirm properties of tarball-related resources
+    # NB: These hashes don't work with Ruby 1.8.7, but we
+    #   don't support 1.8.7 so that's okay. See issue #36.
+    it {
+      should contain_archive('opendaylight-0.2.2').with(
+        'ensure'           => 'present',
+        'url'              => tarball_url,
+        'target'           => '/opt/',
+        'checksum'         => false,
+        'strip_components' => 1,
+      )
+    }
+    it {
+      should contain_archive('opendaylight-systemd').with(
+        'ensure'           => 'present',
+        'url'              => unitfile_url,
+        'target'           => '/usr/lib/systemd/system/',
+        'root_dir'         => '.',
+        'checksum'         => false,
+        'strip_components' => 1,
+      )
+    }
+  else
+    fail("Unexpected install method: #{method}")
+  end
 end
 
 # Shared tests for unsupported OSs
