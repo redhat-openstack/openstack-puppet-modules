@@ -118,6 +118,10 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'strip_components' => 1,
       )
     }
+
+    # Verify that there are no unexpected resources from RPM-type installs
+    it { should_not contain_yumrepo('opendaylight') }
+    it { should_not contain_package('opendaylight') }
   else
     fail("Unexpected install method: #{method}")
   end
