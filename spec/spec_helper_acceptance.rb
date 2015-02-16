@@ -37,6 +37,32 @@ RSpec.configure do |c|
   end
 end
 
+
+def install_odl(options = {})
+  # NB: These param defaults should match the ones used by the opendaylight
+  #   class, which are defined in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  install_method = options.fetch(:install_method, 'rpm')
+  extra_features = options.fetch(:extra_features, [])
+  default_features = options.fetch(:default_features, ['config', 'standard', 'region',
+                                  'package', 'kar', 'ssh', 'management'])
+
+  # Using puppet_apply as a helper
+  it 'should work idempotently with no errors' do
+    pp = <<-EOS
+    class { 'opendaylight':
+      install_method => #{install_method},
+      default_features => #{default_features},
+      extra_features => #{extra_features},
+    }
+    EOS
+
+    # Run it twice and test for idempotency
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes  => true)
+  end
+end
+
 # Shared function that handles generic validations
 # These should be common for all odl class param combos
 def generic_validations()
@@ -79,8 +105,17 @@ def generic_validations()
   end
 end
 
-# Shared function that validates Karaf config file
-def karaf_config_validations(features)
+def karaf_config_validations(options = {})
+  # NB: These param defaults should match the ones used by the opendaylight
+  #   class, which are defined in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  extra_features = options.fetch(:extra_features, [])
+  default_features = options.fetch(:default_features, ['config', 'standard', 'region',
+                                  'package', 'kar', 'ssh', 'management'])
+
+  # Create one list of all of the features
+  features = default_features + extra_features
+
   # TODO: It'd be nice to do this independently of install dir name
   describe file('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') do
     it { should be_file }

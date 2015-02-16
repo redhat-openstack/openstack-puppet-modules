@@ -105,6 +105,7 @@ describe 'opendaylight' do
     yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
     describe 'using default features' do
       # NB: This list should be the same as the one in opendaylight::params
+      # TODO: Remove this possible source of bugs^^
       default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
       context 'and not passing extra features' do
         let(:facts) {{
