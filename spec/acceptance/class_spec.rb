@@ -8,21 +8,33 @@ require 'spec_helper_acceptance'
 #     <this module>/spec/spec_helper_acceptance.rb
 
 describe 'opendaylight class' do
+  describe 'testing install methods' do
+    context 'rpm install' do
+      # Call specialized helper fn to install OpenDaylight
+      install_odl
 
-  context 'rpm install' do
-    # Call specialized helper fn to install OpenDaylight
-    install_odl
+      # Use helper fn to run generic validations
+      generic_validations
 
-    # Use helper fn to run generic validations
-    generic_validations
+      # Call specialized helper fn for RPM-type install validations
+      rpm_validations
+    end
 
-    # Call specialized helper fn for RPM-type install validations
-    rpm_validations
+    # TODO: This is under construction, see Issue #45
+    context 'tarball install' do
+      # Call specialized helper fn to install OpenDaylight
+      install_odl(install_method: 'tarball')
+
+      # Use helper fn to run generic validations
+      generic_validations
+
+      # TODO: Call specialized helper fn for tarball-type install validations
+    end
   end
 
-  describe "testing Karaf config file" do
-    describe "using default features" do
-      context "and not passing extra features" do
+  describe 'testing Karaf config file' do
+    describe 'using default features' do
+      context 'and not passing extra features' do
         # Call specialized helper fn to install OpenDaylight
         install_odl
 
@@ -30,9 +42,9 @@ describe 'opendaylight class' do
         karaf_config_validations
       end
 
-      context "and passing extra features" do
+      context 'and passing extra features' do
         # These are real but arbitrarily chosen features
-        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        extra_features = ['odl-base-all', 'odl-ovsdb-all']
 
         # Call specialized helper fn to install OpenDaylight
         install_odl(extra_features: extra_features)
@@ -42,11 +54,11 @@ describe 'opendaylight class' do
       end
     end
 
-    describe "overriding default features" do
+    describe 'overriding default features' do
       # These are real but arbitrarily chosen features
-      default_features = ["standard", "ssh"]
+      default_features = ['standard', 'ssh']
 
-      context "and not passing extra features" do
+      context 'and not passing extra features' do
         # Call specialized helper fn to install OpenDaylight
         install_odl(default_features: default_features)
 
@@ -54,9 +66,9 @@ describe 'opendaylight class' do
         karaf_config_validations(default_features: default_features)
       end
 
-      context "and passing extra features" do
+      context 'and passing extra features' do
         # These are real but arbitrarily chosen features
-        extra_features = ["odl-base-all", "odl-ovsdb-all"]
+        extra_features = ['odl-base-all', 'odl-ovsdb-all']
 
         # Call specialized helper fn to install OpenDaylight
         install_odl(default_features: default_features,
@@ -67,21 +79,5 @@ describe 'opendaylight class' do
                                  extra_features: extra_features)
       end
     end
-  end
-
-  # All tests for tarball install method
-  # TODO: This is under construction, see Issue #45
-  describe "tarball install" do
-    # TODO: This is never being applied
-    pp = <<-EOS
-    class { 'opendaylight':
-      install_method => 'tarball'
-    }
-    EOS
-
-    # Use helper fn to run generic validations
-    generic_validations
-
-    # TODO: Call specialized helper fn for tarball-type install validations
   end
 end

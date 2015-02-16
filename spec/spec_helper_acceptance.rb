@@ -30,24 +30,28 @@ RSpec.configure do |c|
       # TODO: Why is 1 an acceptable exit code?
       on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
       # Install archive, a dependency of the odl mod use for tarball-type installs
-      # TODO: I'd perfer not to use gini-archive. See:
+      # TODO: I'd prefer not to use gini-archive. See:
       # https://github.com/dfarrell07/puppet-opendaylight/issues/52
       on host, puppet('module', 'install', 'gini-archive'), { :acceptable_exit_codes => [0] }
     end
   end
 end
 
+#
+# NB: These are a library of helper fns used by the Beaker tests
+#
 
 def install_odl(options = {})
   # NB: These param defaults should match the ones used by the opendaylight
   #   class, which are defined in opendaylight::params
   # TODO: Remove this possible source of bugs^^
+  # Extract params if given, defaulting to odl class defaults if not
   install_method = options.fetch(:install_method, 'rpm')
   extra_features = options.fetch(:extra_features, [])
   default_features = options.fetch(:default_features, ['config', 'standard', 'region',
                                   'package', 'kar', 'ssh', 'management'])
 
-  # Using puppet_apply as a helper
+  # Build script for consumption by Puppet apply
   it 'should work idempotently with no errors' do
     pp = <<-EOS
     class { 'opendaylight':
@@ -56,6 +60,8 @@ def install_odl(options = {})
       extra_features => #{extra_features},
     }
     EOS
+
+    # TODO: Apply to host selectively based on install method
 
     # Run it twice and test for idempotency
     apply_manifest(pp, :catch_failures => true)
@@ -105,6 +111,7 @@ def generic_validations()
   end
 end
 
+# Shared function for validations related to the Karaf config file
 def karaf_config_validations(options = {})
   # NB: These param defaults should match the ones used by the opendaylight
   #   class, which are defined in opendaylight::params
