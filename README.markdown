@@ -62,6 +62,8 @@ class { 'opendaylight':
 
 ### Install Method
 
+**Note: The tarball-based install method descrbed here is under active development. Currently, it's not stable and not recommended. See our GitHub Issues for the latest ([#45](https://github.com/dfarrell07/puppet-opendaylight/issues/45), possibly others). As far as we know, RPM-based installs are working fine.**
+
 The `install_method` param, and the associated `tarball_url` and `unitfile_url` params, are intended for use by developers who need to install a custom-built version of OpenDaylight.
 
 It's recommended that most people use the default RPM-based install.
