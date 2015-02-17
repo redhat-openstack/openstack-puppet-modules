@@ -40,6 +40,9 @@ class opendaylight::install {
       # Required to get proper /opt/opendaylight-<version> path
       # Ideally, camptocamp/puppet-archive would support this. PR later?
       strip_components => 1,
+      # See Issue #53:
+      # https://github.com/dfarrell07/puppet-opendaylight/issues/53
+      timeout          => 600,
     }
 
     # Download ODL systemd .service file and put in right location
