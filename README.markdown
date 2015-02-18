@@ -73,8 +73,8 @@ If you do need to install from a tarball, simply pass `tarball` as the value for
 ```
 class { 'opendaylight':
   install_method => 'tarball',
-  tarball_url => '<URL to your custom tarball>'
-  unitfile_url => '<URL to your custom unitfile>'
+  tarball_url => '<URL to your custom tarball>',
+  unitfile_url => '<URL to your custom unitfile>',
 }
 ```
 
