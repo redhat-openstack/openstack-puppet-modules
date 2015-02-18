@@ -10,6 +10,10 @@
 #    service instance.
 #   Defaults to: 'manila-service-image'
 #
+# [*service_image_location*]
+#   (required) URL or pathname to the service image. This will be
+#   loaded into Glance.
+#
 # [*service_instance_name_template*]
 #   (optional) Name of service instance.
 #   Defaults to: 'manila_service_instance_%s'
@@ -45,7 +49,7 @@
 # [*service_instance_flavor_id*]
 #   (optional) ID of flavor, that will be used for service instance
 #    creation.
-#   Defaults to: 100
+#   Defaults to: 1
 #
 # [*service_network_name*]
 #   (optional) Name of manila service network.
@@ -67,12 +71,12 @@
 #   Defaults to: 'manila.network.linux.interface.OVSInterfaceDriver'
 #
 # [*connect_share_server_to_tenant_network*]
-#   (optional) Attach share server directly to smyhare network.
+#   (optional) Attach share server directly to share network.
 #   Defaults to: false
 
-class manila::service_instance (
-  $share_backend_name                     = $name,
+define manila::service_instance (
   $service_image_name                     = 'manila-service-image',
+  $service_image_location                 = undef,
   $service_instance_name_template         = 'manila_service_instance_%s',
   $service_instance_user                  = undef,
   $service_instance_password              = undef,
@@ -81,17 +85,28 @@ class manila::service_instance (
   $path_to_private_key                    = '~/.ssh/id_rsa',
   $max_time_to_build_instance             = 300,
   $service_instance_security_group        = 'manila-service',
-  $service_instance_flavor_id             = 100,
+  $service_instance_flavor_id             = 1,
   $service_network_name                   = 'manila_service_network',
   $service_network_cidr                   = '10.254.0.0/16',
   $service_network_division_mask          = 28,
-  $interface_driver = 'manila.network.linux.interface.OVSInterfaceDriver',
+  $interface_driver                       = 'manila.network.linux.interface.OVSInterfaceDriver',
   $connect_share_server_to_tenant_network = false,
 
 ) {
+  if $service_image_location {
+    glance_image { $service_image_name:
+      ensure           => present,
+      is_public        => 'yes',
+      container_format => 'bare',
+      disk_format      => 'qcow2',
+      source           => $service_image_location,
+    }
+  }
+  else {
+    fail('Missing required parameter service_image_location')
+  }
 
   manila_config {
-    "${name}/share_backend_name":                     value => $share_backend_name;
     "${name}/service_image_name":                     value => $service_image_name;
     "${name}/service_instance_name_template":         value => $service_instance_name_template;
     "${name}/service_instance_user":                  value => $service_instance_user;
