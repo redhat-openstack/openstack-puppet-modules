@@ -42,6 +42,10 @@ mod 'gluster',
   :commit => '6c962083d8b100dcaeb6f11dbe61e6071f3d13f0',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
+mod 'gnocchi',
+  :commit => '9d7e2042282a893da08aa4715a220516036fcc1e',
+  :git => 'https://github.com/stackforge/puppet-gnocchi.git'
+
 mod 'haproxy',
   :commit => 'f381510e940ee11feb044c1c728ba2e5af807c79',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
@@ -118,6 +122,10 @@ mod 'ntp',
   :commit => '8f697e32bc279b36ada752273e6c788716b95315',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
+mod 'openstack_extras',
+  :commit => '9693efeb878b305bd00e7ef98cb25e1a874d21bf',
+  :git => 'https://github.com/stackforge/puppet-openstack_extras.git'
+
 mod 'openstacklib',
   :commit => 'b7d3c8eaaf47ffbddb50cd942f8654e1aa8fe2f2',
   :git => 'https://github.com/stackforge/puppet-openstacklib.git'
@@ -181,6 +189,10 @@ mod 'tempest',
 mod 'timezone',
   :commit => 'e82cd1b32f395217056df492e5a7dac8dc5c683a',
   :git => 'https://github.com/saz/puppet-timezone.git'
+
+mod 'tripleo',
+  :commit => '045e853acac8439d00fcd750928342af721582ad',
+  :git => 'https://github.com/stackforge/puppet-tripleo.git'
 
 mod 'trove',
   :commit => 'c345e128c7fec585acf00b5a275a78cd1ae89f03',
