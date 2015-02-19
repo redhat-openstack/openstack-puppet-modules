@@ -25,7 +25,7 @@
       "operatingsystemrelease": ["8"]
     }
   ],
-  "description": "Installs and configures OpenStack Sahara (Hadoop).",
+  "description": "Installs and configures OpenStack Sahara (Data Processing).",
   "dependencies": [
     { "name": "duritong/sysctl", "version_requirement": ">=0.0.1 <1.0.0" },
     { "name": "stackforge/keystone", "version_requirement": ">=5.0.0 <6.0.0" },

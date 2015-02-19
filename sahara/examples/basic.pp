@@ -36,9 +36,9 @@ class { 'sahara':
   os_tenant_name      => 'admin',
   os_auth_url         => 'http://127.0.0.1:5000/v2.0/',
   identity_url        => 'http://127.0.0.1:35357/',
-  service_host        => '127.0.0.1',
+  service_host        => '0.0.0.0',
   service_port        => 8386,
-  use_neutron         => true,
+  use_floating_ips    => true,
 }
 
 # Finally, make it accessible

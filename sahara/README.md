@@ -31,7 +31,7 @@ Setup
 
 **What the sahara module affects:**
 
-* sahara, the hadoop clustering service for Openstack.
+* sahara, the data processing service for Openstack.
 
 ### Installing sahara
 
