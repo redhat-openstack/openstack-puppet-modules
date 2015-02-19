@@ -13,8 +13,6 @@ describe 'manila::backend::generic' do
       :max_time_to_create_volume        => 180,
       :max_time_to_attach               => 120,
       :service_instance_smb_config_path => '$share_mount_path/smb.conf',
-      :share_helpers                    => ['CIFS=manila.share.drivers.generic.CIFSHelper',
-                                            'NFS=manila.share.drivers.generic.NFSHelper'],
       :share_volume_fstype              => 'ext4',
     }
   end
@@ -26,6 +24,9 @@ describe 'manila::backend::generic' do
         :value => 'hippo')
       should contain_manila_config('hippo/share_driver').with_value(
         'manila.share.drivers.generic.GenericShareDriver')
+      should contain_manila_config('hippo/share_helpers').with_value(
+	'CIFS=manila.share.drivers.generic.CIFSHelper,'\
+        'NFS=manila.share.drivers.generic.NFSHelper')
       params.each_pair do |config,value|
         should contain_manila_config("hippo/#{config}").with_value( value )
       end

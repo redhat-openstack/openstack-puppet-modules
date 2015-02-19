@@ -41,7 +41,7 @@
 # [*share_helpers*]
 #   (optional) Specify list of share export helpers.
 #   Defaults to: ['CIFS=manila.share.drivers.generic.CIFSHelper',
-#                'NFS=manila.share.drivers.generic.NFSHelper']
+#                 'NFS=manila.share.drivers.generic.NFSHelper']
 #
 define manila::backend::generic (
   $share_backend_name               = $name,
@@ -70,6 +70,6 @@ define manila::backend::generic (
     "${name}/max_time_to_attach":               value => $max_time_to_attach;
     "${name}/service_instance_smb_config_path": value => $service_instance_smb_config_path;
     "${name}/share_volume_fstype":              value => $share_volume_fstype;
-    "${name}/share_helpers":                    value => $share_helpers;
+    "${name}/share_helpers":                    value => join($share_helpers, ',');
   }
 }

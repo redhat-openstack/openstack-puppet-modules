@@ -38,8 +38,8 @@
 #
 # [*share_helpers*]
 #   (optional) Specify list of share export helpers.
-#   Defaults to: ['CIFS=manila.share.drivers.generic.CIFSHelper',
-#                 'NFS=manila.share.drivers.generic.NFSHelper']
+#   Defaults to:  ['CIFS=manila.share.drivers.generic.CIFSHelper',
+#                  'NFS=manila.share.drivers.generic.NFSHelper']
 #
 
 class manila::share::generic (
