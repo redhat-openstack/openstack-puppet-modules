@@ -135,7 +135,7 @@ mod 'pacemaker',
   :git => 'https://github.com/redhat-openstack/puppet-pacemaker.git'
 
 mod 'puppet',
-  :commit => 'bd467cae15eba9ca44274034d2593b0eaf30518d',
+  :commit => '97b41d9fdadbe98f965d515b55c35a65da596ef2',
   :git => 'https://github.com/purpleidea/puppet-puppet.git'
 
 mod 'qpid',
