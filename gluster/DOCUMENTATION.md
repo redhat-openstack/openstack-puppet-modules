@@ -1,5 +1,6 @@
 #Puppet-Gluster
-<!---
+
+<!--
 GlusterFS module by James
 Copyright (C) 2010-2013+ James Shubin
 Written by James Shubin <james@shubin.ca>
@@ -17,6 +18,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
 ##A GlusterFS Puppet module by [James](https://ttboj.wordpress.com/)
 ####Available from:
 ####[https://github.com/purpleidea/puppet-gluster/](https://github.com/purpleidea/puppet-gluster/)
@@ -24,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ####Also available from:
 ####[https://forge.gluster.org/puppet-gluster/](https://forge.gluster.org/puppet-gluster/)
 
-####This documentation is available in: [Markdown](https://github.com/purpleidea/puppet-gluster/blob/master/DOCUMENTATION.md) or [PDF](https://github.com/purpleidea/puppet-gluster/raw/master/puppet-gluster-documentation.pdf) format.
+####This documentation is available in: [Markdown](https://github.com/purpleidea/puppet-gluster/blob/master/DOCUMENTATION.md) or [PDF](https://pdfdoc-purpleidea.rhcloud.com/pdf/https://github.com/purpleidea/puppet-gluster/blob/master/DOCUMENTATION.md) format.
 
 ####Table of Contents
 
@@ -251,6 +253,30 @@ vagrant tricks, and to get the needed dependencies installed:
 * [Vagrant vsftp and other tricks](https://ttboj.wordpress.com/2013/12/21/vagrant-vsftp-and-other-tricks/)
 * [Vagrant clustered SSH and ‘screen’](https://ttboj.wordpress.com/2014/01/02/vagrant-clustered-ssh-and-screen/)
 
+###Can I use it without a puppetmaster?
+
+Yes, you can use Puppet-Gluster without a puppetmaster, however you will lose
+out on some advantages and features that are simply not possible without one.
+The features you will miss out on are Puppet-Gluster features, that make
+configuring this module easier, and not any core GlusterFS features.
+
+For example, without a puppetmaster, [gluster::simple](#glustersimple) will not
+be able to work, because it relies on the puppetmaster for the exchange of
+[exported resources](http://docs.puppetlabs.com/puppet/latest/reference/lang_exported.html)
+so that Puppet-Gluster can automatically figure out how many hosts are present
+in your cluster.
+
+To use Puppet-Gluster without a puppetmaster, you'll most likely want to use a
+configuration that is similar to the [verbose distributed-replicate](https://github.com/purpleidea/puppet-gluster/blob/master/examples/distributed-replicate-example.pp)
+example.
+
+The more philosophical way of thinking about this is that if you want to
+have multi-hosts coordination of things, so that your life as a sysadmin is
+easier, then you'll need to use a puppetmaster so that there is a central
+point of coordination. This is a current design limitation of puppet.
+
+Please note that you can still use the [VIP as a DLM](#do-i-need-to-use-a-virtual-ip).
+
 ###Puppet runs fail with "Invalid relationship" errors.
 
 When running Puppet, you encounter a compilation failure like:
@@ -448,6 +474,45 @@ you don't want to include the entire module, you can pull in the
 _puppet::vardir_ class by itself, or create the contained file type manually in
 your puppet manifests.
 
+###I get an undefined method error when running Puppet-Gluster.
+
+This is caused by a regression in a recent version of Puppet. They silently
+"removed" a feature, which apparently wasn't supposed to exist, which
+Puppet-Gluster relied upon. The original author of Puppet-Gluster would like
+this feature added back. If you are affected by this issue, you should see an
+an error similar to:
+
+```bash
+Error: Could not retrieve catalog from remote server:
+Error 400 on SERVER: undefined method `brick_str_to_hash' for
+Scope(Gluster::Volume[puppet]):Puppet::Parser::Scope at
+/etc/puppet/modules/gluster/manifests/volume.pp:89 on node annex1.example.com
+```
+
+Puppet-Gluster now has a patch in git master that works around the missing
+feature. This is:
+
+[06af205a562d543bbeb7c4d5c55143ade3bdb4e6](https://github.com/purpleidea/puppet-gluster/commit/06af205a562d543bbeb7c4d5c55143ade3bdb4e6)
+
+Puppet-Gluster has also been
+[updated](https://github.com/purpleidea/puppet-gluster/commit/6dfaa8446e4287cf6f7f540158cde700fb95b830)
+to fix the issue for users of brick_layout_chained.
+
+###Puppet master gives warning: "Unable to load yaml data/ directory!"
+
+You may see the message "Unable to load yaml data/ directory!" in
+_/var/log/messages_ on your puppet master. This error comes from the
+_ipa::params_ class. The _ipa::params_ class expects the puppet-module-data
+module to read data from the ipa/data directory, and this message indicates
+that the module-data module is not installed properly. Most users do not have
+this issue, but if you do, here is a workaround:
+
+* Run _puppet config print libdir_ to find the puppet libdir (e.g. /var/lib/puppet/lib).
+* Run _mkdir /etc/puppet/modules/module\_data_.
+* Copy the contents of the puppet-module-data directory into _/etc/puppet/modules/module\_data_.
+* Run "ln -s /etc/puppet/modules/module\_data/lib/hiera _<libdir>_/hiera".
+* Restart the puppet master.
+
 ###Will this work on my favourite OS? (eg: GNU/Linux F00bar OS v12 ?)
 If it's a GNU/Linux based OS, can run GlusterFS, and Puppet, then it will
 probably work. Typically, you might need to add a yaml data file to the _data/_
@@ -455,6 +520,18 @@ folder so that Puppet-Gluster knows where certain operating system specific
 things are found. The multi-distro support has been designed to make it
 particularly easy to add support for additional platforms. If your platform
 doesn't work, please submit a yaml data file with the platform specific values.
+
+###How do I get the OS independent aspects of this module to work?
+The OS independent aspects of this module use the hiera "data-in-modules"
+technique. It is actually very simple to get this to work. For a longer write
+up of this technique, please read:
+[https://ttboj.wordpress.com/2014/06/04/hiera-data-in-modules-and-os-independent-puppet/](https://ttboj.wordpress.com/2014/06/04/hiera-data-in-modules-and-os-independent-puppet/)
+
+In short, this requires puppet version 3.0.0 or greater, and needs the
+[module_data](https://github.com/ripienaar/puppet-module-data)
+puppet module to be present on the puppet server in the _modules/_ directory.
+The *module_data* code should be in a module folder named: *module_data/*.
+That's it!
 
 ###Awesome work, but it's missing support for a feature and/or platform!
 

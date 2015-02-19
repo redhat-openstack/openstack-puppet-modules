@@ -39,7 +39,7 @@ mod 'glance',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
-  :commit => '6c962083d8b100dcaeb6f11dbe61e6071f3d13f0',
+  :commit => 'ae24ecc28844404ff3b29ff80230a1564485b2b8',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
 mod 'gnocchi',

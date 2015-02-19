@@ -75,8 +75,8 @@ define gluster::host(
 				'' => undef,
 				default => "${uuid}\n",
 			},
-			owner => root,
-			group => root,
+			owner => "${::gluster::params::misc_owner_root}",
+			group => "${::gluster::params::misc_group_root}",
 			mode => 600,	# might as well...
 			ensure => present,
 			require => File["${vardir}/uuid/"],
@@ -97,19 +97,10 @@ define gluster::host(
 				'\1.\2'				# print int.int
 			)
 
-			# TODO: add additional values to this table...
-			$operating_version = "${gluster_version}" ? {
-				'' => '',	# gluster not yet installed...
-				# specific version matches go here...
-				'3.4.0' => '2',
-				default => "${gluster_main_version}" ? {
-					# loose version matches go here...
-					#'3.3' => '1',		# blank...
-					'3.4' => '2',
-					#'3.5' => '3',		# guessing...
-					default => '-1',	# unknown...
-				},
-			}
+			# TODO: add additional values to the yaml hiera data...
+			include gluster::versions
+			# if empty string, gluster is not yet installed...
+			$operating_version = "${::gluster::versions::operating_version}"
 
 			# this catches unknown gluster versions to add to table
 			if "${operating_version}" == '-1' {
@@ -119,11 +110,11 @@ define gluster::host(
 			# set a unique uuid per host, and operating version...
 			file { '/var/lib/glusterd/glusterd.info':
 				content => template('gluster/glusterd.info.erb'),
-				owner => root,
-				group => root,
+				owner => "${::gluster::params::misc_owner_root}",
+				group => "${::gluster::params::misc_group_root}",
 				mode => 600,			# u=rw,go=r
 				seltype => 'glusterd_var_lib_t',
-				seluser => 'system_u',
+				seluser => "${::gluster::params::selinux_glusterd_seluser}",
 				ensure => present,
 				notify => Service["${::gluster::params::service_glusterd}"],
 				require => File['/var/lib/glusterd/'],
@@ -133,8 +124,8 @@ define gluster::host(
 			@@file { "${vardir}/uuid/uuid_${name}":
 				content => "${valid_uuid}\n",
 				tag => 'gluster_uuid',
-				owner => root,
-				group => root,
+				owner => "${::gluster::params::misc_owner_root}",
+				group => "${::gluster::params::misc_group_root}",
 				mode => 600,
 				ensure => present,
 			}
@@ -204,12 +195,12 @@ define gluster::host(
 			# tag the file so it doesn't get removed by purge
 			file { "/var/lib/glusterd/peers/${valid_uuid}":
 				ensure => present,
-				owner => root,
-				group => root,
+				owner => "${::gluster::params::misc_owner_root}",
+				group => "${::gluster::params::misc_group_root}",
 				# NOTE: this mode was found by inspecting the process
 				mode => 600,			# u=rw,go=r
 				seltype => 'glusterd_var_lib_t',
-				seluser => 'system_u',
+				seluser => "${::gluster::params::selinux_glusterd_seluser}",
 				notify => [
 					# propagate the notify up
 					File['/var/lib/glusterd/peers/'],
@@ -239,8 +230,8 @@ define gluster::host(
 		# store so that a fact can figure out the interface and cidr...
 		file { "${vardir}/vrrp/ip":
 			content => "${valid_ip}\n",
-			owner => root,
-			group => root,
+			owner => "${::gluster::params::misc_owner_root}",
+			group => "${::gluster::params::misc_group_root}",
 			mode => 600,	# might as well...
 			ensure => present,
 			require => File["${vardir}/vrrp/"],
@@ -252,8 +243,8 @@ define gluster::host(
 				'' => undef,
 				default => "${password}",
 			},
-			owner => root,
-			group => root,
+			owner => "${::gluster::params::misc_owner_root}",
+			group => "${::gluster::params::misc_group_root}",
 			mode => 600,	# might as well...
 			ensure => present,
 			require => File["${vardir}/vrrp/"],
@@ -263,8 +254,8 @@ define gluster::host(
 		@@file { "${vardir}/vrrp/vrrp_${name}":
 			content => "${::gluster_vrrp}\n",
 			tag => 'gluster_vrrp',
-			owner => root,
-			group => root,
+			owner => "${::gluster::params::misc_owner_root}",
+			group => "${::gluster::params::misc_group_root}",
 			mode => 600,
 			ensure => present,
 		}
