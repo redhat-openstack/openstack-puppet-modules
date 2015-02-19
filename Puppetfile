@@ -59,7 +59,7 @@ mod 'horizon',
   :git => 'https://github.com/stackforge/puppet-horizon.git'
 
 mod 'inifile',
-  :commit => 'be5fc47f00466a2e6293145b3a0d4fcb586bcf15',
+  :commit => '606de6971d019fa9557d0866e90942a3d6e06a97',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ipa',
