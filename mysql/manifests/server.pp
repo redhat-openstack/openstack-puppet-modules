@@ -2,6 +2,7 @@
 class mysql::server (
   $config_file             = $mysql::params::config_file,
   $includedir              = $mysql::params::includedir,
+  $install_options         = undef,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
@@ -16,6 +17,8 @@ class mysql::server (
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
   $service_provider        = $mysql::params::server_service_provider,
+  $create_root_user        = $mysql::params::create_root_user,
+  $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
   $users                   = {},
   $grants                  = {},
   $databases               = {},

@@ -52,8 +52,9 @@ password or `/etc/my.cnf` settings, then you must also pass in an override hash:
 
 ```puppet
 class { '::mysql::server':
-  root_password    => 'strongpassword',
-  override_options => $override_options
+  root_password           => 'strongpassword',
+  remove_default_accounts => true,
+  override_options        => $override_options
 }
 ```
 (see 'Overrides' below for examples of the hash structure for `$override_options`)
@@ -137,9 +138,28 @@ To add custom MySQL configuration, drop additional files into
 
 ####mysql::server
 
+#####`create_root_user`
+
+Specify whether root user should be created or not. Defaults to 'true'.
+
+This is useful for a cluster setup with Galera. The root user has to
+be created once only. `create_root_user` can be set to 'true' on one node while
+it is set to 'false' on the remaining nodes.
+
+#####`create_root_my_cnf`
+
+If set to 'true' create `/root/.my.cnf`. Defaults to 'true'.
+
+`create_root_my_cnf` allows to create `/root/.my.cnf` independently of `create_root_user`.
+This can be used for a cluster setup with Galera where you want to have `/root/.my.cnf`
+on all nodes.
+
 #####`root_password`
 
 The MySQL root password.  Puppet will attempt to set the root password and update `/root/.my.cnf` with it.
+
+Has to be set if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET' `create_root_user`
+and `create_root_my_cnf` are assumed to be false, i.e. the MySQL root user and `/root/.my.cnf` are not created.
 
 #####`old_root_password`
 
@@ -177,6 +197,9 @@ Whether the MySQL configuration file should be managed.
 
 #####`includedir`
 The location of !includedir for custom configuration overrides.
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`purge_conf_dir`
 
@@ -344,7 +367,28 @@ The password to create for MySQL monitoring.
 
 The hostname to allow to access the MySQL monitoring user.
 
+####mysql::server::mysqltuner
+
+***Note***
+
+If using this class on a non-network-connected system you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
+
+#####`ensure`
+
+Whether the file should be `present` or `absent`. Defaults to `present`.
+
+#####`version`
+
+The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
+
+#####`source`
+
+Parameter to optionally specify the source. If not specified, defaults to `https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl`
+
 ####mysql::bindings
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`java_enable`
 
@@ -419,6 +463,9 @@ What provider should be used to install the package.
 #####`bindings_enable`
 
 Boolean to automatically install all bindings.
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`package_ensure`
 
@@ -512,6 +559,14 @@ mysql_user { 'root@127.0.0.1':
 }
 ```
 
+It is also possible to specify an authentication plugin.
+```
+mysql_user{ 'myuser'@'localhost':
+  ensure                   => 'present',
+  plugin                   => 'unix_socket',
+}
+```
+
 ####mysql_grant
 
 `mysql_grant` can be used to create grant permissions to access databases within
@@ -535,6 +590,17 @@ mysql_grant { 'root@localhost/mysql.user':
   privileges => ['SELECT (Host, User)'],
   table      => 'mysql.user',
   user       => 'root@localhost',
+}
+```
+
+####mysql_plugin
+
+`mysql_plugin` can be used to load plugins into the MySQL Server.
+
+```puppet
+mysql_plugin { 'auth_socket':
+  ensure     => 'present',
+  soname     => 'auth_socket.so',
 }
 ```
 
@@ -575,4 +641,5 @@ This module is based on work by David Schmitt. The following contributors have c
 * William Van Hevelingen
 * Michael Arnold
 * Chris Weyl
+* Daniël van Eeden
 
