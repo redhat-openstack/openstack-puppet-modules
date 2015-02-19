@@ -73,6 +73,23 @@
 #   (optional) Force backing images to raw format.
 #   Defaults to true
 #
+#  [*reserved_host_memory*]
+#   Reserved host memory
+#   The amount of memory in MB reserved for the host.
+#   Defaults to '512'
+#
+#  [*compute_manager*]
+#   Compute manager
+#   The driver that will manage the running instances.
+#   Defaults to nova.compute.manager.ComputeManager
+#
+#  [*pci_passthrough_whitelist*]
+#   (optional) Pci passthrough hash in format of:
+#   Defaults to undef
+#   Example
+#  "[ { 'vendor_id':'1234','product_id':'5678' },
+#     { 'vendor_id':'4321','product_id':'8765','physical_network':'default' } ] "
+#
 class nova::compute (
   $enabled                       = false,
   $manage_service                = true,
@@ -91,9 +108,17 @@ class nova::compute (
   $instance_usage_audit          = false,
   $instance_usage_audit_period   = 'month',
   $force_raw_images              = true,
+  $reserved_host_memory          = '512',
+  $compute_manager               = 'nova.compute.manager.ComputeManager',
+  $pci_passthrough               = undef,
 ) {
 
   include nova::params
+
+  nova_config {
+    'DEFAULT/reserved_host_memory_mb':  value => $reserved_host_memory;
+    'DEFAULT/compute_manager':          value => $compute_manager;
+  }
 
   if ($vnc_enabled) {
     if ($vncproxy_host) {
@@ -167,5 +192,11 @@ class nova::compute (
 
   nova_config {
     'DEFAULT/force_raw_images': value => $force_raw_images;
+  }
+
+  if ($pci_passthrough) {
+    nova_config {
+      'DEFAULT/pci_passthrough_whitelist': value => check_array_of_hash($pci_passthrough);
+    }
   }
 }
