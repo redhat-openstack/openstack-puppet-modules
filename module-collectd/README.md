@@ -1,7 +1,7 @@
 Collectd module for Puppet
 ==========================
 
-[![Build Status](https://travis-ci.org/pdxcat/puppet-module-collectd.png?branch=master)](https://travis-ci.org/pdxcat/puppet-module-collectd)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/pdxcat/collectd.svg)](https://forge.puppetlabs.com/pdxcat/collectd) [![Build Status](https://travis-ci.org/pdxcat/puppet-module-collectd.png?branch=master)](https://travis-ci.org/pdxcat/puppet-module-collectd)
 
 Description
 -----------
@@ -58,7 +58,9 @@ documentation for each plugin for configurable attributes.
 * `amqp`  (see [collectd::plugin::amqp](#class-collectdpluginamqp) below)
 * `apache`  (see [collectd::plugin::apache](#class-collectdpluginapache) below)
 * `bind`  (see [collectd::plugin::bind](#class-collectdpluginbind) below)
+* `conntrack`  (see [collectd::plugin::conntrack](#class-conntrack) below)
 * `cpu`  (see [collectd::plugin::cpu](#class-collectdplugincpu) below)
+* `cpufreq`  (see [collectd::plugin::cpufreq](#class-collectdplugincpufreq) below)
 * `csv`  (see [collectd::plugin::csv](#class-collectdplugincsv) below)
 * `curl` (see [collectd::plugin::curl](#class-collectdplugincurl) below)
 * `curl_json` (see [collectd::plugin::curl_json](#class-collectdplugincurl_json) below)
@@ -67,12 +69,15 @@ documentation for each plugin for configurable attributes.
 * `entropy`  (see [collectd::plugin::entropy](#class-collectdpluginentropy) below)
 * `exec`  (see [collectd::plugin::exec](#class-collectdpluginexec) below)
 * `filecount` (see [collectd::plugin::filecount](#class-collectdpluginfilecount) below)
+* `genericjmx` (see [collectd::plugin::genericjmx](#class-collectdplugingenericjmx) below)
 * `interface` (see [collectd::plugin::interface](#class-collectdplugininterface) below)
 * `iptables` (see [collectd::plugin::iptables](#class-collectdpluginiptables) below)
 * `irq` (see [collectd::plugin::irq](#class-collectdpluginirq) below)
+* `java` (see [collectd::plugin::java](#class-collectdpluginjava) below)
 * `load` (see [collectd::plugin::load](#class-collectdpluginload) below)
 * `logfile` (see [collectd::plugin::logfile](#class-collectdpluginlogfile) below)
 * `libvirt` (see [collectd::plugin::libvirt](#class-collectdpluginlibvirt) below)
+* `lvm` (see [collectd::plugin::lvm](#class-collectdpluginlvm) below)
 * `memcached`(see [collectd::plugin::memcached](#class-collectdpluginmemcached) below )
 * `memory`(see [collectd::plugin::memory](#class-collectdpluginmemory) below )
 * `mysql` (see [collectd::plugin::mysql](#class-collectdpluginmysql) below)
@@ -95,6 +100,7 @@ documentation for each plugin for configurable attributes.
 * `swap` (see [collectd::plugin::swap](#class-collectdpluginswap) below)
 * `syslog` (see [collectd::plugin::syslog](#class-collectdpluginsyslog) below)
 * `tail` (see [collectd::plugin::tail](#class-collectdplugintail) below)
+* `target_v5upgrade` (see [collectd::plugin::target_v5upgrade](#class-collectdplugintarget_v5upgrade) below)
 * `tcpconns` (see [collectd::plugin::tcpconns](#class-collectdplugintcpconns) below)
 * `unixsock` (see [collectd::plugin::unixsock](#class-collectdpluginunixsock) below)
 * `uptime` (see [collectd::plugin::uptime](#class-collectdpluginuptime) below)
@@ -105,6 +111,7 @@ documentation for each plugin for configurable attributes.
 * `write_http` (see [collectd::plugin::write_http](#class-collectdpluginwrite_http) below)
 * `write_network` (see [collectd::plugin::write_network](#class-collectdpluginwrite_network) below)
 * `write_riemann` (see [collectd::plugin::write_riemann](#class-collectdpluginwrite_riemann) below)
+* `zfs_arc` (see [collectd::plugin::zfs_arc](#class-collectdpluginzfs_arc) below)
 
 ####Class: `collectd::plugin::amqp`
 
@@ -140,10 +147,27 @@ class { 'collectd::plugin::bind':
 }
 ```
 
+####Class: `collectd::plugin::conntrack`
+
+```puppet
+class { 'collectd::plugin::conntrack':
+}
+
+
+```
+
 ####Class: `collectd::plugin::cpu`
 
 ```puppet
 class { 'collectd::plugin::cpu':
+}
+
+
+```
+####Class: `collectd::plugin::cpufreq`
+
+```puppet
+class { 'collectd::plugin::cpufreq':
 }
 ```
 
@@ -231,7 +255,7 @@ class { 'collectd::plugin::disk':
 ####Class: `collectd::plugin::entropy`
 
 ```puppet
-collectd::plugin::entropy {
+class { 'collectd::plugin::entropy':
 }
 ```
 
@@ -249,6 +273,31 @@ collectd::plugin::exec {
 ####Class: `collectd::plugin::filecount`
 
 ```puppet
+collectd::plugin::filecount::directory {'foodir':
+  path          => '/path/to/dir',
+  pattern       => '*.conf',
+  mtime         => '-5m',
+  recursive     => true,
+  includehidden => false
+}
+
+```
+You can also configure this plugin with a parameterized class:
+```puppet
+class { 'collectd::plugin::filecount':
+  directories => {
+    'foodir' => {
+      'path'          => '/path/to/dir',
+      'pattern'       => '*.conf',
+      'mtime'         => '-5m',
+      'recursive'     => true,
+      'includehidden' => false
+      },
+  },
+}
+```
+For backwards compatibility:
+```puppet
 class { 'collectd::plugin::filecount':
   directories => {
     'active'   => '/var/spool/postfix/active',
@@ -256,6 +305,41 @@ class { 'collectd::plugin::filecount':
   },
 }
 ```
+
+####Class: `collectd::plugin::genericjmx`
+
+```puppet
+include collectd::plugin::genericjmx
+
+collectd::plugin::genericjmx::mbean {
+  'garbage_collector':
+    object_name     => 'java.lang:type=GarbageCollector,*',
+    instance_prefix => 'gc-',
+    instance_from   => 'name',
+    values          => [
+      {
+        type      => 'invocations',
+        table     => false,
+        attribute => 'CollectionCount',
+      },
+      {
+        type            => 'total_time_in_ms',
+        instance_prefix => 'collection_time',
+        table           => false,
+        attribute       => 'CollectionTime',
+      },
+    ];
+}
+
+collectd::plugin::genericjmx::connection {
+  'java_app':
+    host            => $fqdn,
+    service_url     => 'service:jmx:rmi:///jndi/rmi://localhost:3637/jmxrmi',
+    collect         => [ 'memory-heap', 'memory-nonheap','garbage_collector' ],
+}
+
+```
+
 ####Class: `collectd::plugin::interface`
 
 ```puppet
@@ -285,6 +369,12 @@ class { 'collectd::plugin::iptables':
 }
 ```
 
+####Class: `collectd::plugin::java`
+
+```puppet
+class { 'collectd::plugin::java': }
+```
+
 ####Class: `collectd::plugin::load`
 
 ```puppet
@@ -311,6 +401,12 @@ class { 'collectd::plugin::libvirt':
   connection       => 'qemu:///system',
   interface_format => 'address'
 }
+```
+
+####Class: `collectd::plugin::lvm`
+
+```puppet
+class { 'collectd::plugin::lvm': }
 ```
 
 ####Class: `collectd::plugin::memcached`
@@ -668,6 +764,13 @@ class { 'collectd::plugin::syslog':
 }
 ```
 
+####Class: `collectd::plugin::target_v5upgrade`
+
+```puppet
+class { 'collectd::plugin::target_v5upgrade':
+}
+```
+
 ####Class: `collectd::plugin::tcpconns`
 
 ```puppet
@@ -756,7 +859,7 @@ class { 'collectd::plugin::vmem':
 
 ```puppet
 class { 'collectd::plugin::write_graphite':
-  graphitehost => 'graphite.examle.org',
+  graphitehost => 'graphite.example.org',
 }
 ```
 
@@ -790,6 +893,14 @@ class { 'collectd::plugin::write_network':
 class { 'collectd::plugin::write_riemann':
   riemann_host => 'riemann.example.org',
   riemann_port => 5555,
+}
+```
+
+
+####Class: `collectd::plugin::zfs_arc`
+
+```puppet
+class { 'collectd::plugin::zfs_arc':
 }
 ```
 
