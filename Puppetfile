@@ -197,7 +197,7 @@ mod 'stdlib',
   :ref => 'fb42396c75d90ce3a9473e2a7ed22682266ea03f'
 mod 'sudo',
   :git => 'git://github.com/enovance/puppet-sudo.git',
-  :ref => 'be624a8e6f236285ca8fdb76b9e74bdd26146101'
+  :ref => '38ad9b99fa774d6ef3303e5d520c8116e1c91684'
 mod 'sysctl',
   :git => 'git://github.com/enovance/puppet-sysctl.git',
   :ref => '4a463384e844f51b270428643a5b8beb3628e854'
