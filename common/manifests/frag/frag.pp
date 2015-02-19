@@ -36,7 +36,7 @@ define whole(
 	}
 
 	# this is the parent (basename) dir of $name which is special if i frag
-	$frag_d = sprintf("%s/", regsubst($name, '((\/[\w.-]+)*)(\/)([\w.-]+)', '\1'))
+	$frag_d = sprintf("%s/", regsubst("${name}", '((\/[\w.-]+)*)(\/)([\w.-]+)', '\1'))
 
 	# the file (used to set perms and as a placeholder so it's not deleted)
 	file { "${name}":
@@ -96,10 +96,10 @@ define frag(				# dir to store frag, is path in namevar
 	$source = ''
 	# TODO: add more file object features if someone needs them or if bored
 ) {
-	# finds the file name in a complete path; eg: /tmp/dir/file => file
-	#$x = regsubst($name, '(\/[\w.]+)*(\/)([\w.]+)', '\3')
+	# finds the file basename in a complete path; eg: /tmp/dir/file => file
+	#$x = regsubst("${name}", '(\/[\w.]+)*(\/)([\w.]+)', '\3')
 	# finds the basepath in a complete path; eg: /tmp/dir/file => /tmp/dir/
-	$d = sprintf("%s/", regsubst($name, '((\/[\w.-]+)*)(\/)([\w.-]+)', '\1'))
+	$d = sprintf("%s/", regsubst("${name}", '((\/[\w.-]+)*)(\/)([\w.-]+)', '\1'))
 
 	# the file fragment
 	file { "${name}":
