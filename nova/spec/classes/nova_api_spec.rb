@@ -110,6 +110,7 @@ describe 'nova::api' do
           :metadata_workers                     => 2,
           :osapi_v3                             => true,
           :keystone_ec2_url                     => 'https://example.com:5000/v2.0/ec2tokens',
+          :pci_alias                            => "[{\"vendor_id\":\"8086\",\"product_id\":\"0126\",\"name\":\"graphic_card\"},{\"vendor_id\":\"9096\",\"product_id\":\"1520\",\"name\":\"network_card\"}]"
         })
       end
 
@@ -165,6 +166,12 @@ describe 'nova::api' do
 
       it 'configure nova api v3' do
         should contain_nova_config('osapi_v3/enabled').with('value' => true)
+      end
+
+      it 'configures nova pci_alias entries' do
+        should contain_nova_config('DEFAULT/pci_alias').with(
+          'value' => "[{\"vendor_id\":\"8086\",\"product_id\":\"0126\",\"name\":\"graphic_card\"},{\"vendor_id\":\"9096\",\"product_id\":\"1520\",\"name\":\"network_card\"}]"
+        )
       end
     end
 
@@ -234,6 +241,29 @@ describe 'nova::api' do
 
       it { should contain_service('nova-api').without_ensure }
     end
+
+    context 'with default database parameters' do
+      let :pre_condition do
+        "include nova"
+      end
+
+      it { should_not contain_nova_config('database/connection') }
+      it { should_not contain_nova_config('database/idle_timeout').with_value('3600') }
+    end
+
+    context 'with overridden database parameters' do
+      let :pre_condition do
+        "class { 'nova':
+           database_connection   => 'mysql://user:pass@db/db',
+           database_idle_timeout => '30',
+         }
+        "
+      end
+
+      it { should contain_nova_config('database/connection').with_value('mysql://user:pass@db/db').with_secret(true) }
+      it { should contain_nova_config('database/idle_timeout').with_value('30') }
+    end
+
   end
 
   context 'on Debian platforms' do
