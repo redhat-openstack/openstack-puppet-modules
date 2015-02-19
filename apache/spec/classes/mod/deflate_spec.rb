@@ -41,6 +41,7 @@ describe 'apache::mod::deflate', :type => :class do
         :operatingsystemrelease => '6',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         :concat_basedir         => '/dne',
+        :is_pe                  => false,
       }
     end
 
@@ -67,6 +68,7 @@ describe 'apache::mod::deflate', :type => :class do
         :operatingsystemrelease => '6',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         :concat_basedir         => '/dne',
+        :is_pe                  => false,
       }
     end
 
@@ -86,6 +88,7 @@ describe 'apache::mod::deflate', :type => :class do
         :operatingsystemrelease => '9',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         :concat_basedir         => '/dne',
+        :is_pe                  => false,
       }
     end
 
@@ -94,7 +97,7 @@ describe 'apache::mod::deflate', :type => :class do
 
     it { is_expected.to contain_file("deflate.conf").with({
       :ensure => 'file',
-      :path   => '/usr/local/etc/apache22/Modules/deflate.conf',
+      :path   => '/usr/local/etc/apache24/Modules/deflate.conf',
     } ) }
   end
 end

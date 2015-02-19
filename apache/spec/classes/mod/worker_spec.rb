@@ -15,6 +15,7 @@ describe 'apache::mod::worker', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -60,6 +61,7 @@ describe 'apache::mod::worker', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -105,11 +107,12 @@ describe 'apache::mod::worker', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.not_to contain_apache__mod('worker') }
-    it { is_expected.to contain_file("/usr/local/etc/apache22/Modules/worker.conf").with_ensure('file') }
+    it { is_expected.to contain_file("/usr/local/etc/apache24/Modules/worker.conf").with_ensure('file') }
   end
 
   # Template config doesn't vary by distro
@@ -123,6 +126,7 @@ describe 'apache::mod::worker', :type => :class do
         :id                     => 'root',
         :concat_basedir         => '/dne',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 

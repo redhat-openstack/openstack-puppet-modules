@@ -27,6 +27,7 @@ class apache::params inherits ::apache::version {
 
   # The default error log level
   $log_level = 'warn'
+  $use_optional_includes = false
 
   if $::operatingsystem == 'Ubuntu' and $::lsbdistrelease == '10.04' {
     $verify_command = '/usr/sbin/apache2ctl -t'
@@ -66,7 +67,9 @@ class apache::params inherits ::apache::version {
     $suphp_engine         = 'off'
     $suphp_configpath     = undef
     # NOTE: The module for Shibboleth is not available to RH/CentOS without an additional repository. http://wiki.aaf.edu.au/tech-info/sp-install-guide
+    # NOTE: The auth_cas module isn't available to RH/CentOS without enabling EPEL.
     $mod_packages         = {
+      'auth_cas'    => 'mod_auth_cas',
       'auth_kerb'   => 'mod_auth_kerb',
       'authnz_ldap' => $::apache::version::distrelease ? {
         '7'     => 'mod_ldap',
@@ -83,6 +86,7 @@ class apache::params inherits ::apache::version {
       },
       'proxy_html'  => 'mod_proxy_html',
       'python'      => 'mod_python',
+      'security'    => 'mod_security',
       'shibboleth'  => 'shibboleth',
       'ssl'         => 'mod_ssl',
       'wsgi'        => 'mod_wsgi',
@@ -104,11 +108,42 @@ class apache::params inherits ::apache::version {
     $mime_support_package = 'mailcap'
     $mime_types_config    = '/etc/mime.types'
     $docroot              = '/var/www/html'
-    if $::osfamily == "RedHat" {
+    $error_documents_path = $::apache::version::distrelease ? {
+      '7'     => '/usr/share/httpd/error',
+      default => '/var/www/error'
+    }
+    if $::osfamily == 'RedHat' {
       $wsgi_socket_prefix = '/var/run/wsgi'
     } else {
       $wsgi_socket_prefix = undef
     }
+    $cas_cookie_path      = '/var/cache/mod_auth_cas/'
+    $modsec_crs_package   = 'mod_security_crs'
+    $modsec_crs_path      = '/usr/lib/modsecurity.d'
+    $modsec_dir           = '/etc/httpd/modsecurity.d'
+    $modsec_default_rules = [
+      'base_rules/modsecurity_35_bad_robots.data',
+      'base_rules/modsecurity_35_scanners.data',
+      'base_rules/modsecurity_40_generic_attacks.data',
+      'base_rules/modsecurity_41_sql_injection_attacks.data',
+      'base_rules/modsecurity_50_outbound.data',
+      'base_rules/modsecurity_50_outbound_malware.data',
+      'base_rules/modsecurity_crs_20_protocol_violations.conf',
+      'base_rules/modsecurity_crs_21_protocol_anomalies.conf',
+      'base_rules/modsecurity_crs_23_request_limits.conf',
+      'base_rules/modsecurity_crs_30_http_policy.conf',
+      'base_rules/modsecurity_crs_35_bad_robots.conf',
+      'base_rules/modsecurity_crs_40_generic_attacks.conf',
+      'base_rules/modsecurity_crs_41_sql_injection_attacks.conf',
+      'base_rules/modsecurity_crs_41_xss_attacks.conf',
+      'base_rules/modsecurity_crs_42_tight_security.conf',
+      'base_rules/modsecurity_crs_45_trojans.conf',
+      'base_rules/modsecurity_crs_47_common_exceptions.conf',
+      'base_rules/modsecurity_crs_49_inbound_blocking.conf',
+      'base_rules/modsecurity_crs_50_outbound.conf',
+      'base_rules/modsecurity_crs_59_outbound_blocking.conf',
+      'base_rules/modsecurity_crs_60_correlation.conf'
+    ]
   } elsif $::osfamily == 'Debian' {
     $user                = 'www-data'
     $group               = 'www-data'
@@ -137,6 +172,7 @@ class apache::params inherits ::apache::version {
     $suphp_engine        = 'off'
     $suphp_configpath    = '/etc/php5/apache2'
     $mod_packages        = {
+      'auth_cas'    => 'libapache2-mod-auth-cas',
       'auth_kerb'   => 'libapache2-mod-auth-kerb',
       'dav_svn'     => 'libapache2-svn',
       'fastcgi'     => 'libapache2-mod-fastcgi',
@@ -149,6 +185,7 @@ class apache::params inherits ::apache::version {
       'proxy_html'  => 'libapache2-mod-proxy-html',
       'python'      => 'libapache2-mod-python',
       'rpaf'        => 'libapache2-mod-rpaf',
+      'security'    => 'libapache2-modsecurity',
       'suphp'       => 'libapache2-mod-suphp',
       'wsgi'        => 'libapache2-mod-wsgi',
       'xsendfile'   => 'libapache2-mod-xsendfile',
@@ -165,6 +202,34 @@ class apache::params inherits ::apache::version {
     $mime_support_package = 'mime-support'
     $mime_types_config    = '/etc/mime.types'
     $docroot              = '/var/www'
+    $cas_cookie_path      = '/var/cache/apache2/mod_auth_cas/'
+    $modsec_crs_package   = 'modsecurity-crs'
+    $modsec_crs_path      = '/usr/share/modsecurity-crs'
+    $modsec_dir           = '/etc/modsecurity'
+    $modsec_default_rules = [
+      'base_rules/modsecurity_35_bad_robots.data',
+      'base_rules/modsecurity_35_scanners.data',
+      'base_rules/modsecurity_40_generic_attacks.data',
+      'base_rules/modsecurity_41_sql_injection_attacks.data',
+      'base_rules/modsecurity_50_outbound.data',
+      'base_rules/modsecurity_50_outbound_malware.data',
+      'base_rules/modsecurity_crs_20_protocol_violations.conf',
+      'base_rules/modsecurity_crs_21_protocol_anomalies.conf',
+      'base_rules/modsecurity_crs_23_request_limits.conf',
+      'base_rules/modsecurity_crs_30_http_policy.conf',
+      'base_rules/modsecurity_crs_35_bad_robots.conf',
+      'base_rules/modsecurity_crs_40_generic_attacks.conf',
+      'base_rules/modsecurity_crs_41_sql_injection_attacks.conf',
+      'base_rules/modsecurity_crs_41_xss_attacks.conf',
+      'base_rules/modsecurity_crs_42_tight_security.conf',
+      'base_rules/modsecurity_crs_45_trojans.conf',
+      'base_rules/modsecurity_crs_47_common_exceptions.conf',
+      'base_rules/modsecurity_crs_49_inbound_blocking.conf',
+      'base_rules/modsecurity_crs_50_outbound.conf',
+      'base_rules/modsecurity_crs_59_outbound_blocking.conf',
+      'base_rules/modsecurity_crs_60_correlation.conf'
+    ]
+    $error_documents_path = '/usr/share/apache2/error'
 
     #
     # Passenger-specific settings
@@ -202,6 +267,11 @@ class apache::params inherits ::apache::version {
             $passenger_ruby         = '/usr/bin/ruby'
             $passenger_default_ruby = undef
           }
+          'jessie': {
+            $passenger_root         = '/usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini'
+            $passenger_ruby         = undef
+            $passenger_default_ruby = '/usr/bin/ruby'
+          }
           default: {
             # The following settings may or may not work on Debian releases not
             # supported by this module.
@@ -217,9 +287,9 @@ class apache::params inherits ::apache::version {
     $user             = 'www'
     $group            = 'www'
     $root_group       = 'wheel'
-    $apache_name      = 'apache22'
-    $service_name     = 'apache22'
-    $httpd_dir        = '/usr/local/etc/apache22'
+    $apache_name      = 'apache24'
+    $service_name     = 'apache24'
+    $httpd_dir        = '/usr/local/etc/apache24'
     $server_root      = '/usr/local'
     $conf_dir         = $httpd_dir
     $confd_dir        = "${httpd_dir}/Includes"
@@ -229,24 +299,24 @@ class apache::params inherits ::apache::version {
     $vhost_enable_dir = undef
     $conf_file        = 'httpd.conf'
     $ports_file       = "${conf_dir}/ports.conf"
-    $logroot          = '/var/log/apache22'
+    $logroot          = '/var/log/apache24'
     $logroot_mode     = undef
-    $lib_path         = '/usr/local/libexec/apache22'
+    $lib_path         = '/usr/local/libexec/apache24'
     $mpm_module       = 'prefork'
     $dev_packages     = undef
-    $default_ssl_cert = '/usr/local/etc/apache22/server.crt'
-    $default_ssl_key  = '/usr/local/etc/apache22/server.key'
-    $ssl_certs_dir    = '/usr/local/etc/apache22'
+    $default_ssl_cert = '/usr/local/etc/apache24/server.crt'
+    $default_ssl_key  = '/usr/local/etc/apache24/server.key'
+    $ssl_certs_dir    = '/usr/local/etc/apache24'
     $passenger_conf_file = 'passenger.conf'
     $passenger_conf_package_file = undef
-    $passenger_root   = '/usr/local/lib/ruby/gems/1.9/gems/passenger-4.0.10'
-    $passenger_ruby   = '/usr/bin/ruby'
+    $passenger_root   = '/usr/local/lib/ruby/gems/2.0/gems/passenger-4.0.58'
+    $passenger_ruby   = '/usr/local/bin/ruby'
     $passenger_default_ruby = undef
     $suphp_addhandler = 'php5-script'
     $suphp_engine     = 'off'
     $suphp_configpath = undef
     $mod_packages     = {
-      # NOTE: I list here only modules that are not included in www/apache22
+      # NOTE: I list here only modules that are not included in www/apache24
       # NOTE: 'passenger' needs to enable APACHE_SUPPORT in make config
       # NOTE: 'php' needs to enable APACHE option in make config
       # NOTE: 'dav_svn' needs to enable MOD_DAV_SVN make config
@@ -255,7 +325,7 @@ class apache::params inherits ::apache::version {
       'fcgid'      => 'www/mod_fcgid',
       'passenger'  => 'www/rubygem-passenger',
       'perl'       => 'www/mod_perl2',
-      'php5'       => 'lang/php5',
+      'php5'       => 'www/mod_php5',
       'proxy_html' => 'www/mod_proxy_html',
       'python'     => 'www/mod_python3',
       'wsgi'       => 'www/mod_wsgi',
@@ -275,7 +345,8 @@ class apache::params inherits ::apache::version {
     $mime_support_package = 'misc/mime-support'
     $mime_types_config    = '/usr/local/etc/mime.types'
     $wsgi_socket_prefix   = undef
-    $docroot              = '/usr/local/www/apache22/data'
+    $docroot              = '/usr/local/www/apache24/data'
+    $error_documents_path = '/usr/local/www/apache24/error'
   } else {
     fail("Class['apache::params']: Unsupported osfamily: ${::osfamily}")
   }

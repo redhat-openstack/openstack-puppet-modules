@@ -103,6 +103,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
             { 'path' => '/foo', 'url' => 'http://backend-foo/'},
           ],
         proxy_preserve_host   => true,
+        proxy_error_override  => true,
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
@@ -113,6 +114,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       it { is_expected.to contain "ServerName proxy.example.com" }
       it { is_expected.to contain "ProxyPass" }
       it { is_expected.to contain "ProxyPreserveHost On" }
+      it { is_expected.to contain "ProxyErrorOverride On" }
       it { is_expected.not_to contain "<Proxy \*>" }
     end
   end
@@ -761,6 +763,34 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
     end
   end
 
+  describe 'multiple access_logs' do
+    it 'applies cleanly' do
+      pp = <<-EOS
+        class { 'apache': }
+        host { 'test.server': ip => '127.0.0.1' }
+        apache::vhost { 'test.server':
+          docroot            => '/tmp',
+          logroot            => '/tmp',
+          access_logs => [
+            {'file' => 'log1'},
+            {'file' => 'log2', 'env' => 'admin' },
+            {'file' => '/var/tmp/log3', 'format' => '%h %l'},
+            {'syslog' => 'syslog' }
+          ]
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file("#{$vhost_dir}/25-test.server.conf") do
+      it { is_expected.to be_file }
+      it { is_expected.to contain 'CustomLog "/tmp/log1" combined' }
+      it { is_expected.to contain 'CustomLog "/tmp/log2" combined env=admin' }
+      it { is_expected.to contain 'CustomLog "/var/tmp/log3" "%h %l"' }
+      it { is_expected.to contain 'CustomLog "syslog" combined' }
+    end
+  end
+
   describe 'aliases' do
     it 'applies cleanly' do
       pp = <<-EOS
@@ -971,6 +1001,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
             { comment => 'test',
               rewrite_cond => '%{HTTP_USER_AGENT} ^Lynx/ [OR]',
               rewrite_rule => ['^index\.html$ welcome.html'],
+              rewrite_map  => ['lc int:tolower'],
             }
           ],
         }
@@ -983,6 +1014,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       it { is_expected.to contain '#test' }
       it { is_expected.to contain 'RewriteCond %{HTTP_USER_AGENT} ^Lynx/ [OR]' }
       it { is_expected.to contain 'RewriteRule ^index.html$ welcome.html' }
+      it { is_expected.to contain 'RewriteMap lc int:tolower' }
     end
   end
 
@@ -1187,7 +1219,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
   describe 'additional_includes' do
     it 'applies cleanly' do
       pp = <<-EOS
-        if $::osfamily == 'RedHat' and $::selinux == 'true' {
+        if $::osfamily == 'RedHat' and $::selinux {
           $semanage_package = $::operatingsystemmajrelease ? {
             '5'     => 'policycoreutils',
             default => 'policycoreutils-python',
@@ -1223,4 +1255,20 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
     end
   end
 
+  describe 'virtualhost without priority prefix' do
+    it 'applies cleanly' do
+      pp = <<-EOS
+        class { 'apache': }
+        apache::vhost { 'test.server':
+          priority => false,
+          docroot => '/tmp'
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file("#{$vhost_dir}/test.server.conf") do
+      it { is_expected.to be_file }
+    end
+  end
 end

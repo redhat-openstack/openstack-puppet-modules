@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'apache::vhost', :type => :define do
   let :pre_condition do
-    'class { "apache": default_vhost => false, default_mods => false, }'
+    'class { "apache": default_vhost => false, default_mods => false, vhost_enable_dir => "/etc/apache2/sites-enabled"}'
   end
   let :title do
     'rspec.example.com'
@@ -24,6 +24,7 @@ describe 'apache::vhost', :type => :define do
           :id                     => 'root',
           :kernel                 => 'Linux',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
       let :params do default_params end
@@ -42,6 +43,7 @@ describe 'apache::vhost', :type => :define do
           :id                     => 'root',
           :kernel                 => 'Linux',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
       let :params do default_params end
@@ -68,6 +70,7 @@ describe 'apache::vhost', :type => :define do
           :id                     => 'root',
           :kernel                 => 'FreeBSD',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
       let :params do default_params end
@@ -76,7 +79,7 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_class("apache::params") }
       it { is_expected.to contain_file("25-rspec.example.com.conf").with(
         :ensure => 'present',
-        :path   => '/usr/local/etc/apache22/Vhosts/25-rspec.example.com.conf'
+        :path   => '/usr/local/etc/apache24/Vhosts/25-rspec.example.com.conf'
       ) }
     end
   end
@@ -91,6 +94,7 @@ describe 'apache::vhost', :type => :define do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     describe 'basic assumptions' do
@@ -150,7 +154,6 @@ describe 'apache::vhost', :type => :define do
           'directories'                 => {
             'path'     => '/var/www/files',
             'provider' => 'files',
-            'deny'     => 'from all'
           },
           'error_log'                   => false,
           'error_log_file'              => 'httpd_error_log',
@@ -188,6 +191,7 @@ describe 'apache::vhost', :type => :define do
           'php_admin_values'            => ['true', 'false'],
           'no_proxy_uris'               => '/foo',
           'proxy_preserve_host'         => true,
+          'proxy_error_override'        => true,
           'redirect_source'             => '/bar',
           'redirect_dest'               => '/',
           'redirect_status'             => 'temp',
@@ -257,6 +261,7 @@ describe 'apache::vhost', :type => :define do
           :kernel                 => 'Linux',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
           :kernelversion          => '3.6.2',
+          :is_pe                  => false,
         }
       end
 
@@ -281,11 +286,17 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_class('apache::mod::passenger') }
       it { is_expected.to contain_class('apache::mod::fastcgi') }
       it { is_expected.to contain_class('apache::mod::headers') }
+      it { is_expected.to contain_class('apache::mod::setenvif') }
       it { is_expected.to contain_concat('30-rspec.example.com.conf').with({
         'owner'   => 'root',
         'mode'    => '0644',
         'require' => 'Package[httpd]',
-        'notify'  => 'Service[httpd]',
+        'notify'  => 'Class[Apache::Service]',
+      })
+      }
+      it { is_expected.to contain_file('30-rspec.example.com.conf symlink').with({
+        'ensure' => 'link',
+        'path'   => '/etc/apache2/sites-enabled/30-rspec.example.com.conf',
       })
       }
       it { is_expected.to contain_concat__fragment('rspec.example.com-apache-header') }
@@ -337,6 +348,21 @@ describe 'apache::vhost', :type => :define do
           'manage_docroot'  => true,
           'logroot'         => '/tmp/logroot',
           'logroot_ensure'  => 'absent',
+          'directories'     => [
+            {
+              'path'     => '/var/www/files',
+              'provider' => 'files',
+              'allow'    => [ 'from 127.0.0.1', 'from 127.0.0.2', ],
+              'deny'     => [ 'from 127.0.0.3', 'from 127.0.0.4', ],
+            },
+            {
+              'path'     => '/var/www/foo',
+              'provider' => 'files',
+              'allow'    => 'from 127.0.0.5',
+              'deny'     => 'from all',
+            },
+          ],
+
         }
       end
       let :facts do
@@ -349,6 +375,7 @@ describe 'apache::vhost', :type => :define do
           :kernel                 => 'Linux',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
           :kernelversion          => '3.6.2',
+          :is_pe                  => false,
         }
       end
 
@@ -380,6 +407,18 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-itk') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-fallbackresource') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-directories') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Allow from 127\.0\.0\.1$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Allow from 127\.0\.0\.2$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Allow from 127\.0\.0\.5$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Deny from 127\.0\.0\.3$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Deny from 127\.0\.0\.4$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Deny from all$/ ) }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-additional_includes') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-logging') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-serversignature') }
@@ -407,6 +446,64 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-file_footer') }
     end
   end
+  describe 'access logs' do
+    let :facts do
+      {
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '6',
+        :concat_basedir         => '/dne',
+        :operatingsystem        => 'RedHat',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
+      }
+    end
+    context 'single log file' do
+      let(:params) do
+        {
+          'docroot'         => '/rspec/docroot',
+          'access_log_file' => 'my_log_file',
+        }
+      end
+      it { is_expected.to contain_concat__fragment('rspec.example.com-access_log').with(
+        :content => /^\s+CustomLog.*my_log_file" combined\s*$/
+      )}
+    end
+    context 'single log file with environment' do
+      let(:params) do
+        {
+          'docroot'            => '/rspec/docroot',
+          'access_log_file'    => 'my_log_file',
+          'access_log_env_var' => 'prod'
+        }
+      end
+      it { is_expected.to contain_concat__fragment('rspec.example.com-access_log').with(
+        :content => /^\s+CustomLog.*my_log_file" combined\s+env=prod$/
+      )}
+    end
+    context 'multiple log files' do
+      let(:params) do
+        {
+          'docroot'     => '/rspec/docroot',
+          'access_logs' => [
+            { 'file' => '/tmp/log1', 'env' => 'dev' },
+            { 'file' => 'log2' },
+            { 'syslog' => 'syslog', 'format' => '%h %l' }
+          ],
+        }
+      end
+      it { is_expected.to contain_concat__fragment('rspec.example.com-access_log').with(
+        :content => /^\s+CustomLog "\/tmp\/log1"\s+combined\s+env=dev$/
+      )}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-access_log').with(
+        :content => /^\s+CustomLog "\/var\/log\/httpd\/log2"\s+combined\s*$/
+      )}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-access_log').with(
+        :content => /^\s+CustomLog "syslog" "%h %l"\s*$/
+      )}
+    end
+  end # access logs
   describe 'validation' do
     context 'bad ensure' do
       let :params do
@@ -615,6 +712,16 @@ describe 'apache::vhost', :type => :define do
         {
           'docroot'         => '/rspec/docroot',
           'custom_fragment' => true,
+        }
+      end
+      let :facts do default_facts end
+      it { expect { is_expected.to compile }.to raise_error }
+    end
+    context 'bad access_logs' do
+      let :params do
+        {
+          'docroot'     => '/rspec/docroot',
+          'access_logs' => '/var/log/somewhere',
         }
       end
       let :facts do default_facts end

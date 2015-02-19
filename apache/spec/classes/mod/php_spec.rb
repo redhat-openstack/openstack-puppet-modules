@@ -12,6 +12,7 @@ describe 'apache::mod::php', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     context "with mpm_module => prefork" do
@@ -49,6 +50,7 @@ describe 'apache::mod::php', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     context "with default params" do
@@ -124,12 +126,13 @@ describe 'apache::mod::php', :type => :class do
     let :facts do
       {
         :osfamily               => 'FreeBSD',
-        :operatingsystemrelease => '9',
+        :operatingsystemrelease => '10',
         :concat_basedir         => '/dne',
         :operatingsystem        => 'FreeBSD',
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     context "with mpm_module => prefork" do
@@ -138,7 +141,7 @@ describe 'apache::mod::php', :type => :class do
       end
       it { is_expected.to contain_class('apache::params') }
       it { is_expected.to contain_apache__mod('php5') }
-      it { is_expected.to contain_package("lang/php5") }
+      it { is_expected.to contain_package("www/mod_php5") }
       it { is_expected.to contain_file('php5.load') }
     end
     context "with mpm_module => itk" do
@@ -148,7 +151,7 @@ describe 'apache::mod::php', :type => :class do
       it { is_expected.to contain_class('apache::params') }
       it { is_expected.to contain_class('apache::mod::itk') }
       it { is_expected.to contain_apache__mod('php5') }
-      it { is_expected.to contain_package("lang/php5") }
+      it { is_expected.to contain_package("www/mod_php5") }
       it { is_expected.to contain_file('php5.load') }
     end
   end
@@ -163,6 +166,7 @@ describe 'apache::mod::php', :type => :class do
         :concat_basedir         => '/dne',
         :id                     => 'root',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     context 'with content param' do

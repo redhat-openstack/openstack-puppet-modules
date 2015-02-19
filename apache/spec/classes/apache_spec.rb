@@ -12,6 +12,7 @@ describe 'apache', :type => :class do
         :operatingsystemrelease => '6',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         :concat_basedir         => '/dne',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -92,7 +93,10 @@ describe 'apache', :type => :class do
 
     context "with Apache version >= 2.4" do
       let :params do
-        { :apache_version => '2.4' }
+        {
+          :apache_version => '2.4',
+          :use_optional_includes => true
+        }
       end
 
       it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^IncludeOptional "/etc/apache2/conf\.d/\*\.conf"$} }
@@ -218,6 +222,7 @@ describe 'apache', :type => :class do
         :operatingsystemrelease => '5',
         :concat_basedir         => '/dne',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -315,7 +320,10 @@ describe 'apache', :type => :class do
 
       context "with Apache version >= 2.4" do
         let :params do
-          { :apache_version => '2.4' }
+          {
+            :apache_version => '2.4',
+            :use_optional_includes => true
+          }
         end
 
         it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^IncludeOptional "/etc/httpd/conf\.d/\*\.conf"$} }
@@ -488,6 +496,42 @@ describe 'apache', :type => :class do
         it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^EnableSendfile Off\n} }
       end
     end
+    context "on Fedora" do
+      let :facts do
+        super().merge({
+          :operatingsystem => 'Fedora'
+        })
+      end
+
+      context "21" do
+        let :facts do
+          super().merge({
+            :lsbdistrelease         => '21',
+            :operatingsystemrelease => '21'
+          })
+        end
+        it { is_expected.to contain_class('apache').with_apache_version('2.4') }
+      end
+      context "Rawhide" do
+        let :facts do
+          super().merge({
+            :lsbdistrelease         => 'Rawhide',
+            :operatingsystemrelease => 'Rawhide'
+          })
+        end
+        it { is_expected.to contain_class('apache').with_apache_version('2.4') }
+      end
+      # kinda obsolete
+      context "17" do
+        let :facts do
+          super().merge({
+            :lsbdistrelease         => '17',
+            :operatingsystemrelease => '17'
+          })
+        end
+        it { is_expected.to contain_class('apache').with_apache_version('2.2') }
+      end
+    end
   end
   context "on a FreeBSD OS" do
     let :facts do
@@ -496,9 +540,10 @@ describe 'apache', :type => :class do
         :kernel                 => 'FreeBSD',
         :osfamily               => 'FreeBSD',
         :operatingsystem        => 'FreeBSD',
-        :operatingsystemrelease => '9',
+        :operatingsystemrelease => '10',
         :concat_basedir         => '/dne',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -506,25 +551,25 @@ describe 'apache', :type => :class do
     it { is_expected.to contain_user("www") }
     it { is_expected.to contain_group("www") }
     it { is_expected.to contain_class("apache::service") }
-    it { is_expected.to contain_file("/usr/local/www/apache22/data").with(
+    it { is_expected.to contain_file("/usr/local/www/apache24/data").with(
       'ensure'  => 'directory'
       )
     }
-    it { is_expected.to contain_file("/usr/local/etc/apache22/Vhosts").with(
+    it { is_expected.to contain_file("/usr/local/etc/apache24/Vhosts").with(
       'ensure'  => 'directory',
       'recurse' => 'true',
       'purge'   => 'true',
       'notify'  => 'Class[Apache::Service]',
       'require' => 'Package[httpd]'
     ) }
-    it { is_expected.to contain_file("/usr/local/etc/apache22/Modules").with(
+    it { is_expected.to contain_file("/usr/local/etc/apache24/Modules").with(
       'ensure'  => 'directory',
       'recurse' => 'true',
       'purge'   => 'true',
       'notify'  => 'Class[Apache::Service]',
       'require' => 'Package[httpd]'
     ) }
-    it { is_expected.to contain_concat("/usr/local/etc/apache22/ports.conf").with(
+    it { is_expected.to contain_concat("/usr/local/etc/apache24/ports.conf").with(
       'owner'   => 'root',
       'group'   => 'wheel',
       'mode'    => '0644',
@@ -534,7 +579,6 @@ describe 'apache', :type => :class do
     [
       'auth_basic',
       'authn_file',
-      'authz_default',
       'authz_groupfile',
       'authz_host',
       'authz_user',
@@ -542,7 +586,7 @@ describe 'apache', :type => :class do
       'env'
     ].each do |modname|
       it { is_expected.to contain_file("#{modname}.load").with(
-        'path'   => "/usr/local/etc/apache22/Modules/#{modname}.load",
+        'path'   => "/usr/local/etc/apache24/Modules/#{modname}.load",
         'ensure' => 'file'
       ) }
       it { is_expected.not_to contain_file("#{modname}.conf") }
@@ -560,11 +604,11 @@ describe 'apache', :type => :class do
       'setenvif',
     ].each do |modname|
       it { is_expected.to contain_file("#{modname}.load").with(
-        'path'   => "/usr/local/etc/apache22/Modules/#{modname}.load",
+        'path'   => "/usr/local/etc/apache24/Modules/#{modname}.load",
         'ensure' => 'file'
       ) }
       it { is_expected.to contain_file("#{modname}.conf").with(
-        'path'   => "/usr/local/etc/apache22/Modules/#{modname}.conf",
+        'path'   => "/usr/local/etc/apache24/Modules/#{modname}.conf",
         'ensure' => 'file'
       ) }
     end
@@ -579,6 +623,7 @@ describe 'apache', :type => :class do
         :operatingsystemrelease => '6',
         :concat_basedir         => '/dne',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     context 'with a custom apache_name parameter' do
@@ -617,6 +662,7 @@ describe 'apache', :type => :class do
       { :osfamily        => 'Darwin',
         :operatingsystemrelease => '13.1.0',
         :concat_basedir         => '/dne',
+        :is_pe                  => false,
       }
     end
 

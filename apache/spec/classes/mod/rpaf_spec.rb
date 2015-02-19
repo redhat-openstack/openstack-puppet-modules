@@ -17,6 +17,7 @@ describe 'apache::mod::rpaf', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -56,13 +57,14 @@ describe 'apache::mod::rpaf', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.to contain_apache__mod('rpaf') }
     it { is_expected.to contain_package("www/mod_rpaf2") }
     it { is_expected.to contain_file('rpaf.conf').with({
-      'path' => '/usr/local/etc/apache22/Modules/rpaf.conf',
+      'path' => '/usr/local/etc/apache24/Modules/rpaf.conf',
     }) }
     it { is_expected.to contain_file('rpaf.conf').with_content(/^RPAFenable On$/) }
 

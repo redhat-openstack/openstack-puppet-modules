@@ -38,19 +38,21 @@ when 'Debian'
 
   if _operatingsystem == 'Ubuntu' and _operatingsystemrelease >= 13.10
     $apache_version = '2.4'
+  elsif _operatingsystem == 'Debian' and _operatingsystemrelease >= 8.0
+    $apache_version = '2.4'
   else
     $apache_version = '2.2'
   end
 when 'FreeBSD'
-  $confd_dir        = '/usr/local/etc/apache22/Includes'
-  $mod_dir          = '/usr/local/etc/apache22/Modules'
-  $conf_file        = '/usr/local/etc/apache22/httpd.conf'
-  $ports_file       = '/usr/local/etc/apache22/Includes/ports.conf'
-  $vhost            = '/usr/local/etc/apache22/Vhosts/15-default.conf'
-  $vhost_dir        = '/usr/local/etc/apache22/Vhosts'
-  $run_dir          = '/var/run/apache22'
-  $service_name     = 'apache22'
-  $package_name     = 'apache22'
+  $confd_dir        = '/usr/local/etc/apache24/Includes'
+  $mod_dir          = '/usr/local/etc/apache24/Modules'
+  $conf_file        = '/usr/local/etc/apache24/httpd.conf'
+  $ports_file       = '/usr/local/etc/apache24/Includes/ports.conf'
+  $vhost            = '/usr/local/etc/apache24/Vhosts/15-default.conf'
+  $vhost_dir        = '/usr/local/etc/apache24/Vhosts'
+  $run_dir          = '/var/run/apache24'
+  $service_name     = 'apache24'
+  $package_name     = 'apache24'
   $error_log        = 'http-error.log'
 
   $apache_version = '2.2'
