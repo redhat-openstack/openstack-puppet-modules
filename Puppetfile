@@ -171,7 +171,7 @@ mod 'staging',
   :git => 'https://github.com/nanliu/puppet-staging.git'
 
 mod 'stdlib',
-  :commit => '62e8c1d76902e6f22cb9f7b3abd43e757b4130a3',
+  :commit => 'ad5727266a5c243cebf8007b9b00ffc80674b4fc',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',

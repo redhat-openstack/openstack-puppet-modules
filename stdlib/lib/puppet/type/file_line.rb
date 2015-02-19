@@ -21,6 +21,9 @@ Puppet::Type.newtype(:file_line) do
     In this example, Puppet will ensure both of the specified lines are
     contained in the file /etc/sudoers.
 
+    **Autorequires:** If Puppet is managing the file that will contain the line
+    being managed, the file_line resource will autorequire that file.
+
   EOT
 
   ensurable do
@@ -68,12 +71,5 @@ Puppet::Type.newtype(:file_line) do
     unless self[:line] and self[:path]
       raise(Puppet::Error, "Both line and path are required attributes")
     end
-
-    if (self[:match])
-      unless Regexp.new(self[:match]).match(self[:line])
-        raise(Puppet::Error, "When providing a 'match' parameter, the value must be a regex that matches against the value of your 'line' parameter")
-      end
-    end
-
   end
 end
