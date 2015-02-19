@@ -216,6 +216,14 @@ Ensure there's a newline at the end of the fragments.
 - ensure_newline => true
 - ensure_newline => false
 
+#####`validate_cmd`
+Ensure the destination file passes the following validation command.
+Only supported on Puppet >= 3.5.0.
+
+######Example
+- validate_cmd => '/usr/sbin/apache2 -t -f %'
+- validate_cmd => '/usr/sbin/visudo -c -f %'
+
 ####concat::fragment
 
 #####`target`
