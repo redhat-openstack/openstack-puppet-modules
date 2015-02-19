@@ -115,7 +115,7 @@ mod 'nova',
   :git => 'https://github.com/stackforge/puppet-nova.git'
 
 mod 'nssdb',
-  :commit => 'b3799a9a7c62c3b5b7968f9860220a885b45fb8a',
+  :commit => '2e163a21fb80d828afede2d4be6214f1171c4887',
   :git => 'https://github.com/rcritten/puppet-nssdb.git'
 
 mod 'ntp',
