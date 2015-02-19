@@ -2,7 +2,8 @@
 # Author: François Charlier <francois.charlier@enovance.com>
 #
 
-Puppet::Type.type(:mongodb_replset).provide(:mongo) do
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mongodb'))
+Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider::Mongodb) do
 
   desc "Manage hosts members for a replicaset."
 
@@ -95,8 +96,19 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo) do
     false
   end
 
+  def self.get_mongod_conf_file
+    if File.exists? '/etc/mongod.conf'
+      file = '/etc/mongod.conf'
+    else
+      file = '/etc/mongodb.conf'
+    end
+    file
+  end
+
   def self.get_replset_properties
-    output = mongo_command('rs.conf()')
+
+    conn_string = get_conn_string
+    output = mongo_command('rs.conf()', conn_string)
     if output['members']
       members = output['members'].collect do |val|
         val['host']
@@ -128,10 +140,10 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo) do
           end
 
           # This node is alive and supposed to be a member of our set
-          Puppet.debug "Host #{self.name} is available for replset #{status['set']}"
+          Puppet.debug "Host #{host} is available for replset #{status['set']}"
           true
         elsif status.has_key?('info')
-          Puppet.debug "Host #{self.name} is alive but unconfigured: #{status['info']}"
+          Puppet.debug "Host #{host} is alive but unconfigured: #{status['info']}"
           true
         end
       rescue Puppet::ExecutionFailure
@@ -181,6 +193,7 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo) do
       # Add members to an existing replset
       if master = master_host(alive_hosts)
         current_hosts = db_ismaster(master)['hosts']
+        Puppet.debug "Current Hosts are: #{current_hosts.inspect}"
         newhosts = alive_hosts - current_hosts
         newhosts.each do |host|
           output = rs_add(host, master)

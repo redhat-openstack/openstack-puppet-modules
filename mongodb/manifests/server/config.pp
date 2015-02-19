@@ -38,6 +38,8 @@ class mongodb::server::config {
   $slave           = $mongodb::server::slave
   $only            = $mongodb::server::only
   $source          = $mongodb::server::source
+  $configsvr       = $mongodb::server::configsvr
+  $shardsvr        = $mongodb::server::shardsvr
   $replset         = $mongodb::server::replset
   $rest            = $mongodb::server::rest
   $quiet           = $mongodb::server::quiet
@@ -48,6 +50,9 @@ class mongodb::server::config {
   $profile         = $mongodb::server::profile
   $set_parameter   = $mongodb::server::set_parameter
   $syslog          = $mongodb::server::syslog
+  $ssl             = $mongodb::server::ssl
+  $ssl_key         = $mongodb::server::ssl_key
+  $ssl_ca          = $mongodb::server::ssl_ca
 
   File {
     owner => $user,
