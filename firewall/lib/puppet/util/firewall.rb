@@ -169,7 +169,7 @@ module Puppet::Util::Firewall
     end
 
     # RHEL 7 and newer also use systemd to persist iptable rules
-    if os_key == 'RedHat' && ['RedHat','CentOS','Scientific','SL','SLC','Ascendos','CloudLinux','PSBM','OracleLinux','OVS','OEL','Amazon','XenServer'].include?(Facter.value(:operatingsystem)) && Facter.value(:operatingsystemrelease).to_i >= 7
+    if os_key == 'RedHat' && ['RedHat','CentOS','Scientific','SL','SLC','Ascendos','CloudLinux','PSBM','OracleLinux','OVS','OEL','XenServer'].include?(Facter.value(:operatingsystem)) && Facter.value(:operatingsystemrelease).to_i >= 7
       os_key = 'Fedora'
     end
 
@@ -191,7 +191,7 @@ module Puppet::Util::Firewall
     when :Debian
       case proto.to_sym
       when :IPv4, :IPv6
-        if Puppet::Util::Package.versioncmp(persist_ver, '1.0') > 0
+        if (persist_ver and Puppet::Util::Package.versioncmp(persist_ver, '1.0') > 0)
           %w{/usr/sbin/service netfilter-persistent save}
         else
           %w{/usr/sbin/service iptables-persistent save}
