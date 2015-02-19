@@ -1,3 +1,19 @@
+##2014-11-04 - Supported Release 3.3.0
+###Summary
+
+This release adds support for SLES 12.
+
+####Features
+- Added support for SLES 12
+
+##2014-10-02 - Supported Release 3.2.1
+###Summary
+
+This is a bug-fix release addressing the security concerns of setting /etc/ntp to mode 0755 recursively.
+
+####Bugfixes
+- Do not recursively set ownership/mode of /etc/ntp
+
 ##2014-09-10 - Supported Release 3.2.0
 ###Summary
 

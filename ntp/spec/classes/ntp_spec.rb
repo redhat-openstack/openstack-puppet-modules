@@ -9,6 +9,10 @@ describe 'ntp' do
         let :facts do
           super().merge({ :osfamily => 'Linux', :operatingsystem => 'Gentoo' })
         end
+      elsif system == 'Suse'
+        let :facts do
+          super().merge({ :osfamily => system,:operatingsystem => 'SLES',:operatingsystemmajrelease => '11' })
+        end
       else
         let :facts do
           super().merge({ :osfamily => system })
@@ -124,20 +128,25 @@ describe 'ntp' do
         end
 
         describe "ntp::install on #{system}" do
-          let(:params) {{ :package_ensure => 'present', :package_name => ['ntp'], }}
+          let(:params) {{ :package_ensure => 'present', :package_name => ['ntp'], :package_manage => true, }}
 
           it { should contain_package('ntp').with(
             :ensure => 'present'
           )}
 
           describe 'should allow package ensure to be overridden' do
-            let(:params) {{ :package_ensure => 'latest', :package_name => ['ntp'] }}
+            let(:params) {{ :package_ensure => 'latest', :package_name => ['ntp'], :package_manage => true, }}
             it { should contain_package('ntp').with_ensure('latest') }
           end
 
           describe 'should allow the package name to be overridden' do
-            let(:params) {{ :package_ensure => 'present', :package_name => ['hambaby'] }}
+            let(:params) {{ :package_ensure => 'present', :package_name => ['hambaby'], :package_manage => true, }}
             it { should contain_package('hambaby') }
+          end
+
+          describe 'should allow the package to be unmanaged' do
+            let(:params) {{ :package_manage => false, :package_name => ['ntp'], }}
+            it { should_not contain_package('ntp') }
           end
         end
 
@@ -214,22 +223,22 @@ describe 'ntp' do
               :servers => ['a', 'b', 'c', 'd'],
               :logfile => '/var/log/foobar.log',
             }}
-    
+
             it 'should contain logfile setting' do
               should contain_file('/etc/ntp.conf').with({
-              'content' => /^logfile = \/var\/log\/foobar\.log\n/,
+              'content' => /^logfile \/var\/log\/foobar\.log\n/,
               })
             end
           end
-    
+
           context 'when set to false' do
             let(:params) {{
               :servers => ['a', 'b', 'c', 'd'],
             }}
-    
+
             it 'should not contain a logfile line' do
               should_not contain_file('/etc/ntp.conf').with({
-                'content' => /logfile =/,
+                'content' => /logfile /,
               })
             end
           end
@@ -289,13 +298,13 @@ describe 'ntp' do
 
       describe "on osfamily Suse" do
         let :facts do
-          super().merge({ :osfamily => 'Suse' })
+          super().merge({ :osfamily => 'Suse', :operatingsystem => 'SLES',:operatingsystemmajrelease => '11' })
         end
 
         it 'uses the opensuse ntp servers by default' do
           should contain_file('/etc/ntp.conf').with({
             'content' => /server \d.opensuse.pool.ntp.org/,
-          })
+            })
         end
       end
 
