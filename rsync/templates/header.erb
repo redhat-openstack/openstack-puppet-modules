@@ -2,11 +2,13 @@
 # DO NOT EDIT
 
 pid file = /var/run/rsyncd.pid
-uid = nobody
-gid = nobody
-use chroot = <%= use_chroot %>
+uid = <%= @uid %>
+gid = <%= @gid %>
+use chroot = <%= @use_chroot %>
 log format = %t %a %m %f %b
 syslog facility = local3
 timeout = 300
-address = <%= address %>
-<% if motd_file != 'UNSET' %>motd file = <%= motd_file %><% end %>
+address = <%= @address %>
+<% if @motd_file != 'UNSET' -%>
+motd file = <%= @motd_file %>
+<% end -%>
