@@ -175,7 +175,7 @@ mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',
-  :commit => '2c61fd3187b2f367aa4738bb8239933aec1ff883',
+  :commit => '0d40df78fe40b002380cb3c58ac22dc6ee8b913f',
   :git => 'https://github.com/stackforge/puppet-swift.git'
 
 mod 'sysctl',
