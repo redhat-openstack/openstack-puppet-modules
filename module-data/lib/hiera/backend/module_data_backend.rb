@@ -14,9 +14,9 @@ class Hiera
         default_config = {:hierarchy => ["common"]}
 
         mod = Puppet::Module.find(module_name, environment)
-        
+
         return default_config unless mod
-        
+
         path = mod.path
         module_config = File.join(path, "data", "hiera.yaml")
         config = {}
@@ -25,7 +25,7 @@ class Hiera
           Hiera.debug("Reading config from %s file" % module_config)
           config = load_data(module_config)
         end
-
+        
         config["path"] = path
 
         default_config.merge(config)
@@ -44,15 +44,19 @@ class Hiera
 
         Hiera.debug("Looking up %s in Module Data backend" % key)
 
-        unless scope["module_name"]
+        module_name = begin
+          scope["module_name"]
+        rescue Puppet::ParseError # Gets thrown if not in a module and strict_variables = true
+        end
+
+        unless module_name
           Hiera.debug("Skipping Module Data backend as this does not look like a module")
           return answer
         end
 
-        config = load_module_config(scope["module_name"], scope["environment"])
-
+        config = load_module_config(scope["module_name"], scope["::environment"])
         unless config["path"]
-          Hiera.debug("Could not find a path to the module '%s' in environment '%s'" % [scope["module_name"], scope["environment"]])
+          Hiera.debug("Could not find a path to the module '%s' in environment '%s'" % [scope["module_name"], scope["::environment"]])
           return answer
         end
 
@@ -67,19 +71,19 @@ class Hiera
           next if data.empty?
           next unless data.include?(key)
 
-          found = data[key]
-
+          new_answer = Backend.parse_answer(data[key], scope)
           case resolution_type
             when :array
-              raise("Hiera type mismatch: expected Array or String and got %s" % found.class) unless [Array, String].include?(found.class)
+              raise("Hiera type mismatch: expected Array and got %s" % new_answer.class) unless (new_answer.kind_of?(Array) || new_answer.kind_of?(String))
               answer ||= []
-              answer << Backend.parse_answer(found, scope)
+              answer << new_answer
 
             when :hash
-              raise("Hiera type mismatch: expected Hash and got %s" % found.class) unless found.is_a?(Hash)
-              answer = Backend.parse_answer(found, scope).merge(answer || {})
+              raise("Hiera type mismatch: expected Hash and got %s" % new_answer.class) unless new_answer.kind_of?(Hash)
+              answer ||= {}
+              answer = Backend.merge_answer(new_answer, answer)
             else
-              answer = Backend.parse_answer(found, scope)
+              answer = new_answer
               break
           end
         end

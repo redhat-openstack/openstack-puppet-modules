@@ -87,7 +87,7 @@ mod 'module-collectd',
   :git => 'https://github.com/pdxcat/puppet-module-collectd.git'
 
 mod 'module-data',
-  :commit => '159fc5e0e21ce9df96c777f0064b5eca88e29cae',
+  :commit => '010c9eb3496f515582a4d4868154e5fb246ee9b8',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
 
 mod 'mongodb',
