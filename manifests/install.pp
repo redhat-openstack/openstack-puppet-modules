@@ -10,6 +10,7 @@ class opendaylight::install {
       'Fedora' => 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/',
     }
 
+    # Add OpenDaylight's Yum repository
     yumrepo { 'opendaylight':
       # 'ensure' isn't supported with Puppet <3.5
       # Seems to default to present, but docs don't say
@@ -22,6 +23,7 @@ class opendaylight::install {
       before   => Package['opendaylight'],
     }
 
+    # Install the OpenDaylight RPM
     package { 'opendaylight':
       ensure  => present,
       require => Yumrepo['opendaylight'],
@@ -32,15 +34,14 @@ class opendaylight::install {
     archive { 'opendaylight-0.2.2':
       ensure           => present,
       url              => $opendaylight::tarball_url,
-      # Will end up installing in /opt/opendaylight-<version>
+      # Will end up installing /opt/opendaylight-0.2.2
       target           => '/opt/',
-      # Install will break if this is true and no chksum in expected path
+      # ODL doesn't provide a checksum in the expected path, would fail
       checksum         => false,
       # This discards top-level dir of extracted tarball
       # Required to get proper /opt/opendaylight-<version> path
-      # Ideally, camptocamp/puppet-archive would support this. PR later?
       strip_components => 1,
-      # See Issue #53:
+      # Default timeout is 120s, which may not be enough. See Issue #53:
       # https://github.com/dfarrell07/puppet-opendaylight/issues/53
       timeout          => 600,
     }
@@ -49,14 +50,14 @@ class opendaylight::install {
     archive { 'opendaylight-systemd':
       ensure           => present,
       url              => $opendaylight::unitfile_url,
+      # Will end up installing /usr/lib/systemd/system/opendaylight.service
       target           => '/usr/lib/systemd/system/',
       # This prevents an opendaylight-systemd/ in the system/ dir
       root_dir         => '.',
-      # Install will break if this is true and no chksum in expected path
+      # ODL doesn't provide a checksum in the expected path, would fail
       checksum         => false,
       # This discards top-level dir of extracted tarball
       # Required to get proper /opt/opendaylight-<version> path
-      # Ideally, camptocamp/puppet-archive would support this. PR later?
       strip_components => 1,
     }
   }
