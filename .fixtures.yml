@@ -1,6 +1,6 @@
 fixtures:
   repositories:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
-    archive: "https://github.com/gini/puppet-archive.git"
+    archive: "https://github.com/dfarrell07/puppet-archive"
   symlinks:
     opendaylight: "#{source_dir}"
