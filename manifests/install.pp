@@ -35,7 +35,7 @@ class opendaylight::install {
       ensure           => present,
       url              => $opendaylight::tarball_url,
       # Will end up installing /opt/opendaylight-0.2.2
-      target           => '/opt/',
+      target           => '/opt/opendaylight-0.2.2',
       # ODL doesn't provide a checksum in the expected path, would fail
       checksum         => false,
       # This discards top-level dir of extracted tarball
