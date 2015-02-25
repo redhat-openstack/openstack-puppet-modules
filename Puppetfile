@@ -222,3 +222,6 @@ mod 'openstack_extras',
 mod 'staging',
   :git => 'git://github.com/enovance/puppet-staging.git',
   :ref => 'bc434a71e19aae54223d57c274e2e1a7f9546d5e'
+mod 'hiera_resources',
+  :git => 'git://github.com/rnelson0/hiera_resources.git',
+  :ref => 'f62e18465add18e6bc6f1a9be55e3c8115c5c3c3'
