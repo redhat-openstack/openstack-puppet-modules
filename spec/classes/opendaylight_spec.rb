@@ -237,6 +237,7 @@ describe 'opendaylight' do
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
             :operatingsystemmajrelease => operatingsystemmajrelease,
+            :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
 
           let(:params) {{
@@ -259,6 +260,7 @@ describe 'opendaylight' do
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
             :operatingsystemmajrelease => operatingsystemmajrelease,
+            :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
 
           let(:params) {{
@@ -285,6 +287,7 @@ describe 'opendaylight' do
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
             :operatingsystemmajrelease => operatingsystemmajrelease,
+            :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
 
           let(:params) {{
@@ -308,6 +311,7 @@ describe 'opendaylight' do
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
             :operatingsystemmajrelease => operatingsystemmajrelease,
+            :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
 
           let(:params) {{
