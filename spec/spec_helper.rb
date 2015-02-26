@@ -103,7 +103,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       should contain_archive('opendaylight-0.2.2').with(
         'ensure'           => 'present',
         'url'              => tarball_url,
-        'target'           => '/opt/',
+        'target'           => '/opt/opendaylight-0.2.2',
         'checksum'         => false,
         'strip_components' => 1,
       )
@@ -113,7 +113,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'ensure'           => 'present',
         'url'              => unitfile_url,
         'target'           => '/usr/lib/systemd/system/',
-        'root_dir'         => '.',
+        'root_dir'         => 'opendaylight.service',
         'checksum'         => false,
         'strip_components' => 1,
       )

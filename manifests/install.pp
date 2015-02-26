@@ -52,13 +52,16 @@ class opendaylight::install {
       url              => $opendaylight::unitfile_url,
       # Will end up installing /usr/lib/systemd/system/opendaylight.service
       target           => '/usr/lib/systemd/system/',
-      # This prevents an opendaylight-systemd/ in the system/ dir
-      root_dir         => '.',
+      # Required by archive mod for correct exec `creates` param
+      root_dir         => 'opendaylight.service',
       # ODL doesn't provide a checksum in the expected path, would fail
       checksum         => false,
       # This discards top-level dir of extracted tarball
       # Required to get proper /opt/opendaylight-<version> path
       strip_components => 1,
+      # May end up with an HTML redirect output in a text file without this
+      # Note that the curl'd down file would still have a .tar.gz name
+      follow_redirects => true,
     }
   }
   else {
