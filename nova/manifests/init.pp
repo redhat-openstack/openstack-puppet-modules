@@ -13,6 +13,10 @@
 #   (optional) Connection url to connect to nova database.
 #   Defaults to false
 #
+# [*slave_connection*]
+#   (optional) Connection url to connect to nova slave database (read-only).
+#   Defaults to false
+#
 # [*database_idle_timeout*]
 #   (optional) Timeout before idle db connections are reaped.
 #   Defaults to 3600
@@ -227,6 +231,7 @@
 class nova(
   $ensure_package           = 'present',
   $database_connection      = false,
+  $slave_connection         = false,
   $database_idle_timeout    = 3600,
   $rpc_backend              = 'rabbit',
   $image_service            = 'nova.image.glance.GlanceImageService',
@@ -285,7 +290,7 @@ class nova(
 ) inherits nova::params {
 
   # maintain backward compatibility
-  include nova::db
+  include ::nova::db
 
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
@@ -386,7 +391,7 @@ class nova(
   }
 
   if $install_utilities {
-    class { 'nova::utilities': }
+    class { '::nova::utilities': }
   }
 
   # this anchor is used to simplify the graph between nova components by
@@ -396,14 +401,14 @@ class nova(
   package { 'python-nova':
     ensure  => $ensure_package,
     require => Package['python-greenlet'],
-    tag     => ['openstack', 'nova'],
+    tag     => ['openstack'],
   }
 
   package { 'nova-common':
     ensure  => $ensure_package,
     name    => $::nova::params::common_package_name,
     require => [Package['python-nova'], Anchor['nova-start']],
-    tag     => ['openstack', 'nova'],
+    tag     => ['openstack'],
   }
 
   file { '/etc/nova/nova.conf':
@@ -560,7 +565,7 @@ class nova(
       ensure  => directory,
       mode    => '0750',
       owner   => 'nova',
-      group   => 'nova',
+      group   => $::nova::params::nova_log_group,
       require => Package['nova-common'],
     }
     nova_config { 'DEFAULT/log_dir': value => $log_dir;}

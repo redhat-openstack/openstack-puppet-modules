@@ -8,6 +8,10 @@
 #   (optional) Whether to enable the nova-compute service
 #   Defaults to false
 #
+# [*heal_instance_info_cache_interval*]
+#   (optional) Controls how often the instance info should be updated.
+#    Defaults to '60' , to disable you can set the value to zero.
+#
 # [*manage_service*]
 #   (optional) Whether to start/stop the service
 #   Defaults to true
@@ -95,6 +99,13 @@
 #   (optional) The availability zone to show internal services under.
 #   Defaults to internal
 #
+#  [*pci_passthrough_whitelist*]
+#   (optional) Pci passthrough hash in format of:
+#   Defaults to undef
+#   Example
+#  "[ { 'vendor_id':'1234','product_id':'5678' },
+#     { 'vendor_id':'4321','product_id':'8765','physical_network':'default' } ] "
+#
 class nova::compute (
   $enabled                            = false,
   $manage_service                     = true,
@@ -118,13 +129,16 @@ class nova::compute (
   $default_availability_zone          = 'nova',
   $default_schedule_zone              = undef,
   $internal_service_availability_zone = 'internal',
+  $heal_instance_info_cache_interval  = '60',
+  $pci_passthrough                    = undef,
 ) {
 
-  include nova::params
+  include ::nova::params
 
   nova_config {
-    'DEFAULT/reserved_host_memory_mb':  value => $reserved_host_memory;
-    'DEFAULT/compute_manager':          value => $compute_manager;
+    'DEFAULT/reserved_host_memory_mb':           value => $reserved_host_memory;
+    'DEFAULT/compute_manager':                   value => $compute_manager;
+    'DEFAULT/heal_instance_info_cache_interval': value => $heal_instance_info_cache_interval;
   }
 
   if ($vnc_enabled) {
@@ -209,6 +223,12 @@ class nova::compute (
   if $default_schedule_zone {
     nova_config {
       'DEFAULT/default_schedule_zone': value => $default_schedule_zone;
+    }
+  }
+
+  if ($pci_passthrough) {
+    nova_config {
+      'DEFAULT/pci_passthrough_whitelist': value => check_array_of_hash($pci_passthrough);
     }
   }
 }

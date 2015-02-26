@@ -17,7 +17,7 @@ describe 'nova::compute::libvirt' do
       it { should contain_package('nova-compute-kvm').with(
         :ensure => 'present',
         :before => 'Package[nova-compute]',
-        :tag    => ['openstack', 'nova']
+        :tag    => ['openstack']
       ) }
 
       it { should contain_package('libvirt').with(
@@ -102,7 +102,7 @@ describe 'nova::compute::libvirt' do
           raise_error(Puppet::Error, /For migration support to work, you MUST set vncserver_listen to '0.0.0.0'/) }
       end
 
-      context 'with custom libvirt service name on Debian plateforms' do
+      context 'with custom libvirt service name on Debian platforms' do
         let :params do
           { :libvirt_service_name  => 'libvirtd',
             :vncserver_listen      => '0.0.0.0',

@@ -5,6 +5,8 @@
 #
 #   [package_ensure] Desired ensure state of packages. Optional. Defaults to present.
 #     accepts latest or specific versions.
+#   [client_package_ensure] Desired ensure state of the client package. Optional. Defaults to present.
+#     accepts latest or specific versions.
 #   [bind_host] Host that keystone binds to.
 #   [bind_port] Port that keystone binds to.
 #   [public_port]
@@ -248,6 +250,14 @@
 #     (optional) maximum allowable Keystone token size
 #     Defaults to undef
 #
+#   [*admin_workers*]
+#     (optional) The number of worker processes to serve the admin WSGI application.
+#     Defaults to max($::processorcount, 2)
+#
+#   [*public_workers*]
+#     (optional) The number of worker processes to serve the public WSGI application.
+#     Defaults to max($::processorcount, 2)
+#
 # == Dependencies
 #  None
 #
@@ -280,6 +290,7 @@
 class keystone(
   $admin_token,
   $package_ensure         = 'present',
+  $client_package_ensure  = 'present',
   $bind_host              = false,
   $public_bind_host       = '0.0.0.0',
   $admin_bind_host        = '0.0.0.0',
@@ -344,6 +355,8 @@ class keystone(
   $service_provider       = $::keystone::params::service_provider,
   $service_name           = 'keystone',
   $max_token_size         = undef,
+  $admin_workers          = max($::processorcount, 2),
+  $public_workers         = max($::processorcount, 2),
   # DEPRECATED PARAMETERS
   $mysql_module           = undef,
 ) inherits keystone::params {
@@ -384,10 +397,12 @@ class keystone(
   package { 'keystone':
     ensure => $package_ensure,
     name   => $::keystone::params::package_name,
+    tag    => 'openstack',
   }
   # TODO: Move this to openstacklib::openstackclient in Kilo
   package { 'python-openstackclient':
-    ensure => present,
+    ensure => $client_package_ensure,
+    tag    => 'openstack',
   }
 
   group { 'keystone':
@@ -631,6 +646,11 @@ class keystone(
       'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
       'DEFAULT/kombu_ssl_version':  ensure => absent;
     }
+  }
+
+  keystone_config {
+    'DEFAULT/admin_workers':  value => $admin_workers;
+    'DEFAULT/public_workers': value => $public_workers;
   }
 
   if $enabled {

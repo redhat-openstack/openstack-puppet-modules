@@ -18,7 +18,7 @@ define nova::generic_service(
   $ensure_package = 'present'
 ) {
 
-  include nova::params
+  include ::nova::params
 
   $nova_title = "nova-${name}"
   # ensure that the service is only started after
@@ -37,7 +37,7 @@ define nova::generic_service(
         ensure => $ensure_package,
         name   => $package_name,
         notify => Service[$nova_title],
-        tag    => ['openstack', 'nova'],
+        tag    => ['openstack'],
       }
     }
   }
