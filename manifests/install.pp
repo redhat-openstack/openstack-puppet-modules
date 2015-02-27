@@ -30,11 +30,22 @@ class opendaylight::install {
     }
   }
   elsif $opendaylight::install_method == 'tarball' {
-    # Install Java
-    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/56
+    # Install Java 7
     class { 'java':
       # NB: ODL is currently in the process of moving to Java 8
       package => 'java-1.7.0-openjdk',
+    }
+
+    # Create and configure the `odl` user
+    user { 'odl':
+      ensure     => present,
+      # Must be a valid dir for the auto-creation of some files
+      home       => '/opt/opendaylight-0.2.2',
+      # The odl user should, at the minimum, be a member of the odl group
+      membership => 'minimum',
+      groups     => 'odl',
+      # The odl user's home dir should exist before it's created
+      require    => Archive['opendaylight-0.2.2'],
     }
 
     # Download and extract the ODL tarball
@@ -51,6 +62,8 @@ class opendaylight::install {
       # Default timeout is 120s, which may not be enough. See Issue #53:
       # https://github.com/dfarrell07/puppet-opendaylight/issues/53
       timeout          => 600,
+      # The odl user will set this to their home dir, should exist
+      before           => User['odl'],
     }
 
     # Download ODL systemd .service file and put in right location
@@ -71,9 +84,8 @@ class opendaylight::install {
       follow_redirects => true,
     }
 
-    # TODO: Create odl:odl user:group and set perms on extracted archives
-    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/51
-
+    # TODO: Set `user:group` to `odl:odl` on extracted ODL archive
+    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/58
   }
   else {
     fail("Unknown install method: ${opendaylight::install_method}")
