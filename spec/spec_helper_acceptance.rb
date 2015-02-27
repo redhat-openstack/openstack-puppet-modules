@@ -30,10 +30,8 @@ RSpec.configure do |c|
       # TODO: Why is 1 an acceptable exit code?
       on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
       # Install archive, a dependency of the odl mod use for tarball-type installs
-      # TODO: I'd prefer not to use gini-archive. See:
-      # https://github.com/dfarrell07/puppet-opendaylight/issues/52
-      on host, puppet('module', 'install', 'gini-archive'), { :acceptable_exit_codes => [0] }
-      # Required by tarball install method
+      on host, puppet('module', 'install', 'camptocamp-archive'), { :acceptable_exit_codes => [0] }
+      # Install Java Puppet mod, a dependency of the tarball install method
       on host, puppet('module', 'install', 'puppetlabs-java'), { :acceptable_exit_codes => [0] }
     end
   end
