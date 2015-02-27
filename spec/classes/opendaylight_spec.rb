@@ -202,6 +202,7 @@ describe 'opendaylight' do
     #   https://github.com/dfarrell07/puppet-opendaylight/issues/43#issue-57343159
     osfamily = 'RedHat'
     operatingsystem = 'CentOS'
+    operatingsystemrelease = '7.0'
     operatingsystemmajrelease = '7'
     # This is the CentOS 7 Yum repo URL
     yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
@@ -236,6 +237,7 @@ describe 'opendaylight' do
           let(:facts) {{
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
+            :operatingsystemrelease => operatingsystemrelease,
             :operatingsystemmajrelease => operatingsystemmajrelease,
             :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
@@ -259,6 +261,7 @@ describe 'opendaylight' do
           let(:facts) {{
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
+            :operatingsystemrelease => operatingsystemrelease,
             :operatingsystemmajrelease => operatingsystemmajrelease,
             :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
@@ -286,6 +289,7 @@ describe 'opendaylight' do
           let(:facts) {{
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
+            :operatingsystemrelease => operatingsystemrelease,
             :operatingsystemmajrelease => operatingsystemmajrelease,
             :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
@@ -310,6 +314,7 @@ describe 'opendaylight' do
           let(:facts) {{
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
+            :operatingsystemrelease => operatingsystemrelease,
             :operatingsystemmajrelease => operatingsystemmajrelease,
             :path => ['/usr/local/bin', '/usr/bin', '/bin'],
           }}
