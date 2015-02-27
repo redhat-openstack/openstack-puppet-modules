@@ -61,11 +61,19 @@ def install_odl(options = {})
     }
     EOS
 
-    # TODO: Apply to host selectively based on install method
-
-    # Run it twice and test for idempotency
-    apply_manifest(pp, :catch_failures => true)
-    apply_manifest(pp, :catch_changes  => true)
+    # Apply to host selectively based on install method
+    # TODO: Document how this works via Rake call path
+    if install_method == 'rpm'
+      apply_manifest_on('rpm', pp, :catch_failures => true)
+      # Run it twice to test for idempotency
+      apply_manifest_on('rpm', pp, :catch_changes  => true)
+    elsif install_method == 'tarball'
+      apply_manifest_on('tarball', pp, :catch_failures => true)
+      # Run it twice to test for idempotency
+      apply_manifest_on('tarball', pp, :catch_changes  => true)
+    else
+      fail("Unexpected install method: #{install_method}")
+    end
   end
 end
 

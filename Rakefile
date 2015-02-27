@@ -52,6 +52,11 @@ task :centos do
   sh "RS_SET=centos-7 bundle exec rake beaker"
 end
 
+desc "Run Beaker tests against CentOS 7 using tarball install."
+task :centos_tarball do
+  sh "RS_SET=centos-7-tarball bundle exec rake beaker"
+end
+
 desc "Run Beaker tests against Fedora 20 node."
 task :fedora_20 do
   sh "RS_SET=fedora-20 bundle exec rake beaker"

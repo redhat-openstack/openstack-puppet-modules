@@ -1,8 +1,8 @@
 HOSTS:
-  centos-7:
+  centos-7-tarball:
     roles:
       - master
-      - rpm
+      - tarball
     platform: el-7-x86_64
     box: chef/centos-7.0
     box_url: https://vagrantcloud.com/chef/boxes/centos-7.0
