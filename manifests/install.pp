@@ -30,6 +30,13 @@ class opendaylight::install {
     }
   }
   elsif $opendaylight::install_method == 'tarball' {
+    # Install Java
+    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/56
+    class { 'java':
+      # NB: ODL is currently in the process of moving to Java 8
+      package => 'java-1.7.0-openjdk',
+    }
+
     # Download and extract the ODL tarball
     archive { 'opendaylight-0.2.2':
       ensure           => present,
@@ -63,6 +70,10 @@ class opendaylight::install {
       # Note that the curl'd down file would still have a .tar.gz name
       follow_redirects => true,
     }
+
+    # TODO: Create odl:odl user:group and set perms on extracted archives
+    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/51
+
   }
   else {
     fail("Unknown install method: ${opendaylight::install_method}")

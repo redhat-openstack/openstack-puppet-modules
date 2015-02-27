@@ -95,6 +95,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     # Confirm presense of tarball-related resources
     it { should contain_archive('opendaylight-0.2.2') }
     it { should contain_archive('opendaylight-systemd') }
+    it { should contain_class('java') }
 
     # Confirm properties of tarball-related resources
     # NB: These hashes don't work with Ruby 1.8.7, but we
@@ -116,6 +117,11 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'root_dir'         => 'opendaylight.service',
         'checksum'         => false,
         'strip_components' => 1,
+      )
+    }
+    it {
+      should contain_package('java').with(
+        'name' => 'java-1.7.0-openjdk',
       )
     }
 
