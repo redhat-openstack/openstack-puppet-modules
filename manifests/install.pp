@@ -45,7 +45,15 @@ class opendaylight::install {
       membership => 'minimum',
       groups     => 'odl',
       # The odl user's home dir should exist before it's created
-      require    => Archive['opendaylight-0.2.2'],
+      # The odl group, to which the odl user will below, should exist
+      require    => [Archive['opendaylight-0.2.2'], Group['odl']],
+    }
+
+    # Create and configure the `odl` group
+    group { 'odl':
+      ensure => present,
+      # The `odl` user will be a member of this group, create it first
+      before => User['odl'],
     }
 
     # Download and extract the ODL tarball
