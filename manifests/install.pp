@@ -47,13 +47,14 @@ class opendaylight::install {
       # The odl user's home dir should exist before it's created
       # The odl group, to which the odl user will below, should exist
       require    => [Archive['opendaylight-0.2.2'], Group['odl']],
+      before     => File['/opt/opendaylight-0.2.2/'],
     }
 
     # Create and configure the `odl` group
     group { 'odl':
       ensure => present,
       # The `odl` user will be a member of this group, create it first
-      before => User['odl'],
+      before => [File['/opt/opendaylight-0.2.2/'], User['odl']],
     }
 
     # Download and extract the ODL tarball
@@ -71,7 +72,7 @@ class opendaylight::install {
       # https://github.com/dfarrell07/puppet-opendaylight/issues/53
       timeout          => 600,
       # The odl user will set this to their home dir, should exist
-      before           => User['odl'],
+      before           => [File['/opt/opendaylight-0.2.2/'], User['odl']],
     }
 
     # Download ODL systemd .service file and put in right location
@@ -92,8 +93,13 @@ class opendaylight::install {
       follow_redirects => true,
     }
 
-    # TODO: Set `user:group` to `odl:odl` on extracted ODL archive
-    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/58
+    # Set `user:group` to `odl:odl` on extracted ODL archive
+    file { '/opt/opendaylight-0.2.2/':
+      owner   => 'odl',
+      group   => 'odl',
+      # Should happen after archive extracted and user/group created
+      require => [Archive['opendaylight-systemd'], Group['odl'], User['odl']],
+    }
   }
   else {
     fail("Unknown install method: ${opendaylight::install_method}")
