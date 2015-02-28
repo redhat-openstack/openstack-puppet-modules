@@ -91,6 +91,8 @@ class opendaylight::install {
       # May end up with an HTML redirect output in a text file without this
       # Note that the curl'd down file would still have a .tar.gz name
       follow_redirects => true,
+      # Should exist before we try to set its user/group/mode
+      before           => File['/usr/lib/systemd/system/opendaylight.service'],
     }
 
     # Set the user:group owners and mode of ODL dir
@@ -104,7 +106,20 @@ class opendaylight::install {
       # Set mode of ODL dir
       mode    => '0775',
       # Should happen after archive extracted and user/group created
-      require => [Archive['opendaylight-systemd'], Group['odl'], User['odl']],
+      require => [Archive['opendaylight-0.2.2'], Group['odl'], User['odl']],
+    }
+
+    # Set the user:group owners and mode of ODL's systemd .service file
+    file { '/usr/lib/systemd/system/opendaylight.service':
+      # It should be a normal file
+      ensure  => 'file',
+      # Set user:group owners of ODL systemd .service file
+      owner   => 'root',
+      group   => 'root',
+      # Set mode of ODL systemd .service file
+      mode    => '0644',
+      # Should happen after the ODL systemd .service file has been extracted
+      require => Archive['opendaylight-systemd'],
     }
   }
   else {
