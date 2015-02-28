@@ -93,10 +93,16 @@ class opendaylight::install {
       follow_redirects => true,
     }
 
-    # Set `user:group` to `odl:odl` on extracted ODL archive
+    # Set the user:group owners and mode of ODL dir
     file { '/opt/opendaylight-0.2.2/':
+      # ensure=>dir and recurse=>true are required for managing recursively
+      ensure  => 'directory',
+      recurse => true,
+      # Set user:group owners of ODL dir
       owner   => 'odl',
       group   => 'odl',
+      # Set mode of ODL dir
+      mode    => '0775',
       # Should happen after archive extracted and user/group created
       require => [Archive['opendaylight-systemd'], Group['odl'], User['odl']],
     }
