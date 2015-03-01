@@ -98,11 +98,15 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     it { should contain_archive('opendaylight-0.2.2') }
     it { should contain_archive('opendaylight-systemd') }
     it { should contain_class('java') }
+    it { should contain_file('/opt/opendaylight-0.2.2/') }
 
     # Confirm relationships between tarball-related resources
     it { should contain_archive('opendaylight-0.2.2').that_comes_before('File[/opt/opendaylight-0.2.2/]') }
     it { should contain_archive('opendaylight-0.2.2').that_comes_before('User[odl]') }
     it { should contain_archive('opendaylight-systemd').that_comes_before('File[/usr/lib/systemd/system/opendaylight.service]') }
+    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('Archive[opendaylight-0.2.2]') }
+    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('Group[odl]') }
+    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('User[odl]') }
 
     # Confirm properties of tarball-related resources
     # NB: These hashes don't work with Ruby 1.8.7, but we
@@ -131,6 +135,15 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     it {
       should contain_package('java').with(
         'name' => 'java-1.7.0-openjdk',
+      )
+    }
+    it {
+      should contain_file('/opt/opendaylight-0.2.2/').with(
+        'ensure'  => 'directory',
+        'recurse' => true,
+        'owner'   => 'odl',
+        'group'   => 'odl',
+        'mode'    => '0775',
       )
     }
 
