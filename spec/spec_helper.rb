@@ -1,5 +1,34 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
+# Customize filters to ignore 3rd-party code
+custom_filters = [
+  'Anchor[java::end]',
+  'Stage[setup]',
+  'Anchor[java::begin:]',
+  'Archive::Download[opendaylight-0.2.2.tar.gz]',
+  'Archive::Download[opendaylight-systemd.tar.gz]',
+  'Archive::Extract[opendaylight-0.2.2]',
+  'Archive::Extract[opendaylight-systemd]',
+  'Class[Java::Config]',
+  'Class[Java::Params]',
+  'Class[Stdlib::Stages]',
+  'Class[Stdlib]',
+  'Exec[download archive opendaylight-0.2.2.tar.gz and check sum]',
+  'Exec[download archive opendaylight-systemd.tar.gz and check sum]',
+  'Exec[opendaylight-0.2.2 unpack]',
+  'Exec[opendaylight-systemd unpack]',
+  'Exec[rm-on-error-opendaylight-0.2.2.tar.gz]',
+  'Exec[rm-on-error-opendaylight-systemd.tar.gz]',
+  'Package[curl]',
+  'Stage[deploy]',
+  'Stage[deploy_app]',
+  'Stage[deploy_infra]',
+  'Stage[runtime]',
+  'Stage[setup_app]',
+  'Stage[setup_infra]',
+]
+RSpec::Puppet::Coverage.filters.push(*custom_filters)
+
 # Tests that are common to all possible configurations
 def generic_tests(yum_repo)
   # Confirm that module compiles
