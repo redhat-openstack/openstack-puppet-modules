@@ -64,6 +64,8 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     # Confirm presense of RPM-related resources
     it { should contain_yumrepo('opendaylight') }
     it { should contain_package('opendaylight') }
+
+    # Confirm relationships between RPM-related resources
     it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
     it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
 
@@ -80,7 +82,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     }
     it {
       should contain_package('opendaylight').with(
-        'ensure'      => 'present',
+        'ensure'   => 'present',
       )
     }
   when 'tarball'
@@ -97,6 +99,11 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     it { should contain_archive('opendaylight-systemd') }
     it { should contain_class('java') }
 
+    # Confirm relationships between tarball-related resources
+    it { should contain_archive('opendaylight-0.2.2').that_comes_before('File[/opt/opendaylight-0.2.2/]') }
+    it { should contain_archive('opendaylight-0.2.2').that_comes_before('User[odl]') }
+    it { should contain_archive('opendaylight-systemd').that_comes_before('File[/usr/lib/systemd/system/opendaylight.service]') }
+
     # Confirm properties of tarball-related resources
     # NB: These hashes don't work with Ruby 1.8.7, but we
     #   don't support 1.8.7 so that's okay. See issue #36.
@@ -107,6 +114,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'target'           => '/opt/opendaylight-0.2.2',
         'checksum'         => false,
         'strip_components' => 1,
+        'timeout'          => 600,
       )
     }
     it {
@@ -117,6 +125,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'root_dir'         => 'opendaylight.service',
         'checksum'         => false,
         'strip_components' => 1,
+        'follow_redirects' => true,
       )
     }
     it {
