@@ -57,7 +57,6 @@ class gnocchi::db::mysql(
   $allowed_hosts = undef,
   $charset       = 'utf8',
   $collate       = 'utf8_unicode_ci',
-  $mysql_module  = undef,
 ) {
 
   validate_string($password)

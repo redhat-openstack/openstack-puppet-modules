@@ -22,7 +22,6 @@ class gnocchi::db::sync {
     path        => '/usr/bin',
     user        => 'gnocchi',
     refreshonly => true,
-    subscribe   => [Package['gnocchi'], Keystone_config['database/connection']],
-    require     => User['gnocchi'],
+    subscribe   => [Package['gnocchi-api'], Gnocchi_config['database/connection']],
   }
 }

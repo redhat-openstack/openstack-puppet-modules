@@ -47,8 +47,8 @@ describe 'gnocchi::api' do
              database_connection   => 'mysql://gnocchi:pass@10.0.0.1/gnocchi'}"
         end
         it 'configures gnocchi-api with RabbitMQ' do
-          should contain_gnocchi_config('database/sql_connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi')
-          should contain_gnocchi_config('database/sql_connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi').with_secret(true)
+          should contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi')
+          should contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi').with_secret(true)
         end
       end
     end
