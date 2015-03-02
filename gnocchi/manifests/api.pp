@@ -115,8 +115,8 @@ class gnocchi::api(
       fail("Invalid db connection ${::gnocchi::database_connection}")
     }
     gnocchi_config {
-      'database/sql_connection':   value => $::gnocchi::database_connection, secret => true;
-      'database/sql_idle_timeout': value => $::gnocchi::database_idle_timeoutl;
+      'database/connection':   value => $::gnocchi::database_connection, secret => true;
+      'database/idle_timeout': value => $::gnocchi::database_idle_timeoutl;
     }
   }
 
