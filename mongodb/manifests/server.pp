@@ -22,7 +22,7 @@ class mongodb::server (
   $bind_ip         = $mongodb::params::bind_ip,
   $logappend       = true,
   $fork            = $mongodb::params::fork,
-  $port            = 27017,
+  $port            = undef,
   $journal         = $mongodb::params::journal,
   $nojournal       = undef,
   $smallfiles      = undef,
@@ -49,14 +49,19 @@ class mongodb::server (
   $mms_name        = undef,
   $mms_interval    = undef,
   $replset         = undef,
+  $configsvr       = undef,
+  $shardsvr        = undef,
   $rest            = undef,
   $quiet           = undef,
   $slowms          = undef,
   $keyfile         = undef,
+  $key             = undef,
   $set_parameter   = undef,
   $syslog          = undef,
-  
   $config_content  = undef,
+  $ssl             = undef,
+  $ssl_key         = undef,
+  $ssl_ca          = undef,
 
   # Deprecated parameters
   $master          = undef,
@@ -65,6 +70,10 @@ class mongodb::server (
   $source          = undef,
 ) inherits mongodb::params {
 
+
+  if $ssl {
+    validate_string($ssl_key, $ssl_ca)
+  }
 
   if ($ensure == 'present' or $ensure == true) {
     anchor { 'mongodb::server::start': }->

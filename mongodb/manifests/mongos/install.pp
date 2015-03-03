@@ -1,16 +1,20 @@
 # PRIVATE CLASS: do not call directly
-class mongodb::client::install {
-  $package_ensure = $mongodb::client::ensure
-  $package_name   = $mongodb::client::package_name
+class mongodb::mongos::install (
+  $package_ensure           = $mongodb::mongos::package_ensure,
+  $package_name             = $mongodb::mongos::package_name,
+) {
 
   case $package_ensure {
     true:     {
       $my_package_ensure = 'present'
     }
     false:    {
-      $my_package_ensure = 'purged'
+      $my_package_ensure = 'absent'
     }
     'absent': {
+      $my_package_ensure = 'absent'
+    }
+    'purged': {
       $my_package_ensure = 'purged'
     }
     default:  {
@@ -18,11 +22,11 @@ class mongodb::client::install {
     }
   }
 
-  if $package_name {
-    package { 'mongodb_client':
+  if !defined(Package[$package_name]) {
+    package { 'mongodb_mongos':
       ensure => $my_package_ensure,
       name   => $package_name,
-      tag    => 'mongodb',
     }
   }
+
 }
