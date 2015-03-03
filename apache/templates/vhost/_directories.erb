@@ -2,21 +2,35 @@
 
   ## Directories, there should at least be a declaration for <%= @docroot %>
   <%- [@_directories].flatten.compact.each do |directory| -%>
-    <%- if directory['path'] and directory['path'] != '' -%>
-  <%- if directory['provider'] and directory['provider'].match('(directory|location|files)') -%>
-    <%- if /^(.*)match$/ =~ directory['provider'] -%>
-      <%- provider = $1.capitalize + 'Match' -%>
-    <%- else -%>
-      <%- provider = directory['provider'].capitalize -%>
+    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+      <%- if directory['allow'] and ! [ false, 'false', '' ].include?(directory['allow']) -%>
+        <%- scope.function_fail(["Apache::Vhost: Using allow is not supported in your Apache version"]) -%>
+      <%- end -%>
+      <%- if directory['deny'] and ! [ false, 'false', '' ].include?(directory['deny']) -%>
+        <%- scope.function_fail(["Apache::Vhost: Using deny is not supported in your Apache version"]) -%>
+      <%- end -%>
+      <%- if directory['order'] and ! [ false, 'false', '' ].include?(directory['order']) -%>
+        <%- scope.function_fail(["Apache::Vhost: Using order is not supported in your Apache version"]) -%>
+      <%- end -%>
+      <%- if directory['satisfy'] and ! [ false, 'false', '' ].include?(directory['satisfy']) -%>
+        <%- scope.function_fail(["Apache::Vhost: Using satisfy is not supported in your Apache version"]) -%>
+      <%- end -%>
     <%- end -%>
-  <%- else -%>
-    <%- provider = 'Directory' -%>
-  <%- end -%>
-  <%- path = directory['path'] -%>
+    <%- if directory['path'] and directory['path'] != '' -%>
+      <%- if directory['provider'] and directory['provider'].match('(directory|location|files)') -%>
+        <%- if /^(.*)match$/ =~ directory['provider'] -%>
+          <%- provider = $1.capitalize + 'Match' -%>
+        <%- else -%>
+          <%- provider = directory['provider'].capitalize -%>
+        <%- end -%>
+      <%- else -%>
+        <%- provider = 'Directory' -%>
+      <%- end -%>
+      <%- path = directory['path'] -%>
 
   <<%= provider %> "<%= path %>">
-    <%- if directory['headers'] -%>
-      <%- Array(directory['headers']).each do |header| -%>
+      <%- if directory['headers'] -%>
+        <%- Array(directory['headers']).each do |header| -%>
     Header <%= header %>
       <%- end -%>
     <%- end -%>
@@ -38,7 +52,9 @@
     <%- end -%>
     <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
       <%- if directory['require'] and directory['require'] != '' -%>
-    Require <%= Array(directory['require']).join(' ') %>
+        <%- Array(directory['require']).each do |req| -%>
+    Require <%= req %>
+        <%- end -%>
       <%- end -%>
       <%- if directory['auth_require'] -%>
     Require <%= directory['auth_require'] %>
@@ -55,8 +71,14 @@
       <%- else -%>
     Order allow,deny
       <%- end -%>
-      <%- if directory['deny'] and directory['deny'] != '' -%>
+      <%- if directory['deny'] and ! [ false, 'false', '' ].include?(directory['deny']) -%>
+        <%- if directory['deny'].kind_of?(Array) -%>
+          <%- Array(directory['deny']).each do |restrict| -%>
+    Deny <%=  restrict %>
+          <%- end -%>
+        <%- else -%>
     Deny <%= directory['deny'] %>
+        <%- end -%>
       <%- end -%>
       <%- if directory['allow'] and ! [ false, 'false', '' ].include?(directory['allow']) -%>
         <%- if directory['allow'].kind_of?(Array) -%>
@@ -87,14 +109,25 @@
     <%- if directory['passenger_enabled'] and directory['passenger_enabled'] != '' -%>
     PassengerEnabled <%= directory['passenger_enabled'] %>
     <%- end -%>
+    <%- if directory['php_flags'] and ! directory['php_flags'].empty? -%>
+      <%- directory['php_flags'].sort.each do |flag,value| -%>
+        <%- value = if value =~ /true|yes|on|1/i then 'on' else 'off' end -%>
+    php_flag <%= "#{flag} #{value}" %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['php_values'] and ! directory['php_values'].empty? -%>
+      <%- directory['php_values'].sort.each do |key,value| -%>
+    php_value <%= "#{key} #{value}" %>
+      <%- end -%>
+    <%- end -%>
     <%- if directory['php_admin_flags'] and ! directory['php_admin_flags'].empty? -%>
-      <%- directory['php_admin_flags'].each do |flag,value| -%>
-      <%- value = if value =~ /true|yes|on|1/i then 'on' else 'off' end -%>
+      <%- directory['php_admin_flags'].sort.each do |flag,value| -%>
+        <%- value = if value =~ /true|yes|on|1/i then 'on' else 'off' end -%>
     php_admin_flag <%= "#{flag} #{value}" %>
       <%- end -%>
     <%- end -%>
     <%- if directory['php_admin_values'] and ! directory['php_admin_values'].empty? -%>
-      <%- directory['php_admin_values'].each do |key,value| -%>
+      <%- directory['php_admin_values'].sort.each do |key,value| -%>
     php_admin_value <%= "#{key} #{value}" %>
       <%- end -%>
     <%- end -%>

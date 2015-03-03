@@ -14,11 +14,29 @@ describe 'apache::mod::event', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.not_to contain_apache__mod('event') }
-    it { is_expected.to contain_file("/usr/local/etc/apache22/Modules/event.conf").with_ensure('file') }
+    it { is_expected.to contain_file("/usr/local/etc/apache24/Modules/event.conf").with_ensure('file') }
+  end
+  context "on a Gentoo OS" do
+    let :facts do
+      {
+        :osfamily               => 'Gentoo',
+        :operatingsystem        => 'Gentoo',
+        :operatingsystemrelease => '3.16.1-gentoo',
+        :concat_basedir         => '/dne',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin',
+        :is_pe                  => false,
+      }
+    end
+    it { is_expected.to contain_class("apache::params") }
+    it { is_expected.not_to contain_apache__mod('event') }
+    it { is_expected.to contain_file("/etc/apache2/modules.d/event.conf").with_ensure('file') }
   end
   context "on a Debian OS" do
     let :facts do
@@ -31,6 +49,7 @@ describe 'apache::mod::event', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 
@@ -56,7 +75,7 @@ describe 'apache::mod::event', :type => :class do
           :maxconnectionsperchild => '10',
         }
       end
-    
+
       it { is_expected.to contain_file("/etc/apache2/mods-available/event.conf").with_ensure('file').with_content(/^\s*ServerLimit\s*0/) }
       it { is_expected.to contain_file("/etc/apache2/mods-available/event.conf").with_ensure('file').with_content(/^\s*StartServers\s*1/) }
       it { is_expected.to contain_file("/etc/apache2/mods-available/event.conf").with_ensure('file').with_content(/^\s*MaxClients\s*2/) }
@@ -108,6 +127,7 @@ describe 'apache::mod::event', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 

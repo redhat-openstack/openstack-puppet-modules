@@ -28,6 +28,7 @@ class apache (
   $default_ssl_crl_check  = undef,
   $ip                     = undef,
   $service_enable         = true,
+  $service_manage         = true,
   $service_ensure         = 'running',
   $purge_configs          = true,
   $purge_vhost_dir        = undef,
@@ -66,12 +67,15 @@ class apache (
   $trace_enable           = 'On',
   $allow_encoded_slashes  = undef,
   $package_ensure         = 'installed',
+  $use_optional_includes  = $::apache::params::use_optional_includes,
 ) inherits ::apache::params {
   validate_bool($default_vhost)
   validate_bool($default_ssl_vhost)
   validate_bool($default_confd_files)
   # true/false is sufficient for both ensure and enable
   validate_bool($service_enable)
+  validate_bool($service_manage)
+  validate_bool($use_optional_includes)
 
   $valid_mpms_re = $apache_version ? {
     '2.4'   => '(event|itk|peruser|prefork|worker)',
@@ -126,6 +130,7 @@ class apache (
   class { '::apache::service':
     service_name   => $service_name,
     service_enable => $service_enable,
+    service_manage => $service_manage,
     service_ensure => $service_ensure,
   }
 
@@ -242,23 +247,37 @@ class apache (
       'debian': {
         $pidfile              = "\${APACHE_PID_FILE}"
         $error_log            = 'error.log'
-        $error_documents_path = '/usr/share/apache2/error'
         $scriptalias          = '/usr/lib/cgi-bin'
         $access_log_file      = 'access.log'
       }
       'redhat': {
         $pidfile              = 'run/httpd.pid'
         $error_log            = 'error_log'
-        $error_documents_path = '/var/www/error'
         $scriptalias          = '/var/www/cgi-bin'
         $access_log_file      = 'access_log'
       }
       'freebsd': {
         $pidfile              = '/var/run/httpd.pid'
         $error_log            = 'httpd-error.log'
-        $error_documents_path = '/usr/local/www/apache22/error'
-        $scriptalias          = '/usr/local/www/apache22/cgi-bin'
+        $scriptalias          = '/usr/local/www/apache24/cgi-bin'
         $access_log_file      = 'httpd-access.log'
+      } 'gentoo': {
+        $pidfile              = '/run/apache2.pid'
+        $error_log            = 'error.log'
+        $error_documents_path = '/usr/share/apache2/error'
+        $scriptalias          = '/var/www/localhost/cgi-bin'
+        $access_log_file      = 'access.log'
+
+        ::portage::makeconf { 'apache2_modules':
+          content => $default_mods,
+        }
+        file { [
+          '/etc/apache2/modules.d/.keep_www-servers_apache-2',
+          '/etc/apache2/vhosts.d/.keep_www-servers_apache-2'
+        ]:
+          ensure  => absent,
+          require => Package['httpd'],
+        }
       }
       default: {
         fail("Unsupported osfamily ${::osfamily}")

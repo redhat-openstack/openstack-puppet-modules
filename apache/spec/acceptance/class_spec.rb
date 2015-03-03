@@ -9,8 +9,11 @@ describe 'apache class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamil
     package_name = 'apache2'
     service_name = 'apache2'
   when 'FreeBSD'
-    package_name = 'apache22'
-    service_name = 'apache22'
+    package_name = 'apache24'
+    service_name = 'apache24'
+  when 'Gentoo'
+    package_name = 'www-servers/apache'
+    service_name = 'apache2'
   end
 
   context 'default parameters' do
@@ -32,13 +35,17 @@ describe 'apache class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamil
       it { is_expected.to be_enabled }
       it { is_expected.to be_running }
     end
+
+    describe port(80) do
+      it { should be_listening }
+    end
   end
 
   context 'custom site/mod dir parameters' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
       pp = <<-EOS
-      if $::osfamily == 'RedHat' and $::selinux == 'true' {
+      if $::osfamily == 'RedHat' and $::selinux {
         $semanage_package = $::operatingsystemmajrelease ? {
           '5'     => 'policycoreutils',
           default => 'policycoreutils-python',

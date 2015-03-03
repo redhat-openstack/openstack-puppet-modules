@@ -1,5 +1,10 @@
 class apache::mod::cgid {
-  Class['::apache::mod::worker'] -> Class['::apache::mod::cgid']
+  case $::osfamily {
+    'FreeBSD': {}
+    default: {
+      Class['::apache::mod::worker'] -> Class['::apache::mod::cgid']
+    }
+  }
 
   # Debian specifies it's cgid sock path, but RedHat uses the default value
   # with no config file
@@ -17,7 +22,7 @@ class apache::mod::cgid {
       content => template('apache/mod/cgid.conf.erb'),
       require => Exec["mkdir ${::apache::mod_dir}"],
       before  => File[$::apache::mod_dir],
-      notify  => Service['httpd'],
+      notify  => Class['apache::service'],
     }
   }
 }

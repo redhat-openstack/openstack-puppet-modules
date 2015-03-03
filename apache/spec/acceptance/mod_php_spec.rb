@@ -11,9 +11,13 @@ describe 'apache::mod::php class', :unless => UNSUPPORTED_PLATFORMS.include?(fac
     mod_dir      = '/etc/httpd/conf.d'
     service_name = 'httpd'
   when 'FreeBSD'
-    vhost_dir    = '/usr/local/etc/apache22/Vhosts'
-    mod_dir      = '/usr/local/etc/apache22/Modules'
-    service_name = 'apache22'
+    vhost_dir    = '/usr/local/etc/apache24/Vhosts'
+    mod_dir      = '/usr/local/etc/apache24/Modules'
+    service_name = 'apache24'
+  when 'Gentoo'
+    vhost_dir    = '/etc/apache2/vhosts.d'
+    mod_dir      = '/etc/apache2/modules.d'
+    service_name = 'apache2'
   end
 
   context "default php config" do
@@ -53,7 +57,7 @@ describe 'apache::mod::php class', :unless => UNSUPPORTED_PLATFORMS.include?(fac
     end
   end
 
-  context "custom extensions, php_admin_flag, and php_admin_value" do
+  context "custom extensions, php_flag, php_value, php_admin_flag, and php_admin_value" do
     it 'succeeds in puppeting php' do
       pp= <<-EOS
         class { 'apache':
@@ -65,6 +69,8 @@ describe 'apache::mod::php class', :unless => UNSUPPORTED_PLATFORMS.include?(fac
         apache::vhost { 'php.example.com':
           port             => '80',
           docroot          => '/var/www/php',
+          php_values       => { 'include_path' => '.:/usr/share/pear:/usr/bin/php', },
+          php_flags        => { 'display_errors' => 'on', },
           php_admin_values => { 'open_basedir' => '/var/www/php/:/usr/share/pear/', },
           php_admin_flags  => { 'engine' => 'on', },
         }
@@ -83,6 +89,8 @@ describe 'apache::mod::php class', :unless => UNSUPPORTED_PLATFORMS.include?(fac
     end
 
     describe file("#{vhost_dir}/25-php.example.com.conf") do
+      it { is_expected.to contain "  php_flag display_errors on" }
+      it { is_expected.to contain "  php_value include_path .:/usr/share/pear:/usr/bin/php" }
       it { is_expected.to contain "  php_admin_flag engine on" }
       it { is_expected.to contain "  php_admin_value open_basedir /var/www/php/:/usr/share/pear/" }
     end

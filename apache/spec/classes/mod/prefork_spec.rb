@@ -15,6 +15,7 @@ describe 'apache::mod::prefork', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -60,6 +61,7 @@ describe 'apache::mod::prefork', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -105,10 +107,28 @@ describe 'apache::mod::prefork', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.not_to contain_apache__mod('prefork') }
-    it { is_expected.to contain_file("/usr/local/etc/apache22/Modules/prefork.conf").with_ensure('file') }
+    it { is_expected.to contain_file("/usr/local/etc/apache24/Modules/prefork.conf").with_ensure('file') }
+  end
+  context "on a Gentoo OS" do
+    let :facts do
+      {
+        :osfamily               => 'Gentoo',
+        :operatingsystem        => 'Gentoo',
+        :operatingsystemrelease => '3.16.1-gentoo',
+        :concat_basedir         => '/dne',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin',
+        :is_pe                  => false,
+      }
+    end
+    it { is_expected.to contain_class("apache::params") }
+    it { is_expected.not_to contain_apache__mod('prefork') }
+    it { is_expected.to contain_file("/etc/apache2/modules.d/prefork.conf").with_ensure('file') }
   end
 end
