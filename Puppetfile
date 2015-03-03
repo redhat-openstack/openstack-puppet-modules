@@ -71,7 +71,7 @@ mod 'ironic',
   :git => 'https://github.com/stackforge/puppet-ironic.git'
 
 mod 'keystone',
-  :commit => '6b0e35989aa380fc5c2c363de9d8512086f0c260',
+  :commit => 'a65b54f594f40d206161ac54e659d2351168f87a',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'manila',
