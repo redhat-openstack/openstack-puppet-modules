@@ -163,7 +163,7 @@ mod 'sahara',
   :git => 'https://github.com/frozencemetery/puppet-sahara.git'
 
 mod 'ssh',
-  :commit => 'd6571f8c43ac55d20a6afd8a8ce3f86ac4b0d7a4',
+  :commit => 'e5cfeae06a16497382072d80c65c901aa0e696ea',
   :git => 'https://github.com/saz/puppet-ssh.git'
 
 mod 'staging',
