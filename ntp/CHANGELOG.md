@@ -1,3 +1,35 @@
+## 2015-xx-xx - Supported Release 4.0.0
+### Summary
+This release drops puppet 2.7 support and older stdlib support.
+
+#### Backwards-incompatible changes
+- UDLC (Undisciplined local clock) is now no longer enabled by default on anything (previous was enabled on non-virtual).
+- Puppet 2.7 no longer supported
+- puppetlabs-stdlib less than 4.5.0 no longer supported
+- TODO: The `keys_file` parent directory is no longer managed by puppet
+
+#### Features
+- TODO
+
+#### Bugfixes
+- TODO
+
+##2014-11-04 - Supported Release 3.3.0
+###Summary
+
+This release adds support for SLES 12.
+
+####Features
+- Added support for SLES 12
+
+##2014-10-02 - Supported Release 3.2.1
+###Summary
+
+This is a bug-fix release addressing the security concerns of setting /etc/ntp to mode 0755 recursively.
+
+####Bugfixes
+- Do not recursively set ownership/mode of /etc/ntp
+
 ##2014-09-10 - Supported Release 3.2.0
 ###Summary
 

@@ -9,6 +9,9 @@ tinker panic 0
 <% if @disable_monitor == true -%>
 disable monitor
 <% end -%>
+<% if @disable_auth == true -%>
+disable auth
+<% end -%>
 
 <% if @restrict != [] -%>
 # Permit time synchronization with our time source, but do not
@@ -27,15 +30,19 @@ interface listen <%= interface %>
 <% end -%>
 <% end -%>
 
+<% if @broadcastclient == true -%>
+broadcastclient
+<% end -%>
+
 <% [@servers].flatten.each do |server| -%>
 server <%= server %><% if @iburst_enable == true -%> iburst<% end %><% if @preferred_servers.include?(server) -%> prefer<% end %>
 <% end -%>
 
-<% if scope.lookupvar('::is_virtual') == "false" or @udlc -%>
+<% if @udlc -%>
 # Undisciplined Local Clock. This is a fake driver intended for backup
-# and when no outside source of synchronized time is available. 
-server	127.127.1.0 
-fudge	127.127.1.0 stratum 10
+# and when no outside source of synchronized time is available.
+server   127.127.1.0
+fudge    127.127.1.0 stratum 10
 restrict 127.127.1.0
 <% end -%>
 
@@ -44,7 +51,7 @@ driftfile <%= @driftfile %>
 
 <% unless @logfile.nil? -%>
 # Logfile
-logfile = <%= @logfile %>
+logfile <%= @logfile %>
 <% end -%>
 
 <% if @keys_enable -%>
@@ -59,4 +66,7 @@ requestkey <%= @keys_requestkey %>
 controlkey <%= @keys_controlkey %>
 <% end -%>
 
+<% end -%>
+<% [@fudge].flatten.each do |entry| -%>
+fudge <%= entry %>
 <% end -%>
