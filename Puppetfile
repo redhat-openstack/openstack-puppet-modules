@@ -15,7 +15,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => 'a1e9f54d7e1840b1bd03acce5a1fd3199f803ac5',
+  :commit => '00efa65680314e9364d6aaa559ebada7015dfb7f',
   :git => 'https://github.com/stackforge/puppet-cinder.git'
 
 mod 'common',
@@ -35,7 +35,7 @@ mod 'galera',
   :git => 'https://github.com/rohara/puppet-galera.git'
 
 mod 'glance',
-  :commit => '637bc4c7f64c7baf6f1814b5012eaf7ba38f681a',
+  :commit => 'f71bab5b7ddac3e1fde4823e67ad4cb21512e0d5',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
@@ -51,7 +51,7 @@ mod 'heat',
   :git => 'https://github.com/stackforge/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '6026088c831f9886f3445eb8775cc5514cadf79d',
+  :commit => '46f74e5576ccd4044328c619702721df012a0521',
   :git => 'https://github.com/stackforge/puppet-horizon.git'
 
 mod 'inifile',
@@ -67,7 +67,7 @@ mod 'ironic',
   :git => 'https://github.com/stackforge/puppet-ironic.git'
 
 mod 'keystone',
-  :commit => 'dfb8eb21f6bf8f81888491c2a3248a9d2207594d',
+  :commit => '3bb6ec1281d831b743e3c18587d75227fb96dc19',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'memcached',
@@ -95,7 +95,7 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '8fe0ddd50a8c44357dbdea79c371267a0887c04e',
+  :commit => '1e5e1b902964013f7c5c2e7107dcd81ed26db1e5',
   :git => 'https://github.com/stackforge/puppet-neutron.git'
 
 mod 'nova',
@@ -143,7 +143,7 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '66301097ee42840831f8c8c7cd0482e3e2325df5',
+  :commit => '6781e080362fa03a7bde0feaa52e2fc0d10b4c8b',
   :git => 'https://github.com/frozencemetery/puppet-sahara.git'
 
 mod 'ssh',
@@ -171,7 +171,7 @@ mod 'tempest',
   :git => 'https://github.com/stackforge/puppet-tempest.git'
 
 mod 'trove',
-  :commit => '2ef93e8e90978915d166ed21fd53dab67f820fe7',
+  :commit => 'c6d7addb151d572b5146d59898179434d1c2ba73',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'vcsrepo',
