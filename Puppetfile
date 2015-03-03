@@ -143,7 +143,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => '4832bd61b5b1bfea7c9cc985508e65cd10081652',
+  :commit => '15e2421048a3495e60482837910441a1248bf6f0',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',

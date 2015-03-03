@@ -1,12 +1,15 @@
 % This file managed by Puppet
 % Template Path: <%= @module_name %>/templates/rabbitmq.config
 [
+<%- if @ssl and @ssl_versions -%>
+  {ssl, [{versions, [<%= @ssl_versions.sort.map { |v| "'#{v}'" }.join(', ') %>]}]},
+<%- end -%>
   {rabbit, [
 <% if @ldap_auth -%>
     {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},
 <% end -%>
 <% if @config_cluster -%>
-    {cluster_nodes, {[<%= @r_cluster_nodes.map { |n| "\'rabbit@#{n}\'" }.join(', ') %>], <%= @cluster_node_type %>}},
+    {cluster_nodes, {[<%= @cluster_nodes.map { |n| "\'rabbit@#{n}\'" }.join(', ') %>], <%= @cluster_node_type %>}},
     {cluster_partition_handling, <%= @cluster_partition_handling %>},
 <% end -%>
 <%- if @tcp_keepalive -%>
@@ -14,14 +17,27 @@
 <%- end -%>
 <%- if @ssl_only -%>
     {tcp_listeners, []},
+<%- elsif @interface != 'UNSET' -%>
+    {tcp_listeners, [{"<%= @interface%>", <%= @port %>}]},
 <%- end -%>
 <%- if @ssl -%>
+  <%- if @ssl_interface != 'UNSET' -%>
+    {ssl_listeners, [{"<%= @ssl_interface%>", <%= @ssl_port %>}]},
+  <%- else -%>
     {ssl_listeners, [<%= @ssl_port %>]},
-    {ssl_options, [{cacertfile,"<%= @ssl_cacert %>"},
-                    {certfile,"<%= @ssl_cert %>"},
-                    {keyfile,"<%= @ssl_key %>"},
-                    {verify,<%= @ssl_verify %>},
-                    {fail_if_no_peer_cert,<%= @ssl_fail_if_no_peer_cert %>}]},
+  <%- end -%>
+    {ssl_options, [
+                   <%- if @ssl_cacert != 'UNSET' -%>
+                   {cacertfile,"<%= @ssl_cacert %>"},
+                   <%- end -%>
+                   {certfile,"<%= @ssl_cert %>"},
+                   {keyfile,"<%= @ssl_key %>"},
+                   {verify,<%= @ssl_verify %>},
+                   {fail_if_no_peer_cert,<%= @ssl_fail_if_no_peer_cert %>}
+                   <%- if @ssl_versions -%>
+                   ,{versions, [<%= @ssl_versions.sort.map { |v| "'#{v}'" }.join(', ') %>]}
+                   <%- end -%>
+                  ]},
 <%- end -%>
 <% if @config_variables -%>
 <%- @config_variables.keys.sort.each do |key| -%>
@@ -41,9 +57,12 @@
 <%- if @ssl -%>
       {port, <%= @ssl_management_port %>},
       {ssl, true},
-      {ssl_opts, [{cacertfile, "<%= @ssl_cacert %>"},
+      {ssl_opts, [<%- if @ssl_cacert != 'UNSET' -%>{cacertfile, "<%= @ssl_cacert %>"},<%- end -%>
                   {certfile, "<%= @ssl_cert %>"},
-                  {keyfile, "<%= @ssl_key %>"}]}
+                  {keyfile, "<%= @ssl_key %>"}
+                   <%- if @ssl_versions -%>
+                     ,{versions, [<%= @ssl_versions.sort.map { |v| "'#{v}'" }.join(', ') %>]}
+                   <% end -%>]}
 <%- else -%>
       {port, <%= @management_port %>}
 <%- end -%>
@@ -62,11 +81,16 @@
 <%- if @ldap_auth -%>,
 % Configure the LDAP authentication plugin
   {rabbitmq_auth_backend_ldap, [
-    {other_bind, anon},
+    {other_bind, <%= @ldap_other_bind %>},
     {servers, ["<%= @ldap_server %>"]},
     {user_dn_pattern, "<%= @ldap_user_dn_pattern %>"},
     {use_ssl, <%= @ldap_use_ssl %>},
     {port, <%= @ldap_port %>},
+<% if @ldap_config_variables -%>
+<%- @ldap_config_variables.keys.sort.each do |key| -%>
+    {<%= key %>, <%= @ldap_config_variables[key] %>},
+<%- end -%>
+<%- end -%>
     {log, <%= @ldap_log %>}
   ]}
 <%- end -%>
