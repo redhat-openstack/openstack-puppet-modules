@@ -31,7 +31,7 @@ define nssdb::add_cert_and_key (
   $key,
   $basedir = '/etc/pki'
 ) {
-  package { 'openssl': ensure => present }
+  ensure_packages(['openssl'])
 
   exec {'generate_pkcs12':
     command => "/usr/bin/openssl pkcs12 -export -in $cert -inkey $key -password 'file:${basedir}/${dbname}/password.conf' -out '${basedir}/${dbname}/$dbname.p12' -name $nickname",

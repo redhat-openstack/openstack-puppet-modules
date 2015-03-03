@@ -1,2 +1,5 @@
+2014-10-22 1.0.1
+- Use ensure_packages API to avoid dependency issues
+
 2013-08-22 1.0.0
 - Initial Release. Create the database, add certificates.
