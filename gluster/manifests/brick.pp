@@ -74,8 +74,8 @@ define gluster::brick(
 	$safename = regsubst("${name}", '/', '_', 'G')	# make /'s safe
 	file { "${vardir}/brick/${safename}.${group}":
 		content => "${name}\n",
-		owner => root,
-		group => root,
+		owner => "${::gluster::params::misc_owner_root}",
+		group => "${::gluster::params::misc_group_root}",
 		mode => 644,
 		ensure => present,
 		require => File["${vardir}/brick/"],
@@ -84,7 +84,7 @@ define gluster::brick(
 	#
 	#	fsuuid...
 	#
-	if ("${fsuuid}" != '') and "${fsuuid}" =~ /^[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}$/ {
+	if ("${fsuuid}" != '') and (! ("${fsuuid}" =~ /^[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}$/)) {
 		fail("The chosen fs uuid: '${fsuuid}' is not valid.")
 	}
 
@@ -96,8 +96,8 @@ define gluster::brick(
 		# $group is unnecessary, but i left it in for consistency...
 		file { "${vardir}/brick/fsuuid/${safename}.${group}":
 			content => "${fsuuid}\n",
-			owner => root,
-			group => root,
+			owner => "${::gluster::params::misc_owner_root}",
+			group => "${::gluster::params::misc_group_root}",
 			mode => 600,	# might as well...
 			ensure => present,
 			require => File["${vardir}/brick/fsuuid/"],
@@ -446,7 +446,7 @@ define gluster::brick(
 				logoutput => on_failure,
 				unless => [		# if one element is true, this *doesn't* run
 					#"${::gluster::params::program_lvdisplay} ${lvm_lvname}",	# nope!
-					"${::gluster::params::program_lvs} --separator ':' | /usr/bin/tr -d ' ' | /bin/awk -F ':' '{print \$1}' | /bin/grep -q '${lvm_lvname}'",
+					"${::gluster::params::program_lvs} --separator ':' | /usr/bin/tr -d ' ' | ${::gluster::params::program_awk} -F ':' '{print \$1}' | /bin/grep -q '${lvm_lvname}'",
 					'/bin/false',	# TODO: add more criteria
 				],
 				require => $exec_requires,
