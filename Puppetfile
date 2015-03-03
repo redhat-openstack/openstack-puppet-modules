@@ -167,7 +167,7 @@ mod 'ssh',
   :git => 'https://github.com/saz/puppet-ssh.git'
 
 mod 'staging',
-  :commit => '887275d8fb20e148c6f9eb327f1f6c8ea5ee280f',
+  :commit => 'bc434a71e19aae54223d57c274e2e1a7f9546d5e',
   :git => 'https://github.com/nanliu/puppet-staging.git'
 
 mod 'stdlib',
