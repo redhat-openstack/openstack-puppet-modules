@@ -34,7 +34,7 @@
 #
 # === Actions:
 # * Creates fragment directories if it didn't exist already
-# * Executes the concatfragments.sh script to build the final file, this
+# * Executes the concatfragments.rb script to build the final file, this
 #   script will create directory/fragments.concat.   Execution happens only
 #   when:
 #   * The directory changes
@@ -64,6 +64,7 @@ define concat(
   $replace        = true,
   $order          = 'alpha',
   $ensure_newline = false,
+  $validate_cmd   = undef,
   $gnu            = undef
 ) {
   validate_re($ensure, '^present$|^absent$')
@@ -81,6 +82,9 @@ define concat(
   validate_bool($replace)
   validate_re($order, '^alpha$|^numeric$')
   validate_bool($ensure_newline)
+  if $validate_cmd and ! is_string($validate_cmd) {
+    fail('$validate_cmd must be a string')
+  }
   if $gnu {
     warning('The $gnu parameter to concat is deprecated and has no effect')
   }
@@ -140,6 +144,12 @@ define concat(
     backup  => false,
   }
 
+  # reset poisoned Exec defaults
+  Exec {
+    user  => undef,
+    group => undef,
+  }
+
   if $ensure == 'present' {
     file { $fragdir:
       ensure => directory,
@@ -167,22 +177,40 @@ define concat(
     }
 
     file { $name:
-      ensure  => present,
-      owner   => $owner,
-      group   => $group,
-      mode    => $mode,
-      replace => $replace,
-      path    => $path,
-      alias   => "concat_${name}",
-      source  => "${fragdir}/${concat_name}",
-      backup  => $backup,
+      ensure       => present,
+      owner        => $owner,
+      group        => $group,
+      mode         => $mode,
+      replace      => $replace,
+      path         => $path,
+      alias        => "concat_${name}",
+      source       => "${fragdir}/${concat_name}",
+      backup       => $backup,
+    }
+
+    # Only newer versions of puppet 3.x support the validate_cmd parameter
+    if $validate_cmd {
+      File[$name] {
+        validate_cmd => $validate_cmd,
+      }
     }
 
     # remove extra whitespace from string interpolation to make testing easier
     $command = strip(regsubst("${script_command} -o \"${fragdir}/${concat_name}\" -d \"${fragdir}\" ${warnflag} ${forceflag} ${orderflag} ${newlineflag}", '\s+', ' ', 'G'))
 
+    # make sure ruby is in the path for PE
+    if defined('$is_pe') and $::is_pe {
+      if $::kernel == 'windows' {
+        $command_path = "${::env_windows_installdir}/bin:${::path}"
+      } else {
+        $command_path = "/opt/puppet/bin:${::path}"
+      }
+    } else {
+      $command_path = $::path
+    }
+
     # if puppet is running as root, this exec should also run as root to allow
-    # the concatfragments.sh script to potentially be installed in path that
+    # the concatfragments.rb script to potentially be installed in path that
     # may not be accessible by a target non-root owner.
     exec { "concat_${name}":
       alias     => "concat_${fragdir}",
@@ -190,7 +218,7 @@ define concat(
       notify    => File[$name],
       subscribe => File[$fragdir],
       unless    => "${command} -t",
-      path      => $::path,
+      path      => $command_path,
       require   => [
         File[$fragdir],
         File["${fragdir}/fragments"],

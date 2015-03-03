@@ -1,7 +1,5 @@
 #Concat
 
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-concat.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-concat)
-
 ####Table of Contents
 
 1. [Overview](#overview)
@@ -215,6 +213,14 @@ Ensure there's a newline at the end of the fragments.
 ######Example
 - ensure_newline => true
 - ensure_newline => false
+
+#####`validate_cmd`
+Ensure the destination file passes the following validation command.
+Only supported on Puppet >= 3.5.0.
+
+######Example
+- validate_cmd => '/usr/sbin/apache2 -t -f %'
+- validate_cmd => '/usr/sbin/visudo -c -f %'
 
 ####concat::fragment
 

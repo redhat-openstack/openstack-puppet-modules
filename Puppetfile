@@ -23,7 +23,7 @@ mod 'common',
   :git => 'https://github.com/purpleidea/puppet-common.git'
 
 mod 'concat',
-  :commit => '644fb1b6dc8b64accc4d1208d6127b79a08a38b7',
+  :commit => '30fbfe11aaf6d9d90e2cbf8cb5e20f2bd7748123',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'firewall',
