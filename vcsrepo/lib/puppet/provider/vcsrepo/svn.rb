@@ -3,9 +3,9 @@ require File.join(File.dirname(__FILE__), '..', 'vcsrepo')
 Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) do
   desc "Supports Subversion repositories"
 
-  optional_commands :svn      => 'svn',
-                    :svnadmin => 'svnadmin',
-                    :svnlook  => 'svnlook'
+  commands :svn      => 'svn',
+           :svnadmin => 'svnadmin',
+           :svnlook  => 'svnlook'
 
   has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration
 
@@ -24,8 +24,10 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
     if File.directory?(@resource.value(:path))
       # :path is an svn checkout
       return true if File.directory?(File.join(@resource.value(:path), '.svn'))
-      # :path is an svn server
-      return true if svnlook('uuid', @resource.value(:path))
+      if File.file?(File.join(@resource.value(:path), 'format'))
+        # :path is an svn server
+        return true if svnlook('uuid', @resource.value(:path))
+      end
     end
     false
   end
@@ -66,7 +68,7 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
   def latest
     args = buildargs.push('info', '-r', 'HEAD')
     at_path do
-      svn(*args)[/^Last Changed Rev:\s+(\d+)/m, 1]
+      svn(*args)[/^Revision:\s+(\d+)/m, 1]
     end
   end
 
@@ -80,7 +82,7 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
   def revision
     args = buildargs.push('info')
     at_path do
-      svn(*args)[/^Last Changed Rev:\s+(\d+)/m, 1]
+      svn(*args)[/^Revision:\s+(\d+)/m, 1]
     end
   end
 

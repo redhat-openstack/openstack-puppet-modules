@@ -199,7 +199,7 @@ mod 'trove',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'vcsrepo',
-  :commit => '6f7507a2a48ff0a58c7db026760a2eb84e382a77',
+  :commit => '9a955b8746f373a1a3e47ebf67d4186b98e0094f',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
 
 mod 'vlan',
