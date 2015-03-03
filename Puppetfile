@@ -171,7 +171,7 @@ mod 'tempest',
   :git => 'https://github.com/stackforge/puppet-tempest.git'
 
 mod 'trove',
-  :commit => '2ef93e8e90978915d166ed21fd53dab67f820fe7',
+  :commit => 'c6d7addb151d572b5146d59898179434d1c2ba73',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'vcsrepo',
