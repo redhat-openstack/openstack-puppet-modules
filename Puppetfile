@@ -155,7 +155,7 @@ mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote.git'
 
 mod 'rsync',
-  :commit => '357d51f3a6a22bc3da842736176c3510e507b4fb',
+  :commit => '67a3475e141d672caa5fe552d8cf59cd0bd0137e',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',

@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'rsync::get', :type => :define do
+describe 'rsync::put', :type => :define do
   let :title do
     'foobar'
   end
@@ -19,18 +19,9 @@ describe 'rsync::get', :type => :define do
       is_expected.to contain_exec("rsync foobar").with({
         'command' => 'rsync -q -a example.com foobar',
         'onlyif'  => "test `rsync --dry-run --itemize-changes -a example.com foobar | wc -l` -gt 0",
-        'timeout' => '900',
-        'user'    => 'root'
+        'timeout' => '900'
       })
     }
-  end
-
-  describe "when setting the execuser" do
-    let :params do
-      common_params.merge( { :execuser => 'username' } )
-    end
-
-    it{ is_expected.to contain_exec("rsync foobar").with({ 'user' => 'username' }) }
   end
 
   describe "when setting the timeout" do
@@ -50,8 +41,8 @@ describe 'rsync::get', :type => :define do
 
     it {
       is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a -e \'ssh -i /home/mr_baz/.ssh/id_rsa -l mr_baz\' mr_baz@example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a -e \'ssh -i /home/mr_baz/.ssh/id_rsa -l mr_baz\' mr_baz@example.com foobar | wc -l` -gt 0",
+        'command' => 'rsync -q -a -e \'ssh -i /home/mr_baz/.ssh/id_rsa -l mr_baz\' example.com mr_baz@foobar',
+        'onlyif'  => "test `rsync --dry-run --itemize-changes -a -e \'ssh -i /home/mr_baz/.ssh/id_rsa -l mr_baz\' example.com mr_baz@foobar | wc -l` -gt 0",
       })
     }
   end
@@ -79,8 +70,8 @@ describe 'rsync::get', :type => :define do
 
     it {
       is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a -e \'ssh -i /path/to/keyfile -l mr_baz\' mr_baz@example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a -e \'ssh -i /path/to/keyfile -l mr_baz\' mr_baz@example.com foobar | wc -l` -gt 0",
+        'command' => 'rsync -q -a -e \'ssh -i /path/to/keyfile -l mr_baz\' example.com mr_baz@foobar',
+        'onlyif'  => "test `rsync --dry-run --itemize-changes -a -e \'ssh -i /path/to/keyfile -l mr_baz\' example.com mr_baz@foobar | wc -l` -gt 0",
        })
     }
   end
@@ -150,32 +141,6 @@ describe 'rsync::get', :type => :define do
     }
   end
 
-  describe "when enabling recursive" do
-    let :params do
-      common_params.merge({ :recursive => true })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a -r example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a -r example.com foobar | wc -l` -gt 0"
-       })
-    }
-  end
-
-  describe "when enabling links" do
-    let :params do
-      common_params.merge({ :links => true })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a --links example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a --links example.com foobar | wc -l` -gt 0"
-       })
-    }
-  end
-
   describe "when changing rsync options" do
     let :params do
       common_params.merge({ :options => '-rlpcgoD' })
@@ -185,45 +150,6 @@ describe 'rsync::get', :type => :define do
       is_expected.to contain_exec("rsync foobar").with({
         'command' => 'rsync -q -rlpcgoD example.com foobar',
         'onlyif'  => "test `rsync --dry-run --itemize-changes -rlpcgoD example.com foobar | wc -l` -gt 0"
-       })
-    }
-  end
-
-  describe "when enabling hardlinks" do
-    let :params do
-      common_params.merge({ :hardlinks => true })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a --hard-links example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a --hard-links example.com foobar | wc -l` -gt 0"
-       })
-    }
-  end
-
-  describe "when enabling copylinks" do
-    let :params do
-      common_params.merge({ :copylinks => true })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a --copy-links example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a --copy-links example.com foobar | wc -l` -gt 0"
-       })
-    }
-  end
-
-  describe "when enabling times" do
-    let :params do
-      common_params.merge({ :times => true })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a --times example.com foobar',
-        'onlyif'  => "test `rsync --dry-run --itemize-changes -a --times example.com foobar | wc -l` -gt 0"
        })
     }
   end
@@ -240,18 +166,4 @@ describe 'rsync::get', :type => :define do
        })
     }
   end
-
-  describe "when setting a custom onlyif condition" do
-    let :params do
-      common_params.merge({ :onlyif => 'false' })
-    end
-
-    it {
-      is_expected.to contain_exec("rsync foobar").with({
-        'command' => 'rsync -q -a example.com foobar',
-        'onlyif'  => "false"
-       })
-    }
-  end
-
 end
