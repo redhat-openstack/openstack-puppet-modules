@@ -147,7 +147,7 @@ mod 'rabbitmq',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',
-  :commit => 'd72af9ab3c2911b6dc18c5cc12e700630ebdcfb2',
+  :commit => '8f9c2bc96e08409b558de678aa6a023abbfacfb8',
   :git => 'https://github.com/arioch/puppet-redis.git'
 
 mod 'remote',
