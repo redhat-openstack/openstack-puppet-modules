@@ -1,3 +1,4 @@
+#! /usr/bin/env ruby -S rspec
 dir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift File.join(dir, 'lib')
 
@@ -8,7 +9,6 @@ end
 
 require 'puppet'
 require 'rspec-puppet'
-require 'simplecov'
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'puppet_spec/verbose'
 require 'puppet_spec/files'
@@ -19,10 +19,6 @@ require 'puppet_spec/database'
 require 'monkey_patches/alias_should_to_must'
 require 'mocha/setup'
 
-
-SimpleCov.start do
-  add_filter "/spec/"
-end
 
 
 RSpec.configure do |config|
