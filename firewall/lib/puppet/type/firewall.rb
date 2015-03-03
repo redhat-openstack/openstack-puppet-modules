@@ -34,6 +34,7 @@ Puppet::Type.newtype(:firewall) do
   feature :recent_limiting, "The netfilter recent module"
   feature :snat, "Source NATing"
   feature :dnat, "Destination NATing"
+  feature :netmap, "NET MAPping"
   feature :interface_match, "Interface matching"
   feature :icmp_match, "Matching ICMP types"
   feature :owner, "Matching owners"
@@ -136,10 +137,25 @@ Puppet::Type.newtype(:firewall) do
 
           src_range => '192.168.1.1-192.168.1.10'
 
-      The source IP range is must in 'IP1-IP2' format.
+      The source IP range must be in 'IP1-IP2' format.
     EOS
 
-    newvalues(/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)-((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)/)
+    validate do |value|
+      if matches = /^([^\-\/]+)-([^\-\/]+)$/.match(value)
+        start_addr = matches[1]
+        end_addr = matches[2]
+
+        [start_addr, end_addr].each do |addr|
+          begin
+            @resource.host_to_ip(addr)
+          rescue Exception
+            self.fail("Invalid IP address \"#{addr}\" in range \"#{value}\"")
+          end
+        end
+      else
+        raise(ArgumentError, "The source IP range must be in 'IP1-IP2' format.")
+      end
+    end
   end
 
   newproperty(:destination) do
@@ -171,10 +187,25 @@ Puppet::Type.newtype(:firewall) do
 
           dst_range => '192.168.1.1-192.168.1.10'
 
-      The destination IP range is must in 'IP1-IP2' format.
+      The destination IP range must be in 'IP1-IP2' format.
     EOS
 
-    newvalues(/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)-((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)/)
+    validate do |value|
+      if matches = /^([^\-\/]+)-([^\-\/]+)$/.match(value)
+        start_addr = matches[1]
+        end_addr = matches[2]
+
+        [start_addr, end_addr].each do |addr|
+          begin
+            @resource.host_to_ip(addr)
+          rescue Exception
+            self.fail("Invalid IP address \"#{addr}\" in range \"#{value}\"")
+          end
+        end
+      else
+        raise(ArgumentError, "The destination IP range must be in 'IP1-IP2' format.")
+      end
+    end
   end
 
   newproperty(:sport, :array_matching => :all) do
@@ -428,16 +459,24 @@ Puppet::Type.newtype(:firewall) do
   # Interface specific matching properties
   newproperty(:iniface, :required_features => :interface_match) do
     desc <<-EOS
-      Input interface to filter on.
+      Input interface to filter on.  Supports interface alias like eth0:0.
+      To negate the match try this:
+
+            iniface => '! lo',
+
     EOS
-    newvalues(/^[a-zA-Z0-9\-\._\+]+$/)
+    newvalues(/^!?\s?[a-zA-Z0-9\-\._\+\:]+$/)
   end
 
   newproperty(:outiface, :required_features => :interface_match) do
     desc <<-EOS
-      Output interface to filter on.
+      Output interface to filter on.  Supports interface alias like eth0:0.
+     To negate the match try this:
+
+           outiface => '! lo',
+
     EOS
-    newvalues(/^[a-zA-Z0-9\-\._\+]+$/)
+    newvalues(/^!?\s?[a-zA-Z0-9\-\._\+\:]+$/)
   end
 
   # NAT specific properties
@@ -458,6 +497,12 @@ Puppet::Type.newtype(:firewall) do
   newproperty(:toports, :required_features => :dnat) do
     desc <<-EOS
       For DNAT this is the port that will replace the destination port.
+    EOS
+  end
+
+  newproperty(:to, :required_features => :netmap) do
+    desc <<-EOS
+      For NETMAP this will replace the destination IP
     EOS
   end
 
@@ -685,6 +730,46 @@ Puppet::Type.newtype(:firewall) do
       only, as iptables does not accept multiple uid in a single
       statement.
     EOS
+    def insync?(is)
+      require 'etc'
+
+      # The following code allow us to take into consideration unix mappings
+      # between string usernames and UIDs (integers). We also need to ignore
+      # spaces as they are irrelevant with respect to rule sync.
+
+      # Remove whitespace
+      is = is.gsub(/\s+/,'')
+      should = @should.first.to_s.gsub(/\s+/,'')
+
+      # Keep track of negation, but remove the '!'
+      is_negate = ''
+      should_negate = ''
+      if is.start_with?('!')
+        is = is.gsub(/^!/,'')
+        is_negate = '!'
+      end
+      if should.start_with?('!')
+        should = should.gsub(/^!/,'')
+        should_negate = '!'
+      end
+
+      # If 'should' contains anything other than digits,
+      # we assume that we have to do a lookup to convert
+      # to UID
+      unless should[/[0-9]+/] == should
+        should = Etc.getpwnam(should).uid
+      end
+
+      # If 'is' contains anything other than digits,
+      # we assume that we have to do a lookup to convert
+      # to UID
+      unless is[/[0-9]+/] == is
+        is = Etc.getpwnam(is).uid
+      end
+
+      return "#{is_negate}#{is}" == "#{should_negate}#{should}"
+    end
+
   end
 
   newproperty(:gid, :required_features => :owner) do
@@ -988,6 +1073,27 @@ Puppet::Type.newtype(:firewall) do
     newvalues(/^([0-9a-f]{2}[:]){5}([0-9a-f]{2})$/i)
   end
 
+  newproperty(:physdev_in, :required_features => :iptables) do
+    desc <<-EOS
+      Match if the packet is entering a bridge from the given interface.
+    EOS
+    newvalues(/^[a-zA-Z0-9\-\._\+]+$/)
+  end
+
+  newproperty(:physdev_out, :required_features => :iptables) do
+    desc <<-EOS
+      Match if the packet is leaving a bridge via the given interface.
+    EOS
+    newvalues(/^[a-zA-Z0-9\-\._\+]+$/)
+  end
+
+  newproperty(:physdev_is_bridged, :required_features => :iptables) do
+    desc <<-EOS
+      Match if the packet is transversing a bridge.
+    EOS
+    newvalues(:true, :false)
+  end
+
   autorequire(:firewallchain) do
     reqs = []
     protocol = nil
@@ -1014,7 +1120,7 @@ Puppet::Type.newtype(:firewall) do
   autorequire(:package) do
     case value(:provider)
     when :iptables, :ip6tables
-      %w{iptables iptables-persistent iptables-services}
+      %w{iptables iptables-persistent netfilter-persistent iptables-services}
     else
       []
     end
@@ -1066,10 +1172,9 @@ Puppet::Type.newtype(:firewall) do
 
     if value(:set_mark)
       unless value(:jump).to_s  =~ /MARK/ &&
-             value(:chain).to_s =~ /PREROUTING|OUTPUT/ &&
              value(:table).to_s =~ /mangle/
         self.fail "Parameter set_mark only applies to " \
-          "the PREROUTING or OUTPUT chain of the mangle table and when jump => MARK"
+          "the mangle table and when jump => MARK"
       end
     end
 

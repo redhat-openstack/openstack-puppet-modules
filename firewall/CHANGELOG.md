@@ -1,3 +1,36 @@
+##2015-01-27 - Supported Release 1.4.0
+###Summary
+
+This release includes physdev support, the ability to look up usernames from uuid, and a number of bugfixes
+
+####Features
+- Add `netmap` feature
+- Add `physdev` support
+- Add ability to look up username from uuid (MODULES-753, MODULES-1688)
+
+####Bugfixes
+- Sync iptables/ip6tables providers (MODULES-1612)
+- Fix package names for Amazon and Ubuntu 14.10 (MODULES-1029)
+- Fix overly aggressive gsub when `ensure => absent` (MODULES-1453)
+- Unable to parse `-m (tcp|udp)` rules (MODULES-1552)
+- Fix ip6tables provider when `iptables-ipv6` package isn't installed for EL6 (MODULES-633)
+- Test fixes
+
+##2014-12-16 - Supported Release 1.3.0
+###Summary
+
+This release includes a number of bugfixes and features, including fixing `tcp_flags` support, and added support for interface aliases, negation for iniface and outiface, and extra configurability for packages and service names.
+
+####Features
+- Add support for interface aliases (eth0:0) (MODULES-1469)
+- Add negation for iniface, outiface (MODULES-1470)
+- Make package and service names configurable (MODULES-1309)
+
+####Bugfixes
+- Fix test regexes for EL5 (MODULES-1565)
+- Fix `tcp_flags` support for ip6tables (MODULES-556)
+- Don't arbitrarily limit `set_mark` for certain chains
+
 ##2014-11-04 - Supported Release 1.2.0
 ###Summary
 
