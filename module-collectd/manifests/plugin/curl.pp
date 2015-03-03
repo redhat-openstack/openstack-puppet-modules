@@ -1,10 +1,19 @@
 #
 class collectd::plugin::curl (
-  $ensure = present,
-  $pages  = { },
+  $ensure   = present,
+  $interval = undef,
+  $pages    = { },
 ) {
+
+  if $::osfamily == 'Redhat' {
+    package { 'collectd-curl':
+      ensure => $ensure,
+    }
+  }
+
   collectd::plugin {'curl':
-    ensure => $ensure,
+    ensure   => $ensure,
+    interval => $interval,
   }
   $defaults = {
     'ensure' => $ensure

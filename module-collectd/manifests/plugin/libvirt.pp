@@ -8,7 +8,8 @@ class collectd::plugin::libvirt (
   $interface_device = undef,
   $ignore_selected  = undef,
   $hostname_format  = undef,
-  $interface_format = undef
+  $interface_format = undef,
+  $interval         = undef,
 ) {
   validate_string($connection)
 
@@ -20,8 +21,15 @@ class collectd::plugin::libvirt (
   if $hostname_format != undef  { validate_string($hostname_format) }
   if $interface_format != undef { validate_string($interface_format) }
 
+  if $::osfamily == 'RedHat' {
+    package { 'collectd-virt':
+      ensure => $ensure,
+    }
+  }
+
   collectd::plugin { 'libvirt':
-    ensure  => $ensure,
-    content => template('collectd/plugin/libvirt.conf.erb'),
+    ensure   => $ensure,
+    content  => template('collectd/plugin/libvirt.conf.erb'),
+    interval => $interval,
   }
 }

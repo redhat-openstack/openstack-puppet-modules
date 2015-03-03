@@ -2,13 +2,21 @@
 class collectd::plugin::postgresql (
   $ensure    = present,
   $databases = { },
+  $interval  = undef,
   $queries   = { },
   $writers   = { },
 ) {
   include collectd::params
 
+  if $::osfamily == 'Redhat' {
+    package { 'collectd-postgresql':
+      ensure => $ensure,
+    }
+  }
+
   collectd::plugin {'postgresql':
-    ensure => $ensure,
+    ensure   => $ensure,
+    interval => $interval,
   }
 
   concat{"${collectd::params::plugin_conf_dir}/postgresql-config.conf":
