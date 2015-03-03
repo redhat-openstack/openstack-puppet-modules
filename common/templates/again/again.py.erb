@@ -183,7 +183,7 @@ if fork == 0:			# child
 	os.execvpe(argv[0], argv, env)		# this command does not return!
 
 else:				# parent
-	print "pid: %d will try to puppet again..." % fork
+	print "pid: %d will try to run puppet again..." % fork
 	sys.exit(0)				# let puppet exit successfully!
 
 # vim: ts=8

@@ -19,7 +19,7 @@ mod 'cinder',
   :git => 'https://github.com/stackforge/puppet-cinder.git'
 
 mod 'common',
-  :commit => '2c0ed2844c606fd806bde0c02e47e79c88fab4a9',
+  :commit => '165e2adc3ab559597f461e6eae3eb004967070f9',
   :git => 'https://github.com/purpleidea/puppet-common.git'
 
 mod 'concat',

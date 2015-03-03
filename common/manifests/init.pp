@@ -19,5 +19,5 @@ import 'frag/*.pp'
 
 class common {
 
-
 }
+# vim: ts=8
