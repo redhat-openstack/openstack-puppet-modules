@@ -26,7 +26,7 @@
 #
 # [*service_host*]
 #   (Optional) Hostname for sahara to listen on
-#   Defaults to '127.0.0.1'.
+#   Defaults to '0.0.0.0'.
 #
 # [*service_port*]
 #   (Optional) Port for sahara to listen on
@@ -34,7 +34,11 @@
 #
 # [*use_neutron*]
 #   (Optional) Whether to use neutron
-#   Defaults to true.
+#   Defaults to 'false'.
+#
+# [*use_floating_ips*]
+#   (Optional) Whether to use floating IPs to communicate with instances.
+#   Defaults to 'true'.
 #
 # [*database_connection*]
 #   (Optional) Non-sqllite database for sahara
@@ -68,9 +72,10 @@ class sahara(
   $package_ensure      = 'present',
   $verbose             = false,
   $debug               = false,
-  $service_host        = '127.0.0.1',
+  $service_host        = '0.0.0.0',
   $service_port        = 8386,
-  $use_neutron         = true,
+  $use_neutron         = false,
+  $use_floating_ips    = true,
   $database_connection = 'mysql://sahara:secrete@localhost:3306/sahara',
   $os_username         = 'admin',
   $os_password         = 'secrete',
@@ -123,6 +128,7 @@ class sahara(
 
   sahara_config {
     'DEFAULT/use_neutron': value => $use_neutron;
+    'DEFAULT/use_floating_ips': value => $use_floating_ips;
     'DEFAULT/host': value => $service_host;
     'DEFAULT/port': value => $service_port;
     'DEFAULT/debug': value => $debug;

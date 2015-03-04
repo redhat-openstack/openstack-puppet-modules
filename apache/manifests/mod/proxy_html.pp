@@ -4,7 +4,7 @@ class apache::mod::proxy_html {
 
   # Add libxml2
   case $::osfamily {
-    /RedHat|FreeBSD/: {
+    /RedHat|FreeBSD|Gentoo/: {
       ::apache::mod { 'xml2enc': }
       $loadfiles = undef
     }
@@ -32,6 +32,6 @@ class apache::mod::proxy_html {
     content => template('apache/mod/proxy_html.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],
-    notify  => Service['httpd'],
+    notify  => Class['apache::service'],
   }
 }

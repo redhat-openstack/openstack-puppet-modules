@@ -36,6 +36,7 @@ define common::again::delta(
 		default => '',
 	}
 
+	# TODO: add --name '${name}' as a uid to prevent running of duplicates!
 	$arglist = ["--delta ${valid_delta}", "${valid_start_timer_now}"]
 	$args = join(delete($arglist, ''), ' ')
 

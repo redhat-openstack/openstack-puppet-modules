@@ -6,16 +6,20 @@ class collectd::plugin::write_graphite (
   $storerates        = true,
   $graphiteprefix    = 'collectd.',
   $graphitepostfix   = undef,
+  $interval          = undef,
   $escapecharacter   = '_',
   $alwaysappendds    = false,
   $protocol          = 'tcp',
   $separateinstances = false,
+  $logsenderrors     = true,
 ) {
   validate_bool($storerates)
   validate_bool($separateinstances)
+  validate_bool($logsenderrors)
 
   collectd::plugin {'write_graphite':
-    ensure  => $ensure,
-    content => template('collectd/plugin/write_graphite.conf.erb'),
+    ensure   => $ensure,
+    content  => template('collectd/plugin/write_graphite.conf.erb'),
+    interval => $interval,
   }
 }

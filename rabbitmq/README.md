@@ -36,6 +36,7 @@ all features against earlier versions.
 
 ###Beginning with rabbitmq
 
+
 ```puppet
 include '::rabbitmq'
 ```
@@ -83,8 +84,8 @@ To use RabbitMQ Environment Variables, use the parameters `environment_variables
 class { 'rabbitmq':
   port              => '5672',
   environment_variables   => {
-    'RABBITMQ_NODENAME'     => 'node01',
-    'RABBITMQ_SERVICENAME'  => 'RabbitMQ'
+    'NODENAME'     => 'node01',
+    'SERVICENAME'  => 'RabbitMQ'
   }
 }
 ```
@@ -122,9 +123,11 @@ To use RabbitMQ clustering facilities, use the rabbitmq parameters
 
 ```puppet
 class { 'rabbitmq':
-  config_cluster    => true,
-  cluster_nodes     => ['rabbit1', 'rabbit2'],
-  cluster_node_type => 'ram',
+  config_cluster           => true,
+  cluster_nodes            => ['rabbit1', 'rabbit2'],
+  cluster_node_type        => 'ram',
+  erlang_cookie            => 'A_SECRET_COOKIE_STRING',
+  wipe_db_on_cookie_change => true,
 }
 ```
 
@@ -138,17 +141,13 @@ class { 'rabbitmq':
 * rabbitmq::params: Different configuration data for different systems.
 * rabbitmq::service: Handles the rabbitmq service.
 * rabbitmq::repo::apt: Handles apt repo for Debian systems.
-* rabbitmq::repo::rhel: Handles yum repo for Redhat systems.
+* rabbitmq::repo::rhel: Handles rpm repo for Redhat systems.
 
 ###Parameters
 
 ####`admin_enable`
 
 Boolean, if enabled sets up the management interface/plugin for RabbitMQ.
-
-####`cluster_disk_nodes`
-
-DEPRECATED AND REPLACED BY CLUSTER_NODES.
 
 ####`cluster_node_type`
 
@@ -221,6 +220,7 @@ RabbitMQ Environment Variables in rabbitmq_env.config
 ####`erlang_cookie`
 
 The erlang cookie to use for clustering - must be the same between all nodes.
+This value has no default and must be set explicitly if using clustering.
 
 ###`key_content`
 
@@ -238,6 +238,14 @@ LDAP server to use for auth.
 ####`ldap_user_dn_pattern`
 
 User DN pattern for LDAP auth.
+
+####`ldap_other_bind`
+
+How to bind to the LDAP server. Defaults to 'anon'.
+
+####`ldap_config_variables`
+
+Hash of other LDAP config variables.
 
 ####`ldap_use_ssl`
 
@@ -261,7 +269,7 @@ The port for the RabbitMQ management interface.
 
 ####`node_ip_address`
 
-The value of RABBITMQ_NODE_IP_ADDRESS in rabbitmq_env.config
+The value of NODE_IP_ADDRESS in rabbitmq_env.config
 
 ####`package_ensure`
 
@@ -271,7 +279,7 @@ be changed to latest.
 ####`package_gpg_key`
 
 RPM package GPG key to import. Uses source method. Should be a URL for Debian/RedHat
-OS family, or a file name for RedHat OS family. 
+OS family, or a file name for RedHat OS family.
 Set to http://www.rabbitmq.com/rabbitmq-signing-key-public.asc by default.
 Note, that `key_content`, if specified, would override this parameter for Debian OS family.
 
@@ -286,6 +294,12 @@ What provider to use to install the package.
 ####`package_source`
 
 Where should the package be installed from?
+
+On Debian- and Arch-based systems using the default package provider,
+this parameter is ignored and the package is installed from the
+rabbitmq repository, if enabled with manage_repo => true, or from the
+system repository otherwise. If you want to use dpkg as the
+package_provider, you must specify a local package_source.
 
 ####`plugin_dir`
 
@@ -314,7 +328,7 @@ Configures the service for using SSL.
 ####`ssl_only`
 
 Configures the service to only use SSL.  No cleartext TCP listeners will be created.
-Requires that ssl => true also.
+Requires that ssl => true and port => UNSET also
 
 ####`ssl_cacert`
 
@@ -344,6 +358,12 @@ rabbitmq.config SSL verify setting.
 
 rabbitmq.config `fail_if_no_peer_cert` setting.
 
+####`ssl_versions`
+
+Choose which SSL versions to enable. Example: `['tlsv1.2', 'tlsv1.1']`.
+
+Note that it is recommended to disable `sslv3` and `tlsv1` to prevent against POODLE and BEAST attacks. Please see the [RabbitMQ SSL](https://www.rabbitmq.com/ssl.html) documentation for more information.
+
 ####`stomp_port`
 
 The port to use for Stomp.
@@ -360,9 +380,26 @@ Boolean to enable TCP connection keepalive for RabbitMQ service.
 
 Sets the version to install.
 
+On Debian- and Arch-based operating systems, the version parameter is
+ignored and the latest version is installed from the rabbitmq
+repository, if enabled with manage_repo => true, or from the system
+repository otherwise.
+
 ####`wipe_db_on_cookie_change`
 
 Boolean to determine if we should DESTROY AND DELETE the RabbitMQ database.
+
+####`rabbitmq_user`
+
+String: OS dependent, default defined in param.pp. The system user the rabbitmq daemon runs as.
+
+####`rabbitmq_group`
+
+String: OS dependent, default defined in param.pp. The system group the rabbitmq daemon runs as.
+
+####`rabbitmq_home`
+
+String: OS dependent. default defined in param.pp. The home directory of the rabbitmq deamon.
 
 ##Native Types
 
@@ -408,6 +445,35 @@ rabbitmq_exchange { 'myexchange@myhost':
 }
 ```
 
+### rabbitmq\_queue
+
+```puppet
+rabbitmq_queue { 'myqueue@myhost':
+  user        => 'dan',
+  password    => 'bar',
+  durable     => true,
+  auto_delete => false,
+  arguments   => {
+    x-message-ttl => 123,
+    x-dead-letter-exchange => 'other'
+  },
+  ensure      => present,
+}
+```
+
+### rabbitmq\_binding
+
+```puppet
+rabbitmq_binding { 'myexchange@myqueue@myhost':
+  user             => 'dan',
+  password         => 'bar',
+  destination_type => 'queue',
+  routing_key      => '#',
+  arguments        => {},
+  ensure           => present,
+}
+```
+
 ### rabbitmq\_user\_permissions
 
 ```puppet
@@ -415,6 +481,20 @@ rabbitmq_user_permissions { 'dan@myhost':
   configure_permission => '.*',
   read_permission      => '.*',
   write_permission     => '.*',
+}
+```
+
+### rabbitmq\_policy
+
+```puppet
+rabbitmq_policy { 'ha-all@myhost':
+  pattern    => '.*',
+  priority   => 0,
+  applyto    => 'all',
+  definition => {
+    'ha-mode'      => 'all',
+    'ha-sync-mode' => 'automatic',
+  },
 }
 ```
 
@@ -428,20 +508,33 @@ rabbitmq_plugin {'rabbitmq_stomp':
 }
 ```
 
+### rabbitmq\_erlang\_cookie
+
+This is essentially a private type used by the rabbitmq::config class
+to manage the erlang cookie. It replaces the rabbitmq_erlang_cookie fact
+from earlier versions of this module. It manages the content of the cookie
+usually located at "${rabbitmq_home}/.erlang.cookie", which includes
+stopping the rabbitmq service and wiping out the database at
+"${rabbitmq_home}/mnesia" if the user agrees to it. We don't recommend using
+this type directly.
+
 ##Limitations
 
-This module has been built on and tested against Puppet 2.7 and higher.
+This module has been built on and tested against Puppet 3.x.
 
 The module has been tested on:
 
 * RedHat Enterprise Linux 5/6
 * Debian 6/7
 * CentOS 5/6
-* Ubuntu 12.04
+* Ubuntu 12.04/14.04
 
 Testing on other platforms has been light and cannot be guaranteed.
 
 ### Module dependencies
+
+If running CentOS/RHEL, and using the yum provider, ensure the epel repo is present.
+
 To have a suitable erlang version installed on RedHat and Debian systems,
 you have to install another puppet module from http://forge.puppetlabs.com/garethr/erlang with:
 

@@ -10,7 +10,7 @@
 #
 # === Requirement/Dependencies:
 #
-# Currently requires the ripienaar/concat module on the Puppet Forge and
+# Currently requires the puppetlabs/concat module on the Puppet Forge and
 #  uses storeconfigs on the Puppet Master to export/collect resources
 #  from all balancer members.
 #
@@ -21,39 +21,39 @@
 #    fragment name.
 #
 # [*listening_service*]
-#    The haproxy service's instance name (or, the title of the
-#     haproxy::listen resource). This must match up with a declared
-#     haproxy::listen resource.
+#   The haproxy service's instance name (or, the title of the
+#    haproxy::listen resource). This must match up with a declared
+#    haproxy::listen resource.
 #
 # [*ports*]
-#     An array or commas-separated list of ports for which the balancer member
-#     will accept connections from the load balancer. Note that cookie values
-#     aren't yet supported, but shouldn't be difficult to add to the
-#     configuration. If you use an array in server_names and ipaddresses, the
-#     same port is used for all balancermembers.
+#   An array or commas-separated list of ports for which the balancer member
+#    will accept connections from the load balancer. Note that cookie values
+#    aren't yet supported, but shouldn't be difficult to add to the
+#    configuration. If you use an array in server_names and ipaddresses, the
+#    same port is used for all balancermembers.
 #
 # [*server_names*]
-#     The name of the balancer member server as known to haproxy in the
-#      listening service's configuration block. This defaults to the
-#      hostname. Can be an array of the same length as ipaddresses,
-#      in which case a balancermember is created for each pair of
-#      server_names and ipaddresses (in lockstep).
+#   The name of the balancer member server as known to haproxy in the
+#    listening service's configuration block. This defaults to the
+#    hostname. Can be an array of the same length as ipaddresses,
+#    in which case a balancermember is created for each pair of
+#    server_names and ipaddresses (in lockstep).
 #
 # [*ipaddresses*]
-#      The ip address used to contact the balancer member server.
-#      Can be an array, see documentation to server_names.
+#   The ip address used to contact the balancer member server.
+#    Can be an array, see documentation to server_names.
 #
 # [*ensure*]
-#      If the balancermember should be present or absent.
-#      Defaults to present.
+#   If the balancermember should be present or absent.
+#    Defaults to present.
 #
 # [*options*]
-#      An array of options to be specified after the server declaration
-#       in the listening service's configuration block.
+#   An array of options to be specified after the server declaration
+#    in the listening service's configuration block.
 #
 # [*define_cookies*]
-#      If true, then add "cookie SERVERID" stickiness options.
-#      Default false.
+#   If true, then add "cookie SERVERID" stickiness options.
+#    Default false.
 #
 # === Examples
 #
@@ -75,7 +75,7 @@
 #  Creating the resource for multiple balancer members at once
 #  (for single-pass installation of haproxy without requiring a first
 #  pass to export the resources if you know the members in advance):
-# 
+#
 #  haproxy::balancermember { 'haproxy':
 #    listening_service => 'puppet00',
 #    ports             => '8140',
@@ -83,23 +83,24 @@
 #    ipaddresses       => ['192.168.56.200', '192.168.56.201'],
 #    options           => 'check',
 #  }
-#  
+#
 #  (this resource can be declared anywhere)
 #
 define haproxy::balancermember (
   $listening_service,
-  $ports,
+  $ports        = undef,
   $server_names = $::hostname,
   $ipaddresses  = $::ipaddress,
   $ensure       = 'present',
   $options      = '',
   $define_cookies = false
 ) {
+
   # Template uses $ipaddresses, $server_name, $ports, $option
   concat::fragment { "${listening_service}_balancermember_${name}":
-    order   => "20-${listening_service}-${name}",
     ensure  => $ensure,
-    target  => '/etc/haproxy/haproxy.cfg',
+    order   => "20-${listening_service}-01-${name}",
+    target  => $::haproxy::config_file,
     content => template('haproxy/haproxy_balancermember.erb'),
   }
 }

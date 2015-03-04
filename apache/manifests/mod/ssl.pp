@@ -1,15 +1,23 @@
 class apache::mod::ssl (
-  $ssl_compression = false,
-  $ssl_options     = [ 'StdEnvVars' ],
-  $ssl_cipher      = 'HIGH:MEDIUM:!aNULL:!MD5',
-  $ssl_protocol    = [ 'all', '-SSLv2', '-SSLv3' ],
-  $apache_version  = $::apache::apache_version,
-  $package_name    = undef,
+  $ssl_compression        = false,
+  $ssl_options            = [ 'StdEnvVars' ],
+  $ssl_cipher             = 'HIGH:MEDIUM:!aNULL:!MD5',
+  $ssl_protocol           = [ 'all', '-SSLv2', '-SSLv3' ],
+  $ssl_pass_phrase_dialog = 'builtin',
+  $ssl_random_seeds       = [
+    'startup builtin',
+    'startup file:/dev/urandom 512',
+    'connect builtin',
+    'connect file:/dev/urandom 512',
+  ],
+  $apache_version         = $::apache::apache_version,
+  $package_name           = undef,
 ) {
   $session_cache = $::osfamily ? {
     'debian'  => "\${APACHE_RUN_DIR}/ssl_scache(512000)",
     'redhat'  => '/var/cache/mod_ssl/scache(512000)',
     'freebsd' => '/var/run/ssl_scache(512000)',
+    'gentoo'  => '/var/run/ssl_scache(512000)',
   }
 
   case $::osfamily {
@@ -26,6 +34,9 @@ class apache::mod::ssl (
       $ssl_mutex = 'default'
     }
     'freebsd': {
+      $ssl_mutex = 'default'
+    }
+    'gentoo': {
       $ssl_mutex = 'default'
     }
     default: {
@@ -47,6 +58,7 @@ class apache::mod::ssl (
   # $ssl_options
   # $session_cache,
   # $ssl_mutex
+  # $ssl_random_seeds
   # $apache_version
   #
   file { 'ssl.conf':
@@ -55,6 +67,6 @@ class apache::mod::ssl (
     content => template('apache/mod/ssl.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],
-    notify  => Service['httpd'],
+    notify  => Class['apache::service'],
   }
 }

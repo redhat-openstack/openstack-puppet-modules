@@ -17,6 +17,7 @@ describe 'apache::mod::fcgid', :type => :class do
         :id                        => 'root',
         :kernel                    => 'Linux',
         :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -35,6 +36,7 @@ describe 'apache::mod::fcgid', :type => :class do
         :id                        => 'root',
         :kernel                    => 'Linux',
         :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 
@@ -79,6 +81,7 @@ describe 'apache::mod::fcgid', :type => :class do
         :id                        => 'root',
         :kernel                    => 'Linux',
         :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 
@@ -103,11 +106,31 @@ describe 'apache::mod::fcgid', :type => :class do
         :id                        => 'root',
         :kernel                    => 'FreeBSD',
         :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
 
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.to contain_apache__mod('fcgid') }
     it { is_expected.to contain_package("www/mod_fcgid") }
+  end
+
+  context "on a Gentoo OS" do
+    let :facts do
+      {
+        :osfamily                  => 'Gentoo',
+        :operatingsystem           => 'Gentoo',
+        :operatingsystemrelease    => '3.16.1-gentoo',
+        :concat_basedir            => '/dne',
+        :id                        => 'root',
+        :kernel                    => 'Linux',
+        :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin',
+        :is_pe                  => false,
+      }
+    end
+
+    it { is_expected.to contain_class("apache::params") }
+    it { is_expected.to contain_apache__mod('fcgid') }
+    it { is_expected.to contain_package("www-apache/mod_fcgid") }
   end
 end

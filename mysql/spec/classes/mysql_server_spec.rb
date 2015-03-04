@@ -20,10 +20,18 @@ describe 'mysql::server' do
         end
 
         context 'mysql::server::install' do
-          it 'contains the package' do
+          it 'contains the package by default' do
             is_expected.to contain_package('mysql-server').with({
               :ensure => :present,
             })
+          end
+          context 'with package_manage set to true' do
+            let(:params) {{ :package_manage => true }}
+            it { is_expected.to contain_package('mysql-server') }
+          end
+          context 'with package_manage set to false' do
+            let(:params) {{ :package_manage => false }}
+            it { is_expected.not_to contain_package('mysql-server') }
           end
           context 'with datadir overridden' do
             let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
@@ -45,6 +53,10 @@ describe 'mysql::server' do
               })
             end
           end
+          context 'with log-error overridden' do
+            let(:params) {{ :override_options => { 'mysqld' => { 'log-error' => '/tmp/error.log' }} }}
+            it { is_expected.to contain_file('/tmp/error.log') }
+          end
         end
 
         context 'mysql::server::root_password' do
@@ -52,10 +64,25 @@ describe 'mysql::server' do
             it { is_expected.not_to contain_mysql_user('root@localhost') }
             it { is_expected.not_to contain_file('/root/.my.cnf') }
           end
-          describe 'when set' do
+          describe 'when root_password set' do
             let(:params) {{:root_password => 'SET' }}
             it { is_expected.to contain_mysql_user('root@localhost') }
+            it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
+          end
+          describe 'when root_password set, create_root_user set to false' do
+            let(:params) {{ :root_password => 'SET', :create_root_user => false }}
+            it { is_expected.not_to contain_mysql_user('root@localhost') }
             it { is_expected.to contain_file('/root/.my.cnf') }
+          end
+          describe 'when root_password set, create_root_my_cnf set to false' do
+            let(:params) {{ :root_password => 'SET', :create_root_my_cnf => false }}
+            it { is_expected.to contain_mysql_user('root@localhost') }
+            it { is_expected.not_to contain_file('/root/.my.cnf') }
+          end
+          describe 'when root_password set, create_root_user and create_root_my_cnf set to false' do
+            let(:params) {{ :root_password => 'SET', :create_root_user => false, :create_root_my_cnf => false }}
+            it { is_expected.not_to contain_mysql_user('root@localhost') }
+            it { is_expected.not_to contain_file('/root/.my.cnf') }
           end
         end
 

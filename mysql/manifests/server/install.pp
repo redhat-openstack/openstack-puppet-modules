@@ -1,21 +1,31 @@
 #
 class mysql::server::install {
 
-  package { 'mysql-server':
-    ensure => $mysql::server::package_ensure,
-    name   => $mysql::server::package_name,
-  }
+  if $mysql::server::package_manage {
 
-  # Build the initial databases.
-  if $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['datadir'] {
+    package { 'mysql-server':
+      ensure          => $mysql::server::package_ensure,
+      install_options => $mysql::server::install_options,
+      name            => $mysql::server::package_name,
+    }
+
+    # Build the initial databases.
     $mysqluser = $mysql::server::options['mysqld']['user']
-    $datadir = $mysql::server::override_options['mysqld']['datadir']
+    $datadir = $mysql::server::options['mysqld']['datadir']
+    $basedir = $mysql::server::options['mysqld']['basedir']
+    $config_file = $mysql::server::config_file
+
+    if $mysql::server::manage_config_file {
+      $install_db_args = "--basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
+    } else {
+      $install_db_args = "--basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
+    }
 
     exec { 'mysql_install_db':
-      command   => "mysql_install_db --datadir=${datadir} --user=${mysqluser}",
+      command   => "mysql_install_db ${install_db_args}",
       creates   => "${datadir}/mysql",
       logoutput => on_failure,
-      path      => '/bin:/sbin:/usr/bin:/usr/sbin',
+      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
       require   => Package['mysql-server'],
     }
 

@@ -20,20 +20,18 @@ class concat::setup {
     fail ('$concat_basedir not defined. Try running again with pluginsync=true on the [master] and/or [main] section of your node\'s \'/etc/puppet/puppet.conf\'.')
   }
 
-  # owner and mode of fragment files (on windows owner and access rights should
+  # owner,group and mode of fragment files (on windows owner and access rights should
   # be inherited from concatdir and not explicitly set to avoid problems)
   $fragment_owner = $::osfamily ? { 'windows' => undef, default => $::id }
   $fragment_mode  = $::osfamily ? { 'windows' => undef, default => '0640' }
-
-  # PR #174 introduced changes to the concatfragments.sh script that are
-  # incompatible with Solaris 10 but reportedly OK on Solaris 11.  As a work
-  # around we are enable the .rb concat script on all Solaris versions.  If
-  # this goes smoothly, we should move towards completely eliminating the .sh
-  # version.
-  $script_name = $::osfamily? {
-    /(?i:(Windows|Solaris))/ => 'concatfragments.rb',
-    default                  => 'concatfragments.sh'
+  # test on gid fact availability to support older facter versions
+  if defined('$gid') and $::gid and $::osfamily != 'Windows' {
+    $fragment_group = $::gid
+  } else {
+    $fragment_group = undef
   }
+
+  $script_name = 'concatfragments.rb'
 
   $script_path = "${concatdir}/bin/${script_name}"
 

@@ -1,7 +1,5 @@
 #apache
 
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-apache.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-apache)
-
 ####Table of Contents
 
 1. [Overview - What is the apache module?](#overview)
@@ -16,6 +14,7 @@
         * [Class: apache::default_mods](#class-apachedefault_mods)
         * [Defined Type: apache::mod](#defined-type-apachemod)
         * [Classes: apache::mod::*](#classes-apachemodname)
+        * [Class: apache::mod::alias](#class-apachemodalias)
         * [Class: apache::mod::event](#class-apachemodevent)
         * [Class: apache::mod::info](#class-apachemodinfo)
         * [Class: apache::mod::pagespeed](#class-apachemodpagespeed)
@@ -27,6 +26,7 @@
         * [Class: apache::mod::negotiation](#class-apachemodnegotiation)
         * [Class: apache::mod::deflate](#class-apachemoddeflate)
         * [Class: apache::mod::reqtimeout](#class-apachemodreqtimeout)
+        * [Class: apache::mod::security](#class-modsecurity)
         * [Class: apache::mod::version](#class-apachemodversion)
         * [Defined Type: apache::vhost](#defined-type-apachevhost)
         * [Parameter: `directories` for apache::vhost](#parameter-directories-for-apachevhost)
@@ -68,7 +68,8 @@ Apache is a widely-used web server, and this module provides a simplified way of
 * Apache modules
 * virtual hosts
 * listened-to ports
-* `/etc/make.conf` on FreeBSD
+* `/etc/make.conf` on FreeBSD and Gentoo
+* depends on module 'gentoo/puppet-portage' for Gentoo
 
 ###Beginning with Apache
 
@@ -78,7 +79,7 @@ To install Apache with the default parameters
     class { 'apache':  }
 ```
 
-The defaults are determined by your operating system (e.g. Debian systems have one set of defaults, and RedHat systems have another, as do FreeBSD systems). These defaults work well in a testing environment, but are not suggested for production. To establish customized parameters
+The defaults are determined by your operating system (e.g. Debian systems have one set of defaults, and RedHat systems have another, as do FreeBSD and Gentoo systems). These defaults work well in a testing environment, but are not suggested for production. To establish customized parameters
 
 ```puppet
     class { 'apache':
@@ -237,11 +238,11 @@ Configures the behavior of the module templates, package names, and default mods
 
 #####`conf_dir`
 
-Changes the location of the configuration directory the main configuration file is placed in. Defaults to '/etc/httpd/conf' on RedHat, '/etc/apache2' on Debian, and '/usr/local/etc/apache22' on FreeBSD.
+Changes the location of the configuration directory the main configuration file is placed in. Defaults to '/etc/httpd/conf' on RedHat, '/etc/apache2' on Debian, '/usr/local/etc/apache22' on FreeBSD, and '/etc/apache2' on Gentoo.
 
 #####`confd_dir`
 
-Changes the location of the configuration directory your custom configuration files are placed in. Defaults to '/etc/httpd/conf' on RedHat, '/etc/apache2' on Debian, and '/usr/local/etc/apache22' on FreeBSD.
+Changes the location of the configuration directory your custom configuration files are placed in. Defaults to '/etc/httpd/conf' on RedHat, '/etc/apache2/conf.d' on Debian, '/usr/local/etc/apache22' on FreeBSD, and '/etc/apache2/conf.d' on Gentoo.
 
 #####`conf_template`
 
@@ -269,7 +270,7 @@ The default certificate authority, which is automatically set to 'undef'. This d
 
 #####`default_ssl_cert`
 
-The default SSL certification, which is automatically set based on your operating system  ('/etc/pki/tls/certs/localhost.crt' for RedHat, '/etc/ssl/certs/ssl-cert-snakeoil.pem' for Debian, and '/usr/local/etc/apache22/server.crt' for FreeBSD). This default works out of the box but must be updated with your specific certificate information before being used in production.
+The default SSL certification, which is automatically set based on your operating system  ('/etc/pki/tls/certs/localhost.crt' for RedHat, '/etc/ssl/certs/ssl-cert-snakeoil.pem' for Debian, '/usr/local/etc/apache22/server.crt' for FreeBSD, and '/etc/ssl/apache2/server.crt' for Gentoo). This default works out of the box but must be updated with your specific certificate information before being used in production.
 
 #####`default_ssl_chain`
 
@@ -289,7 +290,7 @@ Sets the default certificate revocation check level via the [SSLCARevocationChec
 
 #####`default_ssl_key`
 
-The default SSL key, which is automatically set based on your operating system ('/etc/pki/tls/private/localhost.key' for RedHat, '/etc/ssl/private/ssl-cert-snakeoil.key' for Debian, and '/usr/local/etc/apache22/server.key' for FreeBSD). This default works out of the box but must be updated with your specific certificate information before being used in production.
+The default SSL key, which is automatically set based on your operating system ('/etc/pki/tls/private/localhost.key' for RedHat, '/etc/ssl/private/ssl-cert-snakeoil.key' for Debian, '/usr/local/etc/apache22/server.key' for FreeBSD, and '/etc/ssl/apache2/server.key' for Gentoo). This default works out of the box but must be updated with your specific certificate information before being used in production.
 
 #####`default_ssl_vhost`
 
@@ -314,7 +315,7 @@ Sets up a default virtual host. Defaults to 'true', set to 'false' to set up [cu
 
 #####`docroot`
 
-Changes the location of the default [Documentroot](https://httpd.apache.org/docs/current/mod/core.html#documentroot). Defaults to '/var/www/html' on RedHat, '/var/www' on Debian, and '/usr/local/www/apache22/data' on FreeBSD.
+Changes the location of the default [Documentroot](https://httpd.apache.org/docs/current/mod/core.html#documentroot). Defaults to '/var/www/html' on RedHat, '/var/www' on Debian, '/usr/local/www/apache22/data' on FreeBSD, and '/var/www/localhost/htdocs' on Gentoo.
 
 #####`error_documents`
 
@@ -322,7 +323,7 @@ Enables custom error documents. Defaults to 'false'.
 
 #####`httpd_dir`
 
-Changes the base location of the configuration directories used for the apache service. This is useful for specially repackaged HTTPD builds, but might have unintended consequences when used in combination with the default distribution packages. Defaults to '/etc/httpd' on RedHat, '/etc/apache2' on Debian, and '/usr/local/etc/apache22' on FreeBSD.
+Changes the base location of the configuration directories used for the apache service. This is useful for specially repackaged HTTPD builds, but might have unintended consequences when used in combination with the default distribution packages. Defaults to '/etc/httpd' on RedHat, '/etc/apache2' on Debian, '/usr/local/etc/apache22' on FreeBSD, and '/etc/apache2' on Gentoo.
 
 #####`keepalive`
 
@@ -354,7 +355,7 @@ Define additional [LogFormats](https://httpd.apache.org/docs/current/mod/mod_log
 
 #####`logroot`
 
-Changes the directory where Apache log files for the virtual host are placed. Defaults to '/var/log/httpd' on RedHat, '/var/log/apache2' on Debian, and '/var/log/apache22' on FreeBSD.
+Changes the directory where Apache log files for the virtual host are placed. Defaults to '/var/log/httpd' on RedHat, '/var/log/apache2' on Debian, '/var/log/apache22' on FreeBSD, and '/var/log/apache2' on Gentoo.
 
 #####`logroot_mode`
 
@@ -371,11 +372,11 @@ Setting this to 'false' stops the user resource from being created. This is for 
 
 #####`mod_dir`
 
-Changes the location of the configuration directory your Apache modules configuration files are placed in. Defaults to '/etc/httpd/conf.d' for RedHat, '/etc/apache2/mods-available' for Debian, and '/usr/local/etc/apache22/Modules' for FreeBSD.
+Changes the location of the configuration directory your Apache modules configuration files are placed in. Defaults to '/etc/httpd/conf.d' for RedHat, '/etc/apache2/mods-available' for Debian, '/usr/local/etc/apache22/Modules' for FreeBSD, and '/etc/apache2/modules.d' on Gentoo.
 
 #####`mpm_module`
 
-Determines which MPM is loaded and configured for the HTTPD process. Valid values are 'event', 'itk', 'peruser', 'prefork', 'worker', or 'false'. Defaults to 'prefork' on RedHat and FreeBSD, and 'worker' on Debian. Must be set to 'false' to explicitly declare the following classes with custom parameters:
+Determines which MPM is loaded and configured for the HTTPD process. Valid values are 'event', 'itk', 'peruser', 'prefork', 'worker', or 'false'. Defaults to 'prefork' on RedHat, FreeBSD and Gentoo, and 'worker' on Debian. Must be set to 'false' to explicitly declare the following classes with custom parameters:
 
 * `apache::mod::event`
 * `apache::mod::itk`
@@ -415,7 +416,7 @@ Sets the server name. Defaults to `fqdn` provided by Facter.
 
 #####`server_root`
 
-Sets the root directory in which the server resides. Defaults to '/etc/httpd' on RedHat, '/etc/apache2' on Debian, and '/usr/local' on FreeBSD.
+Sets the root directory in which the server resides. Defaults to '/etc/httpd' on RedHat, '/etc/apache2' on Debian, '/usr/local' on FreeBSD, and '/var/www' on Gentoo.
 
 #####`server_signature`
 
@@ -435,7 +436,11 @@ Determines whether the service should be running. Valid values are 'true', 'fals
 
 #####`service_name`
 
-Name of the Apache service to run. Defaults to: 'httpd' on RedHat, 'apache2' on Debian, and 'apache22' on FreeBSD.
+Name of the Apache service to run. Defaults to: 'httpd' on RedHat, 'apache2' on Debian and Gentoo, and 'apache22' on FreeBSD.
+
+#####`service_manage`
+
+Determines whether the HTTPD service state is managed by Puppet . Defaults to 'true'.
 
 #####`trace_enable`
 
@@ -443,7 +448,7 @@ Controls how TRACE requests per RFC 2616 are handled. More information about [Tr
 
 #####`vhost_dir`
 
-Changes the location of the configuration directory your virtual host configuration files are placed in. Defaults to 'etc/httpd/conf.d' on RedHat, '/etc/apache2/sites-available' on Debian, and '/usr/local/etc/apache22/Vhosts' on FreeBSD.
+Changes the location of the configuration directory your virtual host configuration files are placed in. Defaults to 'etc/httpd/conf.d' on RedHat, '/etc/apache2/sites-available' on Debian, '/usr/local/etc/apache22/Vhosts' on FreeBSD, and '/etc/apache2/vhosts.d' on Gentoo.
 
 #####`apache_name`
 
@@ -476,6 +481,8 @@ The content of the configuration file. Only one of `$content` and `$source` can 
 #####`priority`
 
 The priority of the configuration file, used for ordering. Defaults to '25'.
+
+Pass priority `false` to omit the priority prefix in file names.
 
 #####`source`
 
@@ -511,10 +518,14 @@ Used to enable arbitrary Apache HTTPD modules for which there is no specific `ap
 There are many `apache::mod::[name]` classes within this module that can be declared using `include`:
 
 * `actions`
-* `alias`
+* `alias`(see [`apache::mod::alias`](#class-apachemodalias) below)
 * `auth_basic`
+* `auth_cas`* (see [`apache::mod::auth_cas`](#class-apachemodauthcas) below)
 * `auth_kerb`
+* `authn_file`
 * `authnz_ldap`*
+* `authz_default`
+* `authz_user`
 * `autoindex`
 * `cache`
 * `cgi`
@@ -530,6 +541,7 @@ There are many `apache::mod::[name]` classes within this module that can be decl
 * `expires`
 * `fastcgi`
 * `fcgid`
+* `filter`
 * `headers`
 * `include`
 * `info`*
@@ -555,6 +567,7 @@ There are many `apache::mod::[name]` classes within this module that can be decl
 * `rewrite`
 * `rpaf`*
 * `setenvif`
+* `security`
 * `shib`* (see [`apache::mod::shib`](#class-apachemodshib) below)
 * `speling`
 * `ssl`* (see [`apache::mod::ssl`](#class-apachemodssl) below)
@@ -570,7 +583,20 @@ Modules noted with a * indicate that the module has settings and, thus, a templa
 
 The modules mentioned above, and other Apache modules that have templates, cause template files to be dropped along with the mod install. The module will not work without the template. Any module without a template installs the package but drops no files.
 
-####Class:  `apache::mod::event
+###Class: `apache::mod::alias`
+
+Installs and manages the alias module.
+
+Full Documentation for alias is available from [Apache](https://httpd.apache.org/docs/current/mod/mod_alias.html).
+
+To disable directory listing for the icons directory:
+```puppet
+  class { 'apache::mod::alias':
+    icons_options => 'None',
+  }
+```
+
+####Class:  `apache::mod::event`
 
 Installs and manages mpm_event module.
 
@@ -583,7 +609,12 @@ To configure the event thread limit:
     $threadlimit      => '128',
   }
 ```
-  
+
+####Class: `apache::mod::auth_cas`
+
+Installs and manages mod_auth_cas. The parameters `cas_login_url` and `cas_validate_url` are required.
+
+Full documentation on mod_auth_cas is available from [JASIG](https://github.com/Jasig/mod_auth_cas).
 
 ####Class: `apache::mod::info`
 
@@ -730,10 +761,18 @@ Installs Apache SSL capabilities and uses the ssl.conf.erb template. These are t
 
 ```puppet
     class { 'apache::mod::ssl':
-      ssl_compression => false,
-      ssl_options     => [ 'StdEnvVars' ],
-      ssl_protocol    => [ 'all', '-SSLv2', '-SSLv3'],
-  }
+      ssl_compression        => false,
+      ssl_options            => [ 'StdEnvVars' ],
+      ssl_cipher             => 'HIGH:MEDIUM:!aNULL:!MD5',
+      ssl_protocol           => [ 'all', '-SSLv2', '-SSLv3' ],
+      ssl_pass_phrase_dialog => 'builtin',
+      ssl_random_seeds       => [
+        'startup builtin',
+        'startup file:/dev/urandom 512',
+        'connect builtin',
+        'connect file:/dev/urandom 512',
+      ],
+    }
 ```
 
 To *use* SSL with a virtual host, you must either set the`default_ssl_vhost` parameter in `::apache` to 'true' or set the `ssl` parameter in `apache::vhost` to 'true'.
@@ -748,8 +787,8 @@ Installs Apache mod_status and uses the status.conf.erb template. These are the 
       extended_status = 'On',
       status_path     = '/server-status',
 ){
-      
-      
+
+
   }
 ```
 
@@ -766,6 +805,22 @@ For customized parameters, which tell Apache how Python is currently configured 
       wsgi_python_path   => '/path/to/venv/site-packages',
     }
 ```
+
+To specify an alternate mod\_wsgi package name to install and the name of the module .so it provides,
+(e.g. a "python27-mod\_wsgi" package that provides "python27-mod_wsgi.so" in the default module directory):
+
+```puppet
+    class { 'apache::mod::wsgi':
+      wsgi_socket_prefix => "\${APACHE_RUN_DIR}WSGI",
+      wsgi_python_home   => '/path/to/venv',
+      wsgi_python_path   => '/path/to/venv/site-packages',
+	  package_name       => 'python27-mod_wsgi',
+	  mod_path           => 'python27-mod_wsgi.so',
+    }
+```
+
+If ``mod_path`` does not contain "/", it will be prefixed by the default module path
+for your OS; otherwise, it will be used literally.
 
 More information about [WSGI](http://modwsgi.readthedocs.org/en/latest/).
 
@@ -860,7 +915,7 @@ mod_reqtimeout configuration.
   }
 ```
 
-####Class: `apache::mod::reqtimeout`
+####Class: `apache::mod::version`
 
 This wrapper around mod_version warns on Debian and Ubuntu systems with Apache httpd 2.4
 about loading mod_version, as on these platforms it's already built-in.
@@ -873,6 +928,45 @@ about loading mod_version, as on these platforms it's already built-in.
 
 A string or an array that sets the `RequestReadTimeout` option. Defaults to
 `['header=20-40,MinRate=500', 'body=20,MinRate=500']`.
+
+
+####Class: `apache::mod::security`
+
+Installs and configures mod_security.  Defaults to enabled and running on all
+vhosts.
+
+```puppet
+  include '::apache::mod::security'
+```
+
+#####`crs_package`
+
+Name of package to install containing crs rules
+
+#####`modsec_dir`
+
+Directory to install the modsec configuration and activated rules links into
+
+#####`activated_rules`
+
+Array of rules from the modsec_crs_path to activate by symlinking to
+${modsec_dir}/activated_rules.
+
+#####`allowed_methods`
+
+HTTP methods allowed by mod_security
+
+#####`content_types`
+
+Content-types allowed by mod_security
+
+#####`restricted_extensions`
+
+Extensions prohibited by mod_security
+
+#####`restricted_headers`
+
+Headers restricted by mod_security
 
 
 ####Defined Type: `apache::vhost`
@@ -907,7 +1001,7 @@ If you have a series of specific configurations and do not want a base `::apache
 
 #####`access_log`
 
-Specifies whether `*_access.log` directives (`*_file`,`*_pipe`, or `*_syslog`) should be configured. Setting the value to 'false' chooses none. Defaults to 'true'. 
+Specifies whether `*_access.log` directives (`*_file`,`*_pipe`, or `*_syslog`) should be configured. Setting the value to 'false' chooses none. Defaults to 'true'.
 
 #####`access_log_file`
 
@@ -938,6 +1032,10 @@ Sets [AddDefaultCharset](http://httpd.apache.org/docs/current/mod/core.html#addd
 Determines whether the vhost creates a Listen statement. The default value is 'true'.
 
 Setting `add_listen` to 'false' stops the vhost from creating a Listen statement, and this is important when you combine vhosts that are not passed an `ip` parameter with vhosts that *are* passed the `ip` parameter.
+
+#####`use_optional_includes`
+
+Specifies if for apache > 2.4 it should use IncludeOptional instead of Include for `additional_includes`. Defaults to 'false'.
 
 #####`additional_includes`
 
@@ -1109,6 +1207,34 @@ in without being aware of the consequences; see http://httpd.apache.org/docs/2.4
 
 Specifies the verbosity of the error log. Defaults to 'warn' for the global server configuration and can be overridden on a per-vhost basis. Valid values are 'emerg', 'alert', 'crit', 'error', 'warn', 'notice', 'info' or 'debug'.
 
+######`modsec_body_limit`
+
+Configures the maximum request body size (in bytes) ModSecurity will accept for buffering
+
+######`modsec_disable_vhost`
+
+Boolean.  Only valid if apache::mod::security is included.  Used to disable mod_security on an individual vhost.  Only relevant if apache::mod::security is included.
+
+######`modsec_disable_ids`
+
+Array of mod_security IDs to remove from the vhost.  Also takes a hash allowing removal of an ID from a specific location.
+
+```puppet
+    apache::vhost { 'sample.example.net':
+      modsec_disable_ids => [ 90015, 90016 ],
+    }
+```
+
+```puppet
+    apache::vhost { 'sample.example.net':
+      modsec_disable_ids => { '/location1' => [ 90015, 90016 ] },
+    }
+```
+
+######`modsec_disable_ips`
+
+Array of IPs to exclude from mod_security rule matching
+
 #####`no_proxy_uris`
 
 Specifies URLs you do not want to proxy. This parameter is meant to be used in combination with [`proxy_dest`](#proxy_dest).
@@ -1116,6 +1242,10 @@ Specifies URLs you do not want to proxy. This parameter is meant to be used in c
 #####`proxy_preserve_host`
 
 Sets the [ProxyPreserveHost Directive](http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost).  true Enables the Host: line from an incoming request to be proxied to the host instead of hostname .  false sets this option to off (default).
+
+#####`proxy_error_override`
+
+Sets the [ProxyErrorOverride Directive](http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxyerroroverride). This directive controls whether apache should override error pages for proxied content. This option is off by default.
 
 #####`options`
 
@@ -1138,6 +1268,10 @@ Sets the overrides for the specified virtual host. Accepts an array of [AllowOve
 
 Sets [PassengerRoot](https://www.phusionpassenger.com/documentation/Users%20guide%20Apache.html#PassengerAppRoot), the location of the Passenger application root if different from the DocumentRoot.
 
+#####`passenger_app_env`
+
+Sets [PassengerAppEnv](https://www.phusionpassenger.com/documentation/Users%20guide%20Apache.html#PassengerAppEnv), the environment for the Passenger application. If not specifies, defaults to the global setting or 'production'.
+
 #####`passenger_ruby`
 
 Sets [PassengerRuby](https://www.phusionpassenger.com/documentation/Users%20guide%20Apache.html#PassengerRuby) on this virtual host, the Ruby interpreter to use for the application.
@@ -1154,13 +1288,17 @@ Sets [PassengerStartTimeout](https://www.phusionpassenger.com/documentation/User
 
 Sets [PassengerPreStart](https://www.phusionpassenger.com/documentation/Users%20guide%20Apache.html#PassengerPreStart), the URL of the application if pre-starting is required.
 
+#####`php_flags & values`
+
+Allows per-vhost setting [`php_value`s or `php_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values can be overwritten by a user or an application. Defaults to '[]'.
+
 #####`php_admin_flags & values`
 
 Allows per-vhost setting [`php_admin_value`s or `php_admin_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values cannot be overwritten by a user or an application. Defaults to '[]'.
 
 #####`port`
 
-Sets the port the host is configured on. The module's defaults ensure the host listens on port 80 for non-SSL vhosts and port 443 for SSL vhosts. The host only listens on the port set in this parameter. 
+Sets the port the host is configured on. The module's defaults ensure the host listens on port 80 for non-SSL vhosts and port 443 for SSL vhosts. The host only listens on the port set in this parameter.
 
 #####`priority`
 
@@ -1169,6 +1307,8 @@ Sets the relative load-order for Apache HTTPD VirtualHost configuration files. D
 If nothing matches the priority, the first name-based vhost is used. Likewise, passing a higher priority causes the alphabetically first name-based vhost to be used if no other names match.
 
 *Note:* You should not need to use this parameter. However, if you do use it, be aware that the `default_vhost` parameter for `apache::vhost` passes a priority of '15'.
+
+Pass priority `false` to omit the priority prefix in file names.
 
 #####`proxy_dest`
 
@@ -1184,7 +1324,7 @@ apache::vhost { 'site.name.fdqn':
   proxy_pass => [
     { 'path' => '/a', 'url' => 'http://backend-a/' },
     { 'path' => '/b', 'url' => 'http://backend-b/' },
-    { 'path' => '/c', 'url' => 'http://backend-a/c', 'params' => 'max=20 ttl=120 retry=300' },
+    { 'path' => '/c', 'url' => 'http://backend-a/c', 'params' => {'max'=>20, 'ttl'=>120, 'retry'=>300}},
     { 'path' => '/l', 'url' => 'http://backend-xy',
       'reverse_urls' => ['http://backend-x', 'http://backend-y'] },
     { 'path' => '/d', 'url' => 'http://backend-a/d',
@@ -1208,7 +1348,7 @@ Specifies the address to redirect to. Defaults to 'undef'.
 
 #####`redirect_source`
 
-Specifies the source URIs that redirect to the destination specified in `redirect_dest`. If more than one item for redirect is supplied, the source and destination must be the same length, and the items are order-dependent. 
+Specifies the source URIs that redirect to the destination specified in `redirect_dest`. If more than one item for redirect is supplied, the source and destination must be the same length, and the items are order-dependent.
 
 ```puppet
     apache::vhost { 'site.name.fdqn':
@@ -1258,7 +1398,7 @@ Modifies collected [request headers](http://httpd.apache.org/docs/current/mod/mo
 
 #####`rewrites`
 
-Creates URL rewrite rules. Expects an array of hashes, and the hash keys can be any of 'comment', 'rewrite_base', 'rewrite_cond', or 'rewrite_rule'. Defaults to 'undef'.
+Creates URL rewrite rules. Expects an array of hashes, and the hash keys can be any of 'comment', 'rewrite_base', 'rewrite_cond', 'rewrite_rule' or 'rewrite_map'. Defaults to 'undef'.
 
 For example, you can specify that anyone trying to access index.html is served welcome.html
 
@@ -1319,6 +1459,11 @@ Multiple rewrites and conditions are also possible
           rewrite_base => /apps/,
           rewrite_rule => ['^index\.cgi$ index.php', '^index\.html$ index.php', '^index\.asp$ index.html'],
         },
+        { comment      => 'Rewrite to lower case',
+          rewrite_cond => ['%{REQUEST_URI} [A-Z]'],
+          rewrite_map  => ['lc int:tolower'],
+          rewrite_rule => ['(.*) ${lc:$1} [R=301,L]'],
+        },
      ],
     }
 ```
@@ -1374,6 +1519,14 @@ Sets the servername corresponding to the hostname you connect to the virtual hos
 
 Used by HTTPD to set environment variables for vhosts. Defaults to '[]'.
 
+Example:
+
+```puppet
+    apache::vhost { 'setenv.example.com':
+      setenv => ['SPECIAL_PATH /foo/bin'],
+    }
+```
+
 #####`setenvif`
 
 Used by HTTPD to conditionally set environment variables for vhosts. Defaults to '[]'.
@@ -1382,9 +1535,9 @@ Used by HTTPD to conditionally set environment variables for vhosts. Defaults to
 
 Set up a virtual host with [suPHP](http://suphp.org/DocumentationView.html?file=apache/CONFIG).
 
-`suphp_addhandler` defaults to 'php5-script' on RedHat and FreeBSD, and 'x-httpd-php' on Debian.
+`suphp_addhandler` defaults to 'php5-script' on RedHat and FreeBSD, and 'x-httpd-php' on Debian and Gentoo.
 
-`suphp_configpath` defaults to 'undef' on RedHat and FreeBSD, and '/etc/php5/apache2' on Debian.
+`suphp_configpath` defaults to 'undef' on RedHat and FreeBSD, and '/etc/php5/apache2' on Debian and Gentoo.
 
 `suphp_engine` allows values 'on' or 'off'. Defaults to 'off'
 
@@ -1459,9 +1612,9 @@ To set up a virtual host with WSGI
 
 The `directories` parameter within the `apache::vhost` class passes an array of hashes to the vhost to create [Directory](http://httpd.apache.org/docs/current/mod/core.html#directory), [File](http://httpd.apache.org/docs/current/mod/core.html#files), and [Location](http://httpd.apache.org/docs/current/mod/core.html#location) directive blocks. These blocks take the form, '< Directory /path/to/directory>...< /Directory>'.
 
-The `path` key sets the path for the directory, files, and location blocks. Its value must be a path for the 'directory', 'files', and 'location' providers, or a regex for the 'directorymatch', 'filesmatch', or 'locationmatch' providers. Each hash passed to `directories` **must** contain `path` as one of the keys. 
+The `path` key sets the path for the directory, files, and location blocks. Its value must be a path for the 'directory', 'files', and 'location' providers, or a regex for the 'directorymatch', 'filesmatch', or 'locationmatch' providers. Each hash passed to `directories` **must** contain `path` as one of the keys.
 
-The `provider` key is optional. If missing, this key defaults to 'directory'. Valid values for `provider` are 'directory', 'files', 'location', 'directorymatch', 'filesmatch', or 'locationmatch'. If you set `provider` to 'directorymatch', it uses the keyword 'DirectoryMatch' in the Apache config file. 
+The `provider` key is optional. If missing, this key defaults to 'directory'. Valid values for `provider` are 'directory', 'files', 'location', 'directorymatch', 'filesmatch', or 'locationmatch'. If you set `provider` to 'directorymatch', it uses the keyword 'DirectoryMatch' in the Apache config file.
 
 General `directories` usage looks something like
 
@@ -1488,7 +1641,7 @@ Available handlers, represented as keys, should be placed within the `directory`
 }
 ```
 
-Any handlers you do not set in these hashes are considered 'undefined' within Puppet and are not added to the virtual host, resulting in the module using their default values. Supported handlers are: 
+Any handlers you do not set in these hashes are considered 'undefined' within Puppet and are not added to the virtual host, resulting in the module using their default values. Supported handlers are:
 
 ######`addhandlers`
 
@@ -1620,7 +1773,7 @@ Pass a string of custom configuration directives to be placed at the end of the 
 
 ######`deny`
 
-Sets a [Deny](http://httpd.apache.org/docs/2.2/mod/mod_authz_host.html#deny) directive, specifying which hosts are denied access to the server. **Deprecated:** This parameter is being deprecated due to a change in Apache. It only works with Apache 2.2 and lower. 
+Sets a [Deny](http://httpd.apache.org/docs/2.2/mod/mod_authz_host.html#deny) directive, specifying which hosts are denied access to the server. **Deprecated:** This parameter is being deprecated due to a change in Apache. It only works with Apache 2.2 and lower. You can use it as a single string for one rule or as an array for more than one.
 
 ```puppet
     apache::vhost { 'sample.example.net':
@@ -1734,15 +1887,19 @@ Sets the value for the [PassengerEnabled](http://www.modrails.com/documentation/
 ```puppet
     apache::vhost { 'sample.example.net':
       docroot     => '/path/to/directory',
-      directories => [ 
-        { path              => '/path/to/directory', 
+      directories => [
+        { path              => '/path/to/directory',
           passenger_enabled => 'on',
-        }, 
+        },
       ],
     }
 ```
 
 *Note:* Be aware that there is an [issue](http://www.conandalton.net/2010/06/passengerenabled-off-not-working.html) using the PassengerEnabled directive with the PassengerHighPerformance directive.
+
+######`php_value` and `php_flag`
+
+`php_value` sets the value of the directory, and `php_flag` uses a boolean to configure the directory. Further information can be found [here](http://php.net/manual/en/configuration.changes.php).
 
 ######`php_admin_value` and `php_admin_flag`
 
@@ -1771,9 +1928,9 @@ Sets a `SetHandler` directive as per the [Apache Core documentation](http://http
 ```puppet
     apache::vhost { 'sample.example.net':
       docroot     => '/path/to/directory',
-      directories => [ 
-        { path       => '/path/to/directory', 
-          sethandler => 'None', 
+      directories => [
+        { path       => '/path/to/directory',
+          sethandler => 'None',
         }
       ],
     }
@@ -1824,7 +1981,7 @@ Allows an valid content setting to be set or altered for the application request
 
 ######`shib_use_headers`
 
-When set to 'On' this turns on the use of request headers to publish attributes to applications. Valid values for this key is 'On' or 'Off', and the default value is 'Off'. This key is disabled if `apache::mod::shib` is not defined. Check the [`mod_shib` documentation](https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApacheConfig#NativeSPApacheConfig-Server/VirtualHostOptions) for more details. 
+When set to 'On' this turns on the use of request headers to publish attributes to applications. Valid values for this key is 'On' or 'Off', and the default value is 'Off'. This key is disabled if `apache::mod::shib` is not defined. Check the [`mod_shib` documentation](https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApacheConfig#NativeSPApacheConfig-Server/VirtualHostOptions) for more details.
 
 ######`ssl_options`
 
@@ -1876,19 +2033,15 @@ Specifies the SSL certificate authority. Defaults to 'undef'.
 
 #####`ssl_cert`
 
-Specifies the SSL certification. Defaults are based on your OS: '/etc/pki/tls/certs/localhost.crt' for RedHat, '/etc/ssl/certs/ssl-cert-snakeoil.pem' for Debian, and '/usr/local/etc/apache22/server.crt' for FreeBSD.
+Specifies the SSL certification. Defaults are based on your OS: '/etc/pki/tls/certs/localhost.crt' for RedHat, '/etc/ssl/certs/ssl-cert-snakeoil.pem' for Debian, '/usr/local/etc/apache22/server.crt' for FreeBSD, and '/etc/ssl/apache2/server.crt' on Gentoo.
 
 #####`ssl_protocol`
 
-Specifies [SSLProtocol](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol). Defaults to 'undef'.
-
-If you do not use this parameter, it uses the HTTPD default from ssl.conf.erb, 'all -SSLv2 -SSLv3'.
+Specifies [SSLProtocol](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol). Expects an array of accepted protocols. Defaults to 'all', '-SSLv2', '-SSLv3'.
 
 #####`ssl_cipher`
 
-Specifies [SSLCipherSuite](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslciphersuite). Defaults to 'undef'.
-
-If you do not use this parameter, it uses the HTTPD default from ssl.conf.erb, 'HIGH:MEDIUM:!aNULL:!MD5'.
+Specifies [SSLCipherSuite](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslciphersuite). Defaults to 'HIGH:MEDIUM:!aNULL:!MD5'.
 
 #####`ssl_honorcipherorder`
 
@@ -1896,7 +2049,7 @@ Sets [SSLHonorCipherOrder](http://httpd.apache.org/docs/current/mod/mod_ssl.html
 
 #####`ssl_certs_dir`
 
-Specifies the location of the SSL certification directory. Defaults to '/etc/ssl/certs' on Debian, '/etc/pki/tls/certs' on RedHat, and '/usr/local/etc/apache22' on FreeBSD.
+Specifies the location of the SSL certification directory. Defaults to '/etc/ssl/certs' on Debian, '/etc/pki/tls/certs' on RedHat, '/usr/local/etc/apache22' on FreeBSD, and '/etc/ssl/apache2' on Gentoo.
 
 #####`ssl_chain`
 
@@ -1916,7 +2069,7 @@ Sets the certificate revocation check level via the [SSLCARevocationCheck direct
 
 #####`ssl_key`
 
-Specifies the SSL key. Defaults are based on your operating system: '/etc/pki/tls/private/localhost.key' for RedHat, '/etc/ssl/private/ssl-cert-snakeoil.key' for Debian, and '/usr/local/etc/apache22/server.key' for FreeBSD. (This default works out of the box but must be updated in the base `apache` class with your specific certificate information before being used in production.)
+Specifies the SSL key. Defaults are based on your operating system: '/etc/pki/tls/private/localhost.key' for RedHat, '/etc/ssl/private/ssl-cert-snakeoil.key' for Debian, '/usr/local/etc/apache22/server.key' for FreeBSD, and '/etc/ssl/apache2/server.key' on Gentoo. (This default works out of the box but must be updated in the base `apache` class with your specific certificate information before being used in production.)
 
 #####`ssl_verify_client`
 
@@ -1988,7 +2141,7 @@ Within your virtual host, you can then configure the specified file type to be h
 ```puppet
 apache::vhost { 'www':
   ...
-  custom_fragment = 'AddType application/x-httpd-php .php'
+  custom_fragment => 'AddType application/x-httpd-php .php'
   ...
 }
 ```
@@ -2015,7 +2168,7 @@ A unique alias. This is used internally to link the action with the FastCGI serv
 
 #####`file_type`
 
-The MIME-type of the file to be processed by the FastCGI server. 
+The MIME-type of the file to be processed by the FastCGI server.
 
 ###Virtual Host Examples
 
@@ -2310,6 +2463,7 @@ If you need to use ProxySet in the balancer config
 
 * `apache::peruser::multiplexer`: Enables the [Peruser](http://www.freebsd.org/cgi/url.cgi?ports/www/apache22-peruser-mpm/pkg-descr) module for FreeBSD only.
 * `apache::peruser::processor`: Enables the [Peruser](http://www.freebsd.org/cgi/url.cgi?ports/www/apache22-peruser-mpm/pkg-descr) module for FreeBSD only.
+* `apache::security::file_link`: Links the activated_rules from apache::mod::security to the respective CRS rules on disk.
 
 ###Templates
 
@@ -2333,7 +2487,7 @@ The `apache::mod::passenger` class is untested as the repository does not have p
 
 This module is CI tested on Centos 5 & 6, Ubuntu 12.04 & 14.04, Debian 7, and RHEL 5, 6 & 7 platforms against both the OSS and Enterprise version of Puppet.
 
-The module contains support for other distributions and operating systems, such as FreeBSD and Amazon Linux, but is not formally tested on those and regressions can occur.
+The module contains support for other distributions and operating systems, such as FreeBSD, Gentoo and Amazon Linux, but is not formally tested on those and regressions can occur.
 
 ###SELinux and Custom Paths
 

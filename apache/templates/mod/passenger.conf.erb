@@ -1,4 +1,4 @@
-# The Passanger Apache module configuration file is being
+# The Passenger Apache module configuration file is being
 # managed by Puppet and changes will be overwritten.
 <IfModule mod_passenger.c>
   <%- if @passenger_root -%>
@@ -33,5 +33,8 @@
   <%- end -%>
   <%- if @passenger_use_global_queue -%>
   PassengerUseGlobalQueue <%= @passenger_use_global_queue %>
+  <%- end -%>
+  <%- if @passenger_app_env -%>
+  PassengerAppEnv <%= @passenger_app_env %>
   <%- end -%>
 </IfModule>

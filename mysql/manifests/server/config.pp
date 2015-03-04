@@ -11,11 +11,27 @@ class mysql::server::config {
   }
 
   if $includedir and $includedir != '' {
-    file { "$mysql::server::includedir":
+    file { $includedir:
       ensure  => directory,
       mode    => '0755',
       recurse => $mysql::server::purge_conf_dir,
       purge   => $mysql::server::purge_conf_dir,
+    }
+  }
+
+  $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
+
+  if $logbin {
+    $logbindir = mysql_dirname($logbin)
+    
+    #Stop puppet from managing directory if just a filename/prefix is specified
+    if $logbindir != '.' {
+      file { $logbindir:
+        ensure => directory,
+        mode   => '0755',
+        owner  => $options['mysqld']['user'],
+        group  => $options['mysqld']['user'],
+      }
     }
   }
 

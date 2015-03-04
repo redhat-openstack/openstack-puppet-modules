@@ -38,16 +38,22 @@ class mongodb::server::config {
   $slave           = $mongodb::server::slave
   $only            = $mongodb::server::only
   $source          = $mongodb::server::source
+  $configsvr       = $mongodb::server::configsvr
+  $shardsvr        = $mongodb::server::shardsvr
   $replset         = $mongodb::server::replset
   $rest            = $mongodb::server::rest
   $quiet           = $mongodb::server::quiet
   $slowms          = $mongodb::server::slowms
   $keyfile         = $mongodb::server::keyfile
+  $key             = $mongodb::server::key
   $bind_ip         = $mongodb::server::bind_ip
   $directoryperdb  = $mongodb::server::directoryperdb
   $profile         = $mongodb::server::profile
   $set_parameter   = $mongodb::server::set_parameter
   $syslog          = $mongodb::server::syslog
+  $ssl             = $mongodb::server::ssl
+  $ssl_key         = $mongodb::server::ssl_key
+  $ssl_ca          = $mongodb::server::ssl_ca
 
   File {
     owner => $user,
@@ -64,6 +70,16 @@ class mongodb::server::config {
     }
     else {
       $noauth = true
+    }
+    if $keyfile and $key {
+      validate_string($key)
+      validate_re($key,'.{6}')
+      file { $keyfile:
+        content => $key,
+        owner   => $user,
+        group   => $group,
+        mode    => '0400',
+      }
     }
 
     #Pick which config content to use

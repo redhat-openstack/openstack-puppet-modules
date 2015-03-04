@@ -1,4 +1,9 @@
-coverage
-.DS_Store
-.#*
-\#*
+pkg/
+Gemfile.lock
+vendor/
+spec/fixtures/
+.vagrant/
+.bundle/
+coverage/
+.idea/
+*.iml

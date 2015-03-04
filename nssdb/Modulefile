@@ -1,5 +1,5 @@
 name    'rcritten/nssdb'
-version '1.0.0'
+version '1.0.1'
 source 'git://github.com/rcritten/puppet-nssdb.git'
 author 'Rob Crittenden <rcritten@redhat.com>'
 license 'Apache'

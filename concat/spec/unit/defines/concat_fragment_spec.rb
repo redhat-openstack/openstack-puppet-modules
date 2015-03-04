@@ -17,6 +17,7 @@ describe 'concat::fragment', :type => :define do
     concatdir        = '/var/lib/puppet/concat'
     fragdir          = "#{concatdir}/#{safe_target_name}"
     id               = 'root'
+    gid              = 'root'
     if p[:ensure] == 'absent'
       safe_ensure = p[:ensure] 
     else
@@ -28,8 +29,10 @@ describe 'concat::fragment', :type => :define do
       {
         :concat_basedir => concatdir,
         :id             => id,
+        :gid            => gid,
         :osfamily       => 'Debian',
         :path           => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe          => false,
       }
     end
     let(:params) { params }
@@ -43,6 +46,7 @@ describe 'concat::fragment', :type => :define do
       should contain_file("#{fragdir}/fragments/#{p[:order]}_#{safe_name}").with({
         :ensure  => safe_ensure,
         :owner   => id,
+        :group   => gid,
         :mode    => '0640',
         :source  => p[:source],
         :content => p[:content],
@@ -71,7 +75,7 @@ describe 'concat::fragment', :type => :define do
 
     context 'false' do
       let(:title) { 'motd_header' }
-      let(:facts) {{ :concat_basedir => '/tmp' }}
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
       let(:params) {{ :target => false }}
 
       it 'should fail' do
@@ -92,11 +96,11 @@ describe 'concat::fragment', :type => :define do
 
     context 'any value other than \'present\' or \'absent\'' do
       let(:title) { 'motd_header' }
-      let(:facts) {{ :concat_basedir => '/tmp' }}
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
       let(:params) {{ :ensure => 'invalid', :target => '/etc/motd' }}
 
       it 'should create a warning' do
-        pending('rspec-puppet support for testing warning()')
+        skip('rspec-puppet support for testing warning()')
       end
     end
   end # ensure =>
@@ -113,7 +117,7 @@ describe 'concat::fragment', :type => :define do
 
     context 'false' do
       let(:title) { 'motd_header' }
-      let(:facts) {{ :concat_basedir => '/tmp' }}
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
       let(:params) {{ :content => false, :target => '/etc/motd' }}
 
       it 'should fail' do
@@ -134,7 +138,7 @@ describe 'concat::fragment', :type => :define do
 
     context 'false' do
       let(:title) { 'motd_header' }
-      let(:facts) {{ :concat_basedir => '/tmp' }}
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
       let(:params) {{ :source => false, :target => '/etc/motd' }}
 
       it 'should fail' do
@@ -155,11 +159,39 @@ describe 'concat::fragment', :type => :define do
 
     context 'false' do
       let(:title) { 'motd_header' }
-      let(:facts) {{ :concat_basedir => '/tmp' }}
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
       let(:params) {{ :order => false, :target => '/etc/motd' }}
 
       it 'should fail' do
         expect { should }.to raise_error(Puppet::Error, /is not a string or integer/)
+      end
+    end
+
+    context '123:456' do
+      let(:title) { 'motd_header' }
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
+      let(:params) {{ :order => '123:456', :target => '/etc/motd' }}
+
+      it 'should fail' do
+        expect { should }.to raise_error(Puppet::Error, /cannot contain/)
+      end
+    end
+    context '123/456' do
+      let(:title) { 'motd_header' }
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
+      let(:params) {{ :order => '123/456', :target => '/etc/motd' }}
+
+      it 'should fail' do
+        expect { should }.to raise_error(Puppet::Error, /cannot contain/)
+      end
+    end
+    context '123\n456' do
+      let(:title) { 'motd_header' }
+      let(:facts) {{ :concat_basedir => '/tmp', :is_pe => false }}
+      let(:params) {{ :order => "123\n456", :target => '/etc/motd' }}
+
+      it 'should fail' do
+        expect { should }.to raise_error(Puppet::Error, /cannot contain/)
       end
     end
   end # order =>
@@ -174,6 +206,8 @@ describe 'concat::fragment', :type => :define do
           :concat_basedir => '/tmp',
           :osfamily       => 'Debian',
           :id             => 'root',
+          :is_pe          => false,
+          :gid            => 'root',
         }
       end
       let(:params) do
@@ -196,6 +230,8 @@ describe 'concat::fragment', :type => :define do
           :concat_basedir => '/tmp',
           :osfamily       => 'Debian',
           :id             => 'root',
+          :is_pe          => false,
+          :gid            => 'root',
         }
       end
       let(:params) do
@@ -218,6 +254,8 @@ describe 'concat::fragment', :type => :define do
           :concat_basedir => '/tmp',
           :osfamily       => 'Debian',
           :id             => 'root',
+          :is_pe          => false,
+          :gid            => 'root',
         }
       end
       let(:params) do
@@ -244,7 +282,7 @@ describe 'concat::fragment', :type => :define do
         }
 
         it 'should create a warning' do
-          pending('rspec-puppet support for testing warning()')
+          skip('rspec-puppet support for testing warning()')
         end
       end
     end # mode =>
@@ -257,7 +295,7 @@ describe 'concat::fragment', :type => :define do
         }
 
         it 'should create a warning' do
-          pending('rspec-puppet support for testing warning()')
+          skip('rspec-puppet support for testing warning()')
         end
       end
     end # owner =>
@@ -270,7 +308,7 @@ describe 'concat::fragment', :type => :define do
         }
 
         it 'should create a warning' do
-          pending('rspec-puppet support for testing warning()')
+          skip('rspec-puppet support for testing warning()')
         end
       end
     end # group =>
@@ -283,7 +321,7 @@ describe 'concat::fragment', :type => :define do
         }
 
         it 'should create a warning' do
-          pending('rspec-puppet support for testing warning()')
+          skip('rspec-puppet support for testing warning()')
         end
       end
     end # backup =>

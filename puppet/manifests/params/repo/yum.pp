@@ -17,13 +17,14 @@
 
 class puppet::params::repo::yum {
 
-	$version = $operatingsystemrelease ? {
-		6.0 => '6',
+	$version = "${operatingsystemrelease}" ? {
+		'6.0' => '6',
 		#6.1 => '6.1',
 		#6.2 => '6.2',
 		#6.3 => '6.3',
 		#6.4 => '6.4',
-		6.5 => '6',	# TODO: repo not released yet
+		'6.5' => '6',
+		'7.0.1406' => '7',
 		default => "${operatingsystemrelease}",
 	}
 

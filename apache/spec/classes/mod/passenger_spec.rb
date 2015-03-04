@@ -16,6 +16,7 @@ describe 'apache::mod::passenger', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -94,6 +95,12 @@ describe 'apache::mod::passenger', :type => :class do
       end
       it { is_expected.to contain_file('passenger.conf').with_content(/^  PassengerUseGlobalQueue on$/) }
     end
+    describe "with passenger_app_env => 'foo'" do
+      let :params do
+        { :passenger_app_env => 'foo' }
+      end
+      it { is_expected.to contain_file('passenger.conf').with_content(/^  PassengerAppEnv foo$/) }
+    end
     describe "with mod_path => '/usr/lib/foo/mod_foo.so'" do
       let :params do
         { :mod_path => '/usr/lib/foo/mod_foo.so' }
@@ -130,6 +137,7 @@ describe 'apache::mod::passenger', :type => :class do
           :concat_basedir         => '/dne',
           :id                     => 'root',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
 
@@ -149,6 +157,7 @@ describe 'apache::mod::passenger', :type => :class do
           :concat_basedir         => '/dne',
           :id                     => 'root',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
 
@@ -168,12 +177,33 @@ describe 'apache::mod::passenger', :type => :class do
           :concat_basedir         => '/dne',
           :id                     => 'root',
           :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
         }
       end
 
       it { is_expected.to contain_file('passenger.conf').with_content(%r{PassengerRoot "/usr"}) }
       it { is_expected.to contain_file('passenger.conf').with_content(%r{PassengerRuby "/usr/bin/ruby"}) }
       it { is_expected.to contain_file('passenger.conf').without_content(/PassengerDefaultRuby/) }
+    end
+
+    context "with Debian 8 defaults" do
+      let :facts do
+        {
+          :osfamily               => 'Debian',
+          :operatingsystemrelease => '8.0',
+          :operatingsystem        => 'Debian',
+          :kernel                 => 'Linux',
+          :lsbdistcodename        => 'jessie',
+          :concat_basedir         => '/dne',
+          :id                     => 'root',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to contain_file('passenger.conf').with_content(%r{PassengerRoot "/usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini"}) }
+      it { is_expected.to contain_file('passenger.conf').without_content(/PassengerRuby/) }
+      it { is_expected.to contain_file('passenger.conf').with_content(%r{PassengerDefaultRuby "/usr/bin/ruby"}) }
     end
   end
 
@@ -187,6 +217,7 @@ describe 'apache::mod::passenger', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
@@ -225,10 +256,28 @@ describe 'apache::mod::passenger', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_class("apache::params") }
     it { is_expected.to contain_apache__mod('passenger') }
     it { is_expected.to contain_package("www/rubygem-passenger") }
+  end
+  context "on a Gentoo OS" do
+    let :facts do
+      {
+        :osfamily               => 'Gentoo',
+        :operatingsystem        => 'Gentoo',
+        :operatingsystemrelease => '3.16.1-gentoo',
+        :concat_basedir         => '/dne',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin',
+        :is_pe                  => false,
+      }
+    end
+    it { is_expected.to contain_class("apache::params") }
+    it { is_expected.to contain_apache__mod('passenger') }
+    it { is_expected.to contain_package("www-apache/passenger") }
   end
 end

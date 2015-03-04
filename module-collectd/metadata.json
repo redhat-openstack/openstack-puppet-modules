@@ -63,20 +63,19 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "3.2.x"
+      "version_requirement": ">= 3.2.0"
     },
     {
       "name": "puppet",
-      "version_requirement": "3.x"
+      "version_requirement": ">= 3.2.0"
     }
   ],
   "name": "pdxcat-collectd",
-  "version": "3.0.1",
+  "version": "3.2.0",
   "source": "https://github.com/pdxcat/puppet-module-collectd",
   "author": "Computer Action Team",
   "license": "Apache Version 2.0",
   "summary": "Puppet module for Collectd",
-  "description": "Manages collectd configuration and service",
   "project_page": "https://github.com/pdxcat/puppet-module-collectd",
   "dependencies": [
     {

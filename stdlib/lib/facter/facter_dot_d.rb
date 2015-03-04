@@ -15,7 +15,7 @@
 class Facter::Util::DotD
   require 'yaml'
 
-  def initialize(dir="/etc/facts.d", cache_file="/tmp/facts_cache.yml")
+  def initialize(dir="/etc/facts.d", cache_file=File.join(Puppet[:libdir], "facts_dot_d.cache"))
     @dir = dir
     @cache_file = cache_file
     @cache = nil
@@ -23,7 +23,7 @@ class Facter::Util::DotD
   end
 
   def entries
-    Dir.entries(@dir).reject{|f| f =~ /^\.|\.ttl$/}.sort.map {|f| File.join(@dir, f) }
+    Dir.entries(@dir).reject { |f| f =~ /^\.|\.ttl$/ }.sort.map { |f| File.join(@dir, f) }
   rescue
     []
   end
@@ -40,7 +40,7 @@ class Facter::Util::DotD
 
   def txt_parser(file)
     File.readlines(file).each do |line|
-      if line =~ /^(.+)=(.+)$/
+      if line =~ /^([^=]+)=(.+)$/
         var = $1; val = $2
 
         Facter.add(var) do
@@ -113,7 +113,7 @@ class Facter::Util::DotD
 
   def cache_save!
     cache = load_cache
-    File.open(@cache_file, "w", 0600) {|f| f.write(YAML.dump(cache)) }
+    File.open(@cache_file, "w", 0600) { |f| f.write(YAML.dump(cache)) }
   rescue
   end
 

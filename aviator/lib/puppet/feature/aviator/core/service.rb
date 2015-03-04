@@ -1,5 +1,8 @@
 module Aviator
 
+  #
+  # Manages a service
+  #
   class Service
 
     class AccessDetailsNotDefinedError < StandardError
@@ -34,7 +37,6 @@ module Aviator
               "      be needed depending on what the request class you are calling requires.\n\n"
       end
     end
-
 
     class UnknownRequestError < StandardError
       def initialize(request_name, options)
@@ -75,7 +77,9 @@ module Aviator
       load_requests
     end
 
-
+    #
+    # No longer recommended for public use. Use Aviator::Session#request instead
+    #
     def request(request_name, options={}, &params)
       if options[:api_version].nil? && @default_options[:api_version]
         options[:api_version] = @default_options[:api_version]
@@ -92,6 +96,19 @@ module Aviator
       request_class = provider_module.find_request(service, request_name, session_data, options)
 
       raise UnknownRequestError.new(request_name, options) unless request_class
+
+      # Always use :params over &params if provided
+      if options[:params]
+        params = lambda do |params|
+          options[:params].each do |key, value|
+            begin
+              params[key] = value
+            rescue NameError => e
+              raise NameError.new("Unknown param name '#{key}'")
+            end
+          end
+        end
+      end
 
       request  = request_class.new(session_data, &params)
 

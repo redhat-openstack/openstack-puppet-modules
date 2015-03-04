@@ -15,10 +15,17 @@ class ntp::params {
   $service_manage    = true
   $udlc              = false
   $interfaces        = []
+  $disable_auth      = false
+  $broadcastclient   = false
+
+  # Allow a list of fudge options
+  $fudge             = []
 
   # On virtual machines allow large clock skews.
-  $panic = str2bool($::is_virtual) ? {
-    true    => false,
+  # TODO Change this to str2bool($::is_virtual) when stdlib dependency is >= 4.0.0
+  # NOTE The "x${var}" is just to avoid lint quoted variable warning.
+  $panic = "x${::is_virtual}" ? {
+    'xtrue' => false,
     default => true,
   }
 
@@ -27,6 +34,11 @@ class ntp::params {
   $default_driftfile    = '/var/lib/ntp/drift'
   $default_package_name = ['ntp']
   $default_service_name = 'ntpd'
+
+  $package_manage = $::osfamily ? {
+    'FreeBSD' => false,
+    default   => true,
+  }
 
   case $::osfamily {
     'AIX': {
@@ -53,10 +65,10 @@ class ntp::params {
       $driftfile       = $default_driftfile
       $package_name    = $default_package_name
       $restrict        = [
-        'default kod nomodify notrap nopeer noquery',
+        '-4 kod nomodify notrap nopeer noquery',
         '-6 default kod nomodify notrap nopeer noquery',
         '127.0.0.1',
-        '-6 ::1',
+        '::1',
       ]
       $service_name    = 'ntp'
       $iburst_enable   = true
@@ -87,8 +99,15 @@ class ntp::params {
       ]
     }
     'Suse': {
+      if $::operatingsystem == 'SLES' and $::operatingsystemmajrelease == '12'
+      {
+        $service_name  = 'ntpd'
+        $keys_file     = '/etc/ntp.keys'
+      } else{
+        $service_name  = 'ntp'
+        $keys_file     = $default_keys_file
+      }
       $config          = $default_config
-      $keys_file       = $default_keys_file
       $driftfile       = '/var/lib/ntp/drift/ntp.drift'
       $package_name    = $default_package_name
       $restrict        = [
@@ -97,7 +116,6 @@ class ntp::params {
         '127.0.0.1',
         '-6 ::1',
       ]
-      $service_name    = 'ntp'
       $iburst_enable   = false
       $servers         = [
         '0.opensuse.pool.ntp.org',
@@ -168,7 +186,7 @@ class ntp::params {
         '3.pool.ntp.org',
       ]
     }
-    # Gentoo was added as its own $::osfamily in Facter 1.7.0
+  # Gentoo was added as its own $::osfamily in Facter 1.7.0
     'Gentoo': {
       $config          = $default_config
       $keys_file       = $default_keys_file
@@ -190,8 +208,8 @@ class ntp::params {
       ]
     }
     'Linux': {
-      # Account for distributions that don't have $::osfamily specific settings.
-      # Before Facter 1.7.0 Gentoo did not have its own $::osfamily
+    # Account for distributions that don't have $::osfamily specific settings.
+    # Before Facter 1.7.0 Gentoo did not have its own $::osfamily
       case $::operatingsystem {
         'Gentoo': {
           $config          = $default_config

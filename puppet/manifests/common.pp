@@ -64,10 +64,11 @@ class puppet::common(
 		require => Package[$package_augeas],
 	}
 
-	package { 'ruby-rdoc':		# provide 'RDoc::usage' for puppet help
-		ensure => present,
-		require => Package['puppet'],	# install only if puppet is used
-	}
+	# TODO: is rubygem-rdoc equivalent ?
+	#package { 'ruby-rdoc':		# provide 'RDoc::usage' for puppet help
+	#	ensure => present,
+	#	require => Package['puppet'],	# install only if puppet is used
+	#}
 
 	# TODO: enable this if we ever use the gem provider...
 	# NOTE: for building closed systems, hopefully gem can install offline!

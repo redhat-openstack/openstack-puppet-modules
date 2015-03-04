@@ -7,9 +7,13 @@ class mysql::params {
   $restart                = false
   $root_password          = 'UNSET'
   $server_package_ensure  = 'present'
+  $server_package_manage  = true
   $server_service_manage  = true
   $server_service_enabled = true
   $client_package_ensure  = 'present'
+  $client_package_manage  = true
+  $create_root_user       = true
+  $create_root_my_cnf     = true
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'
@@ -32,14 +36,14 @@ class mysql::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          if is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == 'Rawhide' {
+          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
           }
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
-          if $::operatingsystemmajrelease >= 7 {
+          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -88,15 +92,27 @@ class mysql::params {
     }
 
     'Suse': {
-      $client_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server-client',
-        /(SLES|SLED)/        => 'mysql-client',
+      case $::operatingsystem {
+        'OpenSuSE': {
+          $client_package_name = 'mysql-community-server-client'
+          $server_package_name = 'mysql-community-server'
+          $basedir             = '/usr'
+        }
+        'SLES','SLED': {
+          if versioncmp($::operatingsystemrelease, '12') >= 0 {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-client'
+            $server_package_name = 'mysql'
+            $basedir             = '/usr'
+          }
+        }
+        default: {
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::operatingsystem}")
+        }
       }
-      $server_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server',
-        /(SLES|SLED)/        => 'mysql',
-      }
-      $basedir             = '/usr'
       $config_file         = '/etc/my.cnf'
       $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
@@ -155,6 +171,7 @@ class mysql::params {
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
         'trusty'           => 'ruby-mysql',
+        'jessie'           => 'ruby-mysql',
         default            => 'libmysql-ruby',
       }
       $client_dev_package_name = 'libmysqlclient-dev'

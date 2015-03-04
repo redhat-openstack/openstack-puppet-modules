@@ -15,6 +15,7 @@ describe 'apache::service', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_service("httpd").with(
@@ -60,6 +61,14 @@ describe 'apache::service', :type => :class do
       end
     end
 
+    context "$service_manage must be a bool" do
+      let (:params) {{ :service_manage => 'not-a-boolean' }}
+
+      it 'should fail' do
+        expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+      end
+    end
+
     context "with $service_ensure => 'running'" do
       let (:params) {{ :service_ensure => 'running', }}
       it { is_expected.to contain_service("httpd").with(
@@ -85,7 +94,7 @@ describe 'apache::service', :type => :class do
   end
 
 
-  context "on a RedHat 5 OS" do
+  context "on a RedHat 5 OS, do not manage service" do
     let :facts do
       {
         :osfamily               => 'RedHat',
@@ -95,14 +104,19 @@ describe 'apache::service', :type => :class do
         :id                     => 'root',
         :kernel                 => 'Linux',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
-    it { is_expected.to contain_service("httpd").with(
-      'name'      => 'httpd',
-      'ensure'    => 'running',
-      'enable'    => 'true'
-      )
-    }
+    let(:params) do
+      {
+        'service_ensure' => 'running',
+        'service_name'   => 'httpd',
+        'service_manage' => false
+      }
+    end
+    it 'should not manage the httpd service' do
+      subject.should_not contain_service('httpd')
+    end
   end
 
   context "on a FreeBSD 5 OS" do
@@ -115,10 +129,32 @@ describe 'apache::service', :type => :class do
         :id                     => 'root',
         :kernel                 => 'FreeBSD',
         :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
       }
     end
     it { is_expected.to contain_service("httpd").with(
-      'name'      => 'apache22',
+      'name'      => 'apache24',
+      'ensure'    => 'running',
+      'enable'    => 'true'
+      )
+    }
+  end
+
+  context "on a Gentoo OS" do
+    let :facts do
+      {
+        :osfamily               => 'Gentoo',
+        :operatingsystem        => 'Gentoo',
+        :operatingsystemrelease => '3.16.1-gentoo',
+        :concat_basedir         => '/dne',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin',
+        :is_pe                  => false,
+      }
+    end
+    it { is_expected.to contain_service("httpd").with(
+      'name'      => 'apache2',
       'ensure'    => 'running',
       'enable'    => 'true'
       )

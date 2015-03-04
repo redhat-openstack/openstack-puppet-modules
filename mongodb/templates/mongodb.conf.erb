@@ -18,7 +18,9 @@ bind_ip = <%= Array(@bind_ip).join(',') %>
 # fork and run in background
 fork=<%= @fork %>
 <% end -%>
+<% if @port -%>
 port = <%= @port %>
+<% end -%>
 dbpath=<%= @dbpath %>
 <% if @pidfilepath -%>
 # location of pidfile
@@ -133,6 +135,14 @@ master = <%= @master %>
 # files in a distinct folder.
 directoryperdb = <%= @directoryperdb %>
 <% end -%>
+<% if @configsvr -%>
+# Is the mongod instance a configuration server
+configsvr = <%= @configsvr %>
+<% end -%>
+<% if @shardsvr -%>
+# Is the mongod instance a shard server
+shardsvr = <%= @shardsvr %>
+<% end -%>
 <% if @replset -%>
 # Configure ReplicaSet membership
 replSet = <%= @replset %>
@@ -169,4 +179,9 @@ syslog = <%= @syslog %>
 <% end -%>
 <% if @quiet -%>
 quiet = <%= @quiet %>
+<% end -%>
+<% if @ssl -%>
+sslOnNormalPorts = true
+sslPEMKeyFile = <%= @ssl_key %>
+sslCAFile = <%= @ssl_ca %>
 <% end -%>
