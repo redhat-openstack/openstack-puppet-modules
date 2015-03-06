@@ -80,6 +80,7 @@ end
 # Shared function that handles generic validations
 # These should be common for all odl class param combos
 def generic_validations()
+  # Verify ODL's directory
   # TODO: It'd be nice to do this independently of install dir name
   describe file('/opt/opendaylight-0.2.2/') do
     it { should be_directory }
@@ -88,6 +89,7 @@ def generic_validations()
     it { should be_mode '775' }
   end
 
+  # Verify ODL's systemd service
   describe service('opendaylight') do
     it { should be_enabled }
     it { should be_enabled.with_level(3) }
@@ -99,6 +101,7 @@ def generic_validations()
     it { should be_running }
   end
 
+  # Creation handled by RPM, or Puppet during tarball installs
   # TODO: It'd be nice to do this independently of install dir name
   describe user('odl') do
     it { should exist }
@@ -106,11 +109,13 @@ def generic_validations()
     it { should have_home_directory '/opt/opendaylight-0.2.2' }
   end
 
+  # This should not be the odl user's home dir
   describe file('/home/odl') do
     # Home dir shouldn't be created for odl user
     it { should_not be_directory }
   end
 
+  # Verify ODL systemd .service file
   describe file('/usr/lib/systemd/system/opendaylight.service') do
     it { should be_file }
     it { should be_owned_by 'root' }
