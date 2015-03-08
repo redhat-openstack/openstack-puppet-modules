@@ -200,7 +200,7 @@ mod 'sudo',
   :ref => '6875e3c16bb17149fb24d49d45e8dc32bacbdfaf'
 mod 'sysctl',
   :git => 'git://github.com/enovance/puppet-sysctl.git',
-  :ref => '4a463384e844f51b270428643a5b8beb3628e854'
+  :ref => 'aca277a3d407359ced96267cd2b3205bd8ab9c48'
 mod 'types',
   :git => 'git://github.com/enovance/puppet-module-types.git',
   :ref => '4c58ae8b6cdb1a9da3da9654a35375e274019dfb'
