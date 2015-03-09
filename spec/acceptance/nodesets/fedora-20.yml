@@ -2,7 +2,6 @@ HOSTS:
   fedora-20:
     roles:
       - master
-      - rpm
     platform: fedora-20-x86_64
     box: chef/fedora-20
     box_url: https://vagrantcloud.com/chef/boxes/fedora-20

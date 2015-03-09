@@ -2,7 +2,6 @@ HOSTS:
   fedora-21:
     roles:
       - master
-      - rpm
     # TODO: Update to F21 once RPM is created by Puppet folks
     # See: https://github.com/dfarrell07/puppet-opendaylight/issues/10#issuecomment-70542612
     platform: fedora-20-x86_64
