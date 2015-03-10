@@ -46,7 +46,8 @@ def install_odl(options = {})
   #   class, which are defined in opendaylight::params
   # TODO: Remove this possible source of bugs^^
   # Extract params if given, defaulting to odl class defaults if not
-  install_method = options.fetch(:install_method, 'rpm')
+  # Default install method is passed via environment var, set in Rakefile
+  install_method = options.fetch(:install_method, ENV['INSTALL_METHOD'])
   extra_features = options.fetch(:extra_features, [])
   default_features = options.fetch(:default_features, ['config', 'standard', 'region',
                                   'package', 'kar', 'ssh', 'management'])

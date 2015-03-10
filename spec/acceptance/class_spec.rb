@@ -9,17 +9,13 @@ require 'spec_helper_acceptance'
 
 describe 'opendaylight class' do
   describe 'testing install methods' do
-    # Apply to host selectively based on install method
-    # Install method is passed via environment var, set in Rakefile
-    if ENV['INSTALL_METHOD'] == 'tarball'
-      # Call specialized helper fn to install OpenDaylight from a tarball
-      install_odl(install_method: 'tarball')
+    # Call specialized helper fn to install OpenDaylight
+    install_odl
 
+    # Run checks specific to install type, via env var passed from Rakefile
+    if ENV['INSTALL_METHOD'] == 'tarball'
       # TODO: Call specialized helper fn for tarball-type install validations
     else
-      # Call specialized helper fn to install OpenDaylight from an RPM
-      install_odl(install_method: 'rpm')
-
       # Call specialized helper fn for RPM-type install validations
       rpm_validations
     end
