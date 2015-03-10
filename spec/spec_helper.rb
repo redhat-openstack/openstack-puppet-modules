@@ -50,7 +50,7 @@ def generic_tests(yum_repo)
   it { should contain_class('opendaylight::service').that_comes_before('opendaylight') }
   it { should contain_class('opendaylight').that_requires('opendaylight::service') }
 
-  # Confirm presense of generic resources
+  # Confirm presence of generic resources
   it { should contain_service('opendaylight') }
   it { should contain_file('org.apache.karaf.features.cfg') }
 
@@ -90,7 +90,7 @@ end
 def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
   case method
   when 'rpm'
-    # Confirm presense of RPM-related resources
+    # Confirm presence of RPM-related resources
     it { should contain_yumrepo('opendaylight') }
     it { should contain_package('opendaylight') }
 
@@ -123,7 +123,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       fail('Expected unitfile_url param')
     end
 
-    # Confirm presense of tarball-related resources
+    # Confirm presence of tarball-related resources
     it { should contain_archive('opendaylight-0.2.2') }
     it { should contain_archive('opendaylight-systemd') }
     it { should contain_class('java') }
