@@ -4,7 +4,7 @@
      <vcpu placement='static'> <%= scope.lookupvar('n1k_vsm::vcpu') %></vcpu>
 
      <os>
-          <type arch='x86_64' machine='rhel6.5.0'>hvm</type> 
+          <type arch='x86_64' machine='pc-i440fx-rhel7.0.0'>hvm</type> 
           <boot dev='hd'/>
           <boot dev='cdrom'/>
      </os>
@@ -37,8 +37,7 @@
           </controller>
 
           <interface type='bridge'>
-                    <mac address='<%= @ctrlmac %>'/> 
-                    <source bridge='<%= @ctrlbridge %>'/>
+                    <source bridge='<%= scope.lookupvar('n1k_vsm::ovsbridge') %>'/>
                     <virtualport type='openvswitch' />
                     <target dev='<%= @ctrltap %>'/>
                     <model type='e1000'/>
@@ -46,8 +45,7 @@
           </interface>
 
           <interface type='bridge'>
-                    <mac address='<%= @mgmtmac %>'/> 
-                    <source bridge='<%= @mgmtbridge %>'/>
+                    <source bridge='<%= scope.lookupvar('n1k_vsm::ovsbridge') %>'/>
                     <virtualport type='openvswitch' />
                     <target dev='<%= @mgmttap %>'/>
                     <model type='e1000'/>
@@ -55,8 +53,7 @@
           </interface> 
 
           <interface type='bridge'>
-                    <mac address='<%= @pktmac %>'/> 
-                    <source bridge='<%= @pktbridge %>'/>
+                    <source bridge='<%= scope.lookupvar('n1k_vsm::ovsbridge') %>'/>
                     <virtualport type='openvswitch' />
                     <target dev='<%= @pkttap %>'/>
                     <model type='e1000'/>
