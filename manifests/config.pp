@@ -17,8 +17,6 @@ class opendaylight::config (
     # Set user:group owners
     owner   => 'odl',
     group   => 'odl',
-    # Set mode
-    mode    => '0775',
     # Use a template to populate the content
     content => template('opendaylight/org.apache.karaf.features.cfg.erb'),
   }
