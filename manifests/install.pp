@@ -112,8 +112,6 @@ class opendaylight::install {
       # Set user:group owners of ODL dir
       owner   => 'odl',
       group   => 'odl',
-      # Set mode of ODL dir
-      mode    => '0775',
       # The ODL archive we're modifying should exist
       # Since ODL's dir is owned by odl:odl, that user:group should exist
       require => [Archive['opendaylight-0.2.2'], Group['odl'], User['odl']],

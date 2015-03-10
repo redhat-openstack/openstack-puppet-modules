@@ -181,7 +181,6 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'recurse' => true,
         'owner'   => 'odl',
         'group'   => 'odl',
-        'mode'    => '0775',
       )
     }
     it {
