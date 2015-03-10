@@ -64,8 +64,13 @@ def install_odl(options = {})
 
     # Apply our Puppet manifest on the Beaker host
     apply_manifest(pp, :catch_failures => true)
-    # Run it twice to test for idempotency
-    apply_manifest(pp, :catch_changes  => true)
+
+    # The tarball extract isn't idempotent, can't do this check
+    # See: https://github.com/dfarrell07/puppet-opendaylight/issues/45#issuecomment-78135725
+    if install_method != 'tarball'
+      # Run it twice to test for idempotency
+      apply_manifest(pp, :catch_changes  => true)
+    end
   end
 end
 
@@ -132,7 +137,6 @@ def karaf_config_validations(options = {})
     it { should be_file }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
-    it { should be_mode '775' }
     its(:content) { should match /^featuresBoot=#{features.join(",")}/ }
   end
 end
