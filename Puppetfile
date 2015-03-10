@@ -98,7 +98,7 @@ mod 'mysql',
   :commit => '60c0bfb8698aa98ad123dca1dcb4a299a3b2053c',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
-mod 'n1k-vsm',
+mod 'n1k_vsm',
   :commit => '2a42723f5a9d7dbfa00edf944ac5dec2bff6d9ea',
   :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
 
