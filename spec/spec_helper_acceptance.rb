@@ -77,7 +77,6 @@ def generic_validations()
     it { should be_directory }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
-    it { should be_mode '775' }
   end
 
   # Verify ODL's systemd service
