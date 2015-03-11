@@ -62,6 +62,18 @@ describe 'zookeeper::config', :type => :class do
         ).with_content(/maxClientCnxns=#{max_conn}/) }
     end
 
+    context 'set client ip address' do
+      ipaddress = '192.168.1.1'
+      let(:params){{
+        :client_ip => ipaddress
+      }}
+
+      it { should contain_file(
+        '/etc/zookeeper/conf/zoo.cfg'
+      ).with_content(/clientPortAddress=#{ipaddress}/) }
+    end
+
+
     context 'quorum file' do
       ipaddress = '192.168.1.1'
       let(:facts) {{
