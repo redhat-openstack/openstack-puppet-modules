@@ -41,6 +41,11 @@ end
 # NB: These are a library of helper fns used by the Beaker tests
 #
 
+# NB: There are a large number of helper functions used in these tests.
+# They make this code much more friendly, but may need to be referenced.
+# The serverspec helpers (`should`, `be_running`...) are documented here:
+#   http://serverspec.org/resource_types.html
+
 def install_odl(options = {})
   # NB: These param defaults should match the ones used by the opendaylight
   #   class, which are defined in opendaylight::params
@@ -85,15 +90,18 @@ def generic_validations()
     it { should be_grouped_into 'odl' }
   end
 
+  # Verify ODL systemd .service file
+  describe file('/usr/lib/systemd/system/opendaylight.service') do
+    it { should be_file }
+    it { should be_owned_by 'root' }
+    it { should be_grouped_into 'root' }
+    it { should be_mode '644' }
+  end
+
   # Verify ODL's systemd service
   describe service('opendaylight') do
     it { should be_enabled }
     it { should be_enabled.with_level(3) }
-    it { should be_running }
-  end
-
-  # OpenDaylight will appear as a Java process
-  describe process('java') do
     it { should be_running }
   end
 
@@ -105,19 +113,27 @@ def generic_validations()
     it { should have_home_directory '/opt/opendaylight-0.2.2' }
   end
 
+  # Creation handled by RPM, or Puppet during tarball installs
+  describe group('odl') do
+    it { should exist }
+  end
+
   # This should not be the odl user's home dir
   describe file('/home/odl') do
     # Home dir shouldn't be created for odl user
     it { should_not be_directory }
   end
 
-  # Verify ODL systemd .service file
-  describe file('/usr/lib/systemd/system/opendaylight.service') do
-    it { should be_file }
-    it { should be_owned_by 'root' }
-    it { should be_grouped_into 'root' }
-    it { should be_mode '644' }
+  # Java 7 should be installed
+  describe package('java-1.7.0-openjdk') do
+    it { should be_installed }
   end
+
+  # OpenDaylight will appear as a Java process
+  describe process('java') do
+    it { should be_running }
+  end
+
 end
 
 # Shared function for validations related to the Karaf config file
@@ -150,5 +166,17 @@ def rpm_validations()
 
   describe package('opendaylight') do
     it { should be_installed }
+  end
+end
+
+# Shared function that handles validations specific to tarball-type installs
+def tarball_validations()
+  describe yumrepo('opendaylight') do
+    it { should_not exist }
+    it { should_not be_enabled }
+  end
+
+  describe package('opendaylight') do
+    it { should_not be_installed }
   end
 end

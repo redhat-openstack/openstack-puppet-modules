@@ -14,7 +14,8 @@ describe 'opendaylight class' do
 
     # Run checks specific to install type, via env var passed from Rakefile
     if ENV['INSTALL_METHOD'] == 'tarball'
-      # TODO: Call specialized helper fn for tarball-type install validations
+      # Call specialized helper fn for tarball-type install validations
+      tarball_validations
     else
       # Call specialized helper fn for RPM-type install validations
       rpm_validations
