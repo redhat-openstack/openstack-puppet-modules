@@ -5,19 +5,19 @@ custom_filters = [
   'Anchor[java::end]',
   'Stage[setup]',
   'Anchor[java::begin:]',
-  'Archive::Download[opendaylight-0.2.2.tar.gz]',
+  'Archive::Download[opendaylight.tar.gz]',
   'Archive::Download[opendaylight-systemd.tar.gz]',
-  'Archive::Extract[opendaylight-0.2.2]',
+  'Archive::Extract[opendaylight]',
   'Archive::Extract[opendaylight-systemd]',
   'Class[Java::Config]',
   'Class[Java::Params]',
   'Class[Stdlib::Stages]',
   'Class[Stdlib]',
-  'Exec[download archive opendaylight-0.2.2.tar.gz and check sum]',
+  'Exec[download archive opendaylight.tar.gz and check sum]',
   'Exec[download archive opendaylight-systemd.tar.gz and check sum]',
-  'Exec[opendaylight-0.2.2 unpack]',
+  'Exec[opendaylight unpack]',
   'Exec[opendaylight-systemd unpack]',
-  'Exec[rm-on-error-opendaylight-0.2.2.tar.gz]',
+  'Exec[rm-on-error-opendaylight.tar.gz]',
   'Exec[rm-on-error-opendaylight-systemd.tar.gz]',
   'Package[curl]',
   'Stage[deploy]',
@@ -68,7 +68,7 @@ def generic_tests(yum_repo)
   it {
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
-      'path'        => '/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg',
+      'path'        => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
     )
   }
 end
@@ -81,7 +81,7 @@ def karaf_feature_tests(features)
   it {
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
-      'path'        => '/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg',
+      'path'        => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
       'content'     => /^featuresBoot=#{features.join(",")}/
     )
   }
@@ -124,36 +124,36 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
     end
 
     # Confirm presence of tarball-related resources
-    it { should contain_archive('opendaylight-0.2.2') }
+    it { should contain_archive('opendaylight') }
     it { should contain_archive('opendaylight-systemd') }
     it { should contain_class('java') }
-    it { should contain_file('/opt/opendaylight-0.2.2/') }
+    it { should contain_file('/opt/opendaylight/') }
     it { should contain_file('/usr/lib/systemd/system/opendaylight.service') }
     it { should contain_user('odl') }
     it { should contain_group('odl') }
 
     # Confirm relationships between tarball-related resources
-    it { should contain_archive('opendaylight-0.2.2').that_comes_before('File[/opt/opendaylight-0.2.2/]') }
-    it { should contain_archive('opendaylight-0.2.2').that_comes_before('User[odl]') }
+    it { should contain_archive('opendaylight').that_comes_before('File[/opt/opendaylight/]') }
+    it { should contain_archive('opendaylight').that_comes_before('User[odl]') }
     it { should contain_archive('opendaylight-systemd').that_comes_before('File[/usr/lib/systemd/system/opendaylight.service]') }
-    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('Archive[opendaylight-0.2.2]') }
-    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('Group[odl]') }
-    it { should contain_file('/opt/opendaylight-0.2.2/').that_requires('User[odl]') }
+    it { should contain_file('/opt/opendaylight/').that_requires('Archive[opendaylight]') }
+    it { should contain_file('/opt/opendaylight/').that_requires('Group[odl]') }
+    it { should contain_file('/opt/opendaylight/').that_requires('User[odl]') }
     it { should contain_file('/usr/lib/systemd/system/opendaylight.service').that_requires('Archive[opendaylight-systemd]') }
-    it { should contain_user('odl').that_comes_before('File[/opt/opendaylight-0.2.2/]') }
-    it { should contain_user('odl').that_requires('Archive[opendaylight-0.2.2]') }
+    it { should contain_user('odl').that_comes_before('File[/opt/opendaylight/]') }
+    it { should contain_user('odl').that_requires('Archive[opendaylight]') }
     it { should contain_user('odl').that_requires('Group[odl]') }
-    it { should contain_group('odl').that_comes_before('File[/opt/opendaylight-0.2.2/]') }
+    it { should contain_group('odl').that_comes_before('File[/opt/opendaylight/]') }
     it { should contain_group('odl').that_comes_before('User[odl]') }
 
     # Confirm properties of tarball-related resources
     # NB: These hashes don't work with Ruby 1.8.7, but we
     #   don't support 1.8.7 so that's okay. See issue #36.
     it {
-      should contain_archive('opendaylight-0.2.2').with(
+      should contain_archive('opendaylight').with(
         'ensure'           => 'present',
         'url'              => tarball_url,
-        'target'           => '/opt/opendaylight-0.2.2',
+        'target'           => '/opt/opendaylight',
         'checksum'         => false,
         'strip_components' => 1,
         'timeout'          => 600,
@@ -176,7 +176,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       )
     }
     it {
-      should contain_file('/opt/opendaylight-0.2.2/').with(
+      should contain_file('/opt/opendaylight/').with(
         'ensure'  => 'directory',
         'recurse' => true,
         'owner'   => 'odl',
@@ -195,7 +195,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       should contain_user('odl').with(
         'name'       => 'odl',
         'ensure'     => 'present',
-        'home'       => '/opt/opendaylight-0.2.2',
+        'home'       => '/opt/opendaylight',
         'membership' => 'minimum',
         'groups'     => 'odl',
       )

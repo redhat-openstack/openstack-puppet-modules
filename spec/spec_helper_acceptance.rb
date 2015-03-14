@@ -83,8 +83,7 @@ end
 # These should be common for all odl class param combos
 def generic_validations()
   # Verify ODL's directory
-  # TODO: It'd be nice to do this independently of install dir name
-  describe file('/opt/opendaylight-0.2.2/') do
+  describe file('/opt/opendaylight/') do
     it { should be_directory }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
@@ -106,11 +105,10 @@ def generic_validations()
   end
 
   # Creation handled by RPM, or Puppet during tarball installs
-  # TODO: It'd be nice to do this independently of install dir name
   describe user('odl') do
     it { should exist }
     it { should belong_to_group 'odl' }
-    it { should have_home_directory '/opt/opendaylight-0.2.2' }
+    it { should have_home_directory '/opt/opendaylight' }
   end
 
   # Creation handled by RPM, or Puppet during tarball installs
@@ -148,8 +146,7 @@ def karaf_config_validations(options = {})
   # Create one list of all of the features
   features = default_features + extra_features
 
-  # TODO: It'd be nice to do this independently of install dir name
-  describe file('/opt/opendaylight-0.2.2/etc/org.apache.karaf.features.cfg') do
+  describe file('/opt/opendaylight/etc/org.apache.karaf.features.cfg') do
     it { should be_file }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
