@@ -153,7 +153,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       should contain_archive('opendaylight').with(
         'ensure'           => 'present',
         'url'              => tarball_url,
-        'target'           => '/opt/opendaylight',
+        'target'           => '/opt/opendaylight/',
         'checksum'         => false,
         'strip_components' => 1,
         'timeout'          => 600,
@@ -195,7 +195,7 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       should contain_user('odl').with(
         'name'       => 'odl',
         'ensure'     => 'present',
-        'home'       => '/opt/opendaylight',
+        'home'       => '/opt/opendaylight/',
         'membership' => 'minimum',
         'groups'     => 'odl',
       )

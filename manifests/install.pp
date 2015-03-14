@@ -44,7 +44,7 @@ class opendaylight::install {
     user { 'odl':
       ensure     => present,
       # Must be a valid dir for the auto-creation of some files
-      home       => '/opt/opendaylight',
+      home       => '/opt/opendaylight/',
       # The odl user should, at the minimum, be a member of the odl group
       membership => 'minimum',
       groups     => 'odl',
@@ -60,7 +60,7 @@ class opendaylight::install {
       ensure => present,
       # The odl user will be a member of this group, create it first
       # The odl user will own ODL's dir, so should exist before owner set 
-      before => [File['/opt/opendaylight'], User['odl']],
+      before => [File['/opt/opendaylight/'], User['odl']],
     }
 
     # Download and extract the ODL tarball
@@ -68,12 +68,12 @@ class opendaylight::install {
       ensure           => present,
       # URL from which ODL's tarball can be downloaded
       url              => $opendaylight::tarball_url,
-      # Will end up installing /opt/opendaylight
-      target           => '/opt/opendaylight',
+      # Will end up installing /opt/opendaylight/
+      target           => '/opt/opendaylight/',
       # ODL doesn't provide a checksum in the expected path, would fail
       checksum         => false,
       # This discards top-level dir of extracted tarball
-      # Required to get proper /opt/opendaylight path
+      # Required to get proper /opt/opendaylight/ path
       strip_components => 1,
       # Default timeout is 120s, which may not be enough. See Issue #53:
       # https://github.com/dfarrell07/puppet-opendaylight/issues/53

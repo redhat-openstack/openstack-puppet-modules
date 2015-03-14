@@ -108,7 +108,7 @@ def generic_validations()
   describe user('odl') do
     it { should exist }
     it { should belong_to_group 'odl' }
-    it { should have_home_directory '/opt/opendaylight' }
+    it { should have_home_directory '/opt/opendaylight/' }
   end
 
   # Creation handled by RPM, or Puppet during tarball installs
