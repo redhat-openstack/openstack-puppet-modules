@@ -108,7 +108,13 @@ def generic_validations()
   describe user('odl') do
     it { should exist }
     it { should belong_to_group 'odl' }
-    it { should have_home_directory '/opt/opendaylight/' }
+    # NB: This really shouldn't have a slash at the end!
+    #     The home dir set by the RPM is `/opt/opendaylight`.
+    #     Since we use the trailing slash elsewhere else, this
+    #     may look like a style issue. It isn't! It will make
+    #     Beaker tests fail if it ends with a `/`. A future
+    #     version of the ODL RPM may change this.
+    it { should have_home_directory '/opt/opendaylight' }
   end
 
   # Creation handled by RPM, or Puppet during tarball installs
