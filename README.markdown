@@ -17,17 +17,19 @@ Puppet module for deploying the OpenDaylight Software Defined Networking (SDN) c
 
 ## Module Description
 
-Stands up the OpenDaylight SDN controller from an RPM, including systemd configuration.
+Deploys and configrues the OpenDaylight SDN controller, including systemd configuration.
 
-The currently supported OpenDaylight version is Helium SR2 (0.2.2).
+Both supported install methods default to the lastest stable OpenDaylight release, which is currently Helium 0.2.2 SR2. 
 
 ## Setup
 
 ### What opendaylight affects
 
-* Installs OpenDaylight archive in /opt/ (may change as RPM matures).
-* Installs a [systemd unit file](https://github.com/dfarrell07/opendaylight-systemd/) for OpenDaylight.
+* Installs OpenDaylight.
+* Installs a [systemd unitfile](https://github.com/dfarrell07/opendaylight-systemd/) for OpenDaylight.
+* Starts the `opendaylight` systemd service.
 * Creates `odl:odl` user:group if they don't already exist.
+* Installs Java, which is required by ODL.
 
 ### Beginning with opendaylight
 
@@ -93,20 +95,20 @@ class { 'opendaylight':
 
 #### Public classes
 
-* `opendaylight`: This is the modules main class. It installs and configures OpenDaylight.
+* `opendaylight`: Main entry point to the module. All ODL knobs should be managed through its params.
 
 #### Private classes
 
-* `opendaylight::params`: Manages default param values.
-* `opendaylight::config`: Manages the Karaf config file via a template.
-* `opendaylight::install`: Chooses the correct Yum repo URL based on OS, installs the OpenDaylight Yum repo, installs the OpenDaylight RPM.
-* `opendaylight::service`: Configures and starts the OpenDaylight service.
+* `opendaylight::params`: Contains default `opendaylight` class param values.
+* `opendaylight::config`: Manages ODL config, including Karaf features and REST port.
+* `opendaylight::install`: Installs ODL from an RPM or tarball.
+* `opendaylight::service`: Starts the OpenDaylight service.
 
 ## Limitations
 
 * The target OS must use systemd (Fedora 15+, CentOS 7+).
 * Only tested on Fedora 20, 21 and CentOS 7.
-* Currently only supports RPM-based installs.
+* CentOS 7 is currently the most stable OS option.
 
 ## Development
 
