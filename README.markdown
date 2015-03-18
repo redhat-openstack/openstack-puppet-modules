@@ -13,25 +13,25 @@
 
 ## Overview
 
-Puppet module for deploying the OpenDaylight Software Defined Networking (SDN) controller.
+Puppet module for deploying the [OpenDaylight Software Defined Networking (SDN) controller](http://www.opendaylight.org/).
 
 ## Module Description
 
-Deploys and configrues the OpenDaylight SDN controller, including systemd configuration.
+Deploys and configrues the [OpenDaylight SDN controller](http://www.opendaylight.org/), including systemd configuration.
 
 Both supported install methods default to the lastest stable OpenDaylight release, which is currently Helium 0.2.2 SR2. 
 
 ## Setup
 
-### What opendaylight affects
+### What `opendaylight` affects
 
-* Installs OpenDaylight.
+* Installs [OpenDaylight](http://www.opendaylight.org/).
 * Installs a [systemd unitfile](https://github.com/dfarrell07/opendaylight-systemd/) for OpenDaylight.
 * Starts the `opendaylight` systemd service.
 * Creates `odl:odl` user:group if they don't already exist.
 * Installs Java, which is required by ODL.
 
-### Beginning with opendaylight
+### Beginning with `opendaylight`
 
 To install and start OpenDaylight, include the `opendaylight` class: `include opendaylight`.
 
