@@ -171,7 +171,7 @@ def port_config_validations(options = {})
     it { should be_file }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
-    its(:content) { should match /    <Connector port="#{port}" protocol="HTTP\/1.1"$/ }
+    its(:content) { should match /'    <Connector port="#{port}" protocol="HTTP\/1.1"'$/ }
   end
 end
 
