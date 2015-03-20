@@ -73,4 +73,22 @@ describe 'opendaylight class' do
       end
     end
   end
+
+  describe 'testing REST port config file' do
+    context 'using default port' do
+      # Call specialized helper fn to install OpenDaylight
+      install_odl
+
+      # Call specialized helper fn for REST port config validations
+      port_config_validations
+    end
+
+    context 'overriding default port' do
+      # Call specialized helper fn to install OpenDaylight
+      install_odl
+
+      # Call specialized helper fn for REST port config validations
+      port_config_validations(port: 7777)
+    end
+  end
 end
