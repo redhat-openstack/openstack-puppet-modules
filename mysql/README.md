@@ -10,6 +10,7 @@
 4. [Usage - Configuration options and additional functionality](#usage)
     * [Customizing Server Options](#customizing-server-options)
     * [Creating a Database](#creating-a-database)
+    * [Custom Configuration](#custom-configuration)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -140,7 +141,7 @@ mysql::db { 'mydb':
 }
 ~~~
 
-###Custom configuration
+###Custom Configuration
 
 To add custom MySQL configuration, drop additional files into
 `includedir`. Dropping files into `includedir` allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The `includedir` location is by default set to /etc/mysql/conf.d.
@@ -244,6 +245,10 @@ Whether the service should be restarted when things change. Valid values are 'tr
 #####`root_group`
 
 The name of the group used for root. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
+
+#####`mysql_group`
+
+The name of the group of the mysql daemon user. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 
 #####`package_ensure`
 
@@ -412,9 +417,7 @@ The hostname from which the monitoring user requests are allowed access.
 
 ####mysql::server::mysqltuner
 
-***Note***
-
-If using this class on a non-network-connected system you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
+**Note**: If you're using this class on a non-network-connected system, you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
 
 ##### `ensure`
 
@@ -768,6 +771,14 @@ The name of the MySQL plugin to manage.
 ##### `soname`
 
 The library file name.
+
+###Facts
+
+####`mysql_server_id`
+
+Generates a unique id, based on the node's MAC address, which can be used as
+`server_id`. This fact will *always* return `0` on all nodes which only have
+loopback interfaces. Given those nodes' connnectivity that's probably okay.
 
 ##Limitations
 
