@@ -33,7 +33,7 @@ class gnocchi(
   $database_connection          = 'sqlite:////var/lib/gnocchi/gnocchi.sqlite',
   $database_idle_timeout        = 3600,
 ) {
-  include gnocchi::params
+  include ::gnocchi::params
 
   exec { 'post-gnocchi_config':
     command     => '/bin/echo "Gnocchi config has changed"',

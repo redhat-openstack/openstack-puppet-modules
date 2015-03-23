@@ -24,7 +24,7 @@ describe 'gnocchi::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('gnocchi').with(
+      it { is_expected.to contain_postgresql__server__db('gnocchi').with(
         :user     => 'gnocchi',
         :password => 'md590440288cb225f56d585b88ad270cd37'
       )}
@@ -47,7 +47,7 @@ describe 'gnocchi::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('gnocchi').with(
+      it { is_expected.to contain_postgresql__server__db('gnocchi').with(
         :user     => 'gnocchi',
         :password => 'md590440288cb225f56d585b88ad270cd37'
       )}

@@ -96,8 +96,8 @@ class gnocchi::api(
   $ensure_package               = 'present',
 ) inherits gnocchi {
 
-  require keystone::python
-  include gnocchi::params
+  require ::keystone::python
+  include ::gnocchi::params
 
   Gnocchi_config<||> ~> Exec['post-gnocchi_config']
   Gnocchi_config<||> ~> Service['gnocchi-api']

@@ -13,8 +13,8 @@ describe 'gnocchi::storage::file' do
 
     context 'with default parameters' do
       it 'configures gnocchi-api with default parameters' do
-        should contain_gnocchi_config('storage/driver').with_value('file')
-        should contain_gnocchi_config('storage/file_basepath').with_value('/var/lib/gnocchi')
+        is_expected.to contain_gnocchi_config('storage/driver').with_value('file')
+        is_expected.to contain_gnocchi_config('storage/file_basepath').with_value('/var/lib/gnocchi')
       end
     end
   end

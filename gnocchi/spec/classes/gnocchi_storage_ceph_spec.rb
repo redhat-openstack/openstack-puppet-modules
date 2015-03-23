@@ -16,11 +16,11 @@ describe 'gnocchi::storage::ceph' do
 
     context 'with default parameters' do
       it 'configures gnocchi-api with default parameters' do
-        should contain_gnocchi_config('storage/driver').with_value('ceph')
-        should contain_gnocchi_config('storage/ceph_username').with_value('joe')
-        should contain_gnocchi_config('storage/ceph_keyring').with_value('client.admin')
-        should contain_gnocchi_config('storage/ceph_pool').with_value('gnocchi')
-        should contain_gnocchi_config('storage/ceph_conffile').with_value('/etc/ceph/ceph.conf')
+        is_expected.to contain_gnocchi_config('storage/driver').with_value('ceph')
+        is_expected.to contain_gnocchi_config('storage/ceph_username').with_value('joe')
+        is_expected.to contain_gnocchi_config('storage/ceph_keyring').with_value('client.admin')
+        is_expected.to contain_gnocchi_config('storage/ceph_pool').with_value('gnocchi')
+        is_expected.to contain_gnocchi_config('storage/ceph_conffile').with_value('/etc/ceph/ceph.conf')
       end
     end
   end

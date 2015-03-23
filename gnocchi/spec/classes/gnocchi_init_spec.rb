@@ -7,8 +7,8 @@ describe 'gnocchi' do
 
   shared_examples_for 'gnocchi' do
     it {
-      should contain_class('gnocchi::params')
-      should contain_exec('post-gnocchi_config')
+      is_expected.to contain_class('gnocchi::params')
+      is_expected.to contain_exec('post-gnocchi_config')
     }
   end
 
