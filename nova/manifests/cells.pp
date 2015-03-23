@@ -2,7 +2,7 @@
 # Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
-#         François Charlier <francois.charlier@enovance.com>
+#         Francois Charlier <francois.charlier@enovance.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -16,9 +16,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-# The nova::cells class installs the Nova Cells
+# == Class: nova::cells
 #
-# == Parameters
+# Installs the Nova Cells
+#
+# === Parameters:
+#
 #  [*enabled*]
 #    Use Nova Cells or not
 #    Defaults to 'False'
@@ -34,6 +37,10 @@
 #  [*driver*]
 #    Cells communication driver to use
 #    Defaults to 'nova.cells.rpc_driver.CellsRPCDriver'
+#
+#  [*ensure_package*]
+#    Desired ensure state of packages.
+#    Defaults to present
 #
 #  [*instance_updated_at_threshold*]
 #    Number of seconds after an instance was updated or deleted to continue to update cells
@@ -133,7 +140,6 @@
 #    It might be used by some cell scheduling code in the future
 #    Defaults to '1.0'
 #
-
 class nova::cells (
   $bandwidth_update_interval     = '600',
   $call_timeout                  = '60',
