@@ -110,6 +110,14 @@ describe 'apache', :type => :class do
       it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^AllowEncodedSlashes nodecode$} }
     end
 
+    context "when specifying default character set" do
+      let :params do
+        { :default_charset => 'none' }
+      end
+
+      it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^AddDefaultCharset none$} }
+    end
+
     # Assert that both load files and conf files are placed and symlinked for these mods
     [
       'alias',
@@ -139,6 +147,40 @@ describe 'apache', :type => :class do
         'ensure' => 'link',
         'target' => "/etc/apache2/mods-available/#{modname}.conf"
       ) }
+    end
+
+    describe "Check default type" do
+      context "with Apache version < 2.4" do
+        let :params do
+          {
+            :apache_version => '2.2',
+          }
+        end
+    
+       context "when default_type => 'none'" do
+          let :params do
+            { :default_type => 'none' }
+          end
+    
+          it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^DefaultType none$} }
+        end
+        context "when default_type => 'text/plain'" do
+          let :params do
+            { :default_type => 'text/plain' }
+          end
+    
+          it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^DefaultType text/plain$} }
+        end
+      end
+   
+      context "with Apache version >= 2.4" do
+        let :params do
+          {
+            :apache_version => '2.4',
+          }
+        end
+        it { is_expected.to contain_file("/etc/apache2/apache2.conf").without_content %r{^DefaultType [.]*$} }
+      end
     end
 
     describe "Don't create user resource" do
@@ -335,6 +377,46 @@ describe 'apache', :type => :class do
         end
 
         it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^AllowEncodedSlashes nodecode$} }
+      end
+
+      context "when specifying default character set" do
+        let :params do
+          { :default_charset => 'none' }
+        end
+
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^AddDefaultCharset none$} }
+      end
+
+      context "with Apache version < 2.4" do
+        let :params do
+          {
+            :apache_version => '2.2',
+          }
+        end
+
+       context "when default_type => 'none'" do
+          let :params do
+            { :default_type => 'none' }
+          end
+
+          it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^DefaultType none$} }
+        end
+        context "when default_type => 'text/plain'" do
+          let :params do
+            { :default_type => 'text/plain' }
+          end
+
+          it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^DefaultType text/plain$} }
+        end
+      end
+
+      context "with Apache version >= 2.4" do
+        let :params do
+          {
+            :apache_version => '2.4',
+          }
+        end
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").without_content %r{^DefaultType [.]*$} }
       end
 
       it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^Include "/etc/httpd/site\.d/\*"$} }
@@ -690,6 +772,7 @@ describe 'apache', :type => :class do
       }
       end
       it { is_expected.to contain_apache__vhost('default').with_ensure('absent') }
+      it { is_expected.not_to contain_file('/var/www/html') }
     end
     context 'with default ssl vhost' do
       let :params do {
@@ -697,6 +780,7 @@ describe 'apache', :type => :class do
         }
       end
       it { is_expected.to contain_apache__vhost('default-ssl').with_ensure('present') }
+      it { is_expected.to contain_file('/var/www/html') }
     end
   end
   context 'with unsupported osfamily' do

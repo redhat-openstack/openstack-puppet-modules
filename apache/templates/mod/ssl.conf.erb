@@ -1,26 +1,25 @@
 <IfModule mod_ssl.c>
-  <%- Array(@ssl_random_seeds).each do |ssl_random_seed| -%>
-    <%- if ssl_random_seed != '' -%>
-  SSLRandomSeed <%= ssl_random_seed %>
-    <%- end -%>
-  <%- end -%>
+  SSLRandomSeed startup builtin
+  SSLRandomSeed startup file:/dev/urandom <%= @ssl_random_seed_bytes %>
+  SSLRandomSeed connect builtin
+  SSLRandomSeed connect file:/dev/urandom <%= @ssl_random_seed_bytes %>
 
   AddType application/x-x509-ca-cert .crt
   AddType application/x-pkcs7-crl    .crl
 
   SSLPassPhraseDialog <%= @ssl_pass_phrase_dialog %>
   SSLSessionCache "shmcb:<%= @session_cache %>"
-  SSLSessionCacheTimeout 300
+  SSLSessionCacheTimeout <%= @ssl_sessioncachetimeout %>
 <% if @ssl_compression -%>
   SSLCompression On
 <% end -%>
-  <% if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+  <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
   Mutex <%= @ssl_mutex %>
-  <% else -%>
+  <%- else -%>
   SSLMutex <%= @ssl_mutex %>
-  <% end -%>
-  SSLCryptoDevice builtin
-  SSLHonorCipherOrder On
+  <%- end -%>
+  SSLCryptoDevice <%= @ssl_cryptodevice %>
+  SSLHonorCipherOrder <%= @ssl_honorcipherorder %>
   SSLCipherSuite <%= @ssl_cipher %>
   SSLProtocol <%= @ssl_protocol.compact.join(' ') %>
 <% if @ssl_options -%>

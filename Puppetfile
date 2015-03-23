@@ -1,5 +1,5 @@
 mod 'apache',
-  :commit => 'daf257e0503f3e900403ad558f5c0f04bb5ff352',
+  :commit => '7dde9fc31e68a8acb2bd313fbcbc92ae33e0c440',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',
