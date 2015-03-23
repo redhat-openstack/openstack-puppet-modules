@@ -191,7 +191,7 @@ mod 'timezone',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
 mod 'tripleo',
-  :commit => '045e853acac8439d00fcd750928342af721582ad',
+  :commit => '4b4fcb0536de411aa36d39a02e51e78693fcf999',
   :git => 'https://github.com/stackforge/puppet-tripleo.git'
 
 mod 'trove',
