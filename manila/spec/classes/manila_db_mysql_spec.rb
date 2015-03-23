@@ -19,7 +19,7 @@ describe 'manila::db::mysql' do
     let :params do
       req_params
     end
-    it { should contain_openstacklib__db__mysql('manila').with(
+    it { is_expected.to contain_openstacklib__db__mysql('manila').with(
       :user         => 'manila',
       :password_hash => '*D821809F681A40A6E379B50D0463EFAE20BDD122',
       :host         => '127.0.0.1',

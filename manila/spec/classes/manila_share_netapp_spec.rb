@@ -29,15 +29,15 @@ describe 'manila::share::netapp' do
     end
 
     it 'configures netapp share driver' do
-      should contain_manila_config('DEFAULT/share_driver').with_value(
+      is_expected.to contain_manila_config('DEFAULT/share_driver').with_value(
         'manila.share.drivers.netapp.cluster_mode.NetAppClusteredShareDriver')
       params_hash.each_pair do |config,value|
-        should contain_manila_config("DEFAULT/#{config}").with_value( value )
+        is_expected.to contain_manila_config("DEFAULT/#{config}").with_value( value )
       end
     end
 
     it 'marks netapp_password as secret' do
-      should contain_manila_config('DEFAULT/netapp_nas_password').with_secret( true )
+      is_expected.to contain_manila_config('DEFAULT/netapp_nas_password').with_secret( true )
     end
   end
 

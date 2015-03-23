@@ -60,6 +60,6 @@ define manila::type_set (
     path        => ['/usr/bin', '/bin'],
     command     => "manila type-key ${type} set ${key}=${name}",
     environment => concat($manila_env, $region_env),
-    require     => Package['python-manilaclient']
+    require     => Package['python-manilaclient'],
   }
 }

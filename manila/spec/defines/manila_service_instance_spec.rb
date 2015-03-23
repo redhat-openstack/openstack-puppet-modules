@@ -27,7 +27,7 @@ describe 'manila::service_instance' do
     it 'configures service instance' do
       expect {
         params.each_pair do |config,value|
-          should contain_manila_config("DEFAULT/#{config}").with_value( value )
+          is_expected.to contain_manila_config("DEFAULT/#{config}").with_value( value )
         end
       }.to raise_error(Puppet::Error, /Missing required parameter service_image_location/)
     end
@@ -40,7 +40,7 @@ describe 'manila::service_instance' do
     }) }
 
     it 'creates Glance image' do
-      should contain_glance_image(req_params[:service_image_name]).with(
+      is_expected.to contain_glance_image(req_params[:service_image_name]).with(
         :ensure           => 'present',
         :is_public        => 'yes',
         :container_format => 'bare',

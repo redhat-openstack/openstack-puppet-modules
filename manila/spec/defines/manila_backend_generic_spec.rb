@@ -20,15 +20,15 @@ describe 'manila::backend::generic' do
   describe 'generic share driver' do
 
     it 'configures generic share driver' do
-      should contain_manila_config('hippo/share_backend_name').with(
+      is_expected.to contain_manila_config('hippo/share_backend_name').with(
         :value => 'hippo')
-      should contain_manila_config('hippo/share_driver').with_value(
+      is_expected.to contain_manila_config('hippo/share_driver').with_value(
         'manila.share.drivers.generic.GenericShareDriver')
-      should contain_manila_config('hippo/share_helpers').with_value(
-	'CIFS=manila.share.drivers.generic.CIFSHelper,'\
+      is_expected.to contain_manila_config('hippo/share_helpers').with_value(
+        'CIFS=manila.share.drivers.generic.CIFSHelper,'\
         'NFS=manila.share.drivers.generic.NFSHelper')
       params.each_pair do |config,value|
-        should contain_manila_config("hippo/#{config}").with_value( value )
+        is_expected.to contain_manila_config("hippo/#{config}").with_value( value )
       end
     end
   end

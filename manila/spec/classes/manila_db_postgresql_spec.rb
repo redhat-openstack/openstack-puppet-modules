@@ -24,7 +24,7 @@ describe 'manila::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('manila').with(
+      it { is_expected.to contain_postgresql__server__db('manila').with(
         :user     => 'manila',
         :password => 'md5b15a47e3dd847f86827b328466426faf'
       )}
@@ -47,7 +47,7 @@ describe 'manila::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('manila').with(
+      it { is_expected.to contain_postgresql__server__db('manila').with(
         :user     => 'manila',
         :password => 'md5b15a47e3dd847f86827b328466426faf'
       )}

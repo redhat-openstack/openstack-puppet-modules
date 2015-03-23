@@ -64,15 +64,15 @@ class manila::share::netapp (
 ) {
 
   manila::backend::netapp { 'DEFAULT':
-    netapp_nas_transport_type             => $netapp_nas_transport_type,
-    netapp_nas_login                      => $netapp_nas_login,
-    netapp_nas_password                   => $netapp_nas_password,
-    netapp_nas_server_hostname            => $netapp_nas_server_hostname,
-    netapp_nas_volume_name_template       => $netapp_nas_volume_name_template,
-    netapp_vserver_name_template          => $netapp_vserver_name_template,
-    netapp_lif_name_template              => $netapp_lif_name_template,
-    netapp_aggregate_name_search_pattern  => $netapp_aggregate_name_search_pattern,
-    netapp_root_volume_aggregate          => $netapp_root_volume_aggregate,
-    netapp_root_volume_name               => $netapp_root_volume_name,
+    netapp_nas_transport_type            => $netapp_nas_transport_type,
+    netapp_nas_login                     => $netapp_nas_login,
+    netapp_nas_password                  => $netapp_nas_password,
+    netapp_nas_server_hostname           => $netapp_nas_server_hostname,
+    netapp_nas_volume_name_template      => $netapp_nas_volume_name_template,
+    netapp_vserver_name_template         => $netapp_vserver_name_template,
+    netapp_lif_name_template             => $netapp_lif_name_template,
+    netapp_aggregate_name_search_pattern => $netapp_aggregate_name_search_pattern,
+    netapp_root_volume_aggregate         => $netapp_root_volume_aggregate,
+    netapp_root_volume_name              => $netapp_root_volume_name,
   }
 }

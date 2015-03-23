@@ -7,11 +7,11 @@ describe 'manila::share' do
       'class { "manila": rabbit_password => "fpp", sql_connection => "mysql://a:b@c/d" }'
     end
 
-    it { should contain_package('manila-share').with(
+    it { is_expected.to contain_package('manila-share').with(
       :name   => platform_params[:package_name],
       :ensure => 'present'
     ) }
-    it { should contain_service('manila-share').with(
+    it { is_expected.to contain_service('manila-share').with(
       'hasstatus' => true
     )}
 
@@ -20,7 +20,7 @@ describe 'manila::share' do
         { 'manage_service' => false }
       end
       it 'should not change the state of the service' do
-        should contain_service('manila-share').without_ensure
+        is_expected.to contain_service('manila-share').without_ensure
       end
     end
   end

@@ -17,13 +17,13 @@ describe 'manila::share::generic' do
 
   describe 'generic share driver' do
     it 'configures generic share driver' do
-      should contain_manila_config('DEFAULT/share_driver').with_value(
+      is_expected.to contain_manila_config('DEFAULT/share_driver').with_value(
         'manila.share.drivers.generic.GenericShareDriver')
-      should contain_manila_config('DEFAULT/share_helpers').with_value(
+      is_expected.to contain_manila_config('DEFAULT/share_helpers').with_value(
         'CIFS=manila.share.drivers.generic.CIFSHelper,'\
         'NFS=manila.share.drivers.generic.NFSHelper')
       params.each_pair do |config,value|
-        should contain_manila_config("DEFAULT/#{config}").with_value( value )
+        is_expected.to contain_manila_config("DEFAULT/#{config}").with_value( value )
       end
     end
   end
