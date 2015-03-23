@@ -29,7 +29,7 @@
 #
 # [*service_type*]
 #   (Optional) Type of service.
-#   Defaults to 'data_processing'.
+#   Defaults to 'data-processing'.
 #
 # [*service_description*]
 #   (Optional) Description of service.
@@ -80,7 +80,7 @@ class sahara::keystone::auth(
   $auth_name           = 'sahara',
   $email               = 'sahara@localhost',
   $tenant              = 'services',
-  $service_type        = 'data_processing',
+  $service_type        = 'data-processing',
   $service_description = 'Sahara Data Processing',
   $configure_endpoint  = true,
   $region              = 'RegionOne',

@@ -32,6 +32,12 @@
 #   (Optional) TTL for zeromq messages.
 #   Defaults to 30.
 #
+#  [*kombu_ssl_version*]
+#    (optional) SSL version to use (valid only if SSL enabled).
+#    Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
+#    available on some distributions.
+#    Defaults to 'TLSv1'
+#
 # [*kombu_ssl_keyfile*]
 #   (Optional) SSL key file (valid only if SSL enabled).
 #   Defaults to undef.
@@ -56,6 +62,7 @@ class sahara::notify::zeromq(
   $zeromq_ipc_dir         = '/var/run/openstack',
   $zeromq_host            = 'sahara',
   $cast_timeout           = 30,
+  $kombu_ssl_version      = 'TLSv1',
   $kombu_ssl_keyfile      = undef,
   $kombu_ssl_certfile     = undef,
   $kombu_ssl_ca_certs     = undef,
@@ -72,7 +79,7 @@ class sahara::notify::zeromq(
       fail('kombu_ca_certs must be set when using SSL in zeromq')
     }
     sahara_config {
-      'DEFAULT/kombu_ssl_version': value => 'TLSv1';
+      'DEFAULT/kombu_ssl_version': value => $kombu_ssl_version;
       'DEFAULT/kombu_ssl_keyfile': value => $kombu_ssl_keyfile;
       'DEFAULT/kombu_ssl_certfile': value => $kombu_ssl_certfile;
       'DEFAULT/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs;
