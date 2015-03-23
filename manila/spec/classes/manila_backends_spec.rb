@@ -44,7 +44,7 @@ describe 'manila::backends' do
       end
 
       it 'configures manila.conf with default params' do
-        should contain_manila_config('DEFAULT/enabled_share_backends').with_value(p[:enabled_share_backends].join(','))
+        is_expected.to contain_manila_config('DEFAULT/enabled_share_backends').with_value(p[:enabled_share_backends].join(','))
       end
     end
 

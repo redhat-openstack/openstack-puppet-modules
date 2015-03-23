@@ -35,8 +35,8 @@ define gnocchi::generic_service(
   $ensure_package = 'present'
 ) {
 
-  include gnocchi::params
-  include gnocchi::db::sync
+  include ::gnocchi::params
+  include ::gnocchi::db::sync
 
   $gnocchi_title = "gnocchi-${name}"
   Exec['post-gnocchi_config'] ~> Service<| title == $gnocchi_title |>

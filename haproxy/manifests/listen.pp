@@ -98,7 +98,7 @@ define haproxy::listen (
   if $ipaddress and $bind {
     fail('The use of $ipaddress and $bind is mutually exclusive, please choose either one')
   }
-  if $bind_options {
+  if $bind_options != '' {
     warning('The $bind_options parameter is deprecated; please use $bind instead')
   }
   if $bind {

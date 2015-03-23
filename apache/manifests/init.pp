@@ -17,6 +17,7 @@ class apache (
   $service_name           = $::apache::params::service_name,
   $default_mods           = true,
   $default_vhost          = true,
+  $default_charset        = undef,
   $default_confd_files    = true,
   $default_ssl_vhost      = false,
   $default_ssl_cert       = $::apache::params::default_ssl_cert,
@@ -26,6 +27,7 @@ class apache (
   $default_ssl_crl_path   = undef,
   $default_ssl_crl        = undef,
   $default_ssl_crl_check  = undef,
+  $default_type           = 'none',
   $ip                     = undef,
   $service_enable         = true,
   $service_manage         = true,
@@ -54,7 +56,7 @@ class apache (
   $group                  = $::apache::params::group,
   $keepalive              = $::apache::params::keepalive,
   $keepalive_timeout      = $::apache::params::keepalive_timeout,
-  $max_keepalive_requests = $apache::params::max_keepalive_requests,
+  $max_keepalive_requests = $::apache::params::max_keepalive_requests,
   $logroot                = $::apache::params::logroot,
   $logroot_mode           = $::apache::params::logroot_mode,
   $log_level              = $::apache::params::log_level,
@@ -355,6 +357,7 @@ class apache (
       priority        => '15',
       ip              => $ip,
       logroot_mode    => $logroot_mode,
+      manage_docroot  => $default_vhost,
     }
     $ssl_access_log_file = $::osfamily ? {
       'freebsd' => $access_log_file,
@@ -371,6 +374,7 @@ class apache (
       priority        => '15',
       ip              => $ip,
       logroot_mode    => $logroot_mode,
+      manage_docroot  => $default_ssl_vhost,
     }
   }
 }

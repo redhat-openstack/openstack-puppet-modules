@@ -250,6 +250,10 @@ Overrides the template used for the main apache configuration file. Defaults to 
 
 *Note:* Using this parameter is potentially risky, as the module has been built for a minimal configuration file with the configuration primarily coming from conf.d/ entries.
 
+#####`default_charset`
+
+If defined, the value will be set as `AddDefaultCharset` in the main configuration file. It is undefined by default.
+
 #####`default_confd_files`
 
 Generates default set of include-able Apache configuration files under  `${apache::confd_dir}` directory. These configuration files correspond to what is usually installed with the Apache package on a given platform.
@@ -308,6 +312,10 @@ Sets up a default SSL virtual host. Defaults to 'false'. If set to 'true', sets 
 ```
 
 SSL vhosts only respond to HTTPS queries.
+
+#####`default_type`
+
+(Apache httpd 2.2 only) MIME content-type that will be sent if the server cannot determine a type in any other way. This directive has been deprecated in Apache httpd 2.4, and only exists there for backwards compatibility of configuration files.
 
 #####`default_vhost`
 
@@ -761,17 +769,15 @@ Installs Apache SSL capabilities and uses the ssl.conf.erb template. These are t
 
 ```puppet
     class { 'apache::mod::ssl':
-      ssl_compression        => false,
-      ssl_options            => [ 'StdEnvVars' ],
-      ssl_cipher             => 'HIGH:MEDIUM:!aNULL:!MD5',
-      ssl_protocol           => [ 'all', '-SSLv2', '-SSLv3' ],
-      ssl_pass_phrase_dialog => 'builtin',
-      ssl_random_seeds       => [
-        'startup builtin',
-        'startup file:/dev/urandom 512',
-        'connect builtin',
-        'connect file:/dev/urandom 512',
-      ],
+      ssl_compression         => false,
+      ssl_cryptodevice        => 'builtin',
+      ssl_options             => [ 'StdEnvVars' ],
+      ssl_cipher              => 'HIGH:MEDIUM:!aNULL:!MD5',
+      ssl_honorcipherorder    => 'On',
+      ssl_protocol            => [ 'all', '-SSLv2', '-SSLv3' ],
+      ssl_pass_phrase_dialog  => 'builtin',
+      ssl_random_seed_bytes   => '512',
+      ssl_sessioncachetimeout => '300',
     }
 ```
 
@@ -1049,7 +1055,7 @@ Passes a list of hashes to the vhost to create Alias, AliasMatch, ScriptAlias or
 aliases => [
   { aliasmatch       => '^/image/(.*)\.jpg$',
     path             => '/files/jpg.images/$1.jpg',
-  }
+  },
   { alias            => '/image',
     path             => '/ftp/pub/image',
   },
@@ -1239,6 +1245,10 @@ Array of IPs to exclude from mod_security rule matching
 
 Specifies URLs you do not want to proxy. This parameter is meant to be used in combination with [`proxy_dest`](#proxy_dest).
 
+#####`no_proxy_uris_match`
+
+This directive is equivalent to `no_proxy_uris`, but takes regular expressions.
+
 #####`proxy_preserve_host`
 
 Sets the [ProxyPreserveHost Directive](http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypreservehost).  true Enables the Host: line from an incoming request to be proxied to the host instead of hostname .  false sets this option to off (default).
@@ -1331,12 +1341,27 @@ apache::vhost { 'site.name.fdqn':
       'params' => { 'retry' => '0', 'timeout' => '5' }, },
     { 'path' => '/e', 'url' => 'http://backend-a/e',
       'keywords' => ['nocanon', 'interpolate'] },
+    { 'path' => '/f', 'url' => 'http://backend-f/',
+      'setenv' => ['proxy-nokeepalive 1','force-proxy-request-1.0 1']},
   ],
 }
 ```
 
 `reverse_urls` is optional and can be an array or a string. It is useful when used with `mod_proxy_balancer`.
 `params` is an optional parameter. It allows to provide the ProxyPass key=value parameters (Connection settings).
+`setenv` is optional and is an array to set environment variables for the proxy directive, for details see http://httpd.apache.org/docs/current/mod/mod_proxy.html#envsettings
+
+#####`proxy_dest_match`
+
+This directive is equivalent to proxy_dest, but takes regular expressions, see [ProxyPassMatch](http://httpd.apache.org/docs/current/mod/mod_proxy.html#proxypassmatch) for details.
+
+#####`proxy_dest_reverse_match`
+
+Allows you to pass a ProxyPassReverse if `proxy_dest_match` is specified. See [ProxyPassReverse](http://httpd.apache.org/docs/current/mod/mod_proxy.html#proxypassreverse) for details.
+
+#####`proxy_pass_match`
+
+This directive is equivalent to proxy_pass, but takes regular expressions, see [ProxyPassMatch](http://httpd.apache.org/docs/current/mod/mod_proxy.html#proxypassmatch) for details.
 
 #####`rack_base_uris`
 
@@ -2505,7 +2530,7 @@ Something along the lines of:
         exec { 'restorecon_apache':
           command => 'restorecon -Rv /apache_spec',
           path    => '/bin:/usr/bin/:/sbin:/usr/sbin',
-          before  => Service['httpd'],
+          before  => Class['Apache::Service'],
           require => Class['apache'],
         }
         class { 'apache': }
@@ -2519,6 +2544,10 @@ Something along the lines of:
 ```
 
 You need to set the contexts using `semanage fcontext` not `chcon` because `file {...}` resources reset the context to the values in the database if the resource isn't specifying the context.
+
+###FreeBSD
+
+In order to use this module on FreeBSD, you *must* use apache24-2.4.12 (www/apache24) or newer.
 
 ##Development
 
@@ -2536,8 +2565,20 @@ This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) an
 
 Quickstart:
 
+####Ruby > 1.8.7
+
+```
     gem install bundler
     bundle install
     bundle exec rake spec
     bundle exec rspec spec/acceptance
     RS_DEBUG=yes bundle exec rspec spec/acceptance
+```
+
+####Ruby = 1.8.7
+
+```
+    gem install bundler
+    bundle install --without system_tests
+    bundle exec rake spec
+```

@@ -5,7 +5,7 @@ describe 'manila::db::sync' do
   let :facts do
     {:osfamily => 'Debian'}
   end
-  it { should contain_exec('manila-manage db_sync').with(
+  it { is_expected.to contain_exec('manila-manage db_sync').with(
     :command     => 'manila-manage db sync',
     :path        => '/usr/bin',
     :user        => 'manila',

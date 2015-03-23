@@ -20,7 +20,9 @@ class ceilometer::agent::compute (
   $package_ensure   = 'present',
 ) inherits ceilometer {
 
-  include ceilometer::params
+  warning('This class is deprecated. Please use ceilometer::agent::polling with compute namespace instead.')
+
+  include ::ceilometer::params
 
   Ceilometer_config<||> ~> Service['ceilometer-agent-compute']
 

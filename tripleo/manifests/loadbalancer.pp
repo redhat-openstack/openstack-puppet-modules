@@ -20,27 +20,27 @@
 # === Parameters:
 #
 # [*controller_host*]
-#  (optional) Host or group of hosts to load-balance the services
+#  Host or group of hosts to load-balance the services
 #  Can be a string or an array.
 #  Defaults to undef
 #
 # [*controller_virtual_ip*]
-#  (optional) Control IP or group of IPs to bind the pools
+#  Control IP or group of IPs to bind the pools
 #  Can be a string or an array.
 #  Defaults to undef
 #
 # [*control_virtual_interface*]
-#  (optional) Interface to bind the control VIP
+#  Interface to bind the control VIP
 #  Can be a string or an array.
 #  Defaults to undef
 #
 # [*public_virtual_interface*]
-#  (optional) Interface to bind the public VIP
+#  Interface to bind the public VIP
 #  Can be a string or an array.
 #  Defaults to undef
 #
 # [*public_virtual_ip*]
-#  (optional) Public IP or group of IPs to bind the pools
+#  Public IP or group of IPs to bind the pools
 #  Can be a string or an array.
 #  Defaults to undef
 #
@@ -117,11 +117,11 @@
 #  Defaults to false
 #
 class tripleo::loadbalancer (
-  $controller_host           = undef,
-  $controller_virtual_ip     = undef,
-  $control_virtual_interface = undef,
-  $public_virtual_interface  = undef,
-  $public_virtual_ip         = undef,
+  $controller_host,
+  $controller_virtual_ip,
+  $control_virtual_interface,
+  $public_virtual_interface,
+  $public_virtual_ip,
   $keystone_admin            = false,
   $keystone_public           = false,
   $neutron                   = false,
@@ -158,7 +158,7 @@ class tripleo::loadbalancer (
     }
   }
 
-  class { 'keepalived': }
+  class { '::keepalived': }
   keepalived::vrrp_script { 'haproxy':
     name_is_process => $keepalived_name_is_process,
     script          => $keepalived_vrrp_script,
@@ -184,7 +184,7 @@ class tripleo::loadbalancer (
 
   sysctl::value { 'net.ipv4.ip_nonlocal_bind': value => '1' }
 
-  class { 'haproxy':
+  class { '::haproxy':
     global_options   => {
       'log'     => '/dev/log local0',
       'pidfile' => '/var/run/haproxy.pid',
@@ -218,7 +218,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 35357,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -235,7 +235,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 5000,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -252,7 +252,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 9696,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -269,7 +269,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8776,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -286,7 +286,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 9292,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -303,7 +303,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 9191,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -320,7 +320,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8773,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -337,7 +337,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8774,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -354,7 +354,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8775,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -371,7 +371,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 6080,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -402,7 +402,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8080,
       options          => {
-        'option' => [ 'httpchk GET /info' ]
+        'option' => [ 'httpchk GET /info' ],
       },
       collect_exported => false,
     }
@@ -419,7 +419,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8004,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -436,7 +436,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8003,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -453,7 +453,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 8000,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -470,7 +470,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 80,
       options          => {
-        'option' => [ 'httpchk GET /' ]
+        'option' => [ 'httpchk GET /' ],
       },
       collect_exported => false,
     }
@@ -487,7 +487,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip],
       ports            => 3306,
       options          => {
-        'timeout' => [ 'client 0', 'server 0' ]
+        'timeout' => [ 'client 0', 'server 0' ],
       },
       collect_exported => false,
     }
@@ -504,7 +504,7 @@ class tripleo::loadbalancer (
       ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
       ports            => 5672,
       options          => {
-        'timeout' => [ 'client 0', 'server 0' ]
+        'timeout' => [ 'client 0', 'server 0' ],
       },
       collect_exported => false,
     }

@@ -15,24 +15,24 @@ describe 'gnocchi::keystone::auth' do
         :tenant   => 'foobar' }
     end
 
-    it { should contain_keystone_user('gnocchi').with(
+    it { is_expected.to contain_keystone_user('gnocchi').with(
       :ensure   => 'present',
       :password => 'gnocchi_password',
       :tenant   => 'foobar'
     ) }
 
-    it { should contain_keystone_user_role('gnocchi@foobar').with(
+    it { is_expected.to contain_keystone_user_role('gnocchi@foobar').with(
       :ensure  => 'present',
       :roles   => 'admin'
     )}
 
-    it { should contain_keystone_service('gnocchi').with(
+    it { is_expected.to contain_keystone_service('gnocchi').with(
       :ensure      => 'present',
       :type        => 'gnocchi',
       :description => 'OpenStack Datapoint Service'
     ) }
 
-    it { should contain_keystone_endpoint('RegionOne/gnocchi').with(
+    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi').with(
       :ensure       => 'present',
       :public_url   => "http://127.0.0.1:8041",
       :admin_url    => "http://127.0.0.1:8041",
@@ -52,7 +52,7 @@ describe 'gnocchi::keystone::auth' do
         :admin_address    => '10.10.10.12' }
     end
 
-    it { should contain_keystone_endpoint('RegionOne/gnocchi').with(
+    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi').with(
       :ensure       => 'present',
       :public_url   => "https://10.10.10.10:80",
       :internal_url => "http://10.10.10.11:82",
@@ -66,9 +66,9 @@ describe 'gnocchi::keystone::auth' do
         :auth_name => 'gnocchy' }
     end
 
-    it { should contain_keystone_user('gnocchy') }
-    it { should contain_keystone_user_role('gnocchy@services') }
-    it { should contain_keystone_service('gnocchy') }
-    it { should contain_keystone_endpoint('RegionOne/gnocchy') }
+    it { is_expected.to contain_keystone_user('gnocchy') }
+    it { is_expected.to contain_keystone_user_role('gnocchy@services') }
+    it { is_expected.to contain_keystone_service('gnocchy') }
+    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchy') }
   end
 end

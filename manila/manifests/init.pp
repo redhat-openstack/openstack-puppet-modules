@@ -1,16 +1,55 @@
+# Class: manila
 #
 # == Parameters
-# [sql_connection]
+#
+# [*sql_connection*]
 #    Url used to connect to database.
 #    (Optional) Defaults to
 #    'sqlite:////var/lib/manila/manila.sqlite'
 #
-# [sql_idle_timeout]
+# [*sql_idle_timeout*]
 #   Timeout when db connections should be reaped.
 #   (Optional) Defaults to 3600.
 #
+# [*control_exchange*]
+#   (Optional) The default exchange under which topics are scope.
+#   Defaults to 'openstack'.
+#
+# [*rpc_backend*]
+#   (Optional) Use these options to configure the RabbitMQ message system.
+#   Defaults to 'heat.openstack.common.rpc.impl_kombu'
+#
+# [*package_ensure*]
+#    (Optional) Ensure state for package.
+#    Defaults to 'present'
+#
+# [*rabbit_host*]
+#   (Optional) IP or hostname of the rabbit server.
+#   Defaults to '127.0.0.1'
+#
+# [*rabbit_port*]
+#   (Optional) Port of the rabbit server.
+#   Defaults to 5672.
+#
+# [*rabbit_hosts*]
+#   (Optional) Array of host:port (used with HA queues).
+#   If defined, will remove rabbit_host & rabbit_port parameters from config
+#   Defaults to undef.
+#
+# [*rabbit_userid*]
+#   (Optional) User to connect to the rabbit server.
+#   Defaults to 'guest'
+#
+# [*rabbit_password*]
+#   (Optional) Password to connect to the rabbit_server.
+#   Defaults to empty.
+#
+# [*rabbit_virtual_host*]
+#   (Optional) Virtual_host to use.
+#   Defaults to '/'
+#
 # [*rabbit_use_ssl*]
-#   (optional) Connect over SSL for RabbitMQ
+#   (Optional) Connect over SSL for RabbitMQ.
 #   Defaults to false
 #
 # [*kombu_ssl_ca_certs*]
@@ -31,15 +70,47 @@
 #   available on some distributions.
 #   Defaults to 'TLSv1'
 #
-# [amqp_durable_queues]
+# [*amqp_durable_queues*]
 #   Use durable queues in amqp.
 #   (Optional) Defaults to false.
 #
-# [use_syslog]
+# ==== Various QPID options (Optional)
+#
+# [*qpid_hostname*]
+#
+# [*qpid_port*]
+#
+# [*qpid_username*]
+#
+# [*qpid_password*]
+#
+# [*qpid_heartbeat*]
+#
+# [*qpid_protocol*]
+#
+# [*qpid_tcp_nodelay*]
+#
+# [*qpid_reconnect*]
+#
+# [*qpid_reconnect_timeout*]
+#
+# [*qpid_reconnect_limit*]
+#
+# [*qpid_reconnect_interval*]
+#
+# [*qpid_reconnect_interval_min*]
+#
+# [*qpid_reconnect_interval_max*]
+#
+# [*qpid_sasl_mechanisms*]
+#   (Optional) ENable one or more SASL mechanisms.
+#   Defaults to false.
+#
+# [*use_syslog*]
 #   Use syslog for logging.
 #   (Optional) Defaults to false.
 #
-# [log_facility]
+# [*log_facility*]
 #   Syslog facility to receive log lines.
 #   (Optional) Defaults to LOG_USER.
 #
@@ -64,13 +135,24 @@
 #   (optional) CA certificate file to use to verify connecting clients
 #   Defaults to false, not set_
 #
+# [*verbose*]
+#   (Optional) Should the daemons log verbose messages
+#   Defaults to false
+#
+# [*debug*]
+#   (Optional) Should the daemons log debug messages
+#   Defaults to false
+#
+# [*api_paste_config*]
+#   (Optional) Allow Configuration of /etc/manila/api-paste.ini.
+#
 # [*storage_availability_zone*]
 #   (optional) Availability zone of the node.
 #   Defaults to 'nova'
 #
 # [*rootwrap_config*]
-# (optional) Path to the rootwrap configuration file to use for
-# running commands as root
+#   (optional) Path to the rootwrap configuration file to use for
+#   running commands as root
 #
 class manila (
   $sql_connection              = 'sqlite:////var/lib/manila/manila.sqlite',
@@ -118,7 +200,7 @@ class manila (
   $rootwrap_config             = '/etc/manila/rootwrap.conf',
 ) {
 
-  include manila::params
+  include ::manila::params
 
   Package['manila'] -> Manila_config<||>
   Package['manila'] -> Manila_api_paste_ini<||>

@@ -24,6 +24,19 @@
 #   (Optional) Should the daemons log debug messages
 #   Defaults to 'false'.
 #
+# [*use_syslog*]
+#   Use syslog for logging.
+#   (Optional) Defaults to false.
+#
+# [*log_facility*]
+#   Syslog facility to receive log lines.
+#   (Optional) Defaults to LOG_USER.
+#
+# [*log_dir*]
+#   (optional) Directory where logs should be stored.
+#   If set to boolean false, it will not log to any directory.
+#   Defaults to '/var/log/sahara'
+#
 # [*service_host*]
 #   (Optional) Hostname for sahara to listen on
 #   Defaults to '0.0.0.0'.
@@ -42,23 +55,23 @@
 #
 # [*database_connection*]
 #   (Optional) Non-sqllite database for sahara
-#   Defaults to 'mysql://sahara:secrete@localhost:3306/sahara'.
+#   Defaults to 'mysql://sahara:secrete@localhost:3306/sahara'
 #
 # == keystone authentication options
 #
-# [*os_username*]
+# [*keystone_username*]
 #   (Optional) Username for sahara credentials
 #   Defaults to 'admin'.
 #
-# [*os_password*]
+# [*keystone_password*]
 #   (Optional) Password for sahara credentials
-#   Defaults to 'secrete'.
+#   Defaults to false.
 #
-# [*os_tenant_name*]
-#   (Optional) Tenant for os_username
+# [*keystone_tenant*]
+#   (Optional) Tenant for keystone_username
 #   Defaults to 'admin'.
 #
-# [*os_auth_url*]
+# [*keystone_url*]
 #   (Optional) Public identity endpoint
 #   Defaults to 'http://127.0.0.1:5000/v2.0/'.
 #
@@ -72,18 +85,22 @@ class sahara(
   $package_ensure      = 'present',
   $verbose             = false,
   $debug               = false,
+  $use_syslog          = false,
+  $log_facility        = 'LOG_USER',
+  $log_dir             = '/var/log/sahara',
   $service_host        = '0.0.0.0',
   $service_port        = 8386,
   $use_neutron         = false,
   $use_floating_ips    = true,
   $database_connection = 'mysql://sahara:secrete@localhost:3306/sahara',
-  $os_username         = 'admin',
-  $os_password         = 'secrete',
-  $os_tenant_name      = 'admin',
-  $os_auth_url         = 'http://127.0.0.1:5000/v2.0/',
+  $keystone_username   = 'admin',
+  $keystone_password   = false,
+  $keystone_tenant     = 'admin',
+  $keystone_url        = 'http://127.0.0.1:5000/v2.0/',
   $identity_url        = 'http://127.0.0.1:35357/',
 ) {
-  include sahara::params
+  include ::sahara::params
+  include ::sahara::policy
 
   file { '/etc/sahara/':
     ensure  => directory,
@@ -106,7 +123,10 @@ class sahara(
   }
 
   Package['sahara'] -> Sahara_config<||>
+  Package['sahara'] -> Class['sahara::policy']
+
   Package['sahara'] ~> Service['sahara']
+  Class['sahara::policy'] ~> Service['sahara']
 
   validate_re($database_connection, '(sqlite|mysql|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
 
@@ -137,14 +157,39 @@ class sahara(
     'database/connection':
       value => $database_connection,
       secret => true;
+  }
 
-    'keystone_authtoken/auth_uri': value => $os_auth_url;
-    'keystone_authtoken/identity_uri': value => $identity_url;
-    'keystone_authtoken/admin_user': value => $os_username;
-    'keystone_authtoken/admin_tenant_name': value => $os_tenant_name;
-    'keystone_authtoken/admin_password':
-      value => $os_password,
-      secret => true;
+  if $keystone_password {
+    sahara_config {
+      'keystone_authtoken/auth_uri': value => $keystone_url;
+      'keystone_authtoken/identity_uri': value => $identity_url;
+      'keystone_authtoken/admin_user': value => $keystone_username;
+      'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
+      'keystone_authtoken/admin_password':
+        value => $keystone_password,
+        secret => true;
+    }
+  }
+
+  if $log_dir {
+    sahara_config {
+      'DEFAULT/log_dir': value => $log_dir;
+    }
+  } else {
+    sahara_config {
+      'DEFAULT/log_dir': ensure => absent;
+    }
+  }
+
+  if $use_syslog {
+    sahara_config {
+      'DEFAULT/use_syslog':           value => true;
+      'DEFAULT/syslog_log_facility':  value => $log_facility;
+    }
+  } else {
+    sahara_config {
+      'DEFAULT/use_syslog':           value => false;
+    }
   }
 
   if $manage_service {
@@ -155,7 +200,6 @@ class sahara(
     }
   }
 
-  Package['sahara'] -> Service['sahara']
   service { 'sahara':
     ensure     => $service_ensure,
     name       => $::sahara::params::service_name,
@@ -165,13 +209,12 @@ class sahara(
     subscribe  => Exec['sahara-dbmanage'],
   }
 
-  Sahara_config<||> ~> Exec['sahara-dbmanage']
-
   exec { 'sahara-dbmanage':
     command     => $::sahara::params::dbmanage_command,
     path        => '/usr/bin',
     user        => 'root',
     refreshonly => true,
+    subscribe   => [Package['sahara'],Sahara_config['database/connection']],
     logoutput   => on_failure,
   }
 

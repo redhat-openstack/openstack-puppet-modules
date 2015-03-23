@@ -3,10 +3,10 @@
   "version": "5.0.0",
   "author": "Red Hat and StackForge Contributors",
   "summary": "Puppet module for OpenStack Sahara",
-  "license": "Apache License 2.0",
-  "source": "git://github.com/frozencemetery/puppet-sahara.git",
-  "project_page": "https://github.com/frozencemetery/puppet-sahara",
-  "issues_url": "https://github.com/frozencemetery/puppet-sahara/issues",
+  "license": "Apache-2.0",
+  "source": "git://github.com/stackforge/puppet-sahara.git",
+  "project_page": "https://launchpad.net/puppet-sahara",
+  "issues_url": "https://bugs.launchpad.net/puppet-sahara",
   "requirements": [
     { "name": "pe","version_requirement": "3.x" },
     { "name": "puppet","version_requirement": "3.x" }

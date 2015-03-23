@@ -17,7 +17,7 @@ describe 'manila::type_set' do
   end
 
   it 'should have its execs' do
-    should contain_exec('manila type-key sith set monchichi=hippo').with(
+    is_expected.to contain_exec('manila type-key sith set monchichi=hippo').with(
       :command => 'manila type-key sith set monchichi=hippo',
       :environment => [
         'OS_TENANT_NAME=admin',

@@ -1,7 +1,7 @@
 #
 class manila::db::sync {
 
-  include manila::params
+  include ::manila::params
 
   exec { 'manila-manage db_sync':
     command     => $::manila::params::db_sync_command,

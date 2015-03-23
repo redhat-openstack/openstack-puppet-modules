@@ -211,7 +211,20 @@ describe 'apache::vhost', :type => :define do
               'params'   => {
                       'retry'   => '0',
                       'timeout' => '5'
-              }
+              },
+              'setenv'   => ['proxy-nokeepalive 1','force-proxy-request-1.0 1'],
+            }
+          ],
+          'proxy_pass_match'            => [
+            {
+              'path'     => '/a',
+              'url'      => 'http://backend-a/',
+              'keywords' => ['noquery', 'interpolate'],
+              'params'   => {
+                      'retry'   => '0',
+                      'timeout' => '5'
+              },
+              'setenv'   => ['proxy-nokeepalive 1','force-proxy-request-1.0 1'],
             }
           ],
           'suphp_addhandler'            => 'foo',
@@ -220,6 +233,7 @@ describe 'apache::vhost', :type => :define do
           'php_admin_flags'             => ['foo', 'bar'],
           'php_admin_values'            => ['true', 'false'],
           'no_proxy_uris'               => '/foo',
+          'no_proxy_uris_match'         => '/foomatch',
           'proxy_preserve_host'         => true,
           'proxy_error_override'        => true,
           'redirect_source'             => '/bar',
@@ -299,6 +313,12 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to compile }
       it { is_expected.to_not contain_file('/var/www/foo') }
       it { is_expected.to contain_class('apache::mod::ssl') }
+      it { is_expected.to contain_file('ssl.conf').with(
+        :content => /^\s+SSLHonorCipherOrder On$/ ) }
+      it { is_expected.to contain_file('ssl.conf').with(
+        :content => /^\s+SSLPassPhraseDialog builtin$/ ) }
+      it { is_expected.to contain_file('ssl.conf').with(
+        :content => /^\s+SSLSessionCacheTimeout 300$/ ) }
       it { is_expected.to contain_class('apache::mod::mime') }
       it { is_expected.to contain_class('apache::mod::vhost_alias') }
       it { is_expected.to contain_class('apache::mod::wsgi') }
@@ -353,6 +373,10 @@ describe 'apache::vhost', :type => :define do
               /retry=0/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
               /timeout=5/) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /SetEnv force-proxy-request-1.0 1/) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /SetEnv proxy-nokeepalive 1/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
               /noquery interpolate/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-rack') }

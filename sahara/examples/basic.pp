@@ -1,10 +1,10 @@
 # First, install a mysql server
-class { 'mysql::server':
+class { '::mysql::server':
   # sahara documentation recommends this configuration.
   override_options   => {
     'mysqld' => {
-      'max_allowed_packet' => '256M'
-    }
+      'max_allowed_packet' => '256M',
+    },
   },
 
   # many configurations will need this line, too
@@ -16,25 +16,25 @@ class { 'mysql::server':
 }
 
 # Then, create a database
-class { 'sahara::db::mysql':
+class { '::sahara::db::mysql':
   password => 'a_big_secret',
 }
 
 # And connect a message bus
-class { 'sahara::notify::rabbitmq':
+class { '::sahara::notify::rabbitmq':
   rabbit_password => 'guest',
   rabbit_use_ssl  => false,
 }
 
 # Then the common class
-class { 'sahara':
+class { '::sahara':
   database_connection => 'mysql://sahara:a_big_secret@127.0.0.1:3306/sahara',
   verbose             => true,
   debug               => true,
-  os_username         => 'admin',
-  os_password         => 'secrets_everywhere',
-  os_tenant_name      => 'admin',
-  os_auth_url         => 'http://127.0.0.1:5000/v2.0/',
+  keystone_username   => 'admin',
+  keystone_password   => 'secrets_everywhere',
+  keystone_tenant     => 'admin',
+  keystone_url        => 'http://127.0.0.1:5000/v2.0/',
   identity_url        => 'http://127.0.0.1:35357/',
   service_host        => '0.0.0.0',
   service_port        => 8386,
@@ -42,6 +42,6 @@ class { 'sahara':
 }
 
 # Finally, make it accessible
-class { 'sahara::keystone::auth':
+class { '::sahara::keystone::auth':
   password => 'secrete',
 }

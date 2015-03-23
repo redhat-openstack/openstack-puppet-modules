@@ -1,8 +1,6 @@
 sahara
 ======
 
-5.0.0 - 2014.2.0 - Juno
-
 #### Table of Contents
 
 1. [Overview - What is the sahara module?](#overview)
@@ -31,12 +29,7 @@ Setup
 
 **What the sahara module affects:**
 
-* sahara, the data processing service for Openstack.
-
-### Installing sahara
-
-    example% cd /usr/share/puppet/modules
-    example% git clone https://github.com/frozencemetery/puppet-sahara sahara
+* sahara, the data processing service for OpenStack.
 
 ### Beginning with sahara
 
@@ -52,29 +45,25 @@ Implementation
 
 ### sahara
 
-sahara is a combination of Puppet manifests and ruby code to deliver
+puppet-sahara is a combination of Puppet manifests and ruby code to deliver
 configuration and extra functionality through types and providers.
 
 Limitations
 -----------
 
-Batman has no limits.
+None.
 
 Development
 -----------
 
-Since this is not (yet?) a stackforge project, development happens through
-pull requests on the
-[main repository](https://github.com/frozencemetery/puppet-sahara).
+Developer documentation for the entire puppet-openstack project.
 
-I will do my best to keep in mind when merging that building the bike shed is
-more important than its [color](http://bikeshed.org/).
+* https://wiki.openstack.org/wiki/Puppet-openstack#Developer_documentation
 
 Contributors
 ------------
 
-- Robbie Harwood &lt;rharwood@redhat.com&gt;
-- Sebastien Badia &lt;sbadia@redhat.com&gt;
+* https://github.com/stackforge/puppet-sahara/graphs/contributors
 
 Release Notes
 -------------

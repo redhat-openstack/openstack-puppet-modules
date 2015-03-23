@@ -1,4 +1,3 @@
-# TODO: This should be extracted into openstacklib during the Kilo cycle
 # Load libraries from aviator here to simulate how they live together in a real puppet run
 $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'modules', 'aviator', 'lib'))
 require 'puppet'
@@ -175,6 +174,31 @@ Enabled="True"
       end
     end
 
+    context 'it retries on connection errors' do
+      let(:resource_attrs) do
+        {
+          :name         => 'stubresource',
+          :auth         => {
+            'username'    => 'test',
+            'password'    => 'abc123',
+            'tenant_name' => 'test',
+            'auth_url'    => 'http://127.0.0.1:5000/v2.0',
+          }
+        }
+      end
+      let(:provider) do
+        Puppet::Provider::Openstack.new(type.new(resource_attrs))
+      end
+      it 'retries' do
+        provider.class.stubs(:openstack)
+                      .with('project', 'list', '--quiet', '--format', 'csv', [['--long', '--os-username', 'test', '--os-password', 'abc123', '--os-tenant-name', 'test', '--os-auth-url', 'http://127.0.0.1:5000/v2.0']])
+                      .raises(Puppet::ExecutionFailure, 'Unable to establish connection')
+                      .then
+                      .returns('')
+        provider.class.expects(:sleep).with(2).returns(nil)
+        provider.request('project', 'list', nil, resource_attrs[:auth], '--long')
+      end
+    end
   end
 
 
@@ -196,6 +220,39 @@ Enabled="True"
     context 'with no valid credentials' do
       it_behaves_like 'it has no credentials' do
         let(:provider) { Puppet::Provider::Openstack.dup }
+      end
+    end
+
+  end
+
+  describe 'parse_csv' do
+    context 'with mixed stderr' do
+      text = "ERROR: Testing\n\"field\",\"test\",1,2,3\n"
+      csv = Puppet::Provider::Openstack.parse_csv(text)
+      it 'should ignore non-CSV text at the beginning of the input' do
+        expect(csv).to be_kind_of(Array)
+        expect(csv[0]).to match_array(['field', 'test', '1', '2', '3'])
+        expect(csv.size).to eq(1)
+      end
+    end
+
+    context 'with \r\n line endings' do
+      text = "ERROR: Testing\r\n\"field\",\"test\",1,2,3\r\n"
+      csv = Puppet::Provider::Openstack.parse_csv(text)
+      it 'ignore the carriage returns' do
+        expect(csv).to be_kind_of(Array)
+        expect(csv[0]).to match_array(['field', 'test', '1', '2', '3'])
+        expect(csv.size).to eq(1)
+      end
+    end
+
+    context 'with embedded newlines' do
+      text = "ERROR: Testing\n\"field\",\"te\nst\",1,2,3\n"
+      csv = Puppet::Provider::Openstack.parse_csv(text)
+      it 'should parse correctly' do
+        expect(csv).to be_kind_of(Array)
+        expect(csv[0]).to match_array(['field', "te\nst", '1', '2', '3'])
+        expect(csv.size).to eq(1)
       end
     end
   end

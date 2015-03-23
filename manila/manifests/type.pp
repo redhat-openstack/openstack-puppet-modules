@@ -69,13 +69,13 @@ define manila::type (
   if ($set_value and $set_key) {
     Exec["manila type-create ${volume_name}"] ->
     manila::type_set { $set_value:
-      type            => $volume_name,
-      key             => $set_key,
-      os_password     => $os_password,
-      os_tenant_name  => $os_tenant_name,
-      os_username     => $os_username,
-      os_auth_url     => $os_auth_url,
-      os_region_name  => $os_region_name,
+      type           => $volume_name,
+      key            => $set_key,
+      os_password    => $os_password,
+      os_tenant_name => $os_tenant_name,
+      os_username    => $os_username,
+      os_auth_url    => $os_auth_url,
+      os_region_name => $os_region_name,
     }
   }
 }

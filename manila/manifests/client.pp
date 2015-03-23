@@ -4,14 +4,14 @@
 #
 # === Parameters
 #
-# [*ensure*]
+# [*package_ensure*]
 #   Ensure state for package. Defaults to 'present'.
 #
-class manila::client(
+class manila::client (
   $package_ensure = 'present'
 ) {
 
-  include manila::params
+  include ::manila::params
 
   package { 'python-manilaclient':
     ensure => $package_ensure,

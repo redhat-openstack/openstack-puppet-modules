@@ -17,7 +17,7 @@ describe 'manila::type' do
   end
 
   it 'should have its execs' do
-    should contain_exec('manila type-create hippo').with(
+    is_expected.to contain_exec('manila type-create hippo').with(
       :command => 'manila type-create hippo',
       :environment => [
         'OS_TENANT_NAME=admin',
@@ -26,7 +26,7 @@ describe 'manila::type' do
         'OS_AUTH_URL=http://127.127.127.1:5000/v2.0/'],
       :unless  => 'manila type-list | grep hippo',
       :require => 'Package[python-manilaclient]')
-    should contain_exec('manila type-key hippo set volume_backend_name=name1')
-    should contain_exec('manila type-key hippo set volume_backend_name=name2')
+    is_expected.to contain_exec('manila type-key hippo set volume_backend_name=name1')
+    is_expected.to contain_exec('manila type-key hippo set volume_backend_name=name2')
   end
 end

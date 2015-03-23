@@ -56,14 +56,14 @@ class manila::share::generic (
 ) {
 
   manila::backend::generic { 'DEFAULT':
-    smb_template_config_path          => $smb_template_config_path,
-    volume_name_template              => $volume_name_template,
-    volume_snapshot_name_template     => $volume_snapshot_name_template,
-    share_mount_path                  => $share_mount_path,
-    max_time_to_create_volume         => $max_time_to_create_volume,
-    max_time_to_attach                => $max_time_to_attach,
-    service_instance_smb_config_path  => $service_instance_smb_config_path,
-    share_helpers                     => $share_helpers,
-    share_volume_fstype               => $share_volume_fstype,
+    smb_template_config_path         => $smb_template_config_path,
+    volume_name_template             => $volume_name_template,
+    volume_snapshot_name_template    => $volume_snapshot_name_template,
+    share_mount_path                 => $share_mount_path,
+    max_time_to_create_volume        => $max_time_to_create_volume,
+    max_time_to_attach               => $max_time_to_attach,
+    service_instance_smb_config_path => $service_instance_smb_config_path,
+    share_helpers                    => $share_helpers,
+    share_volume_fstype              => $share_volume_fstype,
   }
 }

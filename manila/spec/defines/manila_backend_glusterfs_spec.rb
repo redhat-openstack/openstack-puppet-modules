@@ -13,13 +13,13 @@ describe 'manila::backend::glusterfs' do
     end
 
     it 'configures glusterfs share driver' do
-      should contain_manila_config('mygluster/share_backend_name').with_value(
+      is_expected.to contain_manila_config('mygluster/share_backend_name').with_value(
         'mygluster')
-      should contain_manila_config('mygluster/share_driver').with_value(
+      is_expected.to contain_manila_config('mygluster/share_driver').with_value(
         'manila.share.drivers.glusterfs.GlusterfsShareDriver')
-      should contain_manila_config('mygluster/glusterfs_volumes_config').with_value(
+      is_expected.to contain_manila_config('mygluster/glusterfs_volumes_config').with_value(
         '/etc/manila/glusterfs_volumes')
-      should contain_manila_config('mygluster/glusterfs_mount_point_base').with_value(
+      is_expected.to contain_manila_config('mygluster/glusterfs_mount_point_base').with_value(
         '$state_path/mnt')
     end
   end

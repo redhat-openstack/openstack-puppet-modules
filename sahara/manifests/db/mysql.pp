@@ -6,8 +6,7 @@
 # === Parameters
 #
 # [*password*]
-#   (Mandatory) Password to connect to the database.
-#   Defaults to 'false'.
+#   (Required) Password to connect to the database.
 #
 # [*dbname*]
 #   (Optional) Name of the database.
@@ -30,8 +29,7 @@
 #   Defaults to 'utf8'.
 #
 # [*collate*]
-#   (Optional) The database collate.
-#   Only used with mysql modules >= 2.2.
+#   (Optional) Charset collate of sahara database.
 #    Defaults to 'utf8_unicode_ci'.
 #
 class sahara::db::mysql(

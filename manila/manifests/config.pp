@@ -18,10 +18,10 @@
 #     DEFAULT/bar:
 #       value: barValue
 #
-# [**manila_config**]
+# [*manila_config*]
 #   (optional) Allow configuration of manila.conf configurations.
 #
-# [**api_paste_ini_config**]
+# [*api_paste_ini_config*]
 #   (optional) Allow configuration of /etc/manila/api-paste.ini configurations.
 #
 #   NOTE: The configuration MUST NOT be already handled by this module

@@ -4,15 +4,15 @@
 #
 # === Parameters
 #
-# [*enabled_backends*]
-#   (required) a list of ini sections to enable.
-#     This should contain names used in ceph::backend::* resources.
-#     Example: ['share1', 'share2', 'sata3']
+# [*enabled_share_backends*]
+#   (Required) a list of ini sections to enable.
+#   This should contain names used in ceph::backend::* resources.
+#   Example: ['share1', 'share2', 'sata3']
 #
 # Author: Andrew Woodward <awoodward@mirantis.com>
 class manila::backends (
-  $enabled_share_backends    = undef
-  ){
+  $enabled_share_backends = undef
+) {
 
   # Maybe this could be extented to dynamicly find the enabled names
   manila_config {

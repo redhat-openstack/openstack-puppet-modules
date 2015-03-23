@@ -18,13 +18,13 @@ describe 'gnocchi::api' do
     context 'with default parameters' do
 
       it 'installs gnocchi-api package and service' do
-        should contain_service('gnocchi-api').with(
+        is_expected.to contain_service('gnocchi-api').with(
           :name      => platform_params[:api_service_name],
           :ensure    => 'running',
           :hasstatus => true,
           :enable    => true
         )
-        should contain_package('gnocchi-api').with(
+        is_expected.to contain_package('gnocchi-api').with(
           :name   => platform_params[:api_package_name],
           :ensure => 'present',
           :notify => 'Service[gnocchi-api]'
@@ -32,13 +32,13 @@ describe 'gnocchi::api' do
       end
 
       it 'configures gnocchi-api with default parameters' do
-        should contain_gnocchi_config('DEFAULT/verbose').with_value(false)
-        should contain_gnocchi_config('DEFAULT/debug').with_value(false)
-        should contain_gnocchi_config('keystone_authtoken/identity_uri').with_value(params[:identity_uri])
-        should contain_gnocchi_config('keystone_authtoken/admin_tenant_name').with_value(params[:keystone_tenant])
-        should contain_gnocchi_config('keystone_authtoken/admin_user').with_value(params[:keystone_user])
-        should contain_gnocchi_config('keystone_authtoken/admin_password').with_value(params[:keystone_password])
-        should contain_gnocchi_config('keystone_authtoken/admin_password').with_value(params[:keystone_password]).with_secret(true)
+        is_expected.to contain_gnocchi_config('DEFAULT/verbose').with_value(false)
+        is_expected.to contain_gnocchi_config('DEFAULT/debug').with_value(false)
+        is_expected.to contain_gnocchi_config('keystone_authtoken/identity_uri').with_value(params[:identity_uri])
+        is_expected.to contain_gnocchi_config('keystone_authtoken/admin_tenant_name').with_value(params[:keystone_tenant])
+        is_expected.to contain_gnocchi_config('keystone_authtoken/admin_user').with_value(params[:keystone_user])
+        is_expected.to contain_gnocchi_config('keystone_authtoken/admin_password').with_value(params[:keystone_password])
+        is_expected.to contain_gnocchi_config('keystone_authtoken/admin_password').with_value(params[:keystone_password]).with_secret(true)
       end
 
       context 'when using MySQL' do
@@ -47,8 +47,8 @@ describe 'gnocchi::api' do
              database_connection   => 'mysql://gnocchi:pass@10.0.0.1/gnocchi'}"
         end
         it 'configures gnocchi-api with RabbitMQ' do
-          should contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi')
-          should contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi').with_secret(true)
+          is_expected.to contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi')
+          is_expected.to contain_gnocchi_config('database/connection').with_value('mysql://gnocchi:pass@10.0.0.1/gnocchi').with_secret(true)
         end
       end
     end

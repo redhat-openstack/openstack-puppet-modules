@@ -1,4 +1,3 @@
-# TODO: This should be extracted into openstacklib during the kilo cycle
 # Add the auth parameter to whatever type is given
 module Puppet::Util::Openstack
   def self.add_openstack_type_methods(type, comment)

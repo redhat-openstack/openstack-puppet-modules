@@ -68,7 +68,7 @@ describe 'ironic::keystone::auth' do
     end
 
     #FIXME it { should contain_keystone_endpoint('RegionOne/ironic').with_notify('Service[ironic-server]') }
-  end
+ end
 
   describe 'when overriding public_protocol, public_port and public address' do
     let :params do
@@ -100,4 +100,62 @@ describe 'ironic::keystone::auth' do
     it { should contain_keystone_service('ironicy') }
     it { should contain_keystone_endpoint('RegionOne/ironicy') }
   end
+
+  describe 'when overriding service name' do
+    let :params do
+      {
+        :service_name => 'ironic_service',
+        :password     => 'ironic_password',
+      }
+    end
+
+    it { should contain_keystone_user('ironic') }
+    it { should contain_keystone_user_role('ironic@services') }
+    it { should contain_keystone_service('ironic_service') }
+    it { should contain_keystone_endpoint('RegionOne/ironic_service') }
+  end
+
+  describe 'when disabling user configuration' do
+
+    let :params do
+      {
+        :password       => 'ironic_password',
+        :configure_user => false
+      }
+    end
+
+    it { should_not contain_keystone_user('ironic') }
+
+    it { should contain_keystone_user_role('ironic@services') }
+
+    it { should contain_keystone_service('ironic').with(
+      :ensure      => 'present',
+      :type        => 'baremetal',
+      :description => 'Ironic Networking Service'
+    ) }
+
+  end
+
+  describe 'when disabling user and user role configuration' do
+
+    let :params do
+      {
+        :password            => 'ironic_password',
+        :configure_user      => false,
+        :configure_user_role => false
+      }
+    end
+
+    it { should_not contain_keystone_user('ironic') }
+
+    it { should_not contain_keystone_user_role('ironic@services') }
+
+    it { should contain_keystone_service('ironic').with(
+      :ensure      => 'present',
+      :type        => 'baremetal',
+      :description => 'Ironic Networking Service'
+    ) }
+
+  end
+
 end
