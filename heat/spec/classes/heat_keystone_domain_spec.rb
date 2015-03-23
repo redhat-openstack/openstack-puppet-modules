@@ -21,7 +21,7 @@ describe 'heat::keystone::domain' do
     end
 
     it 'should configure heat domain id' do
-      should contain_heat_domain_id_setter('heat_domain_id').with(
+      is_expected.to contain_heat_domain_id_setter('heat_domain_id').with(
         :ensure           => 'present',
         :domain_name      => params[:domain_name],
         :auth_url         => params[:auth_url],
@@ -32,10 +32,11 @@ describe 'heat::keystone::domain' do
     end
 
     it 'should exec helper script' do
-      should contain_exec('heat_domain_create').with(
-        :command     => 'heat-keystone-setup-domain &>/dev/null',
+      is_expected.to contain_exec('heat_domain_create').with(
+        :command     => 'heat-keystone-setup-domain',
         :path        => '/usr/bin',
         :require     => 'Package[heat-common]',
+        :logoutput   => 'on_failure',
         :environment => [
             "OS_USERNAME=#{params[:keystone_admin]}",
             "OS_PASSWORD=#{params[:keystone_password]}",
