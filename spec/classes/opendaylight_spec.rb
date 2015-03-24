@@ -79,8 +79,18 @@ describe 'opendaylight' do
       end
     end
 
+    # All tests for OSs in the Debian family (Ubuntu)
+    describe 'OS family Debian' do
+      osfamily = 'Debian'
+
+      # All tests for Ubuntu 14.04
+      describe 'Ubuntu' do
+        operatingsystem = 'Ubuntu'
+      end
+    end
+
     # All tests for unsupported OS families
-    ['Debian', 'Suse', 'Solaris'].each do |osfamily|
+    ['Suse', 'Solaris'].each do |osfamily|
       context "OS family #{osfamily}" do
         let(:facts) {{
           :osfamily => osfamily,
