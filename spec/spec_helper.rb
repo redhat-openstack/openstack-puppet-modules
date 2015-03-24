@@ -215,6 +215,10 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
   end
 end
 
+# Shared tests Ubuntu 14.04
+def ubuntu_tests()
+end
+
 # Shared tests for unsupported OSs
 def unsupported_os_tests(expected_err_msg)
   # Confirm that classes fail on unsupported OSs

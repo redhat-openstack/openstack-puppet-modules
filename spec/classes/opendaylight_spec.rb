@@ -86,6 +86,34 @@ describe 'opendaylight' do
       # All tests for Ubuntu 14.04
       describe 'Ubuntu' do
         operatingsystem = 'Ubuntu'
+
+        # All tests for supported versions of CentOS
+        ['14.04'].each do |operatingsystemmajrelease|
+          context "#{operatingsystemmajrelease}" do
+            let(:facts) {{
+              :osfamily => osfamily,
+              :operatingsystem => operatingsystem,
+              :operatingsystemmajrelease => operatingsystemmajrelease,
+            }}
+            # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            ubuntu_tests
+          end
+        end
+
+        # All tests for unsupported versions of CentOS
+        ['12.04', '12.10', '13.04', '13.10', '14.10', '15.04'].each do |operatingsystemmajrelease|
+          context "#{operatingsystemmajrelease}" do
+            let(:facts) {{
+              :osfamily => osfamily,
+              :operatingsystem => operatingsystem,
+              :operatingsystemmajrelease => operatingsystemmajrelease,
+            }}
+            # Run shared tests applicable to all unsupported OSs
+            # Note that this function is defined in spec_helper
+            unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
+          end
+        end
       end
     end
 
