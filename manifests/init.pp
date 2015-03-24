@@ -26,8 +26,14 @@ class opendaylight (
 ) inherits ::opendaylight::params {
 
   # Validate OS family
-  if $::osfamily != 'RedHat' {
-    fail("Unsupported OS family: ${::osfamily}")
+  case $::osfamily {
+    Debian: {
+        warning('Debian family is valid but only installable with tarball method')
+    }
+    RedHat: {}
+    default: {
+        fail("Unsupported OS family: ${::osfamily}")
+    }
   }
 
   # Validate OS
@@ -41,6 +47,12 @@ class opendaylight (
     fedora: {
       # Fedora distros < 20 are EOL as of Jan 6th 2015
       if ! ($::operatingsystemmajrelease in [20, 21]) {
+        fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
+      }
+    }
+    Ubuntu: {
+      if $::operatingsystemmajrelease != '14.04' {
+        # Only tested on 14.04
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
     }
