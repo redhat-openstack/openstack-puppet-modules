@@ -35,9 +35,13 @@ class opendaylight::install {
   }
   elsif $opendaylight::install_method == 'tarball' {
     # Install Java 7
+    $package = $::osfamily ? {
+      'RedHat' => 'java-1.7.0-openjdk',
+      'Debian' => 'java7-jdk',
+    }
     class { 'java':
       # NB: ODL is currently in the process of moving to Java 8
-      package => 'java-1.7.0-openjdk',
+      package => $package,
     }
 
     # Create and configure the odl user
@@ -83,27 +87,6 @@ class opendaylight::install {
       before           => [File['/opt/opendaylight/'], User['odl']],
     }
 
-    # Download ODL systemd .service file and put in right location
-    archive { 'opendaylight-systemd':
-      ensure           => present,
-      # URL from which ODL's systemd unitfile can be downloaded
-      url              => $opendaylight::unitfile_url,
-      # Will end up installing /usr/lib/systemd/system/opendaylight.service
-      target           => '/usr/lib/systemd/system/',
-      # Required by archive mod for correct exec `creates` param
-      root_dir         => 'opendaylight.service',
-      # ODL doesn't provide a checksum in the expected path, would fail
-      checksum         => false,
-      # This discards top-level dir of extracted tarball
-      # Required to avoid a subdir in system dir, generally get proper path
-      strip_components => 1,
-      # May end up with HTTP redirect output in a text file without this
-      # Note that the curl'd down file would still have a .tar.gz name
-      follow_redirects => true,
-      # The unitfile should exist before we try to set its user/group/mode
-      before           => File['/usr/lib/systemd/system/opendaylight.service'],
-    }
-
     # Set the user:group owners and mode of ODL dir
     file { '/opt/opendaylight/':
       # ensure=>dir and recurse=>true are required for managing recursively
@@ -117,17 +100,54 @@ class opendaylight::install {
       require => [Archive['opendaylight'], Group['odl'], User['odl']],
     }
 
-    # Set the user:group owners and mode of ODL's systemd .service file
-    file { '/usr/lib/systemd/system/opendaylight.service':
-      # It should be a normal file
-      ensure  => 'file',
-      # Set user:group owners of ODL systemd .service file
-      owner   => 'root',
-      group   => 'root',
-      # Set mode of ODL systemd .service file
-      mode    => '0644',
-      # Should happen after the ODL systemd .service file has been extracted
-      require => Archive['opendaylight-systemd'],
+    if ( $::osfamily == 'RedHat' ){
+        # Download ODL systemd .service file and put in right location
+        archive { 'opendaylight-systemd':
+          ensure           => present,
+          url              => $opendaylight::unitfile_url,
+          # Will end up installing /usr/lib/systemd/system/opendaylight.service
+          target           => '/usr/lib/systemd/system/',
+          # Required by archive mod for correct exec `creates` param
+          root_dir         => 'opendaylight.service',
+          # ODL doesn't provide a checksum in the expected path, would fail
+          checksum         => false,
+          # This discards top-level dir of extracted tarball
+          # Required to get proper /opt/opendaylight-<version> path
+          strip_components => 1,
+          # May end up with an HTML redirect output in a text file without this
+          # Note that the curl'd down file would still have a .tar.gz name
+          follow_redirects => true,
+          # Should exist before we try to set its user/group/mode
+          before           => File['/usr/lib/systemd/system/opendaylight.service'],
+        }
+
+        # Set the user:group owners and mode of ODL's systemd .service file
+        file { '/usr/lib/systemd/system/opendaylight.service':
+          # It should be a normal file
+          ensure  => 'file',
+          # Set user:group owners of ODL systemd .service file
+          owner   => 'root',
+          group   => 'root',
+          # Set mode of ODL systemd .service file
+          mode    => '0644',
+          # Should happen after the ODL systemd .service file has been extracted
+          require => Archive['opendaylight-systemd'],
+        }
+    }
+    elsif ( $::osfamily == 'Debian' ){
+        file { '/etc/init/opendaylight.conf':
+          # It should be a normal file
+          ensure  => 'file',
+          # Set user:group owners of ODL upstart file
+          owner   => 'root',
+          group   => 'root',
+          # Set mode of ODL upstart file
+          mode    => '0644',
+          # Get content from template
+          content => template('opendaylight/upstart.odl.conf'),
+        }
+    }else{
+        fail("Unsupported OS family: ${::osfamily}")
     }
   }
   else {
