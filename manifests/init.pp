@@ -27,10 +27,10 @@ class opendaylight (
 
   # Validate OS family
   case $::osfamily {
-    Debian: {
-        warning('Debian family is valid but only installable with tarball method')
-    }
     RedHat: {}
+    Debian: {
+        warning('Debian has limited support, is less stable, less tested.')
+    }
     default: {
         fail("Unsupported OS family: ${::osfamily}")
     }
@@ -50,7 +50,7 @@ class opendaylight (
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
     }
-    Ubuntu: {
+    ubuntu: {
       if $::operatingsystemmajrelease != '14.04' {
         # Only tested on 14.04
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
