@@ -146,7 +146,8 @@ class opendaylight::install {
           # Get content from template
           content => template('opendaylight/upstart.odl.conf'),
         }
-    }else{
+    }
+    else {
         fail("Unsupported OS family: ${::osfamily}")
     }
   }
