@@ -30,7 +30,7 @@ custom_filters = [
 RSpec::Puppet::Coverage.filters.push(*custom_filters)
 
 # Tests that are common to all possible configurations
-def generic_tests(yum_repo)
+def generic_tests()
   # Confirm that module compiles
   it { should compile }
   it { should compile.with_all_deps }

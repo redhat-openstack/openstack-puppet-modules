@@ -23,7 +23,7 @@ describe 'opendaylight' do
             }}
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
-            generic_tests(yum_repo)
+            generic_tests
           end
         end
 
@@ -59,7 +59,7 @@ describe 'opendaylight' do
             }}
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
-            generic_tests(yum_repo)
+            generic_tests
           end
         end
 
@@ -87,21 +87,33 @@ describe 'opendaylight' do
       describe 'Ubuntu' do
         operatingsystem = 'Ubuntu'
 
-        # All tests for supported versions of CentOS
+        # All tests for supported versions of Ubuntu
         ['14.04'].each do |operatingsystemmajrelease|
           context "#{operatingsystemmajrelease}" do
             let(:facts) {{
               :osfamily => osfamily,
               :operatingsystem => operatingsystem,
               :operatingsystemmajrelease => operatingsystemmajrelease,
+              :lsbdistcodename => 'trusty',
             }}
+
+            # Only the tarball method is supported for Debian-based installs
+            let(:params) {{
+                :install_method => 'tarball',
+            }}
+
             # Run shared tests applicable to all supported OSs
+            # Note that this function is defined in spec_helper
+            # TODO: These are currently under development
+            #generic_tests
+
+            # Run Ubuntu-specific tests
             # Note that this function is defined in spec_helper
             ubuntu_tests
           end
         end
 
-        # All tests for unsupported versions of CentOS
+        # All tests for unsupported versions of Ubuntu
         ['12.04', '12.10', '13.04', '13.10', '14.10', '15.04'].each do |operatingsystemmajrelease|
           context "#{operatingsystemmajrelease}" do
             let(:facts) {{
@@ -156,7 +168,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all supported OSs
         # Note that this function is defined in spec_helper
-        generic_tests(yum_repo)
+        generic_tests
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
@@ -178,7 +190,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all supported OSs
         # Note that this function is defined in spec_helper
-        generic_tests(yum_repo)
+        generic_tests
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
@@ -201,7 +213,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all supported OSs
         # Note that this function is defined in spec_helper
-        generic_tests(yum_repo)
+        generic_tests
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
@@ -224,7 +236,7 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all supported OSs
         # Note that this function is defined in spec_helper
-        generic_tests(yum_repo)
+        generic_tests
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
@@ -259,7 +271,7 @@ describe 'opendaylight' do
 
       # Run shared tests applicable to all supported OSs
       # Note that this function is defined in spec_helper
-      generic_tests(yum_repo)
+      generic_tests
 
       # Run test that specialize in checking Karaf feature installs
       # Note that this function is defined in spec_helper
@@ -286,7 +298,7 @@ describe 'opendaylight' do
 
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          generic_tests(yum_repo)
+          generic_tests
 
           # Run test that specialize in checking Karaf feature installs
           # Note that this function is defined in spec_helper
@@ -311,7 +323,7 @@ describe 'opendaylight' do
 
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          generic_tests(yum_repo)
+          generic_tests
 
           # Run test that specialize in checking Karaf feature installs
           # Note that this function is defined in spec_helper
@@ -339,7 +351,7 @@ describe 'opendaylight' do
 
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          generic_tests(yum_repo)
+          generic_tests
 
           # Run test that specialize in checking Karaf feature installs
           # Note that this function is defined in spec_helper
@@ -365,7 +377,7 @@ describe 'opendaylight' do
 
           # Run shared tests applicable to all supported OSs
           # Note that this function is defined in spec_helper
-          generic_tests(yum_repo)
+          generic_tests
 
           # Run test that specialize in checking Karaf feature installs
           # Note that this function is defined in spec_helper
