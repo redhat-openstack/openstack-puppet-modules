@@ -160,6 +160,22 @@ def karaf_config_validations(options = {})
   end
 end
 
+# Shared function for validations related to the ODL REST port config file
+def port_config_validations(options = {})
+  # NB: This param default should match the one used by the opendaylight
+  #   class, which is defined in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  port = options.fetch(:port, 8080)
+
+  describe file('/opt/opendaylight/configuration/tomcat-server.xml') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+    its(:content) { should match /'    <Connector port="#{port}" protocol="HTTP\/1.1"'$/ }
+  end
+end
+
+
 # Shared function that handles validations specific to RPM-type installs
 def rpm_validations()
   describe yumrepo('opendaylight') do
