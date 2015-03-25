@@ -146,8 +146,8 @@ class opendaylight::install {
         # Set mode of ODL upstart file
         # NB: Unverfied, not sure if this is correct for upstart
         mode    => '0644',
-        # Get content from template
-        content => file('opendaylight/upstart.odl.conf'),
+        # Use Puppet URL for Travis. File stored in opendaylight/files/
+        content => 'puppet:///modules/opendaylight/upstart.odl.conf'
       }
     }
     else {
