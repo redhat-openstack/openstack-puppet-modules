@@ -232,8 +232,18 @@ end
 
 def rpm_install_tests(options = {})
   # Extract params
+  # Choose Yum URL based on OS (CentOS vs Fedora)
+  operatingsystem  = options.fetch(:operatingsystem, 'CentOS')
+  case operatingsystem
+  when 'CentOS'
+    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
+  when 'Fedora'
+    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/'
+  else
+    fail("Unknown operatingsystem: #{operatingsystem}")
+  end
+
   # Default to CentOS 7 Yum repo URL
-  yum_repo = options.fetch(:yum_repo, 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/')
 
   # Confirm presence of RPM-related resources
   it { should contain_yumrepo('opendaylight') }

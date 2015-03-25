@@ -21,6 +21,16 @@ describe 'opendaylight' do
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
             generic_tests
+
+            # Run test that specialize in checking rpm-based installs
+            # NB: Only testing defaults here, specialized rpm tests elsewhere
+            # Note that this function is defined in spec_helper
+            rpm_install_tests(operatingsystem: operatingsystem)
+
+            # Run test that specialize in checking Karaf feature installs
+            # NB: Only testing defaults here, specialized Karaf tests elsewhere
+            # Note that this function is defined in spec_helper
+            karaf_feature_tests
           end
         end
 
@@ -55,6 +65,16 @@ describe 'opendaylight' do
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
             generic_tests
+
+            # Run test that specialize in checking rpm-based installs
+            # NB: Only testing defaults here, specialized rpm tests elsewhere
+            # Note that this function is defined in spec_helper
+            rpm_install_tests
+
+            # Run test that specialize in checking Karaf feature installs
+            # NB: Only testing defaults here, specialized Karaf tests elsewhere
+            # Note that this function is defined in spec_helper
+            karaf_feature_tests
           end
         end
 
@@ -105,7 +125,7 @@ describe 'opendaylight' do
             generic_tests
 
             # Run test that specialize in checking tarball-based installs
-            # NB: Only testing defaults here, specialized Karaf tests elsewhere
+            # NB: Only testing defaults here, specialized tarball tests elsewhere
             # Passing osfamily required to do upstart vs systemd (default) checks
             # Note that this function is defined in spec_helper
             tarball_install_tests(osfamily: osfamily)
