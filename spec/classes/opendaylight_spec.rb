@@ -151,12 +151,7 @@ describe 'opendaylight' do
     osfamily = 'RedHat'
     operatingsystem = 'CentOS'
     operatingsystemmajrelease = '7'
-    # This is the CentOS 7 Yum repo URL
-    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
     describe 'using default features' do
-      # NB: This list should be the same as the one in opendaylight::params
-      # TODO: Remove this possible source of bugs^^
-      default_features = ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']
       context 'and not passing extra features' do
         let(:facts) {{
           :osfamily => osfamily,
@@ -172,7 +167,7 @@ describe 'opendaylight' do
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
-        karaf_feature_tests(default_features)
+        karaf_feature_tests
       end
 
       context 'and passing extra features' do
@@ -194,7 +189,7 @@ describe 'opendaylight' do
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
-        karaf_feature_tests(default_features + extra_features)
+        karaf_feature_tests(extra_features: extra_features)
       end
     end
 
@@ -217,7 +212,7 @@ describe 'opendaylight' do
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
-        karaf_feature_tests(default_features)
+        karaf_feature_tests(default_features: default_features)
       end
 
       context 'and passing extra features' do
@@ -240,7 +235,7 @@ describe 'opendaylight' do
 
         # Run test that specialize in checking Karaf feature installs
         # Note that this function is defined in spec_helper
-        karaf_feature_tests(default_features + extra_features)
+        karaf_feature_tests(default_features: default_features, extra_features: extra_features)
       end
     end
   end

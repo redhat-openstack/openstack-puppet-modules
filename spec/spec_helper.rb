@@ -76,7 +76,16 @@ def generic_tests()
 end
 
 # Shared tests that specialize in testing Karaf feature installs
-def karaf_feature_tests(features)
+def karaf_feature_tests(options = {})
+  # Extract params
+  # NB: This default list should be the same as the one in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  default_features = options.fetch(:default_features, ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
+  extra_features = options.fetch(:extra_features, [])
+
+  # The order of this list concat matters
+  features = default_features + extra_features
+
   # Confirm properties of other resources
   # NB: These hashes don't work with Ruby 1.8.7, but we
   #   don't support 1.8.7 so that's okay. See issue #36.
