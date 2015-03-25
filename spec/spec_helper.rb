@@ -199,6 +199,15 @@ def tarball_install_tests(options = {})
         'mode'    => '0644',
       )
     }
+    expected_msg = 'Debian has limited support, is less stable, less tested.'
+    it {
+      expect {
+        # This could be any check, most (all?) will raise warning
+        should contain_file('/etc/init/opendaylight.conf').to(
+          raise_warning(Puppet::Warning, /#{expected_msg}/)
+        )
+      }
+    }
   else
     fail("Unexpected osfamily #{osfamily}")
   end
@@ -240,16 +249,19 @@ def rpm_install_tests(options = {})
 end
 
 # Shared tests for unsupported OSs
-def unsupported_os_tests(expected_err_msg)
+def unsupported_os_tests(options = {})
+  # Extract params
+  expected_msg = options.fetch(:expected_msg)
+
   # Confirm that classes fail on unsupported OSs
-  it { expect { should contain_class('opendaylight') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_class('opendaylight::install') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_class('opendaylight::config') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_class('opendaylight::service') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
+  it { expect { should contain_class('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_class('opendaylight::install') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_class('opendaylight::config') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_class('opendaylight::service') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
 
   # Confirm that other resources fail on unsupported OSs
-  it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
-  it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /#{expected_err_msg}/) }
+  it { expect { should contain_yumrepo('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
 end

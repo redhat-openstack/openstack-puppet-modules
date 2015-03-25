@@ -34,7 +34,8 @@ describe 'opendaylight' do
             }}
             # Run shared tests applicable to all unsupported OSs
             # Note that this function is defined in spec_helper
-            unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
+            expected_msg = "Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}"
+            unsupported_os_tests(expected_msg: expected_msg)
           end
         end
       end
@@ -67,7 +68,8 @@ describe 'opendaylight' do
             }}
             # Run shared tests applicable to all unsupported OSs
             # Note that this function is defined in spec_helper
-            unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
+            expected_msg = "Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}"
+            unsupported_os_tests(expected_msg: expected_msg)
           end
         end
       end
@@ -88,11 +90,12 @@ describe 'opendaylight' do
               :osfamily => osfamily,
               :operatingsystem => operatingsystem,
               :operatingsystemmajrelease => operatingsystemmajrelease,
+              # TODO: Do more elegantly. Java mod uses codenames to ID version.
               :lsbdistcodename => 'trusty',
               :path => ['/usr/local/bin', '/usr/bin', '/bin'],
             }}
 
-            # Only the tarball method is supported for Debian-based installs
+            # NB: Only tarball installs are supported for Debian family OSs
             let(:params) {{
                 :install_method => 'tarball',
             }}
@@ -118,7 +121,8 @@ describe 'opendaylight' do
             }}
             # Run shared tests applicable to all unsupported OSs
             # Note that this function is defined in spec_helper
-            unsupported_os_tests("Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}")
+            expected_msg = "Unsupported OS: #{operatingsystem} #{operatingsystemmajrelease}"
+            unsupported_os_tests(expected_msg: expected_msg)
           end
         end
       end
@@ -133,7 +137,8 @@ describe 'opendaylight' do
 
         # Run shared tests applicable to all unsupported OSs
         # Note that this function is defined in spec_helper
-        unsupported_os_tests("Unsupported OS family: #{osfamily}")
+        expected_msg = "Unsupported OS family: #{osfamily}"
+        unsupported_os_tests(expected_msg: expected_msg)
       end
     end
   end
