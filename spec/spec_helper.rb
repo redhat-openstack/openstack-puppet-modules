@@ -87,76 +87,82 @@ def karaf_feature_tests(features)
   }
 end
 
-def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
-  case method
-  when 'rpm'
-    # Confirm presence of RPM-related resources
-    it { should contain_yumrepo('opendaylight') }
-    it { should contain_package('opendaylight') }
+def tarball_install_tests(options = {})
+  # Extract params
+  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.2-Helium-SR2/distribution-karaf-0.2.2-Helium-SR2.tar.gz')
+  unitfile_url = options.fetch(:unitfile_url, 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz')
+  osfamily = options.fetch(:osfamily, 'RedHat')
 
-    # Confirm relationships between RPM-related resources
-    it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
-    it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
+  # Confirm presence of tarball-related resources
+  it { should contain_archive('opendaylight') }
+  it { should contain_class('java') }
+  it { should contain_file('/opt/opendaylight/') }
+  it { should contain_user('odl') }
+  it { should contain_group('odl') }
 
-    # Confirm properties of RPM-related resources
-    # NB: These hashes don't work with Ruby 1.8.7, but we
-    #   don't support 1.8.7 so that's okay. See issue #36.
-    it {
-      should contain_yumrepo('opendaylight').with(
-        'enabled'     => '1',
-        'gpgcheck'    => '0',
-        'descr'       => 'OpenDaylight SDN controller',
-        'baseurl'     => yum_repo,
-      )
-    }
-    it {
-      should contain_package('opendaylight').with(
-        'ensure'   => 'present',
-      )
-    }
-  when 'tarball'
-    if tarball_url == ''
-      fail('Expected tarball_url param')
-    end
+  # Confirm relationships between tarball-related resources
+  it { should contain_archive('opendaylight').that_comes_before('File[/opt/opendaylight/]') }
+  it { should contain_archive('opendaylight').that_comes_before('User[odl]') }
+  it { should contain_file('/opt/opendaylight/').that_requires('Archive[opendaylight]') }
+  it { should contain_file('/opt/opendaylight/').that_requires('Group[odl]') }
+  it { should contain_file('/opt/opendaylight/').that_requires('User[odl]') }
+  it { should contain_user('odl').that_comes_before('File[/opt/opendaylight/]') }
+  it { should contain_user('odl').that_requires('Archive[opendaylight]') }
+  it { should contain_user('odl').that_requires('Group[odl]') }
+  it { should contain_group('odl').that_comes_before('File[/opt/opendaylight/]') }
+  it { should contain_group('odl').that_comes_before('User[odl]') }
 
-    if unitfile_url == ''
-      fail('Expected unitfile_url param')
-    end
+  # Confirm properties of tarball-related resources
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
+  it {
+    should contain_archive('opendaylight').with(
+      'ensure'           => 'present',
+      'url'              => tarball_url,
+      'target'           => '/opt/opendaylight/',
+      'checksum'         => false,
+      'strip_components' => 1,
+      'timeout'          => 600,
+    )
+  }
+  it {
+    should contain_file('/opt/opendaylight/').with(
+      'ensure'  => 'directory',
+      'recurse' => true,
+      'owner'   => 'odl',
+      'group'   => 'odl',
+    )
+  }
+  it {
+    should contain_user('odl').with(
+      'name'       => 'odl',
+      'ensure'     => 'present',
+      'home'       => '/opt/opendaylight/',
+      'membership' => 'minimum',
+      'groups'     => 'odl',
+    )
+  }
+  it {
+    should contain_group('odl').with(
+      'name'       => 'odl',
+      'ensure'     => 'present',
+    )
+  }
 
-    # Confirm presence of tarball-related resources
-    it { should contain_archive('opendaylight') }
+  # OS-specific validations
+  case osfamily
+  when 'RedHat'
+    # Validations specific to Red Hat family OSs (RHEL/CentOS/Fedora)
     it { should contain_archive('opendaylight-systemd') }
-    it { should contain_class('java') }
-    it { should contain_file('/opt/opendaylight/') }
     it { should contain_file('/usr/lib/systemd/system/opendaylight.service') }
-    it { should contain_user('odl') }
-    it { should contain_group('odl') }
-
-    # Confirm relationships between tarball-related resources
-    it { should contain_archive('opendaylight').that_comes_before('File[/opt/opendaylight/]') }
-    it { should contain_archive('opendaylight').that_comes_before('User[odl]') }
     it { should contain_archive('opendaylight-systemd').that_comes_before('File[/usr/lib/systemd/system/opendaylight.service]') }
-    it { should contain_file('/opt/opendaylight/').that_requires('Archive[opendaylight]') }
-    it { should contain_file('/opt/opendaylight/').that_requires('Group[odl]') }
-    it { should contain_file('/opt/opendaylight/').that_requires('User[odl]') }
     it { should contain_file('/usr/lib/systemd/system/opendaylight.service').that_requires('Archive[opendaylight-systemd]') }
-    it { should contain_user('odl').that_comes_before('File[/opt/opendaylight/]') }
-    it { should contain_user('odl').that_requires('Archive[opendaylight]') }
-    it { should contain_user('odl').that_requires('Group[odl]') }
-    it { should contain_group('odl').that_comes_before('File[/opt/opendaylight/]') }
-    it { should contain_group('odl').that_comes_before('User[odl]') }
 
-    # Confirm properties of tarball-related resources
     # NB: These hashes don't work with Ruby 1.8.7, but we
     #   don't support 1.8.7 so that's okay. See issue #36.
     it {
-      should contain_archive('opendaylight').with(
-        'ensure'           => 'present',
-        'url'              => tarball_url,
-        'target'           => '/opt/opendaylight/',
-        'checksum'         => false,
-        'strip_components' => 1,
-        'timeout'          => 600,
+      should contain_package('java').with(
+        'name' => 'java-1.7.0-openjdk',
       )
     }
     it {
@@ -171,19 +177,6 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
       )
     }
     it {
-      should contain_package('java').with(
-        'name' => 'java-1.7.0-openjdk',
-      )
-    }
-    it {
-      should contain_file('/opt/opendaylight/').with(
-        'ensure'  => 'directory',
-        'recurse' => true,
-        'owner'   => 'odl',
-        'group'   => 'odl',
-      )
-    }
-    it {
       should contain_file('/usr/lib/systemd/system/opendaylight.service').with(
         'ensure'  => 'file',
         'owner'   => 'root',
@@ -191,32 +184,59 @@ def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
         'mode'    => '0644',
       )
     }
+  when 'Debian'
+    # Validations specific to Debain family OSs (Ubuntu)
     it {
-      should contain_user('odl').with(
-        'name'       => 'odl',
-        'ensure'     => 'present',
-        'home'       => '/opt/opendaylight/',
-        'membership' => 'minimum',
-        'groups'     => 'odl',
+      should contain_package('java').with(
+        'name' => 'java7-jdk',
       )
     }
     it {
-      should contain_group('odl').with(
-        'name'       => 'odl',
-        'ensure'     => 'present',
+      should contain_file('/etc/init/opendaylight.conf').with(
+        'ensure'  => 'file',
+        'owner'   => 'root',
+        'group'   => 'root',
+        'mode'    => '0644',
       )
     }
-
-    # Verify that there are no unexpected resources from RPM-type installs
-    it { should_not contain_yumrepo('opendaylight') }
-    it { should_not contain_package('opendaylight') }
   else
-    fail("Unexpected install method: #{method}")
+    fail("Unexpected osfamily #{osfamily}")
   end
+
+  # Verify that there are no unexpected resources from RPM-type installs
+  it { should_not contain_yumrepo('opendaylight') }
+  it { should_not contain_package('opendaylight') }
 end
 
-# Shared tests Ubuntu 14.04
-def ubuntu_tests()
+def rpm_install_tests(options = {})
+  # Extract params
+  # Default to CentOS 7 Yum repo URL
+  yum_repo = options.fetch(:yum_repo, 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/')
+
+  # Confirm presence of RPM-related resources
+  it { should contain_yumrepo('opendaylight') }
+  it { should contain_package('opendaylight') }
+
+  # Confirm relationships between RPM-related resources
+  it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight]') }
+  it { should contain_yumrepo('opendaylight').that_comes_before('Package[opendaylight]') }
+
+  # Confirm properties of RPM-related resources
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
+  it {
+    should contain_yumrepo('opendaylight').with(
+      'enabled'     => '1',
+      'gpgcheck'    => '0',
+      'descr'       => 'OpenDaylight SDN controller',
+      'baseurl'     => yum_repo,
+    )
+  }
+  it {
+    should contain_package('opendaylight').with(
+      'ensure'   => 'present',
+    )
+  }
 end
 
 # Shared tests for unsupported OSs

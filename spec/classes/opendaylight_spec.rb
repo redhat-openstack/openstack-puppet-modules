@@ -10,9 +10,6 @@ describe 'opendaylight' do
       describe 'Fedora' do
         operatingsystem = 'Fedora'
 
-        # This is the Fedora Yum repo URL
-        yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/'
-
         # All tests for supported versions of Fedora
         ['20', '21'].each do |operatingsystemmajrelease|
           context "#{operatingsystemmajrelease}" do
@@ -45,9 +42,6 @@ describe 'opendaylight' do
       # All tests for CentOS
       describe 'CentOS' do
         operatingsystem = 'CentOS'
-
-        # This is the CentOS 7 Yum repo URL
-        yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
 
         # All tests for supported versions of CentOS
         ['7'].each do |operatingsystemmajrelease|
@@ -107,9 +101,10 @@ describe 'opendaylight' do
             # Note that this function is defined in spec_helper
             generic_tests
 
-            # Run Ubuntu-specific tests
+            # Run test that specialize in checking tarball-based installs
+            # Passing osfamily required to do upstart vs systemd (default) checks
             # Note that this function is defined in spec_helper
-            ubuntu_tests
+            tarball_install_tests(osfamily: osfamily)
           end
         end
 
@@ -254,8 +249,6 @@ describe 'opendaylight' do
     operatingsystem = 'CentOS'
     operatingsystemrelease = '7.0'
     operatingsystemmajrelease = '7'
-    # This is the CentOS 7 Yum repo URL
-    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
 
     # All tests for RPM install method
     context 'RPM' do
@@ -273,17 +266,15 @@ describe 'opendaylight' do
       # Note that this function is defined in spec_helper
       generic_tests
 
-      # Run test that specialize in checking Karaf feature installs
+      # Run test that specialize in checking RPM-based installs
       # Note that this function is defined in spec_helper
-      install_method_tests('rpm', yum_repo)
+      rpm_install_tests
     end
 
     # All tests for tarball install method
     describe 'tarball' do
       describe 'using default tarball_url' do
-        tarball_url = 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.2-Helium-SR2/distribution-karaf-0.2.2-Helium-SR2.tar.gz'
         context 'using default unitfile_url' do
-          unitfile_url = 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz'
           let(:facts) {{
             :osfamily => osfamily,
             :operatingsystem => operatingsystem,
@@ -300,9 +291,9 @@ describe 'opendaylight' do
           # Note that this function is defined in spec_helper
           generic_tests
 
-          # Run test that specialize in checking Karaf feature installs
+          # Run test that specialize in checking tarball-based installs
           # Note that this function is defined in spec_helper
-          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+          tarball_install_tests
         end
 
         context 'overriding default unitfile_url' do
@@ -325,9 +316,9 @@ describe 'opendaylight' do
           # Note that this function is defined in spec_helper
           generic_tests
 
-          # Run test that specialize in checking Karaf feature installs
+          # Run test that specialize in checking tarball-based installs
           # Note that this function is defined in spec_helper
-          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+          tarball_install_tests(unitfile_url: unitfile_url)
         end
       end
 
@@ -353,9 +344,9 @@ describe 'opendaylight' do
           # Note that this function is defined in spec_helper
           generic_tests
 
-          # Run test that specialize in checking Karaf feature installs
+          # Run test that specialize in checking tarball-based installs
           # Note that this function is defined in spec_helper
-          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+          tarball_install_tests(tarball_url: tarball_url)
         end
 
         context 'overriding default unitfile_url' do
@@ -379,9 +370,9 @@ describe 'opendaylight' do
           # Note that this function is defined in spec_helper
           generic_tests
 
-          # Run test that specialize in checking Karaf feature installs
+          # Run test that specialize in checking tarball-based installs
           # Note that this function is defined in spec_helper
-          install_method_tests('tarball', yum_repo, tarball_url, unitfile_url)
+          tarball_install_tests(tarball_url: tarball_url, unitfile_url: unitfile_url)
         end
       end
     end
