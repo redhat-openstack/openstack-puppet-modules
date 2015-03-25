@@ -118,7 +118,7 @@ describe 'opendaylight' do
 
             # NB: Only tarball installs are supported for Debian family OSs
             let(:params) {{
-                :install_method => 'tarball',
+              :install_method => 'tarball',
             }}
 
             # Run shared tests applicable to all supported OSs
@@ -286,7 +286,7 @@ describe 'opendaylight' do
       }}
 
       let(:params) {{
-          :install_method => 'rpm',
+        :install_method => 'rpm',
       }}
 
       # Run shared tests applicable to all supported OSs
@@ -311,7 +311,7 @@ describe 'opendaylight' do
           }}
 
           let(:params) {{
-              :install_method => 'tarball',
+            :install_method => 'tarball',
           }}
 
           # Run shared tests applicable to all supported OSs
@@ -335,8 +335,8 @@ describe 'opendaylight' do
           }}
 
           let(:params) {{
-              :install_method => 'tarball',
-              :unitfile_url => unitfile_url,
+            :install_method => 'tarball',
+            :unitfile_url => unitfile_url,
           }}
 
           # Run shared tests applicable to all supported OSs
@@ -363,8 +363,8 @@ describe 'opendaylight' do
           }}
 
           let(:params) {{
-              :install_method => 'tarball',
-              :tarball_url => tarball_url,
+            :install_method => 'tarball',
+            :tarball_url => tarball_url,
           }}
 
           # Run shared tests applicable to all supported OSs
@@ -388,9 +388,9 @@ describe 'opendaylight' do
           }}
 
           let(:params) {{
-              :install_method => 'tarball',
-              :tarball_url => tarball_url,
-              :unitfile_url => unitfile_url,
+            :install_method => 'tarball',
+            :tarball_url => tarball_url,
+            :unitfile_url => unitfile_url,
           }}
 
           # Run shared tests applicable to all supported OSs
