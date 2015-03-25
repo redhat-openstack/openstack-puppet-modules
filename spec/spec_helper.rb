@@ -69,6 +69,8 @@ def generic_tests()
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
       'path'        => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
+      'owner'   => 'odl',
+      'group'   => 'odl',
     )
   }
 end
@@ -82,6 +84,8 @@ def karaf_feature_tests(features)
     should contain_file('org.apache.karaf.features.cfg').with(
       'ensure'      => 'file',
       'path'        => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
+      'owner'   => 'odl',
+      'group'   => 'odl',
       'content'     => /^featuresBoot=#{features.join(",")}/
     )
   }
