@@ -89,14 +89,6 @@ def generic_validations()
     it { should be_grouped_into 'odl' }
   end
 
-  # Verify ODL systemd .service file
-  describe file('/usr/lib/systemd/system/opendaylight.service') do
-    it { should be_file }
-    it { should be_owned_by 'root' }
-    it { should be_grouped_into 'root' }
-    it { should be_mode '644' }
-  end
-
   # Verify ODL's systemd service
   describe service('opendaylight') do
     it { should be_enabled }
@@ -128,16 +120,45 @@ def generic_validations()
     it { should_not be_directory }
   end
 
-  # Java 7 should be installed
-  describe package('java-1.7.0-openjdk') do
-    it { should be_installed }
-  end
-
   # OpenDaylight will appear as a Java process
   describe process('java') do
     it { should be_running }
   end
 
+  # Validations specific to the host OS
+  if ['centos-7', 'fedora-20', 'fedora-21'].include? ENV['RS_SET']
+    # Validations for Red Hat family OSs
+
+    # Verify ODL systemd .service file
+    describe file('/usr/lib/systemd/system/opendaylight.service') do
+      it { should be_file }
+      it { should be_owned_by 'root' }
+      it { should be_grouped_into 'root' }
+      it { should be_mode '644' }
+    end
+
+    # Java 7 should be installed
+    describe package('java-1.7.0-openjdk') do
+      it { should be_installed }
+    end
+  elsif ENV['RS_SET'] == 'ubuntu-1404'
+    # Ubuntu-specific validations
+
+    # Verify ODL Upstart config file
+    describe file('/etc/init/opendaylight.conf') do
+      it { should be_file }
+      it { should be_owned_by 'root' }
+      it { should be_grouped_into 'root' }
+      it { should be_mode '644' }
+    end
+
+    # Java 7 should be installed
+    describe package('java7-jdk') do
+      it { should be_installed }
+    end
+  else
+    fail("Unexpected RS_SET (host OS): #{ENV['RS_SET']}")
+  end
 end
 
 # Shared function for validations related to the Karaf config file

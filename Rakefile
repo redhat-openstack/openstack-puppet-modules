@@ -67,10 +67,16 @@ task :fedora_21 do
   sh "RS_SET=fedora-21 bundle exec rake beaker"
 end
 
+desc "Run Beaker tests against Ubuntu 14.04 node."
+task :ubuntu do
+  sh "RS_SET=ubuntu-1404 INSTALL_METHOD=tarball bundle exec rake beaker"
+end
+
 desc "All tests, including Beaker tests against all nodes."
 task :acceptance => [
   :test,
   :centos,
   :fedora_20,
   :fedora_21,
+  :ubuntu,
 ]
