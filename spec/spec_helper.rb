@@ -201,7 +201,7 @@ def tarball_install_tests(options = {})
     # Validations specific to Debain family OSs (Ubuntu)
     it {
       should contain_package('java').with(
-        'name' => 'java7-jdk',
+        'name' => 'openjdk-7-jdk',
       )
     }
     it {

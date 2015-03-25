@@ -153,7 +153,7 @@ def generic_validations()
     end
 
     # Java 7 should be installed
-    describe package('java7-jdk') do
+    describe package('openjdk-7-jdk') do
       it { should be_installed }
     end
   else
