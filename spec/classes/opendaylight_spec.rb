@@ -95,6 +95,7 @@ describe 'opendaylight' do
               :operatingsystem => operatingsystem,
               :operatingsystemmajrelease => operatingsystemmajrelease,
               :lsbdistcodename => 'trusty',
+              :path => ['/usr/local/bin', '/usr/bin', '/bin'],
             }}
 
             # Only the tarball method is supported for Debian-based installs
@@ -105,7 +106,7 @@ describe 'opendaylight' do
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
             # TODO: These are currently under development
-            #generic_tests
+            generic_tests
 
             # Run Ubuntu-specific tests
             # Note that this function is defined in spec_helper
