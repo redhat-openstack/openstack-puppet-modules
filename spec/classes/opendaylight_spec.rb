@@ -112,6 +112,7 @@ describe 'opendaylight' do
               :operatingsystemmajrelease => operatingsystemmajrelease,
               # TODO: Do more elegantly. Java mod uses codenames to ID version.
               :lsbdistcodename => 'trusty',
+              :alternative => 'x86_64',
               :path => ['/usr/local/bin', '/usr/bin', '/bin'],
             }}
 
