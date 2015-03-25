@@ -100,6 +100,7 @@ class opendaylight::install {
       require => [Archive['opendaylight'], Group['odl'], User['odl']],
     }
 
+    # Systemd vs upstart config depends on OS family
     if ( $::osfamily == 'RedHat' ) {
       # Download ODL systemd .service file and put in right location
       archive { 'opendaylight-systemd':
@@ -139,12 +140,14 @@ class opendaylight::install {
         # It should be a normal file
         ensure  => 'file',
         # Set user:group owners of ODL upstart file
+        # NB: Unverfied, not sure if this is correct for upstart
         owner   => 'root',
         group   => 'root',
         # Set mode of ODL upstart file
+        # NB: Unverfied, not sure if this is correct for upstart
         mode    => '0644',
         # Get content from template
-        content => template('opendaylight/upstart.odl.conf'),
+        content => file('opendaylight/upstart.odl.conf'),
       }
     }
     else {
