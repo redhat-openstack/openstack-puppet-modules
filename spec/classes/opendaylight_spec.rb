@@ -105,9 +105,15 @@ describe 'opendaylight' do
             generic_tests
 
             # Run test that specialize in checking tarball-based installs
+            # NB: Only testing defaults here, specialized Karaf tests elsewhere
             # Passing osfamily required to do upstart vs systemd (default) checks
             # Note that this function is defined in spec_helper
             tarball_install_tests(osfamily: osfamily)
+
+            # Run test that specialize in checking Karaf feature installs
+            # NB: Only testing defaults here, specialized Karaf tests elsewhere
+            # Note that this function is defined in spec_helper
+            karaf_feature_tests
           end
         end
 
