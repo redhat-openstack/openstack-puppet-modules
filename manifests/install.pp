@@ -100,55 +100,55 @@ class opendaylight::install {
       require => [Archive['opendaylight'], Group['odl'], User['odl']],
     }
 
-    if ( $::osfamily == 'RedHat' ){
-        # Download ODL systemd .service file and put in right location
-        archive { 'opendaylight-systemd':
-          ensure           => present,
-          url              => $opendaylight::unitfile_url,
-          # Will end up installing /usr/lib/systemd/system/opendaylight.service
-          target           => '/usr/lib/systemd/system/',
-          # Required by archive mod for correct exec `creates` param
-          root_dir         => 'opendaylight.service',
-          # ODL doesn't provide a checksum in the expected path, would fail
-          checksum         => false,
-          # This discards top-level dir of extracted tarball
-          # Required to get proper /opt/opendaylight-<version> path
-          strip_components => 1,
-          # May end up with an HTML redirect output in a text file without this
-          # Note that the curl'd down file would still have a .tar.gz name
-          follow_redirects => true,
-          # Should exist before we try to set its user/group/mode
-          before           => File['/usr/lib/systemd/system/opendaylight.service'],
-        }
+    if ( $::osfamily == 'RedHat' ) {
+      # Download ODL systemd .service file and put in right location
+      archive { 'opendaylight-systemd':
+        ensure           => present,
+        url              => $opendaylight::unitfile_url,
+        # Will end up installing /usr/lib/systemd/system/opendaylight.service
+        target           => '/usr/lib/systemd/system/',
+        # Required by archive mod for correct exec `creates` param
+        root_dir         => 'opendaylight.service',
+        # ODL doesn't provide a checksum in the expected path, would fail
+        checksum         => false,
+        # This discards top-level dir of extracted tarball
+        # Required to get proper /opt/opendaylight-<version> path
+        strip_components => 1,
+        # May end up with an HTML redirect output in a text file without this
+        # Note that the curl'd down file would still have a .tar.gz name
+        follow_redirects => true,
+        # Should exist before we try to set its user/group/mode
+        before           => File['/usr/lib/systemd/system/opendaylight.service'],
+      }
 
-        # Set the user:group owners and mode of ODL's systemd .service file
-        file { '/usr/lib/systemd/system/opendaylight.service':
-          # It should be a normal file
-          ensure  => 'file',
-          # Set user:group owners of ODL systemd .service file
-          owner   => 'root',
-          group   => 'root',
-          # Set mode of ODL systemd .service file
-          mode    => '0644',
-          # Should happen after the ODL systemd .service file has been extracted
-          require => Archive['opendaylight-systemd'],
-        }
+      # Set the user:group owners and mode of ODL's systemd .service file
+      file { '/usr/lib/systemd/system/opendaylight.service':
+        # It should be a normal file
+        ensure  => 'file',
+        # Set user:group owners of ODL systemd .service file
+        owner   => 'root',
+        group   => 'root',
+        # Set mode of ODL systemd .service file
+        mode    => '0644',
+        # Should happen after the ODL systemd .service file has been extracted
+        require => Archive['opendaylight-systemd'],
+      }
     }
-    elsif ( $::osfamily == 'Debian' ){
-        file { '/etc/init/opendaylight.conf':
-          # It should be a normal file
-          ensure  => 'file',
-          # Set user:group owners of ODL upstart file
-          owner   => 'root',
-          group   => 'root',
-          # Set mode of ODL upstart file
-          mode    => '0644',
-          # Get content from template
-          content => template('opendaylight/upstart.odl.conf'),
-        }
+    elsif ( $::osfamily == 'Debian' ) {
+      file { '/etc/init/opendaylight.conf':
+        # It should be a normal file
+        ensure  => 'file',
+        # Set user:group owners of ODL upstart file
+        owner   => 'root',
+        group   => 'root',
+        # Set mode of ODL upstart file
+        mode    => '0644',
+        # Get content from template
+        content => template('opendaylight/upstart.odl.conf'),
+      }
     }
     else {
-        fail("Unsupported OS family: ${::osfamily}")
+      fail("Unsupported OS family: ${::osfamily}")
     }
   }
   else {

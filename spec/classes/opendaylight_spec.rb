@@ -105,7 +105,6 @@ describe 'opendaylight' do
 
             # Run shared tests applicable to all supported OSs
             # Note that this function is defined in spec_helper
-            # TODO: These are currently under development
             generic_tests
 
             # Run Ubuntu-specific tests
