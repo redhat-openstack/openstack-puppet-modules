@@ -95,7 +95,7 @@ mod 'mongodb',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
 
 mod 'mysql',
-  :commit => 'd8b7a9011ec27c45cd7b30e61f56fe197edb0c25',
+  :commit => '85a5d8be6ff165942e4ee66667db9c5e8a5800a9',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k_vsm',
