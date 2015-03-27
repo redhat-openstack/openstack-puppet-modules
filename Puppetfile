@@ -75,7 +75,7 @@ mod 'keystone',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
 
 mod 'manila',
-  :commit => '3d8d00d613cb4335d992319a72bd328517f73fd8',
+  :commit => '96e95f5c06fe504c0f1b92cca1a00bb9df20bea0',
   :git => 'https://github.com/stackforge/puppet-manila.git'
 
 mod 'memcached',
