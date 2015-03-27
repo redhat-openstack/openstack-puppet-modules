@@ -27,7 +27,7 @@ mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'firewall',
-  :commit => '7ac535981bc43a1821e8c047e7834bbcee8c5a40',
+  :commit => 'eaa2fac5152c7712b1676de5d30a7c8d6307ab4d',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'galera',
