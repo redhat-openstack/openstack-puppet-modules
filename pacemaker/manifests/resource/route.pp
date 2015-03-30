@@ -28,7 +28,7 @@ define pacemaker::resource::route($src='',
       default => " gateway=$gateway"
   }
 
-  pcmk_resource { "route-${src}-${dest}-${gateway}-${group}":
+  pcmk_resource { "route-${name}-${group}":
     ensure          => $ensure,
     resource_type   => 'Route',
     resource_params => "${dest_option} ${src_option} ${nic_option} ${gw_option}",
