@@ -100,6 +100,27 @@ def karaf_feature_tests(options = {})
   }
 end
 
+# Shared tests that specialize in testing ODL's REST port config
+def odl_rest_port_tests(options = {})
+  # Extract params
+  # NB: This default list should be the same as the one in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  odl_rest_port = options.extract(:odl_rest_port, 8080)
+
+  # Confirm properties of ODL REST port config file
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
+  it {
+    should contain_file('tomcat-server.xml').with(
+      'ensure'      => 'file',
+      'path'        => '/opt/opendaylight/configuration//tomcat-server.xml',
+      'owner'   => 'odl',
+      'group'   => 'odl',
+      'content'     => /Connector port="#{odl_rest_port}"/
+    )
+  }
+end
+
 def tarball_install_tests(options = {})
   # Extract params
   tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.2-Helium-SR2/distribution-karaf-0.2.2-Helium-SR2.tar.gz')
