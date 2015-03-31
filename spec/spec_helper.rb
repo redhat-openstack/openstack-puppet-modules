@@ -19,6 +19,7 @@ custom_filters = [
   'Exec[opendaylight-systemd unpack]',
   'Exec[rm-on-error-opendaylight.tar.gz]',
   'Exec[rm-on-error-opendaylight-systemd.tar.gz]',
+  'Exec[update-java-alternatives]',
   'Package[curl]',
   'Stage[deploy]',
   'Stage[deploy_app]',
