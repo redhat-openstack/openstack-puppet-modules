@@ -4,7 +4,6 @@
 2. [Module Description - What the module does and why it is useful](#module-description)
 3. [Setup - The basics of getting started with opendaylight](#setup)
     * [What opendaylight affects](#what-opendaylight-affects)
-    * [Setup requirements](#setup-requirements)
     * [Beginning with opendaylight](#beginning-with-opendaylight)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
