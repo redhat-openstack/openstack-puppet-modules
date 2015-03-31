@@ -86,7 +86,7 @@ def karaf_feature_tests(options = {})
   # The order of this list concat matters
   features = default_features + extra_features
 
-  # Confirm properties of other resources
+  # Confirm properties of Karaf features config file
   # NB: These hashes don't work with Ruby 1.8.7, but we
   #   don't support 1.8.7 so that's okay. See issue #36.
   it {
