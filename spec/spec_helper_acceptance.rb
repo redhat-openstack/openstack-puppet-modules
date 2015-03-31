@@ -54,8 +54,9 @@ def install_odl(options = {})
   # Default install method is passed via environment var, set in Rakefile
   install_method = options.fetch(:install_method, ENV['INSTALL_METHOD'])
   extra_features = options.fetch(:extra_features, [])
-  default_features = options.fetch(:default_features, ['config', 'standard', 'region',
-                                  'package', 'kar', 'ssh', 'management'])
+  default_features = options.fetch(:default_features,
+    ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
+  odl_rest_port = options.fetch(:odl_rest_port, 8080)
 
   # Build script for consumption by Puppet apply
   it 'should work idempotently with no errors' do
@@ -64,6 +65,7 @@ def install_odl(options = {})
       install_method => #{install_method},
       default_features => #{default_features},
       extra_features => #{extra_features},
+      odl_rest_port=> #{odl_rest_port},
     }
     EOS
 
@@ -165,13 +167,13 @@ def port_config_validations(options = {})
   # NB: This param default should match the one used by the opendaylight
   #   class, which is defined in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  port = options.fetch(:port, 8080)
+  odl_rest_port = options.fetch(:odl_rest_port, 8080)
 
   describe file('/opt/opendaylight/configuration/tomcat-server.xml') do
     it { should be_file }
     it { should be_owned_by 'odl' }
     it { should be_grouped_into 'odl' }
-    its(:content) { should match /'    <Connector port="#{port}" protocol="HTTP\/1.1"'$/ }
+    its(:content) { should match /Connector port="#{odl_rest_port}"/ }
   end
 end
 
