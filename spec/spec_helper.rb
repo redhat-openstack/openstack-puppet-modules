@@ -87,6 +87,27 @@ def karaf_feature_tests(features)
   }
 end
 
+# Shared tests that specialize in testing ODL's REST port config
+def odl_rest_port_tests(options = {})
+  # Extract params
+  # NB: This default list should be the same as the one in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  odl_rest_port = options.extract(:odl_rest_port, 8080)
+
+  # Confirm properties of ODL REST port config file
+  # NB: These hashes don't work with Ruby 1.8.7, but we
+  #   don't support 1.8.7 so that's okay. See issue #36.
+  it {
+    should contain_file('tomcat-server.xml').with(
+      'ensure'      => 'file',
+      'path'        => '/opt/opendaylight/configuration//tomcat-server.xml',
+      'owner'   => 'odl',
+      'group'   => 'odl',
+      'content'     => /Connector port="#{odl_rest_port}"/
+    )
+  }
+end
+
 def install_method_tests(method, yum_repo, tarball_url='', unitfile_url='')
   case method
   when 'rpm'
