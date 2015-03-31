@@ -213,12 +213,15 @@ end
 
 # Shared function that handles validations specific to tarball-type installs
 def tarball_validations()
-  describe yumrepo('opendaylight') do
-    it { should_not exist }
-    it { should_not be_enabled }
-  end
-
   describe package('opendaylight') do
     it { should_not be_installed }
+  end
+
+  # Repo checks break (not fail) when yum doesn't make sense (Ubuntu)
+  if ['centos-7', 'fedora-20', 'fedora-21'].include? ENV['RS_SET']
+    describe yumrepo('opendaylight') do
+      it { should_not exist }
+      it { should_not be_enabled }
+    end
   end
 end
