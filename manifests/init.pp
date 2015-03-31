@@ -64,7 +64,7 @@ class opendaylight (
   $features = union($default_features, $extra_features)
 
   class { '::opendaylight::install': } ->
-  class { '::opendaylight::config': odl_rest_port => $odl_rest_port} ~>
+  class { '::opendaylight::config': } ~>
   class { '::opendaylight::service': } ->
   Class['::opendaylight']
 }
