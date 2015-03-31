@@ -267,6 +267,53 @@ describe 'opendaylight' do
     end
   end
 
+  # All ODL REST port tests
+  describe 'REST port tests' do
+    # Non-OS-type tests assume CentOS 7
+    #   See issue #43 for reasoning:
+    #   https://github.com/dfarrell07/puppet-opendaylight/issues/43#issue-57343159
+    osfamily = 'RedHat'
+    operatingsystem = 'CentOS'
+    operatingsystemmajrelease = '7'
+    context 'using default REST port' do
+      let(:facts) {{
+        :osfamily => osfamily,
+        :operatingsystem => operatingsystem,
+        :operatingsystemmajrelease => operatingsystemmajrelease,
+      }}
+
+      let(:params) {{ }}
+
+      # Run shared tests applicable to all supported OSs
+      # Note that this function is defined in spec_helper
+      generic_tests
+
+      # Run test that specialize in checking ODL REST port config
+      # Note that this function is defined in spec_helper
+      odl_rest_port_tests
+    end
+
+    context 'overriding default REST port' do
+      let(:facts) {{
+        :osfamily => osfamily,
+        :operatingsystem => operatingsystem,
+        :operatingsystemmajrelease => operatingsystemmajrelease,
+      }}
+
+      let(:params) {{
+        :odl_rest_port => 7777,
+      }}
+
+      # Run shared tests applicable to all supported OSs
+      # Note that this function is defined in spec_helper
+      generic_tests
+
+      # Run test that specialize in checking ODL REST port config
+      # Note that this function is defined in spec_helper
+      odl_rest_port_tests(odl_rest_port: 7777)
+    end
+  end
+
   # All install method tests
   describe 'install method tests' do
     # Non-OS-type tests assume CentOS 7
