@@ -142,7 +142,8 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
     # we loop around the hash. Otherwise, we assume single url specified
     # in source property
     if @resource.value(:source).is_a?(Hash)
-      @resource.value(:source).each do |remote_name, remote_url|
+      @resource.value(:source).keys.sort.each do |remote_name|
+        remote_url = @resource.value(:source)[remote_name]
         at_path { do_update |= update_remote_url(remote_name, remote_url) }
       end
     else

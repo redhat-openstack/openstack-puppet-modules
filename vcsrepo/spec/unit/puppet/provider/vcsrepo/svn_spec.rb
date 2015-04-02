@@ -83,10 +83,22 @@ describe Puppet::Type.type(:vcsrepo).provider(:svn) do
     before do
       @revision = '30'
     end
-    it "should use 'svn update'" do
-      expects_chdir
-      provider.expects(:svn).with('--non-interactive', 'update', '-r', @revision)
-      provider.revision = @revision
+    context 'with conflict' do
+      it "should use 'svn update'" do
+        resource[:conflict] = 'theirs-full'
+        expects_chdir
+        provider.expects(:svn).with('--non-interactive', 'update',
+                                    '-r', @revision,
+                                    '--accept', resource.value(:conflict))
+        provider.revision = @revision
+      end
+    end
+    context 'without conflict' do
+      it "should use 'svn update'" do
+        expects_chdir
+        provider.expects(:svn).with('--non-interactive', 'update', '-r', @revision)
+        provider.revision = @revision
+      end
     end
   end
 
@@ -94,11 +106,24 @@ describe Puppet::Type.type(:vcsrepo).provider(:svn) do
     before do
       @revision = '30'
     end
-    it "should use 'svn switch'" do
-      resource[:source] = 'an-unimportant-value'
-      expects_chdir
-      provider.expects(:svn).with('--non-interactive', 'switch', '-r', @revision, 'an-unimportant-value')
-      provider.revision = @revision
+    context 'with conflict' do
+      it "should use 'svn switch'" do
+        resource[:source] = 'an-unimportant-value'
+        resource[:conflict] = 'theirs-full'
+        expects_chdir
+        provider.expects(:svn).with('--non-interactive', 'switch',
+                                    '-r', @revision, 'an-unimportant-value',
+                                    '--accept', resource.value(:conflict))
+        provider.revision = @revision
+      end
+    end
+    context 'without conflict' do
+      it "should use 'svn switch'" do
+        resource[:source] = 'an-unimportant-value'
+        expects_chdir
+        provider.expects(:svn).with('--non-interactive', 'switch', '-r', @revision, 'an-unimportant-value')
+        provider.revision = @revision
+      end
     end
   end
 

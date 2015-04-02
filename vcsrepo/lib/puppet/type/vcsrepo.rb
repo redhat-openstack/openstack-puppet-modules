@@ -46,6 +46,9 @@ Puppet::Type.newtype(:vcsrepo) do
   feature :submodules,
           "The repository contains submodules which can be optionally initialized"
 
+  feature :conflict,
+          "The provider supports automatic conflict resolution"
+
   ensurable do
     attr_accessor :latest
 
@@ -212,6 +215,10 @@ Puppet::Type.newtype(:vcsrepo) do
     desc "Initialize and update each submodule in the repository."
     newvalues(:true, :false)
     defaultto true
+  end
+
+  newparam :conflict do
+    desc "The action to take if conflicts exist between repository and working copy"
   end
 
   autorequire(:package) do

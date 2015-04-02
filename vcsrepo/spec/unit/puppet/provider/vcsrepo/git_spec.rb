@@ -263,7 +263,7 @@ branches
     context "when multiple sources are modified" do
       it "should update the urls" do
         resource[:source] = {"origin" => "git://git@foo.com/bar.git", "new_remote" => "git://git@foo.com/baz.git"}
-        provider.expects(:git).at_least_once.with('config', '-l').returns("remote.origin.url=git://git@foo.com/foo.git\n", "remote.origin.url=git://git@foo.com/bar.git\n")
+        provider.expects(:git).at_least_once.with('config', '-l').returns("remote.origin.url=git://git@foo.com/bar.git\n", "remote.origin.url=git://git@foo.com/foo.git\n")
         provider.expects(:git).with('remote', 'set-url', 'origin', 'git://git@foo.com/bar.git')
         provider.expects(:git).with('remote', 'add', 'new_remote', 'git://git@foo.com/baz.git')
         provider.expects(:git).with('remote','update')

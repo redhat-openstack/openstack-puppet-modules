@@ -7,7 +7,7 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
            :svnadmin => 'svnadmin',
            :svnlook  => 'svnlook'
 
-  has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration
+  has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration, :conflict
 
   def create
     if !@resource.value(:source)
@@ -92,6 +92,11 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
            else
              buildargs.push('update', '-r', desired)
            end
+
+    if @resource.value(:conflict)
+      args.push('--accept', @resource.value(:conflict))
+    end
+
     at_path do
       svn(*args)
     end
