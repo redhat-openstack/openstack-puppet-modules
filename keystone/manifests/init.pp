@@ -105,6 +105,10 @@
 #   (optional) Toggle for token system caching. This has no effects unless 'memcache_servers' is set.
 #   Default to true.
 #
+# [*manage_service*]
+#   (Optional) If Puppet should manage service startup / shutdown.
+#   Defaults to true.
+#
 # [*enabled*]
 #  (optional) If the keystone services should be enabled.
 #   Default to true.
@@ -314,8 +318,8 @@
 #   web service.  For example, after calling class {'keystone'...}
 #   use class { 'keystone::wsgi::apache'...} to make keystone be
 #   a web app using apache mod_wsgi.
-#   Defaults to 'keystone'
-#   NOTE: validate_service only applies if the value is 'keystone'
+#   Defaults to '$::keystone::params::service_name'
+#   NOTE: validate_service only applies if the default value is used.
 #
 # [*paste_config*]
 #   (optional) Name of the paste configuration file that defines the
@@ -372,7 +376,6 @@ class keystone(
   $admin_bind_host        = '0.0.0.0',
   $public_port            = '5000',
   $admin_port             = '35357',
-  $compute_port           = '8774',
   $verbose                = false,
   $debug                  = false,
   $log_dir                = '/var/log/keystone',
@@ -396,6 +399,7 @@ class keystone(
   $ssl_cert_subject       = '/C=US/ST=Unset/L=Unset/O=Unset/CN=localhost',
   $cache_dir              = '/var/cache/keystone',
   $memcache_servers       = false,
+  $manage_service         = true,
   $cache_backend          = 'keystone.common.cache.noop',
   $cache_backend_argument = undef,
   $debug_cache_backend    = false,
@@ -430,7 +434,7 @@ class keystone(
   $validate_cacert        = undef,
   $paste_config           = $::keystone::params::paste_config,
   $service_provider       = $::keystone::params::service_provider,
-  $service_name           = 'keystone',
+  $service_name           = $::keystone::params::service_name,
   $max_token_size         = undef,
   $admin_workers          = max($::processorcount, 2),
   $public_workers         = max($::processorcount, 2),
@@ -749,13 +753,15 @@ class keystone(
     'DEFAULT/public_workers': value => $public_workers;
   }
 
-  if $enabled {
-    $service_ensure = 'running'
-  } else {
-    $service_ensure = 'stopped'
+  if $manage_service {
+    if $enabled {
+      $service_ensure = 'running'
+    } else {
+      $service_ensure = 'stopped'
+    }
   }
 
-  if $service_name == 'keystone' {
+  if $service_name == $::keystone::params::service_name {
     if $validate_service {
       if $validate_auth_url {
         $v_auth_url = $validate_auth_url
@@ -765,7 +771,7 @@ class keystone(
 
       class { '::keystone::service':
         ensure         => $service_ensure,
-        service_name   => $::keystone::params::service_name,
+        service_name   => $service_name,
         enable         => $enabled,
         hasstatus      => true,
         hasrestart     => true,
@@ -779,7 +785,7 @@ class keystone(
     } else {
       class { '::keystone::service':
         ensure       => $service_ensure,
-        service_name => $::keystone::params::service_name,
+        service_name => $service_name,
         enable       => $enabled,
         hasstatus    => true,
         hasrestart   => true,
@@ -787,6 +793,16 @@ class keystone(
         validate     => false,
       }
     }
+  } elsif $service_name == 'httpd' {
+    class { '::keystone::service':
+      ensure       => 'stopped',
+      service_name => $::keystone::params::service_name,
+      enable       => false,
+      provider     => $service_provider,
+      validate     => false,
+    }
+  } else {
+    fail('Invalid service_name. Either keystone/openstack-keystone for running as a standalone service, or httpd for being run by a httpd server')
   }
 
   if $enabled {
