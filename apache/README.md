@@ -16,11 +16,13 @@
         * [Classes: apache::mod::*](#classes-apachemodname)
         * [Class: apache::mod::alias](#class-apachemodalias)
         * [Class: apache::mod::event](#class-apachemodevent)
+        * [Class: apache::mod::geoip](#class-apachemodgeoip)
         * [Class: apache::mod::info](#class-apachemodinfo)
         * [Class: apache::mod::pagespeed](#class-apachemodpagespeed)
         * [Class: apache::mod::php](#class-apachemodphp)
         * [Class: apache::mod::ssl](#class-apachemodssl)
         * [Class: apache::mod::status](#class-apachemodstatus)
+        * [Class: apache::mod::expires](#class-apachemodexpires)
         * [Class: apache::mod::wsgi](#class-apachemodwsgi)
         * [Class: apache::mod::fcgid](#class-apachemodfcgid)
         * [Class: apache::mod::negotiation](#class-apachemodnegotiation)
@@ -572,6 +574,7 @@ There are many `apache::mod::[name]` classes within this module that can be decl
 * `proxy_http`
 * `python`
 * `reqtimeout`
+* `remoteip`*
 * `rewrite`
 * `rpaf`*
 * `setenvif`
@@ -623,6 +626,25 @@ To configure the event thread limit:
 Installs and manages mod_auth_cas. The parameters `cas_login_url` and `cas_validate_url` are required.
 
 Full documentation on mod_auth_cas is available from [JASIG](https://github.com/Jasig/mod_auth_cas).
+
+####Class: `apache::mod::geoip`
+
+Installs and manages mod_geoip.
+
+Full documentation on mod_geoip is available from [MaxMind](http://dev.maxmind.com/geoip/legacy/mod_geoip2/).
+
+These are the default settings:
+
+```puppet
+  class {'apache::mod::geoip':
+    $enable  => false,
+    $db_file => '/usr/share/GeoIP/GeoIP.dat',
+    $flag    => 'Standard',
+    $output  => 'All',
+  }
+```
+
+The parameter `db_file` can be a single directory or a hash of directories.
 
 ####Class: `apache::mod::info`
 
@@ -795,6 +817,32 @@ Installs Apache mod_status and uses the status.conf.erb template. These are the 
 ){
 
 
+  }
+```
+
+####Class: `apache::mod::expires`
+
+Installs Apache mod_expires and uses the expires.conf.erb template. These are the defaults:
+
+```puppet
+    class { 'apache::mod::expires':
+      expires_active  = true,
+      expires_default = undef,
+      expires_by_type = undef,
+){
+
+
+  }
+```
+
+`expires_by_type` is an array of Hashes, describing a set of types and their expire times:
+
+```puppet
+  class { 'apache::mod::expires':
+    expires_by_type = [
+      { 'text/json' => 'access plus 1 month' },
+      { 'text/html' => 'access plus 1 year' },
+    ]
   }
 ```
 
@@ -1657,7 +1705,7 @@ General `directories` usage looks something like
 
 *Note:* At least one directory should match the `docroot` parameter. After you start declaring directories, `apache::vhost` assumes that all required Directory blocks will be declared. If not defined, a single default Directory block is created that matches the `docroot` parameter.
 
-Available handlers, represented as keys, should be placed within the `directory`,`'files`, or `location` hashes.  This looks like
+Available handlers, represented as keys, should be placed within the `directory`, `files`, or `location` hashes.  This looks like
 
 ```puppet
     apache::vhost { 'sample.example.net':
@@ -1824,6 +1872,22 @@ An array of hashes used to override the [ErrorDocument](https://httpd.apache.org
               'document'   => '/service-unavail',
             },
           ],
+        },
+      ],
+    }
+```
+
+######`geoip_enable`
+
+Sets the [GeoIPEnable](http://dev.maxmind.com/geoip/legacy/mod_geoip2/#Configuration) directive.
+Note that you must declare `class {'apache::mod::geoip': }` before using this directive.
+
+```puppet
+    apache::vhost { 'first.example.com':
+      docroot     => '/var/www/first',
+      directories => [
+        { path         => '/var/www/first',
+          geoip_enable => true,
         },
       ],
     }
