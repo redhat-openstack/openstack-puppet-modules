@@ -71,6 +71,7 @@ describe 'heat' do
     it_configures 'with SSL wrongly configured'
     it_configures "with custom keystone identity_uri"
     it_configures "with custom keystone identity_uri and auth_uri"
+    it_configures 'with enable_stack_adopt and enable_stack_abandon set'
   end
 
   shared_examples_for 'a heat base installation' do
@@ -116,7 +117,8 @@ describe 'heat' do
     it 'installs heat common package' do
       is_expected.to contain_package('heat-common').with(
         :ensure => 'present',
-        :name   => platform_params[:common_package_name]
+        :name   => platform_params[:common_package_name],
+        :tag    => 'openstack'
       )
     end
 
@@ -165,7 +167,7 @@ describe 'heat' do
     it { is_expected.to contain_heat_config('paste_deploy/flavor').with_value('keystone') }
 
     it 'keeps keystone secrets secret' do
-      should contain_heat_config('keystone_authtoken/admin_password').with_secret(true)
+      is_expected.to contain_heat_config('keystone_authtoken/admin_password').with_secret(true)
     end
 
 
@@ -430,7 +432,7 @@ describe 'heat' do
       })
     end
     it 'configures identity_uri' do
-      should contain_heat_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:1234/");
+      is_expected.to contain_heat_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:1234/");
     end
   end
 
@@ -442,11 +444,11 @@ describe 'heat' do
       })
     end
     it 'configures identity_uri and auth_uri but deprecates old auth settings' do
-      should contain_heat_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:35357/");
-      should contain_heat_config('keystone_authtoken/auth_uri').with_value("https://foo.bar:5000/v2.0/");
-      should contain_heat_config('keystone_authtoken/auth_port').with(:ensure => 'absent')
-      should contain_heat_config('keystone_authtoken/auth_protocol').with(:ensure => 'absent')
-      should contain_heat_config('keystone_authtoken/auth_host').with(:ensure => 'absent')
+      is_expected.to contain_heat_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:35357/");
+      is_expected.to contain_heat_config('keystone_authtoken/auth_uri').with_value("https://foo.bar:5000/v2.0/");
+      is_expected.to contain_heat_config('keystone_authtoken/auth_port').with(:ensure => 'absent')
+      is_expected.to contain_heat_config('keystone_authtoken/auth_protocol').with(:ensure => 'absent')
+      is_expected.to contain_heat_config('keystone_authtoken/auth_host').with(:ensure => 'absent')
     end
   end
 
@@ -458,13 +460,26 @@ describe 'heat' do
     end
 
     it 'has instance_user set when specified' do
-      should contain_heat_config('DEFAULT/instance_user').with_value('fred')
+      is_expected.to contain_heat_config('DEFAULT/instance_user').with_value('fred')
     end
   end
 
   shared_examples_for 'without instance_user set' do
     it 'doesnt have instance_user set by default' do
-      should contain_heat_config('DEFAULT/instance_user').with_enure('absent')
+      is_expected.to contain_heat_config('DEFAULT/instance_user').with_enure('absent')
+    end
+  end
+
+  shared_examples_for "with enable_stack_adopt and enable_stack_abandon set" do
+    before do
+      params.merge!({
+        :enable_stack_adopt   => true,
+        :enable_stack_abandon => true,
+      })
+    end
+    it 'sets enable_stack_adopt and enable_stack_abandon' do
+      is_expected.to contain_heat_config('DEFAULT/enable_stack_adopt').with_value(true);
+      is_expected.to contain_heat_config('DEFAULT/enable_stack_abandon').with_value(true);
     end
   end
 
