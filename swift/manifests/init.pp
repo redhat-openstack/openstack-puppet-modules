@@ -1,6 +1,7 @@
 # Install and configure base swift components
 #
 # == Parameters
+#
 # [*swift_hash_suffix*] string of text to be used
 #   as a salt when hashing to determine mappings in the ring.
 #   This file should be the same on every node in the cluster.
@@ -29,8 +30,8 @@ class swift(
   $client_package_ensure = 'present',
 ) {
 
-  include swift::params
-  include ssh::server
+  include ::swift::params
+  include ::ssh::server
 
   Class['ssh::server::install'] -> Class['swift']
 
@@ -41,15 +42,15 @@ class swift(
     }
   }
 
-  class { 'swift::client':
+  class { '::swift::client':
     ensure => $client_package_ensure;
   }
 
   File { owner => 'swift', group => 'swift', require => Package['swift'] }
 
   file { '/home/swift':
-    ensure  => directory,
-    mode    => '0700',
+    ensure => directory,
+    mode   => '0700',
   }
 
   file { '/etc/swift':
@@ -67,11 +68,11 @@ class swift(
   }
 
   file { '/etc/swift/swift.conf':
-    ensure  => present,
-    mode    => '0660',
+    ensure => file,
+    mode   => '0660',
   }
 
   swift_config { 'swift-hash/swift_hash_path_suffix':
-    value => $swift_hash_suffix
+    value => $swift_hash_suffix,
   }
 }
