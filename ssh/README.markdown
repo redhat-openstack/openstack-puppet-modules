@@ -1,9 +1,11 @@
 # puppet-ssh [![Build Status](https://secure.travis-ci.org/saz/puppet-ssh.png)](http://travis-ci.org/saz/puppet-ssh)
 
-Manage SSH client and server via Puppet
+Manage SSH client and server via Puppet.
 
 ### Gittip
 [![Support via Gittip](https://rawgithub.com/twolfson/gittip-badge/0.2.0/dist/gittip.png)](https://www.gittip.com/saz/)
+
+Source: https://github.com/saz/puppet-ssh
 
 ## Requirements
 * Exported resources for host keys management
@@ -58,7 +60,7 @@ or
 
 ### Hiera example
 ```
-ssh::storeconfigs_enabled: true,
+ssh::storeconfigs_enabled: true
 
 ssh::server_options:
     Protocol: '2'
@@ -183,6 +185,31 @@ UsePAM yes
 PasswordAuthentication no
 ```
 
+Values can also be arrays, which will result in the option being specified multiple times
+
+```
+    class { 'ssh::server':
+      options           => {
+        'HostKey' => ['/etc/ssh/ssh_host_ed25519_key', '/etc/ssh/ssh_host_rsa_key'],
+      },
+    }
+```
+
+Which will lead to the following `sshd_config` file:
+
+ ```
+# File is managed by Puppet
+
+ChallengeResponseAuthentication no
+HostKey /etc/ssh/ssh_host_ed25519_key
+HostKey /etc/ssh/ssh_host_rsa_key
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+UsePAM yes
+PasswordAuthentication no
+```
+
 ## Defining host keys for server
 You can define host keys your server will use
 
@@ -207,9 +234,13 @@ Both of these definitions will create ```/etc/ssh/ssh_host_rsa_key``` and
 ```/etc/ssh/ssh_host_rsa_key.pub``` and restart sshd daemon.
 
 
-## Adding cutom match blocks
+## Adding custom match blocks
 
 ```
+class YOURCUSTOMCLASS { 
+
+  include ssh
+
   ssh::server::match_block { 'sftp_only':
     type    => 'User',
     options => {
@@ -220,4 +251,27 @@ Both of these definitions will create ```/etc/ssh/ssh_host_rsa_key``` and
       'X11Forwarding'          => 'no',
     }
   }
+}
+```
+
+## Facts
+
+This module provides facts detailing the available SSH client and server
+versions.
+
+* `ssh_*_version_full` Provides the full version number including the portable
+  version number.
+* `ssh_*_version_major` Provides the first two numbers in the version number.
+* `ssh_*_version_release` Provides the first three number components of the
+  version, no portable version is present.
+
+Example facter output for OpenSSH `6.6.1p1`:
+
+```
+ssh_client_version_full => 6.6.1p1
+ssh_client_version_major => 6.6
+ssh_client_version_release => 6.6.1
+ssh_server_version_full => 6.6.1p1
+ssh_server_version_major => 6.6
+ssh_server_version_release => 6.6.1
 ```
