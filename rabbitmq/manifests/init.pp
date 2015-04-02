@@ -45,6 +45,7 @@ class rabbitmq(
   $ssl_verify                 = $rabbitmq::params::ssl_verify,
   $ssl_fail_if_no_peer_cert   = $rabbitmq::params::ssl_fail_if_no_peer_cert,
   $ssl_versions               = $rabbitmq::params::ssl_versions,
+  $ssl_ciphers                = $rabbitmq::params::ssl_ciphers,
   $stomp_ensure               = $rabbitmq::params::stomp_ensure,
   $ldap_auth                  = $rabbitmq::params::ldap_auth,
   $ldap_server                = $rabbitmq::params::ldap_server,
@@ -87,11 +88,17 @@ class rabbitmq(
   validate_string($env_config)
   validate_absolute_path($env_config_path)
   validate_string($erlang_cookie)
-  validate_re($management_port, '\d+')
+  if ! is_integer($management_port) {
+    validate_re($management_port, '\d+')
+  }
   validate_string($node_ip_address)
   validate_absolute_path($plugin_dir)
-  validate_re($port, ['\d+','UNSET'])
-  validate_re($stomp_port, '\d+')
+  if ! is_integer($port) {
+    validate_re($port, ['\d+','UNSET'])
+  }
+  if ! is_integer($stomp_port) {
+    validate_re($stomp_port, '\d+')
+  }
   validate_bool($wipe_db_on_cookie_change)
   validate_bool($tcp_keepalive)
   if ! is_integer($file_limit) {
@@ -106,10 +113,16 @@ class rabbitmq(
   validate_string($ssl_cacert)
   validate_string($ssl_cert)
   validate_string($ssl_key)
-  validate_re($ssl_port, '\d+')
-  validate_re($ssl_management_port, '\d+')
-  validate_string($ssl_stomp_port)
-  validate_re($ssl_stomp_port, '\d+')
+  validate_array($ssl_ciphers)
+  if ! is_integer($ssl_port) {
+    validate_re($ssl_port, '\d+')
+  }
+  if ! is_integer($ssl_management_port) {
+    validate_re($ssl_management_port, '\d+')
+  }
+  if ! is_integer($ssl_stomp_port) {
+    validate_re($ssl_stomp_port, '\d+')
+  }
   validate_bool($stomp_ensure)
   validate_bool($ldap_auth)
   validate_string($ldap_server)

@@ -315,7 +315,7 @@ describe 'rabbitmq' do
 
         describe 'with defaults' do
           it 'fails' do
-            expect { catalogue }.to raise_error(Puppet::Error, /^You must set the \$erlang_cookie value/)
+            expect { catalogue }.to raise_error(Puppet::Error, /You must set the \$erlang_cookie value/)
           end
         end
 
@@ -637,7 +637,22 @@ describe 'rabbitmq' do
         } }
 
         it 'fails' do
-          expect { catalogue }.to raise_error(Puppet::Error, /^\$ssl_versions requires that \$ssl => true/)
+          expect { catalogue }.to raise_error(Puppet::Error, /\$ssl_versions requires that \$ssl => true/)
+        end
+      end
+
+      describe 'ssl options with ssl ciphers' do
+        let(:params) {
+          { :ssl => true,
+            :ssl_port => 3141,
+            :ssl_cacert => '/path/to/cacert',
+            :ssl_cert => '/path/to/cert',
+            :ssl_key => '/path/to/key',
+            :ssl_ciphers => ['ecdhe_rsa,aes_256_cbc,sha', 'dhe_rsa,aes_256_cbc,sha']
+        } }
+
+        it 'should set ssl ciphers to specified values' do
+          should contain_file('rabbitmq.config').with_content(%r{ciphers,\[[[:space:]]+{dhe_rsa,aes_256_cbc,sha},[[:space:]]+{ecdhe_rsa,aes_256_cbc,sha}[[:space:]]+\]})
         end
       end
 
