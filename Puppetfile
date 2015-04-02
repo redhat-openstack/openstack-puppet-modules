@@ -47,7 +47,7 @@ mod 'haproxy',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => '46b45265cc2cc3da6d45a89097357a976f045948',
+  :commit => 'f07c80174f9f8b3f467b0171627e4b2586c55e29',
   :git => 'https://github.com/stackforge/puppet-heat.git'
 
 mod 'horizon',
