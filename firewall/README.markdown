@@ -113,6 +113,16 @@ The rules in the `pre` and `post` classes are fairly general. These two classes 
   }
   ```
 
+Alternatively, the [firewallchain](#type-firewallchain) type can be used to set the default policy:
+
+  ```puppet
+  firewallchain { 'INPUT:filter:IPv4':
+    ensure => present,
+    policy => drop,
+    before => undef,
+  }
+  ```
+
 ####Create Firewall Rules
 
 The rules you create here are helpful if you don’t have any existing rules; they help you order your firewall configurations so you don’t lock yourself out of your box.
@@ -123,10 +133,20 @@ Rules are persisted automatically between reboots, although there are known issu
 
   **Note** - This only purges IPv4 rules.
   ```puppet
-  resources { "firewall":
+  resources { 'firewall':
     purge => true
   }
   ```
+
+  To purge unmanaged firewall chains, also add:
+
+  ```puppet
+  resources { 'firewallchain':
+    purge => true
+  }
+  ```
+  **Note** - If there are unmanaged rules in unmanaged chains it will take two Puppet runs before the firewall chain is purged. This is different than the `purge` parameter available in `firewallchain`.
+
 2.)  Use the following code to set up the default parameters for all of the firewall rules you will establish later. These defaults will ensure that the `pre` and `post` classes are run in the correct order to avoid locking you out of your box during the first Puppet run.
 
   ```puppet
@@ -437,6 +457,8 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `chain`: Name of the chain to use. You can provide a user-based chain or use one of the following built-in chains:'INPUT','FORWARD','OUTPUT','PREROUTING', or 'POSTROUTING'. The default value is 'INPUT'. Values must match '/^[a-zA-Z0-9\-_]+$/'. Requires the `iptables` feature.
 
+ * `checksum_fill`: When using a `jump` value of 'CHECKSUM' this boolean will make sure that a checksum is calculated and filled in a packet that lacks a checksum. Valid values are true or false. Requires the `iptables` feature.
+
 * `connlimit_above`: Connection limiting value for matched connections above n. Values must match '/^\d+$/'. Requires the `connection_limiting` feature.
 
 * `connlimit_mask`: Connection limiting by subnet mask for matched connections. Apply a subnet mask of /0 to /32 for IPv4, and a subnet mask of /0 to /128 for IPv6. Values must match '/^\d+$/'. Requires the `connection_limiting` feature.
@@ -542,6 +564,8 @@ firewall { '999 this runs last':
   * 'tcp'
   * 'udp'
   * 'icmp'
+  * 'ipv4'
+  * 'ipv6'
   * 'ipv6-icmp'
   * 'esp'
   * 'ah'
@@ -708,6 +732,14 @@ firewallchain { 'INPUT:filter:IPv4':
     * Supported features: `iptables_chain`, `policy`.
 
 * `purge`: Purge unmanaged firewall rules in this chain. Valid values are 'false', 'true'.
+
+**Note** This `purge` is purging unmanaged rules in a firewall chain, not unmanaged firewall chains. To purge unmanaged firewall chains, use the following instead.
+
+```puppet
+resources { 'firewallchain':
+  purge => true
+}
+```
 
 ###Fact: ip6tables_version
 
