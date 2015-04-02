@@ -99,7 +99,7 @@ mod 'neutron',
   :git => 'https://github.com/stackforge/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '482ca09469f97de8cfbb3fd4f4e08505dfdc8911',
+  :commit => 'a2d7b4dd4a13803f8612b17e214e3856e283b614',
   :git => 'https://github.com/stackforge/puppet-nova.git'
 
 mod 'nssdb',
