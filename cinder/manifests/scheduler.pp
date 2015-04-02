@@ -38,6 +38,10 @@ class cinder::scheduler (
     cinder_config {
       'DEFAULT/scheduler_driver': value => $scheduler_driver;
     }
+  } else {
+    cinder_config {
+      'DEFAULT/scheduler_driver': ensure => absent;
+    }
   }
 
   if $::cinder::params::scheduler_package {
@@ -47,6 +51,7 @@ class cinder::scheduler (
     package { 'cinder-scheduler':
       ensure => $package_ensure,
       name   => $::cinder::params::scheduler_package,
+      tag    => 'openstack',
     }
   }
 

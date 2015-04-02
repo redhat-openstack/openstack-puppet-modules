@@ -43,7 +43,7 @@ class cinder::params {
 
     case $::operatingsystem {
       'RedHat', 'CentOS', 'Scientific': {
-        if $::operatingsystemmajrelease >= 7 {
+        if (versioncmp($::operatingsystemmajrelease, '7') >= 0) {
           $iscsi_helper = 'lioadm'
         } else {
           $iscsi_helper = 'tgtadm'
@@ -55,6 +55,6 @@ class cinder::params {
     }
 
   } else {
-    fail("unsuported osfamily ${::osfamily}, currently Debian and Redhat are the only supported platforms")
+    fail("unsupported osfamily ${::osfamily}, currently Debian and Redhat are the only supported platforms")
   }
 }
