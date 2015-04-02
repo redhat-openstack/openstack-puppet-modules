@@ -72,7 +72,6 @@ define manila::backend::netapp (
   $netapp_share_driver = 'manila.share.drivers.netapp.cluster_mode.NetAppClusteredShareDriver'
 
   manila_config {
-    'DEFAULT/enabled_share_backends':                             value => $share_backend_name;
     "${share_backend_name}/share_backend_name":                   value => $share_backend_name;
     "${share_backend_name}/share_driver":                         value => $netapp_share_driver;
     "${share_backend_name}/netapp_nas_transport_type":            value => $netapp_nas_transport_type;
