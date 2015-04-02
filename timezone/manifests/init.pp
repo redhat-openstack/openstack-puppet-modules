@@ -30,6 +30,10 @@
 #     Only set this, if your platform is not supported or you know, what you're doing.
 #     Default: auto-set, platform specific
 #
+#   [*hwutc*]
+#     Is the hardware clock set to UTC? (true or false)
+#     Default: undefined
+#
 # Actions:
 #   Installs tzdata and configures timezone
 #
@@ -45,6 +49,7 @@
 class timezone (
   $ensure = 'present',
   $timezone = 'UTC',
+  $hwutc = '',
   $autoupgrade = false
 ) inherits timezone::params {
 
@@ -71,8 +76,11 @@ class timezone (
     }
   }
 
-  package { $timezone::params::package:
-    ensure => $package_ensure,
+  if $timezone::params::package {
+    package { $timezone::params::package:
+      ensure => $package_ensure,
+      before => File[$timezone::params::localtime_file],
+    }
   }
 
   if $timezone::params::timezone_file != false {
@@ -95,8 +103,7 @@ class timezone (
   }
 
   file { $timezone::params::localtime_file:
-    ensure  => $localtime_ensure,
-    target  => "${timezone::params::zoneinfo_dir}${timezone}",
-    require => Package[$timezone::params::package],
+    ensure => $localtime_ensure,
+    target => "${timezone::params::zoneinfo_dir}${timezone}",
   }
 }

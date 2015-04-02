@@ -187,7 +187,7 @@ mod 'tempest',
   :git => 'https://github.com/stackforge/puppet-tempest.git'
 
 mod 'timezone',
-  :commit => 'e82cd1b32f395217056df492e5a7dac8dc5c683a',
+  :commit => '0b3e3f06c7c3c4e4ab571666cceb7f4779e69856',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
 mod 'tripleo',

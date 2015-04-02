@@ -12,11 +12,18 @@ class timezone::params {
       $timezone_file_template = 'timezone/timezone.erb'
       $timezone_update = 'dpkg-reconfigure -f noninteractive tzdata'
     }
-    'RedHat': {
+    'RedHat', 'Linux': {
       $package = 'tzdata'
       $zoneinfo_dir = '/usr/share/zoneinfo/'
       $localtime_file = '/etc/localtime'
-      $timezone_file = '/etc/sysconfig/clock'
+      case $::operatingsystemmajrelease {
+        '7': {
+          $timezone_file = false
+        }
+        default: {
+          $timezone_file = '/etc/sysconfig/clock'
+        }
+      }
       $timezone_file_template = 'timezone/clock.erb'
       $timezone_update = false
     }
@@ -41,6 +48,12 @@ class timezone::params {
       $localtime_file = '/etc/localtime'
       $timezone_file = false
       $timezone_update = 'zic -l '
+    }
+    'FreeBSD': {
+      $package      = undef
+      $zoneinfo_dir = '/usr/share/zoneinfo/'
+      $localtime_file = '/etc/localtime'
+      $timezone_file = false
     }
     default: {
       case $::operatingsystem {
