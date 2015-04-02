@@ -195,7 +195,7 @@ mod 'tripleo',
   :git => 'https://github.com/stackforge/puppet-tripleo.git'
 
 mod 'trove',
-  :commit => 'feee104f7f150948f77f357c5708e87a080595c1',
+  :commit => '27f3940b92d803e18bbad37a40533bdeeab0a85e',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'vcsrepo',
