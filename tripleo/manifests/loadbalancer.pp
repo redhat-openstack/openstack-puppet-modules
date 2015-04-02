@@ -20,7 +20,17 @@
 # === Parameters:
 #
 # [*controller_host*]
-#  Host or group of hosts to load-balance the services
+#  (Deprecated)Host or group of hosts to load-balance the services
+#  Can be a string or an array.
+#  Defaults to undef
+#
+# [*controller_hosts*]
+#  IPs of host or group of hosts to load-balance the services
+#  Can be a string or an array.
+#  Defaults to undef
+#
+# [*controller_hosts_names*]
+#  Names of host or group of hosts to load-balance the services
 #  Can be a string or an array.
 #  Defaults to undef
 #
@@ -42,6 +52,10 @@
 # [*public_virtual_ip*]
 #  Public IP or group of IPs to bind the pools
 #  Can be a string or an array.
+#  Defaults to undef
+#
+# [*galera_master_hostname*]
+#  FQDN of the Galera master node
 #  Defaults to undef
 #
 # [*keystone_admin*]
@@ -117,11 +131,14 @@
 #  Defaults to false
 #
 class tripleo::loadbalancer (
-  $controller_host,
   $controller_virtual_ip,
   $control_virtual_interface,
   $public_virtual_interface,
   $public_virtual_ip,
+  $controller_host           = undef,
+  $controller_hosts          = undef,
+  $controller_hosts_names    = undef,
+  $galera_master_hostname    = undef,
   $keystone_admin            = false,
   $keystone_public           = false,
   $neutron                   = false,
@@ -141,6 +158,22 @@ class tripleo::loadbalancer (
   $mysql                     = false,
   $rabbitmq                  = false,
 ) {
+
+  if !$controller_host and !$controller_hosts {
+    fail('$controller_hosts or $controller_host (now deprecated) is a mandatory parameter')
+  }
+  if $controller_hosts {
+    $controller_hosts_real = $controller_hosts
+  } else {
+    warning('$controller_host has been deprecated in favor of $controller_hosts')
+    $controller_hosts_real = $controller_host
+  }
+
+  if !$controller_hosts_names {
+    $controller_hosts_names_real = $controller_hosts_real
+  } else {
+    $controller_hosts_names_real = $controller_hosts_names
+  }
 
   case $::osfamily {
     'RedHat': {
@@ -225,7 +258,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'keystone_admin':
       listening_service => 'keystone_admin',
       ports             => '35357',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -242,7 +276,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'keystone_public':
       listening_service => 'keystone_public',
       ports             => '5000',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -259,7 +294,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'neutron':
       listening_service => 'neutron',
       ports             => '9696',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -276,7 +312,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'cinder':
       listening_service => 'cinder',
       ports             => '8776',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -293,7 +330,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'glance_api':
       listening_service => 'glance_api',
       ports             => '9292',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -310,7 +348,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'glance_registry':
       listening_service => 'glance_registry',
       ports             => '9191',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -327,7 +366,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'nova_ec2':
       listening_service => 'nova_ec2',
       ports             => '8773',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -344,7 +384,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'nova_osapi':
       listening_service => 'nova_osapi',
       ports             => '8774',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -361,7 +402,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'nova_metadata':
       listening_service => 'nova_metadata',
       ports             => '8775',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -378,7 +420,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'nova_novncproxy':
       listening_service => 'nova_novncproxy',
       ports             => '6080',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -392,7 +435,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'ceilometer':
       listening_service => 'ceilometer',
       ports             => '8777',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => [],
     }
   }
@@ -409,7 +453,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'swift_proxy_server':
       listening_service => 'swift_proxy_server',
       ports             => '8080',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -426,7 +471,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'heat_api':
       listening_service => 'heat_api',
       ports             => '8004',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -443,7 +489,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'heat_cloudwatch':
       listening_service => 'heat_cloudwatch',
       ports             => '8003',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -460,7 +507,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'heat_cfn':
       listening_service => 'heat_cfn',
       ports             => '8000',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -477,7 +525,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'horizon':
       listening_service => 'horizon',
       ports             => '80',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
@@ -491,11 +540,17 @@ class tripleo::loadbalancer (
       },
       collect_exported => false,
     }
+    if downcase($galera_master_hostname) == $::hostname or !$galera_master_hostname {
+      $options_real = ['check', 'inter 2000', 'rise 2', 'fall 5']
+    } else {
+      $options_real = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup']
+    }
     haproxy::balancermember { 'mysql':
       listening_service => 'mysql',
       ports             => '3306',
-      ipaddresses       => $controller_host,
-      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
+      options           => $options_real,
     }
   }
 
@@ -511,7 +566,8 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'rabbitmq':
       listening_service => 'rabbitmq',
       ports             => '5672',
-      ipaddresses       => $controller_host,
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
