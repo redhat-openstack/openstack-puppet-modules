@@ -53,13 +53,13 @@ class pacemaker::corosync(
     }
     ->
     exec {"Set password for hacluster user on $cluster_name":
-      command => "/bin/echo ${::pacemaker::params::hacluster_pwd} | /usr/bin/passwd --stdin hacluster",
+      command => "/bin/echo ${::pacemaker::hacluster_pwd} | /usr/bin/passwd --stdin hacluster",
       creates => "/etc/cluster/cluster.conf",
       require => Class["::pacemaker::install"],
     }
     ->
     exec {"auth-successful-across-all-nodes":
-      command => "/usr/sbin/pcs cluster auth $cluster_members -u hacluster -p ${::pacemaker::params::hacluster_pwd} --force",
+      command => "/usr/sbin/pcs cluster auth $cluster_members -u hacluster -p ${::pacemaker::hacluster_pwd} --force",
       timeout   => 3600,
       tries     => 360,
       try_sleep => 10,
