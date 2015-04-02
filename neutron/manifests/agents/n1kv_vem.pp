@@ -97,7 +97,7 @@
 #
 # [*fastpath_flood*]
 #   (optional) Handle broadcast floods and unknown pkts in fastpath(KLM)
-#   Defaults to disable
+#   Defaults to enable
 #
 class neutron::agents::n1kv_vem (
   $n1kv_vsm_ip          = '127.0.0.1',
@@ -113,7 +113,7 @@ class neutron::agents::n1kv_vem (
   $enable               = true,
   $manage_service       = true,
   $portdb               = 'ovs',
-  $fastpath_flood       = 'disable'
+  $fastpath_flood       = 'enable'
 ) {
 
   include ::neutron::params
@@ -182,6 +182,7 @@ class neutron::agents::n1kv_vem (
       ensure   => $n1kv_version,
       provider => $::neutron::params::package_provider,
       source   => $vemtgtimg,
+      tag      => 'openstack',
       require  => File[$vemtgtimg]
     }
   } else {
@@ -198,7 +199,8 @@ class neutron::agents::n1kv_vem (
       }
     }
     package {'nexus1000v':
-      ensure => $package_ensure
+      ensure => $package_ensure,
+      tag    => 'openstack',
     }
   }
 

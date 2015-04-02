@@ -72,7 +72,8 @@ describe 'neutron::server' do
       if platform_params.has_key?(:server_package)
         is_expected.to contain_package('neutron-server').with(
           :name   => platform_params[:server_package],
-          :ensure => p[:package_ensure]
+          :ensure => p[:package_ensure],
+          :tag    => 'openstack'
         )
         is_expected.to contain_package('neutron-server').with_before(/Neutron_api_config\[.+\]/)
         is_expected.to contain_package('neutron-server').with_before(/Neutron_config\[.+\]/)
@@ -127,6 +128,15 @@ describe 'neutron::server' do
         is_expected.to contain_neutron_config('DEFAULT/max_l3_agents_per_router').with_value('3')
         is_expected.to contain_neutron_config('DEFAULT/min_l3_agents_per_router').with_value('2')
         is_expected.to contain_neutron_config('DEFAULT/l3_ha_net_cidr').with_value('169.254.192.0/18')
+      end
+    end
+
+    context 'with HA routers disabled' do
+      before :each do
+        params.merge!(:l3_ha => false)
+      end
+      it 'should disable HA routers' do
+        is_expected.to contain_neutron_config('DEFAULT/l3_ha').with_value(false)
       end
     end
 

@@ -88,6 +88,9 @@ class neutron::agents::dhcp (
       Package[$::neutron::params::dnsmasq_packages] -> Package<| title == 'neutron-dhcp-agent' |>
       ensure_packages($::neutron::params::dnsmasq_packages)
     }
+    /^midonet.*/: {
+      ensure_packages($::neutron::params::midonet_server_package)
+    }
     default: {
       fail("Unsupported dhcp_driver ${dhcp_driver}")
     }
@@ -133,6 +136,7 @@ class neutron::agents::dhcp (
     package { 'neutron-dhcp-agent':
       ensure => $package_ensure,
       name   => $::neutron::params::dhcp_agent_package,
+      tag    => 'openstack',
     }
   } else {
     # Some platforms (RedHat) do not provide a neutron DHCP agent package.

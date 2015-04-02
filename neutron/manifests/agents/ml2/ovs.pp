@@ -203,6 +203,7 @@ class neutron::agents::ml2::ovs (
     package { 'neutron-ovs-agent':
       ensure => $package_ensure,
       name   => $::neutron::params::ovs_agent_package,
+      tag    => 'openstack',
     }
   } else {
     # Some platforms (RedHat) do not provide a separate
@@ -215,6 +216,7 @@ class neutron::agents::ml2::ovs (
       package { 'neutron-ovs-agent':
         ensure => $package_ensure,
         name   => $::neutron::params::ovs_server_package,
+        tag    => 'openstack',
       } ->
       # https://bugzilla.redhat.com/show_bug.cgi?id=1087647
       # Causes init script for agent to load the old ovs file
@@ -228,7 +230,6 @@ class neutron::agents::ml2::ovs (
 
   if $enabled {
     $service_ensure = 'running'
-    Neutron_config<||> ~> Service['neutron-ovs-agent-service']
   } else {
     $service_ensure = 'stopped'
   }

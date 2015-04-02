@@ -252,6 +252,10 @@ class neutron::server (
     } else {
       fail('min_l3_agents_per_router should be less than or equal to max_l3_agents_per_router.')
     }
+  } else {
+      neutron_config {
+        'DEFAULT/l3_ha':                    value => false;
+      }
   }
 
   if $mysql_module {
@@ -340,6 +344,7 @@ class neutron::server (
     package { 'neutron-server':
       ensure => $package_ensure,
       name   => $::neutron::params::server_package,
+      tag    => 'openstack',
     }
   } else {
     # Some platforms (RedHat) does not provide a neutron-server package.

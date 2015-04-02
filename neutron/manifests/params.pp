@@ -31,6 +31,9 @@ class neutron::params {
     $cisco_config_file     = '/etc/neutron/plugins/cisco/cisco_plugins.ini'
     $cisco_ml2_config_file = '/etc/neutron/plugins/ml2/ml2_conf_cisco.ini'
 
+    $midonet_server_package = 'python-neutron-plugin-midonet'
+    $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
+
     $nvp_server_package = 'openstack-neutron-nicira'
 
     $dhcp_agent_package = false
@@ -38,7 +41,7 @@ class neutron::params {
 
     $dnsmasq_packages   = ['dnsmasq', 'dnsmasq-utils']
 
-    $lbaas_agent_package = false
+    $lbaas_agent_package = 'openstack-neutron-lbaas'
     $lbaas_agent_service = 'neutron-lbaas-agent'
 
     $haproxy_package   = 'haproxy'
@@ -48,7 +51,7 @@ class neutron::params {
 
     $vpnaas_agent_package = 'openstack-neutron-vpn-agent'
     $vpnaas_agent_service = 'neutron-vpn-agent'
-    if $::operatingsystemrelease =~ /^7.*/ {
+    if $::operatingsystemrelease =~ /^7.*/ or $::operatingsystem == 'Fedora' {
       $openswan_package     = 'libreswan'
     } else {
       $openswan_package     = 'openswan'
@@ -99,6 +102,9 @@ class neutron::params {
     $cisco_server_package  = 'neutron-plugin-cisco'
     $cisco_config_file     = '/etc/neutron/plugins/cisco/cisco_plugins.ini'
     $cisco_ml2_config_file = '/etc/neutron/plugins/ml2/ml2_conf_cisco.ini'
+
+    $midonet_server_package = 'python-neutron-plugin-midonet'
+    $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
 
     $nvp_server_package = 'neutron-plugin-nicira'
 
