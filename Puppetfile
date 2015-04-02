@@ -79,7 +79,7 @@ mod 'manila',
   :git => 'https://github.com/stackforge/puppet-manila.git'
 
 mod 'memcached',
-  :commit => '5869cadc82553738610b305ce15842ab2a3a4313',
+  :commit => 'e0e9c024dc4ed6f049d68ad3f2cc3ee9666e7277',
   :git => 'https://github.com/saz/puppet-memcached.git'
 
 mod 'module-collectd',
