@@ -1,0 +1,7 @@
+Code-Review+2: Gaël Chamoulaud <gchamoul@redhat.com>
+Verified+1: Gaël Chamoulaud <gchamoul@redhat.com>
+Submitted-by: Gaël Chamoulaud <gchamoul@redhat.com>
+Submitted-at: Fri, 03 Apr 2015 11:13:51 +0200
+Reviewed-on: https://review.gerrithub.io/229187
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/master
