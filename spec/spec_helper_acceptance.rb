@@ -27,8 +27,7 @@ RSpec.configure do |c|
     puppet_module_install(:source => proj_root, :module_name => 'opendaylight')
     hosts.each do |host|
       # Install stdlib, a dependency of the odl mod
-      # TODO: Why is 1 an acceptable exit code?
-      on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0] }
       # Install archive, a dependency of the odl mod use for tarball-type installs
       on host, puppet('module', 'install', 'camptocamp-archive'), { :acceptable_exit_codes => [0] }
       # Install Java Puppet mod, a dependency of the tarball install method
