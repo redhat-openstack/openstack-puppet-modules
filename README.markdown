@@ -18,7 +18,7 @@ Puppet module for deploying the [OpenDaylight Software Defined Networking (SDN) 
 
 Deploys and configrues the [OpenDaylight SDN controller](http://www.opendaylight.org/), including systemd configuration.
 
-Both supported install methods default to the lastest stable OpenDaylight release, which is currently Helium 0.2.2 SR2. 
+Both supported install methods default to the lastest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
 
 ## Setup
 

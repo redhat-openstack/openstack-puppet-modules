@@ -104,7 +104,7 @@ end
 # Shared tests that specialize in testing ODL's REST port config
 def odl_rest_port_tests(options = {})
   # Extract params
-  # NB: This default list should be the same as the one in opendaylight::params
+  # NB: This default value should be the same as one in opendaylight::params
   # TODO: Remove this possible source of bugs^^
   odl_rest_port = options.fetch(:odl_rest_port, 8080)
 
@@ -124,7 +124,9 @@ end
 
 def tarball_install_tests(options = {})
   # Extract params
-  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.2-Helium-SR2/distribution-karaf-0.2.2-Helium-SR2.tar.gz')
+  # NB: These default values should be the same as ones in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.3-Helium-SR3/distribution-karaf-0.2.3-Helium-SR3.tar.gz')
   unitfile_url = options.fetch(:unitfile_url, 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz')
   osfamily = options.fetch(:osfamily, 'RedHat')
 
