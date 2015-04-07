@@ -76,6 +76,7 @@ desc "All tests, including Beaker tests against all nodes."
 task :acceptance => [
   :test,
   :centos,
+  :centos_tarball,
   :fedora_20,
   :fedora_21,
   :ubuntu,
