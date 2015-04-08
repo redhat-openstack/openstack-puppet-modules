@@ -138,16 +138,16 @@ class opendaylight::install {
     elsif ( $::osfamily == 'Debian' ) {
       file { '/etc/init/opendaylight.conf':
         # It should be a normal file
-        ensure  => 'file',
+        ensure => 'file',
         # Set user:group owners of ODL upstart file
         # NB: Unverfied, not sure if this is correct for upstart
-        owner   => 'root',
-        group   => 'root',
+        owner  => 'root',
+        group  => 'root',
         # Set mode of ODL upstart file
         # NB: Unverfied, not sure if this is correct for upstart
-        mode    => '0644',
+        mode   => '0644',
         # Use Puppet URL for Travis. File stored in opendaylight/files/
-        content => 'puppet:///modules/opendaylight/upstart.odl.conf'
+        source => 'puppet:///modules/opendaylight/upstart.odl.conf'
       }
     }
     else {
