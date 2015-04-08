@@ -17,6 +17,33 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 class { 'zookeeper': }
 ```
 
+### Quorum
+
+For setting up a quorum of ZooKeeper you should list all nodes in the quorum:
+
+```puppet
+class { 'zookeeper':
+  servers => ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+}
+```
+Currently first ZooKeeper will have `ID = 1`. This would produce following configuration:
+```
+server.1=192.168.1.1:2888:3888
+server.2=192.168.1.2:2888:3888
+server.3=192.168.1.3:2888:3888
+```
+where first port is `election_port` and second one `leader_port`. Both ports could be customized for each ZooKeeper instance.
+
+```puppet
+class { 'zookeeper':
+  election_port => 2889,
+  leader_port   => 3889,
+  servers       => ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+}
+```
+
+### Setting IP address
+
 If `$::ipaddress` is not your public IP (e.g. you are using Docker) make sure to setup correct IP:
 
 ```puppet
@@ -30,6 +57,8 @@ or in Hiera:
 ```yaml
 zookeeper::client_ip: "%{::ipaddress_eth0}"
 ```
+
+This is a workaround for a a [Facter issue](https://tickets.puppetlabs.com/browse/FACT-380).
 
 ##  Parameters
 
