@@ -24,8 +24,8 @@ clientPortAddress=<%= @client_ip %>
 #server.2=zookeeper2:2888:3888
 #server.3=zookeeper3:2888:3888
 <% i = 1 -%>
-<% @servers.each do |h| -%>
-<%= "server.#{i}=#{h}:%s:%s" % [ @election_port, @leader_port ] %><% i += 1 %>
+<% @servers.each_with_index do |h, i| -%>
+<%= "server.#{i+1}=#{h}:%s:%s" % [ @election_port, @leader_port ] %>
 <% end -%>
 
 # To avoid seeks ZooKeeper allocates space in the transaction log file in
