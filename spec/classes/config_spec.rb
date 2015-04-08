@@ -166,13 +166,42 @@ describe 'zookeeper::config', :type => :class do
   end
 
   context 'myid link' do
-
     it { should contain_file(
       '/var/lib/zookeeper/myid'
     ).with({
       'ensure' => 'link',
       'target' => '/etc/zookeeper/conf/myid',
     })}
+  end
+
+  context 'setting quorum of servers with custom ports' do
+    let(:params) {{
+      :election_port => 3000,
+      :leader_port   => 4000,
+      :servers       => ['192.168.1.1', '192.168.1.2']
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.1=192.168.1.1:3000:4000/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.2=192.168.1.2:3000:4000/) }
+  end
+
+  context 'setting quorum of servers with default ports' do
+    let(:params) {{
+      :servers => ['192.168.1.1', '192.168.1.2']
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.1=192.168.1.1:2888:3888/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.2=192.168.1.2:2888:3888/) }
   end
 
 end
