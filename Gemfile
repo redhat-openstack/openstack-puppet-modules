@@ -6,6 +6,7 @@ gem 'puppetlabs_spec_helper'
 gem 'rake'
 # librarian 2 does not support ruby 1.8.7
 gem 'librarian-puppet', '< 2.0'
+gem 'highline', '< 1.7' # 1.7 is not compatible with ruby 1.8.7
 gem 'rspec-system-puppet',     :require => false
 gem 'serverspec',              :require => false
 gem 'rspec-system-serverspec', :require => false
