@@ -105,8 +105,7 @@ class { 'opendaylight':
 
 ## Limitations
 
-* The target OS must use systemd (Fedora 15+, CentOS 7+).
-* Only tested on Fedora 20, 21 and CentOS 7.
+* Only tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
 * CentOS 7 is currently the most stable OS option.
 
 ## Development
