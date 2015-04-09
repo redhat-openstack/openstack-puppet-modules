@@ -85,14 +85,12 @@
 # }
 #
 class galera::server (
-  $mysql_server_hash     = {},
   $bootstrap             = false,
   $debug                 = false,
   $service_name          = 'mariadb',
   $service_enable        = true,
   $service_ensure        = 'running',
   $manage_service        = false,
-  $wsrep_bind_address    = '0.0.0.0',
   $wsrep_node_address    = undef,
   $wsrep_provider        = '/usr/lib64/galera/libgalera_smm.so',
   $wsrep_cluster_name    = 'galera_cluster',
@@ -103,11 +101,23 @@ class galera::server (
   $wsrep_ssl             = false,
   $wsrep_ssl_key         = undef,
   $wsrep_ssl_cert        = undef,
+  $create_mysql_resource = true,
+  # DEPRECATED OPTIONS
+  $mysql_server_hash     = {},
+  $wsrep_bind_address    = '0.0.0.0',
 )  {
 
-  $mysql_server_class = { 'mysql::server' => $mysql_server_hash }
+  if $create_mysql_resource {
+  warning("DEPRECATED: ::mysql::server should be called manually, please set create_mysql_resource to false and call class ::mysql::server with your config")
 
-  create_resources( 'class', $mysql_server_class )
+    $mysql_server_class = { 'mysql::server' => $mysql_server_hash }
+
+    create_resources( 'class', $mysql_server_class )
+  }
+
+  if $wsrep_bind_address {
+    warning("DEPRECATED: wsrep_bind_address is deprecated, you should use bind_address of mysql module")
+  }
 
   $wsrep_provider_options = wsrep_options({
     'socket.ssl'      => $wsrep_ssl,
