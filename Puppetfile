@@ -7,7 +7,7 @@ mod 'aviator',
   :git => 'https://github.com/aimonb/puppet_aviator.git'
 
 mod 'ceilometer',
-  :commit => '8d17c36818d99231a64d20f50ea708d59306fe22',
+  :commit => '1c3a3aedddcd8f923bf00763b269b1f8e643b1a1',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
 
 mod 'certmonger',
