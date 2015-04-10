@@ -29,19 +29,19 @@ describe 'Puppet::Type.type(:gnocchi_config)' do
 
   it 'should accept a valid value' do
     @gnocchi_config[:value] = 'bar'
-    @gnocchi_config[:value].should == 'bar'
+    expect(@gnocchi_config[:value]).to eq('bar')
   end
 
   it 'should not accept a value with whitespace' do
     @gnocchi_config[:value] = 'b ar'
-    @gnocchi_config[:value].should == 'b ar'
+    expect(@gnocchi_config[:value]).to eq('b ar')
   end
 
   it 'should accept valid ensure values' do
     @gnocchi_config[:ensure] = :present
-    @gnocchi_config[:ensure].should == :present
+    expect(@gnocchi_config[:ensure]).to eq(:present)
     @gnocchi_config[:ensure] = :absent
-    @gnocchi_config[:ensure].should == :absent
+    expect(@gnocchi_config[:ensure]).to eq(:absent)
   end
 
   it 'should not accept invalid ensure values' do
