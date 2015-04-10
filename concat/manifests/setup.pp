@@ -35,31 +35,30 @@ class concat::setup {
 
   $script_path = "${concatdir}/bin/${script_name}"
 
-  $script_owner = $::osfamily ? { 'windows' => undef, default => $::id }
+  $default_owner = $::osfamily ? { 'windows' => undef, default => $::id }
 
-  $script_group = $script_owner ? { 'root' => '0', default => undef }
+  $default_group = $default_owner ? { 'root' => '0', default => undef }
 
   $script_mode = $::osfamily ? { 'windows' => undef, default => '0755' }
 
   $script_command = $::osfamily? {
     'windows' => "ruby.exe '${script_path}'",
+    'openbsd' => "/usr/local/bin/ruby21 '${script_path}'",
     default   => $script_path
-  }
-
-  File {
-    backup => false,
   }
 
   file { $script_path:
     ensure => file,
-    owner  => $script_owner,
-    group  => $script_group,
+    owner  => $default_owner,
+    group  => $default_group,
     mode   => $script_mode,
     source => "puppet:///modules/concat/${script_name}",
   }
 
   file { [ $concatdir, "${concatdir}/bin" ]:
     ensure => directory,
+    owner  => $default_owner,
+    group  => $default_group,
     mode   => '0755',
   }
 }
