@@ -119,7 +119,7 @@ mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb.git'
 
 mod 'ntp',
-  :commit => '286acbacdb9aaa3f1255d7486078730e380195f4',
+  :commit => '03d8b2c06134fc710e3dc68ed0bcac797854e6df',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
 mod 'openstack_extras',

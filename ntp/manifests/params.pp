@@ -9,11 +9,13 @@ class ntp::params {
   $keys_trusted      = []
   $logfile           = undef
   $package_ensure    = 'present'
+  $peers             = []
   $preferred_servers = []
   $service_enable    = true
   $service_ensure    = 'running'
   $service_manage    = true
   $udlc              = false
+  $udlc_stratum      = '10'
   $interfaces        = []
   $disable_auth      = false
   $broadcastclient   = false
