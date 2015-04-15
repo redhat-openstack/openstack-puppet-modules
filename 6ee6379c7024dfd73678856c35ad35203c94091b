@@ -1,0 +1,7 @@
+Code-Review+2: Lukáš Bezdička <lbezdick@redhat.com>
+Verified+1: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-by: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-at: Wed, 15 Apr 2015 17:03:56 +0200
+Reviewed-on: https://review.gerrithub.io/230253
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/juno
