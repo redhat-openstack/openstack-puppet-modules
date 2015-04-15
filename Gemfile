@@ -18,5 +18,5 @@ group :development do
   gem 'puppet-blacksmith',  '~> 3.0'
   gem 'metadata-json-lint',      :require => false
   gem 'beaker'
-  gem 'beaker-rspec'
+  gem 'beaker-rspec', :require => false
 end
