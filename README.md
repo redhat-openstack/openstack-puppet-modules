@@ -129,18 +129,18 @@ class { 'zookeeper':
 
 ## Install
 
-### librarian (recommended)
+### Librarian (recommended)
 
 For [puppet-librarian](https://github.com/rodjek/librarian-puppet) just add to `Puppetfile`
 
 from Forge:
 ```ruby
-mod 'deric/zookeeper'
+mod 'deric-zookeeper'
 ```
 
 latest (development) version from GitHub
 ```ruby
-mod 'deric/zookeeper', :git => 'git://github.com/deric/puppet-zookeeper.git'
+mod 'deric-zookeeper', git: 'git://github.com/deric/puppet-zookeeper.git'
 ```
 
 ### submodules
