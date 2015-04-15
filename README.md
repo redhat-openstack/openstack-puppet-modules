@@ -17,16 +17,31 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 class { 'zookeeper': }
 ```
 
-### Quorum
+## Cluster setup
 
-For setting up a quorum of ZooKeeper you should list all nodes in the quorum:
+When running ZooKeeper in the distributed mode each node must have unique ID (`1-255`). The easiest way how to setup multiple ZooKeepers, is by using Hiera.
+
+`hiera/host/zk1.example.com.yaml`:
+```yaml
+zookeeper::id: '1'
+```
+`hiera/host/zk2.example.com.yaml`:
+```yaml
+zookeeper::id: '2'
+```
+`hiera/host/zk3.example.com.yaml`:
+```yaml
+zookeeper::id: '3'
+```
+A ZooKeeper quorum should consist of odd number of nodes (usually `3` or `5`).
+For defining a quorum it is enough to list all IP addresses of all its members.
 
 ```puppet
 class { 'zookeeper':
   servers => ['192.168.1.1', '192.168.1.2', '192.168.1.3']
 }
 ```
-Currently first ZooKeeper will have `ID = 1`. This would produce following configuration:
+Currently, first ZooKeeper in the array above, will be assigned `ID = 1`. This would produce following configuration:
 ```
 server.1=192.168.1.1:2888:3888
 server.2=192.168.1.2:2888:3888
