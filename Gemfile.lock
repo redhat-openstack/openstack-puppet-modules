@@ -33,6 +33,9 @@ GEM
       rbvmomi (~> 1.8)
       rsync (~> 1.0.9)
       unf (~> 0.1)
+    beaker-rspec (2.0.0)
+      beaker
+      rspec
     builder (3.2.2)
     diff-lcs (1.2.5)
     docker-api (1.21.0)
@@ -94,7 +97,7 @@ GEM
     fog-json (1.0.1)
       fog-core (~> 1.0)
       multi_json (~> 1.0)
-    fog-local (0.1.0)
+    fog-local (0.2.1)
       fog-core (~> 1.27)
     fog-powerdns (0.1.1)
       fog-core (~> 1.27)
@@ -118,7 +121,7 @@ GEM
     fog-serverlove (0.1.2)
       fog-core
       fog-json
-    fog-softlayer (0.4.2)
+    fog-softlayer (0.4.5)
       fog-core
       fog-json
     fog-storm_on_demand (0.1.1)
@@ -207,7 +210,7 @@ GEM
     puppet-lint (1.1.0)
     puppet-syntax (2.0.0)
       rake
-    puppetlabs_spec_helper (0.10.1)
+    puppetlabs_spec_helper (0.10.2)
       mocha
       puppet-lint
       puppet-syntax
@@ -245,7 +248,7 @@ GEM
       systemu (~> 2.5)
     rspec-system-puppet (2.2.1)
       rspec-system (~> 2.0)
-    rspec-system-serverspec (2.0.1)
+    rspec-system-serverspec (2.0.0)
       rspec-system (~> 2.0)
       serverspec (~> 0.0)
       specinfra (~> 0.0)
@@ -279,6 +282,7 @@ PLATFORMS
 
 DEPENDENCIES
   beaker
+  beaker-rspec
   highline (< 1.7)
   librarian-puppet (< 2.0)
   metadata-json-lint
