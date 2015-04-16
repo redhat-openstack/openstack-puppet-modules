@@ -103,7 +103,6 @@ describe 'glance::api' do
           'registry_port',
           'registry_client_protocol',
           'show_image_direct_url',
-          'os_region_name',
         ].each do |config|
           is_expected.to contain_glance_api_config("DEFAULT/#{config}").with_value(param_hash[config.intern])
         end
@@ -115,9 +114,17 @@ describe 'glance::api' do
           'debug',
           'registry_host',
           'registry_port',
-          'os_region_name',
         ].each do |config|
           is_expected.to contain_glance_cache_config("DEFAULT/#{config}").with_value(param_hash[config.intern])
+        end
+      end
+
+      it 'is_expected.to lay down default glance_store api and cache config' do
+        [
+          'os_region_name',
+        ].each do |config|
+          is_expected.to contain_glance_cache_config("glance_store/#{config}").with_value(param_hash[config.intern])
+          is_expected.to contain_glance_api_config("glance_store/#{config}").with_value(param_hash[config.intern])
         end
       end
 
@@ -427,9 +434,15 @@ describe 'glance::api' do
     end
     let(:params) { default_params }
 
-    it { is_expected.to contain_package('glance-api').with(
-        :tag => ['openstack'],
-    )}
+    ['present', 'latest'].each do |package_ensure|
+      context "with package_ensure '#{package_ensure}'" do
+        let(:params) { default_params.merge({ :package_ensure => package_ensure }) }
+        it { is_expected.to contain_package('glance-api').with(
+            :ensure => package_ensure,
+            :tag    => ['openstack']
+        )}
+      end
+    end
   end
 
   describe 'on RedHat platforms' do
@@ -438,9 +451,15 @@ describe 'glance::api' do
     end
     let(:params) { default_params }
 
-    it { is_expected.to contain_package('openstack-glance').with(
-        :tag => ['openstack'],
-    )}
+    ['present', 'latest'].each do |package_ensure|
+      context "with package_ensure '#{package_ensure}'" do
+        let(:params) { default_params.merge({ :package_ensure => package_ensure }) }
+        it { is_expected.to contain_package('openstack-glance-api').with(
+            :ensure => package_ensure,
+            :tag    => ['openstack']
+        )}
+      end
+    end
   end
 
   describe 'on unknown platforms' do

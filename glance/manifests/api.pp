@@ -7,6 +7,9 @@
 # [*keystone_password*]
 #   (required) Password used to authentication.
 #
+# [*package_ensure*]
+#   (optional) Ensure state for package. Defaults to 'present'.
+#
 # [*verbose*]
 #   (optional) Rather to log the glance api service at verbose level.
 #   Default: false
@@ -184,6 +187,7 @@
 #
 class glance::api(
   $keystone_password,
+  $package_ensure           = 'present',
   $verbose                  = false,
   $debug                    = false,
   $bind_host                = '0.0.0.0',
@@ -233,13 +237,12 @@ class glance::api(
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
   }
 
-  if ( $glance::params::api_package_name != $glance::params::registry_package_name ) {
-    ensure_packages([$glance::params::api_package_name],
-      {
-        tag    => ['openstack'],
-      }
-    )
-  }
+  ensure_packages([$glance::params::api_package_name],
+    {
+      ensure => $package_ensure,
+      tag    => ['openstack'],
+    }
+  )
 
   Package[$glance::params::api_package_name] -> File['/etc/glance/']
   Package[$glance::params::api_package_name] -> Class['glance::policy']
@@ -292,7 +295,7 @@ class glance::api(
     'DEFAULT/workers':               value => $workers;
     'DEFAULT/show_image_direct_url': value => $show_image_direct_url;
     'DEFAULT/image_cache_dir':       value => $image_cache_dir;
-    'DEFAULT/os_region_name':        value => $os_region_name;
+    'glance_store/os_region_name':   value => $os_region_name;
   }
 
   # known_stores config
@@ -307,9 +310,9 @@ class glance::api(
   }
 
   glance_cache_config {
-    'DEFAULT/verbose':        value => $verbose;
-    'DEFAULT/debug':          value => $debug;
-    'DEFAULT/os_region_name': value => $os_region_name;
+    'DEFAULT/verbose':             value => $verbose;
+    'DEFAULT/debug':               value => $debug;
+    'glance_store/os_region_name': value => $os_region_name;
   }
 
   # configure api service to connect registry service

@@ -8,9 +8,7 @@
 #    (required) The keystone password for administrative user
 #
 #  [*package_ensure*]
-#    (optional) Ensure state for package. Defaults to 'present'.  On RedHat
-#    platforms this setting is ignored and the setting from the glance class is
-#    used because there is only one glance package.
+#    (optional) Ensure state for package. Defaults to 'present'.
 #
 #  [*verbose*]
 #    (optional) Enable verbose logs (true|false). Defaults to false.
@@ -115,6 +113,10 @@
 #   (optional) CA certificate file to use to verify connecting clients
 #   Defaults to false, not set
 #
+# [*sync_db*]
+#   (Optional) Run db sync on the node.
+#   Defaults to true
+#
 #  [*mysql_module*]
 #  (optional) Deprecated. Does nothing.
 #
@@ -143,6 +145,7 @@ class glance::registry(
   $cert_file             = false,
   $key_file              = false,
   $ca_file               = false,
+  $sync_db               = true,
   # DEPRECATED PARAMETERS
   $mysql_module          = undef,
   $auth_host             = '127.0.0.1',
@@ -157,14 +160,12 @@ class glance::registry(
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
   }
 
-  if ( $glance::params::api_package_name != $glance::params::registry_package_name ) {
-    ensure_packages( [$glance::params::registry_package_name],
-      {
-        ensure => $package_ensure,
-        tag    => ['openstack'],
-      }
-    )
-  }
+  ensure_packages( [$glance::params::registry_package_name],
+    {
+      ensure => $package_ensure,
+      tag    => ['openstack'],
+    }
+  )
 
   Package[$glance::params::registry_package_name] -> File['/etc/glance/']
   Package[$glance::params::registry_package_name] -> Glance_registry_config<||>
@@ -354,15 +355,17 @@ class glance::registry(
 
   if $manage_service {
     if $enabled {
-      Exec['glance-manage db_sync'] ~> Service['glance-registry']
+      if $sync_db {
+        Exec['glance-manage db_sync'] ~> Service['glance-registry']
 
-      exec { 'glance-manage db_sync':
-        command     => $::glance::params::db_sync_command,
-        path        => '/usr/bin',
-        user        => 'glance',
-        refreshonly => true,
-        logoutput   => on_failure,
-        subscribe   => [Package[$glance::params::registry_package_name], File['/etc/glance/glance-registry.conf']],
+        exec { 'glance-manage db_sync':
+          command     => $::glance::params::db_sync_command,
+          path        => '/usr/bin',
+          user        => 'glance',
+          refreshonly => true,
+          logoutput   => on_failure,
+          subscribe   => [Package[$glance::params::registry_package_name], File['/etc/glance/glance-registry.conf']],
+        }
       }
       $service_ensure = 'running'
     } else {
