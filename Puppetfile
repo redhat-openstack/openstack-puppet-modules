@@ -202,6 +202,10 @@ mod 'trove',
   :commit => '27f3940b92d803e18bbad37a40533bdeeab0a85e',
   :git => 'https://github.com/stackforge/puppet-trove'
 
+mod 'tuskar',
+  :commit => '8c28b3a40f2dba6f70dfa1cad13f2709173bc213',
+  :git => 'https://github.com/stackforge/puppet-tuskar.git'
+
 mod 'vcsrepo',
   :commit => '3d4547646d49295c91bb002fa885e187c2d89feb',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
