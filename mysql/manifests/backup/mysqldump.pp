@@ -1,27 +1,26 @@
 # See README.me for usage.
 class mysql::backup::mysqldump (
-  $backupuser,
-  $backuppassword,
-  $backupdir,
-  $backupdirmode = '0700',
-  $backupdirowner = 'root',
-  $backupdirgroup = 'root',
-  $backupcompress = true,
-  $backuprotate = 30,
-  $ignore_events = true,
+  $backupuser         = '',
+  $backuppassword     = '',
+  $backupdir          = '',
+  $backupdirmode      = '0700',
+  $backupdirowner     = 'root',
+  $backupdirgroup     = $mysql::params::root_group,
+  $backupcompress     = true,
+  $backuprotate       = 30,
+  $ignore_events      = true,
   $delete_before_dump = false,
-  $backupdatabases = [],
-  $file_per_database = false,
-  $ensure = 'present',
-  $time = ['23', '5'],
-  $postscript = false,
-  $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $backupdatabases    = [],
+  $file_per_database  = false,
+  $ensure             = 'present',
+  $time               = ['23', '5'],
+  $postscript         = false,
+  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
 
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
-    provider      => 'mysql',
     require       => Class['mysql::server::root_password'],
   }
 
@@ -47,7 +46,7 @@ class mysql::backup::mysqldump (
     path    => '/usr/local/sbin/mysqlbackup.sh',
     mode    => '0700',
     owner   => 'root',
-    group   => 'root',
+    group   => $mysql::params::root_group,
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 

@@ -195,6 +195,14 @@ Provides one or more keys to be trusted by NTP. Valid options: array of keys. De
 
 Specifies a log file for NTP to use instead of syslog. Valid options: string containing an absolute path. Default value: ' '
 
+####`minpoll`
+
+Tells Puppet to use non-standard minimal poll interval of upstream servers. Valid options: 3 to 16. Default option: undef.
+
+####`maxpoll`
+
+Tells Puppet to use non-standard maximal poll interval of upstream servers. Valid options: 3 to 16. Default option: undef, except FreeBSD (on FreeBSD `maxpoll` set 9 by default).
+
 ####`package_ensure`
 
 Tells Puppet whether the NTP package should be installed, and what version. Valid options: 'present', 'latest', or a specific version number. Default value: 'present'
@@ -209,7 +217,11 @@ Tells Puppet what NTP package to manage. Valid options: string. Default value: '
 
 ####`panic`
 
-Specifies whether NTP should "panic" in the event of a very large clock skew. Valid options: 'true' or 'false'. Default value: 'true' (except on virtual machines, where major time shifts are normal)
+Specifies whether NTP should "panic" in the event of a very large clock skew. Applies only if `tinker` option set to "true" or in case your environment is in virtual machine. Valid options: unsigned shortint digit. Default value: 0 if environment is virtual, undef in all other cases.
+
+####`peers`
+
+List of ntp servers which the local clock can be synchronised against, or which can synchronise against the local clock.
 
 ####`preferred_servers`
 
@@ -257,9 +269,21 @@ Tells Puppet whether to manage the NTP service. Valid options: 'true' or 'false'
 
 Tells Puppet what NTP service to manage. Valid options: string. Default value: varies by operating system
 
+####`stepout`
+
+Tells puppet to change stepout. Applies only if `tinker` value is 'true'. Valid options: unsigned shortint digit. Default value: undef.
+
+####`tinker`
+
+Tells Puppet to enable tinker options. Valid options: 'true' of 'false'. Default value: 'false'
+
 ####`udlc`
 
 Specifies whether to configure ntp to use the undisciplined local clock as a time source. Valid options: 'true' or 'false'. Default value: 'false'
+
+####`udlc_stratum`
+
+Specifies the stratum the server should operate at when using the undisciplined local clock as the time source. It is strongly suggested that this value be set to no less than 10 where ntpd may be accessible outside your immediate, controlled network. Default value: 10
 
 ##Limitations
 

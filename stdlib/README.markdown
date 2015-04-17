@@ -244,6 +244,23 @@ This function flattens any deeply nested arrays and returns a single flat array 
 Returns the largest integer less than or equal to the argument.
 Takes a single numeric value as an argument. *Type*: rvalue
 
+#### `fqdn_rand_string`
+
+Generates a random alphanumeric string using an optionally-specified character set (default is alphanumeric), combining the `$fqdn` fact and an optional seed for repeatable randomness.
+
+*Usage:*
+```
+fqdn_rand_string(LENGTH, [CHARSET], [SEED])
+```
+*Examples:*
+```
+fqdn_rand_string(10)
+fqdn_rand_string(10, 'ABCDEF!@#$%^')
+fqdn_rand_string(10, '', 'custom seed')
+```
+
+*Type*: rvalue
+
 #### `fqdn_rotate`
 
 Rotates an array a random number of times based on a node's fqdn. *Type*: rvalue
@@ -499,6 +516,24 @@ Calling the class or definition from outside the current module will fail. For e
   ```
 
   *Type*: statement
+
+#### `pw_hash`
+
+Hashes a password using the crypt function. Provides a hash usable on most POSIX systems.
+
+The first argument to this function is the password to hash. If it is undef or an empty string, this function returns undef.
+
+The second argument to this function is which type of hash to use. It will be converted into the appropriate crypt(3) hash specifier. Valid hash types are:
+
+|Hash type            |Specifier|
+|---------------------|---------|
+|MD5                  |1        |
+|SHA-256              |5        |
+|SHA-512 (recommended)|6        |
+
+The third argument to this function is the salt to use.
+
+Note: this uses the Puppet Master's implementation of crypt(3). If your environment contains several different operating systems, ensure that they are compatible before using this function.
 
 #### `range`
 
