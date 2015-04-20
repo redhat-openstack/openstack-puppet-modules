@@ -21,11 +21,11 @@ Please use public, documented communication instead of reaching out to developer
 
 Open Source projects benefit from always communicating in the open. Other people may run into the same issue, search for a similar trace and find your question, already answered. More eyes may even get your question answered faster.
 
-We prefer [Issues](https://github.com/dfarrell07/vagrant-opendaylight/issues) for most communication.
+We prefer [Issues](https://github.com/dfarrell07/puppet-opendaylight/issues) for most communication.
 
 ### Issues
 
-Please use our [GitHub Issues freely](https://github.com/dfarrell07/vagrant-opendaylight/issues), even for small things! They are the primary method by which we track what's going on in the project.
+Please use our [GitHub Issues freely](https://github.com/dfarrell07/puppet-opendaylight/issues), even for small things! They are the primary method by which we track what's going on in the project.
 
 The lables assigned to an issue can tell you important things about it.
 
@@ -41,11 +41,11 @@ Issues can be referenced and manipulated from git commit messages. Just referenc
 
 We're experimenting with Gitter, a GitHub-driven chat service that works on a per-repo basis.
 
-Feel free to hop in [our room](https://gitter.im/dfarrell07/vagrant-opendaylight) and test it out with us.
+Feel free to hop in [our room](https://gitter.im/dfarrell07/puppet-opendaylight) and test it out with us.
 
 ## Patches
 
-Please use [Pull Requests](https://github.com/dfarrell07/vagrant-opendaylight/pulls) to submit patches.
+Please use [Pull Requests](https://github.com/dfarrell07/puppet-opendaylight/pulls) to submit patches.
 
 Basics of a pull request:
 * Use the GitHub web UI to fork our repo
