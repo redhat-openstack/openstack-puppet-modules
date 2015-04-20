@@ -27,7 +27,7 @@ We prefer [Issues](https://github.com/dfarrell07/puppet-opendaylight/issues) for
 
 Please use our [GitHub Issues freely](https://github.com/dfarrell07/puppet-opendaylight/issues), even for small things! They are the primary method by which we track what's going on in the project.
 
-The lables assigned to an issue can tell you important things about it.
+The labels assigned to an issue can tell you important things about it.
 
 For example, issues tagged `good-for-beginners` are likely to not require much background knowledge and be fairly self-contained, perfect for people new to the project who are looking to get involved.
 
