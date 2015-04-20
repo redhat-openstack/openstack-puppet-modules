@@ -89,7 +89,8 @@ define xinetd::service (
   $access_times            = undef,
   $log_type                = undef,
   $bind                    = undef,
-  $nice                    = undef
+  $nice                    = undef,
+  $env                     = undef,
 ) {
 
   include xinetd

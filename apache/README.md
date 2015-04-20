@@ -347,6 +347,10 @@ Sets the amount of time the server waits for subsequent requests on a persistent
 
 Sets the limit of the number of requests allowed per connection when KeepAlive is on. Defaults to '100'.
 
+#####`lib_path`
+
+Specifies the location where apache module files are stored. It should not be configured manually without special reason.
+
 #####`loadfile_name`
 
 Sets the file name for the module loadfile. Should be in the format *.load.  This can be used to set the module load order.
@@ -811,9 +815,9 @@ Installs Apache mod_status and uses the status.conf.erb template. These are the 
 
 ```puppet
     class { 'apache::mod::status':
-      allow_from      = ['127.0.0.1','::1'],
-      extended_status = 'On',
-      status_path     = '/server-status',
+      allow_from      => ['127.0.0.1','::1'],
+      extended_status => 'On',
+      status_path     => '/server-status',
 ){
 
 
@@ -826,9 +830,9 @@ Installs Apache mod_expires and uses the expires.conf.erb template. These are th
 
 ```puppet
     class { 'apache::mod::expires':
-      expires_active  = true,
-      expires_default = undef,
-      expires_by_type = undef,
+      expires_active  => true,
+      expires_default => undef,
+      expires_by_type => undef,
 ){
 
 
@@ -839,7 +843,7 @@ Installs Apache mod_expires and uses the expires.conf.erb template. These are th
 
 ```puppet
   class { 'apache::mod::expires':
-    expires_by_type = [
+    expires_by_type => [
       { 'text/json' => 'access plus 1 month' },
       { 'text/html' => 'access plus 1 year' },
     ]
@@ -868,8 +872,8 @@ To specify an alternate mod\_wsgi package name to install and the name of the mo
       wsgi_socket_prefix => "\${APACHE_RUN_DIR}WSGI",
       wsgi_python_home   => '/path/to/venv',
       wsgi_python_path   => '/path/to/venv/site-packages',
-	  package_name       => 'python27-mod_wsgi',
-	  mod_path           => 'python27-mod_wsgi.so',
+      package_name       => 'python27-mod_wsgi',
+      mod_path           => 'python27-mod_wsgi.so',
     }
 ```
 
