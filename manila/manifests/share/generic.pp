@@ -3,6 +3,11 @@
 # Configures Manila to use the generic share driver
 #
 # ===Parameters
+# [*driver_handles_share_servers*]
+# (required) Denotes whether the driver should handle the responsibility of
+#  managing share servers. This must be set to false if the driver is to
+#  operate without managing share servers.
+#
 # [*smb_template_config_path*]
 #   (optional) Path to smb config.
 #   Defaults to: $state_path/smb.conf
@@ -41,8 +46,13 @@
 #   Defaults to:  ['CIFS=manila.share.drivers.generic.CIFSHelper',
 #                  'NFS=manila.share.drivers.generic.NFSHelper']
 #
+# [*cinder_volume_type*]
+#   (optional) Name or id of cinder volume type which will be used for all
+#   volumes created by driver.
+#
 
 class manila::share::generic (
+  $driver_handles_share_servers,
   $smb_template_config_path         = '$state_path/smb.conf',
   $volume_name_template             = 'manila-share-%s',
   $volume_snapshot_name_template    = 'manila-snapshot-%s',
@@ -53,9 +63,11 @@ class manila::share::generic (
   $share_volume_fstype              = 'ext4',
   $share_helpers = ['CIFS=manila.share.drivers.generic.CIFSHelper',
                     'NFS=manila.share.drivers.generic.NFSHelper'],
+  $cinder_volume_type               = undef,
 ) {
 
   manila::backend::generic { 'DEFAULT':
+    driver_handles_share_servers     => $driver_handles_share_servers,
     smb_template_config_path         => $smb_template_config_path,
     volume_name_template             => $volume_name_template,
     volume_snapshot_name_template    => $volume_snapshot_name_template,
@@ -65,5 +77,6 @@ class manila::share::generic (
     service_instance_smb_config_path => $service_instance_smb_config_path,
     share_helpers                    => $share_helpers,
     share_volume_fstype              => $share_volume_fstype,
+    cinder_volume_type               => $cinder_volume_type,
   }
 }

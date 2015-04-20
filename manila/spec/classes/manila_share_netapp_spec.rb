@@ -4,21 +4,27 @@ describe 'manila::share::netapp' do
 
   let :params do
     {
-      :netapp_nas_login             => 'netapp',
-      :netapp_nas_password          => 'password',
-      :netapp_nas_server_hostname   => '127.0.0.2',
-      :netapp_root_volume_aggregate => 'aggr1',
+      :driver_handles_share_servers        => true,
+      :netapp_login                        => 'netapp',
+      :netapp_password                     => 'password',
+      :netapp_server_hostname              => '127.0.0.2',
+      :netapp_server_port                  => '443',
+      :netapp_vserver                      => 'manilasvm',
+      :netapp_root_volume_aggregate        => 'aggr1',
+      :netapp_trace_flags                  => 'method,api',
     }
   end
 
   let :default_params do
     {
-      :netapp_nas_transport_type            => 'http',
-      :netapp_nas_volume_name_template      => 'share_%(share_id)s',
+      :netapp_transport_type                => 'http',
+      :netapp_storage_family                => 'ontap_cluster',
+      :netapp_volume_name_template          => 'share_%(share_id)s',
       :netapp_vserver_name_template         => 'os_%s',
       :netapp_lif_name_template             => 'os_%(net_allocation_id)s',
       :netapp_aggregate_name_search_pattern => '(.*)',
       :netapp_root_volume_name              => 'root',
+      :netapp_port_name_search_pattern      => '(.*)',
     }
   end
 
@@ -30,14 +36,14 @@ describe 'manila::share::netapp' do
 
     it 'configures netapp share driver' do
       is_expected.to contain_manila_config('DEFAULT/share_driver').with_value(
-        'manila.share.drivers.netapp.cluster_mode.NetAppClusteredShareDriver')
+        'manila.share.drivers.netapp.common.NetAppDriver')
       params_hash.each_pair do |config,value|
         is_expected.to contain_manila_config("DEFAULT/#{config}").with_value( value )
       end
     end
 
     it 'marks netapp_password as secret' do
-      is_expected.to contain_manila_config('DEFAULT/netapp_nas_password').with_secret( true )
+      is_expected.to contain_manila_config('DEFAULT/netapp_password').with_secret( true )
     end
   end
 
@@ -53,4 +59,5 @@ describe 'manila::share::netapp' do
   context 'with provided parameters' do
     it_configures 'netapp share driver'
   end
+
 end
