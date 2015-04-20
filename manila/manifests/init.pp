@@ -154,6 +154,10 @@
 #   (optional) Path to the rootwrap configuration file to use for
 #   running commands as root
 #
+# [*lock_path*]
+#   (optional) Location to store Manila locks
+#   Defaults to '/tmp/manila/manila_locks'
+#
 class manila (
   $sql_connection              = 'sqlite:////var/lib/manila/manila.sqlite',
   $sql_idle_timeout            = '3600',
@@ -198,6 +202,7 @@ class manila (
   $debug                       = false,
   $storage_availability_zone   = 'nova',
   $rootwrap_config             = '/etc/manila/rootwrap.conf',
+  $lock_path                   = '/tmp/manila/manila_locks',
 ) {
 
   include ::manila::params
@@ -362,6 +367,7 @@ class manila (
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
     'DEFAULT/rootwrap_config':           value => $rootwrap_config;
+    'DEFAULT/lock_path':                 value => $lock_path;
   }
 
   if($sql_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {

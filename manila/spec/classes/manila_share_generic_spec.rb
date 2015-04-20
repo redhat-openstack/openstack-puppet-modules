@@ -4,6 +4,7 @@ describe 'manila::share::generic' do
 
   let :params do
     {
+      :driver_handles_share_servers     => true,
       :smb_template_config_path         => '$state_path/smb.conf',
       :volume_name_template             => 'manila-share-%s',
       :volume_snapshot_name_template    => 'manila-snapshot-%s',
@@ -12,6 +13,7 @@ describe 'manila::share::generic' do
       :max_time_to_attach               => 120,
       :service_instance_smb_config_path => '$share_mount_path/smb.conf',
       :share_volume_fstype              => 'ext4',
+      :cinder_volume_type               => 'gold',
     }
   end
 

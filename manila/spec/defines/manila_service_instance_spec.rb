@@ -20,6 +20,7 @@ describe 'manila::service_instance' do
       :service_network_division_mask          => 28,
       :interface_driver                       => 'manila.network.linux.interface.OVSInterfaceDriver',
       :connect_share_server_to_tenant_network => false,
+      :service_instance_network_helper_type   => 'neutron',
     }
   end
 
