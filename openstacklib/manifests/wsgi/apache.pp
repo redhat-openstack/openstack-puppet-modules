@@ -99,7 +99,7 @@
 #   (optional) Name of the WSGI daemon process.
 #   Defaults to $name
 #
-# [*wsgi_daemon_group*]
+# [*wsgi_process_group*]
 #   (optional) Name of the WSGI process group.
 #   Defaults to $name
 #
@@ -170,7 +170,7 @@ define openstacklib::wsgi::apache (
   }
 
   $wsgi_daemon_process_options = {
-    owner     => $user,
+    user      => $user,
     group     => $group,
     processes => $workers,
     threads   => $threads,

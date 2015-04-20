@@ -135,6 +135,8 @@ class swift::proxy(
   include ::swift::params
   include ::concat::setup
 
+  Swift_config<| |> ~> Service['swift-proxy']
+
   validate_bool($account_autocreate)
   validate_bool($allow_account_management)
   validate_array($pipeline)
@@ -164,6 +166,7 @@ class swift::proxy(
   package { 'swift-proxy':
     ensure => $package_ensure,
     name   => $::swift::params::proxy_package_name,
+    tag    => 'openstack',
   }
 
   concat { '/etc/swift/proxy-server.conf':

@@ -38,6 +38,7 @@ define swift::storage::generic(
   include ::swift::params
 
   Class['swift::storage'] -> Swift::Storage::Generic[$name]
+  Swift_config<| |> ~> Service["swift-${name}"]
 
   validate_re($name, '^object|container|account$')
 
@@ -46,6 +47,7 @@ define swift::storage::generic(
     # this is a way to dynamically build the variables to lookup
     # sorry its so ugly :(
     name   => inline_template("<%= scope.lookupvar('::swift::params::${name}_package_name') %>"),
+    tag    => 'openstack',
     before => Service["swift-${name}", "swift-${name}-replicator"],
   }
 

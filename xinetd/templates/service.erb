@@ -54,4 +54,7 @@ service <%= @service_name %>
 <% if @nice -%>
         nice            = <%= @nice %>
 <% end -%>
+<% if @env -%>
+        env             = <%= @env %>
+<% end -%>
 }

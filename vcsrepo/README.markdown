@@ -49,7 +49,7 @@ Also, this module, like Puppet generally, will not create parent directories for
 
 To get started with the vcsrepo module, you must simply define the type `vcsrepo` with a path to your repository and the [type of VCS](#Usage) you're using in `provider` (in the below example, Git). 
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
     }
@@ -75,14 +75,14 @@ The vcsrepo module works with the following VCSs:
 To create a blank repository suitable for use as a central repository,
 define `vcsrepo` without `source` or `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
     }
 
 If you're defining `vcsrepo` for a central or official repository, you may want to make it a bare repository.  You do this by setting `ensure` to 'bare' rather than 'present'.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => bare,
       provider => git,
     }
@@ -91,17 +91,17 @@ If you're defining `vcsrepo` for a central or official repository, you may want 
 
 To get the current HEAD on the master branch,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
-      source   => "git://example.com/repo.git",
+      source   => 'git://example.com/repo.git',
     }
 
 To get a specific revision or branch (can be a commit SHA, tag, or branch name),
 
  **SHA**
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
       source   => 'git://example.com/repo.git',
@@ -110,7 +110,7 @@ To get a specific revision or branch (can be a commit SHA, tag, or branch name),
 
 **Tag**
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
       source   => 'git://example.com/repo.git',
@@ -119,7 +119,7 @@ To get a specific revision or branch (can be a commit SHA, tag, or branch name),
 
 **Branch name**
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
       source   => 'git://example.com/repo.git',
@@ -128,7 +128,7 @@ To get a specific revision or branch (can be a commit SHA, tag, or branch name),
 
 To check out a branch as a specific user,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
       source   => 'git://example.com/repo.git',
@@ -138,7 +138,7 @@ To check out a branch as a specific user,
 
 To keep the repository at the latest revision (**WARNING:** this will always overwrite local changes to the repository),
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => latest,
       provider => git,
       source   => 'git://example.com/repo.git',
@@ -147,7 +147,7 @@ To keep the repository at the latest revision (**WARNING:** this will always ove
 
 To clone the repository but skip initialiazing submodules,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure     => latest,
       provider   => git,
       source     => 'git://example.com/repo.git',
@@ -157,12 +157,12 @@ To clone the repository but skip initialiazing submodules,
 ##### Using multiple remotes with a repository
 Instead of specifying a single string in the 'source' property, you can specify a hash with multiple name => URL mappings,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => git,
       source   => {
-        "origin"       => "https://github.com/puppetlabs/puppetlabs-vcsrepo.git", 
-        "other_remote" => "https://github.com/other_user/puppetlabs-vcsrepo.git"
+        origin       => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git', 
+        other_remote => 'https://github.com/other_user/puppetlabs-vcsrepo.git'
       },
     }
 
@@ -187,7 +187,7 @@ For more examples using Git, see `examples/git/`.
 To create a blank repository suitable for use as a central repository,
 define `vcsrepo` without `source` or `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => bzr,
     }
@@ -196,7 +196,7 @@ define `vcsrepo` without `source` or `revision`.
 
 Provide the `source` location to branch from an existing repository.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => bzr,
       source   => 'lp:myproj',
@@ -205,7 +205,7 @@ Provide the `source` location to branch from an existing repository.
 For a specific revision, use `revision` with a valid revisionspec
 (see `bzr help revisionspec` for more information on formatting a revision).
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => bzr,
       source   => 'lp:myproj',
@@ -228,7 +228,7 @@ For more examples using Bazaar, see `examples/bzr/`.
 To create a blank repository suitable for use as a central repository,
 define `vcsrepo` without `source` or `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => cvs,
     }
@@ -237,39 +237,39 @@ define `vcsrepo` without `source` or `revision`.
 
 To get the current mainline,
 
-    vcsrepo { "/path/to/workspace":
+    vcsrepo { '/path/to/workspace':
       ensure   => present,
       provider => cvs,
-      source   => ":pserver:anonymous@example.com:/sources/myproj",
+      source   => ':pserver:anonymous@example.com:/sources/myproj',
     }
     
 To get a specific module on the current mainline,
 
-    vcsrepo {"/vagrant/lockss-daemon-source":
+    vcsrepo {'/vagrant/lockss-daemon-source':
       ensure   => present,
       provider => cvs,
-      source   => ":pserver:anonymous@lockss.cvs.sourceforge.net:/cvsroot/lockss",
-      module   => "lockss-daemon",
+      source   => ':pserver:anonymous@lockss.cvs.sourceforge.net:/cvsroot/lockss',
+      module   => 'lockss-daemon',
     }
 
 
 You can use the `compression` parameter to set the GZIP compression levels for your repository history.
 
-    vcsrepo { "/path/to/workspace":
+    vcsrepo { '/path/to/workspace':
       ensure      => present,
       provider    => cvs,
       compression => 3,
-      source      => ":pserver:anonymous@example.com:/sources/myproj",
+      source      => ':pserver:anonymous@example.com:/sources/myproj',
     }
 
 For a specific tag, use `revision`.
 
-    vcsrepo { "/path/to/workspace":
+    vcsrepo { '/path/to/workspace':
       ensure      => present,
       provider    => cvs,
       compression => 3,
-      source      => ":pserver:anonymous@example.com:/sources/myproj",
-      revision    => "SOMETAG",
+      source      => ':pserver:anonymous@example.com:/sources/myproj',
+      revision    => 'SOMETAG',
     }
 
 #####Sources that use SSH
@@ -287,7 +287,7 @@ For for more examples using CVS, see `examples/cvs/`.
 To create a blank repository suitable for use as a central repository,
 define `vcsrepo` without `source` or `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
     }
@@ -296,51 +296,51 @@ define `vcsrepo` without `source` or `revision`.
 
 To get the default branch tip,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
-      source   => "http://hg.example.com/myrepo",
+      source   => 'http://hg.example.com/myrepo',
     }
 
 For a specific changeset, use `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
-      source   => "http://hg.example.com/myrepo",
+      source   => 'http://hg.example.com/myrepo',
       revision => '21ea4598c962',
     }
 
 You can also set `revision` to a tag.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
-      source   => "http://hg.example.com/myrepo",
+      source   => 'http://hg.example.com/myrepo',
       revision => '1.1.2',
     }
 
 To check out as a specific user,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
-      source   => "http://hg.example.com/myrepo",
+      source   => 'http://hg.example.com/myrepo',
       user     => 'user',
     }
 
 To specify an SSH identity key,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => hg,
-      source   => "ssh://hg@hg.example.com/myrepo",
-      identity => "/home/user/.ssh/id_dsa,
+      source   => 'ssh://hg@hg.example.com/myrepo',
+      identity => '/home/user/.ssh/id_dsa',
     }
 
 To specify a username and password for HTTP Basic authentication,
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => latest,
       provider => hg,
       source   => 'http://hg.example.com/myrepo',
@@ -364,7 +364,7 @@ To create an empty Workspace, define a `vcsrepo` without a `source` or `revision
 Environment variables P4PORT, P4USER, etc... are used to define the Perforce server
 connection settings.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure     => present,
       provider   => p4
     }
@@ -378,7 +378,7 @@ A Perforce configuration file can be used by setting the `P4CONFIG` environment 
 defining `p4config`.  If a configuration is defined, then the environment variable for 
 `P4CLIENT` is replaced.
  
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure     => present,
       provider   => p4,
       p4config   => '.p4config'
@@ -388,7 +388,7 @@ defining `p4config`.  If a configuration is defined, then the environment variab
 
 To sync a depot path to head, ensure `latest`:
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
         ensure   => latest,
         provider => p4,
         source   => '//depot/branch/...'
@@ -396,7 +396,7 @@ To sync a depot path to head, ensure `latest`:
 
 For a specific changelist, ensure `present` and specify a `revision`:
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
         ensure   => present,
         provider => p4,
         source   => '//depot/branch/...',
@@ -405,7 +405,7 @@ For a specific changelist, ensure `present` and specify a `revision`:
 
 You can also set `revision` to a label:
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
         ensure   => present,
         provider => p4,
         source   => '//depot/branch/...',
@@ -428,7 +428,7 @@ For examples you can run, see `examples/p4/`
 To create a blank repository suitable for use as a central repository,
 define `vcsrepo` without `source` or `revision`.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => svn,
     }
@@ -437,18 +437,18 @@ define `vcsrepo` without `source` or `revision`.
 
 Provide a `source` pointing to the branch/tag you want to check out from a repository.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => svn,
-      source   => "svn://svnrepo/hello/branches/foo",
+      source   => 'svn://svnrepo/hello/branches/foo',
     }
 
 You can also provide a specific revision.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
       ensure   => present,
       provider => svn,
-      source   => "svn://svnrepo/hello/branches/foo",
+      source   => 'svn://svnrepo/hello/branches/foo',
       revision => '1234',
     }
 
@@ -456,11 +456,11 @@ You can also provide a specific revision.
 
 To use a specific configuration directory, provide a `configuration` parameter which should be a directory path on the local system where your svn configuration files are.  Typically, it is '/path/to/.subversion'.
 
-    vcsrepo { "/path/to/repo":
+    vcsrepo { '/path/to/repo':
         ensure        => present,
         provider      => svn,
-        source        => "svn://svnrepo/hello/branches/foo",
-        configuration => "/path/to/.subversion",
+        source        => 'svn://svnrepo/hello/branches/foo',
+        configuration => '/path/to/.subversion',
     }
 
 #####Sources that use SSH 
