@@ -58,6 +58,10 @@
 #  FQDN of the Galera master node
 #  Defaults to undef
 #
+# [*galera_master_ip*]
+#  IP of the Galera master node
+#  Defaults to undef
+#
 # [*keystone_admin*]
 #  (optional) Enable or not Keystone Admin API binding
 #  Defaults to false
@@ -130,6 +134,10 @@
 #  (optional) Enable or not RabbitMQ binding
 #  Defaults to false
 #
+# [*redis*]
+#  (optional) Enable or not Redis binding
+#  Defaults to false
+#
 class tripleo::loadbalancer (
   $controller_virtual_ip,
   $control_virtual_interface,
@@ -139,6 +147,7 @@ class tripleo::loadbalancer (
   $controller_hosts          = undef,
   $controller_hosts_names    = undef,
   $galera_master_hostname    = undef,
+  $galera_master_ip          = undef,
   $keystone_admin            = false,
   $keystone_public           = false,
   $neutron                   = false,
@@ -157,6 +166,7 @@ class tripleo::loadbalancer (
   $horizon                   = false,
   $mysql                     = false,
   $rabbitmq                  = false,
+  $redis                     = false,
 ) {
 
   if !$controller_host and !$controller_hosts {
@@ -540,17 +550,23 @@ class tripleo::loadbalancer (
       },
       collect_exported => false,
     }
-    if downcase($galera_master_hostname) == $::hostname or !$galera_master_hostname {
-      $options_real = ['check', 'inter 2000', 'rise 2', 'fall 5']
-    } else {
-      $options_real = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup']
-    }
+
     haproxy::balancermember { 'mysql':
       listening_service => 'mysql',
       ports             => '3306',
-      ipaddresses       => $controller_hosts_real,
-      server_names      => $controller_hosts_names_real,
-      options           => $options_real,
+      ipaddresses       => $galera_master_ip,
+      server_names      => $galera_master_hostname,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+
+    $controller_hosts_without_galera_master = delete($controller_hosts_real, $galera_master_ip)
+    $controller_hosts_names_without_galera_master = delete($controller_hosts_names_real, downcase($galera_master_hostname))
+    haproxy::balancermember { 'mysql-backup':
+      listening_service => 'mysql',
+      ports             => '3306',
+      ipaddresses       => $controller_hosts_without_galera_master,
+      server_names      => $controller_hosts_names_without_galera_master,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup'],
     }
   }
 
@@ -566,6 +582,28 @@ class tripleo::loadbalancer (
     haproxy::balancermember { 'rabbitmq':
       listening_service => 'rabbitmq',
       ports             => '5672',
+      ipaddresses       => $controller_hosts_real,
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
+
+  if $redis {
+    haproxy::listen { 'redis':
+      ipaddress        => [$controller_virtual_ip],
+      ports            => 6379,
+      options          => {
+        'timeout'   => [ 'client 0', 'server 0' ],
+        'mode'      => 'tcp',
+        'balance'   => 'first',
+        'option'    => ['tcp-check',],
+        'tcp-check' => ['send info\ replication\r\n','expect string role:master'],
+      },
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'redis':
+      listening_service => 'redis',
+      ports             => '6379',
       ipaddresses       => $controller_hosts_real,
       server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],

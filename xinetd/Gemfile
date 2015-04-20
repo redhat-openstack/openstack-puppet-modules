@@ -1,10 +1,13 @@
 source 'https://rubygems.org'
 
-group :development, :test do
+group :development, :unit_test do
   gem 'rake',                    :require => false
   gem 'rspec-puppet', '~> 1.0',  :require => false
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint',             :require => false
+end
+
+group :system_tests do
   gem 'serverspec',              :require => false
   gem 'rspec-system',            :require => false
   gem 'rspec-system-puppet',     :require => false

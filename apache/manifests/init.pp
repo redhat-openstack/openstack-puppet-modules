@@ -48,6 +48,7 @@ class apache (
   $mod_dir                = $::apache::params::mod_dir,
   $mod_enable_dir         = $::apache::params::mod_enable_dir,
   $mpm_module             = $::apache::params::mpm_module,
+  $lib_path               = $::apache::params::lib_path,
   $conf_template          = $::apache::params::conf_template,
   $servername             = $::apache::params::servername,
   $manage_user            = true,
@@ -124,10 +125,7 @@ class apache (
     }
   }
 
-  $valid_log_level_re = '(emerg|alert|crit|error|warn|notice|info|debug)'
-
-  validate_re($log_level, $valid_log_level_re,
-  "Log level '${log_level}' is not one of the supported Apache HTTP Server log levels.")
+  validate_apache_log_level($log_level)
 
   class { '::apache::service':
     service_name   => $service_name,
