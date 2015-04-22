@@ -33,6 +33,7 @@ class zookeeper(
   $log4j_prop               = 'INFO,ROLLINGFILE',
   $cleanup_sh              = '/usr/share/zookeeper/bin/zkCleanup.sh',
   $servers                 = [],
+  $observers               = [],
   $ensure                  = present,
   $snap_count              = 10000,
   # since zookeeper 3.4, for earlier version cron task might be used
@@ -90,6 +91,7 @@ class zookeeper(
     zoo_main                => $zoo_main,
     log4j_prop              => $log4j_prop,
     servers                 => $servers,
+    observers               => $observers,
     snap_count              => $snap_count,
     snap_retain_count       => $snap_retain_count,
     purge_interval          => $purge_interval,

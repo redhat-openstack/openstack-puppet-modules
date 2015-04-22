@@ -132,6 +132,17 @@ describe 'zookeeper::config', :type => :class do
         should contain_file('/etc/zookeeper/conf/zoo.cfg').with_content(/leaderServes=no/)
       }
     end
+
+    context 'set peer_type to observer' do
+      let(:params){{
+        :peer_type => 'observer'
+      }}
+
+      it { should contain_file(
+        '/etc/zookeeper/conf/zoo.cfg'
+      ).with_content(/peerType=observer/) }
+    end
+
   end
 
   context 'on debian-like system' do
@@ -202,6 +213,45 @@ describe 'zookeeper::config', :type => :class do
     it { should contain_file(
       '/etc/zookeeper/conf/zoo.cfg'
     ).with_content(/server.2=192.168.1.2:2888:3888/) }
+  end
+
+  context 'setting quorum of servers with default ports with observer' do
+    let(:params) {{
+      :servers => ['192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4', '192.168.1.5'],
+      :observers => ['192.168.1.4', '192.168.1.5']
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.1=192.168.1.1:2888:3888/) }
+
+    it { should_not contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.1=192.168.1.1:2888:3888:observer/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.2=192.168.1.2:2888:3888/) }
+
+    it { should_not contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.2=192.168.1.2:2888:3888:observer/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.3=192.168.1.3:2888:3888/) }
+
+    it { should_not contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.3=192.168.1.3:2888:3888:observer/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.4=192.168.1.4:2888:3888:observer/) }
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/server.5=192.168.1.5:2888:3888:observer/) }
   end
 
 end
