@@ -57,6 +57,17 @@ class { 'zookeeper':
 }
 ```
 
+### Observers
+
+[Observers](http://zookeeper.apache.org/doc/r3.3.0/zookeeperObservers.html) were introduced in ZooKeeper 3.3.0. To enable this feature simply state which of ZooKeeper servers are observing:
+
+```puppet
+class { 'zookeeper':
+  servers   => ['192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4', '192.168.1.5'],
+  observers => ['192.168.1.4', '192.168.1.5']
+}
+```
+
 ### Setting IP address
 
 If `$::ipaddress` is not your public IP (e.g. you are using Docker) make sure to setup correct IP:
