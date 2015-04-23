@@ -1,0 +1,17 @@
+roles:
+  allinone:
+    classes:
+      - ceph::mons
+      - ceph::osds
+    class_groups:
+      - base
+  mon:
+    classes:
+      - ceph::mons
+    class_groups:
+      - base
+  osd:
+    classes:
+      - ceph::osds
+    class_groups:
+      - base

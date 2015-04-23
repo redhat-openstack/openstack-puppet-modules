@@ -1,0 +1,11 @@
+roles:
+  mon:
+    classes:
+      - ceph::mons
+    class_groups:
+      - base
+  osd:
+    classes:
+      - ceph::osds
+    class_groups:
+      - base
