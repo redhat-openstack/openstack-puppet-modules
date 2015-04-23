@@ -74,6 +74,10 @@ mod 'ironic',
   :commit => 'dcd26f4d8c85e6a607c9d86ccb9991213ce03c2f',
   :git => 'https://github.com/stackforge/puppet-ironic.git'
 
+mod 'keepalived',
+  :commit => '24d523691b3581d4d0f662ffd10f1458014a9829',
+  :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
+
 mod 'keystone',
   :commit => 'c1f5e5159f2bae6003a535c8ce3070d8cfb7f089',
   :git => 'https://github.com/stackforge/puppet-keystone.git'
@@ -221,4 +225,3 @@ mod 'vswitch',
 mod 'xinetd',
   :commit => '4f16fc824e04d724a486634bd9c26ef549f10ff5',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
-
