@@ -30,6 +30,10 @@ mod 'concat',
   :commit => '52d0f1d6809c9f1d8453f9e3ca10d792e67acc89',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
+mod 'corosync',
+  :commit => '8d725aea7a9d91d861929851a9da8da1e3519b21',
+  :git => 'https://github.com/puppetlabs/puppetlabs-corosync.git'
+
 mod 'firewall',
   :commit => 'e7121fe12f7582695ef774b51742b65a37d462db',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
