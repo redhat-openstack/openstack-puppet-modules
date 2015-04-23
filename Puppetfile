@@ -94,6 +94,10 @@ mod 'module-data',
   :commit => '0eead7f411f404b0a9a73bb161aac46c9fbe3219',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
 
+mod 'module-keepalived',
+  :commit => '24d523691b3581d4d0f662ffd10f1458014a9829',
+  :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
+
 mod 'mongodb',
   :commit => 'b41a706f7c1f3f01b84391972ecd6e135d113ab7',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'

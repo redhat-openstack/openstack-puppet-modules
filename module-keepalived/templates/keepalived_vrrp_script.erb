@@ -1,0 +1,5 @@
+vrrp_script <%= @name %> {
+  script   "<%= @script_real %>"
+  interval <%= @interval %>
+  weight   <%= @weight %>
+}
