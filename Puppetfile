@@ -170,6 +170,10 @@ mod 'sahara',
   :commit => '303e514db06b34db1ab26e84edbbdf91d98d6679',
   :git => 'https://github.com/stackforge/puppet-sahara.git'
 
+mod 'snmp',
+  :commit => '64f1a6976830bb4e96176a7296e8d14f65df0cac',
+  :git => 'https://github.com/razorsedge/puppet-snmp.git'
+
 mod 'ssh',
   :commit => 'ec2dd7a44939f0e620edc27e44a8f2287385e807',
   :git => 'https://github.com/saz/puppet-ssh.git'
