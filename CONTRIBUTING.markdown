@@ -30,13 +30,13 @@ We prefer [Issues](https://github.com/dfarrell07/puppet-opendaylight/issues) for
 
 ### Issues
 
-Please use our [GitHub Issues freely](https://github.com/dfarrell07/puppet-opendaylight/issues), even for small things! They are the primary method by which we track what's going on in the project.
+Please use our [GitHub Issues](https://github.com/dfarrell07/puppet-opendaylight/issues) freely, even for small things! They are the primary method by which we track what's going on in the project.
 
 The labels assigned to an issue can tell you important things about it.
 
-For example, issues tagged `good-for-beginners` are likely to not require much background knowledge and be fairly self-contained, perfect for people new to the project who are looking to get involved.
+For example, issues tagged [`good-for-beginners`](https://github.com/dfarrell07/puppet-opendaylight/labels/good-for-beginners) are likely to not require much background knowledge and be fairly self-contained, perfect for people new to the project who are looking to get involved.
 
-The priority-related issue labels (`prio:high`, `piro:normal`...) are also important to note. They typically accurately reflect the next TODOs the community will complete.
+The priority-related issue labels ([`prio:high`](https://github.com/dfarrell07/puppet-opendaylight/labels/prio%3Ahigh), [`piro:normal`](https://github.com/dfarrell07/puppet-opendaylight/labels/prio%3Anormal)...) are also important to note. They typically accurately reflect the next TODOs the community will complete.
 
 The `info:progress` labels may not always be up-to-date, but will be used when appropriate (typically long-standing issues that take multiple commits).
 
