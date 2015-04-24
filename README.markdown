@@ -49,7 +49,7 @@ For an easy way to experiment with applying this Puppet module to running CentOS
 
 The most basic usage, passing no parameters to the OpenDaylight class, will install and start OpenDaylight with a default configuration.
 
-```
+```puppet
 class { 'opendaylight':
 }
 ```
@@ -58,7 +58,7 @@ class { 'opendaylight':
 
 To set extra Karaf features to be installed at OpenDaylight start time, pass them in a list to the `extra_features` param. The extra features you pass will typically be driven by the requirements of your ODL install. You'll almost certainly need to pass some.
 
-```
+```puppet
 class { 'opendaylight':
   extra_features => ['odl-ovsdb-plugin', 'odl-ovsdb-openstack'],
 }
@@ -66,7 +66,7 @@ class { 'opendaylight':
 
 OpenDaylight normally installs a default set of Karaf features at boot. They are recommended, so the ODL Puppet mod defaults to installing them. This can be customized by overriding the `default_features` param. You shouldn't normally need to do so.
 
-```
+```puppet
 class { 'opendaylight':
   default_features => ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'],
 }
@@ -80,7 +80,7 @@ It's recommended that most people use the default RPM-based install.
 
 If you do need to install from a tarball, simply pass `tarball` as the value for `install_method` and optionally pass the URL to your tarball via the `tarball_url` param. The default value for `tarball_url` points at OpenDaylight's latest release. The `unitfile_url` param points at the OpenDaylight systemd .service file used by the RPM and should (very likely) not need to be overridden.
 
-```
+```puppet
 class { 'opendaylight':
   install_method => 'tarball',
   tarball_url    => '<URL to your custom tarball>',
@@ -93,7 +93,7 @@ class { 'opendaylight':
 To change the port OpenDaylight's northbound listens on for REST API calls, use the `odl_rest_port` param. This was added because OpenStack's Swift project uses a conflicting port.
 
 
-```
+```puppet
 class { 'opendaylight':
   odl_rest_port => '8080',
 }
