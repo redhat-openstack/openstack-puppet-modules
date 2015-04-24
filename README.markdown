@@ -18,11 +18,13 @@
 
 ## Overview
 
-Puppet module for deploying the [OpenDaylight Software Defined Networking (SDN) controller](http://www.opendaylight.org/).
+Puppet module that installs and configures the [OpenDaylight Software Defined Networking (SDN) controller](http://www.opendaylight.org/).
 
 ## Module Description
 
-Installs and configures the [OpenDaylight SDN controller](http://www.opendaylight.org/).
+Deploys OpenDaylight to various OSs either via an RPM or directly from the ODL tarball release artifact.
+
+All OpenDaylight configuration should be handled through the ODL Puppet module's [params](#parameters). If you need a new knob, [please raise an Issue](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown#issues).
 
 Both supported [install methods](#install-method) default to the latest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
 
@@ -30,11 +32,12 @@ Both supported [install methods](#install-method) default to the latest stable O
 
 ### What `opendaylight` affects
 
-* Installs [OpenDaylight](http://www.opendaylight.org/).
-* Installs a [systemd unitfile](https://github.com/dfarrell07/opendaylight-systemd/) for OpenDaylight.
-* Starts the `opendaylight` systemd service.
-* Creates `odl:odl` user:group if they don't already exist.
 * Installs Java, which is required by ODL.
+* Creates `odl:odl` user:group if they don't already exist.
+* Installs [OpenDaylight](http://www.opendaylight.org/).
+* Installs a [systemd unitfile](https://github.com/dfarrell07/opendaylight-systemd/) or [Upstart config file](https://github.com/dfarrell07/puppet-opendaylight/blob/master/files/upstart.odl.conf) for OpenDaylight.
+* Manipulates OpenDaylight's configuration files according to the params passed to the `::opendaylight` class.
+* Starts the `opendaylight` systemd or Upstart service.
 
 ### Beginning with `opendaylight`
 
