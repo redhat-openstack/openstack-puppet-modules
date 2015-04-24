@@ -121,10 +121,10 @@ class { 'opendaylight':
 
 #### Private classes
 
-* `opendaylight::params`: Contains default `opendaylight` class param values.
-* `opendaylight::config`: Manages ODL config, including Karaf features and REST port.
-* `opendaylight::install`: Installs ODL from an RPM or tarball.
-* `opendaylight::service`: Starts the OpenDaylight service.
+* `::opendaylight::params`: Contains default `opendaylight` class param values.
+* `::opendaylight::install`: Installs ODL from an RPM or tarball.
+* `::opendaylight::config`: Manages ODL config, including Karaf features and REST port.
+* `::opendaylight::service`: Starts the OpenDaylight service.
 
 ### `::opendaylight`
 
