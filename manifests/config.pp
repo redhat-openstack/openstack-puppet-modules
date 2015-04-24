@@ -3,10 +3,6 @@
 # This class handles ODL config changes.
 # It's called from the opendaylight class.
 #
-# === Parameters
-# [*odl_rest_port *]
-#   Port for ODL northbound REST interface to listen on.
-#
 class opendaylight::config {
   # Configuration of Karaf features to install
   file { 'org.apache.karaf.features.cfg':
