@@ -158,12 +158,14 @@ Current machine states:
 
 centos-7                  running (virtualbox)
 [~/puppet-opendaylight/.vagrant/beaker_vagrant_files/centos-7.yml]$ vagrant ssh
-grant@centos-7 ~]$ sudo systemctl status opendaylight
+[vagrant@centos-7 ~]$ sudo systemctl status opendaylight
 opendaylight.service - OpenDaylight SDN Controller
    Loaded: loaded (/usr/lib/systemd/system/opendaylight.service; enabled)
    Active: active (running) since Fri 2015-04-24 16:34:07 UTC; 1min 1s ago
      Docs: https://wiki.opendaylight.org/view/Main_Page
            http://www.opendaylight.org/
+[vagrant@centos-7 ~]$ logout
+[~/puppet-opendaylight/.vagrant/beaker_vagrant_files/centos-7.yml]$ vagrant destroy -f
 ```
 
 For more information about using Beaker, see [these docs](https://github.com/puppetlabs/beaker/wiki/How-to-Write-a-Beaker-Test-for-a-Module#typical-workflow).
