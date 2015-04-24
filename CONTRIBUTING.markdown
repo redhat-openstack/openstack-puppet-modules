@@ -9,10 +9,10 @@ We work to make contributing easy. Please let us know if you spot something we c
     * [Gitter](#gitter)
 1. [Patches](#patches)
 1. [Testing](#testing)
-    * [Dependencies](#dependencies)
-    * [Syntax and Style](#syntax-and-style)
-    * [Running the Unit Tests](#running-the-unit-tests)
-    * [Integration Tests](#integration-tests)
+    * [Test Dependencies](#test-dependencies)
+    * [Syntax and Style Tests](#syntax-and-style-tests)
+    * [Unit Tests](#unit-tests)
+    * [System Tests](#system-tests)
 
 ## Overview
 
@@ -80,7 +80,7 @@ The testing tools have a number of dependencies. We use [Bundler](http://bundler
 
 ### Syntax and Style Tests
 
-The test suite will run [Puppet Lint](http://puppet-lint.com/) and [Puppet Syntax](https://github.com/gds-operations/puppet-syntax) to check various syntax and style things. You can run these locally with:
+We use [Puppet Lint](http://puppet-lint.com/) and [Puppet Syntax](https://github.com/gds-operations/puppet-syntax) to validate the module's syntax and style.
 
 ```ShellSession
 [~/puppet-opendaylight]$ bundle exec rake lint
@@ -91,7 +91,7 @@ The test suite will run [Puppet Lint](http://puppet-lint.com/) and [Puppet Synta
 
 We use rspec-puppet to provide unit test coverage.
 
-To run the unit tests and generate a coverage report, use
+To run the unit tests and generate a coverage report, use:
 
 ```ShellSession
 [~/puppet-opendaylight]$ bundle exec rake spec
@@ -115,7 +115,7 @@ To run the syntax, style and unit tests in one rake task (recommended), use:
 
 ### System Tests
 
-While the unit tests are able to quickly find many errors, they don't do much more than checking that the code compiles to a given state. To verify that the Puppet module behaves as desired once applied to a real, running system, we use [Beaker](https://github.com/puppetlabs/beaker).
+While the [unit tests](#unit-tests) are able to quickly find many errors, they don't do much more than checking that the code compiles to a given state. To verify that the Puppet module behaves as desired once applied to a real, running system, we use [Beaker](https://github.com/puppetlabs/beaker).
 
 Beaker stands up virtual machines using Vagrant, applies the OpenDaylight puppet module with various combinations of params and uses [Serverspec](http://serverspec.org/resource_types.html) to validate the resulting system state.
 
