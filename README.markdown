@@ -41,9 +41,24 @@ Both supported [install methods](#install-method) default to the latest stable O
 
 ### Beginning with `opendaylight`
 
-Getting started with the OpenDaylight Puppet module is as simple as declaring the ``::opendaylight` class.
+Getting started with the OpenDaylight Puppet module is as simple as declaring the `::opendaylight` class.
 
-For an easy way to experiment with applying this Puppet module to running CentOS 7, Fedora 20 and Fedora 21 Vagrant boxes, head over to the [vagrant-opendaylight](https://github.com/dfarrell07/vagrant-opendaylight/) project.
+The [vagrant-opendaylight](https://github.com/dfarrell07/vagrant-opendaylight/) project provides an easy way to experiment with [applying the ODL Puppet module](https://github.com/dfarrell07/vagrant-opendaylight/tree/master/manifests) to CentOS 7, Fedora 20 and Fedora 21 Vagrant boxes.
+
+```
+[~/vagrant-opendaylight]$ vagrant status
+Current machine states:
+
+cent7_pup_rpm             not created (virtualbox)
+cent7_pup_tb              not created (virtualbox)
+cent7_rpm                 not created (virtualbox)
+f20_pup_rpm               not created (virtualbox)
+f20_pup_tb                not created (virtualbox)
+f20_rpm                   not created (virtualbox)
+f21_pup_rpm               not created (virtualbox)
+f21_pup_tb                not created (virtualbox)
+f21_rpm                   not created (virtualbox)
+```
 
 ## Usage
 
