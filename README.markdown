@@ -1,14 +1,20 @@
 [![Build Status](https://travis-ci.org/dfarrell07/puppet-opendaylight.svg)](https://travis-ci.org/dfarrell07/puppet-opendaylight) [![Dependency Status](https://gemnasium.com/dfarrell07/puppet-opendaylight.svg)](https://gemnasium.com/dfarrell07/puppet-opendaylight) [![Join the chat at https://gitter.im/dfarrell07/puppet-opendaylight](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dfarrell07/puppet-opendaylight?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+# OpenDaylight
+
 #### Table of Contents 
 1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with opendaylight](#setup)
-    * [What opendaylight affects](#what-opendaylight-affects)
-    * [Beginning with opendaylight](#beginning-with-opendaylight)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+2. [Module Description](#module-description)
+3. [Setup](#setup)
+    * [What `opendaylight` affects](#what-opendaylight-affects)
+    * [Beginning with `opendaylight`](#beginning-with-opendaylight)
+4. [Usage](#usage)
+    * [Karaf Features](#karaf-features)
+    * [Install Method](#install-method)
+    * [Ports](#ports)
+5. [Reference ](#reference)
+5. [Limitations](#limitations)
+6. [Development](#development)
 
 ## Overview
 
@@ -16,9 +22,9 @@ Puppet module for deploying the [OpenDaylight Software Defined Networking (SDN) 
 
 ## Module Description
 
-Deploys and configures the [OpenDaylight SDN controller](http://www.opendaylight.org/), including systemd configuration.
+Installs and configures the [OpenDaylight SDN controller](http://www.opendaylight.org/).
 
-Both supported install methods default to the latest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
+Both supported [install methods](#install-method) default to the latest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
 
 ## Setup
 
