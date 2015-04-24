@@ -23,9 +23,9 @@ We accept patches via [GitHub Pull Requests](https://github.com/dfarrell07/puppe
 
 ## Communication
 
-Please use public, documented communication instead of reaching out to developers 1-1.
+*Please use public, documented communication instead of reaching out to developers 1-1.*
 
-Open Source projects benefit from always communicating in the open. Other people may run into the same issue, search for a similar trace and find your question, already answered. More eyes may even get your question answered faster.
+Open Source projects benefit from always communicating in the open. Previously answered questions end up becoming documentation for other people hitting similar issues. More eyes may get your question answered faster. Doing everything in the open keeps community members on an equal playing field (`@<respected company>` email addresses don't get priority, good questions do).
 
 We prefer [Issues](https://github.com/dfarrell07/puppet-opendaylight/issues) for most communication.
 
@@ -118,7 +118,7 @@ To run the syntax, style and unit tests in one rake task (recommended), use:
 
 While the [unit tests](#unit-tests) are able to quickly find many errors, they don't do much more than checking that the code compiles to a given state. To verify that the Puppet module behaves as desired once applied to a real, running system, we use [Beaker](https://github.com/puppetlabs/beaker).
 
-Beaker stands up virtual machines using Vagrant, applies the OpenDaylight puppet module with various combinations of params and uses [Serverspec](http://serverspec.org/resource_types.html) to validate the resulting system state.
+Beaker stands up virtual machines using Vagrant, applies the OpenDaylight Puppet module with various combinations of params and uses [Serverspec](http://serverspec.org/resource_types.html) to validate the resulting system state.
 
 To run our Beaker test against the primary target OS (CentOS 7) using the recommended RPM-based install method:
 
