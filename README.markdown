@@ -13,9 +13,6 @@
   * [Install Method](#install-method)
   * [Ports](#ports)
 1. [Reference ](#reference)
-  * [Classes](#classes)
-    * [Private Classes](#private-classes)
-    * [Public Classes](#public-classes)
 1. [Limitations](#limitations)
 1. [Development](#development)
 
