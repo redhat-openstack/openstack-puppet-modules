@@ -146,14 +146,6 @@ Default: `[]`
 
 Valid options: A list of Karaf feature name strings.
 
-##### `odl_rest_port `
-
-Sets the port for the ODL northbound REST interface to listen on.
-
-Default: `'8080'`
-
-Valid options: Valid port numbers as strings or integers.
-
 ##### `install_method `
 
 Determines the install method to use for OpenDaylight.
@@ -161,6 +153,14 @@ Determines the install method to use for OpenDaylight.
 Default: `'rpm'`
 
 Valid options: `'tarball'` or `'rpm'`
+
+##### `odl_rest_port `
+
+Sets the port for the ODL northbound REST interface to listen on.
+
+Default: `'8080'`
+
+Valid options: Valid port numbers as strings or integers.
 
 ##### `tarball_url`
 
