@@ -61,7 +61,7 @@ Basics of a pull request:
 * Push your commit.
 * Submit a pull request against the project, again using GitHub's web UI.
 * We'll give feedback and get your changed merged ASAP.
-* You contributed! Thank you!
+* You contributed! [Thank you](http://cdn3.volusion.com/74gtv.tjme9/v/vspfiles/photos/Delicious%20Dozen-1.jpg)!
 
 Other tips for submitting excellent pull requests:
 * If you'd like to make more than one logically distinct change, please submit them as different pull requests (if they don't depend on each other) or different commits in the same PR (if they do).
