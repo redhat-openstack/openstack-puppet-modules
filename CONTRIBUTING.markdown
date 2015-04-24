@@ -125,7 +125,7 @@ To run our Beaker test against the primary target OS (CentOS 7) using the recomm
 [~/puppet-opendaylight]$ bundle exec rake beaker
 ```
 
-Two environment variables can be use to change Beaker's target OS (Fedora 20, Fedora 21, CentOS 7, Ubuntu 14.04) and change the install method to be tests (RPM or tarball).
+The `RS_SET` environment variable can be use to change Beaker's target OS (Fedora 20, Fedora 21, CentOS 7, Ubuntu 14.04). ODL's install method (RPM or tarball) can be configured via the `INSTALL_METHOD` environment variable.
 
 ```ShellSession
 [~/puppet-opendaylight]$ RS_SET=fedora-20 INSTALL_METHOD=tarball bundle exec rake beaker
