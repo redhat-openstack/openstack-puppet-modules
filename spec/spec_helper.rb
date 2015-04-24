@@ -1,6 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 
 # Customize filters to ignore 3rd-party code
+# If the coverage report shows not-our-code results, add it here
 custom_filters = [
   'Anchor[java::end]',
   'Stage[setup]',
@@ -29,6 +30,10 @@ custom_filters = [
   'Stage[setup_infra]',
 ]
 RSpec::Puppet::Coverage.filters.push(*custom_filters)
+
+#
+# NB: This is a library of helper fns used by the rspec-puppet tests
+#
 
 # Tests that are common to all possible configurations
 def generic_tests()

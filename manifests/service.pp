@@ -1,6 +1,6 @@
 # == Class opendaylight::service
 #
-# Starts the OpenDaylight systemd service.
+# Starts the OpenDaylight systemd or Upstart service.
 #
 class opendaylight::service {
   service { 'opendaylight':

@@ -15,6 +15,7 @@
 1. [Reference ](#reference)
 1. [Limitations](#limitations)
 1. [Development](#development)
+1. [Release Notes/Contributors](#release-notescontributors)
 
 ## Overview
 

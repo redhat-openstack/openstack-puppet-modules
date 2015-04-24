@@ -81,11 +81,12 @@ The testing tools have a number of dependencies. We use [Bundler](http://bundler
 
 ### Syntax and Style Tests
 
-We use [Puppet Lint](http://puppet-lint.com/) and [Puppet Syntax](https://github.com/gds-operations/puppet-syntax) to validate the module's syntax and style.
+We use [Puppet Lint](http://puppet-lint.com/), [Puppet Syntax](https://github.com/gds-operations/puppet-syntax) and [metadata-json-lint](https://github.com/puppet-community/metadata-json-lint) to validate the module's syntax and style.
 
 ```
 [~/puppet-opendaylight]$ bundle exec rake lint
 [~/puppet-opendaylight]$ bundle exec rake syntax
+[~/puppet-opendaylight]$ bundle exec rake metadata
 ```
 
 ### Unit Tests
