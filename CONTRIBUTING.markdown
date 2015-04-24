@@ -8,6 +8,11 @@ We work to make contributing easy. Please let us know if you spot something we c
     * [Issues](#issues)
     * [Gitter](#gitter)
 1. [Patches](#patches)
+1. [Testing](#testing)
+    * [Dependencies](#dependencies)
+    * [Syntax and Style](#syntax-and-style)
+    * [Running the Unit Tests](#running-the-unit-tests)
+    * [Integration Tests](#integration-tests)
 
 ## Overview
 
