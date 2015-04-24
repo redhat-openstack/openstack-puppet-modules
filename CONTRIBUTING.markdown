@@ -48,14 +48,20 @@ Feel free to hop in [our room](https://gitter.im/dfarrell07/puppet-opendaylight)
 Please use [Pull Requests](https://github.com/dfarrell07/puppet-opendaylight/pulls) to submit patches.
 
 Basics of a pull request:
-* Use the GitHub web UI to fork our repo
-* Clone your fork to your local system
-* Make your changes
-* Commit your changes, using a good commit message and referencing any applicable issues
-* Push your commit
-* Submit a pull request against the project, again using GitHub's web UI
+* Use the GitHub web UI to fork our repo.
+* Clone your fork to your local system.
+* Make your changes.
+* Commit your changes, using a good commit message and referencing any applicable issues.
+* Push your commit.
+* Submit a pull request against the project, again using GitHub's web UI.
 * We'll give feedback and get your changed merged ASAP.
 * You contributed! Thank you!
+
+Other tips for submitting excellent pull requests:
+* If you'd like to make more than one logically distinct change, please submit them as different pull requests (if they don't depend on each other) or different commits in the same PR (if they do).
+* If your PR contains a number of commits that provide one logical change, please squash them using `git rebase`.
+* Please provide test coverage for your changes.
+* If applicable, please provide documentation updates to reflect your changes.
 
 ## Testing
 
