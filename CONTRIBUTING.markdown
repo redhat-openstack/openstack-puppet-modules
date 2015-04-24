@@ -142,10 +142,10 @@ There are a number of pre-defined rake tasks to simplify running common Beaker t
 [~/puppet-opendaylight]$ bundle exec rake ubuntu
 ```
 
-If you'd like to preserve the Beaker VM after a test run, perhaps for manual inspection or a quicker follow-up test run, use the `BEAKER_DESTROY` environment variable.
+If you'd like to preserve the Beaker VM after a test run, perhaps for manual inspection or a quicker follow-up test run, use the `BEAKER_destroy` environment variable.
 
 ```ShellSession
-[~/puppet-opendaylight]$ BEAKER_DESTROY=no bundle exec rake centos
+[~/puppet-opendaylight]$ BEAKER_destroy=no bundle exec rake centos
 ```
 
 For more information about using Beaker, see [these docs](https://github.com/puppetlabs/beaker/wiki/How-to-Write-a-Beaker-Test-for-a-Module#typical-workflow).
