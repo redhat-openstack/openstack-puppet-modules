@@ -132,27 +132,47 @@ class { 'opendaylight':
 
 ##### `default_features`
 
-Features that should normally be installed by default, but can be overridden.
+Sets the Karaf features to install by default. These should not normally need to be overridden.
+
+Default: `['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']`
+Valid options: A list of Karaf feature name strings.
 
 ##### `extra_features`
 
-List of features to install in addition to the default ones.
+Specifies Karaf features to install in addition to the defaults covered by `default_features`.
+
+Default: `[]`
+Valid options: A list of Karaf feature name strings.
 
 ##### `odl_rest_port `
 
-Port for ODL northbound REST interface to listen on.
+Sets the port for the ODL northbound REST interface to listen on.
+
+Default: `'8080'`
+Valid options: Valid port numbers as strings or integers.
 
 ##### `install_method `
 
-How to install OpenDaylight. Current options are "rpm" and "tarball", default is RPM.
+Determines the install method to use for OpenDaylight.
+
+Default: `'rpm'`
+Valid options: `'tarball'` or `'rpm'`
 
 ##### `tarball_url`
 
-If installing from a tarball, use this one. Defaults to latest ODL.
+Specifies the ODL tarball to use when installing via the tarball install method.
+
+Default: `'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.3-Helium-SR3/distribution-karaf-0.2.3-Helium-SR3.tar.gz'`
+Valid options: A valid URL to an ODL tarball as a string.
 
 ##### `unitfile_url`
 
-OpenDaylight .service file to use for tarball installs. Defaults to one used by ODL RPM.
+Specifies the ODL systemd .service file to use when installing via the tarball install method.
+
+It's very unlikely that you'll need to override this.
+
+Default: `'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz'`
+Valid options: A valid URL to a valid ODL system .service file in a tarball as a string.
 
 ## Limitations
 
