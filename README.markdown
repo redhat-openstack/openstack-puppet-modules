@@ -120,7 +120,7 @@ class { 'opendaylight':
 
 #### Public classes
 
-* `opendaylight`: Main entry point to the module. All ODL knobs should be managed through its params.
+* `::opendaylight`: Main entry point to the module. All ODL knobs should be managed through its params.
 
 #### Private classes
 
@@ -128,6 +128,34 @@ class { 'opendaylight':
 * `opendaylight::config`: Manages ODL config, including Karaf features and REST port.
 * `opendaylight::install`: Installs ODL from an RPM or tarball.
 * `opendaylight::service`: Starts the OpenDaylight service.
+
+### `::opendaylight`
+
+#### Parameters
+
+##### `default_features`
+
+Features that should normally be installed by default, but can be overridden.
+
+##### `extra_features`
+
+List of features to install in addition to the default ones.
+
+##### `odl_rest_port `
+
+Port for ODL northbound REST interface to listen on.
+
+##### `install_method `
+
+How to install OpenDaylight. Current options are "rpm" and "tarball", default is RPM.
+
+##### `tarball_url`
+
+If installing from a tarball, use this one. Defaults to latest ODL.
+
+##### `unitfile_url`
+
+OpenDaylight .service file to use for tarball installs. Defaults to one used by ODL RPM.
 
 ## Limitations
 
