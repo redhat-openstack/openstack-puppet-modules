@@ -162,7 +162,7 @@ OpenDaylight .service file to use for tarball installs. Defaults to one used by 
 
 ## Development
 
-See [CONTRIBUTING.md](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.md) for details about how to contribute to this OpenDaylight Puppet module.
+See [CONTRIBUTING.markdown](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown) for details about how to contribute to the OpenDaylight Puppet module.
 
 ## Release Notes/Contributors
 
