@@ -75,7 +75,7 @@ Other tips for submitting excellent pull requests:
 
 The testing tools have a number of dependencies. We use [Bundler](http://bundler.io/) to make installing them easy.
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle install
 ```
 
@@ -83,7 +83,7 @@ The testing tools have a number of dependencies. We use [Bundler](http://bundler
 
 We use [Puppet Lint](http://puppet-lint.com/) and [Puppet Syntax](https://github.com/gds-operations/puppet-syntax) to validate the module's syntax and style.
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle exec rake lint
 [~/puppet-opendaylight]$ bundle exec rake syntax
 ```
@@ -94,7 +94,7 @@ We use rspec-puppet to provide unit test coverage.
 
 To run the unit tests and generate a coverage report, use:
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle exec rake spec
 # Snip test output
 Finished in 10.08 seconds (files took 0.50776 seconds to load)
@@ -110,7 +110,7 @@ Note that we have a very large number of tests and 100% test coverage.
 
 To run the syntax, style and unit tests in one rake task (recommended), use:
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle exec rake test
 ```
 
@@ -122,19 +122,19 @@ Beaker stands up virtual machines using Vagrant, applies the OpenDaylight Puppet
 
 To run our Beaker test against the primary target OS (CentOS 7) using the recommended RPM-based install method:
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle exec rake beaker
 ```
 
 The `RS_SET` environment variable can be use to change Beaker's target OS (Fedora 20, Fedora 21, CentOS 7, Ubuntu 14.04). ODL's install method (RPM or tarball) can be configured via the `INSTALL_METHOD` environment variable.
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ RS_SET=fedora-20 INSTALL_METHOD=tarball bundle exec rake beaker
 ```
 
 There are a number of pre-defined rake tasks to simplify running common Beaker tests.
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ bundle exec rake centos
 [~/puppet-opendaylight]$ bundle exec rake centos_tarball
 [~/puppet-opendaylight]$ bundle exec rake fedora_20
@@ -144,14 +144,14 @@ There are a number of pre-defined rake tasks to simplify running common Beaker t
 
 If you'd like to preserve the Beaker VM after a test run, perhaps for manual inspection or a quicker follow-up test run, use the `BEAKER_destroy` environment variable.
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ BEAKER_destroy=no bundle exec rake centos
 ```
 
 You can then connect to the VM by navigating to the directory that contains its Vagrantfile and using standard Vagrant commands.
 
 
-```ShellSession
+```
 [~/puppet-opendaylight]$ cd .vagrant/beaker_vagrant_files/centos-7.yml
 [~/puppet-opendaylight/.vagrant/beaker_vagrant_files/centos-7.yml]$ vagrant status
 Current machine states:
