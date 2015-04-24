@@ -57,7 +57,7 @@ Basics of a pull request:
 * Use the GitHub web UI to fork our repo.
 * Clone your fork to your local system.
 * Make your changes.
-* Commit your changes, using a good commit message and referencing any applicable issues.
+* Commit your changes, using a [good commit message](http://chris.beams.io/posts/git-commit/) and referencing any applicable issues.
 * Push your commit.
 * Submit a pull request against the project, again using GitHub's web UI.
 * We'll give feedback and get your changed merged ASAP.
