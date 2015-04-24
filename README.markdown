@@ -105,7 +105,7 @@ class { 'opendaylight':
 
 ### Ports
 
-To change the port OpenDaylight's northbound listens on for REST API calls, use the `odl_rest_port` param. This was added because OpenStack's Swift project uses a conflicting port.
+To change the port on which OpenDaylight's northbound listens for REST API calls, use the `odl_rest_port` param. This was added because OpenStack's Swift project uses a conflicting port.
 
 
 ```puppet
@@ -139,31 +139,35 @@ Sets the Karaf features to install by default. These should not normally need to
 
 Default: `['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management']`
 
-Valid options: A list of Karaf feature name strings.
+Valid options: A list of Karaf feature names as strings.
 
 ##### `extra_features`
 
-Specifies Karaf features to install in addition to the defaults covered by `default_features`.
+Specifies Karaf features to install in addition to the defaults listed in `default_features`.
+
+You will likely need to customize this to your use-case.
 
 Default: `[]`
 
-Valid options: A list of Karaf feature name strings.
+Valid options: A list of Karaf feature names as strings.
 
 ##### `install_method `
 
-Determines the install method to use for OpenDaylight.
+Specifies the install method by which to install OpenDaylight.
+
+The RPM install method is less complex, more frequently consumed and recommended.
 
 Default: `'rpm'`
 
-Valid options: `'tarball'` or `'rpm'`
+Valid options: The strings `'tarball'` or `'rpm'`.
 
 ##### `odl_rest_port `
 
-Sets the port for the ODL northbound REST interface to listen on.
+Specifies the port for the ODL northbound REST interface to listen on.
 
 Default: `'8080'`
 
-Valid options: Valid port numbers as strings or integers.
+Valid options: A valid port number as a string or integer.
 
 ##### `tarball_url`
 
@@ -181,15 +185,18 @@ It's very unlikely that you'll need to override this.
 
 Default: `'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz'`
 
-Valid options: A valid URL to a valid ODL system .service file in a tarball as a string.
+Valid options: A valid URL to an ODL systemd .service file (archived in a tarball) as a string.
 
 ## Limitations
 
-* Only tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
+* Tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
 * CentOS 7 is currently the most stable OS option.
+* The RPM install method is likely more reliable than the tarball install method.
 * Our [Fedora 21 Beaker tests are failing](https://github.com/dfarrell07/puppet-opendaylight/issues/63), but it seems to be an issue with the Vagrant image, not the Puppet mod.
 
 ## Development
+
+We welcome contributions and work to make them easy!
 
 See [CONTRIBUTING.markdown](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown) for details about how to contribute to the OpenDaylight Puppet module.
 
