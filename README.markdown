@@ -107,6 +107,7 @@ class { 'opendaylight':
 
 * Only tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
 * CentOS 7 is currently the most stable OS option.
+* Our [Fedora 21 Beaker tests are failing](https://github.com/dfarrell07/puppet-opendaylight/issues/63), but it seems to be an issue with the Vagrant image, not the Puppet mod.
 
 ## Development
 
