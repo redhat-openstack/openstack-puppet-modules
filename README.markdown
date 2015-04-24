@@ -4,17 +4,20 @@
 
 #### Table of Contents 
 1. [Overview](#overview)
-2. [Module Description](#module-description)
-3. [Setup](#setup)
-    * [What `opendaylight` affects](#what-opendaylight-affects)
-    * [Beginning with `opendaylight`](#beginning-with-opendaylight)
-4. [Usage](#usage)
-    * [Karaf Features](#karaf-features)
-    * [Install Method](#install-method)
-    * [Ports](#ports)
-5. [Reference ](#reference)
-5. [Limitations](#limitations)
-6. [Development](#development)
+1. [Module Description](#module-description)
+1. [Setup](#setup)
+  * [What `opendaylight` affects](#what-opendaylight-affects)
+  * [Beginning with `opendaylight`](#beginning-with-opendaylight)
+1. [Usage](#usage)
+  * [Karaf Features](#karaf-features)
+  * [Install Method](#install-method)
+  * [Ports](#ports)
+1. [Reference ](#reference)
+  * [Classes](#classes)
+    * [Private Classes](#private-classes)
+    * [Public Classes](#public-classes)
+1. [Limitations](#limitations)
+1. [Development](#development)
 
 ## Overview
 
