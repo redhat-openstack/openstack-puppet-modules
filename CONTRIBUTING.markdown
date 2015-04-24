@@ -13,6 +13,7 @@ We work to make contributing easy. Please let us know if you spot something we c
     * [Syntax and Style Tests](#syntax-and-style-tests)
     * [Unit Tests](#unit-tests)
     * [System Tests](#system-tests)
+    * [Tests in Continuous Integration](#tests-in-continuous-integration)
 
 ## Overview
 
