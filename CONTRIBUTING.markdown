@@ -148,3 +148,7 @@ If you'd like to preserve the Beaker VM after a test run, perhaps for manual ins
 ```
 
 For more information about using Beaker, see [these docs](https://github.com/puppetlabs/beaker/wiki/How-to-Write-a-Beaker-Test-for-a-Module#typical-workflow).
+
+### Tests in Continuous Integration
+
+We use [Travis CI](https://travis-ci.org/dfarrell07/puppet-opendaylight) to run our unit, syntax and style tests against a matrix of supported Ruby and Puppet versions at every commit. This currently results in >8500 automated tests per commit.
