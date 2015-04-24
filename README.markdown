@@ -41,11 +41,13 @@ Both supported [install methods](#install-method) default to the latest stable O
 
 ### Beginning with `opendaylight`
 
-To install and start OpenDaylight, include the `opendaylight` class: `include opendaylight`.
+Getting started with the OpenDaylight Puppet module is as simple as declaring the ``::opendaylight` class.
+
+For an easy way to experiment with applying this Puppet module to running CentOS 7, Fedora 20 and Fedora 21 Vagrant boxes, head over to the [vagrant-opendaylight](https://github.com/dfarrell07/vagrant-opendaylight/) project.
 
 ## Usage
 
-The most basic usage, passing no parameters to the OpenDaylight class, will install and start OepnDaylight with a default configuration.
+The most basic usage, passing no parameters to the OpenDaylight class, will install and start OpenDaylight with a default configuration.
 
 ```
 class { 'opendaylight':
