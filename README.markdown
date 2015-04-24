@@ -114,4 +114,4 @@ See [CONTRIBUTING.md](https://github.com/dfarrell07/puppet-opendaylight/blob/mas
 
 ## Release Notes/Contributors
 
-See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG) for information about releases and [CONTRIBUTORS](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTORS) file for a list of folks who have contributed.
+See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG) or our git tags for information about releases. See the git commit history for contributor information.
