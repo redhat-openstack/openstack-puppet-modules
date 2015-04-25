@@ -59,6 +59,11 @@ f20_rpm                   not created (virtualbox)
 f21_pup_rpm               not created (virtualbox)
 f21_pup_tb                not created (virtualbox)
 f21_rpm                   not created (virtualbox)
+[~/vagrant-opendaylight]$ vagrant up cent7_pup_rpm
+# A CentOS 7 VM is created and configured using the ODL Puppet mod's defaults
+[~/vagrant-opendaylight]$ vagrant ssh cent7_pup_rpm
+[vagrant@localhost ~]$ sudo systemctl is-active opendaylight
+active
 ```
 
 ## Usage
