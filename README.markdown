@@ -21,13 +21,13 @@
 
 ## Overview
 
-Puppet module that installs and configures the [OpenDaylight Software Defined Networking (SDN) controller](http://www.opendaylight.org/).
+Puppet module that installs and configures the [OpenDaylight Software Defined Networking (SDN) controller][7].
 
 ## Module Description
 
 Deploys OpenDaylight to various OSs either via an RPM or directly from the ODL tarball release artifact.
 
-All OpenDaylight configuration should be handled through the ODL Puppet module's [params](#parameters). If you need a new knob, [please raise an Issue](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown#issues).
+All OpenDaylight configuration should be handled through the ODL Puppet module's [params](#parameters). If you need a new knob, [please raise an Issue][8].
 
 Both supported [install methods](#install-method) default to the latest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
 
@@ -37,8 +37,8 @@ Both supported [install methods](#install-method) default to the latest stable O
 
 * Installs Java, which is required by ODL.
 * Creates `odl:odl` user:group if they don't already exist.
-* Installs [OpenDaylight](http://www.opendaylight.org/).
-* Installs a [systemd unitfile](https://github.com/dfarrell07/opendaylight-systemd/) or [Upstart config file](https://github.com/dfarrell07/puppet-opendaylight/blob/master/files/upstart.odl.conf) for OpenDaylight.
+* Installs [OpenDaylight][7].
+* Installs a [systemd unitfile][9] or [Upstart config file][10] for OpenDaylight.
 * Manipulates OpenDaylight's configuration files according to the params passed to the `::opendaylight` class.
 * Starts the `opendaylight` systemd or Upstart service.
 
@@ -46,7 +46,7 @@ Both supported [install methods](#install-method) default to the latest stable O
 
 Getting started with the OpenDaylight Puppet module is as simple as declaring the `::opendaylight` class.
 
-The [vagrant-opendaylight](https://github.com/dfarrell07/vagrant-opendaylight/) project provides an easy way to experiment with [applying the ODL Puppet module](https://github.com/dfarrell07/vagrant-opendaylight/tree/master/manifests) to CentOS 7, Fedora 20 and Fedora 21 Vagrant boxes.
+The [vagrant-opendaylight][11] project provides an easy way to experiment with [applying the ODL Puppet module][12] to CentOS 7, Fedora 20 and Fedora 21 Vagrant boxes.
 
 ```
 [~/vagrant-opendaylight]$ vagrant status
@@ -200,17 +200,17 @@ Valid options: A valid URL to an ODL systemd .service file (archived in a tarbal
 * Tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
 * CentOS 7 is currently the most stable OS option.
 * The RPM install method is likely more reliable than the tarball install method.
-* Our [Fedora 21 Beaker tests are failing](https://github.com/dfarrell07/puppet-opendaylight/issues/63), but it seems to be an issue with the Vagrant image, not the Puppet mod.
+* Our [Fedora 21 Beaker tests are failing][13], but it seems to be an issue with the Vagrant image, not the Puppet mod.
 
 ## Development
 
 We welcome contributions and work to make them easy!
 
-See [CONTRIBUTING.markdown](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown) for details about how to contribute to the OpenDaylight Puppet module.
+See [CONTRIBUTING.markdown][14] for details about how to contribute to the OpenDaylight Puppet module.
 
 ## Release Notes/Contributors
 
-See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG) or our [git tags](https://github.com/dfarrell07/puppet-opendaylight/releases) for information about releases. See our [git commit history](https://github.com/dfarrell07/puppet-opendaylight/commits/master) for contributor information.
+See the [CHANGELOG][15] or our [git tags][16] for information about releases. See our [git commit history][17] for contributor information.
 
 
 [1]: https://travis-ci.org/dfarrell07/puppet-opendaylight
@@ -219,3 +219,14 @@ See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/maste
 [4]: https://travis-ci.org/dfarrell07/puppet-opendaylight.svg
 [5]: https://gemnasium.com/dfarrell07/puppet-opendaylight.svg
 [6]: https://badges.gitter.im/Join%20Chat.svg
+[7]: http://www.opendaylight.org/
+[8]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown#issues
+[9]: https://github.com/dfarrell07/opendaylight-systemd/
+[10]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/files/upstart.odl.conf
+[11]: https://github.com/dfarrell07/vagrant-opendaylight/
+[12]: https://github.com/dfarrell07/vagrant-opendaylight/tree/master/manifests
+[13]: https://github.com/dfarrell07/puppet-opendaylight/issues/63
+[14]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/CONTRIBUTING.markdown
+[15]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG
+[16]: https://github.com/dfarrell07/puppet-opendaylight/releases
+[17]: https://github.com/dfarrell07/puppet-opendaylight/commits/master
