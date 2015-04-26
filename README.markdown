@@ -29,7 +29,7 @@ Deploys OpenDaylight to various OSs either via an RPM or directly from the ODL t
 
 All OpenDaylight configuration should be handled through the ODL Puppet module's [params](#parameters). If you need a new knob, [please raise an Issue][8].
 
-Both supported [install methods](#install-method) default to the latest stable OpenDaylight release, which is currently Helium 0.2.3 SR3.
+Both supported [install methods](#install-method) default to the latest stable OpenDaylight release, which is currently [Helium 0.2.3 SR3][18].
 
 ## Setup
 
@@ -230,3 +230,4 @@ See the [CHANGELOG][15] or our [git tags][16] for information about releases. Se
 [15]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG
 [16]: https://github.com/dfarrell07/puppet-opendaylight/releases
 [17]: https://github.com/dfarrell07/puppet-opendaylight/commits/master
+[18]: http://www.opendaylight.org/software/downloads/helium-sr3
