@@ -1,6 +1,6 @@
-[![Build Status][4]][1]
+[![CI Status][4]][1]
 [![Dependency Status][5]][2]
-[![Join the chat at https://gitter.im/dfarrell07/puppet-opendaylight][6]][3]
+[![Project Chatroom][6]][3]
 
 # OpenDaylight
 
