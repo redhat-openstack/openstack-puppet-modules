@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/dfarrell07/puppet-opendaylight.svg)](https://travis-ci.org/dfarrell07/puppet-opendaylight) [![Dependency Status](https://gemnasium.com/dfarrell07/puppet-opendaylight.svg)](https://gemnasium.com/dfarrell07/puppet-opendaylight) [![Join the chat at https://gitter.im/dfarrell07/puppet-opendaylight](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dfarrell07/puppet-opendaylight?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status][4]][1]
+[![Dependency Status][5]][2]
+[![Join the chat at https://gitter.im/dfarrell07/puppet-opendaylight][6]][3]
 
 # OpenDaylight
 
@@ -209,3 +211,11 @@ See [CONTRIBUTING.markdown](https://github.com/dfarrell07/puppet-opendaylight/bl
 ## Release Notes/Contributors
 
 See the [CHANGELOG](https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG) or our [git tags](https://github.com/dfarrell07/puppet-opendaylight/releases) for information about releases. See our [git commit history](https://github.com/dfarrell07/puppet-opendaylight/commits/master) for contributor information.
+
+
+[1]: https://travis-ci.org/dfarrell07/puppet-opendaylight
+[2]: https://gemnasium.com/dfarrell07/puppet-opendaylight
+[3]: https://gitter.im/dfarrell07/puppet-opendaylight?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[4]: https://travis-ci.org/dfarrell07/puppet-opendaylight.svg
+[5]: https://gemnasium.com/dfarrell07/puppet-opendaylight.svg
+[6]: https://badges.gitter.im/Join%20Chat.svg
