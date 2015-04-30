@@ -40,6 +40,9 @@ Puppet::Type.newtype(:vcsrepo) do
   feature :depth,
           "The provider can do shallow clones"
 
+  feature :branch,
+          "The name of the branch"
+
   feature :p4config,
           "The provider understands Perforce Configuration"
 
@@ -205,6 +208,10 @@ Puppet::Type.newtype(:vcsrepo) do
 
   newparam :depth, :required_features => [:depth] do
     desc "The value to be used to do a shallow clone."
+  end
+
+  newparam :branch, :required_features => [:branch] do
+    desc "The name of the branch to clone."
   end
 
   newparam :p4config, :required_features => [:p4config] do

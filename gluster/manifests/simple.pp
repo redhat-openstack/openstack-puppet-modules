@@ -61,7 +61,9 @@ class gluster::simple(
 
 	$valid_path = sprintf("%s/", regsubst($chosen_path, '\/$', ''))
 
-	$valid_volumes = type($volume) ? {	# always an array of volumes...
+	# Stdlib 4.6.0 deprecates 'type' in favor of 'type3x'.
+	# Ensure $valid_volumes is always an array.
+	$valid_volumes = type3x($volume) ? {
 		'array' => $volume,
 		default => ["${volume}"],
 	}

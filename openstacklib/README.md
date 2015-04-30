@@ -110,7 +110,7 @@ string; optional; default to 'utf8'
 
 #####`collate`
 The collate to use for the database;
-string; optional; default to 'utf8_unicode_ci'
+string; optional; default to 'utf8_general_ci'
 
 #####`allowed_hosts`
 Additional hosts that are allowed to access this database;
@@ -287,6 +287,18 @@ fail to correctly migrate postgresql databases. While this module does not
 handle database migrations, it is common to set up refresh relationships
 between openstacklib::db::postgresql resource and the database sync exec
 resource. Relying on this behavior may cause errors.
+
+Beaker-Rspec
+------------
+
+This module has beaker-rspec tests
+
+To run:
+
+```shell
+bundle install
+bundle exec rspec spec/acceptance
+```
 
 Development
 -----------
