@@ -38,6 +38,10 @@ mod 'firewall',
   :commit => 'e7121fe12f7582695ef774b51742b65a37d462db',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
+mod 'fluentd',
+  :commit => '37b764532a911a36cb365eb54aa18e0880f805ba',
+  :git => 'https://github.com/directxman12/puppet-fluentd.git'
+
 mod 'galera',
   :commit => '92463ad0567c066796b7fac4a1466e6a60621f6c',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
@@ -233,3 +237,4 @@ mod 'vswitch',
 mod 'xinetd',
   :commit => '4f16fc824e04d724a486634bd9c26ef549f10ff5',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
+

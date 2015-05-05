@@ -1,0 +1,29 @@
+## puppet-fluentd changelog
+
+Release notes for the srfmmz/puppet-fluentd module.
+
+------------------------------------------
+
+#### 0.2.0
+IMPORTANT: this version will break your old configuration. 
+
+* CHANGE remove concattination of files 
+
+
+#### 0.1.4 - 2014/08/05
+
+* FEATURE added filter functionality (by softecspa) 
+* FIX configfile syntax fix for td-agent v2 (by Molezeem) 
+* CHANGE changed the plugin installation to fluentgem provider (by saleksee) 
+
+#### 0.1.3 - 2014/07/06
+
+Please update to get the new repository of Treasuredata.
+
+Detailed Changes:
+
+* FEATURE : added time_format for source configuration
+* CHANGE : Added new treasuredata repositories.
+  - for more info see here : https://groups.google.com/forum/#!topic/fluentd/46FnWIoLTrU
+* CHANGE : Restart td-agent when config changed
+* FEATURE : Startetd this changelog 
