@@ -1,8 +1,0 @@
-old/
-tmp/
-pkg/
-docs/
-hacking/
-rpmbuild/
-.pmtignore
-puppet-gluster-documentation.pdf

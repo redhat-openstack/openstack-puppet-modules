@@ -1,8 +1,0 @@
----
-:backends:
-  - yaml
-:yaml:
-  :datadir: /var/lib/hiera
-:hierarchy:
-  - "nodes/%{::hostname}"
-  - common

@@ -1,5 +1,0 @@
-pkg/
-.rspec_system
-*.swp
-.bundle/
-spec/fixtures/

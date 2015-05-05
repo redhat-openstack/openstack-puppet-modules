@@ -1,5 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/network restart
-systemctl start libvirtd.service
-
