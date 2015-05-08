@@ -19,6 +19,10 @@
 #
 # === Parameters:
 #
+# [*manage_vip*]
+#  Whether to enable keepalived to manage the VIPs or not
+#  Defaults to true
+#
 # [*controller_host*]
 #  (Deprecated)Host or group of hosts to load-balance the services
 #  Can be a string or an array.
@@ -143,6 +147,7 @@ class tripleo::loadbalancer (
   $control_virtual_interface,
   $public_virtual_interface,
   $public_virtual_ip,
+  $manage_vip                = true,
   $controller_host           = undef,
   $controller_hosts          = undef,
   $controller_hosts_names    = undef,
@@ -185,44 +190,46 @@ class tripleo::loadbalancer (
     $controller_hosts_names_real = $controller_hosts_names
   }
 
-  case $::osfamily {
-    'RedHat': {
-      $keepalived_name_is_process = false
-      $keepalived_vrrp_script     = 'systemctl status haproxy.service'
-    } # RedHat
-    'Debian': {
-      $keepalived_name_is_process = true
-      $keepalived_vrrp_script     = undef
+  if $manage_vip {
+    case $::osfamily {
+      'RedHat': {
+        $keepalived_name_is_process = false
+        $keepalived_vrrp_script     = 'systemctl status haproxy.service'
+      } # RedHat
+      'Debian': {
+        $keepalived_name_is_process = true
+        $keepalived_vrrp_script     = undef
+      }
+      default: {
+        warning('Please configure keepalived defaults in tripleo::loadbalancer.')
+        $keepalived_name_is_process = undef
+        $keepalived_vrrp_script     = undef
+      }
     }
-    default: {
-      warning('Please configure keepalived defaults in tripleo::loadbalancer.')
-      $keepalived_name_is_process = undef
-      $keepalived_vrrp_script     = undef
+
+    class { '::keepalived': }
+    keepalived::vrrp_script { 'haproxy':
+      name_is_process => $keepalived_name_is_process,
+      script          => $keepalived_vrrp_script,
     }
-  }
 
-  class { '::keepalived': }
-  keepalived::vrrp_script { 'haproxy':
-    name_is_process => $keepalived_name_is_process,
-    script          => $keepalived_vrrp_script,
-  }
+    # KEEPALIVE INSTANCE CONTROL
+    keepalived::instance { '51':
+      interface    => $control_virtual_interface,
+      virtual_ips  => [join([$controller_virtual_ip, ' dev ', $control_virtual_interface])],
+      state        => 'MASTER',
+      track_script => ['haproxy'],
+      priority     => 101,
+    }
 
-  # KEEPALIVE INSTANCE CONTROL
-  keepalived::instance { '51':
-    interface    => $control_virtual_interface,
-    virtual_ips  => [join([$controller_virtual_ip, ' dev ', $control_virtual_interface])],
-    state        => 'MASTER',
-    track_script => ['haproxy'],
-    priority     => 101,
-  }
-
-  # KEEPALIVE INSTANCE PUBLIC
-  keepalived::instance { '52':
-    interface    => $public_virtual_interface,
-    virtual_ips  => [join([$public_virtual_ip, ' dev ', $public_virtual_interface])],
-    state        => 'MASTER',
-    track_script => ['haproxy'],
-    priority     => 101,
+    # KEEPALIVE INSTANCE PUBLIC
+    keepalived::instance { '52':
+      interface    => $public_virtual_interface,
+      virtual_ips  => [join([$public_virtual_ip, ' dev ', $public_virtual_interface])],
+      state        => 'MASTER',
+      track_script => ['haproxy'],
+      priority     => 101,
+    }
   }
 
   sysctl::value { 'net.ipv4.ip_nonlocal_bind': value => '1' }
@@ -247,11 +254,11 @@ class tripleo::loadbalancer (
   }
 
   haproxy::listen { 'haproxy.stats':
-    ipaddress        => '*',
+    ipaddress        => $controller_virtual_ip,
     ports            => '1993',
     mode             => 'http',
     options          => {
-      'stats' => 'enable',
+      'stats' => ['enable', 'uri /'],
     },
     collect_exported => false,
   }
@@ -572,7 +579,7 @@ class tripleo::loadbalancer (
 
   if $rabbitmq {
     haproxy::listen { 'rabbitmq':
-      ipaddress        => [$controller_virtual_ip, $public_virtual_ip],
+      ipaddress        => [$controller_virtual_ip],
       ports            => 5672,
       options          => {
         'timeout' => [ 'client 0', 'server 0' ],

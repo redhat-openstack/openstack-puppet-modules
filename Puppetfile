@@ -207,7 +207,7 @@ mod 'timezone',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
 mod 'tripleo',
-  :commit => 'e0921709d946d8db95f2a399a1b9da93d6b73d06',
+  :commit => 'a388f84654701f5d6604e0833a6a8fe1b90fcfdd',
   :git => 'https://github.com/stackforge/puppet-tripleo.git'
 
 mod 'trove',
@@ -233,3 +233,4 @@ mod 'vswitch',
 mod 'xinetd',
   :commit => '4f16fc824e04d724a486634bd9c26ef549f10ff5',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
+
