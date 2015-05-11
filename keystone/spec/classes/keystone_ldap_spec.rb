@@ -73,6 +73,7 @@ describe 'keystone::ldap' do
         :tls_cacertfile => '/etc/ssl/certs/ca-certificates.crt',
         :tls_req_cert => 'demand',
         :identity_driver => 'keystone.identity.backends.ldap.Identity',
+        :credential_driver => 'keystone.credential.backends.ldap.Credential',
         :assignment_driver => 'keystone.assignment.backends.ldap.Assignment',
         :use_pool => 'True',
         :pool_size => 20,
@@ -182,6 +183,7 @@ describe 'keystone::ldap' do
 
       # drivers
       is_expected.to contain_keystone_config('identity/driver').with_value('keystone.identity.backends.ldap.Identity')
+      is_expected.to contain_keystone_config('credential/driver').with_value('keystone.credential.backends.ldap.Credential')
       is_expected.to contain_keystone_config('assignment/driver').with_value('keystone.assignment.backends.ldap.Assignment')
     end
   end
@@ -209,7 +211,7 @@ describe 'keystone::ldap' do
     end
     it 'should work with deprecated params' do
       is_expected.to contain_keystone_config('ldap/project_tree_dn').with_value('ou=projects,ou=openstack,dc=example,dc=com')
-      is_expected.to contain_keystone_config('ldap/project_filter').with_value(nil)
+      is_expected.to contain_keystone_config('ldap/project_filter')
       is_expected.to contain_keystone_config('ldap/project_objectclass').with_value('organizationalUnit')
       is_expected.to contain_keystone_config('ldap/project_id_attribute').with_value('ou')
       is_expected.to contain_keystone_config('ldap/project_member_attribute').with_value('member')
@@ -217,7 +219,7 @@ describe 'keystone::ldap' do
       is_expected.to contain_keystone_config('ldap/project_name_attribute').with_value('ou')
       is_expected.to contain_keystone_config('ldap/project_enabled_attribute').with_value('enabled')
       is_expected.to contain_keystone_config('ldap/project_domain_id_attribute').with_value('businessCategory')
-      is_expected.to contain_keystone_config('ldap/project_attribute_ignore').with_value(nil)
+      is_expected.to contain_keystone_config('ldap/project_attribute_ignore')
       is_expected.to contain_keystone_config('ldap/project_allow_create').with_value('True')
       is_expected.to contain_keystone_config('ldap/project_allow_update').with_value('True')
       is_expected.to contain_keystone_config('ldap/project_allow_delete').with_value('True')

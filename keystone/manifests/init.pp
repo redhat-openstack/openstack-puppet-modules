@@ -211,6 +211,10 @@
 #   (optional) AMQP topics to publish to when using the RPC notification driver.
 #   Default to false.
 #
+# [*notification_format*]
+#   Format for the notifications. Valid values are 'basic' and 'cadf'.
+#   Default to undef
+#
 # [*control_exchange*]
 #   (optional) AMQP exchange to connect to if using RabbitMQ or Qpid
 #   Default to false.
@@ -431,6 +435,7 @@ class keystone(
   $kombu_ssl_version      = 'TLSv1',
   $notification_driver    = false,
   $notification_topics    = false,
+  $notification_format    = undef,
   $control_exchange       = false,
   $validate_service       = false,
   $validate_insecure      = false,
@@ -486,8 +491,12 @@ class keystone(
     name   => $::keystone::params::package_name,
     tag    => 'openstack',
   }
-  class { '::openstacklib::openstackclient':
-    package_ensure => $client_package_ensure,
+  if $client_package_ensure == 'present' {
+    include '::openstacklib::openstackclient'
+  } else {
+    class { '::openstacklib::openstackclient':
+      package_ensure => $client_package_ensure,
+    }
   }
 
   group { 'keystone':
@@ -713,6 +722,11 @@ class keystone(
     keystone_config { 'DEFAULT/notification_topics': value => $notification_topics }
   } else {
     keystone_config { 'DEFAULT/notification_topics': ensure => absent }
+  }
+  if $notification_format {
+    keystone_config { 'DEFAULT/notification_format': value => $notification_format }
+  } else {
+    keystone_config { 'DEFAULT/notification_format': ensure => absent }
   }
   if $control_exchange {
     keystone_config { 'DEFAULT/control_exchange': value => $control_exchange }
