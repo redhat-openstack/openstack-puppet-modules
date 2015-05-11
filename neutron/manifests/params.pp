@@ -34,6 +34,10 @@ class neutron::params {
     $midonet_server_package = 'python-neutron-plugin-midonet'
     $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
 
+    $plumgrid_plugin_package    = 'openstack-neutron-plumgrid'
+    $plumgrid_pythonlib_package = 'plumgrid-pythonlib'
+    $plumgrid_config_file       = '/etc/neutron/plugins/plumgrid/plumgrid.ini'
+
     $nvp_server_package = 'openstack-neutron-nicira'
 
     $dhcp_agent_package = false
@@ -106,6 +110,10 @@ class neutron::params {
     $midonet_server_package = 'python-neutron-plugin-midonet'
     $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
 
+    $plumgrid_plugin_package    = 'neutron-plugin-plumgrid'
+    $plumgrid_pythonlib_package = 'plumgrid-pythonlib'
+    $plumgrid_config_file       = '/etc/neutron/plugins/plumgrid/plumgrid.ini'
+
     $nvp_server_package = 'neutron-plugin-nicira'
 
     $dhcp_agent_package = 'neutron-dhcp-agent'
@@ -134,7 +142,7 @@ class neutron::params {
     $l3_agent_package   = 'neutron-l3-agent'
     $l3_agent_service   = 'neutron-l3-agent'
 
-    $fwaas_package      = false
+    $fwaas_package      = 'neutron-fwaas'
 
     $cliff_package      = 'python-cliff'
     $kernel_headers     = "linux-headers-${::kernelrelease}"

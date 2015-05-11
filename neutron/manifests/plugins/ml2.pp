@@ -132,7 +132,8 @@ class neutron::plugins::ml2 (
       line    => 'NEUTRON_PLUGIN_CONFIG=/etc/neutron/plugin.ini',
       require => File['/etc/neutron/plugin.ini'],
     }
-    File_line['/etc/default/neutron-server:NEUTRON_PLUGIN_CONFIG']
+    Package<| title == 'neutron-server' |>
+    -> File_line['/etc/default/neutron-server:NEUTRON_PLUGIN_CONFIG']
     ~> Service<| title == 'neutron-server' |>
   }
 
@@ -176,4 +177,7 @@ class neutron::plugins::ml2 (
     'ml2/mechanism_drivers':                value => join($mechanism_drivers, ',');
     'securitygroup/enable_security_group':  value => $enable_security_group;
   }
+
+  Neutron_plugin_ml2<||> ~> Exec<| title == 'neutron-db-sync' |>
+
 }

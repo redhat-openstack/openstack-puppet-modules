@@ -76,7 +76,7 @@ correctly configured.")
       authenv[:OS_REGION_NAME] = q['nova_region_name']
     end
     rv = nil
-    timeout = 120
+    timeout = 10
     end_time = Time.now.to_i + timeout
     loop do
       begin
@@ -100,8 +100,7 @@ correctly configured.")
           break
         else
           wait = end_time - current_time
-          Puppet::debug("Non-fatal error: \"#{e.message}\"")
-          notice("Neutron API not available. Wait up to #{wait} sec.")
+          notice("Unable to complete neutron request due to non-fatal error: \"#{e.message}\". Retrying for #{wait} sec.")
         end
         sleep(2)
         # Note(xarses): Don't remove, we know that there is one of the
