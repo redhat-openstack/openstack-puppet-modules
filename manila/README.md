@@ -49,6 +49,17 @@ Implementation
 
 manila is a combination of Puppet manifests and ruby code to delivery configuration and extra functionality through types and providers.
 
+Beaker-Rspec
+------------
+
+This module has beaker-rspec tests
+
+To run:
+
+``shell
+bundle install
+bundle exec rspec spec/acceptance
+``
 
 Development
 -----------

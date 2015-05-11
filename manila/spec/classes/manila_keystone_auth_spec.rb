@@ -22,7 +22,7 @@ describe 'manila::keystone::auth' do
       )
       is_expected.to contain_keystone_user_role('manila@services').with(
         :ensure  => 'present',
-        :roles   => 'admin'
+        :roles   => ['admin']
       )
       is_expected.to contain_keystone_service('manila').with(
         :ensure      => 'present',

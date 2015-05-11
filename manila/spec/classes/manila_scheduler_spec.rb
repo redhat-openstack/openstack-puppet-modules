@@ -15,7 +15,7 @@ describe 'manila::scheduler' do
       it { is_expected.to contain_package('manila-scheduler').with(
         :name      => 'manila-scheduler',
         :ensure    => 'present',
-        :before    => 'Service[manila-scheduler]'
+        :before    => ["Service[manila-scheduler]"]
       ) }
 
       it { is_expected.to contain_service('manila-scheduler').with(
