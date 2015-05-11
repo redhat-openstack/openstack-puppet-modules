@@ -43,7 +43,7 @@ mod 'galera',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
 mod 'glance',
-  :commit => 'eaddd54d8ac87571a01046b5da7dbca33f3b3a59',
+  :commit => '0db42a6a60bd4952f795d61ea26ed299e8c35bc8',
   :git => 'https://github.com/stackforge/puppet-glance.git'
 
 mod 'gluster',
