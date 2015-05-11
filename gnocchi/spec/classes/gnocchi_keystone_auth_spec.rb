@@ -23,7 +23,7 @@ describe 'gnocchi::keystone::auth' do
 
     it { is_expected.to contain_keystone_user_role('gnocchi@foobar').with(
       :ensure  => 'present',
-      :roles   => 'admin'
+      :roles   => ['admin']
     )}
 
     it { is_expected.to contain_keystone_service('gnocchi').with(
