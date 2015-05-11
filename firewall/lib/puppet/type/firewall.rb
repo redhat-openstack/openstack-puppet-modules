@@ -43,6 +43,7 @@ Puppet::Type.newtype(:firewall) do
   feature :log_level, "The ability to control the log level"
   feature :log_prefix, "The ability to add prefixes to log messages"
   feature :mark, "Match or Set the netfilter mark value associated with the packet"
+  feature :mss, "Match a given TCP MSS value or range."
   feature :tcp_flags, "The ability to match on particular TCP flag settings"
   feature :pkttype, "Match a packet type"
   feature :socket, "Match open sockets"
@@ -360,6 +361,13 @@ Puppet::Type.newtype(:firewall) do
       [proto, "! #{proto}".to_sym]
     end.flatten)
     defaultto "tcp"
+  end
+  
+  # tcp-specific
+  newproperty(:mss) do
+    desc <<-EOS
+      Match a given TCP MSS value or range.
+    EOS
   end
 
   # tcp-specific
@@ -780,6 +788,36 @@ Puppet::Type.newtype(:firewall) do
     EOS
   end
 
+  # match mark
+  newproperty(:match_mark, :required_features => :mark) do
+    desc <<-EOS
+      Match the Netfilter mark value associated with the packet.  Accepts either of:
+      mark/mask or mark.  These will be converted to hex if they are not already.
+    EOS
+    munge do |value|
+      mark_regex = %r{\A((?:0x)?[0-9A-F]+)(/)?((?:0x)?[0-9A-F]+)?\z}i
+      match = value.to_s.match(mark_regex)
+      if match.nil?
+        raise ArgumentError, "Match MARK value must be integer or hex between 0 and 0xffffffff"
+      end
+      mark = @resource.to_hex32(match[1])
+
+      # Values that can't be converted to hex.
+      # Or contain a trailing slash with no mask.
+      if mark.nil? or (mark and match[2] and match[3].nil?)
+        raise ArgumentError, "Match MARK value must be integer or hex between 0 and 0xffffffff"
+      end
+
+      # There should not be a mask on match_mark
+      unless match[3].nil?
+        raise ArgumentError, "iptables does not support masks on MARK match rules"
+      end
+      value = mark
+
+      value
+    end
+  end
+
   newproperty(:set_mark, :required_features => :mark) do
     desc <<-EOS
       Set the Netfilter mark value associated with the packet.  Accepts either of:
@@ -820,6 +858,12 @@ Puppet::Type.newtype(:firewall) do
 
       value
     end
+  end
+
+  newproperty(:set_mss, :required_features => :iptables) do
+    desc <<-EOS
+      Sets the TCP MSS value for packets.
+    EOS
   end
 
   newproperty(:pkttype, :required_features => :pkttype) do
@@ -1050,6 +1094,13 @@ Puppet::Type.newtype(:firewall) do
     EOS
   end
 
+  newproperty(:gateway, :required_features => :iptables) do
+    desc <<-EOS
+      The TEE target will clone a packet and redirect this clone to another
+      machine on the local network segment. gateway is the target host's IP.
+    EOS
+  end
+
   newproperty(:ipset, :required_features => :ipset) do
     desc <<-EOS
       Matches against the specified ipset list.
@@ -1101,6 +1152,101 @@ Puppet::Type.newtype(:firewall) do
     EOS
     newvalues(:true, :false)
   end
+
+  newproperty(:date_start, :required_features => :iptables) do
+    desc <<-EOS
+      Only match during the given time, which must be in ISO 8601 "T" notation.
+      The possible time range is 1970-01-01T00:00:00 to 2038-01-19T04:17:07
+    EOS
+  end
+
+  newproperty(:date_stop, :required_features => :iptables) do
+    desc <<-EOS
+      Only match during the given time, which must be in ISO 8601 "T" notation.
+      The possible time range is 1970-01-01T00:00:00 to 2038-01-19T04:17:07
+    EOS
+  end
+
+  newproperty(:time_start, :required_features => :iptables) do
+    desc <<-EOS
+      Only match during the given daytime. The possible time range is 00:00:00 to 23:59:59.
+      Leading zeroes are allowed (e.g. "06:03") and correctly interpreted as base-10.
+    EOS
+
+    munge do |value|
+      if value =~ /^([0-9]):/
+        value = "0#{value}"
+      end
+
+      if value =~ /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+        value = "#{value}:00"
+      end
+
+      value
+    end
+  end
+
+  newproperty(:time_stop, :required_features => :iptables) do
+    desc <<-EOS
+      Only match during the given daytime. The possible time range is 00:00:00 to 23:59:59.
+      Leading zeroes are allowed (e.g. "06:03") and correctly interpreted as base-10.
+    EOS
+
+    munge do |value|
+      if value =~ /^([0-9]):/
+        value = "0#{value}"
+      end
+
+      if value =~ /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+        value = "#{value}:00"
+      end
+
+      value
+    end
+  end
+
+  newproperty(:month_days, :required_features => :iptables) do
+    desc <<-EOS
+      Only match on the given days of the month. Possible values are 1 to 31.
+      Note that specifying 31 will of course not match on months which do not have a 31st day;
+      the same goes for 28- or 29-day February.
+    EOS
+
+    validate do |value|
+      month = value.to_i
+      if month >= 1 and month <=31
+        value
+      else
+        raise ArgumentError,
+          "month_days must be in the range of 1-31"
+      end
+    end
+  end
+
+  newproperty(:week_days, :required_features => :iptables) do
+    desc <<-EOS
+      Only match on the given weekdays. Possible values are Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+    EOS
+
+    newvalues(:Mon, :Tue, :Wed, :Thu, :Fri, :Sat, :Sun)
+  end
+
+  newproperty(:time_contiguous, :required_features => :iptables) do
+    desc <<-EOS
+      When time_stop is smaller than time_start value, match this as a single time period instead distinct intervals.
+    EOS
+
+    newvalues(:true, :false)
+  end
+
+  newproperty(:kernel_timezone, :required_features => :iptables) do
+    desc <<-EOS
+      Use the kernel timezone instead of UTC to determine whether a packet meets the time regulations.
+    EOS
+
+    newvalues(:true, :false)
+  end
+
 
   autorequire(:firewallchain) do
     reqs = []
@@ -1191,6 +1337,18 @@ Puppet::Type.newtype(:firewall) do
         self.fail "[%s] Parameter dport only applies to sctp, tcp and udp " \
           "protocols. Current protocol is [%s] and dport is [%s]" %
           [value(:name), should(:proto), should(:dport)]
+      end
+    end
+
+    if value(:jump).to_s == "TCPMSS"
+      unless value(:set_mss)
+        self.fail "When using jump => TCPMSS, the set_mss property is required"
+      end
+    end
+
+    if value(:jump).to_s == "TEE"
+      unless value(:gateway)
+        self.fail "When using jump => TEE, the gateway property is required"
       end
     end
 

@@ -6,10 +6,6 @@ class firewall::params {
           $service_name = 'iptables'
           $package_name = undef
         }
-        'Archlinux': {
-          $service_name = ['iptables','ip6tables']
-          $package_name = undef
-        }
         'Fedora': {
           if versioncmp($::operatingsystemrelease, '15') >= 0 {
             $package_name = 'iptables-services'
@@ -33,7 +29,7 @@ class firewall::params {
         'Debian': {
           if versioncmp($::operatingsystemrelease, '8.0') >= 0 {
             $service_name = 'netfilter-persistent'
-            $package_name = 'netfilter-persistent'
+            $package_name = 'iptables-persistent'
           } else {
             $service_name = 'iptables-persistent'
             $package_name = 'iptables-persistent'
@@ -43,7 +39,7 @@ class firewall::params {
         'Ubuntu': {
           if versioncmp($::operatingsystemrelease, '14.10') >= 0 {
             $service_name = 'netfilter-persistent'
-            $package_name = 'netfilter-persistent'
+            $package_name = 'iptables-persistent'
           } else {
             $service_name = 'iptables-persistent'
             $package_name = 'iptables-persistent'
@@ -61,8 +57,16 @@ class firewall::params {
       $package_name = 'net-firewall/iptables'
     }
     default: {
-      $package_name = undef
-      $service_name = 'iptables'
+      case $::operatingsystem {
+        'Archlinux': {
+          $service_name = ['iptables','ip6tables']
+          $package_name = undef
+        }
+        default: {
+          $service_name = 'iptables'
+          $package_name = undef
+        }
+      }
     }
   }
 }

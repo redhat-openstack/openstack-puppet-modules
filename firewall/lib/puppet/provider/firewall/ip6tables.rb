@@ -16,6 +16,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
   has_feature :log_level
   has_feature :log_prefix
   has_feature :mark
+  has_feature :mss
   has_feature :tcp_flags
   has_feature :pkttype
   has_feature :ishasmorefrags
@@ -74,6 +75,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :dport              => ["-m multiport --dports", "--dport"],
     :dst_range          => '--dst-range',
     :dst_type           => "--dst-type",
+    :gateway            => "--gateway",
     :gid                => "--gid-owner",
     :hop_limit          => "-m hl --hl-eq",
     :icmp               => "-m icmp6 --icmpv6-type",
@@ -89,8 +91,10 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :log_level          => "--log-level",
     :log_prefix         => "--log-prefix",
     :mask               => "--mask",
+    :match_mark         => "-m mark --mark",
     :name               => "-m comment --comment",
     :mac_source         => ["-m mac --mac-source", "--mac-source"],
+    :mss                => "-m tcpmss --mss",
     :outiface           => "-o",
     :pkttype            => "-m pkttype --pkt-type",
     :port               => '-m multiport --ports',
@@ -105,6 +109,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :rsource            => "--rsource",
     :rttl               => "--rttl",
     :set_mark           => mark_flag,
+    :set_mss            => '--set-mss',
     :socket             => "-m socket",
     :source             => "-s",
     :sport              => ["-m multiport --sports", "--sport"],
@@ -123,7 +128,15 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :uid                => "--uid-owner",
     :physdev_in         => "--physdev-in",
     :physdev_out        => "--physdev-out",
-    :physdev_is_bridged => "--physdev-is-bridged"
+    :physdev_is_bridged => "--physdev-is-bridged",
+    :date_start         => "--datestart",
+    :date_stop          => "--datestop",
+    :time_start         => "--timestart",
+    :time_stop          => "--timestop",
+    :month_days         => "--monthdays",
+    :week_days          => "--weekdays",
+    :time_contiguous    => "--contiguous",
+    :kernel_timezone    => "--kerneltz",
   }
 
   # These are known booleans that do not take a value, but we want to munge
@@ -138,7 +151,9 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :reap,
     :rttl,
     :socket,
-    :physdev_is_bridged
+    :physdev_is_bridged,
+    :time_contiguous,
+    :kernel_timezone,
   ]
 
   # Properties that use "-m <ipt module name>" (with the potential to have multiple 
@@ -158,6 +173,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :addrtype  => [:src_type, :dst_type],
     :iprange   => [:src_range, :dst_range],
     :owner     => [:uid, :gid],
+    :time      => [:time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
   }
 
   # Create property methods dynamically
@@ -199,8 +215,8 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :tcp_flags, :uid, :gid, :mac_source, :sport, :dport, :port, :src_type,
     :dst_type, :socket, :pkttype, :name, :ipsec_dir, :ipsec_policy, :state,
     :ctstate, :icmp, :hop_limit, :limit, :burst, :recent, :rseconds, :reap,
-    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :todest,
-    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :reject,
-    :set_mark, :connlimit_above, :connlimit_mask, :connmark]
+    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :gateway, :todest,
+    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :reject, :set_mss, :mss,
+    :set_mark, :match_mark, :connlimit_above, :connlimit_mask, :connmark, :time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
 
 end

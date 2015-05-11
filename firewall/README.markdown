@@ -292,6 +292,34 @@ firewall { '100 snat for network foo2':
 }
 ```
 
+
+You can also change the TCP MSS value for VPN client traffic:
+
+```puppet
+firewall { '110 TCPMSS for VPN clients':
+  chain     => 'FORWARD',
+  table     => 'mangle',
+  source    => '10.0.2.0/24',
+  proto     => tcp,
+  tcp_flags => 'SYN,RST SYN',
+  mss       => '1361:1541',
+  set_mss   => '1360',
+  jump      => 'TCPMSS',
+}
+```
+
+The following will mirror all traffic sent to the server to a secondary host on the LAN with the TEE target:
+
+```puppet
+firewall { '503 Mirror traffic to IDS':
+  proto   => all,
+  jump    => 'TEE',
+  gateway => '10.0.0.2',
+  chain   => 'PREROUTING',
+  table   => 'mangle',
+}
+```
+
 The following example creates a new chain and forwards any port 5000 access to it.
 ```puppet
 firewall { '100 forward to MY_CHAIN':
@@ -373,12 +401,12 @@ This type enables you to manage firewall rules within Puppet.
 
  * `ip6tables`: Ip6tables type provider
     * Required binaries: `ip6tables-save`, `ip6tables`.
-    * Supported features: `address_type`, `connection_limiting`, `dnat`, `hop_limiting`, `icmp_match`, `interface_match`, `iprange`, `ipsec_dir`, `ipsec_policy`, `ipset`, `iptables`, `isfirstfrag`, `ishasmorefrags`, `islastfrag`, `log_level`, `log_prefix`, `mark`, `mask`, `owner`, `pkttype`, `rate_limiting`, `recent_limiting`, `reject_type`, `snat`, `socket`, `state_match`, `tcp_flags`.
+    * Supported features: `address_type`, `connection_limiting`, `dnat`, `hop_limiting`, `icmp_match`, `interface_match`, `iprange`, `ipsec_dir`, `ipsec_policy`, `ipset`, `iptables`, `isfirstfrag`, `ishasmorefrags`, `islastfrag`, `log_level`, `log_prefix`, `mark`, `mask`, `mss`, `owner`, `pkttype`, `rate_limiting`, `recent_limiting`, `reject_type`, `snat`, `socket`, `state_match`, `tcp_flags`.
 
 * `iptables`: Iptables type provider
     * Required binaries: `iptables-save`, `iptables`.
     * Default for `kernel` == `linux`.
-    * Supported features: `address_type`, `connection_limiting`, `dnat`, `icmp_match`, `interface_match`, `iprange`, `ipsec_dir`, `ipsec_policy`, `ipset`, `iptables`, `isfragment`, `log_level`, `log_prefix`, `mark`, `mask`, `netmap`, `owner`, `pkttype`, `rate_limiting`, `recent_limiting`, `reject_type`, `snat`, `socket`, `state_match`, `tcp_flags`.
+    * Supported features: `address_type`, `connection_limiting`, `dnat`, `icmp_match`, `interface_match`, `iprange`, `ipsec_dir`, `ipsec_policy`, `ipset`, `iptables`, `isfragment`, `log_level`, `log_prefix`, `mark`, `mask`, `mss`, `netmap`, `owner`, `pkttype`, `rate_limiting`, `recent_limiting`, `reject_type`, `snat`, `socket`, `state_match`, `tcp_flags`.
 
 **Autorequires:**
 
@@ -434,6 +462,8 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `reject_type`: The ability to control reject messages.
 
+* `set_mss`: Set the TCP MSS of a packet.
+
 * `snat`: Source NATing.
 
 * `socket`: The ability to match open sockets.
@@ -467,6 +497,10 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `ctstate`: Matches a packet based on its state in the firewall stateful inspection table, using the conntrack module. Valid values are: 'INVALID', 'ESTABLISHED', 'NEW', 'RELATED'. Requires the `state_match` feature.
 
+* `date_start`: Start Date/Time for the rule to match, which must be in ISO 8601 "T" notation. The possible time range is '1970-01-01T00:00:00' to '2038-01-19T04:17:07'
+
+* `date_stop`: End Date/Time for the rule to match, which must be in ISO 8601 "T" notation. The possible time range is '1970-01-01T00:00:00' to '2038-01-19T04:17:07'
+
 * `destination`: The destination address to match. For example: `destination => '192.168.1.0/24'`. You can also negate a mask by putting ! in front. For example: `destination  => '! 192.168.2.0/24'`. The destination can also be an IPv6 address if your provider supports it.
 
   For some firewall providers you can pass a range of ports in the format: 'start number-end number'. For example, '1-1024' would cover ports 1 to 1024.
@@ -497,6 +531,8 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `ensure`: Ensures that the resource is present. Valid values are 'present', 'absent'. The default is 'present'.
 
+* `gateway`: Used with TEE target to mirror traffic of a machine to a secondary host on the LAN.
+
 * `gid`: GID or Group owner matching rule. Accepts a string argument only, as iptables does not accept multiple gid in a single statement. Requires the `owner` feature.
 
 * `hop_limit`: Hop limiting value for matched packets. Values must match '/^\d+$/'. Requires the `hop_limiting` feature.
@@ -519,11 +555,13 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `islastfrag`: If true, matches when the packet is the last fragment of a fragmented ipv6 packet. Supported by ipv6 only. Valid values are 'true', 'false'. Requires the `islastfrag`.
 
-* `jump`: The value for the iptables `--jump` parameter. Any valid chain name is allowed, but normal values are: 'QUEUE', 'RETURN', 'DNAT', 'SNAT', 'LOG', 'MASQUERADE', 'REDIRECT', 'MARK'.
+* `jump`: The value for the iptables `--jump` parameter. Any valid chain name is allowed, but normal values are: 'QUEUE', 'RETURN', 'DNAT', 'SNAT', 'LOG', 'MASQUERADE', 'REDIRECT', 'MARK', 'TCPMSS'.
 
   For the values 'ACCEPT', 'DROP', and 'REJECT', you must use the generic `action` parameter. This is to enforce the use of generic parameters where possible for maximum cross-platform modeling.
 
   If you set both `accept` and `jump` parameters, you will get an error, because only one of the options should be set. Requires the `iptables` feature.
+
+* `kernel_timezone`: Use the kernel timezone instead of UTC to determine whether a packet meets the time regulations.
 
 * `limit`: Rate limiting value for matched packets. The format is: 'rate/[/second/|/minute|/hour|/day]'. Example values are: '50/sec', '40/min', '30/hour', '10/day'. Requires the  `rate_limiting` feature.
 
@@ -534,6 +572,12 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 * `log_prefix`: When combined with `jump => 'LOG'` specifies the log prefix to use when logging. Requires the `log_prefix` feature.
 
 * `mask`: Sets the mask to use when `recent` is enabled. Requires the `mask` feature.
+
+* `month_days`: Only match on the given days of the month. Possible values are '1' to '31'. Note that specifying 31 will of course not match on months which do not have a 31st day; the same goes for 28- or 29-day February.
+
+* `match_mark`: Match the Netfilter mark value associated with the packet.  Accepts either of mark/mask or mark. These will be converted to hex if they are not already. Requires the `mark` feature.
+
+* `mss`: Sets a given TCP MSS value or range to match.
 
 * `name`: The canonical name of the rule. This name is also used for ordering, so make sure you prefix the rule with a number. For example:
 
@@ -626,6 +670,8 @@ firewall { '101 blacklist strange traffic':
 
 * `set_mark`: Set the Netfilter mark value associated with the packet. Accepts either  'mark/mask' or 'mark'. These will be converted to hex if they are not already. Requires the `mark` feature.
 
+* `set_mss`: When combined with `jump => 'TCPMSS'` specifies the value of the MSS field.
+
 * `socket`: If 'true', matches if an open socket can be found by doing a socket lookup on the packet. Valid values are 'true', 'false'. Requires the `socket` feature.
 
 * `source`: The source address. For example: `source => '192.168.2.0/24'`. You can also negate a mask by putting ! in front. For example: `source => '! 192.168.2.0/24'`. The source can also be an IPv6 address if your provider supports it.
@@ -668,6 +714,12 @@ firewall { '101 blacklist strange traffic':
 
    Note that you specify flags in the order that iptables `--list` rules would list them to avoid having Puppet think you changed the flags. For example, 'FIN,SYN,RST,ACK SYN' matches packets with the SYN bit set and the ACK, RST and FIN bits cleared. Such packets are used to request TCP connection initiation. Requires the `tcp_flags` feature.
 
+* `time_contiguous`: When time_stop is smaller than time_start value, match this as a single time period instead distinct intervals.
+
+* `time_start`: Start time for the rule to match. The possible time range is '00:00:00' to '23:59:59'. Leading zeroes are allowed (e.g. '06:03') and correctly interpreted as base-10.
+
+* `time_stop`: End time for the rule to match. The possible time range is '00:00:00' to '23:59:59'. Leading zeroes are allowed (e.g. '06:03') and correctly interpreted as base-10.
+
 * `todest`: When using `jump => 'DNAT'`, you can specify the new destination address using this parameter. Requires the `dnat` feature.
 
 * `toports`: For DNAT this is the port that will replace the destination port. Requires the `dnat` feature.
@@ -677,6 +729,8 @@ firewall { '101 blacklist strange traffic':
 * `to`: When using `jump => 'NETMAP'`, you can specify a source or destination subnet to nat to. Requires the `netmap` feature`.
 
 * `uid`: UID or Username owner matching rule. Accepts a string argument only, as iptables does not accept multiple uid in a single statement. Requires the `owner` feature.
+
+* `week_days`: Only match on the given weekdays. Possible values are 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'.
 
 ###Type: firewallchain
 

@@ -21,6 +21,7 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
   has_feature :log_level
   has_feature :log_prefix
   has_feature :mark
+  has_feature :mss
   has_feature :tcp_flags
   has_feature :pkttype
   has_feature :isfragment
@@ -60,6 +61,7 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :dport              => ["-m multiport --dports", "--dport"],
     :dst_range          => "--dst-range",
     :dst_type           => "--dst-type",
+    :gateway            => "--gateway",
     :gid                => "--gid-owner",
     :icmp               => "-m icmp --icmp-type",
     :iniface            => "-i",
@@ -73,6 +75,8 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :log_prefix         => "--log-prefix",
     :mac_source         => ["-m mac --mac-source", "--mac-source"],
     :mask               => '--mask',
+    :match_mark         => "-m mark --mark",
+    :mss                => '-m tcpmss --mss',
     :name               => "-m comment --comment",
     :outiface           => "-o",
     :pkttype            => "-m pkttype --pkt-type",
@@ -89,6 +93,7 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :rsource            => "--rsource",
     :rttl               => "--rttl",
     :set_mark           => mark_flag,
+    :set_mss            => '--set-mss',
     :socket             => "-m socket",
     :source             => "-s",
     :sport              => ["-m multiport --sports", "--sport"],
@@ -108,7 +113,15 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :uid                => "--uid-owner",
     :physdev_in         => "--physdev-in",
     :physdev_out        => "--physdev-out",
-    :physdev_is_bridged => "--physdev-is-bridged"
+    :physdev_is_bridged => "--physdev-is-bridged",
+    :date_start         => "--datestart",
+    :date_stop          => "--datestop",
+    :time_start         => "--timestart",
+    :time_stop          => "--timestop",
+    :month_days         => "--monthdays",
+    :week_days          => "--weekdays",
+    :time_contiguous    => "--contiguous",
+    :kernel_timezone    => "--kerneltz",
   }
 
   # These are known booleans that do not take a value, but we want to munge
@@ -122,7 +135,9 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :rsource,
     :rttl,
     :socket,
-    :physdev_is_bridged
+    :physdev_is_bridged,
+    :time_contiguous,
+    :kernel_timezone,
   ]
 
   # Properties that use "-m <ipt module name>" (with the potential to have multiple 
@@ -142,6 +157,7 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :addrtype  => [:src_type, :dst_type],
     :iprange   => [:src_range, :dst_range],
     :owner     => [:uid, :gid],
+    :time      => [:time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
   }
 
   def self.munge_resource_map_from_existing_values(resource_map_original, compare)
@@ -224,9 +240,9 @@ Puppet::Type.type(:firewall).provide :iptables, :parent => Puppet::Provider::Fir
     :src_range, :dst_range, :tcp_flags, :uid, :gid, :mac_source, :sport, :dport, :port,
     :src_type, :dst_type, :socket, :pkttype, :name, :ipsec_dir, :ipsec_policy,
     :state, :ctstate, :icmp, :limit, :burst, :recent, :rseconds, :reap,
-    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :todest,
-    :tosource, :toports, :to, :checksum_fill, :random, :log_prefix, :log_level, :reject, :set_mark,
-    :connlimit_above, :connlimit_mask, :connmark
+    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :gateway, :set_mss, :todest,
+    :tosource, :toports, :to, :checksum_fill, :random, :log_prefix, :log_level, :reject, :set_mark, :match_mark, :mss,
+    :connlimit_above, :connlimit_mask, :connmark, :time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone
   ]
 
   def insert
