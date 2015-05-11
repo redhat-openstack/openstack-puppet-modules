@@ -211,7 +211,7 @@ mod 'tripleo',
   :git => 'https://github.com/stackforge/puppet-tripleo.git'
 
 mod 'trove',
-  :commit => '27f3940b92d803e18bbad37a40533bdeeab0a85e',
+  :commit => '19731ad8f1598106226617b7bd66a1ee1fd67ac2',
   :git => 'https://github.com/stackforge/puppet-trove'
 
 mod 'tuskar',
