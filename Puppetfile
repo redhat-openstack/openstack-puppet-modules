@@ -7,7 +7,7 @@ mod 'aviator',
   :git => 'https://github.com/aimonb/puppet_aviator.git'
 
 mod 'ceilometer',
-  :commit => 'e87b29e6efa1ee37bd80b49624e75ea98d123cbb',
+  :commit => '69af03e1665e5eca2ef988ccaacf3623f7ace2af',
   :git => 'https://github.com/stackforge/puppet-ceilometer.git'
 
 mod 'ceph',
