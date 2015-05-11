@@ -1,5 +1,4 @@
 pkg/
-log/
 Gemfile.lock
 vendor/
 spec/fixtures/

@@ -1,3 +1,17 @@
+# == Defined Type: haproxy::peers
+#
+#  This type will set up a peers entry in /etc/haproxy/haproxy.cfg
+#   on the load balancer. This setting is required to share the
+#   current state of HAproxy with other HAproxy in High available
+#   configurations.
+#
+# === Parameters
+#
+# [*name*]
+#  Sets the peers' name. Generally it will be the namevar of the
+#   defined resource type. This value appears right after the
+#   'peers' statement in haproxy.cfg
+
 define haproxy::peers (
   $collect_exported = true,
 ) {
