@@ -13,33 +13,31 @@ class mysql::backup::xtrabackup (
   $delete_before_dump = false,
   $backupdatabases    = [],
   $file_per_database  = false,
+  $include_triggers   = true,
+  $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
 
-  mysql_user { "${backupuser}@localhost":
-    ensure        => $ensure,
-    password_hash => mysql_password($backuppassword),
-    require       => Class['mysql::server::root_password'],
-  }
-
   package{ 'percona-xtrabackup':
     ensure  => $ensure,
   }
+
   cron { 'xtrabackup-weekly':
     ensure  => $ensure,
-    command => 'innobackupex $backupdir',
+    command => "innobackupex ${backupdir}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
     weekday => 0,
     require => Package['percona-xtrabackup'],
   }
+
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => 'innobackupex --incremental $backupdir',
+    command => "innobackupex --incremental ${backupdir}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -54,5 +52,4 @@ class mysql::backup::xtrabackup (
     owner  => $backupdirowner,
     group  => $backupdirgroup,
   }
-
 }

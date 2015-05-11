@@ -4,7 +4,6 @@ class mysql::server (
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
   $manage_config_file      = $mysql::params::manage_config_file,
-  $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
   $package_ensure          = $mysql::params::server_package_ensure,
   $package_manage          = $mysql::params::server_package_manage,
@@ -27,7 +26,8 @@ class mysql::server (
 
   # Deprecated parameters
   $enabled                 = undef,
-  $manage_service          = undef
+  $manage_service          = undef,
+  $old_root_password       = undef
 ) inherits mysql::params {
 
   # Deprecated parameters.
@@ -43,6 +43,9 @@ class mysql::server (
   } else {
     $real_service_manage = $service_manage
   }
+  if $old_root_password {
+    warning('old_root_password is no longer used and will be removed in a future release')
+  }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
   $options = mysql_deepmerge($mysql::params::default_options, $override_options)
@@ -51,6 +54,7 @@ class mysql::server (
 
   include '::mysql::server::install'
   include '::mysql::server::config'
+  include '::mysql::server::installdb'
   include '::mysql::server::service'
   include '::mysql::server::root_password'
   include '::mysql::server::providers'
@@ -65,24 +69,18 @@ class mysql::server (
   anchor { 'mysql::server::end': }
 
   if $restart {
-    Anchor['mysql::server::start'] ->
-    Class['mysql::server::install'] ->
-    # Only difference between the blocks is that we use ~> to restart if
-    # restart is set to true.
     Class['mysql::server::config'] ~>
-    Class['mysql::server::service'] ->
-    Class['mysql::server::root_password'] ->
-    Class['mysql::server::providers'] ->
-    Anchor['mysql::server::end']
-  } else {
-    Anchor['mysql::server::start'] ->
-    Class['mysql::server::install'] ->
-    Class['mysql::server::config'] ->
-    Class['mysql::server::service'] ->
-    Class['mysql::server::root_password'] ->
-    Class['mysql::server::providers'] ->
-    Anchor['mysql::server::end']
+    Class['mysql::server::service']
   }
+
+  Anchor['mysql::server::start'] ->
+  Class['mysql::server::install'] ->
+  Class['mysql::server::config'] ->
+  Class['mysql::server::installdb'] ->
+  Class['mysql::server::service'] ->
+  Class['mysql::server::root_password'] ->
+  Class['mysql::server::providers'] ->
+  Anchor['mysql::server::end']
 
 
 }

@@ -12,6 +12,8 @@ class mysql::backup::mysqldump (
   $delete_before_dump = false,
   $backupdatabases    = [],
   $file_per_database  = false,
+  $include_triggers   = true,
+  $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
   $postscript         = false,
@@ -24,11 +26,17 @@ class mysql::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
+  if $include_triggers and versioncmp($::mysql_version, '5.1.5') > 0 {
+    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
+  } else {
+    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
+  }
+
   mysql_grant { "${backupuser}@localhost/*.*":
     ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => '*.*',
-    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
+    privileges => $privs,
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
