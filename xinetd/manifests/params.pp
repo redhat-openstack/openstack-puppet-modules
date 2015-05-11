@@ -1,6 +1,6 @@
 class xinetd::params {
-  $default_default_user   = 'root'
-  $default_default_group  = 'root'
+  $default_user   = 'root'
+  $default_group  = 'root'
   $package_ensure         = 'installed'
 
   case $::osfamily {
@@ -66,11 +66,4 @@ class xinetd::params {
     }
   }
 
-  if $default_user == undef {
-    $default_user = $default_default_user
-  }
-
-  if $default_group == undef {
-    $default_group = $default_default_group
-  }
 }
