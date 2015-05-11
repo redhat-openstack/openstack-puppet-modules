@@ -171,7 +171,7 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '826a2c8480074ce20f93c983721d10d95f2c9d76',
+  :commit => '704d1d812e89b88a49a8d3cf8f9502f47267b256',
   :git => 'https://github.com/stackforge/puppet-sahara.git'
 
 mod 'snmp',
