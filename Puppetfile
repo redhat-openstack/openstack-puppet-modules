@@ -19,7 +19,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => 'cc7279832bb7bd2840c831219f5f00a0f2efb8a3',
+  :commit => 'd6ccce6554e85ee50d926bbc413c1a1ea2ddffbf',
   :git => 'https://github.com/stackforge/puppet-cinder.git'
 
 mod 'common',
