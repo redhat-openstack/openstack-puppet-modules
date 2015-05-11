@@ -135,7 +135,7 @@ mod 'ntp',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
 mod 'openstack_extras',
-  :commit => 'd4af0036a42c2deebcef1aa690101aa35aec930d',
+  :commit => '610313ca08ffc50c44b6d41000d25bd0274d57f0',
   :git => 'https://github.com/stackforge/puppet-openstack_extras.git'
 
 mod 'openstacklib',
