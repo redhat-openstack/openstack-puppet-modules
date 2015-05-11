@@ -78,6 +78,7 @@ class redis::params {
       $config_group              = 'root'
       $config_owner              = 'root'
       $daemonize                 = true
+      $log_dir_mode              = '0755'
       $package_ensure            = 'present'
       $package_name              = 'redis-server'
       $sentinel_config_file      = '/etc/redis/redis-sentinel.conf'
@@ -103,6 +104,7 @@ class redis::params {
       $config_group              = 'root'
       $config_owner              = 'root'
       $daemonize                 = false
+      $log_dir_mode              = '0755'
       $package_ensure            = 'present'
       $package_name              = 'redis'
       $sentinel_config_file      = '/etc/redis-sentinel.conf'
@@ -127,10 +129,36 @@ class redis::params {
       $config_group              = 'wheel'
       $config_owner              = 'root'
       $daemonize                 = true
+      $log_dir_mode              = '0755'
       $package_ensure            = 'present'
       $package_name              = 'redis'
       $sentinel_config_file      = '/usr/local/etc/redis-sentinel.conf'
       $sentinel_config_file_orig = '/usr/local/etc/redis-sentinel.conf.puppet'
+      $sentinel_init_script      = undef
+      $sentinel_package_name     = 'redis'
+      $sentinel_package_ensure   = 'present'
+      $service_enable            = true
+      $service_ensure            = 'running'
+      $service_group             = 'redis'
+      $service_hasrestart        = true
+      $service_hasstatus         = true
+      $service_name              = 'redis'
+      $service_user              = 'redis'
+    }
+
+    'Suse': {
+      $config_dir                = '/etc/redis'
+      $config_dir_mode           = '0750'
+      $config_file               = '/etc/redis/redis-server.conf'
+      $config_file_mode          = '0644'
+      $config_group              = 'redis'
+      $config_owner              = 'redis'
+      $daemonize                 = true
+      $log_dir_mode              = '0750'
+      $package_ensure            = 'present'
+      $package_name              = 'redis'
+      $sentinel_config_file      = '/etc/redis/redis-sentinel.conf'
+      $sentinel_config_file_orig = '/etc/redis/redis-sentinel.conf.puppet'
       $sentinel_init_script      = undef
       $sentinel_package_name     = 'redis'
       $sentinel_package_ensure   = 'present'
