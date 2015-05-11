@@ -219,7 +219,7 @@ mod 'tuskar',
   :git => 'https://github.com/stackforge/puppet-tuskar.git'
 
 mod 'vcsrepo',
-  :commit => '210ca5acd8eecc909eae248745e24f0debd66ffc',
+  :commit => '4cc3383f3e22edb31a03a3dad7817734529781ee',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
 
 mod 'vlan',
