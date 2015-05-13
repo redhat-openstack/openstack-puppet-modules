@@ -5,4 +5,4 @@ spec/fixtures/*
 *.tmp
 .librarian
 pkg/*
-
+Gemfile.lock
