@@ -11,7 +11,7 @@ describe 'zookeeper::repo', :type => :class do
       :lsbdistcodename => codename,
       :operatingsystemmajrelease => codename,
       :hardwaremodel => hardwaremodel,
-      :puppetversion => '3.7.1',
+      :puppetversion => ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : '3.7.1',
     }}
 
     it {
