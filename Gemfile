@@ -13,6 +13,7 @@ gem 'serverspec',              :require => false
 gem 'rspec-system-serverspec', :require => false
 # coverage reports will be in release 2.0
 gem 'rspec-puppet', '> 2.0'
+gem 'rspec', '~> 2.13'
 
 # blacksmith > 3.0 does not support ruby 1.8.7
 group :development do
