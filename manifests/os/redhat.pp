@@ -25,10 +25,19 @@ class zookeeper::os::redhat(
 
     # make sure the Java package is only installed once.
     anchor { 'zookeeper::os::redhat::java': }
-    ensure_resource('package', $java_package,
-      {'ensure' => $ensure, 'allow_virtual' => true,
-      'before' => Anchor['zookeeper::os::redhat::java']}
-    )
+
+    # parameter allow_virtual is not supported before Puppet 3.6
+    if versioncmp($::puppetversion, '3.6.0') >= 0 {
+      ensure_resource('package', $java_package,
+        {'ensure' => $ensure, 'allow_virtual' => true,
+        'before' => Anchor['zookeeper::os::debian::java']}
+      )
+    } else {
+      ensure_resource('package', $java_package,
+        {'ensure' => $ensure,
+        'before' => Anchor['zookeeper::os::debian::java']}
+      )
+    }
 
     ensure_resource('package', $packages,
       {'ensure' => $ensure, 'require' => Anchor['zookeeper::os::redhat::java']}
