@@ -11,7 +11,11 @@ syncLimit=<%= @sync_limit %>
 # the directory where the snapshot is stored.
 dataDir=<%= @datastore %>
 # Place the dataLogDir to a separate physical disc for better performance
+<% if @datalogstore -%>
+dataLogDir=<%= @datalogstore %>
+<% else -%>
 # dataLogDir=/disk2/zookeeper
+<% end -%>
 
 # the port at which the clients will connect
 clientPort=<%= @client_port %>

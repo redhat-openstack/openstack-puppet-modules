@@ -15,6 +15,8 @@
 class zookeeper(
   $id                      = '1',
   $datastore               = '/var/lib/zookeeper',
+  # datalogstore used to put transaction logs in separate location than snapshots
+  $datalogstore            = undef,
   $initialize_datastore    = false,
   # fact from which we get public ip address
   $client_ip               = $::ipaddress,
@@ -76,6 +78,7 @@ class zookeeper(
   class { 'zookeeper::config':
     id                      => $id,
     datastore               => $datastore,
+    datalogstore            => $datalogstore,
     initialize_datastore    => $initialize_datastore,
     client_ip               => $client_ip,
     client_port             => $client_port,

@@ -90,6 +90,7 @@ This is a workaround for a a [Facter issue](https://tickets.puppetlabs.com/brows
 
    - `id` - cluster-unique zookeeper's instance id (1-255)
    - `datastore`
+   - `datalogstore` - specifying this configures the dataLogDir Zookeeper config values and allows for transaction logs to be stored in a different location, improving IO performance
    - `log_dir`
    - `purge_interval` - automatically will delete zookeeper logs (available since 3.4.0)
    - `snap_retain_count` - number of snapshots that will be kept after purging (since 3.4.0)
@@ -113,6 +114,7 @@ All parameters could be defined in hiera files, e.g. `common.yaml`, `Debian.yaml
 zookeeper::id: 1
 zookeeper::client_port: 2181
 zookeeper::datastore: '/var/lib/zookeeper'
+zookeeper::datalogstore: '/disk2/zookeeper'
 ```
 
 ## Cloudera package

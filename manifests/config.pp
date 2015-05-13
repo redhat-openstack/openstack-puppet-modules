@@ -22,6 +22,7 @@
 class zookeeper::config(
   $id                      = '1',
   $datastore               = '/var/lib/zookeeper',
+  $datalogstore            = undef,
   $initialize_datastore    = false,
   $client_ip               = $::ipaddress,
   $client_port             = 2181,
@@ -79,6 +80,16 @@ class zookeeper::config(
     group   => $group,
     mode    => '0644',
     recurse => true,
+  }
+
+  if $datalogstore {
+    file { $datalogstore:
+      ensure  => directory,
+      owner   => $user,
+      group   => $group,
+      mode    => '0644',
+      recurse => true,
+    }
   }
 
   file { "${cfg_dir}/myid":

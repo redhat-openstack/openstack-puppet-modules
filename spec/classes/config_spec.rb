@@ -185,6 +185,30 @@ describe 'zookeeper::config', :type => :class do
     })}
   end
 
+  context 'without datalogstore parameter' do
+    it { should contain_file(
+        '/etc/zookeeper/conf/zoo.cfg'
+      ).with_content(/# dataLogDir=\/disk2\/zookeeper/)
+    }
+  end
+
+  context 'with datalogstore parameter' do
+    let(:params) {{
+      :datalogstore => '/zookeeper/transaction/device',
+    }}
+
+    let(:datalogstore)  { '/zookeeper/transaction/device' }
+
+    it { should contain_file(datalogstore).with({
+      'ensure'  => 'directory',
+    }) }
+
+    it { should contain_file(
+        '/etc/zookeeper/conf/zoo.cfg'
+      ).with_content(/dataLogDir=\/zookeeper\/transaction\/device/)
+    }
+  end
+
   context 'setting quorum of servers with custom ports' do
     let(:params) {{
       :election_port => 3000,
