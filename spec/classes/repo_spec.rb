@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'zookeeper::repo', :type => :class do
-  shared_examples 'redhat-install' do |os, codename|
+  shared_examples 'redhat-install' do |os, codename, puppet|
     let(:cdhver){ 4 }
     let(:hardwaremodel){ 'x86_64' }
 
@@ -11,7 +11,7 @@ describe 'zookeeper::repo', :type => :class do
       :lsbdistcodename => codename,
       :operatingsystemmajrelease => codename,
       :hardwaremodel => hardwaremodel,
-      :puppetversion => ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : '3.7.1',
+      :puppetversion => puppet,
     }}
 
     it {
@@ -25,11 +25,14 @@ describe 'zookeeper::repo', :type => :class do
     let(:user) { 'zookeeper' }
     let(:group) { 'zookeeper' }
 
-    let(:params) { {
+    let(:params) {{
       :source => 'cloudera',
-    } }
+    }}
+    # ENV variable might contain characters which are not supported
+    # by versioncmp function (like '~>')
+    puppet = `puppet --version`
 
-    it_behaves_like 'redhat-install', 'RedHat', '6'
+    it_behaves_like 'redhat-install', 'RedHat', '6', puppet
   end
 
   context 'fail when architecture not supported' do

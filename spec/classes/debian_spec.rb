@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe 'zookeeper::os::debian', :type => :class do
-  shared_examples 'debian-install' do |os, codename|
+  shared_examples 'debian-install' do |os, codename, puppet|
     let(:facts) {{
       :operatingsystem => os,
       :osfamily => 'Debian',
       :lsbdistcodename => codename,
-      :puppetversion => ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : '3.7.1',
+      :puppetversion => puppet,
     }}
 
     it { should contain_package('zookeeper') }
@@ -88,13 +88,16 @@ describe 'zookeeper::os::debian', :type => :class do
     let(:user) { 'zookeeper' }
     let(:group) { 'zookeeper' }
 
-    let(:params) { {
+    let(:params) {{
       :snap_retain_count => 1,
-    } }
+    }}
+    # ENV variable might contain characters which are not supported
+    # by versioncmp function (like '~>')
+    puppet = `puppet --version`
 
-    it_behaves_like 'debian-install', 'Debian', 'squeeze'
-    it_behaves_like 'debian-install', 'Debian', 'wheezy'
-    it_behaves_like 'debian-install', 'Ubuntu', 'precise'
+    it_behaves_like 'debian-install', 'Debian', 'squeeze', puppet
+    it_behaves_like 'debian-install', 'Debian', 'wheezy', puppet
+    it_behaves_like 'debian-install', 'Ubuntu', 'precise', puppet
   end
 
   context 'does not install cron script on trusty' do
@@ -122,7 +125,7 @@ describe 'zookeeper::os::debian', :type => :class do
       :operatingsystem => 'Ubuntu',
       :osfamily => 'Debian',
       :lsbdistcodename => 'trusty',
-      :puppetversion => ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : '3.7.1',
+      :puppetversion => `puppet --version`,
     }}
 
     let(:params) { {

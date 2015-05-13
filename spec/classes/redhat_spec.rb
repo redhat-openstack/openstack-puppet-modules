@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe 'zookeeper::os::redhat', :type => :class do
-  shared_examples 'redhat-install' do |os, codename|
+  shared_examples 'redhat-install' do |os, codename, puppet|
     let(:facts) {{
       :operatingsystem => os,
       :osfamily => 'RedHat',
       :lsbdistcodename => codename,
-      :puppetversion => ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : '3.7.1',
+      :puppetversion => puppet,
     }}
 
     it { should contain_package('zookeeper') }
@@ -90,13 +90,16 @@ describe 'zookeeper::os::redhat', :type => :class do
   context 'on RedHat-like system' do
     let(:user) { 'zookeeper' }
     let(:group) { 'zookeeper' }
+    # ENV variable might contain characters which are not supported
+    # by versioncmp function (like '~>')
+    puppet = `puppet --version`
 
     let(:params) { {
       :snap_retain_count => 1,
     } }
 
-    it_behaves_like 'redhat-install', 'RedHat', '6'
-    it_behaves_like 'redhat-install', 'CentOS', '5'
-    it_behaves_like 'redhat-install', 'Fedora', '20'
+    it_behaves_like 'redhat-install', 'RedHat', '6', puppet
+    it_behaves_like 'redhat-install', 'CentOS', '5', puppet
+    it_behaves_like 'redhat-install', 'Fedora', '20', puppet
   end
 end
