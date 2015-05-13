@@ -4,8 +4,9 @@ describe 'zookeeper', :type => :class do
 
   let(:facts) {{
     :operatingsystem => 'Debian',
-    :osfamily => 'Debian',
+    :osfamily        => 'Debian',
     :lsbdistcodename => 'wheezy',
+    :ipaddress       => '192.168.1.1',
   }}
 
   it { should contain_class('zookeeper::config') }

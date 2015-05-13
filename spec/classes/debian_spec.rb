@@ -6,6 +6,7 @@ describe 'zookeeper::os::debian', :type => :class do
       :operatingsystem => os,
       :osfamily => 'Debian',
       :lsbdistcodename => codename,
+      :puppetversion => '3.7.1',
     }}
 
     it { should contain_package('zookeeper') }
@@ -121,6 +122,7 @@ describe 'zookeeper::os::debian', :type => :class do
       :operatingsystem => 'Ubuntu',
       :osfamily => 'Debian',
       :lsbdistcodename => 'trusty',
+      :puppetversion => '3.7.1',
     }}
 
     let(:params) { {

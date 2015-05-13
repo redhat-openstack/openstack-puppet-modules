@@ -2,3 +2,4 @@
 --color
 --pattern "spec/*/*_spec.rb"
 #--backtrace
+#--fail-fast

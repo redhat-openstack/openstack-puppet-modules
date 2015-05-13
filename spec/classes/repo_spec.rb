@@ -34,6 +34,7 @@ describe 'zookeeper::repo', :type => :class do
   context 'fail when architecture not supported' do
     let(:facts) {{
       :osfamily => 'RedHat',
+      :operatingsystemmajrelease => '7',
       :hardwaremodel => 'arc',
     }}
 
@@ -51,6 +52,7 @@ describe 'zookeeper::repo', :type => :class do
       :osfamily => 'RedHat',
       :operatingsystemmajrelease => '7',
       :hardwaremodel => 'x86_64',
+      :osrel => '7',
     }}
 
     let(:params) { {

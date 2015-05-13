@@ -6,6 +6,7 @@ describe 'zookeeper::os::redhat', :type => :class do
       :operatingsystem => os,
       :osfamily => 'RedHat',
       :lsbdistcodename => codename,
+      :puppetversion => '3.7.1',
     }}
 
     it { should contain_package('zookeeper') }

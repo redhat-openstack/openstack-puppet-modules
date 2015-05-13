@@ -6,6 +6,7 @@ describe 'zookeeper::config', :type => :class do
     :operatingsystem => 'Debian',
     :osfamily => 'Debian',
     :lsbdistcodename => 'wheezy',
+    :ipaddress => '192.168.1.1',
   }}
 
   shared_examples 'common' do |os, codename|
@@ -13,6 +14,7 @@ describe 'zookeeper::config', :type => :class do
       :operatingsystem => os,
       :osfamily => 'Debian',
       :lsbdistcodename => codename,
+      :ipaddress => '192.168.1.1',
     }}
 
     it { should contain_file(cfg_dir).with({
