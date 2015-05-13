@@ -1,5 +1,6 @@
 bundler_args: --without development
 script:
+  - RAKE_ENV=ci bundle exec puppet --version
   - RAKE_ENV=ci bundle exec rake validate
   - RAKE_ENV=ci bundle exec rake spec
   - RAKE_ENV=ci bundle exec rake lint
