@@ -291,7 +291,7 @@ DEPENDENCIES
   highline (< 1.7)
   librarian-puppet (< 2.0)
   metadata-json-lint
-  puppet
+  puppet (>= 2.7.0, < 4.0)
   puppet-blacksmith (~> 3.0)
   puppet-lint
   puppetlabs_spec_helper
