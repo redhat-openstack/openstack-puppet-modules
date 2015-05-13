@@ -11,6 +11,7 @@ describe 'zookeeper::repo', :type => :class do
       :lsbdistcodename => codename,
       :operatingsystemmajrelease => codename,
       :hardwaremodel => hardwaremodel,
+      :puppetversion => '3.7.1',
     }}
 
     it {

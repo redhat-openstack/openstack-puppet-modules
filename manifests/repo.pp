@@ -4,7 +4,8 @@
 #
 
 class zookeeper::repo(
-  $source = undef
+  $source = undef,
+  $ensure = present,
 ) {
 
   if $source {
@@ -26,12 +27,22 @@ class zookeeper::repo(
             }
             case $osrel {
               '6': {
-                yumrepo { "cloudera-cdh${cdhver}":
-                  ensure   => present,
-                  descr    => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
-                  baseurl  => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
-                  gpgkey   => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
-                  gpgcheck => 1
+                # parameter ensure is not supported before Puppet 3.5
+                if versioncmp($::puppetversion, '3.5.0') >= 0 {
+                  yumrepo { "cloudera-cdh${cdhver}":
+                    ensure   => $ensure,
+                    descr    => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
+                    baseurl  => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
+                    gpgkey   => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
+                    gpgcheck => 1
+                  }
+                } else {
+                  yumrepo { "cloudera-cdh${cdhver}":
+                    descr    => "Cloudera's Distribution for Hadoop, Version ${cdhver}",
+                    baseurl  => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/${cdhver}/",
+                    gpgkey   => "http://archive.cloudera.com/cdh${cdhver}/redhat/6/${::hardwaremodel}/cdh/RPM-GPG-KEY-cloudera",
+                    gpgcheck => 1
+                  }
                 }
               }
               default: {
