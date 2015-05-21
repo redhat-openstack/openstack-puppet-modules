@@ -231,6 +231,6 @@ mod 'vswitch',
   :git => 'https://github.com/stackforge/puppet-vswitch.git'
 
 mod 'xinetd',
-  :commit => '902825112b383dc837acfdd326457f5ba2c5921b',
+  :commit => '1420bf2bf2462a95185e9d2fffdf0a93edd8c7dc',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
 
