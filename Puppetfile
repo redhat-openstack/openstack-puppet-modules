@@ -55,7 +55,7 @@ mod 'gnocchi',
   :git => 'https://github.com/stackforge/puppet-gnocchi.git'
 
 mod 'haproxy',
-  :commit => 'd89fad1c32cba514298c7eb2b82705a997f472f4',
+  :commit => 'e6bd52b6effdc436e8f065964478c58ca3f43a0a',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
