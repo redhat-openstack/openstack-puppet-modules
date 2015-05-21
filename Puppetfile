@@ -75,7 +75,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa-1.git'
 
 mod 'ironic',
-  :commit => '0c859d8fc9a2fc790f20013e8668f520e01ef3a2',
+  :commit => '78e0dc117ee77275f40dcda8dd060f1d6ca06499',
   :git => 'https://github.com/stackforge/puppet-ironic.git'
 
 mod 'keepalived',
