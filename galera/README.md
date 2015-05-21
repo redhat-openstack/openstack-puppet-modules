@@ -8,16 +8,9 @@ It depends on the mysql module from puppetlabs as well as xinetd.
 
 ### galera::server
 
-  Used to deploy and manage a MariaDB Galera server cluster. Installs
-  mariadb-galera-server and galera packages, configures galera.cnf and
-  starts mysqld service:
+  Used to configure a MariaDB Galera server cluster.
 
     class { 'galera::server':
-      config_hash => {
-        bind_address   => '0.0.0.0',
-        default_engine => 'InnoDB',
-        root_password  => 'root_pass',
-      },
       wsrep_cluster_name => 'galera_cluster',
       wsrep_sst_method   => 'rsync'
       wsrep_sst_username => 'ChangeMe',
