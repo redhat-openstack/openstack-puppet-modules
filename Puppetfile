@@ -35,7 +35,7 @@ mod 'corosync',
   :git => 'https://github.com/puppetlabs/puppetlabs-corosync.git'
 
 mod 'firewall',
-  :commit => '667a9f67a7ce8eb343c132feb1e00c6e2132d38a',
+  :commit => 'dbcfba063d4b5ba4073794880d29d1dd17392c58',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'galera',
