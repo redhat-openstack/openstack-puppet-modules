@@ -37,7 +37,8 @@ more realistic scenarios.
 ```puppet
 node 'example' {
   include '::cassandra'
-}```
+}
+```
 
 ## Usage
 
@@ -53,7 +54,8 @@ node 'example' {
     java_package_ensure        => 'latest',
     manage_dsc_repo            => true
   }
-}```
+}
+```
 
 ### Class: cassandra
 
