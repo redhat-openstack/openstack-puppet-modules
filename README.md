@@ -11,13 +11,18 @@
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+6. [References](#references)
 
 ## Overview
 
 A one-maybe-two sentence summary of what the module does/what problem it solves.
 This is your 30 second elevator pitch for your module. Consider including
 OS/Puppet version it works with.
+
+This module installs and configures Apache Cassandra.  The installation steps
+were taken from the installation documentation prepared by DataStax [1] and
+the configuration parameters are the same as those for the Puppet module
+developed by msimonin [2].
 
 ## Module Description
 
@@ -45,11 +50,18 @@ etc.), mention it here.
 
 ### Beginning with cassandra
 
-The very basic steps needed for a user to get the module up and running.
+To install Cassandra in a similar to what is suggested in the DataStax
+documentation do something similar to this:
 
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+node 'example' {
+  class { 'cassandra':
+    cassandra_package_name     => 'dsc21',
+    cassandra_opt_package_name => 'cassandra21-tools',
+    java_package_name          => 'java-1.7.0-openjdk',
+    java_package_ensure        => 'latest',
+    manage_dsc_repo            => true
+  }
+}
 
 ## Usage
 
@@ -67,13 +79,7 @@ with things. (We are working on automating this section!)
 
 This is where you list OS compatibility, version compatibility, etc.
 
-## Development
+## References
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+[1] - Installing DataStax Community on RHEL-based systems
+http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html
