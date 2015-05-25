@@ -1,0 +1,8 @@
+*.swp
+*.swo
+*.swn
+pkg/
+.vagrant/
+.bundle/
+vendor/
+Gemfile.lock
