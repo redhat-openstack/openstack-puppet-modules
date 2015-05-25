@@ -53,6 +53,7 @@ class cassandra (
       baseurl  => 'http://rpm.datastax.com/community',
       enabled  => 1,
       gpgcheck => 0,
+      before   => Package[ $cassandra_package_name ],
     }
   }
 
