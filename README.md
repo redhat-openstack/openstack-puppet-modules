@@ -23,6 +23,7 @@ developed by msimonin [2].
 ### What cassandra affects
 
 * Installs the Cassandra package (default **dsc21**).
+* Ensures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
   from.
@@ -104,6 +105,9 @@ downloaded from the DataStax community edition (default **false**).
 
 This module uses the package type to install the Cassandra package and the
 optional Cassandra tools and Java package.
+
+It uses the service type to enable the cassandra service and ensure it is
+running.
 
 It also uses the yumrepo type on the RedHat family of operating systems to
 (optionally) install the *DataStax Repo for Apache Cassandra*.
