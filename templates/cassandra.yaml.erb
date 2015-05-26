@@ -375,7 +375,7 @@ ssl_storage_port: 7001
 # you can specify which should be chosen using listen_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-listen_address: localhost
+listen_address: <%= @listen_address %>
 # listen_interface: eth0
 # listen_interface_prefer_ipv6: false
 

@@ -4,13 +4,14 @@
 # does as part of the module and how to use it.
 #
 class cassandra (
-  $cluster_name                  = 'Test Cluster',
-  $cassandra_package_name        = 'dsc21',
-  $cassandra_package_ensure      = 'present',
   $cassandra_opt_package_name    = undef,
   $cassandra_opt_package_ensure  = 'present',
-  $java_package_name             = undef,
+  $cassandra_package_ensure      = 'present',
+  $cassandra_package_name        = 'dsc21',
+  $cluster_name                  = 'Test Cluster',
   $java_package_ensure           = 'present',
+  $java_package_name             = undef,
+  $listen_address                = 'localhost',
   $manage_dsc_repo               = false,
   ) {
 

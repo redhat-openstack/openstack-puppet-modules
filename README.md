@@ -88,15 +88,19 @@ The name of the Cassandra package.  Must be installable from a repository
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
 
-[*java_package_name*]
-Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
-executed if the default value of **undef** is unchanged.
-
 [*java_package_ensure*]
 The status of the package specified in **java_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
 *java_package_name* is *undef*, this option has no effect (default
 **present**).
+
+[*java_package_name*]
+Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
+executed if the default value of **undef** is unchanged.
+
+[*listen_address*]
+Address or interface to bind to and tell other Cassandra nodes to connect to
+(default **localhost**).
 
 [*manage_dsc_repo*]
 If set to true then a repository will be setup so that packages can be
