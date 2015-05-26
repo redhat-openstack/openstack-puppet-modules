@@ -44,12 +44,29 @@ node 'example' {
 
 ## Usage
 
-To install Cassandra in a similar way to what is suggested in the DataStax
-documentation do something similar to this:
+To install Cassandra in a two node cluster called 'Foobar Cluster' where
+node1 (192.168.42.1) is the seed and a second node called node2
+192.168.42.2 is also to be a member, do something similar to this:
 
 ```puppet
-node 'example' {
+node 'node1' {
   class { 'cassandra':
+    cluster_name               => 'Foobar Cluster',
+    listen_address             => "${::ipaddress}",
+    seeds                      => "${::ipaddress}",
+    cassandra_package_name     => 'dsc21',
+    cassandra_opt_package_name => 'cassandra21-tools',
+    java_package_name          => 'java-1.7.0-openjdk',
+    java_package_ensure        => 'latest',
+    manage_dsc_repo            => true
+  }
+}
+
+node 'node2' {
+  class { 'cassandra':
+    cluster_name               => 'Foobar Cluster',
+    listen_address             => "${::ipaddress}",
+    seeds                      => '192.168.42.1',
     cassandra_package_name     => 'dsc21',
     cassandra_opt_package_name => 'cassandra21-tools',
     java_package_name          => 'java-1.7.0-openjdk',
@@ -123,6 +140,9 @@ It also uses the yumrepo type on the RedHat family of operating systems to
 (optionally) install the *DataStax Repo for Apache Cassandra*.
 
 ## Limitations
+
+This module currently has **VERY** basic functionality.  More parameters and configuration parameters will
+be added later.
 
 Tested on CentOS 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
 
