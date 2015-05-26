@@ -13,6 +13,7 @@ class cassandra (
   $java_package_name             = undef,
   $listen_address                = 'localhost',
   $manage_dsc_repo               = false,
+  $seeds                         = '127.0.0.1',
   ) {
 
   case $::osfamily {

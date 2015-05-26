@@ -106,6 +106,11 @@ Address or interface to bind to and tell other Cassandra nodes to connect to
 If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
 
+[*seeds*]
+Addresses of hosts that are deemed contact points.  Cassandra nodes use this list of hosts to find each other and
+learn the topology of the ring.  You must change this if you are running multiple nodes!  Seeds is actually a
+comma-delimited list of addresses (default **127.0.0.1**).
+
 ## Reference
 
 This module uses the package type to install the Cassandra package and the
