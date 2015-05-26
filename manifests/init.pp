@@ -4,7 +4,7 @@
 # does as part of the module and how to use it.
 #
 class cassandra (
-  $cluster_name                  = undef,
+  $cluster_name                  = 'Test Cluster',
   $cassandra_package_name        = 'dsc21',
   $cassandra_package_ensure      = 'present',
   $cassandra_opt_package_name    = undef,
@@ -48,6 +48,15 @@ class cassandra (
       ensure  => $cassandra_opt_package_ensure,
       require => Package[$cassandra_package_name],
     }
+  }
+
+  file { '/etc/cassandra/default.conf/cassandra.yaml':
+    ensure  => file,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    content => template('cassandra/cassandra.yaml.erb'),
+    require => Package[$cassandra_package_name],
+    notify  => Service['cassandra'],
   }
 
   service { 'cassandra':

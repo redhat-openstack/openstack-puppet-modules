@@ -28,6 +28,7 @@ developed by msimonin [2].
 * Optionally configures a Yum repository to install the Cassandra packages
   from.
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+* Configures settings in */etc/cassandra/default.conf/cassandra.yaml*.
 
 ### Beginning with cassandra
 
@@ -60,32 +61,32 @@ node 'example' {
 
 ### Class: cassandra
 
-Currently this is the only class within this module.  Therefore, it does
-everything.
+Currently this is the only class within this module.
+
 
 #### Parameters
-
-[*cluster_name*]
-The name of the Cassandra cluster that this node is to be part of (default
-**undef**).
-
-[*cassandra_package_name*]
-The name of the Cassandra package.  Must be installable from a repository
-(default **dsc21**).
-
-[*cassandra_package_ensure*]
-The status of the package specified in **cassandra_package_name**.  Can be
-*present*, *latest* or a specific version number (default **present**).
-
-[*cassandra_opt_package_name*]
-Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
-executed if the default value of **undef** is unchanged.
 
 [*cassandra_opt_package_ensure*]
 The status of the package specified in **cassandra_opt_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
 *cassandra_opt_package_name* is *undef*, this option has no effect (default
 **present**).
+
+[*cassandra_opt_package_name*]
+Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
+executed if the default value of **undef** is unchanged.
+
+[*cassandra_package_ensure*]
+The status of the package specified in **cassandra_package_name**.  Can be
+*present*, *latest* or a specific version number (default **present**).
+
+[*cassandra_package_name*]
+The name of the Cassandra package.  Must be installable from a repository
+(default **dsc21**).
+
+[*cluster_name*]
+The name of the cluster. This is mainly used to prevent machines in one logical
+cluster from joining another (default **Test Cluster**).
 
 [*java_package_name*]
 Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
