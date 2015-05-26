@@ -116,7 +116,7 @@ It also uses the yumrepo type on the RedHat family of operating systems to
 
 Tested on CentOS 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
 
-## External Links
+## External_Links
 
 [1] - *Installing DataStax Community on RHEL-based systems*, available at
 http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html, accessed 25th May 2015.
