@@ -128,6 +128,10 @@ Addresses of hosts that are deemed contact points.  Cassandra nodes use this lis
 learn the topology of the ring.  You must change this if you are running multiple nodes!  Seeds is actually a
 comma-delimited list of addresses (default **127.0.0.1**).
 
+[*service_name*]
+The name of the service that runs the Cassandra software (default
+**cassandra**).
+
 ## Reference
 
 This module uses the package type to install the Cassandra package and the

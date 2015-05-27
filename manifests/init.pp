@@ -14,6 +14,7 @@ class cassandra (
   $listen_address                = 'localhost',
   $manage_dsc_repo               = false,
   $seeds                         = '127.0.0.1',
+  $service_name                  = 'cassandra',
   ) {
 
   case $::osfamily {
@@ -62,6 +63,7 @@ class cassandra (
   }
 
   service { 'cassandra':
+    name    => $service_name,
     ensure  => running,
     enable  => true,
     require => Package[$cassandra_package_name],
