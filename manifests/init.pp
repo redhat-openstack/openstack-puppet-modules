@@ -10,6 +10,7 @@ class cassandra (
   $cassandra_package_name        = 'dsc21',
   $cassandra_yaml_tmpl           = 'cassandra/cassandra.yaml.erb',
   $cluster_name                  = 'Test Cluster',
+  $hinted_handoff_enabled        = 'true',
   $java_package_ensure           = 'present',
   $java_package_name             = undef,
   $listen_address                = 'localhost',

@@ -110,6 +110,11 @@ allows the user to supply their own customized template.
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
 
+[*hinted_handoff_enabled*]
+See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
+"false" to enable globally, or contain a list of data centers to enable
+per-datacenter (e.g. 'DC1,DC2').  Defaults to **'true'**.
+
 [*java_package_ensure*]
 The status of the package specified in **java_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
