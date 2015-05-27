@@ -1,8 +1,6 @@
-# DEPRECATED: use pacemaker::stonith::xvm instead
-
 # To use this class ensure that fence_virtd is properly configured and running on the hypervisor
 
-class pacemaker::stonith::fence_xvm(
+class pacemaker::stonith::xvm(
   $name,
   $manage_key_file=false,
   $key_file="/etc/cluster/fence_xvm.key",
@@ -13,11 +11,8 @@ class pacemaker::stonith::fence_xvm(
   $pcmk_host=undef,  # the hostname or IP that pacemaker uses
   $manage_fw = true,
   ) {
-
-  warning('pacemaker::stonith::fence_xvm is deprecated, use pacemaker::stonith::xvm instead')
-
   if($ensure == absent) {
-    exec { "Removing stonith::fence_xvm ${name}":
+    exec { "Removing stonith::xvm ${name}":
       command => "/usr/sbin/pcs stonith delete fence_xvm-${name }",
       onlyif  => "/usr/sbin/pcs stonith show fence_xvm-${name} > /dev/null 2>&1",
       require => Class['pacemaker::corosync'],
@@ -53,7 +48,7 @@ class pacemaker::stonith::fence_xvm(
       }
     }
 
-    exec { "Creating stonith::fence_xvm ${name}":
+    exec { "Creating stonith::xvm ${name}":
       command => "/usr/sbin/pcs stonith create fence_xvm-${name} fence_xvm ${port_chunk} ${pcmk_host_list_chunk} op monitor interval=${interval}",
       unless  => "/usr/sbin/pcs stonith show fence_xvm-${name}  > /dev/null 2>&1",
       require => Class['pacemaker::corosync'],
