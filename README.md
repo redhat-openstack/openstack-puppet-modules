@@ -83,7 +83,7 @@ Currently this is the only class within this module.
 
 #### Parameters
 
-[*cassandra_opt_package_ensure*]
+#####`cassandra_opt_package_ensure`
 The status of the package specified in **cassandra_opt_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
 *cassandra_opt_package_name* is *undef*, this option has no effect (default
