@@ -1,14 +1,20 @@
 {
   "name": "locp-cassandra",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "locp",
   "summary": "Install and manage Apache Cassandra.",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "source": "https://github.com/locp/cassandra",
   "project_page": "https://github.com/locp/cassandra",
   "issues_url": "https://github.com/locp/cassandra/issues",
+  "tags": ["cassandra"],
   "dependencies": [
     {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
-  ]
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem":"RedHat",
+      "operatingsystemrelease":[ "7.0" ]
+    }
+  ],
 }
-
