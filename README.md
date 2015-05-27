@@ -23,7 +23,7 @@ developed by msimonin [2].
 ### What cassandra affects
 
 * Installs the Cassandra package (default **dsc21**).
-* Configures settings in */etc/cassandra/default.conf/cassandra.yaml*.
+* Configures settings in *${config_path}/cassandra.yaml*.
 * Optionally insures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
@@ -83,6 +83,126 @@ Currently this is the only class within this module.
 
 #### Parameters
 
+#####`authenticator`
+TODO
+(default **AllowAllAuthenticator**)
+
+#####`authorizer`
+TODO
+(default **AllowAllAuthorizer**)
+
+#####`auto_snapshot`
+TODO
+(default **true**)
+
+#####`client_encryption_enabled`
+TODO
+(default **false**)
+
+#####`client_encryption_keystore`
+TODO
+(default **conf/.keystore**)
+
+#####`client_encryption_keystore_password`
+TODO
+(default **cassandra**)
+
+#####`commitlog_directory`
+TODO
+(default **/var/lib/cassandra/commitlog**)
+
+#####`concurrent_counter_writes`
+TODO
+(default **32**)
+
+#####`concurrent_reads`
+TODO
+(default **32**)
+
+#####`concurrent_writes`
+TODO
+(default **32**)
+
+#####`data_file_directories`
+TODO
+(default **['/var/lib/cassandra/data']**)
+
+#####`disk_failure_policy`
+TODO
+(default **stop**)
+
+#####`endpoint_snitch`
+TODO
+(default **SimpleSnitch**)
+
+#####`incremental_backups`
+TODO
+(default **false**)
+
+#####`internode_compression`
+TODO
+(default **all**)
+
+#####`native_transport_port`
+TODO
+(default **9042**)
+
+#####`partitioner`
+TODO
+(default **org.apache.cassandra.dht.Murmur3Partitioner**)
+
+#####`rpc_address`
+TODO
+(default **localhost**)
+
+#####`rpc_port`
+TODO
+(default **9160**)
+
+#####`rpc_server_type`
+TODO
+(default **sync**)
+
+#####`saved_caches_directory`
+TODO
+(default **/var/lib/cassandra/saved_caches**)
+
+#####`server_encryption_internode`
+TODO
+(default **none**)
+
+#####`server_encryption_keystore`
+TODO
+(default **conf/.keystore**)
+
+#####`server_encryption_keystore_password`
+TODO
+(default **cassandra**)
+
+#####`server_encryption_truststore`
+TODO
+(default **conf/.truststore**)
+
+#####`server_encryption_truststore_password`
+TODO
+(default **cassandra**)
+
+#####`snapshot_before_compaction`
+TODO
+(default **false**)
+
+#####`start_native_transport`
+TODO
+(default **true**)
+
+#####`start_rpc`
+TODO
+(default **true**)
+
+#####`storage_port`
+TODO
+(default **7000**)
+
 #####`cassandra_opt_package_ensure`
 The status of the package specified in **cassandra_opt_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
@@ -109,6 +229,10 @@ allows the user to supply their own customized template.
 #####`cluster_name`
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
+
+#####`cluster_name`
+The path to the cassandra configuration file (default
+**/etc/cassandra/default.conf**).
 
 #####`hinted_handoff_enabled`
 See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
