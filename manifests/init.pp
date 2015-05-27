@@ -17,6 +17,7 @@ class cassandra (
   $client_encryption_keystore_password   = 'cassandra',
   $cluster_name                          = 'Test Cluster',
   $commitlog_directory                   = '/var/lib/cassandra/commitlog',
+  $concurrent_counter_writes             = 32,
   $concurrent_reads                      = 32,
   $concurrent_writes                     = 32,
   $config_path                           = '/etc/cassandra/default.conf',
