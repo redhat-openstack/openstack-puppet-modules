@@ -1,0 +1,7 @@
+Code-Review+2: Martin Magr <mmagr@redhat.com>
+Verified+1: Martin Magr <mmagr@redhat.com>
+Submitted-by: Martin Magr <mmagr@redhat.com>
+Submitted-at: Wed, 27 May 2015 15:44:54 +0200
+Reviewed-on: https://review.gerrithub.io/233980
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/master
