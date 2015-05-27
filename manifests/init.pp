@@ -8,6 +8,7 @@ class cassandra (
   $cassandra_opt_package_ensure  = 'present',
   $cassandra_package_ensure      = 'present',
   $cassandra_package_name        = 'dsc21',
+  $cassandra_yaml_tmpl           = 'cassandra/cassandra.yaml.erb',
   $cluster_name                  = 'Test Cluster',
   $java_package_ensure           = 'present',
   $java_package_name             = undef,
@@ -59,7 +60,7 @@ class cassandra (
       ensure  => file,
       owner   => 'cassandra',
       group   => 'cassandra',
-      content => template('cassandra/cassandra.yaml.erb'),
+      content => template($cassandra_yaml_tmpl),
       require => Package[$cassandra_package_name],
       notify  => Service['cassandra'],
     }
@@ -75,7 +76,7 @@ class cassandra (
       ensure  => file,
       owner   => 'cassandra',
       group   => 'cassandra',
-      content => template('cassandra/cassandra.yaml.erb'),
+      content => template($cassandra_yaml_tmpl),
       require => Package[$cassandra_package_name],
     }
   }

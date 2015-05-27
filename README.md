@@ -101,6 +101,11 @@ The status of the package specified in **cassandra_package_name**.  Can be
 The name of the Cassandra package.  Must be installable from a repository
 (default **dsc21**).
 
+[*cassandra_yaml_tmpl*]
+The path to the Puppet template for the Cassandra configuration file.  This
+allows the user to supply their own customized template.
+(default **cassandra/cassandra.yaml.erb**).
+
 [*cluster_name*]
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
