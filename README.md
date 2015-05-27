@@ -89,69 +89,69 @@ The status of the package specified in **cassandra_opt_package_name**.  Can be
 *cassandra_opt_package_name* is *undef*, this option has no effect (default
 **present**).
 
-[*cassandra_opt_package_name*]
+#####`cassandra_opt_package_name`
 Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
 executed if the default value of **undef** is unchanged.
 
-[*cassandra_package_ensure*]
+#####`cassandra_package_ensure`
 The status of the package specified in **cassandra_package_name**.  Can be
 *present*, *latest* or a specific version number (default **present**).
 
-[*cassandra_package_name*]
+#####`cassandra_package_name`
 The name of the Cassandra package.  Must be installable from a repository
 (default **dsc21**).
 
-[*cassandra_yaml_tmpl*]
+#####`cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
 allows the user to supply their own customized template.
 (default **cassandra/cassandra.yaml.erb**).
 
-[*cluster_name*]
+#####`cluster_name`
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
 
-[*hinted_handoff_enabled*]
+#####`hinted_handoff_enabled`
 See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
 "false" to enable globally, or contain a list of data centers to enable
 per-datacenter (e.g. 'DC1,DC2').  Defaults to **'true'**.
 
-[*java_package_ensure*]
+#####`java_package_ensure`
 The status of the package specified in **java_package_name**.  Can be
 *present*, *latest* or a specific version number.  If
 *java_package_name* is *undef*, this option has no effect (default
 **present**).
 
-[*java_package_name*]
+#####`java_package_name`
 Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
 executed if the default value of **undef** is unchanged.
 
-[*listen_address*]
+#####`listen_address`
 Address or interface to bind to and tell other Cassandra nodes to connect to
 (default **localhost**).
 
-[*manage_dsc_repo*]
+#####`manage_dsc_repo`
 If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
 
-[*manage_service*]
+#####`manage_service`
 If set to true then the module will ensure the service is enabled and running.
 It would also reload/restart the service if the Cassandra configuration was
 changed.  It is possible that this might not be the desired behaviour and the
 user would prefer to control the service themselves.  If so, set this option
 to false (default **true**).
 
-[*num_tokens*]
+#####`num_tokens`
 This defines the number of tokens randomly assigned to this node on the ring
 The more tokens, relative to other nodes, the larger the proportion of data
 that this node will store. You probably want all nodes to have the same number
 of tokens assuming they have equal hardware capability.
 
-[*seeds*]
+#####`seeds`
 Addresses of hosts that are deemed contact points.  Cassandra nodes use this list of hosts to find each other and
 learn the topology of the ring.  You must change this if you are running multiple nodes!  Seeds is actually a
 comma-delimited list of addresses (default **127.0.0.1**).
 
-[*service_name*]
+#####`service_name`
 The name of the service that runs the Cassandra software (default
 **cassandra**).
 
