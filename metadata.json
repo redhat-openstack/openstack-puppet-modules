@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "author": "locp",
   "summary": "Install and manage Apache Cassandra.",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "source": "https://github.com/locp/cassandra",
   "project_page": "https://github.com/locp/cassandra",
   "issues_url": "https://github.com/locp/cassandra/issues",
