@@ -135,6 +135,12 @@ changed.  It is possible that this might not be the desired behaviour and the
 user would prefer to control the service themselves.  If so, set this option
 to false (default **true**).
 
+[*num_tokens*]
+This defines the number of tokens randomly assigned to this node on the ring
+The more tokens, relative to other nodes, the larger the proportion of data
+that this node will store. You probably want all nodes to have the same number
+of tokens assuming they have equal hardware capability.
+
 [*seeds*]
 Addresses of hosts that are deemed contact points.  Cassandra nodes use this list of hosts to find each other and
 learn the topology of the ring.  You must change this if you are running multiple nodes!  Seeds is actually a

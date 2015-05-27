@@ -15,6 +15,7 @@ class cassandra (
   $listen_address                = 'localhost',
   $manage_dsc_repo               = false,
   $manage_service                = true,
+  $num_tokens                    = 256,
   $seeds                         = '127.0.0.1',
   $service_name                  = 'cassandra',
   ) {
