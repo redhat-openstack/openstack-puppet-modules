@@ -4,21 +4,52 @@
 # does as part of the module and how to use it.
 #
 class cassandra (
-  $cassandra_opt_package_name    = undef,
-  $cassandra_opt_package_ensure  = 'present',
-  $cassandra_package_ensure      = 'present',
-  $cassandra_package_name        = 'dsc21',
-  $cassandra_yaml_tmpl           = 'cassandra/cassandra.yaml.erb',
-  $cluster_name                  = 'Test Cluster',
-  $hinted_handoff_enabled        = 'true',
-  $java_package_ensure           = 'present',
-  $java_package_name             = undef,
-  $listen_address                = 'localhost',
-  $manage_dsc_repo               = false,
-  $manage_service                = true,
-  $num_tokens                    = 256,
-  $seeds                         = '127.0.0.1',
-  $service_name                  = 'cassandra',
+  $authenticator                         = 'AllowAllAuthenticator',
+  $authorizer                            = 'AllowAllAuthorizer',
+  $auto_snapshot                         = 'true',
+  $cassandra_opt_package_name            = undef,
+  $cassandra_opt_package_ensure          = 'present',
+  $cassandra_package_ensure              = 'present',
+  $cassandra_package_name                = 'dsc21',
+  $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
+  $client_encryption_enabled             = 'false',
+  $client_encryption_keystore            = 'conf/.keystore',
+  $client_encryption_keystore_password   = 'cassandra',
+  $cluster_name                          = 'Test Cluster',
+  $commitlog_directory                   = '/var/lib/cassandra/commitlog',
+  $concurrent_reads                      = 32,
+  $concurrent_writes                     = 32,
+  $config_path                           = '/etc/cassandra/default.conf',
+  $data_file_directories                 = ['/var/lib/cassandra/data'],
+  $disk_failure_policy                   = 'stop',
+  $endpoint_snitch                       = 'SimpleSnitch',
+  $hinted_handoff_enabled                = 'true',
+  $incremental_backups                   = 'false',
+  $internode_compression                 = 'all',
+  $java_package_ensure                   = 'present',
+  $java_package_name                     = undef,
+  $listen_address                        = 'localhost',
+  $manage_dsc_repo                       = 'false',
+  $manage_service                        = 'true',
+  $native_transport_port                 = 9042,
+  $num_tokens                            = 256,
+  $partitioner
+    = 'org.apache.cassandra.dht.Murmur3Partitioner',
+  $rpc_address                           = 'localhost',
+  $rpc_port                              = 9160,
+  $rpc_server_type                       = 'sync',
+  $saved_caches_directory                = '/var/lib/cassandra/saved_caches',
+  $seeds                                 = '127.0.0.1',
+  $server_encryption_internode           = 'none',
+  $server_encryption_keystore            = 'conf/.keystore',
+  $server_encryption_keystore_password   = 'cassandra',
+  $server_encryption_truststore          = 'conf/.truststore',
+  $server_encryption_truststore_password = 'cassandra',
+  $service_name                          = 'cassandra',
+  $snapshot_before_compaction            = 'false',
+  $start_native_transport                = 'true',
+  $start_rpc                             = 'true',
+  $storage_port                          = 7000
   ) {
 
   case $::osfamily {
@@ -57,8 +88,10 @@ class cassandra (
     }
   }
 
+  $config_file = "${config_path}/cassandra.yaml"
+
   if $manage_service == true {
-    file { '/etc/cassandra/default.conf/cassandra.yaml':
+    file { $config_file:
       ensure  => file,
       owner   => 'cassandra',
       group   => 'cassandra',
@@ -74,7 +107,7 @@ class cassandra (
       require => Package[$cassandra_package_name],
     }
   } else {
-    file { '/etc/cassandra/default.conf/cassandra.yaml':
+    file { $config_file:
       ensure  => file,
       owner   => 'cassandra',
       group   => 'cassandra',
