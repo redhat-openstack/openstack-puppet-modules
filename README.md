@@ -23,12 +23,12 @@ developed by msimonin [2].
 ### What cassandra affects
 
 * Installs the Cassandra package (default **dsc21**).
-* Ensures that the Cassandra service is enabled and running.
+* Configures settings in */etc/cassandra/default.conf/cassandra.yaml*.
+* Optionally insures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
   from.
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
-* Configures settings in */etc/cassandra/default.conf/cassandra.yaml*.
 
 ### Beginning with cassandra
 
@@ -122,6 +122,13 @@ Address or interface to bind to and tell other Cassandra nodes to connect to
 [*manage_dsc_repo*]
 If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
+
+[*manage_service*]
+If set to true then the module will ensure the service is enabled and running.
+It would also reload/restart the service if the Cassandra configuration was
+changed.  It is possible that this might not be the desired behaviour and the
+user would prefer to control the service themselves.  If so, set this option
+to false (default **true**).
 
 [*seeds*]
 Addresses of hosts that are deemed contact points.  Cassandra nodes use this list of hosts to find each other and

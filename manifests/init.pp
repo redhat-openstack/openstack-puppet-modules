@@ -13,6 +13,7 @@ class cassandra (
   $java_package_name             = undef,
   $listen_address                = 'localhost',
   $manage_dsc_repo               = false,
+  $manage_service                = true,
   $seeds                         = '127.0.0.1',
   $service_name                  = 'cassandra',
   ) {
@@ -53,19 +54,29 @@ class cassandra (
     }
   }
 
-  file { '/etc/cassandra/default.conf/cassandra.yaml':
-    ensure  => file,
-    owner   => 'cassandra',
-    group   => 'cassandra',
-    content => template('cassandra/cassandra.yaml.erb'),
-    require => Package[$cassandra_package_name],
-    notify  => Service['cassandra'],
-  }
+  if $manage_service == true {
+    file { '/etc/cassandra/default.conf/cassandra.yaml':
+      ensure  => file,
+      owner   => 'cassandra',
+      group   => 'cassandra',
+      content => template('cassandra/cassandra.yaml.erb'),
+      require => Package[$cassandra_package_name],
+      notify  => Service['cassandra'],
+    }
 
-  service { 'cassandra':
-    name    => $service_name,
-    ensure  => running,
-    enable  => true,
-    require => Package[$cassandra_package_name],
+    service { 'cassandra':
+      name    => $service_name,
+      ensure  => running,
+      enable  => true,
+      require => Package[$cassandra_package_name],
+    }
+  } else {
+    file { '/etc/cassandra/default.conf/cassandra.yaml':
+      ensure  => file,
+      owner   => 'cassandra',
+      group   => 'cassandra',
+      content => template('cassandra/cassandra.yaml.erb'),
+      require => Package[$cassandra_package_name],
+    }
   }
 }
