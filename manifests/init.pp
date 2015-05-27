@@ -65,8 +65,8 @@ class cassandra (
     }
 
     service { 'cassandra':
-      name    => $service_name,
       ensure  => running,
+      name    => $service_name,
       enable  => true,
       require => Package[$cassandra_package_name],
     }
