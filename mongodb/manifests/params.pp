@@ -3,10 +3,12 @@ class mongodb::params inherits mongodb::globals {
   $ensure                = true
   $mongos_ensure         = true
   $ipv6                  = undef
+  $service_manage        = pick($mongodb::globals::mongod_service_manage, true)
   $service_enable        = pick($mongodb::globals::service_enable, true)
   $service_ensure        = pick($mongodb::globals::service_ensure, 'running')
   $service_status        = $mongodb::globals::service_status
 
+  $mongos_service_manage = pick($mongodb::globals::mongos_service_manage, true)
   $mongos_service_enable = pick($mongodb::globals::mongos_service_enable, true)
   $mongos_service_ensure = pick($mongodb::globals::mongos_service_ensure, 'running')
   $mongos_service_status = $mongodb::globals::mongos_service_status
@@ -75,19 +77,21 @@ class mongodb::params inherits mongodb::globals {
         $client_package_name = pick($::mongodb::globals::client_package_name, 'mongodb')
         $mongos_package_name = pick($::mongodb::globals::mongos_package_name, 'mongodb-server')
         $service_name        = pick($::mongodb::globals::service_name, 'mongod')
-        $config              = '/etc/mongodb.conf'
-        $mongos_config       = '/etc/mongodb-shard.conf'
         $dbpath              = '/var/lib/mongodb'
         $logpath             = '/var/log/mongodb/mongodb.log'
         $bind_ip             = pick($::mongodb::globals::bind_ip, ['127.0.0.1'])
         if ($::operatingsystem == 'fedora' and versioncmp($::operatingsystemrelease, '22') >= 0 or
             $::operatingsystem != 'fedora' and versioncmp($::operatingsystemrelease, '7.0') >= 0) {
+          $config                  = '/etc/mongod.conf'
+          $mongos_config           = '/etc/mongos.conf'
           $pidfilepath             = '/var/run/mongodb/mongod.pid'
           $mongos_pidfilepath      = '/var/run/mongodb/mongos.pid'
           $mongos_unixsocketprefix = '/var/run/mongodb'
           $mongos_logpath          = '/var/log/mongodb/mongodb-shard.log'
           $mongos_fork             = true
         } else {
+          $config                  = '/etc/mongodb.conf'
+          $mongos_config           = '/etc/mongodb-shard.conf'
           $pidfilepath             = '/var/run/mongodb/mongodb.pid'
           $mongos_pidfilepath      = undef
           $mongos_unixsocketprefix = undef
