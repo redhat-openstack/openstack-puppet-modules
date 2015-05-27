@@ -7,6 +7,7 @@
   "source": "https://github.com/locp/cassandra",
   "project_page": "https://github.com/locp/cassandra",
   "issues_url": "https://github.com/locp/cassandra/issues",
+  "tags": ["cassandra"],
   "dependencies": [
     {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ]
