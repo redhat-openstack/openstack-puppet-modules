@@ -333,20 +333,35 @@ OrderPreservingPartitioner (default
 **org.apache.cassandra.dht.Murmur3Partitioner**)
 
 #####`rpc_address`
-TODO
-(default **localhost**)
+The address to bind the Thrift RPC service and native transport server to
+(default **localhost**).
 
 #####`rpc_port`
-TODO
-(default **9160**)
+Port for Thrift to listen for clients on (default **9160**).
 
 #####`rpc_server_type`
-TODO
-(default **sync**)
+Cassandra provides two out-of-the-box options for the RPC Server:
+
+* One thread per thrift connection. For a very large number of clients,
+  memory will be your limiting factor. On a 64 bit JVM, 180KB is the minimum
+  stack size per thread, and that will correspond to your use of virtual memory
+  (but physical memory may be limited depending on use of stack space).
+* Stands for "half synchronous, half asynchronous." All thrift clients
+  are handled asynchronously using a small number of threads that does
+  not vary with the amount of thrift clients (and thus scales well to many
+  clients).  The rpc requests are still synchronous (one thread per active
+  request). If hsha is selected then it is essential that rpc_max_threads
+  is changed from the default value of unlimited.
+
+The default is sync because on Windows hsha is about 30% slower.  On Linux,
+sync/hsha performance is about the same, with hsha of course using less memory.
+
+Alternatively, you can provide your own RPC server by providing the
+fully-qualified class name of an o.a.c.t.TServerFactory that can create an
+instance of it.
 
 #####`saved_caches_directory`
-TODO
-(default **/var/lib/cassandra/saved_caches**)
+Default: **/var/lib/cassandra/saved_caches**
 
 #####`seeds`
 Addresses of hosts that are deemed contact points.  Cassandra nodes use this
@@ -355,44 +370,41 @@ change this if you are running multiple nodes!  Seeds is actually a
 comma-delimited list of addresses (default **127.0.0.1**).
 
 #####`server_encryption_internode`
-TODO
-(default **none**)
+Enable or disable inter-node encryption (default **none**).
 
 #####`server_encryption_keystore`
-TODO
-(default **conf/.keystore**)
+Default: **conf/.keystore**
 
 #####`server_encryption_keystore_password`
-TODO
-(default **cassandra**)
+Default: **cassandra**
 
 #####`server_encryption_truststore`
-TODO
-(default **conf/.truststore**)
+Default: **conf/.truststore**
 
 #####`server_encryption_truststore_password`
-TODO
-(default **cassandra**)
+Default: **cassandra**
 
 #####`service_name`
 The name of the service that runs the Cassandra software (default
 **cassandra**).
 
 #####`snapshot_before_compaction`
-TODO
-(default **false**)
+Whether or not to take a snapshot before each compaction.  Be
+careful using this option, since Cassandra won't clean up the
+snapshots for you.  Mostly useful if you're paranoid when there
+is a data format change (default **false**).
 
 #####`start_native_transport`
-TODO
-(default **true**)
+Whether to start the native transport server.  Please note that the address on
+which the native transport is bound is the same as the rpc_address. The port
+however is different and specified below (default **true**).
 
 #####`start_rpc`
-TODO
-(default **true**)
+Whether to start the thrift rpc server (default **true**).
 
 #####`storage_port`
-TODO
-(default **7000**)
+TCP port, for commands and data for security reasons, you should not expose this
+port to the internet.  Firewall it if needed (default **7000**).
 
 ## Reference
 
