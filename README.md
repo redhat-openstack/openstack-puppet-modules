@@ -84,16 +84,57 @@ Currently this is the only class within this module.
 #### Parameters
 
 #####`authenticator`
-TODO
-(default **AllowAllAuthenticator**)
+Authentication backend, implementing IAuthenticator; used to identify users
+Out of the box, Cassandra provides
+org.apache.cassandra.auth.{AllowAllAuthenticator, PasswordAuthenticator}.
+
+* AllowAllAuthenticator performs no checks - set it to disable authentication.
+* PasswordAuthenticator relies on username/password pairs to authenticate
+  users. It keeps usernames and hashed passwords in system_auth.credentials
+  table. Please increase system_auth keyspace replication factor if you use this
+  authenticator.
+
+Default: **AllowAllAuthenticator**
 
 #####`authorizer`
-TODO
-(default **AllowAllAuthorizer**)
+Authorization backend, implementing IAuthorizer; used to limit access/provide
+permissions Out of the box, Cassandra provides
+org.apache.cassandra.auth.{AllowAllAuthorizer, CassandraAuthorizer}.
+
+* AllowAllAuthorizer allows any action to any user - set it to disable
+  authorization.
+* CassandraAuthorizer stores permissions in system_auth.permissions table.
+  Please increase system_auth keyspace replication factor if you use this
+  authorizer.
+
+Default: **AllowAllAuthorizer**
 
 #####`auto_snapshot`
 TODO
 (default **true**)
+
+#####`cassandra_opt_package_ensure`
+The status of the package specified in **cassandra_opt_package_name**.  Can be
+*present*, *latest* or a specific version number.  If
+*cassandra_opt_package_name* is *undef*, this option has no effect (default
+**present**).
+
+#####`cassandra_opt_package_name`
+Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
+executed if the default value of **undef** is unchanged.
+
+#####`cassandra_package_ensure`
+The status of the package specified in **cassandra_package_name**.  Can be
+*present*, *latest* or a specific version number (default **present**).
+
+#####`cassandra_package_name`
+The name of the Cassandra package.  Must be installable from a repository
+(default **dsc21**).
+
+#####`cassandra_yaml_tmpl`
+The path to the Puppet template for the Cassandra configuration file.  This
+allows the user to supply their own customized template.
+(default **cassandra/cassandra.yaml.erb**).
 
 #####`client_encryption_enabled`
 TODO
@@ -106,6 +147,10 @@ TODO
 #####`client_encryption_keystore_password`
 TODO
 (default **cassandra**)
+
+#####`cluster_name`
+The name of the cluster. This is mainly used to prevent machines in one logical
+cluster from joining another (default **Test Cluster**).
 
 #####`commitlog_directory`
 TODO
@@ -203,34 +248,7 @@ TODO
 TODO
 (default **7000**)
 
-#####`cassandra_opt_package_ensure`
-The status of the package specified in **cassandra_opt_package_name**.  Can be
-*present*, *latest* or a specific version number.  If
-*cassandra_opt_package_name* is *undef*, this option has no effect (default
-**present**).
-
-#####`cassandra_opt_package_name`
-Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
-executed if the default value of **undef** is unchanged.
-
-#####`cassandra_package_ensure`
-The status of the package specified in **cassandra_package_name**.  Can be
-*present*, *latest* or a specific version number (default **present**).
-
-#####`cassandra_package_name`
-The name of the Cassandra package.  Must be installable from a repository
-(default **dsc21**).
-
-#####`cassandra_yaml_tmpl`
-The path to the Puppet template for the Cassandra configuration file.  This
-allows the user to supply their own customized template.
-(default **cassandra/cassandra.yaml.erb**).
-
-#####`cluster_name`
-The name of the cluster. This is mainly used to prevent machines in one logical
-cluster from joining another (default **Test Cluster**).
-
-#####`cluster_name`
+#####`config_path`
 The path to the cassandra configuration file (default
 **/etc/cassandra/default.conf**).
 
