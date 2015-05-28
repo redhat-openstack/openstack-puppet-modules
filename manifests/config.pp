@@ -145,7 +145,7 @@ class zookeeper::config(
     exec { 'initialize_datastore':
       command => "/usr/bin/zookeeper-server-initialize --myid=${id}",
       user    => $user,
-      creates => "${datastore}/myid",
+      creates => "${datastore}/version-2",
       require => File[$datastore],
     }
   }
