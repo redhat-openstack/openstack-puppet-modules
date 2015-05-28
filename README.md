@@ -216,8 +216,53 @@ Policy for data disk failures:
 Default: **stop**
 
 #####`endpoint_snitch`
-TODO
-(default **SimpleSnitch**)
+Set this to a class that implements IEndpointSnitch.  The snitch has two
+functions:
+
+* it teaches Cassandra enough about your network topology to route
+  requests efficiently.
+* it allows Cassandra to spread replicas around your cluster to avoid
+  correlated failures. It does this by grouping machines into
+  "datacenters" and "racks."  Cassandra will do its best not to have
+  more than one replica on the same "rack" (which may not actually
+  be a physical location).
+
+IF YOU CHANGE THE SNITCH AFTER DATA IS INSERTED INTO THE CLUSTER,
+YOU MUST RUN A FULL REPAIR, SINCE THE SNITCH AFFECTS WHERE REPLICAS
+ARE PLACED.
+
+Out of the box, Cassandra provides:
+
+* SimpleSnitch: Treats Strategy order as proximity. This can improve cache
+  locality when disabling read repair.  Only appropriate for
+  single-datacenter deployments.
+* GossipingPropertyFileSnitch: This should be your go-to snitch for production
+  use.  The rack and datacenter for the local node are defined in
+  cassandra-rackdc.properties and propagated to other nodes via
+  gossip.  If cassandra-topology.properties exists, it is used as a
+  fallback, allowing migration from the PropertyFileSnitch.
+* PropertyFileSnitch: Proximity is determined by rack and data center, which are
+  explicitly configured in cassandra-topology.properties.
+* Ec2Snitch: Appropriate for EC2 deployments in a single Region. Loads Region
+  and Availability Zone information from the EC2 API. The Region is
+  treated as the datacenter, and the Availability Zone as the rack.
+  Only private IPs are used, so this will not work across multiple Regions.
+* Ec2MultiRegionSnitch: Uses public IPs as broadcast_address to allow
+  cross-region connectivity.  (Thus, you should set seed addresses to the public
+  IP as well.) You will need to open the storage_port or
+  ssl_storage_port on the public IP firewall.  (For intra-Region
+  traffic, Cassandra will switch to the private IP after
+  establishing a connection.)
+* RackInferringSnitch: Proximity is determined by rack and data center, which
+  are assumed to correspond to the 3rd and 2nd octet of each node's IP
+  address, respectively.  Unless this happens to match your
+  deployment conventions, this is best used as an example of
+  writing a custom Snitch class and is provided in that spirit.
+
+You can use a custom Snitch by setting this to the full class name
+of the snitch, which will be assumed to be on your classpath.
+
+Default: **SimpleSnitch**
 
 #####`hinted_handoff_enabled`
 See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
@@ -225,12 +270,19 @@ See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
 per-datacenter (e.g. 'DC1,DC2').  Defaults to **'true'**.
 
 #####`incremental_backups`
-TODO
-(default **false**)
+Set to true to have Cassandra create a hard link to each sstable
+flushed or streamed locally in a backups/ subdirectory of the
+keyspace data.  Removing these links is the operator's
+responsibility (default **false**).
 
 #####`internode_compression`
-TODO
-(default **all**)
+Controls whether traffic between nodes is compressed. Can be:
+
+* all  - all traffic is compressed
+* dc   - traffic between different datacenters is compressed
+* none - nothing is compressed.
+
+Default **all**
 
 #####`java_package_ensure`
 The status of the package specified in **java_package_name**.  Can be
@@ -258,8 +310,9 @@ user would prefer to control the service themselves.  If so, set this option
 to false (default **true**).
 
 #####`native_transport_port`
-TODO
-(default **9042**)
+Port for the CQL native transport to listen for clients on
+For security reasons, you should not expose this port to the internet.
+Firewall it if needed (default **9042**).
 
 #####`num_tokens`
 This defines the number of tokens randomly assigned to this node on the ring
@@ -268,8 +321,16 @@ that this node will store. You probably want all nodes to have the same number
 of tokens assuming they have equal hardware capability.
 
 #####`partitioner`
-TODO
-(default **org.apache.cassandra.dht.Murmur3Partitioner**)
+The partitioner is responsible for distributing groups of rows (by
+partition key) across nodes in the cluster.  You should leave this
+alone for new clusters.  The partitioner can NOT be changed without
+reloading all data, so when upgrading you should set this to the
+same partitioner you were already using.
+
+Besides Murmur3Partitioner, partitioners included for backwards
+compatibility include RandomPartitioner, ByteOrderedPartitioner, and
+OrderPreservingPartitioner (default
+**org.apache.cassandra.dht.Murmur3Partitioner**)
 
 #####`rpc_address`
 TODO
