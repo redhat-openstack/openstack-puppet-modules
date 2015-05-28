@@ -110,8 +110,10 @@ org.apache.cassandra.auth.{AllowAllAuthorizer, CassandraAuthorizer}.
 Default: **AllowAllAuthorizer**
 
 #####`auto_snapshot`
-TODO
-(default **true**)
+Whether or not a snapshot is taken of the data before keyspace truncation
+or dropping of column families. The STRONGLY advised default of true 
+should be used to provide data safety. If you set this flag to false, you will
+lose data on truncation or drop (default **true**).
 
 #####`cassandra_opt_package_ensure`
 The status of the package specified in **cassandra_opt_package_name**.  Can be
@@ -137,48 +139,90 @@ allows the user to supply their own customized template.
 (default **cassandra/cassandra.yaml.erb**).
 
 #####`client_encryption_enabled`
-TODO
-(default **false**)
+Enable or disable client/server encryption (default **false**).
 
 #####`client_encryption_keystore`
-TODO
-(default **conf/.keystore**)
+Keystore for client_encryption (default **conf/.keystore**).
 
 #####`client_encryption_keystore_password`
-TODO
-(default **cassandra**)
+Keystore password for client encryption (default **cassandra**).
 
 #####`cluster_name`
 The name of the cluster. This is mainly used to prevent machines in one logical
 cluster from joining another (default **Test Cluster**).
 
 #####`commitlog_directory`
-TODO
-(default **/var/lib/cassandra/commitlog**)
+Commit log.  when running on magnetic HDD, this should be a separate spindle
+than the data directories (default **/var/lib/cassandra/commitlog**).
 
 #####`concurrent_counter_writes`
-TODO
-(default **32**)
+For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.
+
+On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default **32**).
 
 #####`concurrent_reads`
-TODO
-(default **32**)
+For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.
+
+On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default **32**).
 
 #####`concurrent_writes`
-TODO
-(default **32**)
+For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.
+
+On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default **32**).
+
+#####`config_path`
+The path to the cassandra configuration file (default
+**/etc/cassandra/default.conf**).
 
 #####`data_file_directories`
-TODO
-(default **['/var/lib/cassandra/data']**)
+Directories where Cassandra should store data on disk.  Cassandra
+will spread data evenly across them, subject to the granularity of
+the configured compaction strategy (default **['/var/lib/cassandra/data']**).
 
 #####`disk_failure_policy`
-TODO
-(default **stop**)
+Policy for data disk failures:
+
+* die: shut down gossip and Thrift and kill the JVM for any fs errors or
+  single-sstable errors, so the node can be replaced.
+* stop_paranoid: shut down gossip and Thrift even for single-sstable errors.
+* stop: shut down gossip and Thrift, leaving the node effectively dead, but
+  can still be inspected via JMX.
+* best_effort: stop using the failed disk and respond to requests based on
+  remaining available sstables.  This means you WILL see obsolete
+  data at CL.ONE!
+* ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra.
+
+Default: **stop**
 
 #####`endpoint_snitch`
 TODO
 (default **SimpleSnitch**)
+
+#####`hinted_handoff_enabled`
+See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
+"false" to enable globally, or contain a list of data centers to enable
+per-datacenter (e.g. 'DC1,DC2').  Defaults to **'true'**.
 
 #####`incremental_backups`
 TODO
@@ -187,75 +231,6 @@ TODO
 #####`internode_compression`
 TODO
 (default **all**)
-
-#####`native_transport_port`
-TODO
-(default **9042**)
-
-#####`partitioner`
-TODO
-(default **org.apache.cassandra.dht.Murmur3Partitioner**)
-
-#####`rpc_address`
-TODO
-(default **localhost**)
-
-#####`rpc_port`
-TODO
-(default **9160**)
-
-#####`rpc_server_type`
-TODO
-(default **sync**)
-
-#####`saved_caches_directory`
-TODO
-(default **/var/lib/cassandra/saved_caches**)
-
-#####`server_encryption_internode`
-TODO
-(default **none**)
-
-#####`server_encryption_keystore`
-TODO
-(default **conf/.keystore**)
-
-#####`server_encryption_keystore_password`
-TODO
-(default **cassandra**)
-
-#####`server_encryption_truststore`
-TODO
-(default **conf/.truststore**)
-
-#####`server_encryption_truststore_password`
-TODO
-(default **cassandra**)
-
-#####`snapshot_before_compaction`
-TODO
-(default **false**)
-
-#####`start_native_transport`
-TODO
-(default **true**)
-
-#####`start_rpc`
-TODO
-(default **true**)
-
-#####`storage_port`
-TODO
-(default **7000**)
-
-#####`config_path`
-The path to the cassandra configuration file (default
-**/etc/cassandra/default.conf**).
-
-#####`hinted_handoff_enabled`
-See http://wiki.apache.org/cassandra/HintedHandoff May either be "true" or
-"false" to enable globally, or contain a list of data centers to enable
-per-datacenter (e.g. 'DC1,DC2').  Defaults to **'true'**.
 
 #####`java_package_ensure`
 The status of the package specified in **java_package_name**.  Can be
@@ -282,20 +257,81 @@ changed.  It is possible that this might not be the desired behaviour and the
 user would prefer to control the service themselves.  If so, set this option
 to false (default **true**).
 
+#####`native_transport_port`
+TODO
+(default **9042**)
+
 #####`num_tokens`
 This defines the number of tokens randomly assigned to this node on the ring
 The more tokens, relative to other nodes, the larger the proportion of data
 that this node will store. You probably want all nodes to have the same number
 of tokens assuming they have equal hardware capability.
 
+#####`partitioner`
+TODO
+(default **org.apache.cassandra.dht.Murmur3Partitioner**)
+
+#####`rpc_address`
+TODO
+(default **localhost**)
+
+#####`rpc_port`
+TODO
+(default **9160**)
+
+#####`rpc_server_type`
+TODO
+(default **sync**)
+
+#####`saved_caches_directory`
+TODO
+(default **/var/lib/cassandra/saved_caches**)
+
 #####`seeds`
-Addresses of hosts that are deemed contact points.  Cassandra nodes use this list of hosts to find each other and
-learn the topology of the ring.  You must change this if you are running multiple nodes!  Seeds is actually a
+Addresses of hosts that are deemed contact points.  Cassandra nodes use this
+list of hosts to find each other and learn the topology of the ring.  You must
+change this if you are running multiple nodes!  Seeds is actually a
 comma-delimited list of addresses (default **127.0.0.1**).
+
+#####`server_encryption_internode`
+TODO
+(default **none**)
+
+#####`server_encryption_keystore`
+TODO
+(default **conf/.keystore**)
+
+#####`server_encryption_keystore_password`
+TODO
+(default **cassandra**)
+
+#####`server_encryption_truststore`
+TODO
+(default **conf/.truststore**)
+
+#####`server_encryption_truststore_password`
+TODO
+(default **cassandra**)
 
 #####`service_name`
 The name of the service that runs the Cassandra software (default
 **cassandra**).
+
+#####`snapshot_before_compaction`
+TODO
+(default **false**)
+
+#####`start_native_transport`
+TODO
+(default **true**)
+
+#####`start_rpc`
+TODO
+(default **true**)
+
+#####`storage_port`
+TODO
+(default **7000**)
 
 ## Reference
 
@@ -310,8 +346,8 @@ It also uses the yumrepo type on the RedHat family of operating systems to
 
 ## Limitations
 
-This module currently has **VERY** basic functionality.  More parameters and configuration parameters will
-be added later.
+This module currently has somewhat limited functionality.  More parameters and
+configuration parameters will be added later.
 
 Tested on CentOS 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
 
