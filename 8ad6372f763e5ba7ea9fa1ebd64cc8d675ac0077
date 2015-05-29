@@ -1,0 +1,8 @@
+Code-Review+2: <jguiditt@redhat.com>
+Code-Review+2: Lukáš Bezdička <lbezdick@redhat.com>
+Verified+1: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-by: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-at: Fri, 29 May 2015 11:50:29 +0200
+Reviewed-on: https://review.gerrithub.io/234435
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/master
