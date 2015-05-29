@@ -75,7 +75,7 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
       at_path { git_with_identity('reset', '--hard', "#{@resource.value(:remote)}/#{desired}") }
     end
     #TODO Would this ever reach here if it is bare?
-    if @resource.value(:ensure) != :bare
+    if @resource.value(:ensure) != :bare && @resource.value(:submodules) == :true
       update_submodules
     end
     update_owner_and_excludes
@@ -418,7 +418,7 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
   # @!visibility private
   def git_with_identity(*args)
     if @resource.value(:identity)
-      Tempfile.open('git-helper') do |f|
+      Tempfile.open('git-helper', Puppet[:statedir]) do |f|
         f.puts '#!/bin/sh'
         f.puts "exec ssh -oStrictHostKeyChecking=no -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oChallengeResponseAuthentication=no -oConnectTimeout=120 -i #{@resource.value(:identity)} $*"
         f.close

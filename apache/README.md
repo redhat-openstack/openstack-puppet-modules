@@ -357,7 +357,7 @@ Specifies the location where apache module files are stored. It should not be co
 
 #####`loadfile_name`
 
-Sets the file name for the module loadfile. Should be in the format *.load.  This can be used to set the module load order.
+Sets the file name for the module loadfile. Should be in the format \*.load.  This can be used to set the module load order.
 
 #####`log_level`
 
@@ -370,6 +370,17 @@ Define additional [LogFormats](https://httpd.apache.org/docs/current/mod/mod_log
 ```puppet
   $log_formats = { vhost_common => '%v %h %l %u %t \"%r\" %>s %b' }
 ```
+
+There are a number of predefined LogFormats in the httpd.conf that Puppet writes out:
+
+```httpd
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+```
+
+If your `$log_formats` contains one of those, they will be overwritten with **your** definition.
 
 #####`logroot`
 
@@ -549,6 +560,7 @@ There are many `apache::mod::[name]` classes within this module that can be decl
 * `auth_basic`
 * `auth_cas`* (see [`apache::mod::auth_cas`](#class-apachemodauthcas) below)
 * `auth_kerb`
+* `authn_core`
 * `authn_file`
 * `authnz_ldap`*
 * `authz_default`
@@ -1365,11 +1377,11 @@ Sets [PassengerPreStart](https://www.phusionpassenger.com/documentation/Users%20
 
 #####`php_flags & values`
 
-Allows per-vhost setting [`php_value`s or `php_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values can be overwritten by a user or an application. Defaults to '[]'.
+Allows per-vhost setting [`php_value`s or `php_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values can be overwritten by a user or an application. Defaults to '{}'.
 
 #####`php_admin_flags & values`
 
-Allows per-vhost setting [`php_admin_value`s or `php_admin_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values cannot be overwritten by a user or an application. Defaults to '[]'.
+Allows per-vhost setting [`php_admin_value`s or `php_admin_flag`s](http://php.net/manual/en/configuration.changes.php). These flags or values cannot be overwritten by a user or an application. Defaults to '{}'.
 
 #####`port`
 
@@ -1932,9 +1944,10 @@ Allows configuration settings for [directory indexing](http://httpd.apache.org/d
     apache::vhost { 'sample.example.net':
       docroot     => '/path/to/directory',
       directories => [
-        { path          => '/path/to/directory',
-          options       => ['Indexes','FollowSymLinks','MultiViews'],
-          index_options => ['IgnoreCase', 'FancyIndexing', 'FoldersFirst', 'NameWidth=*', 'DescriptionWidth=*', 'SuppressHTMLPreamble'],
+        { path           => '/path/to/directory',
+          directoryindex => 'disabled', # this is needed on Apache 2.4 or mod_autoindex doesn't work
+          options        => ['Indexes','FollowSymLinks','MultiViews'],
+          index_options  => ['IgnoreCase', 'FancyIndexing', 'FoldersFirst', 'NameWidth=*', 'DescriptionWidth=*', 'SuppressHTMLPreamble'],
         },
       ],
     }
@@ -1951,6 +1964,23 @@ Sets the [default ordering](http://httpd.apache.org/docs/current/mod/mod_autoind
         { path                => '/path/to/directory',
           order               => 'Allow,Deny',
           index_order_default => ['Descending', 'Date'],
+        },
+      ],
+    }
+```
+
+######`index_style_sheet`
+
+Sets the [IndexStyleSheet](http://httpd.apache.org/docs/current/mod/mod_autoindex.html#indexstylesheet) which adds a CSS stylesheet to the directory index.
+
+```puppet
+    apache::vhost { 'sample.example.net':
+      docroot     => '/path/to/directory',
+      directories => [
+        { path              => '/path/to/directory',
+          options           => ['Indexes','FollowSymLinks','MultiViews'],
+          index_options     => ['FancyIndexing'],
+          index_style_sheet => '/styles/style.css',
         },
       ],
     }

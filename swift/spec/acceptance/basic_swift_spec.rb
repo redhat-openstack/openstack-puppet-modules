@@ -8,21 +8,33 @@ describe 'basic swift' do
       pp= <<-EOS
       Exec { logoutput => 'on_failure' }
 
-      include ::apt
-      # some packages are not autoupgraded in trusty.
-      # it will be fixed in liberty, but broken in kilo.
-      $need_to_be_upgraded = ['python-tz', 'python-pbr']
-      apt::source { 'trusty-updates-kilo':
-        location          => 'http://ubuntu-cloud.archive.canonical.com/ubuntu/',
-        release           => 'trusty-updates',
-        required_packages => 'ubuntu-cloud-keyring',
-        repos             => 'kilo/main',
-        trusted_source    => true,
-      } ~>
-      exec { '/usr/bin/apt-get -y dist-upgrade':
-        refreshonly => true,
+      # Common resources
+      case $::osfamily {
+        'Debian': {
+          include ::apt
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'kilo',
+            package_require => true,
+          }
+        }
+        'RedHat': {
+          class { '::openstack_extras::repo::redhat::redhat':
+            # Kilo is not GA yet, so let's use the testing repo
+            manage_rdo => false,
+            repo_hash  => {
+              'rdo-kilo-testing' => {
+                'baseurl'  => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/testing/el7/',
+                # packages are not GA so not signed
+                'gpgcheck' => '0',
+                'priority' => 97,
+              },
+            },
+          }
+        }
+        default: {
+          fail("Unsupported osfamily (${::osfamily})")
+        }
       }
-      Apt::Source['trusty-updates-kilo'] -> Package<| |>
 
       class { '::mysql::server': }
 

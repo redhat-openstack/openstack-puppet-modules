@@ -1,55 +1,71 @@
-##2014-11-04 - Supported Release 1.2.0
-###Summary
+# Change Log
+All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0] - 2015-05-19 Supported Release
+### Summary
+This release adds git provider remote handling, svn conflict resolution, and fixes the git provider when /tmp is mounted noexec.
+
+### Added
+- `source` property now takes a hash of sources for the git provider's remotes
+- Add `submodules` parameter to skip submodule initialization for git provider
+- Add `conflict` to svn provider to resolve conflicts
+- Add `branch` parameter to specify clone branch
+- Readme rewrite
+
+### Fixed
+- The git provider now works even if `/tmp` is noexec
+
+## [1.2.0] - 2014-11-04 Supported Release
+### Summary
 This release includes some improvements for git, mercurial, and cvs providers, and fixes the bug where there were warnings about multiple default providers.
 
-####Features
+### Added
 - Update git and mercurial providers to set UID with `Puppet::Util::Execution.execute` instead of `su`
 - Allow git excludes to be string or array
 - Add `user` feature to cvs provider
 
-####Bugfixes
+### Fixed
 - No more warnings about multiple default providers! (MODULES-428)
 
-##2014-07-14 - Supported Release 1.1.0
-###Summary
-This release adds a Perforce provider* and corrects the git provider behavior
+## [1.1.0] - 2014-07-14 Supported Release
+### Summary
+This release adds a Perforce provider\* and corrects the git provider behavior
 when using `ensure => latest`.
 
-*(Only git provider is currently supported.)
+\*(Only git provider is currently supported.)
 
-####Features
+### Added
 - New Perforce provider
 
-####Bugfixes
+### Fixed
 - (MODULES-660) Fix behavior with `ensure => latest` and detached HEAD
 - Spec test fixes
 
-##2014-06-30 - Supported Release 1.0.2
-###Summary
+## [1.0.2] - 2014-06-30 Supported Release
+### Summary
 This supported release adds SLES 11 to the list of compatible OSs and
 documentation updates for support.
 
-##2014-06-17 - Supported Release 1.0.1
-###Summary
+## [1.0.1] - 2014-06-17 Supported Release
+### Summary
 This release is the first supported release of vcsrepo. The readme has been
 greatly improved.
 
-####Features
+### Added
 - Updated and expanded readme to follow readme template
 
-####Fixes
+### Fixed
 - Remove SLES from compatability metadata
 - Unpin rspec development dependencies
 - Update acceptance level testing
 
-##2014-06-04 - Version 1.0.0
-###Summary
+## [1.0.0] - 2014-06-04
+### Summary
 
 This release focuses on a number of bugfixes, and also has some
 new features for Bzr and Git.
 
-####Features
+### Added
 - Bzr:
  - Call set_ownership
 - Git:
@@ -57,7 +73,7 @@ new features for Bzr and Git.
  - Use -a and desired for HARD resets
  - Use rev-parse to get tag canonical revision
 
-####Fixes
+### Fixed
 - HG:
  - Only add ssh options when it's talking to the network
 - Git:
@@ -68,14 +84,14 @@ new features for Bzr and Git.
 - SVN:
  - Fix svnlook behavior with plain directories
 
-##2013-11-13 - Version 0.2.0
-###Summary
+## 0.2.0 - 2013-11-13
+### Summary
 
 This release mainly focuses on a number of bugfixes, which should
 significantly improve the reliability of Git and SVN.  Thanks to
 our many contributors for all of these fixes!
 
-####Features
+### Added
 - Git:
  - Add autorequire for Package['git']
 - HG:
@@ -88,7 +104,7 @@ our many contributors for all of these fixes!
 - CVS:
  - Allow for setting the CVS_RSH environment variable.
 
-####Fixes
+### Fixed
 - Handle Puppet::Util[::Execution].withenv for 2.x and 3.x properly.
 - Change path_empty? to not do full directory listing.
 - Overhaul spec tests to work with rspec2.
@@ -108,3 +124,10 @@ our many contributors for all of these fixes!
  - Fix svn provider to look for '^Revision:' instead of '^Last Changed Rev:'.
 - CVS:
  - Documented the "module" attribute.
+
+[1.3.0]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/1.0.2...1.1.0
+[1.0.2]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/puppetlabs/puppetlabs-vcsrepo/compare/0.2.0...1.0.0

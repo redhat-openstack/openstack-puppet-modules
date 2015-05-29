@@ -97,6 +97,9 @@ describe 'memcached' do
       :processorcount  => 1
     },
     {
+      :listen_ip       => '',
+    },
+    {
       :pidfile         => false,
     },
     {
@@ -105,6 +108,9 @@ describe 'memcached' do
     {
       :package_ensure  => 'absent',
       :install_dev     => true
+    },
+    {
+      :service_manage => false
     }
   ].each do |param_set|
     describe "when #{param_set == {} ? "using default" : "specifying"} class parameters" do
@@ -148,7 +154,9 @@ describe 'memcached' do
           )}
 
           it { 
-            if param_hash[:package_ensure] == 'absent'
+            if param_hash[:service_manage] == false
+              should_not contain_service('memcached')
+            elsif param_hash[:package_ensure] == 'absent'
               should contain_service("memcached").with(
                 'ensure'     => 'stopped',
                 'enable'     => false
@@ -172,7 +180,6 @@ describe 'memcached' do
             )
             expected_lines = [
               "logfile #{param_hash[:logfile]}",
-              "-l #{param_hash[:listen_ip]}",
               "-p #{param_hash[:tcp_port]}",
               "-U #{param_hash[:udp_port]}",
               "-u #{param_hash[:user]}",
@@ -187,6 +194,9 @@ describe 'memcached' do
               end
             else
               expected_lines.push("-m 950")
+            end
+            if(param_hash[:listen_ip] != '')
+              expected_lines.push("-l #{param_hash[:listen_ip]}")
             end
             if(param_hash[:lock_memory])
               expected_lines.push("-k")
