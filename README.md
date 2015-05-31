@@ -422,7 +422,7 @@ It also uses the yumrepo type on the RedHat family of operating systems to
 This module currently has somewhat limited functionality.  More parameters and
 configuration parameters will be added later.
 
-Tested on CentOS 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
+Tested on the RedHat family versions 6 and 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
 
 ## External Links
 
