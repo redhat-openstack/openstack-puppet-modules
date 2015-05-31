@@ -10,3 +10,5 @@
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
 include cassandra
+include cassandra::config
+include cassandra::install

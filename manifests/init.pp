@@ -53,40 +53,14 @@ class cassandra (
   $storage_port                          = 7000
   ) {
 
-  case $::osfamily {
-    'RedHat': {
-      if $manage_dsc_repo == true {
-        yumrepo { 'datastax':
-          ensure   => present,
-          descr    => 'DataStax Repo for Apache Cassandra',
-          baseurl  => 'http://rpm.datastax.com/community',
-          enabled  => 1,
-          gpgcheck => 0,
-          before   => Package[ $cassandra_package_name ],
-        }
-      }
-    }
-    default: {
-      fail("OS family ${::osfamily} not supported")
-    }
-  }
-
-  if $java_package_name != undef {
-    package { $java_package_name:
-      ensure => $java_package_ensure,
-      before => Package[ $cassandra_package_name ],
-    }
-  }
-
-  package { $cassandra_package_name:
-    ensure => $cassandra_package_ensure,
-  }
-
-  if $cassandra_opt_package_name != undef {
-    package { $cassandra_opt_package_name:
-      ensure  => $cassandra_opt_package_ensure,
-      require => Package[$cassandra_package_name],
-    }
+  class { 'cassandra::install':
+    cassandra_package_ensure     => $cassandra_package_ensure,
+    cassandra_package_name       => $cassandra_package_name,
+    cassandra_opt_package_ensure => $cassandra_opt_package_ensure,
+    cassandra_opt_package_name   => $cassandra_opt_package_name,
+    java_package_ensure          => $java_package_ensure,
+    java_package_name            => $java_package_name,
+    manage_dsc_repo              => $manage_dsc_repo,
   }
 
   $config_file = "${config_path}/cassandra.yaml"
