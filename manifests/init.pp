@@ -65,29 +65,50 @@ class cassandra (
 
   $config_file = "${config_path}/cassandra.yaml"
 
-  if $manage_service == true {
-    file { $config_file:
-      ensure  => file,
-      owner   => 'cassandra',
-      group   => 'cassandra',
-      content => template($cassandra_yaml_tmpl),
-      require => Package[$cassandra_package_name],
-      notify  => Service['cassandra'],
-    }
+  # A hack for long arguments
+  $clt_enc_keystore_pass = $client_encryption_keystore_password
+  $svr_enc_keystore_pass = $server_encryption_keystore_password
+  $svr_enc_trtstore_pass = $server_encryption_truststore_password
 
-    service { 'cassandra':
-      ensure  => running,
-      name    => $service_name,
-      enable  => true,
-      require => Package[$cassandra_package_name],
-    }
-  } else {
-    file { $config_file:
-      ensure  => file,
-      owner   => 'cassandra',
-      group   => 'cassandra',
-      content => template($cassandra_yaml_tmpl),
-      require => Package[$cassandra_package_name],
-    }
+  class { 'cassandra::config':
+    authenticator                         => $authenticator,
+    authorizer                            => $authorizer,
+    auto_snapshot                         => $auto_snapshot,
+    cassandra_package_name                => $cassandra_package_name,
+    cassandra_yaml_tmpl                   => $cassandra_yaml_tmpl,
+    client_encryption_enabled             => $client_encryption_enabled,
+    client_encryption_keystore            => $client_encryption_keystore,
+    client_encryption_keystore_password   => $clt_enc_keystore_pass,
+    cluster_name                          => $cluster_name,
+    commitlog_directory                   => $commitlog_directory,
+    concurrent_counter_writes             => $concurrent_counter_writes,
+    concurrent_reads                      => $concurrent_reads,
+    concurrent_writes                     => $concurrent_writes,
+    data_file_directories                 => $data_file_directories,
+    disk_failure_policy                   => $disk_failure_policy,
+    endpoint_snitch                       => $endpoint_snitch,
+    hinted_handoff_enabled                => $hinted_handoff_enabled,
+    incremental_backups                   => $incremental_backups,
+    internode_compression                 => $internode_compression,
+    listen_address                        => $listen_address,
+    manage_service                        => $manage_service,
+    native_transport_port                 => $native_transport_port,
+    num_tokens                            => $num_tokens,
+    partitioner                           => $partitioner,
+    rpc_address                           => $rpc_address,
+    rpc_port                              => $rpc_port,
+    rpc_server_type                       => $rpc_server_type,
+    saved_caches_directory                => $saved_caches_directory,
+    seeds                                 => $seeds,
+    server_encryption_internode           => $server_encryption_internode,
+    server_encryption_keystore            => $server_encryption_keystore,
+    server_encryption_keystore_password   => $svr_enc_keystore_pass,
+    server_encryption_truststore          => $server_encryption_truststore,
+    server_encryption_truststore_password => $svr_enc_trtstore_pass,
+    service_name                          => $service_name,
+    snapshot_before_compaction            => $snapshot_before_compaction,
+    start_native_transport                => $start_native_transport,
+    start_rpc                             => $start_rpc,
+    storage_port                          => $storage_port,
   }
 }
