@@ -26,7 +26,7 @@ class zookeeper::repo(
               }
             }
             case $osrel {
-              '6': {
+              '6', '7': {
                 # parameter ensure is not supported before Puppet 3.5
                 if versioncmp($::puppetversion, '3.5.0') >= 0 {
                   yumrepo { "cloudera-cdh${cdhver}":
