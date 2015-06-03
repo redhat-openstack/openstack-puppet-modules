@@ -46,7 +46,7 @@ class zookeeper::repo(
                 }
               }
               default: {
-                fail("Yum repository '${source}' is not supported for redhat version ${::osrel}")
+                fail("Yum repository '${source}' is not supported for redhat version ${osrel}")
               }
             }
           }
