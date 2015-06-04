@@ -6,3 +6,5 @@
 pkg/*
 Gemfile.lock
 spec/fixtures/modules/*
+.vagrant
+Puppetfile.lock
