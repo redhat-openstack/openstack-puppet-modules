@@ -54,7 +54,8 @@ class zookeeper(
   $packages                = ['zookeeper'],
   $repo                    = undef,
   $install_java            = false,
-  $java_package            = undef
+  $java_package            = undef,
+  $max_session_timeout     = undef,
 ) {
 
   validate_array($packages)
@@ -102,6 +103,7 @@ class zookeeper(
     tracefile_threshold     => $tracefile_threshold,
     max_allowed_connections => $max_allowed_connections,
     peer_type               => $peer_type,
+    max_session_timeout     => $max_session_timeout,
   }->
   class { 'zookeeper::service':
     cfg_dir      => $cfg_dir,
