@@ -83,3 +83,7 @@ maxClientCnxns=<%= @max_allowed_connections %>
 # Zookeeper peer type
 peerType=<%= @peer_type %>
 <% end -%>
+
+<% if @max_session_timeout -%>
+maxSessionTimeout=<%= @max_session_timeout %>
+<% end -%>
