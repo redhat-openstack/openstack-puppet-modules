@@ -55,6 +55,7 @@ class zookeeper::config(
   $init_limit              = 10,
   $sync_limit              = 5,
   $leader                  = true,
+  $min_session_timeout     = undef,
   $max_session_timeout     = undef,
 ) {
   require zookeeper::install

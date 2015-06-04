@@ -280,4 +280,24 @@ describe 'zookeeper::config', :type => :class do
     ).with_content(/server.5=192.168.1.5:2888:3888:observer/) }
   end
 
+  context 'setting minSessionTimeout' do
+    let(:params) {{
+      :min_session_timeout => 5000
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/minSessionTimeout=5000/) }
+  end
+
+  context 'setting maxSessionTimeout' do
+    let(:params) {{
+      :max_session_timeout => 50000
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/maxSessionTimeout=50000/) }
+  end
+
 end

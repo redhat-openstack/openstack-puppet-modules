@@ -55,6 +55,7 @@ class zookeeper(
   $repo                    = undef,
   $install_java            = false,
   $java_package            = undef,
+  $min_session_timeout     = undef,
   $max_session_timeout     = undef,
 ) {
 
@@ -103,6 +104,7 @@ class zookeeper(
     tracefile_threshold     => $tracefile_threshold,
     max_allowed_connections => $max_allowed_connections,
     peer_type               => $peer_type,
+    min_session_timeout     => $min_session_timeout,
     max_session_timeout     => $max_session_timeout,
   }->
   class { 'zookeeper::service':

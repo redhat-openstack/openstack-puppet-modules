@@ -46,5 +46,23 @@ describe 'zookeeper', :type => :class do
     it { should contain_exec('initialize_datastore') }
   end
 
+  context 'setting minSessionTimeout' do
+    let(:params) {{
+      :min_session_timeout => 3000
+    }}
 
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/minSessionTimeout=3000/) }
+  end
+
+  context 'setting maxSessionTimeout' do
+    let(:params) {{
+      :max_session_timeout => 60000
+    }}
+
+    it { should contain_file(
+      '/etc/zookeeper/conf/zoo.cfg'
+    ).with_content(/maxSessionTimeout=60000/) }
+  end
 end

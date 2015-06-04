@@ -84,6 +84,12 @@ maxClientCnxns=<%= @max_allowed_connections %>
 peerType=<%= @peer_type %>
 <% end -%>
 
+# The minimum session timeout in milliseconds that the server will allow the # client to negotiate. Defaults to 2 times the tickTime.
+<% if @min_session_timeout -%>
+minSessionTimeout=<%= @min_session_timeout %>
+<% end -%>
+
+# The maximum session timeout in milliseconds that the server will allow the # client to negotiate. Defaults to 20 times the tickTime.
 <% if @max_session_timeout -%>
 maxSessionTimeout=<%= @max_session_timeout %>
 <% end -%>
