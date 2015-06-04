@@ -21,6 +21,7 @@ describe 'zookeeper::service' do
       :lsbdistcodename => '7',
       :operatingsystemmajrelease => '7',
       :puppetversion => puppet,
+      :path => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     }}
 
     let(:user) { 'zookeeper' }
