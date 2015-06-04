@@ -54,9 +54,9 @@ describe 'zookeeper::repo', :type => :class do
   context 'fail when release not supported' do
     let(:facts) {{
       :osfamily => 'RedHat',
-      :operatingsystemmajrelease => '7',
+      :operatingsystemmajrelease => '8',
       :hardwaremodel => 'x86_64',
-      :osrel => '7',
+      :osrel => '8',
     }}
 
     let(:params) { {
