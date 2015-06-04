@@ -12,4 +12,32 @@ describe 'zookeeper::service' do
     :ensure => 'running',
     :enable => true
   )}
+
+  context 'RHEL 7' do
+    puppet = `puppet --version`
+    let(:facts) {{
+      :operatingsystem => 'RedHat',
+      :osfamily => 'RedHat',
+      :lsbdistcodename => '7',
+      :operatingsystemmajrelease => '7',
+      :puppetversion => puppet,
+    }}
+
+    let(:user) { 'zookeeper' }
+    let(:group) { 'zookeeper' }
+
+    it { should contain_package('zookeeper') }
+
+    it { should contain_file(
+      '/usr/lib/systemd/system/zookeeper.service'
+      ).with({
+        'ensure'  => 'present',
+      })
+    }
+
+    it { should contain_service('zookeeper').with(
+      :ensure => 'running',
+      :enable => true
+    )}
+  end
 end
