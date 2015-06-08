@@ -10,8 +10,6 @@
 4. [Usage](#usage)
 5. [Reference](#reference)
     * [Midonet Repository Class Reference](#midonet-repository)
-    * [Cassandra Class Reference](#cassandra)
-    * [Zookeeper Class Reference](#zookeeper)
     * [Midonet Agent Class Reference](#midonet-agent)
     * [Midonet API Class Reference](#midonet-api)
     * [Midonet CLI Class Reference](#midonet-cli)
@@ -112,119 +110,6 @@ or use a YAML file using the same attributes, accessible from Hiera:
     midonet_repository::midonet_key_url: 'http://repo.midonet.org/packages.midokura.key'
     midonet_repository::openstack_release: 'juno'
 
-
-#### Cassandra
-
-MidoNet needs Cassandra cluster to keep track of living connections. This class
-installs cassandra the way that MidoNet needs it.
-
-The easiest way to run the class is:
-
-    include midonet::cassandra
-
-And a cassandra single-machine cluster will be installed, binding the
-'localhost' address.
-
-Run a single-machine cluster but binding a hostname or another address
-would be:
-
-    class {'midonet::cassandra':
-        seeds        => ['192.168.2.2'],
-        seed_address => '192.168.2.2'
-    }
-
-For cluster of nodes, use the same 'seeds' value, but change the
-seed_address of each node:
-
-... On node1:
-
-    class {'midonet::cassandra':
-        seeds        => ['node_1', 'node_2', 'node_3'],
-        seed_address => 'node_1'
-    }
-
-... On node2:
-
-    class {'midonet::cassandra':
-        seeds        => ['node_1', 'node_2', 'node_3'],
-        seed_address => 'node_2'
-    }
-
-... On node3:
-
-    class {'midonet::cassandra':
-        seeds        => ['node_1', 'node_2', 'node_3'],
-        seed_address => 'node_3'
-    }
-
-NOTE: node_X can be either hostnames or ip addresses
-You can alternatively use the Hiera's yaml style:
-
-    midonet::cassandra::seeds:
-        - node_1
-        - node_2
-        - node_3
-    midonet::cassandra::seed_address: 'node_1'
-
-#### Zookeeper
-
-ZooKeeper cluster stores MidoNet virtual network hierarchy. Likewise
-Cassandra, this class installs the version and configuration that MidoNet needs
-to run.
-
-The easiest way to run the class is:
-
-     include midonet::zookeeper
-
-And puppet will install a local zookeeper without cluster. For a clustered
-zookeeper, the way you have to define your puppet site, is:
-
-... on Node1
-
-    class {'midonet::zookeeper':
-        servers   =>  [{'id'   => 1
-                        'host' => 'node_1'},
-                       {'id'   => 2,
-                        'host' => 'node_2'},
-                       {'id'   => 3,
-                        'host' => 'node_3'}],
-        server_id => 1}
-
-... on Node2
-
-    class {'midonet::zookeeper':
-        servers   =>  [{'id'   => 1
-                        'host' => 'node_1'},
-                       {'id'   => 2,
-                        'host' => 'node_2'},
-                       {'id'   => 3,
-                        'host' => 'node_3'}],
-        server_id => 2}
-
-... on Node3
-
-    class {'midonet::zookeeper':
-        servers   =>  [{'id'   => 1
-                        'host' => 'node_1'},
-                       {'id'   => 2,
-                        'host' => 'node_2'},
-                       {'id'   => 3,
-                        'host' => 'node_3'}],
-        server_id => 3}
-
-defining the same servers for each puppet node, but using a different
-server\_id for each one. NOTE: node\_X can be hostnames or IP addresses.
-
-you can alternatively use the Hiera's yaml style
-
-    midonet::zookeeper::servers:
-        - id: 1
-          host: 'node_1'
-        - id: 2
-          host: 'node_2'
-        - id: 3
-          host: 'node_3'
-    midonet::zookeeper::server_id: '1'
 
 #### Midonet Agent
 

@@ -1,0 +1,19 @@
+# The number of milliseconds of each tick
+tickTime=2000
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=10
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=5
+# the directory where the snapshot is stored.
+dataDir=<%= @data_dir %>
+# the port at which the clients will connect
+clientPort=2181
+
+# specify all zookeeper servers
+# The fist port is used by followers to connect to the leader
+# The second one is used for leader election
+<% @servers.each do |s| %>
+<%="server.#{s['id']}=#{s['host']}:#{s['peer_port'] ||= 2888}:#{s['lead_port'] || 3888}" %>
+<% end %>

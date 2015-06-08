@@ -1,0 +1,29 @@
+---
+# Repository-based attributes
+midonet::repository::midonet_repo: 'http://repo.midonet.org/midonet/v2015.03'
+midonet::repository::midonet_thirdparty_repo: 'http://repo.midonet.org/misc'
+midonet::repository::midonet_key: '35FEEF2BAD40EA777D0C5BA6FCE340D250F18FCF'
+midonet::repository::midonet_stage: 'stable'
+midonet::repository::midonet_key_url: 'http://repo.midonet.org/packages.midokura.key'
+
+# Midonet Host Agent-based attributes
+midonet::midonet_agent::zk_servers:
+    - ip: 'localhost'
+      port: 2181
+midonet::midonet_agent::cassandra_seeds:
+    - 'localhost'
+
+# Midonet API-based attributes
+midonet::midonet_api::zk_servers:
+    - ip: 'localhost'
+      port: 2181
+midonet::midonet_api::keystone_auth: false
+midonet::midonet_api::vtep: false
+midonet::midonet_api::tomcat_package: 'tomcat7'
+midonet::midonet_api::catalina_base: '/var/lib/tomcat7'
+
+# Neutron Plugin based attributes
+midonet::neutron_plugin::midonet_api_ip: 'localhost'
+midonet::neutron_plugin::username: 'fake_user'
+midonet::neutron_plugin::password: 'fake_password'
+midonet::neutron_plugin::project_id: 'service'
