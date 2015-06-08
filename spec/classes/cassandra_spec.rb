@@ -10,6 +10,8 @@ describe 'cassandra' do
 
     it {
       should contain_class('cassandra')
+      should contain_class('cassandra::install')
+      should contain_class('cassandra::config')
     }
   end
 
