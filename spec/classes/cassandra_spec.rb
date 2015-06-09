@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'cassandra::install' do
+describe 'cassandra' do
 
   context 'On a RedHat OS with defaults for all parameters' do
     let :facts do
@@ -9,7 +9,9 @@ describe 'cassandra::install' do
     end
 
     it {
+      should contain_class('cassandra')
       should contain_class('cassandra::install')
+      should contain_class('cassandra::config')
     }
   end
 
