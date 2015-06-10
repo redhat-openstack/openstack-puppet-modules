@@ -12,24 +12,30 @@ describe 'glance class' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          # some packages are not autoupgraded in trusty.
-          # it will be fixed in liberty, but broken in kilo.
-          $need_to_be_upgraded = ['python-tz', 'python-pbr']
-          apt::source { 'trusty-updates-kilo':
-            location          => 'http://ubuntu-cloud.archive.canonical.com/ubuntu/',
-            release           => 'trusty-updates',
-            required_packages => 'ubuntu-cloud-keyring',
-            repos             => 'kilo/main',
-            trusted_source    => true,
-          } ->
-          package { $need_to_be_upgraded:
-            ensure  => latest,
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'kilo',
+            package_require => true,
           }
         }
         'RedHat': {
-          include ::epel # Get our epel on
+          class { '::openstack_extras::repo::redhat::redhat':
+            # Kilo is not GA yet, so let's use the testing repo
+            manage_rdo => false,
+            repo_hash  => {
+              'rdo-kilo-testing' => {
+                'baseurl'  => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/testing/el7/',
+                # packages are not GA so not signed
+                'gpgcheck' => '0',
+                'priority' => 97,
+              },
+            },
+          }
+        }
+        default: {
+          fail("Unsupported osfamily (${::osfamily})")
         }
       }
+
       class { '::mysql::server': }
 
       # Keystone resources, needed by Glance to run
@@ -68,7 +74,7 @@ describe 'glance class' do
       class { '::glance::api':
         database_connection => 'mysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
         verbose             => false,
-        keystone_password   => 'big_secret',
+        keystone_password   => 'a_big_secret',
       }
       class { '::glance::registry':
         database_connection => 'mysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
