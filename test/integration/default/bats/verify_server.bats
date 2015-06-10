@@ -153,3 +153,8 @@ get_distro
           exit 1;
     esac
 }
+
+@test 'midonetrc file is created' {
+    run bash -c "file /root/.midonetrc"
+    [ "$status" -eq 0 ]
+}

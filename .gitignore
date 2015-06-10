@@ -5,6 +5,7 @@
 /InstalledFiles
 **/pkg/
 /spec/reports/
+/spec/fixtures/modules/*
 /test/tmp/
 /test/version_tmp/
 /tmp/

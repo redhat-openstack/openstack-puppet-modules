@@ -30,12 +30,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class midonet::midonet_cli {
+class midonet::midonet_cli(
+  $api_endpoint='http://127.0.0.1:8080/midonet-api',
+  $username='admin',
+  $password='admin',
+  $tenant_name='admin',
+) {
 
-    require midonet::repository
+  require midonet::repository
 
-    package {'python-midonetclient':
-        ensure  => present,
-        require => Exec['update-midonet-repos']
-    }
+  package {'python-midonetclient':
+    ensure  => present,
+    require => Exec['update-midonet-repos']
+  }
+
+  midonet_client_conf {
+    'cli/api_url':    value => $api_endpoint;
+    'cli/username':   value => $username;
+    'cli/password':   value => $password;
+    'cli/project_id': value => $tenant_name;
+  }
+
 }

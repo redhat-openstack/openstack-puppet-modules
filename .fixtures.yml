@@ -1,0 +1,7 @@
+fixtures:
+  forge_modules:
+    apt: 
+      repo: "puppetlabs-apt"
+      ref: "1.8.0"
+    stdlib: "puppetlabs-stdlib"
+    inifile: "puppetlabs-inifile"
