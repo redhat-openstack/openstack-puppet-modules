@@ -28,14 +28,15 @@ RSpec.configure do |c|
       # install library modules from the forge
       on host, puppet('module','install', '--force', 'puppetlabs-mysql', '--version', '3.2.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','dprince/qpid'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module','install','puppetlabs-apt', '--version', '1.8.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','puppetlabs-inifile'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module','install','puppetlabs-rabbitmq'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','stahnma-epel'), { :acceptable_exit_codes => [0,1] }
 
       # install puppet modules from git, use master
       shell('git clone https://git.openstack.org/stackforge/puppet-openstacklib /etc/puppet/modules/openstacklib')
       shell('git clone https://git.openstack.org/stackforge/puppet-keystone /etc/puppet/modules/keystone')
+      shell('git clone https://git.openstack.org/stackforge/puppet-openstack_extras /etc/puppet/modules/openstack_extras')
 
       # Install the module being tested
       puppet_module_install(:source => proj_root, :module_name => 'glance')
