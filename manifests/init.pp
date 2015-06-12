@@ -60,4 +60,20 @@ class midonet {
     # Add midonet-cli
     class {'midonet::midonet_cli':}
 
+    if ! defined(Package['faraday']) {
+      package { 'faraday':
+        ensure   => present,
+        provider => 'gem',
+        before   => Midonet_host_registry[$::hostname]
+      }
+    }
+
+    # Register the host
+    midonet_host_registry { $::hostname:
+      ensure          => present,
+      midonet_api_url => 'http://127.0.0.1:8080',
+      username        => 'admin',
+      password        => 'admin',
+      require         => Class['midonet::midonet_agent']
+    }
 }

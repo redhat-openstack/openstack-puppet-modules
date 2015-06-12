@@ -16,6 +16,7 @@ group :development, :unit_tests do
   gem 'puppetlabs_spec_helper', '>= 0.1.0', :require => false
   gem 'puppet-lint', '>= 0.3.2',            :require => false
   gem 'metadata-json-lint',                 :require => false
+  gem 'faraday',                            :require => false
 end
 
 group :system_tests do

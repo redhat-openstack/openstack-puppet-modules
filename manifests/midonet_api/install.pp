@@ -28,19 +28,19 @@ class midonet::midonet_api::install {
     require midonet::midonet_api::augeas
 
     if ! defined(Class['java']) {
-        class {'java':
-            distribution => 'jre',
-            require      => Exec['update-midonet-repos']
-        }
+      class {'java':
+        distribution => 'jre',
+        require      => Exec['update-midonet-repos']
+      }
     }
 
     class {'tomcat':
-        install_from_source => false,
-        require             => [Class['java'],
-                                Exec['update-midonet-repos']]
+      install_from_source => false,
+      require             => [Class['java'],
+                              Exec['update-midonet-repos']]
     } ->
 
     package {'midonet-api':
-        ensure  => present,
+      ensure  => present,
     }
 }

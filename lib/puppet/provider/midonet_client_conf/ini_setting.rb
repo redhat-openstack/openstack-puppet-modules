@@ -1,6 +1,6 @@
 Puppet::Type.type(:midonet_client_conf).provide(
-  :ini_setting,
-  :parent => Puppet::Type.type(:ini_setting).provider(:ruby)
+    :ini_setting,
+    :parent => Puppet::Type.type(:ini_setting).provider(:ruby)
 ) do
 
   def section
@@ -18,5 +18,4 @@ Puppet::Type.type(:midonet_client_conf).provide(
   def file_path
     '/root/.midonetrc'
   end
-
 end
