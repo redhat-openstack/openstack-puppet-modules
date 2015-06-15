@@ -1,0 +1,7 @@
+Code-Review+2: Javier Peña <jpena@redhat.com>
+Verified+1: Javier Peña <jpena@redhat.com>
+Submitted-by: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-at: Mon, 15 Jun 2015 17:47:21 +0200
+Reviewed-on: https://review.gerrithub.io/236538
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/master
