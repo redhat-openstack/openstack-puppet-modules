@@ -9,6 +9,7 @@ class ssh::server(
 
   $fin_options = $hiera_options ? {
     undef   => $options,
+    ''      => $options,
     default => $hiera_options,
   }
 
@@ -17,8 +18,6 @@ class ssh::server(
   include ssh::server::install
   include ssh::server::config
   include ssh::server::service
-
-  File[$ssh::params::sshd_config] ~> Service[$ssh::params::service_name]
 
   anchor { 'ssh::server::start': }
   anchor { 'ssh::server::end': }

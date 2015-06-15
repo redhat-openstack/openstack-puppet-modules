@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe 'haproxy::peers' do
-  let(:facts) {{ :ipaddress => '1.1.1.1' }}
+  let(:facts) {{
+    :ipaddress      => '1.1.1.1',
+    :concat_basedir => '/foo',
+  }}
 
   context "when no options are passed" do
     let(:title) { 'bar' }

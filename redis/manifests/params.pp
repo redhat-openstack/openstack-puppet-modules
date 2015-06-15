@@ -76,7 +76,7 @@ class redis::params {
       $config_file               = '/etc/redis/redis.conf'
       $config_file_mode          = '0644'
       $config_group              = 'root'
-      $config_owner              = 'root'
+      $config_owner              = 'redis'
       $daemonize                 = true
       $log_dir_mode              = '0755'
       $package_ensure            = 'present'
@@ -103,7 +103,7 @@ class redis::params {
       $config_file               = '/etc/redis.conf'
       $config_file_mode          = '0644'
       $config_group              = 'root'
-      $config_owner              = 'root'
+      $config_owner              = 'redis'
       $daemonize                 = false
       $log_dir_mode              = '0755'
       $package_ensure            = 'present'
@@ -121,6 +121,7 @@ class redis::params {
       $service_hasstatus         = true
       $service_name              = 'redis'
       $service_user              = 'redis'
+      $ppa_repo                  = undef
     }
 
     'FreeBSD': {
@@ -129,7 +130,7 @@ class redis::params {
       $config_file               = '/usr/local/etc/redis.conf'
       $config_file_mode          = '0644'
       $config_group              = 'wheel'
-      $config_owner              = 'root'
+      $config_owner              = 'redis'
       $daemonize                 = true
       $log_dir_mode              = '0755'
       $package_ensure            = 'present'
@@ -147,6 +148,7 @@ class redis::params {
       $service_hasstatus         = true
       $service_name              = 'redis'
       $service_user              = 'redis'
+      $ppa_repo                  = undef
     }
 
     'Suse': {
@@ -173,6 +175,7 @@ class redis::params {
       $service_hasstatus         = true
       $service_name              = 'redis'
       $service_user              = 'redis'
+      $ppa_repo                  = undef
     }
 
     default: {

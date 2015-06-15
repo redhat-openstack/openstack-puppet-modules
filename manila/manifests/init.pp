@@ -11,6 +11,10 @@
 #   Timeout when db connections should be reaped.
 #   (Optional) Defaults to 3600.
 #
+# [*state_path*]
+#   (optional) Directory for storing state.
+#   Defaults to '/var/lib/manila'
+#
 # [*control_exchange*]
 #   (Optional) The default exchange under which topics are scope.
 #   Defaults to 'openstack'.
@@ -22,6 +26,10 @@
 # [*package_ensure*]
 #    (Optional) Ensure state for package.
 #    Defaults to 'present'
+#
+# [*notification_driver*]
+#   (optional) Driver or drivers to handle sending notifications.
+#   Defaults to 'messaging'
 #
 # [*rabbit_host*]
 #   (Optional) IP or hostname of the rabbit server.
@@ -163,6 +171,7 @@ class manila (
   $sql_idle_timeout            = '3600',
   $rpc_backend                 = 'manila.openstack.common.rpc.impl_kombu',
   $control_exchange            = 'openstack',
+  $notification_driver         = 'messaging',
   $rabbit_host                 = '127.0.0.1',
   $rabbit_port                 = 5672,
   $rabbit_hosts                = false,
@@ -202,6 +211,7 @@ class manila (
   $debug                       = false,
   $storage_availability_zone   = 'nova',
   $rootwrap_config             = '/etc/manila/rootwrap.conf',
+  $state_path                  = '/var/lib/manila',
   $lock_path                   = '/tmp/manila/manila_locks',
 ) {
 
@@ -265,56 +275,56 @@ class manila (
     }
 
     manila_config {
-      'DEFAULT/rabbit_password':     value => $rabbit_password, secret => true;
-      'DEFAULT/rabbit_userid':       value => $rabbit_userid;
-      'DEFAULT/rabbit_virtual_host': value => $rabbit_virtual_host;
-      'DEFAULT/rabbit_use_ssl':      value => $rabbit_use_ssl;
+      'oslo_messaging_rabbit/rabbit_password':     value => $rabbit_password, secret => true;
+      'oslo_messaging_rabbit/rabbit_userid':       value => $rabbit_userid;
+      'oslo_messaging_rabbit/rabbit_virtual_host': value => $rabbit_virtual_host;
+      'oslo_messaging_rabbit/rabbit_use_ssl':      value => $rabbit_use_ssl;
       'DEFAULT/control_exchange':    value => $control_exchange;
       'DEFAULT/amqp_durable_queues': value => $amqp_durable_queues;
     }
 
     if $rabbit_hosts {
-      manila_config { 'DEFAULT/rabbit_hosts':     value => join($rabbit_hosts, ',') }
-      manila_config { 'DEFAULT/rabbit_ha_queues': value => true }
+      manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => join($rabbit_hosts, ',') }
+      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
     } else {
-      manila_config { 'DEFAULT/rabbit_host':      value => $rabbit_host }
-      manila_config { 'DEFAULT/rabbit_port':      value => $rabbit_port }
-      manila_config { 'DEFAULT/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
-      manila_config { 'DEFAULT/rabbit_ha_queues': value => false }
+      manila_config { 'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host }
+      manila_config { 'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port }
+      manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
+      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
     }
 
     if $rabbit_use_ssl {
 
       if $kombu_ssl_ca_certs {
-        manila_config { 'DEFAULT/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
+        manila_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
       } else {
-        manila_config { 'DEFAULT/kombu_ssl_ca_certs': ensure => absent; }
+        manila_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent; }
       }
 
       if $kombu_ssl_certfile or $kombu_ssl_keyfile {
         manila_config {
-          'DEFAULT/kombu_ssl_certfile': value => $kombu_ssl_certfile;
-          'DEFAULT/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
+          'oslo_messaging_rabbit/kombu_ssl_certfile': value => $kombu_ssl_certfile;
+          'oslo_messaging_rabbit/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
         }
       } else {
         manila_config {
-          'DEFAULT/kombu_ssl_certfile': ensure => absent;
-          'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
+          'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
+          'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
         }
       }
 
       if $kombu_ssl_version {
-        manila_config { 'DEFAULT/kombu_ssl_version':  value => $kombu_ssl_version; }
+        manila_config { 'oslo_messaging_rabbit/kombu_ssl_version':  value => $kombu_ssl_version; }
       } else {
-        manila_config { 'DEFAULT/kombu_ssl_version':  ensure => absent; }
+        manila_config { 'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent; }
       }
 
     } else {
       manila_config {
-        'DEFAULT/kombu_ssl_ca_certs': ensure => absent;
-        'DEFAULT/kombu_ssl_certfile': ensure => absent;
-        'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
-        'DEFAULT/kombu_ssl_version':  ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent;
       }
     }
 
@@ -367,6 +377,8 @@ class manila (
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
     'DEFAULT/rootwrap_config':           value => $rootwrap_config;
+    'DEFAULT/notification_driver':       value => $notification_driver;
+    'DEFAULT/state_path':                value => $state_path;
     'DEFAULT/lock_path':                 value => $lock_path;
   }
 

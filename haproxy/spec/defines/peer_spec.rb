@@ -4,8 +4,9 @@ describe 'haproxy::peer' do
   let(:title) { 'dero' }
   let(:facts) do
     {
-      :ipaddress => '1.1.1.1',
-      :hostname  => 'dero',
+      :ipaddress      => '1.1.1.1',
+      :hostname       => 'dero',
+      :concat_basedir => '/foo',
     }
   end
 

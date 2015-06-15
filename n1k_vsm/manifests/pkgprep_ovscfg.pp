@@ -53,13 +53,13 @@ class n1k_vsm::pkgprep_ovscfg
         unless  => '/usr/bin/virsh net-info default | /bin/grep -c \'Autostart: .* no\'',
       }
 
-      package { 'Package_openvswitch':
+      package { 'Package_ovs':
         ensure => installed,
         name   => 'openvswitch',
       }
 
       # bring up OVS and perform interface configuration
-      service { 'Service_openvswitch':
+      service { 'Service_ovs':
         ensure => running,
         name   => 'openvswitch',
         enable => true,

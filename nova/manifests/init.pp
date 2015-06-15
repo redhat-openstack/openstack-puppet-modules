@@ -168,10 +168,6 @@
 #   (optional) Path to the rootwrap configuration file to use for running commands as root
 #   Defaults to '/etc/nova/rootwrap.conf'
 #
-# [*monitoring_notifications*]
-#   (optional) Whether or not to send system usage data notifications out on the message queue. Only valid for stable/essex.
-#   Defaults to false
-#
 # [*use_syslog*]
 #   (optional) Use syslog for logging
 #   Defaults to false
@@ -354,13 +350,13 @@ class nova(
     }
 
     if $nova_public_key {
-      if ! $nova_public_key[key] or ! $nova_public_key['type'] {
+      if ! $nova_public_key['key'] or ! $nova_public_key['type'] {
         fail('You must provide both a key type and key data.')
       }
 
       ssh_authorized_key { 'nova-migration-public-key':
         ensure  => present,
-        key     => $nova_public_key[key],
+        key     => $nova_public_key['key'],
         type    => $nova_public_key['type'],
         user    => 'nova',
         require => File['/var/lib/nova/.ssh'],
@@ -463,63 +459,63 @@ class nova(
   if $rpc_backend == 'nova.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
     # I may want to support exporting and collecting these
     nova_config {
-      'DEFAULT/rabbit_password':     value => $rabbit_password, secret => true;
-      'DEFAULT/rabbit_userid':       value => $rabbit_userid;
-      'DEFAULT/rabbit_virtual_host': value => $rabbit_virtual_host;
-      'DEFAULT/rabbit_use_ssl':      value => $rabbit_use_ssl;
+      'oslo_messaging_rabbit/rabbit_password':     value => $rabbit_password, secret => true;
+      'oslo_messaging_rabbit/rabbit_userid':       value => $rabbit_userid;
+      'oslo_messaging_rabbit/rabbit_virtual_host': value => $rabbit_virtual_host;
+      'oslo_messaging_rabbit/rabbit_use_ssl':      value => $rabbit_use_ssl;
       'DEFAULT/amqp_durable_queues': value => $amqp_durable_queues;
     }
 
     if $rabbit_use_ssl {
 
       if $kombu_ssl_ca_certs {
-        nova_config { 'DEFAULT/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
+        nova_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
       } else {
-        nova_config { 'DEFAULT/kombu_ssl_ca_certs': ensure => absent; }
+        nova_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent; }
       }
 
       if $kombu_ssl_certfile or $kombu_ssl_keyfile {
         nova_config {
-          'DEFAULT/kombu_ssl_certfile': value => $kombu_ssl_certfile;
-          'DEFAULT/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
+          'oslo_messaging_rabbit/kombu_ssl_certfile': value => $kombu_ssl_certfile;
+          'oslo_messaging_rabbit/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
         }
       } else {
         nova_config {
-          'DEFAULT/kombu_ssl_certfile': ensure => absent;
-          'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
+          'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
+          'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
         }
       }
 
       if $kombu_ssl_version {
-        nova_config { 'DEFAULT/kombu_ssl_version':  value => $kombu_ssl_version; }
+        nova_config { 'oslo_messaging_rabbit/kombu_ssl_version':  value => $kombu_ssl_version; }
       } else {
-        nova_config { 'DEFAULT/kombu_ssl_version':  ensure => absent; }
+        nova_config { 'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent; }
       }
 
     } else {
       nova_config {
-        'DEFAULT/kombu_ssl_ca_certs': ensure => absent;
-        'DEFAULT/kombu_ssl_certfile': ensure => absent;
-        'DEFAULT/kombu_ssl_keyfile':  ensure => absent;
-        'DEFAULT/kombu_ssl_version':  ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
+        'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent;
       }
     }
 
     if $rabbit_hosts {
-      nova_config { 'DEFAULT/rabbit_hosts':     value => join($rabbit_hosts, ',') }
+      nova_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => join($rabbit_hosts, ',') }
     } else {
-      nova_config { 'DEFAULT/rabbit_host':      value => $rabbit_host }
-      nova_config { 'DEFAULT/rabbit_port':      value => $rabbit_port }
-      nova_config { 'DEFAULT/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
+      nova_config { 'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host }
+      nova_config { 'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port }
+      nova_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
     }
     if $rabbit_ha_queues == undef {
       if $rabbit_hosts {
-        nova_config { 'DEFAULT/rabbit_ha_queues': value => true }
+        nova_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
       } else {
-        nova_config { 'DEFAULT/rabbit_ha_queues': value => false }
+        nova_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
       }
     } else {
-      nova_config { 'DEFAULT/rabbit_ha_queues': value => $rabbit_ha_queues }
+      nova_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
     }
   }
 
