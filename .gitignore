@@ -53,3 +53,6 @@ Puppetfile.lock
 
 # Ignore vagrant-generated files
 .vagrant
+
+# Beaker
+log/
