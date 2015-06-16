@@ -136,6 +136,7 @@ class galera::server (
     group   => 'root',
     content => template('galera/wsrep.cnf.erb'),
     notify  => Service['mysqld'],
+    require => Class['mysql::server::install'],
   }
 
   if $manage_service {
