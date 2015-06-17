@@ -5,7 +5,17 @@ describe 'cassandra class' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
       pp = <<-EOS
-        class { 'cassandra': manage_dsc_repo => true }
+        if $::osfamily == 'Debian' {
+          class { 'cassandra':
+            config_path       => '/etc/cassandra',
+            manage_dsc_repo   => true,
+            java_package_name => 'openjdk-7-jre-headless',
+          }
+        } else {
+          class { 'cassandra':
+            manage_dsc_repo   => true,
+          }
+        }
       EOS
 
       # Run it twice and test for idempotency
