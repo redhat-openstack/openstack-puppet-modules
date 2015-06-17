@@ -27,7 +27,9 @@ developed by msimonin [2].
 * Optionally insures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
-  from.
+  from (on RedHat).
+* Optionally configures an Apt repository to install the Cassandra packages
+  from (on Ubuntu).
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
 
 ### Beginning with cassandra
@@ -39,6 +41,19 @@ more realistic scenarios.
 ```puppet
 node 'example' {
   include '::cassandra'
+}
+```
+
+Please note that on Ubuntu, the path to the configuration file is different
+and also in our testing Java is not installed by default.  Therefore the
+minumum to get things working would be:
+
+```puppet
+node 'example' {
+  class { '::cassandra':
+    config_path       => '/etc/cassandra',
+    java_package_name => 'openjdk-7-jre-headless'
+  }
 }
 ```
 
@@ -79,7 +94,6 @@ node 'node2' {
 ### Class: cassandra
 
 Currently this is the only class within this module.
-
 
 #### Parameters
 
@@ -417,12 +431,15 @@ running.
 It also uses the yumrepo type on the RedHat family of operating systems to
 (optionally) install the *DataStax Repo for Apache Cassandra*.
 
+On Ubuntu, the apt class is optionally utilised.
+
 ## Limitations
 
 This module currently has somewhat limited functionality.  More parameters and
 configuration parameters will be added later.
 
-Tested on the RedHat family versions 6 and 7, Puppet (CE) 3.7.5 and DSC 2.1.5.
+Tested on the RedHat family versions 6 and 7, and Ubuntu 14.04, Puppet (CE)
+3.7.5 and DSC 2.1.5.
 
 ## External Links
 
