@@ -45,5 +45,11 @@
                 "7"
             ]
         }
+        {
+            "operatingsystem": "Ubuntu",
+            "operatingsystemrelease": [
+                "14.04",
+            ]
+        }
     ]
 }
