@@ -10,3 +10,4 @@ spec/fixtures/
 *.swp
 .vagrant/
 vendor/
+log/
