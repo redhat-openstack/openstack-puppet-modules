@@ -63,8 +63,6 @@ class cassandra (
     manage_dsc_repo              => $manage_dsc_repo,
   }
 
-  $config_file = "${config_path}/cassandra.yaml"
-
   # A hack for long arguments
   $clt_enc_keystore_pass = $client_encryption_keystore_password
   $svr_enc_keystore_pass = $server_encryption_keystore_password
@@ -84,6 +82,7 @@ class cassandra (
     concurrent_counter_writes             => $concurrent_counter_writes,
     concurrent_reads                      => $concurrent_reads,
     concurrent_writes                     => $concurrent_writes,
+    config_path                           => $config_path,
     data_file_directories                 => $data_file_directories,
     disk_failure_policy                   => $disk_failure_policy,
     endpoint_snitch                       => $endpoint_snitch,
