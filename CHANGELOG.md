@@ -1,3 +1,11 @@
+##2015-06-17 - Release 0.2.2
+### Summary
+A non-functional change to change the following:
+
+* Split the single manifest into multiple files.
+* Implement automated testing.
+* Test on additional operating systems.
+
 ##2015-05-28 - Release 0.2.1
 ### Summary
 A non-functional change to fix puppet-lint problems identified by Puppet
