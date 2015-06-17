@@ -32,17 +32,19 @@ class cassandra::install (
         include apt::update
 
         apt::key {'datastaxkey':
-          key        => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
-          key_source => 'http://debian.datastax.com/debian/repo_key',
-          before     => Apt::Source['datastax']
+          id     => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+          source => 'http://debian.datastax.com/debian/repo_key',
+          before => Apt::Source['datastax']
         }
 
         apt::source {'datastax':
-          location    => 'http://debian.datastax.com/community',
-          comment     => 'DataStax Repo for Apache Cassandra',
-          release     => 'stable',
-          include_src => false,
-          notify      => Exec['update-cassandra-repos']
+          location => 'http://debian.datastax.com/community',
+          comment  => 'DataStax Repo for Apache Cassandra',
+          release  => 'stable',
+          include  => {
+            'src' => false
+          },
+          notify   => Exec['update-cassandra-repos']
         }
 
         # Required to wrap apt_update
