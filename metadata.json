@@ -10,12 +10,7 @@
     "tags": [
         "cassandra"
     ],
-    "dependencies": [
-        {
-            "name": "puppetlabs-stdlib",
-            "version_requirement": ">= 1.0.0"
-        }
-    ],
+    "dependencies": [],
     "operatingsystem_support": [
         {
             "operatingsystem": "CentOS",
