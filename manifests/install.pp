@@ -42,14 +42,15 @@ class cassandra::install (
           comment     => 'DataStax Repo for Apache Cassandra',
           release     => 'stable',
           include_src => false,
-          before      => Exec['update-cassandra-repos']
+          notify      => Exec['update-cassandra-repos']
         }
 
         # Required to wrap apt_update
         exec {'update-cassandra-repos':
-          command => '/bin/true',
-          require => Exec['apt_update'],
-          before  => Package[ $cassandra_package_name ]
+          refreshonly => true,
+          command     => '/bin/true',
+          require     => Exec['apt_update'],
+          before      => Package[ $cassandra_package_name ]
         }
       }
     }
