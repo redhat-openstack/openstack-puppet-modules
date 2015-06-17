@@ -26,6 +26,25 @@ class cassandra::install (
         }
       }
     }
+    'Debian': {
+      if $manage_dsc_repo == true {
+        include apt
+        include apt::update
+
+        apt::key {'datastaxkey':
+          key        => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+          key_source => 'http://debian.datastax.com/debian/repo_key',
+          before     => Apt::Source['datastax']
+        }
+
+        apt::source {'datastax':
+          location    => 'http://debian.datastax.com/community',
+          comment     => 'DataStax Repo for Apache Cassandra',
+          release     => 'stable',
+          include_src => false
+        }
+      }
+    }
     default: {
       fail("OS family ${::osfamily} not supported")
     }
