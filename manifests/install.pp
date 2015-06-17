@@ -41,7 +41,14 @@ class cassandra::install (
           location    => 'http://debian.datastax.com/community',
           comment     => 'DataStax Repo for Apache Cassandra',
           release     => 'stable',
-          include_src => false
+          include_src => false,
+          before      => Exec['update-cassandra-repos'],
+        }
+
+        # Required to wrap apt_update
+        exec {'update-cassandra-repos':
+          command => '/bin/true',
+          require => Exec['apt_update']
         }
       }
     }
