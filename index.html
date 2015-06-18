@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Cassandra by locp</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Cassandra</h1>
+        <h2>A Puppet module to install and manage Apache Cassandra.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/locp/cassandra/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/locp/cassandra/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/locp/cassandra" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="cassandra" class="anchor" href="#cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>cassandra</h1>
+
+<h4>
+<a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of Contents</h4>
+
+<ol>
+<li><a href="#overview">Overview</a></li>
+<li>
+<a href="#setup">Setup - The basics of getting started with cassandra</a>
+
+<ul>
+<li><a href="#what-cassandra-affects">What cassandra affects</a></li>
+<li><a href="#beginning-with-cassandra">Beginning with cassandra</a></li>
+</ul>
+</li>
+<li><a href="#usage">Usage - Configuration options and additional functionality</a></li>
+<li><a href="#reference">Reference - An under-the-hood peek at what the module is doing and how</a></li>
+<li><a href="#limitations">Limitations - OS compatibility, etc.</a></li>
+<li><a href="#external-links">External Links</a></li>
+</ol>
+
+<h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>This module installs and configures Apache Cassandra.  The installation steps
+were taken from the installation documentation prepared by DataStax [1] and
+the configuration parameters are the same as those for the Puppet module
+developed by msimonin [2].</p>
+
+<h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
+
+<h3>
+<a id="what-cassandra-affects" class="anchor" href="#what-cassandra-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What cassandra affects</h3>
+
+<ul>
+<li>Installs the Cassandra package (default <strong>dsc21</strong>).</li>
+<li>Configures settings in <em>${config_path}/cassandra.yaml</em>.</li>
+<li>Optionally insures that the Cassandra service is enabled and running.</li>
+<li>Optionally installs the Cassandra support tools (e.g. cassandra21-tools).</li>
+<li>Optionally configures a Yum repository to install the Cassandra packages
+from (on RedHat).</li>
+<li>Optionally configures an Apt repository to install the Cassandra packages
+from (on Ubuntu).</li>
+<li>Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).</li>
+</ul>
+
+<h3>
+<a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
+
+<p>This most basic example would attempt to install the default Cassandra package
+(assuming there is an available repository).  See the following section for
+more realistic scenarios.</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">include</span> '::cassandra'
+}</pre></div>
+
+<p>Please note that on Ubuntu, the path to the configuration file is different
+and also in our testing Java is not installed by default.  Therefore the
+minumum to get things working would be:</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">class</span> { <span class="pl-en">'::cassandra'</span>:
+    <span class="pl-c1">config_path</span>       =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/cassandra<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">java_package_name</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>openjdk-7-jre-headless<span class="pl-pds">'</span></span>
+  }
+}</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To install Cassandra in a two node cluster called 'Foobar Cluster' where
+node1 (192.168.42.1) is the seed and a second node called node2
+192.168.42.2 is also to be a member, do something similar to this:</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>node1<span class="pl-pds">'</span></span> {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>               =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>             =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">seeds</span>                      =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">cassandra_package_name</span>     =&gt; <span class="pl-s"><span class="pl-pds">'</span>dsc21<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">cassandra_opt_package_name</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>cassandra21-tools<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">java_package_name</span>          =&gt; <span class="pl-s"><span class="pl-pds">'</span>java-1.7.0-openjdk<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">java_package_ensure</span>        =&gt; <span class="pl-s"><span class="pl-pds">'</span>latest<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">manage_dsc_repo</span>            =&gt; true
+  }
+}
+
+node <span class="pl-s"><span class="pl-pds">'</span>node2<span class="pl-pds">'</span></span> {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>               =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>             =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">seeds</span>                      =&gt; <span class="pl-s"><span class="pl-pds">'</span>192.168.42.1<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">cassandra_package_name</span>     =&gt; <span class="pl-s"><span class="pl-pds">'</span>dsc21<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">cassandra_opt_package_name</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>cassandra21-tools<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">java_package_name</span>          =&gt; <span class="pl-s"><span class="pl-pds">'</span>java-1.7.0-openjdk<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">java_package_ensure</span>        =&gt; <span class="pl-s"><span class="pl-pds">'</span>latest<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">manage_dsc_repo</span>            =&gt; true
+  }
+}</pre></div>
+
+<h3>
+<a id="class-cassandra" class="anchor" href="#class-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra</h3>
+
+<p>Currently this is the only class within this module.</p>
+
+<h4>
+<a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="authenticator" class="anchor" href="#authenticator" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authenticator</code>
+</h5>
+
+<p>Authentication backend, implementing IAuthenticator; used to identify users
+Out of the box, Cassandra provides
+org.apache.cassandra.auth.{AllowAllAuthenticator, PasswordAuthenticator}.</p>
+
+<ul>
+<li>AllowAllAuthenticator performs no checks - set it to disable authentication.</li>
+<li>PasswordAuthenticator relies on username/password pairs to authenticate
+users. It keeps usernames and hashed passwords in system_auth.credentials
+table. Please increase system_auth keyspace replication factor if you use this
+authenticator.</li>
+</ul>
+
+<p>Default: <strong>AllowAllAuthenticator</strong></p>
+
+<h5>
+<a id="authorizer" class="anchor" href="#authorizer" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authorizer</code>
+</h5>
+
+<p>Authorization backend, implementing IAuthorizer; used to limit access/provide
+permissions Out of the box, Cassandra provides
+org.apache.cassandra.auth.{AllowAllAuthorizer, CassandraAuthorizer}.</p>
+
+<ul>
+<li>AllowAllAuthorizer allows any action to any user - set it to disable
+authorization.</li>
+<li>CassandraAuthorizer stores permissions in system_auth.permissions table.
+Please increase system_auth keyspace replication factor if you use this
+authorizer.</li>
+</ul>
+
+<p>Default: <strong>AllowAllAuthorizer</strong></p>
+
+<h5>
+<a id="auto_snapshot" class="anchor" href="#auto_snapshot" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>auto_snapshot</code>
+</h5>
+
+<p>Whether or not a snapshot is taken of the data before keyspace truncation
+or dropping of column families. The STRONGLY advised default of true 
+should be used to provide data safety. If you set this flag to false, you will
+lose data on truncation or drop (default <strong>true</strong>).</p>
+
+<h5>
+<a id="cassandra_opt_package_ensure" class="anchor" href="#cassandra_opt_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_opt_package_ensure</code>
+</h5>
+
+<p>The status of the package specified in <strong>cassandra_opt_package_name</strong>.  Can be
+<em>present</em>, <em>latest</em> or a specific version number.  If
+<em>cassandra_opt_package_name</em> is <em>undef</em>, this option has no effect (default
+<strong>present</strong>).</p>
+
+<h5>
+<a id="cassandra_opt_package_name" class="anchor" href="#cassandra_opt_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_opt_package_name</code>
+</h5>
+
+<p>Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
+executed if the default value of <strong>undef</strong> is unchanged.</p>
+
+<h5>
+<a id="cassandra_package_ensure" class="anchor" href="#cassandra_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_package_ensure</code>
+</h5>
+
+<p>The status of the package specified in <strong>cassandra_package_name</strong>.  Can be
+<em>present</em>, <em>latest</em> or a specific version number (default <strong>present</strong>).</p>
+
+<h5>
+<a id="cassandra_package_name" class="anchor" href="#cassandra_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_package_name</code>
+</h5>
+
+<p>The name of the Cassandra package.  Must be installable from a repository
+(default <strong>dsc21</strong>).</p>
+
+<h5>
+<a id="cassandra_yaml_tmpl" class="anchor" href="#cassandra_yaml_tmpl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_yaml_tmpl</code>
+</h5>
+
+<p>The path to the Puppet template for the Cassandra configuration file.  This
+allows the user to supply their own customized template.
+(default <strong>cassandra/cassandra.yaml.erb</strong>).</p>
+
+<h5>
+<a id="client_encryption_enabled" class="anchor" href="#client_encryption_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_enabled</code>
+</h5>
+
+<p>Enable or disable client/server encryption (default <strong>false</strong>).</p>
+
+<h5>
+<a id="client_encryption_keystore" class="anchor" href="#client_encryption_keystore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_keystore</code>
+</h5>
+
+<p>Keystore for client_encryption (default <strong>conf/.keystore</strong>).</p>
+
+<h5>
+<a id="client_encryption_keystore_password" class="anchor" href="#client_encryption_keystore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_keystore_password</code>
+</h5>
+
+<p>Keystore password for client encryption (default <strong>cassandra</strong>).</p>
+
+<h5>
+<a id="cluster_name" class="anchor" href="#cluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cluster_name</code>
+</h5>
+
+<p>The name of the cluster. This is mainly used to prevent machines in one logical
+cluster from joining another (default <strong>Test Cluster</strong>).</p>
+
+<h5>
+<a id="commitlog_directory" class="anchor" href="#commitlog_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_directory</code>
+</h5>
+
+<p>Commit log.  when running on magnetic HDD, this should be a separate spindle
+than the data directories (default <strong>/var/lib/cassandra/commitlog</strong>).</p>
+
+<h5>
+<a id="concurrent_counter_writes" class="anchor" href="#concurrent_counter_writes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_counter_writes</code>
+</h5>
+
+<p>For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.</p>
+
+<p>On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default <strong>32</strong>).</p>
+
+<h5>
+<a id="concurrent_reads" class="anchor" href="#concurrent_reads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_reads</code>
+</h5>
+
+<p>For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.</p>
+
+<p>On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default <strong>32</strong>).</p>
+
+<h5>
+<a id="concurrent_writes" class="anchor" href="#concurrent_writes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_writes</code>
+</h5>
+
+<p>For workloads with more data than can fit in memory, Cassandra's bottleneck
+will be reads that need to fetch data from disk. "concurrent_reads"
+should be set to (16 * number_of_drives) in order to allow the operations to
+enqueue low enough in the stack that the OS and drives can reorder them. Same
+applies to "concurrent_counter_writes", since counter writes read the current
+values before incrementing and writing them back.</p>
+
+<p>On the other hand, since writes are almost never IO bound, the ideal
+number of "concurrent_writes" is dependent on the number of cores in
+your system; (8 * number_of_cores) is a good rule of thumb (default <strong>32</strong>).</p>
+
+<h5>
+<a id="config_path" class="anchor" href="#config_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_path</code>
+</h5>
+
+<p>The path to the cassandra configuration file (default
+<strong>/etc/cassandra/default.conf</strong>).</p>
+
+<h5>
+<a id="data_file_directories" class="anchor" href="#data_file_directories" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>data_file_directories</code>
+</h5>
+
+<p>Directories where Cassandra should store data on disk.  Cassandra
+will spread data evenly across them, subject to the granularity of
+the configured compaction strategy (default <strong>['/var/lib/cassandra/data']</strong>).</p>
+
+<h5>
+<a id="disk_failure_policy" class="anchor" href="#disk_failure_policy" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>disk_failure_policy</code>
+</h5>
+
+<p>Policy for data disk failures:</p>
+
+<ul>
+<li>die: shut down gossip and Thrift and kill the JVM for any fs errors or
+single-sstable errors, so the node can be replaced.</li>
+<li>stop_paranoid: shut down gossip and Thrift even for single-sstable errors.</li>
+<li>stop: shut down gossip and Thrift, leaving the node effectively dead, but
+can still be inspected via JMX.</li>
+<li>best_effort: stop using the failed disk and respond to requests based on
+remaining available sstables.  This means you WILL see obsolete
+data at CL.ONE!</li>
+<li>ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra.</li>
+</ul>
+
+<p>Default: <strong>stop</strong></p>
+
+<h5>
+<a id="endpoint_snitch" class="anchor" href="#endpoint_snitch" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>endpoint_snitch</code>
+</h5>
+
+<p>Set this to a class that implements IEndpointSnitch.  The snitch has two
+functions:</p>
+
+<ul>
+<li>it teaches Cassandra enough about your network topology to route
+requests efficiently.</li>
+<li>it allows Cassandra to spread replicas around your cluster to avoid
+correlated failures. It does this by grouping machines into
+"datacenters" and "racks."  Cassandra will do its best not to have
+more than one replica on the same "rack" (which may not actually
+be a physical location).</li>
+</ul>
+
+<p>IF YOU CHANGE THE SNITCH AFTER DATA IS INSERTED INTO THE CLUSTER,
+YOU MUST RUN A FULL REPAIR, SINCE THE SNITCH AFFECTS WHERE REPLICAS
+ARE PLACED.</p>
+
+<p>Out of the box, Cassandra provides:</p>
+
+<ul>
+<li>SimpleSnitch: Treats Strategy order as proximity. This can improve cache
+locality when disabling read repair.  Only appropriate for
+single-datacenter deployments.</li>
+<li>GossipingPropertyFileSnitch: This should be your go-to snitch for production
+use.  The rack and datacenter for the local node are defined in
+cassandra-rackdc.properties and propagated to other nodes via
+gossip.  If cassandra-topology.properties exists, it is used as a
+fallback, allowing migration from the PropertyFileSnitch.</li>
+<li>PropertyFileSnitch: Proximity is determined by rack and data center, which are
+explicitly configured in cassandra-topology.properties.</li>
+<li>Ec2Snitch: Appropriate for EC2 deployments in a single Region. Loads Region
+and Availability Zone information from the EC2 API. The Region is
+treated as the datacenter, and the Availability Zone as the rack.
+Only private IPs are used, so this will not work across multiple Regions.</li>
+<li>Ec2MultiRegionSnitch: Uses public IPs as broadcast_address to allow
+cross-region connectivity.  (Thus, you should set seed addresses to the public
+IP as well.) You will need to open the storage_port or
+ssl_storage_port on the public IP firewall.  (For intra-Region
+traffic, Cassandra will switch to the private IP after
+establishing a connection.)</li>
+<li>RackInferringSnitch: Proximity is determined by rack and data center, which
+are assumed to correspond to the 3rd and 2nd octet of each node's IP
+address, respectively.  Unless this happens to match your
+deployment conventions, this is best used as an example of
+writing a custom Snitch class and is provided in that spirit.</li>
+</ul>
+
+<p>You can use a custom Snitch by setting this to the full class name
+of the snitch, which will be assumed to be on your classpath.</p>
+
+<p>Default: <strong>SimpleSnitch</strong></p>
+
+<h5>
+<a id="hinted_handoff_enabled" class="anchor" href="#hinted_handoff_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hinted_handoff_enabled</code>
+</h5>
+
+<p>See <a href="http://wiki.apache.org/cassandra/HintedHandoff">http://wiki.apache.org/cassandra/HintedHandoff</a> May either be "true" or
+"false" to enable globally, or contain a list of data centers to enable
+per-datacenter (e.g. 'DC1,DC2').  Defaults to <strong>'true'</strong>.</p>
+
+<h5>
+<a id="incremental_backups" class="anchor" href="#incremental_backups" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>incremental_backups</code>
+</h5>
+
+<p>Set to true to have Cassandra create a hard link to each sstable
+flushed or streamed locally in a backups/ subdirectory of the
+keyspace data.  Removing these links is the operator's
+responsibility (default <strong>false</strong>).</p>
+
+<h5>
+<a id="internode_compression" class="anchor" href="#internode_compression" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_compression</code>
+</h5>
+
+<p>Controls whether traffic between nodes is compressed. Can be:</p>
+
+<ul>
+<li>all  - all traffic is compressed</li>
+<li>dc   - traffic between different datacenters is compressed</li>
+<li>none - nothing is compressed.</li>
+</ul>
+
+<p>Default <strong>all</strong></p>
+
+<h5>
+<a id="java_package_ensure" class="anchor" href="#java_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>java_package_ensure</code>
+</h5>
+
+<p>The status of the package specified in <strong>java_package_name</strong>.  Can be
+<em>present</em>, <em>latest</em> or a specific version number.  If
+<em>java_package_name</em> is <em>undef</em>, this option has no effect (default
+<strong>present</strong>).</p>
+
+<h5>
+<a id="java_package_name" class="anchor" href="#java_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>java_package_name</code>
+</h5>
+
+<p>Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
+executed if the default value of <strong>undef</strong> is unchanged.</p>
+
+<h5>
+<a id="listen_address" class="anchor" href="#listen_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>listen_address</code>
+</h5>
+
+<p>Address or interface to bind to and tell other Cassandra nodes to connect to
+(default <strong>localhost</strong>).</p>
+
+<h5>
+<a id="manage_dsc_repo" class="anchor" href="#manage_dsc_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_dsc_repo</code>
+</h5>
+
+<p>If set to true then a repository will be setup so that packages can be
+downloaded from the DataStax community edition (default <strong>false</strong>).</p>
+
+<h5>
+<a id="manage_service" class="anchor" href="#manage_service" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_service</code>
+</h5>
+
+<p>If set to true then the module will ensure the service is enabled and running.
+It would also reload/restart the service if the Cassandra configuration was
+changed.  It is possible that this might not be the desired behaviour and the
+user would prefer to control the service themselves.  If so, set this option
+to false (default <strong>true</strong>).</p>
+
+<h5>
+<a id="native_transport_port" class="anchor" href="#native_transport_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_port</code>
+</h5>
+
+<p>Port for the CQL native transport to listen for clients on
+For security reasons, you should not expose this port to the internet.
+Firewall it if needed (default <strong>9042</strong>).</p>
+
+<h5>
+<a id="num_tokens" class="anchor" href="#num_tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>num_tokens</code>
+</h5>
+
+<p>This defines the number of tokens randomly assigned to this node on the ring
+The more tokens, relative to other nodes, the larger the proportion of data
+that this node will store. You probably want all nodes to have the same number
+of tokens assuming they have equal hardware capability.</p>
+
+<h5>
+<a id="partitioner" class="anchor" href="#partitioner" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>partitioner</code>
+</h5>
+
+<p>The partitioner is responsible for distributing groups of rows (by
+partition key) across nodes in the cluster.  You should leave this
+alone for new clusters.  The partitioner can NOT be changed without
+reloading all data, so when upgrading you should set this to the
+same partitioner you were already using.</p>
+
+<p>Besides Murmur3Partitioner, partitioners included for backwards
+compatibility include RandomPartitioner, ByteOrderedPartitioner, and
+OrderPreservingPartitioner (default
+<strong>org.apache.cassandra.dht.Murmur3Partitioner</strong>)</p>
+
+<h5>
+<a id="rpc_address" class="anchor" href="#rpc_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_address</code>
+</h5>
+
+<p>The address to bind the Thrift RPC service and native transport server to
+(default <strong>localhost</strong>).</p>
+
+<h5>
+<a id="rpc_port" class="anchor" href="#rpc_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_port</code>
+</h5>
+
+<p>Port for Thrift to listen for clients on (default <strong>9160</strong>).</p>
+
+<h5>
+<a id="rpc_server_type" class="anchor" href="#rpc_server_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_server_type</code>
+</h5>
+
+<p>Cassandra provides two out-of-the-box options for the RPC Server:</p>
+
+<ul>
+<li>One thread per thrift connection. For a very large number of clients,
+memory will be your limiting factor. On a 64 bit JVM, 180KB is the minimum
+stack size per thread, and that will correspond to your use of virtual memory
+(but physical memory may be limited depending on use of stack space).</li>
+<li>Stands for "half synchronous, half asynchronous." All thrift clients
+are handled asynchronously using a small number of threads that does
+not vary with the amount of thrift clients (and thus scales well to many
+clients).  The rpc requests are still synchronous (one thread per active
+request). If hsha is selected then it is essential that rpc_max_threads
+is changed from the default value of unlimited.</li>
+</ul>
+
+<p>The default is sync because on Windows hsha is about 30% slower.  On Linux,
+sync/hsha performance is about the same, with hsha of course using less memory.</p>
+
+<p>Alternatively, you can provide your own RPC server by providing the
+fully-qualified class name of an o.a.c.t.TServerFactory that can create an
+instance of it.</p>
+
+<h5>
+<a id="saved_caches_directory" class="anchor" href="#saved_caches_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>saved_caches_directory</code>
+</h5>
+
+<p>Default: <strong>/var/lib/cassandra/saved_caches</strong></p>
+
+<h5>
+<a id="seeds" class="anchor" href="#seeds" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>seeds</code>
+</h5>
+
+<p>Addresses of hosts that are deemed contact points.  Cassandra nodes use this
+list of hosts to find each other and learn the topology of the ring.  You must
+change this if you are running multiple nodes!  Seeds is actually a
+comma-delimited list of addresses (default <strong>127.0.0.1</strong>).</p>
+
+<h5>
+<a id="server_encryption_internode" class="anchor" href="#server_encryption_internode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_internode</code>
+</h5>
+
+<p>Enable or disable inter-node encryption (default <strong>none</strong>).</p>
+
+<h5>
+<a id="server_encryption_keystore" class="anchor" href="#server_encryption_keystore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_keystore</code>
+</h5>
+
+<p>Default: <strong>conf/.keystore</strong></p>
+
+<h5>
+<a id="server_encryption_keystore_password" class="anchor" href="#server_encryption_keystore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_keystore_password</code>
+</h5>
+
+<p>Default: <strong>cassandra</strong></p>
+
+<h5>
+<a id="server_encryption_truststore" class="anchor" href="#server_encryption_truststore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_truststore</code>
+</h5>
+
+<p>Default: <strong>conf/.truststore</strong></p>
+
+<h5>
+<a id="server_encryption_truststore_password" class="anchor" href="#server_encryption_truststore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_truststore_password</code>
+</h5>
+
+<p>Default: <strong>cassandra</strong></p>
+
+<h5>
+<a id="service_name" class="anchor" href="#service_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
+</h5>
+
+<p>The name of the service that runs the Cassandra software (default
+<strong>cassandra</strong>).</p>
+
+<h5>
+<a id="snapshot_before_compaction" class="anchor" href="#snapshot_before_compaction" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>snapshot_before_compaction</code>
+</h5>
+
+<p>Whether or not to take a snapshot before each compaction.  Be
+careful using this option, since Cassandra won't clean up the
+snapshots for you.  Mostly useful if you're paranoid when there
+is a data format change (default <strong>false</strong>).</p>
+
+<h5>
+<a id="start_native_transport" class="anchor" href="#start_native_transport" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_native_transport</code>
+</h5>
+
+<p>Whether to start the native transport server.  Please note that the address on
+which the native transport is bound is the same as the rpc_address. The port
+however is different and specified below (default <strong>true</strong>).</p>
+
+<h5>
+<a id="start_rpc" class="anchor" href="#start_rpc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_rpc</code>
+</h5>
+
+<p>Whether to start the thrift rpc server (default <strong>true</strong>).</p>
+
+<h5>
+<a id="storage_port" class="anchor" href="#storage_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_port</code>
+</h5>
+
+<p>TCP port, for commands and data for security reasons, you should not expose this
+port to the internet.  Firewall it if needed (default <strong>7000</strong>).</p>
+
+<h2>
+<a id="reference" class="anchor" href="#reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference</h2>
+
+<p>This module uses the package type to install the Cassandra package and the
+optional Cassandra tools and Java package.</p>
+
+<p>It uses the service type to enable the cassandra service and ensure it is
+running.</p>
+
+<p>It also uses the yumrepo type on the RedHat family of operating systems to
+(optionally) install the <em>DataStax Repo for Apache Cassandra</em>.</p>
+
+<p>On Ubuntu, the apt class is optionally utilised.</p>
+
+<h2>
+<a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h2>
+
+<p>This module currently has somewhat limited functionality.  More parameters and
+configuration parameters will be added later.</p>
+
+<p>Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
+3.7.5 and DSC 2.1.5.</p>
+
+<h2>
+<a id="external-links" class="anchor" href="#external-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>External Links</h2>
+
+<p>[1] - <em>Installing DataStax Community on RHEL-based systems</em>, available at
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html</a>, accessed 25th May 2015.</p>
+
+<p>[2] - <em>msimonin/cassandra: Puppet module to install Apache Cassandra from
+the DataStax distribution. Forked from gini/cassandra</em>, available at
+<a href="https://forge.puppetlabs.com/msimonin/cassandra">https://forge.puppetlabs.com/msimonin/cassandra</a>, acessed 17th March 2015.</p>
+      </section>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-6773548-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
