@@ -9,7 +9,8 @@
     "issues_url": "https://github.com/locp/cassandra/issues",
     "tags": [
         "cassandra",
-        "datastax"
+        "datastax",
+        "datastax-agent"
     ],
     "dependencies": [
         {
