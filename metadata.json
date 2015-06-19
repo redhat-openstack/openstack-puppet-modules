@@ -2,7 +2,7 @@
     "name": "locp-cassandra",
     "version": "0.2.2",
     "author": "locp",
-    "summary": "Install and manage Apache Cassandra.",
+    "summary": "Install and manage Cassandra and DataStax Agent.",
     "license": "Apache-2.0",
     "source": "https://github.com/locp/cassandra",
     "project_page": "https://github.com/locp/cassandra",
