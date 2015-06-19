@@ -95,7 +95,7 @@ node 'node2' {
 
 ### Class: cassandra
 
-Currently this is the only class within this module.
+Currently this is the only public class within this module.
 
 #### Parameters
 
@@ -441,6 +441,14 @@ Whether to start the thrift rpc server (default **true**).
 #####`storage_port`
 TCP port, for commands and data for security reasons, you should not expose this
 port to the internet.  Firewall it if needed (default **7000**).
+
+### Class: cassandra::config
+
+A private class.
+
+### Class: cassandra::install
+
+A private class.
 
 ## Reference
 
