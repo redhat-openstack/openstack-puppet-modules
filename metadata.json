@@ -8,16 +8,13 @@
     "project_page": "https://github.com/locp/cassandra",
     "issues_url": "https://github.com/locp/cassandra/issues",
     "tags": [
-        "cassandra"
+        "cassandra",
+        "datastax"
     ],
     "dependencies": [
         {
             "name": "puppetlabs-apt",
             "version_requirement": ">= 2.1.0  <3.0.0"
-        },
-        {
-            "name": "puppetlabs-stdlib",
-            "version_requirement": ">= 4.5.0 < 5.0.0"
         }
     ],
     "operatingsystem_support": [
