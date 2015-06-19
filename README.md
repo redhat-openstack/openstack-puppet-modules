@@ -216,6 +216,15 @@ Directories where Cassandra should store data on disk.  Cassandra
 will spread data evenly across them, subject to the granularity of
 the configured compaction strategy (default **['/var/lib/cassandra/data']**).
 
+#####`datastax_agent_ensure`
+If the value is anything other than undef, it is passed to a package reference
+(default **undef**).
+
+#####`datastax_agent_package`
+The name of the datastax-agent package.  This is ignored if
+datastax_agent_ensure is set to undef.
+(default **datastax-agent**).
+
 #####`disk_failure_policy`
 Policy for data disk failures:
 
