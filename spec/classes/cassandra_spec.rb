@@ -76,12 +76,13 @@ describe 'cassandra' do
 
     let :params do
       {
-        :datastax_agent_ensure => 'present'
+        :datastax_agent_ensure  => 'present',
+        :datastax_agent_package => 'datastax-agent-foobar'
       }
     end
 
     it {
-      should contain_package('datastax-agent')
+      should contain_package('datastax-agent-foobar')
     }
   end
 
