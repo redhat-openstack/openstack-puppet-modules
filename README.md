@@ -221,9 +221,19 @@ the configured compaction strategy (default **['/var/lib/cassandra/data']**).
 If the value is anything other than undef, it is passed to a package reference
 (default **undef**).
 
-#####`datastax_agent_package`
+#####`datastax_agent_manage_service`
+If datastax_agent_ensure is anything other than undef, absent or purged and
+this variable is true then the service is enabled to run
+(default **true**).
+
+#####`datastax_agent_package_name`
 The name of the datastax-agent package.  This is ignored if
 datastax_agent_ensure is set to undef.
+(default **datastax-agent**).
+
+#####`datastax_agent_service_name`
+The name of the datastax-agent service.  This is ignored if
+the agent is not installed or datastax_agent_manage_service is false
 (default **datastax-agent**).
 
 #####`disk_failure_policy`
@@ -437,8 +447,8 @@ port to the internet.  Firewall it if needed (default **7000**).
 This module uses the package type to install the Cassandra package, the
 optional Cassandra tools, the DataStax agent and Java package.
 
-It uses the service type to enable the cassandra service and ensure it is
-running.
+It optionally uses the service type to enable the cassandra service and/or the
+DataStax agent and ensure that they are running.
 
 It also uses the yumrepo type on the RedHat family of operating systems to
 (optionally) install the *DataStax Repo for Apache Cassandra*.
