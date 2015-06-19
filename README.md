@@ -9,7 +9,8 @@
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
-6. [External Links](#external-links)
+6. [Contributers](#contibuters)
+7. [External Links](#external-links)
 
 ## Overview
 
@@ -149,7 +150,8 @@ The name of the Cassandra package.  Must be installable from a repository
 
 #####`cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
-allows the user to supply their own customized template.
+allows the user to supply their own customized template.  A Cassandra 1.X
+compatible template called cassandra1.yaml.erb has been provided by @Spredzy
 (default **cassandra/cassandra.yaml.erb**).
 
 #####`client_encryption_enabled`
@@ -440,6 +442,11 @@ configuration parameters will be added later.
 
 Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
 3.7.5 and DSC 2.1.5.
+
+## Contributers
+
+Yanis Guenane (GitHub @Spredzy) provided the Cassandra 1.x compatible
+template (see #11).
 
 ## External Links
 
