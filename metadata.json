@@ -8,7 +8,8 @@
     "project_page": "https://github.com/locp/cassandra",
     "issues_url": "https://github.com/locp/cassandra/issues",
     "tags": [
-        "cassandra"
+        "cassandra",
+        "datastax"
     ],
     "dependencies": [
         {
