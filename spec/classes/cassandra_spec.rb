@@ -67,6 +67,24 @@ describe 'cassandra' do
     }
   end
 
+  context 'On a Supported OS with datastax_agent_ensure set to present' do
+    let :facts do
+      {
+        :osfamily => 'RedHat',
+      }
+    end
+
+    let :params do
+      {
+        :datastax_agent_ensure => 'present'
+      }
+    end
+
+    it {
+      should contain_package('datastax-agent')
+    }
+  end
+
   context 'On an unknown OS with defaults for all parameters' do
     let :facts do
       {

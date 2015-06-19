@@ -7,13 +7,15 @@ describe 'cassandra class' do
       pp = <<-EOS
         if $::osfamily == 'Debian' {
           class { 'cassandra':
-            config_path       => '/etc/cassandra',
-            manage_dsc_repo   => true,
-            java_package_name => 'openjdk-7-jre-headless',
+            config_path           => '/etc/cassandra',
+            datastax_agent_ensure => 'present',
+            manage_dsc_repo       => true,
+            java_package_name     => 'openjdk-7-jre-headless',
           }
         } else {
           class { 'cassandra':
-            manage_dsc_repo   => true,
+            datastax_agent_ensure => 'present',
+            manage_dsc_repo       => true,
           }
         }
       EOS

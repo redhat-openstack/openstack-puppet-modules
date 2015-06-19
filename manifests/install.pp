@@ -4,13 +4,15 @@
 # does as part of the module and how to use it.
 #
 class cassandra::install (
-  $cassandra_opt_package_name   = undef,
-  $cassandra_opt_package_ensure = 'present',
-  $cassandra_package_ensure     = 'present',
-  $cassandra_package_name       = 'dsc21',
-  $java_package_ensure          = 'present',
-  $java_package_name            = undef,
-  $manage_dsc_repo              = false,
+  $cassandra_opt_package_name,
+  $cassandra_opt_package_ensure,
+  $cassandra_package_ensure,
+  $cassandra_package_name,
+  $datastax_agent_ensure,
+  $datastax_agent_package,
+  $java_package_ensure,
+  $java_package_name,
+  $manage_dsc_repo,
   ) {
 
   case $::osfamily {
@@ -76,6 +78,13 @@ class cassandra::install (
     package { $cassandra_opt_package_name:
       ensure  => $cassandra_opt_package_ensure,
       require => Package[$cassandra_package_name],
+    }
+  }
+
+  if $datastax_agent_ensure != undef {
+    package { $datastax_agent_package:
+      ensure  => $datastax_agent_ensure,
+      require => Package[$cassandra_package_name]
     }
   }
 }
