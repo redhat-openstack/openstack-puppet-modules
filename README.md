@@ -464,4 +464,4 @@ http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html, 
 
 [2] - *msimonin/cassandra: Puppet module to install Apache Cassandra from
 the DataStax distribution. Forked from gini/cassandra*, available at
-https://forge.puppetlabs.com/msimonin/cassandra, acessed 17th March 2015.
+https://forge.puppetlabs.com/msimonin/cassandra, accessed 17th March 2015.
