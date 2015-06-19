@@ -32,6 +32,7 @@ developed by msimonin [2].
 * Optionally configures an Apt repository to install the Cassandra packages
   from (on Ubuntu).
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+* Optionally installs the DataStax agent.
 
 ### Beginning with cassandra
 
@@ -433,8 +434,8 @@ port to the internet.  Firewall it if needed (default **7000**).
 
 ## Reference
 
-This module uses the package type to install the Cassandra package and the
-optional Cassandra tools and Java package.
+This module uses the package type to install the Cassandra package, the
+optional Cassandra tools, the DataStax agent and Java package.
 
 It uses the service type to enable the cassandra service and ensure it is
 running.
