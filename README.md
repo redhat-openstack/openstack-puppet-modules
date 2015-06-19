@@ -445,7 +445,7 @@ Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
 
 ## Contributers
 
-Yanis Guenane (GitHub @Spredzy) provided the Cassandra 1.x compatible
+Yanis Guenane (GitHub @spredzy) provided the Cassandra 1.x compatible
 template (see #11).
 
 ## External Links
