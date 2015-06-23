@@ -90,6 +90,7 @@ documentation for each plugin for configurable attributes.
 * `ping` (see [collectd::plugin::ping](#class-collectdpluginping) below)
 * `postgresql` (see [collectd::plugin::postgresql](#class-collectdpluginpostgresql) below)
 * `processes` (see [collectd::plugin:processes](#class-collectdpluginprocesses) below)
+* `protocols` (see [collectd::plugin:protocols](#class-collectdpluginprotocols) below)
 * `python` (see [collectd::plugin::python](#class-collectdpluginpython) below)
 * `redis` (see [collectd::plugin::redis](#class-collectdpluginredis) below)
 * `rrdcached` (see [collectd::plugin::rrdcached](#class-collectdpluginrrdcached) below)
@@ -158,8 +159,17 @@ class { 'collectd::plugin::conntrack':
 
 ####Class: `collectd::plugin::cpu`
 
+ * `reportbystate` available from collectd version >= 5.5
+ * `reportbycpu` available from collectd version >= 5.5
+ * `valuespercentage` available from collectd version >= 5.5
+
+ See [collectd plugin_cpu documentation](https://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_cpu) for more details.
+
 ```puppet
 class { 'collectd::plugin::cpu':
+  reportbystate => true,
+  reportbycpu => true,
+  valuespercentage => true,
 }
 
 
@@ -645,6 +655,19 @@ class { 'collectd::plugin::processes':
   process_matches => [
     { name => 'process-all', regex => 'process.*' }
   ],
+}
+```
+####Class: `collectd::plugin::protocols`
+
+ * `values` is an array of `Protocol` names, `Protocol:ValueName` pairs, or a regex
+ * see `/proc/net/netstat` and `/proc/net/snmp` for a list of `Protocol` targets
+
+ See [collectd.conf documentation] (https://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_protocols) for details
+
+```puppet
+class { 'collectd::plugin::protocols':
+  values => ['/^Tcp:*/', '/^Udp:*/', 'Icmp:InErrors' ],
+  ignoreselected => false,
 }
 ```
 

@@ -38,6 +38,30 @@ describe 'clones a remote repo' do
     end
   end
 
+  context 'using a https source on github' do
+    it 'clones a repo' do
+      pp = <<-EOS
+      vcsrepo { "#{tmpdir}/httpstestrepo":
+        ensure => present,
+        provider => git,
+        source => "https://github.com/puppetlabs/puppetlabs-vcsrepo.git",
+      }
+      EOS
+
+      # Run it twice and test for idempotency
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+    describe file("#{tmpdir}/httpstestrepo/.git") do
+      it { is_expected.to be_directory }
+    end
+
+    describe file("#{tmpdir}/httpstestrepo/.git/HEAD") do
+      it { is_expected.to contain 'ref: refs/heads/master' }
+    end
+  end
+
   context 'using a commit SHA' do
     let (:sha) do
       shell("git --git-dir=#{tmpdir}/testrepo.git rev-list HEAD | tail -1").stdout.chomp

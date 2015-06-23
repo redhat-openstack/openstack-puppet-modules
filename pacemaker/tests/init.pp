@@ -10,59 +10,88 @@
 #
 include pacemaker
 
+
 ### Installs Pacemaker and corosync and creates a cluster
 ### Should be run on all pacemaker nodes
 class {"pacemaker::corosync":
-    cluster_name => "cluster_name",
-    cluster_members => "192.168.122.3 192.168.122.7",
+  cluster_name => "cluster_name",
+  cluster_members => "clu-host-1 clu-host-2 clu-host-3",
 }
 
 ### Disable stonith
 class {"pacemaker::stonith":
-    disable => true,
+  disable => true,
 }
 
 ### Add a stonith device
 class {"pacemaker::stonith::ipmilan":
-    address => "192.168.122.103",
-    user => "admin",
-    password => "admin",
+  address  => "10.10.10.100",
+  username => "admin",
+  password => "admin",
 }
 
-### Add resources
-### each of these can generally be added to a single
-### node, though running them on multiple nodes
-### will net the same result
-class {"pacemaker::resource::ip":
-    ip_address => "192.168.122.223",
-    #ensure => "absent",
-    group => 'test-group',
+pacemaker::resource::ip {"ip-192.168.201.59":
+  ip_address   => '192.168.201.59',
+  nic          => 'eth3',
+  cidr_netmask => '',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
 }
 
-class {"pacemaker::resource::lsb":
-    name => "httpd",
-    #ensure => "absent",
-    group => 'test-group',
+pacemaker::resource::ip {"ip-192.168.201.58":
+  ip_address => '192.168.201.58',
+  tries           => 1,
+  try_sleep       => 1,
+  post_success_sleep => 0,
 }
 
-class {"pacemaker::resource::mysql":
-    name => "my-mysqld",
-    group => 'test-group',
-    #ensure => "absent",
-    #enable_creation => false,
+pacemaker::resource::filesystem{ "fs-varlibglanceimages":
+  device       => '192.168.200.100:/mnt/glance',
+  directory    => '/var/lib/glance/images/',
+  fsoptions    => '',
+  fstype       => 'nfs',
+  clone_params => '',
+  op_params    => 'monitor interval=30s',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
 }
 
-class {"pacemaker::resource::filesystem":
-    device => "192.168.122.1:/var/www/html",
-    directory => "/mnt",
-    fstype => "nfs",
-    group => 'test-group',
+pacemaker::resource::service {"lb-haproxy":
+  service_name    => 'haproxy',
+  op_params       => 'monitor start-delay=10s',
+  clone_params    => '',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
 }
 
-# this must be run on all pacemaker/qpidd nodes
-class {'pacemaker::resource::qpid':
-      name         => "My_qpidd_resource",
-      cluster_name => "qpid_cluster",
+pacemaker::resource::service {"cinder-api":
+  service_name    => 'openstack-cinder-api',
+  clone_params    => 'interleave=true',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
+}
+
+pacemaker::resource::ocf {"neutron-scale":
+  ocf_agent_name => 'neutron:NeutronScale',
+  clone_params        => 'globally-unique=true clone-max=3 interleave=true',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
+}
+
+pcmk_resource { "galera":
+  resource_type   => "galera",
+  resource_params => 'enable_creation=true wsrep_cluster_address="gcomm://pcmk-c1a1,pcmk-c1a2,pcmk-c1a3"',
+  meta_params     => "master-max=3 ordered=true",
+  op_params       => 'promote timeout=300s on-fail=block',
+  master_params   => '',
+  post_success_sleep => 0,
+  tries           => 1,
+  try_sleep       => 1,
 }
 
 ### Add constraints

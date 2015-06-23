@@ -231,6 +231,13 @@ ARGS_TO_HASH = {
       :source => '192.168.0.1/32',
     },
   },
+  'string_escape_sequences' => {
+    :line => '-A INPUT -m comment --comment "000 parse escaped \\"s, \\\'s, and \\\\s"',
+    :table => 'filter',
+    :params => {
+      :name => '000 parse escaped "s, \'s, and \\s',
+    },
+  },
   'log_level_debug' => {
     :line => '-A INPUT -m comment --comment "956 INPUT log-level" -m state --state NEW -j LOG --log-level 7',
     :table => 'filter',
@@ -760,6 +767,13 @@ HASH_TO_ARGS = {
       :source => '192.168.0.1'
     },
     :args => ['-t', :filter, '-s', '192.168.0.1/32', '-p', :tcp, '-m', 'comment', '--comment', '000 allow from 192.168.0.1, please'],
+  },
+  'comment_string_character_validation_2' => {
+    :params => {
+      :name => "000 allow symbols ( $+<=>^`|~ ) in ruby >= 1.9",
+      :table => 'filter',
+    },
+    :args => ['-t', :filter, '-p', :tcp, '-m', 'comment', '--comment', '000 allow symbols ( $+<=>^`|~ ) in ruby >= 1.9'],
   },
   'port_property' => {
     :params => {

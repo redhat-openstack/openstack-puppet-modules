@@ -153,6 +153,7 @@ describe 'apache::vhost', :type => :define do
           'ssl_verify_client'           => 'optional',
           'ssl_verify_depth'            => '3',
           'ssl_options'                 => '+ExportCertData',
+          'ssl_openssl_conf_cmd'        => 'DHParameters "foo.pem"',
           'ssl_proxyengine'             => true,
           'priority'                    => '30',
           'default_vhost'               => true,
@@ -398,6 +399,8 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-serveralias') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-setenv') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-ssl') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-ssl').with(
+        :content => /^\s+SSLOpenSSLConfCmd\s+DHParameters "foo.pem"$/ ) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-suphp') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-php_admin') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-header') }
@@ -410,6 +413,30 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-passenger') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-charsets') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-file_footer') }
+    end
+    context 'proxy_pass_match' do
+      let :params do
+        {
+          'docroot'          => '/rspec/docroot',
+          'proxy_pass_match'            => [
+            {
+              'path'     => '.*',
+              'url'      => 'http://backend-a/',
+            }
+          ],
+        }
+      end
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /ProxyPassMatch .* http:\/\/backend-a\//).with_content(/## Proxy rules/) }
+    end
+    context 'proxy_dest_match' do
+      let :params do
+        {
+          'docroot'          => '/rspec/docroot',
+          'proxy_dest_match' => '/'
+        }
+      end
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(/## Proxy rules/) }
     end
     context 'not everything can be set together...' do
       let :params do

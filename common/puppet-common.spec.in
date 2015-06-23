@@ -7,7 +7,7 @@ Release:	__RELEASE__
 Summary:	A puppet module filled with common puppet utilities
 License:	AGPLv3+
 URL:		https://github.com/purpleidea/puppet-common
-Source0:	https://download.gluster.org/pub/gluster/purpleidea/puppet-common/SOURCES/puppet-common-%{puppet_module_version}.tar.bz2
+Source0:	https://dl.fedoraproject.org/pub/alt/purpleidea/puppet-common/SOURCES/puppet-common-%{puppet_module_version}.tar.bz2
 BuildArch:	noarch
 
 Requires: puppet >= 3.0.0

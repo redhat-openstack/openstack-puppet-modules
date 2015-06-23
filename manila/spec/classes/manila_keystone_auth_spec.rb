@@ -2,15 +2,11 @@ require 'spec_helper'
 
 describe 'manila::keystone::auth' do
 
-  let :req_params do
+  let :params do
     {:password => 'pw'}
   end
 
   describe 'with only required params' do
-
-    let :params do
-      req_params
-    end
 
     it 'should contain auth info' do
 
@@ -40,9 +36,27 @@ describe 'manila::keystone::auth' do
 
   end
 
-  context 'when overriding endpoint params' do
-     let :params do
-       req_params.merge(
+  context 'when overriding endpoint parameters' do
+    before do
+      params.merge!(
+        :region            => 'RegionThree',
+        :public_url   => 'https://10.0.42.1:4242/v42/%(tenant_id)s',
+        :admin_url    => 'https://10.0.42.2:4242/v42/%(tenant_id)s',
+        :internal_url => 'https://10.0.42.3:4242/v42/%(tenant_id)s'
+      )
+    end
+
+    it { is_expected.to contain_keystone_endpoint('RegionThree/manila').with(
+      :ensure       => 'present',
+      :public_url   => 'https://10.0.42.1:4242/v42/%(tenant_id)s',
+      :admin_url    => 'https://10.0.42.2:4242/v42/%(tenant_id)s',
+      :internal_url => 'https://10.0.42.3:4242/v42/%(tenant_id)s'
+    )}
+  end
+
+  context 'when deprecated endpoint parameters' do
+    before do
+       params.merge!(
         :public_address    => '10.0.42.1',
         :admin_address     => '10.0.42.2',
         :internal_address  => '10.0.42.3',
@@ -61,17 +75,14 @@ describe 'manila::keystone::auth' do
       :admin_url    => 'https://10.0.42.2:4242/v42/%(tenant_id)s',
       :internal_url => 'https://10.0.42.3:4242/v42/%(tenant_id)s'
     )}
-
   end
 
-
   describe 'when endpoint should not be configured' do
-    let :params do
-      req_params.merge(
+    before do
+      params.merge!(
         :configure_endpoint => false
       )
     end
     it { is_expected.to_not contain_keystone_endpoint('RegionOne/manila') }
   end
-
 end

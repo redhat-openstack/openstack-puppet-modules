@@ -62,7 +62,7 @@ branches
         resource[:depth] = 1
         Dir.expects(:chdir).with('/').at_least_once.yields
         Dir.expects(:chdir).with('/tmp/test').at_least_once.yields
-        provider.expects(:git).with('clone', '--depth', '1', resource.value(:source), resource.value(:path))
+        provider.expects(:git).with('clone', '--depth', '1', '--branch', resource.value(:revision),resource.value(:source), resource.value(:path))
         provider.expects(:update_submodules)
         provider.expects(:update_remote_url).with("origin", resource.value(:source)).returns false
         provider.expects(:git).with('branch', '-a').returns(branch_a_list(resource.value(:revision)))
