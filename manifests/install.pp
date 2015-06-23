@@ -8,7 +8,7 @@ class cassandra::install (
   $cassandra_opt_package_ensure,
   $cassandra_package_ensure,
   $cassandra_package_name,
-  $datastax_agent_ensure,
+  $datastax_agent_package_ensure,
   $datastax_agent_package_name,
   $java_package_ensure,
   $java_package_name,
@@ -81,9 +81,9 @@ class cassandra::install (
     }
   }
 
-  if $datastax_agent_ensure != undef {
+  if $datastax_agent_package_ensure != undef {
     package { $datastax_agent_package_name:
-      ensure  => $datastax_agent_ensure,
+      ensure  => $datastax_agent_package_ensure,
       require => Package[$cassandra_package_name]
     }
   }
