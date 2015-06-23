@@ -20,7 +20,8 @@ class cassandra::config (
   $config_path,
   $data_file_directories,
   $datastax_agent_package_ensure,
-  $datastax_agent_manage_service,
+  $datastax_agent_service_enable,
+  $datastax_agent_service_ensure,
   $datastax_agent_service_name,
   $disk_failure_policy,
   $endpoint_snitch,
@@ -80,11 +81,9 @@ class cassandra::config (
   if $datastax_agent_package_ensure != undef
   and $datastax_agent_package_ensure != 'absent'
   and $datastax_agent_package_ensure != 'purged' {
-    if $datastax_agent_manage_service == true {
-      service { $datastax_agent_service_name:
-        ensure => running,
-        enable => true,
-      }
+    service { $datastax_agent_service_name:
+      ensure => $datastax_agent_service_ensure,
+      enable => $datastax_agent_service_enable,
     }
   }
 }
