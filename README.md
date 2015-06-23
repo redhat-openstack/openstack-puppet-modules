@@ -217,14 +217,20 @@ Directories where Cassandra should store data on disk.  Cassandra
 will spread data evenly across them, subject to the granularity of
 the configured compaction strategy (default **['/var/lib/cassandra/data']**).
 
-#####`datastax_agent_ensure`
+#####`datastax_agent_package_ensure`
 If the value is anything other than undef, it is passed to a package reference
+to install the DataStax Agent package.
 (default **undef**).
 
-#####`datastax_agent_manage_service`
-If datastax_agent_ensure is anything other than undef, absent or purged and
-this variable is true then the service is enabled to run
-(default **true**).
+#####`datastax_agent_service_enable`
+The datastax_agent_service_enable is passed to a service reference enable
+parameter for the DataStax Agent.  Valid values are true or false
+(default **false**).
+
+#####`datastax_agent_service_ensure`
+The datastax_agent_service_ensure is passed to a service reference ensure
+parameter for the DataStax Agent.  Valid values are running or stopped
+(default **stopped**).
 
 #####`datastax_agent_package_name`
 The name of the datastax-agent package.  This is ignored if
