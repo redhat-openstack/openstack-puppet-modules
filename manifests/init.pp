@@ -22,8 +22,7 @@ class cassandra (
   $concurrent_writes                     = 32,
   $config_path                           = '/etc/cassandra/default.conf',
   $data_file_directories                 = ['/var/lib/cassandra/data'],
-  $datastax_agent_ensure                 = undef,
-  $datastax_agent_manage_service         = true,
+  $datastax_agent_package_ensure         = undef,
   $datastax_agent_package_name           = 'datastax-agent',
   $datastax_agent_service_name           = 'datastax-agent',
   $disk_failure_policy                   = 'stop',
@@ -58,15 +57,15 @@ class cassandra (
   ) {
 
   class { 'cassandra::install':
-    cassandra_package_ensure     => $cassandra_package_ensure,
-    cassandra_package_name       => $cassandra_package_name,
-    cassandra_opt_package_ensure => $cassandra_opt_package_ensure,
-    cassandra_opt_package_name   => $cassandra_opt_package_name,
-    datastax_agent_ensure        => $datastax_agent_ensure,
-    datastax_agent_package_name  => $datastax_agent_package_name,
-    java_package_ensure          => $java_package_ensure,
-    java_package_name            => $java_package_name,
-    manage_dsc_repo              => $manage_dsc_repo,
+    cassandra_package_ensure      => $cassandra_package_ensure,
+    cassandra_package_name        => $cassandra_package_name,
+    cassandra_opt_package_ensure  => $cassandra_opt_package_ensure,
+    cassandra_opt_package_name    => $cassandra_opt_package_name,
+    datastax_agent_package_ensure => $datastax_agent_package_ensure,
+    datastax_agent_package_name   => $datastax_agent_package_name,
+    java_package_ensure           => $java_package_ensure,
+    java_package_name             => $java_package_name,
+    manage_dsc_repo               => $manage_dsc_repo,
   }
 
   # A hack for long arguments
@@ -90,7 +89,7 @@ class cassandra (
     concurrent_writes                     => $concurrent_writes,
     config_path                           => $config_path,
     data_file_directories                 => $data_file_directories,
-    datastax_agent_ensure                 => $datastax_agent_ensure,
+    datastax_agent_package_ensure         => $datastax_agent_package_ensure,
     datastax_agent_manage_service         => $datastax_agent_manage_service,
     datastax_agent_service_name           => $datastax_agent_service_name,
     disk_failure_policy                   => $disk_failure_policy,
