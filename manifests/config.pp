@@ -4,47 +4,49 @@
 # does as part of the module and how to use it.
 #
 class cassandra::config (
-  $authenticator                         = 'AllowAllAuthenticator',
-  $authorizer                            = 'AllowAllAuthorizer',
-  $auto_snapshot                         = true,
-  $cassandra_package_name                = 'dsc21',
-  $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
-  $client_encryption_enabled             = false,
-  $client_encryption_keystore            = 'conf/.keystore',
-  $client_encryption_keystore_password   = 'cassandra',
-  $cluster_name                          = 'Test Cluster',
-  $commitlog_directory                   = '/var/lib/cassandra/commitlog',
-  $concurrent_counter_writes             = 32,
-  $concurrent_reads                      = 32,
-  $concurrent_writes                     = 32,
-  $config_path                           = '/etc/cassandra/default.conf',
-  $data_file_directories                 = ['/var/lib/cassandra/data'],
-  $disk_failure_policy                   = 'stop',
-  $endpoint_snitch                       = 'SimpleSnitch',
-  $hinted_handoff_enabled                = true,
-  $incremental_backups                   = false,
-  $internode_compression                 = 'all',
-  $listen_address                        = 'localhost',
-  $manage_service                        = true,
-  $native_transport_port                 = 9042,
-  $num_tokens                            = 256,
-  $partitioner
-    = 'org.apache.cassandra.dht.Murmur3Partitioner',
-  $rpc_address                           = 'localhost',
-  $rpc_port                              = 9160,
-  $rpc_server_type                       = 'sync',
-  $saved_caches_directory                = '/var/lib/cassandra/saved_caches',
-  $seeds                                 = '127.0.0.1',
-  $server_encryption_internode           = 'none',
-  $server_encryption_keystore            = 'conf/.keystore',
-  $server_encryption_keystore_password   = 'cassandra',
-  $server_encryption_truststore          = 'conf/.truststore',
-  $server_encryption_truststore_password = 'cassandra',
-  $service_name                          = 'cassandra',
-  $snapshot_before_compaction            = false,
-  $start_native_transport                = true,
-  $start_rpc                             = true,
-  $storage_port                          = 7000
+  $authenticator,
+  $authorizer,
+  $auto_snapshot,
+  $cassandra_package_name,
+  $cassandra_yaml_tmpl,
+  $client_encryption_enabled,
+  $client_encryption_keystore,
+  $client_encryption_keystore_password,
+  $cluster_name,
+  $commitlog_directory,
+  $concurrent_counter_writes,
+  $concurrent_reads,
+  $concurrent_writes,
+  $config_path,
+  $data_file_directories,
+  $datastax_agent_ensure,
+  $datastax_agent_manage_service,
+  $datastax_agent_service_name,
+  $disk_failure_policy,
+  $endpoint_snitch,
+  $hinted_handoff_enabled,
+  $incremental_backups,
+  $internode_compression,
+  $listen_address,
+  $manage_service,
+  $native_transport_port,
+  $num_tokens,
+  $partitioner,
+  $rpc_address,
+  $rpc_port,
+  $rpc_server_type,
+  $saved_caches_directory,
+  $seeds,
+  $server_encryption_internode,
+  $server_encryption_keystore,
+  $server_encryption_keystore_password,
+  $server_encryption_truststore,
+  $server_encryption_truststore_password,
+  $service_name,
+  $snapshot_before_compaction,
+  $start_native_transport,
+  $start_rpc,
+  $storage_port,
   ) {
 
   $config_file = "${config_path}/cassandra.yaml"
@@ -72,6 +74,17 @@ class cassandra::config (
       group   => 'cassandra',
       content => template($cassandra_yaml_tmpl),
       require => Package[$cassandra_package_name],
+    }
+  }
+
+  if $datastax_agent_ensure != undef
+  and $datastax_agent_ensure != 'absent'
+  and $datastax_agent_ensure != 'purged' {
+    if $datastax_agent_manage_service == true {
+      service { $datastax_agent_service_name:
+        ensure => running,
+        enable => true,
+      }
     }
   }
 }

@@ -32,6 +32,7 @@ developed by msimonin [2].
 * Optionally configures an Apt repository to install the Cassandra packages
   from (on Ubuntu).
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+* Optionally installs the DataStax agent.
 
 ### Beginning with cassandra
 
@@ -94,7 +95,7 @@ node 'node2' {
 
 ### Class: cassandra
 
-Currently this is the only class within this module.
+Currently this is the only public class within this module.
 
 #### Parameters
 
@@ -215,6 +216,25 @@ The path to the cassandra configuration file (default
 Directories where Cassandra should store data on disk.  Cassandra
 will spread data evenly across them, subject to the granularity of
 the configured compaction strategy (default **['/var/lib/cassandra/data']**).
+
+#####`datastax_agent_ensure`
+If the value is anything other than undef, it is passed to a package reference
+(default **undef**).
+
+#####`datastax_agent_manage_service`
+If datastax_agent_ensure is anything other than undef, absent or purged and
+this variable is true then the service is enabled to run
+(default **true**).
+
+#####`datastax_agent_package_name`
+The name of the datastax-agent package.  This is ignored if
+datastax_agent_ensure is set to undef.
+(default **datastax-agent**).
+
+#####`datastax_agent_service_name`
+The name of the datastax-agent service.  This is ignored if
+the agent is not installed or datastax_agent_manage_service is false
+(default **datastax-agent**).
 
 #####`disk_failure_policy`
 Policy for data disk failures:
@@ -422,13 +442,21 @@ Whether to start the thrift rpc server (default **true**).
 TCP port, for commands and data for security reasons, you should not expose this
 port to the internet.  Firewall it if needed (default **7000**).
 
+### Class: cassandra::config
+
+A private class.
+
+### Class: cassandra::install
+
+A private class.
+
 ## Reference
 
-This module uses the package type to install the Cassandra package and the
-optional Cassandra tools and Java package.
+This module uses the package type to install the Cassandra package, the
+optional Cassandra tools, the DataStax agent and Java package.
 
-It uses the service type to enable the cassandra service and ensure it is
-running.
+It optionally uses the service type to enable the cassandra service and/or the
+DataStax agent and ensure that they are running.
 
 It also uses the yumrepo type on the RedHat family of operating systems to
 (optionally) install the *DataStax Repo for Apache Cassandra*.
@@ -455,4 +483,4 @@ http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html, 
 
 [2] - *msimonin/cassandra: Puppet module to install Apache Cassandra from
 the DataStax distribution. Forked from gini/cassandra*, available at
-https://forge.puppetlabs.com/msimonin/cassandra, acessed 17th March 2015.
+https://forge.puppetlabs.com/msimonin/cassandra, accessed 17th March 2015.
