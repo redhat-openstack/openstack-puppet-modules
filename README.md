@@ -478,8 +478,8 @@ On Ubuntu, the apt class is optionally utilised.
 This module currently has somewhat limited functionality.  More parameters and
 configuration parameters will be added later.
 
-Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
-3.7.5 and DSC 2.1.5.
+Tested on the RedHat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
+(CE) 3.7.5 and DSC 2.1.5.
 
 ## Contributers
 
