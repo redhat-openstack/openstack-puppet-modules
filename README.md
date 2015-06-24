@@ -483,8 +483,16 @@ Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
 
 ## Contributers
 
-Yanis Guenane (GitHub @spredzy) provided the Cassandra 1.x compatible
-template (see #11).
+Contributions will be greatfully accepted.  Please go to the project page,
+fork the project, make your changes locally and then raise a pull request.
+Details on how to do this are available at
+https://guides.github.com/activities/contributing-to-open-source.
+
+### Additional Contributers
+
+Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
+Cassandra 1.x compatible template
+(see [#11](https://github.com/locp/cassandra/pull/11)).
 
 ## External Links
 
