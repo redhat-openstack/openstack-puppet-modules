@@ -20,6 +20,7 @@ class cassandra::config (
   $config_path,
   $data_file_directories,
   $datastax_agent_package_ensure,
+  $datastax_agent_package_name,
   $datastax_agent_service_enable,
   $datastax_agent_service_ensure,
   $datastax_agent_service_name,
@@ -82,8 +83,9 @@ class cassandra::config (
   and $datastax_agent_package_ensure != 'absent'
   and $datastax_agent_package_ensure != 'purged' {
     service { $datastax_agent_service_name:
-      ensure => $datastax_agent_service_ensure,
-      enable => $datastax_agent_service_enable,
+      ensure  => $datastax_agent_service_ensure,
+      enable  => $datastax_agent_service_enable,
+      require => Package[ $datastax_agent_package_name ]
     }
   }
 }
