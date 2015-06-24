@@ -67,7 +67,7 @@ describe 'cassandra' do
     }
   end
 
-  context 'On a Supported OS with datastax_agent_ensure set to present' do
+  context 'On a Supported OS with datastax_agent_package_ensure set to present' do
     let :facts do
       {
         :osfamily => 'RedHat',
@@ -76,9 +76,9 @@ describe 'cassandra' do
 
     let :params do
       {
-        :datastax_agent_ensure       => 'present',
-        :datastax_agent_package_name => 'datastax-agent-foo',
-        :datastax_agent_service_name => 'datastax-agent-bar'
+        :datastax_agent_package_ensure => 'present',
+        :datastax_agent_package_name   => 'datastax-agent-foo',
+        :datastax_agent_service_name   => 'datastax-agent-bar'
       }
     end
 
