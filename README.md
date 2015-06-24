@@ -445,8 +445,8 @@ Tested on the RedHat family versions 6 and 7, Ubuntu 14.04, Puppet (CE)
 
 ## Contributers
 
-Yanis Guenane (GitHub @spredzy) provided the Cassandra 1.x compatible
-template (see #11).
+Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
+Cassandra 1.x compatible template (see [#11](https://github.com/locp/cassandra/pull/11)).
 
 ## External Links
 
