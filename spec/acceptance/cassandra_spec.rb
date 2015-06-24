@@ -13,8 +13,8 @@ describe 'cassandra class' do
         }
 
         class { 'cassandra':
-          datastax_agent_ensure         => 'present',
-          datastax_agent_manage_service => false,
+          datastax_agent_package_ensure => 'present',
+          manage_service                => false,
           manage_dsc_repo               => true,
         }
       EOS
