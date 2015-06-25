@@ -12,6 +12,7 @@ describe 'cassandra' do
       should contain_class('cassandra')
       should contain_class('cassandra::install')
       should contain_class('cassandra::config')
+      should contain_file('/etc/cassandra/default.conf/cassandra.yaml')
     }
   end
 
@@ -44,6 +45,7 @@ describe 'cassandra' do
       should contain_class('cassandra')
       should contain_class('cassandra::install')
       should contain_class('cassandra::config')
+      should contain_file('/etc/cassandra/cassandra.yaml')
     }
   end
 

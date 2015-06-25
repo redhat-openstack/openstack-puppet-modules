@@ -46,19 +46,6 @@ node 'example' {
 }
 ```
 
-Please note that on Ubuntu, the path to the configuration file is different
-and also in our testing Java is not installed by default.  Therefore the
-minumum to get things working would be:
-
-```puppet
-node 'example' {
-  class { '::cassandra':
-    config_path       => '/etc/cassandra',
-    java_package_name => 'openjdk-7-jre-headless'
-  }
-}
-```
-
 ## Usage
 
 To install Cassandra in a two node cluster called 'Foobar Cluster' where
@@ -209,8 +196,11 @@ number of "concurrent_writes" is dependent on the number of cores in
 your system; (8 * number_of_cores) is a good rule of thumb (default **32**).
 
 #####`config_path`
-The path to the cassandra configuration file (default
-**/etc/cassandra/default.conf**).
+The path to the cassandra configuration file.  If this is undef, it will be
+changed to /etc/cassandra/default.conf on the RedHat family of operating
+systems or /etc/cassandra on Ubuntu.  Otherwise the user can specify the
+path name
+(default **undef**).
 
 #####`data_file_directories`
 Directories where Cassandra should store data on disk.  Cassandra

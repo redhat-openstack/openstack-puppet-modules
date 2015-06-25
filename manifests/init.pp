@@ -20,7 +20,7 @@ class cassandra (
   $concurrent_counter_writes             = 32,
   $concurrent_reads                      = 32,
   $concurrent_writes                     = 32,
-  $config_path                           = '/etc/cassandra/default.conf',
+  $config_path                           = undef,
   $data_file_directories                 = ['/var/lib/cassandra/data'],
   $datastax_agent_package_ensure         = undef,
   $datastax_agent_package_name           = 'datastax-agent',

@@ -53,6 +53,14 @@ class cassandra::config (
   $storage_port,
   ) {
 
+  if $config_path == undef {
+    if $::osfamily == 'RedHat' {
+      $config_path = '/etc/cassandra/default.conf'
+    } else {
+      $config_path = '/etc/cassandra'
+    }
+  }
+
   $config_file = "${config_path}/cassandra.yaml"
 
   file { $config_file:
