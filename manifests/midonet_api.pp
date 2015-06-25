@@ -100,7 +100,7 @@ class midonet::midonet_api(
   $keystone_admin_token=undef,
   $keystone_tenant_name='admin',
   $api_ip=$::ipaddress,
-  $api_port='8084',
+  $api_port='8080',
   $catalina_base) {
 
     include midonet::midonet_api::augeas
