@@ -348,13 +348,6 @@ Address or interface to bind to and tell other Cassandra nodes to connect to
 If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
 
-#####`manage_service`
-If set to true then the module will ensure the service is enabled and running.
-It would also reload/restart the service if the Cassandra configuration was
-changed.  It is possible that this might not be the desired behaviour and the
-user would prefer to control the service themselves.  If so, set this option
-to false (default **true**).
-
 #####`native_transport_port`
 Port for the CQL native transport to listen for clients on
 For security reasons, you should not expose this port to the internet.
@@ -429,6 +422,15 @@ Default: **conf/.truststore**
 
 #####`server_encryption_truststore_password`
 Default: **cassandra**
+
+#####`service_enable`
+Enable the Cassandra service to start at boot time.  Valid values are true
+or false
+(default: **true**)
+
+#####`service_ensure`
+Ensure the Cassandra service is running.  Valid values are running or stopped
+(default: **running**)
 
 #####`service_name`
 The name of the service that runs the Cassandra software (default

@@ -7,6 +7,7 @@ class cassandra::config (
   $authenticator,
   $authorizer,
   $auto_snapshot,
+  $cassandra_package_ensure,
   $cassandra_package_name,
   $cassandra_yaml_tmpl,
   $client_encryption_enabled,
@@ -30,7 +31,6 @@ class cassandra::config (
   $incremental_backups,
   $internode_compression,
   $listen_address,
-  $manage_service,
   $native_transport_port,
   $num_tokens,
   $partitioner,
@@ -44,6 +44,8 @@ class cassandra::config (
   $server_encryption_keystore_password,
   $server_encryption_truststore,
   $server_encryption_truststore_password,
+  $service_enable,
+  $service_ensure,
   $service_name,
   $snapshot_before_compaction,
   $start_native_transport,
@@ -53,28 +55,21 @@ class cassandra::config (
 
   $config_file = "${config_path}/cassandra.yaml"
 
-  if $manage_service == true {
-    file { $config_file:
-      ensure  => file,
-      owner   => 'cassandra',
-      group   => 'cassandra',
-      content => template($cassandra_yaml_tmpl),
-      require => Package[$cassandra_package_name],
-      notify  => Service['cassandra'],
-    }
+  file { $config_file:
+    ensure  => file,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    content => template($cassandra_yaml_tmpl),
+    require => Package[$cassandra_package_name],
+    notify  => Service['cassandra'],
+  }
 
+  if $cassandra_package_ensure != 'absent'
+  and $cassandra_package_ensure != 'purged' {
     service { 'cassandra':
       ensure  => running,
       name    => $service_name,
       enable  => true,
-      require => Package[$cassandra_package_name],
-    }
-  } else {
-    file { $config_file:
-      ensure  => file,
-      owner   => 'cassandra',
-      group   => 'cassandra',
-      content => template($cassandra_yaml_tmpl),
       require => Package[$cassandra_package_name],
     }
   }
