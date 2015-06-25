@@ -227,14 +227,14 @@ The datastax_agent_service_enable is passed to a service reference enable
 parameter for the DataStax Agent.  This parameter has no effect if
 datastax_agent_package_ensure is undef, absent or purged.  Valid values are
 true or false
-(default **false**).
+(default **true**).
 
 #####`datastax_agent_service_ensure`
 The datastax_agent_service_ensure is passed to a service reference ensure
 parameter for the DataStax Agent.  This parameter has no effect if
 datastax_agent_package_ensure is undef, absent or purged. Valid values are
 running or stopped
-(default **stopped**).
+(default **running**).
 
 #####`datastax_agent_package_name`
 The name of the datastax-agent package.  This is ignored if
