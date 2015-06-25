@@ -6,3 +6,6 @@ HOSTS:
     box: puppetlabs/centos-6.5-64-nocm
     box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-6.5-64-nocm
     hypervisor: vagrant
+CONFIG:
+  type: foss
+  vagrant_memsize: 2048

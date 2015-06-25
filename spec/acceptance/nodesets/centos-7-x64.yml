@@ -7,3 +7,4 @@ HOSTS:
     hypervisor : vagrant
 CONFIG:
   type: foss
+  vagrant_memsize: 2048

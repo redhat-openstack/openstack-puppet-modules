@@ -6,3 +6,6 @@ HOSTS:
     box: puppetlabs/ubuntu-12.04-64-nocm
     box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-12.04-64-nocm
     hypervisor: vagrant
+CONFIG:
+  type: foss
+  vagrant_memsize: 2048
