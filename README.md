@@ -243,7 +243,7 @@ datastax_agent_ensure is set to undef.
 
 #####`datastax_agent_service_name`
 The name of the datastax-agent service.  This is ignored if
-the agent is not installed or datastax_agent_manage_service is false
+the agent is not installed
 (default **datastax-agent**).
 
 #####`disk_failure_policy`
