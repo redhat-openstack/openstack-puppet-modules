@@ -6,7 +6,6 @@ describe 'cassandra class' do
     it 'should work with no errors' do
       pp = <<-EOS
         if $::osfamily == 'Debian' {
-          $config_path       = '/etc/cassandra'
           $java_package_name = 'openjdk-7-jre-headless'
         } else {
           $java_package_name = 'java-1.7.0-openjdk'
@@ -14,8 +13,11 @@ describe 'cassandra class' do
 
         class { 'cassandra':
           datastax_agent_package_ensure => 'present',
-          manage_service                => false,
+          datastax_agent_service_enable => 'false',
+          datastax_agent_service_ensure => 'stopped',
           manage_dsc_repo               => true,
+          service_enable                => 'false',
+          service_ensure                => 'stopped',
         }
       EOS
 
