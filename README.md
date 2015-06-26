@@ -49,6 +49,11 @@ node 'example' {
 
 ### Upgrading
 
+**From version <= 0.2.2 to >= 0.3.0**
+
+* cassandra_opt_package_name changed from undef to 'cassandra21-tools'.
+* cassandra_opt_package_ensure changed from 'present' to undef.
+
 **From version >= 0.2.0 and <= 0.2.2 to >= 0.3.0**
 
 * The manage_service option has been replaced with service_enable and
