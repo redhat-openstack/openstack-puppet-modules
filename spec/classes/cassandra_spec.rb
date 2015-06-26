@@ -90,7 +90,7 @@ describe 'cassandra' do
     }
   end
 
-  context 'On a Supported OS with cassandra_opt_packet_ensure set to present' do
+  context 'On a Supported OS with cassandra_opt_package_ensure set to present' do
     let :facts do
       {
         :osfamily => 'RedHat',
@@ -99,8 +99,8 @@ describe 'cassandra' do
 
     let :params do
       {
-        :cassandra_opt_packet_ensure => 'present',
-        :cassandra_opt_packet__name  => 'opt-foobar',
+        :cassandra_opt_package_ensure => 'present',
+        :cassandra_opt_package_name   => 'opt-foobar',
       }
     end
 
