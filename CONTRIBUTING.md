@@ -10,14 +10,16 @@ https://guides.github.com/activities/contributing-to-open-source.
 At the very least, before submitting your pull request or patch, the following
 tests should pass with no errors or warnings:
 
-```rake lint              # Run puppet-lint
+```bash
+rake lint              # Run puppet-lint
 rake spec              # Run spec tests in a clean fixtures directory
 rake syntax            # Syntax check Puppet manifests and templates
 ```
 
 ## Beaker Tests
 
-```export BEAKER_destroy=onpass
+```bash
+export BEAKER_destroy=onpass
 
 for node in $( rake beaker_nodes ); do
   export BEAKER_set=$node
