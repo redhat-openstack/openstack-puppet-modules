@@ -62,33 +62,31 @@ node 'example' {
 ## Usage
 
 To install Cassandra in a two node cluster called 'Foobar Cluster' where
-node1 (192.168.42.1) is the seed and a second node called node2
-192.168.42.2 is also to be a member, do something similar to this:
+node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
+member, do something similar to this:
 
 ```puppet
 node 'node1' {
   class { 'cassandra':
-    cluster_name               => 'Foobar Cluster',
-    listen_address             => "${::ipaddress}",
-    seeds                      => "${::ipaddress}",
-    cassandra_package_name     => 'dsc21',
-    cassandra_opt_package_name => 'cassandra21-tools',
-    java_package_name          => 'java-1.7.0-openjdk',
-    java_package_ensure        => 'latest',
-    manage_dsc_repo            => true
+    cluster_name                 => 'Foobar Cluster',
+    listen_address               => "${::ipaddress}",
+    seeds                        => "${::ipaddress}",
+    cassandra_opt_package_ensure => 'present',
+    java_package_name            => 'java-1.7.0-openjdk',
+    java_package_ensure          => 'present',
+    manage_dsc_repo              => true
   }
 }
 
 node 'node2' {
   class { 'cassandra':
-    cluster_name               => 'Foobar Cluster',
-    listen_address             => "${::ipaddress}",
-    seeds                      => '192.168.42.1',
-    cassandra_package_name     => 'dsc21',
-    cassandra_opt_package_name => 'cassandra21-tools',
-    java_package_name          => 'java-1.7.0-openjdk',
-    java_package_ensure        => 'latest',
-    manage_dsc_repo            => true
+    cluster_name                 => 'Foobar Cluster',
+    listen_address               => "${::ipaddress}",
+    seeds                        => '192.168.42.1',
+    cassandra_opt_package_ensure => 'present',
+    java_package_name            => 'java-1.7.0-openjdk',
+    java_package_ensure          => 'present',
+    manage_dsc_repo              => true
   }
 }
 ```
