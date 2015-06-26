@@ -13,6 +13,8 @@ describe 'cassandra' do
       should contain_class('cassandra::install')
       should contain_class('cassandra::config')
       should contain_file('/etc/cassandra/default.conf/cassandra.yaml')
+      should contain_service('cassandra')
+      is_expected.not_to contain_yumrepo('datastax')
     }
   end
 
@@ -43,9 +45,15 @@ describe 'cassandra' do
 
     it {
       should contain_class('cassandra')
+      should contain_service('cassandra')
       should contain_class('cassandra::install')
       should contain_class('cassandra::config')
       should contain_file('/etc/cassandra/cassandra.yaml')
+      is_expected.not_to contain_class('apt')
+      is_expected.not_to contain_class('apt::update')
+      is_expected.not_to contain_apt__key('datastaxkey')
+      is_expected.not_to contain_apt__source('datastax')
+      is_expected.not_to contain_exec('update-cassandra-repos')
     }
   end
 
@@ -66,10 +74,14 @@ describe 'cassandra' do
 
     it {
       should contain_class('apt')
+      should contain_class('apt::update')
+      is_expected.to contain_apt__key('datastaxkey')
+      is_expected.to contain_apt__source('datastax')
+      is_expected.to contain_exec('update-cassandra-repos')
     }
   end
 
-  context 'On a Supported OS with datastax_agent_package_ensure set to present' do
+  context 'With datastax_agent_package_ensure set to present' do
     let :facts do
       {
         :osfamily => 'RedHat',
@@ -90,7 +102,26 @@ describe 'cassandra' do
     }
   end
 
-  context 'On a Supported OS with cassandra_opt_package_ensure set to present' do
+  context 'With datastax_agent_package_ensure set to present' do
+    let :facts do
+      {
+        :osfamily => 'RedHat',
+      }
+    end
+
+    let :params do
+      {
+        :datastax_agent_package_ensure => 'present',
+        :datastax_agent_package_name   => 'da-foobar',
+      }
+    end
+
+    it {
+      should contain_package('da-foobar')
+    }
+  end
+
+  context 'With cassandra_opt_package_ensure set to present' do
     let :facts do
       {
         :osfamily => 'RedHat',
@@ -106,6 +137,27 @@ describe 'cassandra' do
 
     it {
       should contain_package('opt-foobar')
+    }
+  end
+
+  context 'With java_package_name set to foobar' do
+    let :facts do
+      {
+        :osfamily => 'RedHat',
+      }
+    end
+
+    let :params do
+      {
+        :java_package_name   => 'foobar-java',
+        :java_package_ensure => '42',
+      }
+    end
+
+    it {
+      should contain_package('foobar-java').with({
+        :ensure => 42,
+      })
     }
   end
 
