@@ -74,7 +74,7 @@ class cassandra::install (
     ensure => $cassandra_package_ensure,
   }
 
-  if $cassandra_opt_package_name != undef {
+  if $cassandra_opt_package_ensure != undef {
     package { $cassandra_opt_package_name:
       ensure  => $cassandra_opt_package_ensure,
       require => Package[$cassandra_package_name],
