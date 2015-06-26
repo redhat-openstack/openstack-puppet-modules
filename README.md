@@ -66,13 +66,19 @@ node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
 member, do something similar to this:
 
 ```puppet
+if $::osfamily == 'Debian' {
+  $java_package_name = 'openjdk-7-jre-headless'
+} else {
+  $java_package_name = 'java-1.7.0-openjdk'
+}
+
 node 'node1' {
   class { 'cassandra':
     cluster_name                 => 'Foobar Cluster',
     listen_address               => "${::ipaddress}",
     seeds                        => "${::ipaddress}",
     cassandra_opt_package_ensure => 'present',
-    java_package_name            => 'java-1.7.0-openjdk',
+    java_package_name            => $java_package_name,
     java_package_ensure          => 'present',
     manage_dsc_repo              => true
   }
@@ -84,12 +90,15 @@ node 'node2' {
     listen_address               => "${::ipaddress}",
     seeds                        => '192.168.42.1',
     cassandra_opt_package_ensure => 'present',
-    java_package_name            => 'java-1.7.0-openjdk',
+    java_package_name            => $java_package_name,
     java_package_ensure          => 'present',
     manage_dsc_repo              => true
   }
 }
 ```
+
+This would also ensure that the JDK is installed and the optional Cassandra
+tools.
 
 ### Class: cassandra
 
