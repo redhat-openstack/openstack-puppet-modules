@@ -6,6 +6,7 @@
 2. [Setup - The basics of getting started with cassandra](#setup)
     * [What cassandra affects](#what-cassandra-affects)
     * [Beginning with cassandra](#beginning-with-cassandra)
+    * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
@@ -45,6 +46,13 @@ node 'example' {
   include '::cassandra'
 }
 ```
+
+### Upgrading
+
+**From version >= 0.2.0 and <= 0.2.2 to >= 0.3.0**
+
+* The manage_service option has been replaced with service_enable and
+  service_ensure.
 
 ## Usage
 
