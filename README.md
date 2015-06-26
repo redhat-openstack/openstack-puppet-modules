@@ -467,8 +467,10 @@ On Ubuntu, the apt class is optionally utilised.
 
 ## Limitations
 
-This module currently has somewhat limited functionality.  More parameters and
-configuration parameters will be added later.
+This module currently still has somewhat limited functionality.  More
+parameters and configuration parameters will be added later.
+
+There is currently no method for this module to manipulate Java options.
 
 Tested on the RedHat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.5.
