@@ -27,6 +27,10 @@ class cassandra::install (
           before   => Package[ $cassandra_package_name ],
         }
       }
+
+      if $cassandra_opt_package_name == undef {
+        $cassandra_opt_package_name = 'cassandra21-tools'
+      }
     }
     'Debian': {
       if $manage_dsc_repo == true {
@@ -56,6 +60,10 @@ class cassandra::install (
           require     => Exec['apt_update'],
           before      => Package[ $cassandra_package_name ]
         }
+      }
+
+      if $cassandra_opt_package_name == undef {
+        $cassandra_opt_package_name = 'cassandra-tools'
       }
     }
     default: {

@@ -121,7 +121,7 @@ describe 'cassandra' do
     }
   end
 
-  context 'With cassandra_opt_package_ensure set to present' do
+  context 'With cassandra_opt_package_ensure set to present (RedHat)' do
     let :facts do
       {
         :osfamily => 'RedHat',
@@ -131,12 +131,31 @@ describe 'cassandra' do
     let :params do
       {
         :cassandra_opt_package_ensure => 'present',
-        :cassandra_opt_package_name   => 'opt-foobar',
       }
     end
 
     it {
-      should contain_package('opt-foobar')
+      should contain_package('cassandra21-tools')
+    }
+  end
+
+  context 'With cassandra_opt_package_ensure set to present (Ubuntu)' do
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :lsbdistid => 'Ubuntu',
+        :lsbdistrelease => '14.04'
+      }
+    end
+
+    let :params do
+      {
+        :cassandra_opt_package_ensure => 'present',
+      }
+    end
+
+    it {
+      should contain_package('cassandra-tools')
     }
   end
 

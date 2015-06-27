@@ -51,7 +51,6 @@ node 'example' {
 
 **From version <= 0.2.2 to >= 0.3.0**
 
-* cassandra_opt_package_name changed from undef to 'cassandra21-tools'.
 * cassandra_opt_package_ensure changed from 'present' to undef.
 
 **From version >= 0.2.0 and <= 0.2.2 to >= 0.3.0**
@@ -145,8 +144,10 @@ The status of the package specified in **cassandra_opt_package_name**.  Can be
 **present**).
 
 #####`cassandra_opt_package_name`
-Optionally specify a support package (e.g. cassandra21-tools).  Nothing is
-executed if the default value of **undef** is unchanged.
+If left at the default, this will change to 'cassandra21-tools' on RedHat
+or 'cassandra-tools' on Ubuntu.  Alternatively this use can specify the
+package name
+(default undef).
 
 #####`cassandra_package_ensure`
 The status of the package specified in **cassandra_package_name**.  Can be

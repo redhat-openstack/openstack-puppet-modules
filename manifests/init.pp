@@ -8,7 +8,7 @@ class cassandra (
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
   $cassandra_opt_package_ensure          = undef,
-  $cassandra_opt_package_name            = 'cassandra21-tools',
+  $cassandra_opt_package_name            = undef,
   $cassandra_package_ensure              = 'present',
   $cassandra_package_name                = 'dsc21',
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
