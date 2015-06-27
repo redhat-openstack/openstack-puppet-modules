@@ -493,6 +493,8 @@ parameters and configuration parameters will be added later.
 
 There is currently no method for this module to manipulate Java options.
 
+Currently the is no configuration or customisation of the DataStax Agent.
+
 Tested on the RedHat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.5.
 
