@@ -29,19 +29,19 @@ describe 'Puppet::Type.type(:tuskar_config)' do
 
   it 'should accept a valid value' do
     @tuskar_config[:value] = 'bar'
-    @tuskar_config[:value].should == 'bar'
+    expect(@tuskar_config[:value]).to eq('bar')
   end
 
   it 'should not accept a value with whitespace' do
     @tuskar_config[:value] = 'b ar'
-    @tuskar_config[:value].should == 'b ar'
+    expect(@tuskar_config[:value]).to eq('b ar')
   end
 
   it 'should accept valid ensure values' do
     @tuskar_config[:ensure] = :present
-    @tuskar_config[:ensure].should == :present
+    expect(@tuskar_config[:ensure]).to eq(:present)
     @tuskar_config[:ensure] = :absent
-    @tuskar_config[:ensure].should == :absent
+    expect(@tuskar_config[:ensure]).to eq(:absent)
   end
 
   it 'should not accept invalid ensure values' do

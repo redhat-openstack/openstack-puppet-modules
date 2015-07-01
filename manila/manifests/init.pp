@@ -379,7 +379,7 @@ class manila (
     'DEFAULT/rootwrap_config':           value => $rootwrap_config;
     'DEFAULT/notification_driver':       value => $notification_driver;
     'DEFAULT/state_path':                value => $state_path;
-    'DEFAULT/lock_path':                 value => $lock_path;
+    'oslo_concurrency/lock_path':        value => $lock_path;
   }
 
   if($sql_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {

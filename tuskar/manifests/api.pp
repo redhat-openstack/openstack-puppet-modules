@@ -125,7 +125,7 @@ class tuskar::api(
       fail("Invalid db connection ${::tuskar::database_connection}")
     }
     tuskar_config {
-      'database/sql_connection':   value => $::tuskar::database_connection, secret => true;
+      'database/connection':       value => $::tuskar::database_connection, secret => true;
       'database/sql_idle_timeout': value => $::tuskar::database_idle_timeoutl;
     }
   }

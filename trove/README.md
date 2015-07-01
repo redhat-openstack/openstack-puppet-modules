@@ -10,12 +10,11 @@ puppet-trove
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 7. [Contributors - Those with commits](#contributors)
-8. [Release Notes - Notes on the most recent updates to the module](#release-notes)
 
 Overview
 --------
 
-The trove module is a part of [Stackforge](https://github.com/stackforge), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects not part of the core software. The module itself is used to flexibly configure and manage the database service for Openstack.
+The trove module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software. The module itself is used to flexibly configure and manage the database service for Openstack.
 
 Module Description
 ------------------
@@ -67,7 +66,3 @@ Contributors
 ------------
 
 * https://github.com/enovance/puppet-trove/graphs/contributors
-
-Release Notes
--------------
-

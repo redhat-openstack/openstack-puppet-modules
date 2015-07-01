@@ -49,8 +49,8 @@ describe 'tuskar::api' do
              database_connection   => 'mysql://tuskar:pass@10.0.0.1/tuskar'}"
         end
         it 'configures tuskar-api with RabbitMQ' do
-          is_expected.to contain_tuskar_config('database/sql_connection').with_value('mysql://tuskar:pass@10.0.0.1/tuskar')
-          is_expected.to contain_tuskar_config('database/sql_connection').with_value('mysql://tuskar:pass@10.0.0.1/tuskar').with_secret(true)
+          is_expected.to contain_tuskar_config('database/connection').with_value('mysql://tuskar:pass@10.0.0.1/tuskar')
+          is_expected.to contain_tuskar_config('database/connection').with_value('mysql://tuskar:pass@10.0.0.1/tuskar').with_secret(true)
         end
       end
     end
@@ -79,7 +79,7 @@ describe 'tuskar::api' do
     end
 
     let :platform_params do
-      { :api_package_name => 'openstack-tuskar-api',
+      { :api_package_name => 'openstack-tuskar',
         :api_service_name => 'openstack-tuskar-api' }
     end
 

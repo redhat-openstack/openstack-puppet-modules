@@ -39,8 +39,9 @@ describe 'openstack_extras::repo::debian::ubuntu' do
         :location           => 'http://ubuntu-cloud.archive.canonical.com/ubuntu',
         :release            => 'trusty-updates/kilo',
         :repos              => 'main',
-        :required_packages  => 'ubuntu-cloud-keyring'
       )}
+
+      it { should contain_exec('installing ubuntu-cloud-keyring') }
 
     end
 
@@ -53,9 +54,17 @@ describe 'openstack_extras::repo::debian::ubuntu' do
         :location           => 'http://ubuntu-cloud.archive.canonical.com/ubuntu',
         :release            => 'trusty-updates/juno',
         :repos              => 'main',
-        :required_packages  => 'ubuntu-cloud-keyring'
       )}
 
+      it { should contain_exec('installing ubuntu-cloud-keyring') }
+    end
+
+    describe 'when not managing UCA' do
+      let :params do
+        default_params.merge!({ :manage_uca => false })
+      end
+
+      it { should_not contain_exec('installing ubuntu-cloud-keyring') }
     end
 
     describe 'with overridden source hash' do
@@ -91,24 +100,33 @@ describe 'openstack_extras::repo::debian::ubuntu' do
         :key_server         => 'pgp.mit.edu'
       )}
 
+      it { should contain_exec('installing ubuntu-cloud-keyring') }
     end
 
     describe 'with overridden source default' do
       let :params do
+        default_params.merge!({ :source_hash => {
+                                   'local_mirror' => {
+                                       'location' => 'http://mymirror/ubuntu/',
+                                       'repos'    => 'main',
+                                       'release'  => 'trusty'
+                                   }
+                                 }
+                             })
         default_params.merge!({ :source_defaults => {
                                    'include_src' => 'true'
                                 }
                               })
       end
 
-      it { should contain_apt__source('ubuntu-cloud-archive').with(
+      it { should contain_apt__source('local_mirror').with(
         :include_src        => 'true',
-        :location           => 'http://ubuntu-cloud.archive.canonical.com/ubuntu',
-        :release            => 'trusty-updates/kilo',
+        :location           => 'http://mymirror/ubuntu/',
+        :release            => 'trusty',
         :repos              => 'main',
-        :required_packages  => 'ubuntu-cloud-keyring'
       )}
 
+      it { should contain_exec('installing ubuntu-cloud-keyring') }
     end
   end
 end

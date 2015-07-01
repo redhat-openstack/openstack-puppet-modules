@@ -73,7 +73,7 @@ describe 'manila' do
       is_expected.to contain_manila_config('DEFAULT/state_path').with(
         :value => '/var/lib/manila'
       )
-      is_expected.to contain_manila_config('DEFAULT/lock_path').with(
+      is_expected.to contain_manila_config('oslo_concurrency/lock_path').with(
         :value => '/tmp/manila/manila_locks'
       )
       is_expected.to contain_manila_config('DEFAULT/log_dir').with(:value => '/var/log/manila')

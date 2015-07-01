@@ -23,7 +23,7 @@ describe 'tuskar::keystone::auth' do
 
     it { is_expected.to contain_keystone_user_role('tuskar@foobar').with(
       :ensure  => 'present',
-      :roles   => 'admin'
+      :roles   => ['admin']
     )}
 
     it { is_expected.to contain_keystone_service('tuskar').with(

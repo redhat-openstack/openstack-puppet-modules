@@ -132,12 +132,9 @@
 #  When set, enables SSL on the Horizon public API endpoint using the specified file.
 #  Defaults to undef
 #
-# [*galera_master_hostname*]
-#  FQDN of the Galera master node
-#  Defaults to undef
-#
-# [*galera_master_ip*]
-#  IP of the Galera master node
+# [*ironic_certificate*]
+#  Filename of an HAProxy-compatible certificate and key file
+#  When set, enables SSL on the Ironic public API endpoint using the specified file.
 #  Defaults to undef
 #
 # [*keystone_admin*]
@@ -204,8 +201,16 @@
 #  (optional) Enable or not Horizon dashboard binding
 #  Defaults to false
 #
+# [*ironic*]
+#  (optional) Enable or not Ironic API binding
+#  Defaults to false
+#
 # [*mysql*]
 #  (optional) Enable or not MySQL Galera binding
+#  Defaults to false
+#
+# [*mysql_clustercheck*]
+#  (optional) Enable check via clustercheck for mysql
 #  Defaults to false
 #
 # [*rabbitmq*]
@@ -240,8 +245,7 @@ class tripleo::loadbalancer (
   $swift_certificate         = undef,
   $heat_certificate          = undef,
   $horizon_certificate       = undef,
-  $galera_master_hostname    = undef,
-  $galera_master_ip          = undef,
+  $ironic_certificate        = undef,
   $keystone_admin            = false,
   $keystone_public           = false,
   $neutron                   = false,
@@ -258,7 +262,9 @@ class tripleo::loadbalancer (
   $heat_cloudwatch           = false,
   $heat_cfn                  = false,
   $horizon                   = false,
+  $ironic                    = false,
   $mysql                     = false,
+  $mysql_clustercheck        = false,
   $rabbitmq                  = false,
   $redis                     = false,
 ) {
@@ -403,6 +409,11 @@ class tripleo::loadbalancer (
     $horizon_bind_certificate = $horizon_certificate
   } else {
     $horizon_bind_certificate = $service_certificate
+  }
+  if $ironic_certificate {
+    $ironic_bind_certificate = $ironic_certificate
+  } else {
+    $ironic_bind_certificate = $service_certificate
   }
 
   $keystone_public_api_vip = hiera('keystone_public_api_vip', $controller_virtual_ip)
@@ -563,6 +574,19 @@ class tripleo::loadbalancer (
     }
   }
 
+  $ironic_api_vip = hiera('ironic_api_vip', $controller_virtual_ip)
+  if $ironic_bind_certificate {
+    $ironic_bind_opts = {
+      "${ironic_api_vip}:6385" => [],
+      "${public_virtual_ip}:13385" => ['ssl', 'crt', $ironic_bind_certificate],
+    }
+  } else {
+    $ironic_bind_opts = {
+      "${ironic_api_vip}:6385" => [],
+      "${public_virtual_ip}:6385" => [],
+    }
+  }
+
   sysctl::value { 'net.ipv4.ip_nonlocal_bind': value => '1' }
 
   class { '::haproxy':
@@ -684,7 +708,7 @@ class tripleo::loadbalancer (
       ipaddress        => hiera('glance_registry_vip', $controller_virtual_ip),
       ports            => 9191,
       options          => {
-        'option' => [ 'httpchk GET /' ],
+        'mode' => 'tcp',
       },
       collect_exported => false,
     }
@@ -865,32 +889,48 @@ class tripleo::loadbalancer (
     }
   }
 
+  if $mysql_clustercheck {
+    $mysql_listen_options = {
+        'option'      => [ 'httpchk' ],
+        'timeout'     => [ 'client 0', 'server 0' ],
+        'stick-table' => 'type ip size 1000',
+        'stick'       => 'on dst',
+    }
+    $mysql_member_options = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup', 'port 9200', 'on-marked-down shutdown-sessions']
+  } else {
+    $mysql_listen_options = {
+        'timeout'     => [ 'client 0', 'server 0' ],
+    }
+    $mysql_member_options = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup']
+  }
+
+  if $ironic {
+    haproxy::listen { 'ironic':
+      bind             => $ironic_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'ironic':
+      listening_service => 'ironic',
+      ports             => '6385',
+      ipaddresses       => hiera('ironic_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => [],
+    }
+  }
+
   if $mysql {
     haproxy::listen { 'mysql':
       ipaddress        => [hiera('mysql_vip', $controller_virtual_ip)],
       ports            => 3306,
-      options          => {
-        'timeout' => [ 'client 0', 'server 0' ],
-      },
+      options          => $mysql_listen_options,
       collect_exported => false,
     }
-
-    haproxy::balancermember { 'mysql':
-      listening_service => 'mysql',
-      ports             => '3306',
-      ipaddresses       => $galera_master_ip,
-      server_names      => $galera_master_hostname,
-      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
-    }
-
-    $controller_hosts_without_galera_master = delete(hiera('mysql_node_ips', $controller_hosts_real), $galera_master_ip)
-    $controller_hosts_names_without_galera_master = delete($controller_hosts_names_real, downcase($galera_master_hostname))
     haproxy::balancermember { 'mysql-backup':
       listening_service => 'mysql',
       ports             => '3306',
-      ipaddresses       => $controller_hosts_without_galera_master,
-      server_names      => $controller_hosts_names_without_galera_master,
-      options           => ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup'],
+      ipaddresses       => hiera('mysql_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => $mysql_member_options,
     }
   }
 

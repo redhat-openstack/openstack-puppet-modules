@@ -47,7 +47,7 @@
 #
 # [*collate*]
 #   (optional) Charset collate of tuskar database
-#   Defaults 'utf8_unicode_ci'.
+#   Defaults 'utf8_general_ci'.
 #
 # [*mysql_module*]
 #   (optional) Deprecated. Does nothing
@@ -59,7 +59,7 @@ class tuskar::db::mysql(
   $host          = '127.0.0.1',
   $allowed_hosts = undef,
   $charset       = 'utf8',
-  $collate       = 'utf8_unicode_ci',
+  $collate       = 'utf8_general_ci',
   $mysql_module  = undef,
 ) {
 

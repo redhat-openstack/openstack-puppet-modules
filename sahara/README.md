@@ -10,13 +10,14 @@ sahara
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 7. [Contributors - Those with commits](#contributors)
-8. [Release Notes - Notes on the most recent updates to the module](#release-notes)
 
 Overview
 --------
 
-The Sahara module itself is used to flexibly configure and manage the
-clustering service for OpenStack.
+The sahara module is a part of [OpenStack](https://github.com/openstack), an effort
+by the Openstack infrastructure team to provide continuous integration testing and
+code review for Openstack and Openstack community projects as part of the core software.
+The Sahara module itself is used to flexibly configure and manage the clustering service for OpenStack.
 
 Module Description
 ------------------
@@ -75,11 +76,4 @@ Developer documentation for the entire puppet-openstack project.
 Contributors
 ------------
 
-* https://github.com/stackforge/puppet-sahara/graphs/contributors
-
-Release Notes
--------------
-
-**5.0.0**
-
-* Rewrite
+* https://github.com/openstack/puppet-sahara/graphs/contributors
