@@ -44,6 +44,7 @@ define pacemaker::resource::ocf(
   $post_success_sleep = 0,
   $tries              = 1,
   $try_sleep          = 0,
+  $verify_on_create   = false,
 ) {
   pcmk_resource { $name:
     ensure             => $ensure,
@@ -57,5 +58,6 @@ define pacemaker::resource::ocf(
     post_success_sleep => $post_success_sleep,
     tries              => $tries,
     try_sleep          => $try_sleep,
+    verify_on_create   => $verify_on_create,
   }
 }

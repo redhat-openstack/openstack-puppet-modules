@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:pcmk_resource) do
   @doc = "Base resource definition for a pacemaker resource"
 
@@ -64,6 +66,16 @@ Puppet::Type.newtype(:pcmk_resource) do
 
     defaultto 0
   end
+
+  newparam(:verify_on_create, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+     desc "Whether to verify pcs resource creation with an additional
+     call to 'pcs resource show' rather than just relying on the exit
+     status of 'pcs resource create'.  When true, $try_sleep
+     determines how long to wait to verify and $post_success_sleep is
+     ignored.  Defaults to `false`."
+
+     defaultto false
+   end
 
   newproperty(:op_params) do
     desc "op parameters"

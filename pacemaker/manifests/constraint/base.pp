@@ -1,13 +1,16 @@
-define pacemaker::constraint::base ($constraint_type,
-                                    $first_resource,
-                                    $second_resource = undef,
-                                    $first_action    = undef,
-                                    $second_action   = undef,
-                                    $location        = undef,
-                                    $score           = undef,
-                                    $ensure          = present,
-                                    $tries           = 1,
-                                    $try_sleep       = 10,) {
+define pacemaker::constraint::base (
+  $constraint_type,
+  $constraint_params = undef,
+  $first_resource    = undef,
+  $second_resource   = undef,
+  $first_action      = undef,
+  $second_action     = undef,
+  $location          = undef,
+  $score             = undef,
+  $ensure            = present,
+  $tries             = 1,
+  $try_sleep         = 10,
+) {
 
   validate_re($constraint_type, ['colocation', 'order', 'location'])
 
@@ -21,6 +24,12 @@ define pacemaker::constraint::base ($constraint_type,
 
   if($constraint_type == 'location' and $score == undef) {
     fail("Must provide score when constraint type is location")
+  }
+
+  if $constraint_params != undef {
+    $_constraint_params = "${constraint_params}"
+  } else {
+    $_constraint_params = ""
   }
 
   if($ensure == absent) {
@@ -55,7 +64,7 @@ define pacemaker::constraint::base ($constraint_type,
       }
       'order': {
         exec { "Creating order constraint ${name}":
-          command => "/usr/sbin/pcs constraint order ${first_action} ${first_resource} then ${second_action} ${second_resource}",
+          command => "/usr/sbin/pcs constraint order ${first_action} ${first_resource} then ${second_action} ${second_resource} ${_constraint_params}",
           unless  => "/usr/sbin/pcs constraint order show | grep ${first_resource} | grep ${second_resource} > /dev/null 2>&1",
           require => [Exec["wait-for-settle"],Package["pcs"]],
           tries     => $tries,
