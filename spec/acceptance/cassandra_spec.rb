@@ -61,4 +61,15 @@ describe 'cassandra class' do
       expect(apply_manifest(pp3, :catch_failures => true).exit_code).to be_zero
     end
   end
+
+  describe service('cassandra') do
+    it { is_expected.to be_running }
+    it { is_expected.to be_enabled }
+  end
+
+  describe service('datastax-agent') do
+    it { is_expected.to be_running }
+    it { is_expected.to be_enabled }
+  end
+
 end
