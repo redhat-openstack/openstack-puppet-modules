@@ -30,7 +30,7 @@ class midonet::repository::centos (
     $openstack_release,
     $midonet_key_url)
     {
-        # Adding repository for ubuntu
+        # Adding repository for CentOS
         notice('Adding midonet sources for RedHat-like distribution')
         if ($::operatingsystemmajrelease == 6 or
             $::operatingsystemmajrelease == 7) {
