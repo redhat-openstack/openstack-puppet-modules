@@ -53,37 +53,59 @@
 #   (optional) Name or id of cinder volume type which will be used for all
 #   volumes created by driver.
 #
+# [*delete_share_server_with_last_share*]
+#   (optional) With this option is set to True share server willbe deleted
+#   on deletion of last share.
+#   Defaults to: False
+#
+# [*unmanage_remove_access_rules*]
+#   (optional) If set to True, then manila will deny access and remove all
+#   access rules on share unmanage. If set to False - nothing will be changed.
+#   Defaults to: False
+#
+# [*automatic_share_server_cleanup*]
+#   (optional) If set to True, then Manila will delete all share servers which
+#   were unused more than specified time. If set to False, automatic deletion
+#   of share servers will be disabled.
+#   Defaults to: True
+#
 define manila::backend::generic (
   $driver_handles_share_servers,
-  $share_backend_name               = $name,
-  $smb_template_config_path         = '$state_path/smb.conf',
-  $volume_name_template             = 'manila-share-%s',
-  $volume_snapshot_name_template    = 'manila-snapshot-%s',
-  $share_mount_path                 = '/shares',
-  $max_time_to_create_volume        = 180,
-  $max_time_to_attach               = 120,
-  $service_instance_smb_config_path = '$share_mount_path/smb.conf',
-  $share_volume_fstype              = 'ext4',
+  $share_backend_name                  = $name,
+  $smb_template_config_path            = '$state_path/smb.conf',
+  $volume_name_template                = 'manila-share-%s',
+  $volume_snapshot_name_template       = 'manila-snapshot-%s',
+  $share_mount_path                    = '/shares',
+  $max_time_to_create_volume           = 180,
+  $max_time_to_attach                  = 120,
+  $service_instance_smb_config_path    = '$share_mount_path/smb.conf',
+  $share_volume_fstype                 = 'ext4',
   $share_helpers = ['CIFS=manila.share.drivers.generic.CIFSHelper',
                     'NFS=manila.share.drivers.generic.NFSHelper'],
-  $cinder_volume_type               = undef,
+  $cinder_volume_type                  = undef,
+  $delete_share_server_with_last_share = 'False',
+  $unmanage_remove_access_rules        = 'False',
+  $automatic_share_server_cleanup      = 'True',
 ) {
 
   $share_driver = 'manila.share.drivers.generic.GenericShareDriver'
 
   manila_config {
-    "${name}/driver_handles_share_servers":     value => $driver_handles_share_servers;
-    "${name}/share_backend_name":               value => $share_backend_name;
-    "${name}/share_driver":                     value => $share_driver;
-    "${name}/smb_template_config_path":         value => $smb_template_config_path;
-    "${name}/volume_name_template":             value => $volume_name_template;
-    "${name}/volume_snapshot_name_template":    value => $volume_snapshot_name_template;
-    "${name}/share_mount_path":                 value => $share_mount_path;
-    "${name}/max_time_to_create_volume":        value => $max_time_to_create_volume;
-    "${name}/max_time_to_attach":               value => $max_time_to_attach;
-    "${name}/service_instance_smb_config_path": value => $service_instance_smb_config_path;
-    "${name}/share_volume_fstype":              value => $share_volume_fstype;
-    "${name}/share_helpers":                    value => join($share_helpers, ',');
-    "${name}/cinder_volume_type":               value => $cinder_volume_type;
+    "${name}/driver_handles_share_servers":        value => $driver_handles_share_servers;
+    "${name}/share_backend_name":                  value => $share_backend_name;
+    "${name}/share_driver":                        value => $share_driver;
+    "${name}/smb_template_config_path":            value => $smb_template_config_path;
+    "${name}/volume_name_template":                value => $volume_name_template;
+    "${name}/volume_snapshot_name_template":       value => $volume_snapshot_name_template;
+    "${name}/share_mount_path":                    value => $share_mount_path;
+    "${name}/max_time_to_create_volume":           value => $max_time_to_create_volume;
+    "${name}/max_time_to_attach":                  value => $max_time_to_attach;
+    "${name}/service_instance_smb_config_path":    value => $service_instance_smb_config_path;
+    "${name}/share_volume_fstype":                 value => $share_volume_fstype;
+    "${name}/share_helpers":                       value => join($share_helpers, ',');
+    "${name}/cinder_volume_type":                  value => $cinder_volume_type;
+    "${name}/delete_share_server_with_last_share": value => $delete_share_server_with_last_share;
+    "${name}/unmanage_remove_access_rules":        value => $unmanage_remove_access_rules;
+    "${name}/automatic_share_server_cleanup":      value => $automatic_share_server_cleanup;
   }
 }
