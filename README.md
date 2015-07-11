@@ -439,6 +439,18 @@ port to the internet.  Firewall it if needed (default **7000**).
 ####`package_ensure`
 Is passed to the package reference (default **present**).
 
+####`package_name`
+Is passed to the package reference (default **datastax-agent**).
+
+####`service_ensure`
+Is passed to the service reference (default **running**).
+
+####`service_enable`
+Is passed to the service reference (default **true**).
+
+####`service_name`
+Is passed to the service reference (default **datastax-agent**).
+
 ## Reference
 
 This module uses the package type to install the Cassandra package, the
