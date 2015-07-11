@@ -10,4 +10,16 @@ describe 'cassandra::datastax_agent' do
       should contain_class('cassandra::datastax_agent').with_service_name('datastax-agent')
     }
   end
+
+  context 'Test for cassandra::datastax_agent package.' do
+    it {
+      should contain_package('datastax-agent')
+    }
+  end
+
+  context 'Test for cassandra::datastax_agent service.' do
+    it {
+      should contain_service('datastax-agent')
+    }
+  end
 end
