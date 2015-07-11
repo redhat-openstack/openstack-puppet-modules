@@ -8,8 +8,6 @@ class cassandra::install (
   $cassandra_opt_package_ensure,
   $cassandra_package_ensure,
   $cassandra_package_name,
-  $datastax_agent_package_ensure,
-  $datastax_agent_package_name,
   $java_package_ensure,
   $java_package_name,
   $manage_dsc_repo,
@@ -86,13 +84,6 @@ class cassandra::install (
     package { $cassandra_opt_package_name:
       ensure  => $cassandra_opt_package_ensure,
       require => Package[$cassandra_package_name],
-    }
-  }
-
-  if $datastax_agent_package_ensure != undef {
-    package { $datastax_agent_package_name:
-      ensure  => $datastax_agent_package_ensure,
-      require => Package[$cassandra_package_name]
     }
   }
 }

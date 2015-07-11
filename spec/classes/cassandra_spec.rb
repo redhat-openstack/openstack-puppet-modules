@@ -81,46 +81,6 @@ describe 'cassandra' do
     }
   end
 
-  context 'With datastax_agent_package_ensure set to present' do
-    let :facts do
-      {
-        :osfamily => 'RedHat',
-      }
-    end
-
-    let :params do
-      {
-        :datastax_agent_package_ensure => 'present',
-        :datastax_agent_package_name   => 'datastax-agent-foo',
-        :datastax_agent_service_name   => 'datastax-agent-bar'
-      }
-    end
-
-    it {
-      should contain_package('datastax-agent-foo')
-      should contain_service('datastax-agent-bar')
-    }
-  end
-
-  context 'With datastax_agent_package_ensure set to present' do
-    let :facts do
-      {
-        :osfamily => 'RedHat',
-      }
-    end
-
-    let :params do
-      {
-        :datastax_agent_package_ensure => 'present',
-        :datastax_agent_package_name   => 'da-foobar',
-      }
-    end
-
-    it {
-      should contain_package('da-foobar')
-    }
-  end
-
   context 'With cassandra_opt_package_ensure set to present (RedHat)' do
     let :facts do
       {
