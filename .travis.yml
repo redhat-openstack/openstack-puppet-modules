@@ -12,10 +12,10 @@ sudo: false
 rvm:
   - "2.0.0"
 env:
-  - BEAKER_set="centos-65-x64"
-  - BEAKER_set="centos-7-x64"
-  - BEAKER_set="ubuntu-server-1204-x64"
-  - BEAKER_set="ubuntu-server-1404-x64"
-
   global:
     - BEAKER_destoy=yes
+  matrix:
+    - BEAKER_set="centos-65-x64"
+    - BEAKER_set="centos-7-x64"
+    - BEAKER_set="ubuntu-server-1204-x64"
+    - BEAKER_set="ubuntu-server-1404-x64"
