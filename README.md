@@ -101,8 +101,6 @@ tools.
 
 ### Class: cassandra
 
-Currently this is the only public class within this module.
-
 #### Parameters
 
 #####`authenticator`
@@ -227,35 +225,6 @@ path name
 Directories where Cassandra should store data on disk.  Cassandra
 will spread data evenly across them, subject to the granularity of
 the configured compaction strategy (default **['/var/lib/cassandra/data']**).
-
-#####`datastax_agent_package_ensure`
-If the value is anything other than undef, it is passed to a package reference
-to install the DataStax Agent package.
-(default **undef**).
-
-#####`datastax_agent_service_enable`
-The datastax_agent_service_enable is passed to a service reference enable
-parameter for the DataStax Agent.  This parameter has no effect if
-datastax_agent_package_ensure is undef, absent or purged.  Valid values are
-true or false
-(default **true**).
-
-#####`datastax_agent_service_ensure`
-The datastax_agent_service_ensure is passed to a service reference ensure
-parameter for the DataStax Agent.  This parameter has no effect if
-datastax_agent_package_ensure is undef, absent or purged. Valid values are
-running or stopped
-(default **running**).
-
-#####`datastax_agent_package_name`
-The name of the datastax-agent package.  This is ignored if
-datastax_agent_ensure is set to undef.
-(default **datastax-agent**).
-
-#####`datastax_agent_service_name`
-The name of the datastax-agent service.  This is ignored if
-the agent is not installed
-(default **datastax-agent**).
 
 #####`disk_failure_policy`
 Policy for data disk failures:
@@ -465,13 +434,10 @@ Whether to start the thrift rpc server (default **true**).
 TCP port, for commands and data for security reasons, you should not expose this
 port to the internet.  Firewall it if needed (default **7000**).
 
-### Class: cassandra::config
+### Class:  cassandra::datastax_agent
 
-A private class.
-
-### Class: cassandra::install
-
-A private class.
+####`package_ensure`
+Is passed to the package reference (default **present**).
 
 ## Reference
 

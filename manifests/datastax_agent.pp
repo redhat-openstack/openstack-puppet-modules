@@ -1,9 +1,4 @@
 # Install and configure the optional DataStax agent.
-#
-# @example when declaring the class
-#   include cassandra::datastax_agent
-#
-# @param package_ensure Is passed to the package reference (default 'present')
 class cassandra::datastax_agent (
   $package_ensure = 'present',
   $package_name   = 'datastax-agent',
