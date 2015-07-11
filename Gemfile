@@ -13,3 +13,7 @@ group :system_tests do
   gem 'beaker-rspec',  :require => false
   gem 'serverspec',    :require => false
 end
+
+group :development do
+  gem 'yard'
+end
