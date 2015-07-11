@@ -38,8 +38,8 @@ developed by msimonin [2].
 ### Beginning with cassandra
 
 This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the following section for
-more realistic scenarios.
+(assuming there is an available repository).  See the *Usage*(#usage) section
+for more realistic scenarios.
 
 ```puppet
 node 'example' {
@@ -47,14 +47,43 @@ node 'example' {
 }
 ```
 
+To install the DataStax agent, include the specific class.
+
+```puppet
+node 'example' {
+  include '::cassandra'
+  include '::cassandra::datastax_agent'
+}
+```
+
+To install the main cassandra package (which is mandatory) and all the
+optional packages, do the following:
+
+```puppet
+node 'example' {
+  include '::cassandra'
+  include '::cassandra::datastax_agent'
+}
+```
+
 ### Upgrading
 
-**From version <= 0.2.2 to >= 0.3.0**
+**Changes in 0.4.0**
+
+* cassandra::datastax_agent_package_ensure has now been replaced with
+  cassandra::datastax_agent::package_ensure.
+* cassandra::datastax_agent_service_enable has now been replaced with
+  cassandra::datastax_agent::service_enable.
+* cassandra::datastax_agent_service_ensure has now been replaced with
+  cassandra::datastax_agent::service_ensure.
+* cassandra::datastax_agent_package_name has now been replaced with
+  cassandra::datastax_agent::package_name.
+* cassandra::datastax_agent_service_name has now been replaced with
+  cassandra::datastax_agent::service_name.
+
+**Changes in 0.3.0**
 
 * cassandra_opt_package_ensure changed from 'present' to undef.
-
-**From version >= 0.2.0 and <= 0.2.2 to >= 0.3.0**
-
 * The manage_service option has been replaced with service_enable and
   service_ensure.
 
