@@ -13,3 +13,8 @@ rvm:
   - "2.1.0"
   - "2.0.0"
   - "1.9.3"
+env:
+  - BEAKER_set="centos-65-x64"
+  - BEAKER_set="centos-7-x64"
+  - BEAKER_set="ubuntu-server-1204-x64"
+  - BEAKER_set="ubuntu-server-1404-x64"
