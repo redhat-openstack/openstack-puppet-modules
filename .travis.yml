@@ -5,17 +5,8 @@ script:
   - "bundle exec rake lint"
   - "bundle exec rake syntax"
   - "bundle exec rake spec SPEC_OPTS='--format documentation'"
-  - "bundle exec rake beaker"
 notifications:
   email: false
 sudo: false
 rvm:
   - "2.0.0"
-env:
-  global:
-    - BEAKER_destroy=yes
-  matrix:
-    - BEAKER_set="centos-65-x64"
-    - BEAKER_set="centos-7-x64"
-    - BEAKER_set="ubuntu-server-1204-x64"
-    - BEAKER_set="ubuntu-server-1404-x64"
