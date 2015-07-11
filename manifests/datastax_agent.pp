@@ -7,7 +7,8 @@ class cassandra::datastax_agent (
   $service_name   = 'datastax-agent'
   ){
   package { $package_name:
-    ensure => $package_ensure
+    ensure  => $package_ensure,
+    require => Class['cassandra']
   }
 
   service { $service_name:
