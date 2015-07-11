@@ -13,7 +13,7 @@ rvm:
   - "2.0.0"
 env:
   global:
-    - BEAKER_destoy=yes
+    - BEAKER_destroy=yes
   matrix:
     - BEAKER_set="centos-65-x64"
     - BEAKER_set="centos-7-x64"
