@@ -38,8 +38,8 @@ developed by msimonin [2].
 ### Beginning with cassandra
 
 This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the following section for
-more realistic scenarios.
+(assuming there is an available repository).  See the *Usage*(#usage) section
+for more realistic scenarios.
 
 ```puppet
 node 'example' {
