@@ -55,13 +55,13 @@ class cassandra (
   ) {
 
   class { 'cassandra::install':
-    cassandra_package_ensure      => $cassandra_package_ensure,
-    cassandra_package_name        => $cassandra_package_name,
-    cassandra_opt_package_ensure  => $cassandra_opt_package_ensure,
-    cassandra_opt_package_name    => $cassandra_opt_package_name,
-    java_package_ensure           => $java_package_ensure,
-    java_package_name             => $java_package_name,
-    manage_dsc_repo               => $manage_dsc_repo,
+    cassandra_package_ensure     => $cassandra_package_ensure,
+    cassandra_package_name       => $cassandra_package_name,
+    cassandra_opt_package_ensure => $cassandra_opt_package_ensure,
+    cassandra_opt_package_name   => $cassandra_opt_package_name,
+    java_package_ensure          => $java_package_ensure,
+    java_package_name            => $java_package_name,
+    manage_dsc_repo              => $manage_dsc_repo,
   }
 
   # A hack for long arguments
