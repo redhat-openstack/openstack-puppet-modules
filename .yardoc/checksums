@@ -1,0 +1,4 @@
+manifests/init.pp ac18975ee2d33a6e2a3394e349edc85627abc98c
+manifests/config.pp 84581f6d9b7e6216f7a7ade539912201281e7f89
+manifests/install.pp 17592f1fff5ca2139a9fb1f8dd39585cf669493d
+manifests/datastax_agent.pp 54e638f4fb88708ffb119b94972813faa36837ed
