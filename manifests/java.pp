@@ -5,7 +5,7 @@ class cassandra::java (
   ) {
   if $package_name == 'undef' {
     if $::osfamily == 'RedHat' {
-      $java_package_name = 'java-1.7.0-openjdk-headless'
+      $java_package_name = 'java-1.8.0-openjdk-headless'
     } elsif $::operatingsystem == 'Ubuntu' {
       $java_package_name = 'openjdk-7-jre-headless'
     } else {
@@ -16,7 +16,7 @@ class cassandra::java (
   }
 
   package { $java_package_name:
-    ensure => $ensure
+    ensure => $ensure,
     before => Class['cassandra']
   }
 }

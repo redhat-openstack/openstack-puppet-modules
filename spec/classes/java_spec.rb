@@ -10,7 +10,7 @@ describe 'cassandra::java' do
 
     it {
       should contain_class('cassandra::java')
-      should contain_package('java-1.7.0-openjdk-headless')
+      should contain_package('java-1.8.0-openjdk-headless')
     }
   end
 
