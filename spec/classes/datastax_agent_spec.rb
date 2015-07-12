@@ -32,8 +32,10 @@ describe 'cassandra::datastax_agent' do
     end
 
     it {
-      should contain_ini_setting('stomp_interface').with_ensure('present')
-      should contain_ini_setting('stomp_interface').with_value('192.168.0.1')
+      should contain_ini_setting('stomp_interface').with({
+        'ensure'  => 'present',
+        'value'   => '192.168.0.1'
+      })
     }
   end
 
