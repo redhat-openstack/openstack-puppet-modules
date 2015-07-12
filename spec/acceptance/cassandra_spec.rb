@@ -2,16 +2,11 @@ require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
   pp1 = <<-EOS
-    if $::osfamily == 'Debian' {
-      $java_package_name = 'openjdk-7-jre-headless'
-    } else {
-      $java_package_name = 'java-1.7.0-openjdk'
-    }
-
     class { 'cassandra':
-      java_package_name => $java_package_name,
       manage_dsc_repo   => true,
     }
+
+    include '::cassandra::java'
   EOS
 
   describe 'Install Cassandra with Java.' do
@@ -44,19 +39,13 @@ describe 'cassandra class' do
   end
 
   pp4 = <<-EOS
-    if $::osfamily == 'Debian' {
-      $java_package_name = 'openjdk-7-jre-headless'
-    } else {
-      $java_package_name = 'java-1.7.0-openjdk'
-    }
-
     class { 'cassandra':
-      java_package_name            => $java_package_name,
       manage_dsc_repo              => true,
       cassandra_opt_package_ensure => 'present',
     }
 
     include '::cassandra::datastax_agent'
+    include '::cassandra::java'
   EOS
 
   describe 'Idempotency test.' do
