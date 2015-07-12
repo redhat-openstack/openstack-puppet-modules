@@ -1,4 +1,5 @@
-# cassandra
+# cassandra: A Puppet Module to Install and manage Cassandra and DataStax
+Agent.
 
 #### Table of Contents
 
