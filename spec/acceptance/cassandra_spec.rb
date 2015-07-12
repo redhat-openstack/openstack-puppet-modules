@@ -16,9 +16,8 @@ describe 'cassandra class' do
   end
 
   pp2 = <<-EOS
-    class { 'cassandra':
-      cassandra_opt_package_ensure => 'present',
-    }
+    include '::cassandra'
+    include '::cassandra::optutils'
   EOS
 
   describe 'Install the Optional Cassandra tools.' do
@@ -46,6 +45,7 @@ describe 'cassandra class' do
 
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
+    include '::cassandra::optutils'
   EOS
 
   describe 'Idempotency test.' do
