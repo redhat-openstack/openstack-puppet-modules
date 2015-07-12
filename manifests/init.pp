@@ -27,8 +27,6 @@ class cassandra (
   $hinted_handoff_enabled                = true,
   $incremental_backups                   = false,
   $internode_compression                 = 'all',
-  $java_package_ensure                   = 'present',
-  $java_package_name                     = undef,
   $listen_address                        = 'localhost',
   $manage_dsc_repo                       = false,
   $native_transport_port                 = 9042,
@@ -59,8 +57,6 @@ class cassandra (
     cassandra_package_name       => $cassandra_package_name,
     cassandra_opt_package_ensure => $cassandra_opt_package_ensure,
     cassandra_opt_package_name   => $cassandra_opt_package_name,
-    java_package_ensure          => $java_package_ensure,
-    java_package_name            => $java_package_name,
     manage_dsc_repo              => $manage_dsc_repo,
   }
 

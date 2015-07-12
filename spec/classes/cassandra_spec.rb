@@ -119,27 +119,6 @@ describe 'cassandra' do
     }
   end
 
-  context 'With java_package_name set to foobar' do
-    let :facts do
-      {
-        :osfamily => 'RedHat',
-      }
-    end
-
-    let :params do
-      {
-        :java_package_name   => 'foobar-java',
-        :java_package_ensure => '42',
-      }
-    end
-
-    it {
-      should contain_package('foobar-java').with({
-        :ensure => 42,
-      })
-    }
-  end
-
   context 'On an unknown OS with defaults for all parameters' do
     let :facts do
       {

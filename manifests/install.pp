@@ -8,8 +8,6 @@ class cassandra::install (
   $cassandra_opt_package_ensure,
   $cassandra_package_ensure,
   $cassandra_package_name,
-  $java_package_ensure,
-  $java_package_name,
   $manage_dsc_repo,
   ) {
 
@@ -66,13 +64,6 @@ class cassandra::install (
     }
     default: {
       fail("OS family ${::osfamily} not supported")
-    }
-  }
-
-  if $java_package_name != undef {
-    package { $java_package_name:
-      ensure => $java_package_ensure,
-      before => Package[ $cassandra_package_name ],
     }
   }
 
