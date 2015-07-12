@@ -17,5 +17,6 @@ class cassandra::java (
 
   package { $java_package_name:
     ensure => $ensure
+    before => Class['cassandra']
   }
 }
