@@ -56,6 +56,16 @@ node 'example' {
 }
 ```
 
+To install with a reasonably sensible Java environment include the java
+subclass.
+
+```puppet
+node 'example' {
+  include '::cassandra'
+  include '::cassandra::java'
+}
+```
+
 To install the main cassandra package (which is mandatory) and all the
 optional packages, do the following:
 
@@ -63,8 +73,14 @@ optional packages, do the following:
 node 'example' {
   include '::cassandra'
   include '::cassandra::datastax_agent'
+  include '::cassandra::java'
 }
 ```
+
+By saying the cassandra class/package is mandatory, what is meant is that all
+the sub classes have a dependancy on the main class.  So for example one
+could not specify the cassandra::java class for a node with the cassandra
+class also being included.
 
 ### Upgrading
 
@@ -81,9 +97,15 @@ node 'example' {
 * cassandra::datastax_agent_service_name has now been replaced with
   cassandra::datastax_agent::service_name.
 
+* cassandra::java_package_ensure has now been replaced with
+  cassandra::java::ensure.
+* cassandra::java_package_name has now been replaced with
+  cassandra::java::package_name.
+
 **Changes in 0.3.0**
 
 * cassandra_opt_package_ensure changed from 'present' to undef.
+
 * The manage_service option has been replaced with service_enable and
   service_ensure.
 
@@ -94,11 +116,7 @@ node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
 member, do something similar to this:
 
 ```puppet
-if $::osfamily == 'Debian' {
-  $java_package_name = 'openjdk-7-jre-headless'
-} else {
-  $java_package_name = 'java-1.7.0-openjdk'
-}
+include cassandra::java
 
 node 'node1' {
   class { 'cassandra':
@@ -106,8 +124,6 @@ node 'node1' {
     listen_address               => "${::ipaddress}",
     seeds                        => "${::ipaddress}",
     cassandra_opt_package_ensure => 'present',
-    java_package_name            => $java_package_name,
-    java_package_ensure          => 'present',
     manage_dsc_repo              => true
   }
 }
@@ -118,8 +134,6 @@ node 'node2' {
     listen_address               => "${::ipaddress}",
     seeds                        => '192.168.42.1',
     cassandra_opt_package_ensure => 'present',
-    java_package_name            => $java_package_name,
-    java_package_ensure          => 'present',
     manage_dsc_repo              => true
   }
 }
@@ -339,16 +353,6 @@ Controls whether traffic between nodes is compressed. Can be:
 
 Default **all**
 
-#####`java_package_ensure`
-The status of the package specified in **java_package_name**.  Can be
-*present*, *latest* or a specific version number.  If
-*java_package_name* is *undef*, this option has no effect (default
-**present**).
-
-#####`java_package_name`
-Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
-executed if the default value of **undef** is unchanged.
-
 #####`listen_address`
 Address or interface to bind to and tell other Cassandra nodes to connect to
 (default **localhost**).
@@ -466,7 +470,9 @@ port to the internet.  Firewall it if needed (default **7000**).
 ### Class:  cassandra::datastax_agent
 
 ####`package_ensure`
-Is passed to the package reference (default **present**).
+Is passed to the package reference.  Valid values are **present** or a version
+number
+(default **present**).
 
 ####`package_name`
 Is passed to the package reference (default **datastax-agent**).
@@ -484,6 +490,21 @@ Is passed to the service reference (default **datastax-agent**).
 If the value is changed from the default of *undef* then this is what is
 set as the stomp_interface setting in /var/lib/datastax-agent/conf/address.yaml
 which connects the agent to an OpsCenter instance
+(default **undef**).
+
+### Class:  cassandra::java
+
+####`ensure`
+Is passed to the package reference.  Valid values are **present** or a version
+number
+(default **present**).
+
+####`package_name`
+If the default value of *undef* is left as it is, then a package called
+java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
+on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+can specify a package that is available in a package repository to the
+node
 (default **undef**).
 
 ## Reference
