@@ -404,6 +404,9 @@ describe 'neutron' do
     end
 
     it do
+      is_expected.to contain_class('neutron::agents::lbaas::package')
+      is_expected.to contain_class('neutron::agents::vpnaas::package')
+      is_expected.to contain_class('neutron::services::fwaas')
       is_expected.to contain_neutron_config('DEFAULT/service_plugins').with_value('router,firewall,lbaas,vpnaas,metering')
     end
 

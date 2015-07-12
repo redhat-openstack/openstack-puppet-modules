@@ -422,7 +422,59 @@ class neutron (
 
   if $service_plugins {
     if is_array($service_plugins) {
+      $deprecated = [
+        'neutron.services.loadbalancer.plugin.LoadBalancerPlugin',
+        'neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPlugin',
+        'neutron.services.firewall.fwaas_plugin.FirewallPlugin',
+        'neutron_fwaas.services.firewall.fwaas_plugin.FirewallPlugin',
+        'neutron_vpnaas.services.vpn.plugin.VPNDriverPlugin',
+        'neutron.services.vpn.plugin.VPNDriverPlugin'
+      ]
+
+      $deprecated_present = intersection($deprecated, $service_plugins)
+
+      if !empty($deprecated_present) {
+        warning("You should stop using full import paths: ${deprecated_present} please use router, firewall, lbaas, vpnaas, metering")
+      }
+
+      $lbaas = [
+        'lbaas',
+        'neutron.services.loadbalancer.plugin.LoadBalancerPlugin',
+        'neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPlugin'
+      ]
+      $fwaas = [
+        'firewall',
+        'neutron.services.firewall.fwaas_plugin.FirewallPlugin',
+        'neutron_fwaas.services.firewall.fwaas_plugin.FirewallPlugin'
+      ]
+      $vpnaas = [
+        'vpnaas',
+        'neutron_vpnaas.services.vpn.plugin.VPNDriverPlugin',
+        'neutron.services.vpn.plugin.VPNDriverPlugin'
+      ]
+
       neutron_config { 'DEFAULT/service_plugins': value => join($service_plugins, ',') }
+
+      if !empty(intersection($lbaas, $service_plugins)) {
+        if ! defined(Class['::neutron::agents::lbaas::package']) {
+          class { '::neutron::agents::lbaas::package':
+            package_ensure => $package_ensure,
+          }
+        }
+      }
+
+      if !empty(intersection($fwaas, $service_plugins)) {
+        include ::neutron::services::fwaas
+      }
+
+      if !empty(intersection($vpnaas, $service_plugins)) {
+        if ! defined(Class['::neutron::agents::vpnaas::package']) {
+          class { '::neutron::agents::vpnaas::package':
+            package_ensure => $package_ensure,
+          }
+        }
+      }
+
     } else {
       fail('service_plugins should be an array.')
     }

@@ -94,7 +94,9 @@ describe 'basic neutron' do
         public_url => "https://${::fqdn}:5000/",
         admin_url  => "https://${::fqdn}:35357/",
       }
-
+      class { '::neutron::services::fwaas':
+        enabled => true,
+      }
       # Neutron resources
       class { '::neutron':
         rabbit_user           => 'neutron',
@@ -105,9 +107,11 @@ describe 'basic neutron' do
         debug                 => true,
         verbose               => true,
         service_plugins => [
-          'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin',
-          'neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPlugin',
-          'neutron.services.metering.metering_plugin.MeteringPlugin',
+          'router',
+          'lbaas',
+          'metering',
+          'firewall',
+          'vpnaas',
         ],
       }
       class { '::neutron::db::mysql':
@@ -126,6 +130,7 @@ describe 'basic neutron' do
       class { '::neutron::quota': }
       class { '::neutron::agents::dhcp': debug => true }
       class { '::neutron::agents::l3': debug => true }
+      class { '::neutron::agents::vpnaas': }
       class { '::neutron::agents::lbaas':
         debug => true,
       }
