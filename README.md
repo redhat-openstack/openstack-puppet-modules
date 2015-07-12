@@ -66,6 +66,15 @@ node 'example' {
 }
 ```
 
+To install Cassandra with the optional utilities.
+
+```puppet
+node 'example' {
+  include '::cassandra'
+  include '::cassandra::optutils'
+}
+```
+
 To install the main cassandra package (which is mandatory) and all the
 optional packages, do the following:
 
@@ -74,6 +83,7 @@ node 'example' {
   include '::cassandra'
   include '::cassandra::datastax_agent'
   include '::cassandra::java'
+  include '::cassandra::optutils'
 }
 ```
 
@@ -83,6 +93,8 @@ could not specify the cassandra::java class for a node with the cassandra
 class also being included.
 
 ### Upgrading
+
+The following changes to the API have taken place.
 
 **Changes in 0.4.0**
 
@@ -102,6 +114,11 @@ class also being included.
 * cassandra::java_package_name has now been replaced with
   cassandra::java::package_name.
 
+* cassandra::cassandra_opt_package_ensure has now been replaced with
+  cassandra::optutils:ensure.
+* cassandra::cassandra_opt_package_name has now been replaced with
+  cassandra::optutils:package_name.
+
 **Changes in 0.3.0**
 
 * cassandra_opt_package_ensure changed from 'present' to undef.
@@ -117,24 +134,23 @@ member, do something similar to this:
 
 ```puppet
 include cassandra::java
+include cassandra::optutils
 
 node 'node1' {
   class { 'cassandra':
-    cluster_name                 => 'Foobar Cluster',
-    listen_address               => "${::ipaddress}",
-    seeds                        => "${::ipaddress}",
-    cassandra_opt_package_ensure => 'present',
-    manage_dsc_repo              => true
+    cluster_name    => 'Foobar Cluster',
+    listen_address  => "${::ipaddress}",
+    seeds           => "${::ipaddress}",
+    manage_dsc_repo => true
   }
 }
 
 node 'node2' {
   class { 'cassandra':
-    cluster_name                 => 'Foobar Cluster',
-    listen_address               => "${::ipaddress}",
-    seeds                        => '192.168.42.1',
-    cassandra_opt_package_ensure => 'present',
-    manage_dsc_repo              => true
+    cluster_name    => 'Foobar Cluster',
+    listen_address  => "${::ipaddress}",
+    seeds           => '192.168.42.1',
+    manage_dsc_repo => true
   }
 }
 ```
@@ -467,7 +483,7 @@ Whether to start the thrift rpc server (default **true**).
 TCP port, for commands and data for security reasons, you should not expose this
 port to the internet.  Firewall it if needed (default **7000**).
 
-### Class:  cassandra::datastax_agent
+### Class: cassandra::datastax_agent
 
 ####`package_ensure`
 Is passed to the package reference.  Valid values are **present** or a version
@@ -492,7 +508,7 @@ set as the stomp_interface setting in /var/lib/datastax-agent/conf/address.yaml
 which connects the agent to an OpsCenter instance
 (default **undef**).
 
-### Class:  cassandra::java
+### Class: cassandra::java
 
 ####`ensure`
 Is passed to the package reference.  Valid values are **present** or a version
@@ -502,6 +518,21 @@ number
 ####`package_name`
 If the default value of *undef* is left as it is, then a package called
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
+on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+can specify a package that is available in a package repository to the
+node
+(default **undef**).
+
+### Class: cassandra::optutils
+
+####`ensure`
+Is passed to the package reference.  Valid values are **present** or a version
+number
+(default **present**).
+
+####`package_name`
+If the default value of *undef* is left as it is, then a package called
+cassandra21-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
