@@ -198,18 +198,6 @@ or dropping of column families. The STRONGLY advised default of true
 should be used to provide data safety. If you set this flag to false, you will
 lose data on truncation or drop (default **true**).
 
-#####`cassandra_opt_package_ensure`
-The status of the package specified in **cassandra_opt_package_name**.  Can be
-*present*, *latest* or a specific version number.  If
-*cassandra_opt_package_name* is *undef*, this option has no effect (default
-**present**).
-
-#####`cassandra_opt_package_name`
-If left at the default, this will change to 'cassandra21-tools' on RedHat
-or 'cassandra-tools' on Ubuntu.  Alternatively this use can specify the
-package name
-(default undef).
-
 #####`cassandra_package_ensure`
 The status of the package specified in **cassandra_package_name**.  Can be
 *present*, *latest* or a specific version number (default **present**).
