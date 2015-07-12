@@ -12,9 +12,4 @@ gem 'vagrant-wrapper'
 group :system_tests do
   gem 'beaker-rspec',  :require => false
   gem 'serverspec',    :require => false
-  gem 'vagrant-wrapper'
-end
-
-group :development do
-  gem 'yard'
 end
