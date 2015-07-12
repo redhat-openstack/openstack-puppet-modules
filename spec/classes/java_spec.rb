@@ -28,9 +28,10 @@ describe 'cassandra::java' do
   end
 
   context 'With java_package_name set to foobar' do
+    let :params do
       {
-        :java_package_name   => 'foobar-java',
-        :java_package_ensure => '42',
+        :package_name   => 'foobar-java',
+        :ensure         => '42',
       }
     end
 
