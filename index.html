@@ -1,34 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
+    <meta charset="UTF-8">
     <title>Cassandra by locp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Cassandra</h1>
+      <h2 class="project-tagline">A Puppet module to install and manage Apache Cassandra.</h2>
+      <a href="https://github.com/locp/cassandra" class="btn">View on GitHub</a>
+      <a href="https://github.com/locp/cassandra/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/locp/cassandra/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <header>
-      <div class="container">
-        <h1>Cassandra</h1>
-        <h2>A Puppet module to install and manage Apache Cassandra.</h2>
-
-        <section id="downloads">
-          <a href="https://github.com/locp/cassandra/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/locp/cassandra/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/locp/cassandra" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="cassandra" class="anchor" href="#cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>cassandra</h1>
 
 <h4>
@@ -83,27 +74,84 @@ from (on Ubuntu).</li>
 <a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
 
 <p>This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the following section for
-more realistic scenarios.</p>
+(assuming there is an available repository).  See the <em>Usage</em>(#usage) section
+for more realistic scenarios.</p>
 
 <div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
   <span class="pl-k">include</span> '::cassandra'
 }</pre></div>
 
+<p>To install the DataStax agent, include the specific class.</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">include</span> '::cassandra'
+  <span class="pl-k">include</span> '::cassandra::datastax_agent'
+}</pre></div>
+
+<p>To install with a reasonably sensible Java environment include the java
+subclass.</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">include</span> '::cassandra'
+  <span class="pl-k">include</span> '::cassandra::java'
+}</pre></div>
+
+<p>To install Cassandra with the optional utilities.</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">include</span> '::cassandra'
+  <span class="pl-k">include</span> '::cassandra::optutils'
+}</pre></div>
+
+<p>To install the main cassandra package (which is mandatory) and all the
+optional packages, do the following:</p>
+
+<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  <span class="pl-k">include</span> '::cassandra'
+  <span class="pl-k">include</span> '::cassandra::datastax_agent'
+  <span class="pl-k">include</span> '::cassandra::java'
+  <span class="pl-k">include</span> '::cassandra::optutils'
+}</pre></div>
+
+<p>By saying the cassandra class/package is mandatory, what is meant is that all
+the sub classes have a dependancy on the main class.  So for example one
+could not specify the cassandra::java class for a node with the cassandra
+class also being included.</p>
+
 <h3>
 <a id="upgrading" class="anchor" href="#upgrading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading</h3>
 
-<p><strong>From version &lt;= 0.2.2 to &gt;= 0.3.0</strong></p>
+<p>The following changes to the API have taken place.</p>
+
+<p><strong>Changes in 0.4.0</strong></p>
 
 <ul>
-<li>cassandra_opt_package_ensure changed from 'present' to undef.</li>
+<li>cassandra::datastax_agent_package_ensure has now been replaced with
+cassandra::datastax_agent::package_ensure.</li>
+<li>cassandra::datastax_agent_service_enable has now been replaced with
+cassandra::datastax_agent::service_enable.</li>
+<li>cassandra::datastax_agent_service_ensure has now been replaced with
+cassandra::datastax_agent::service_ensure.</li>
+<li>cassandra::datastax_agent_package_name has now been replaced with
+cassandra::datastax_agent::package_name.</li>
+<li><p>cassandra::datastax_agent_service_name has now been replaced with
+cassandra::datastax_agent::service_name.</p></li>
+<li><p>cassandra::java_package_ensure has now been replaced with
+cassandra::java::ensure.</p></li>
+<li><p>cassandra::java_package_name has now been replaced with
+cassandra::java::package_name.</p></li>
+<li><p>cassandra::cassandra_opt_package_ensure has now been replaced with
+cassandra::optutils:ensure.</p></li>
+<li>cassandra::cassandra_opt_package_name has now been replaced with
+cassandra::optutils:package_name.</li>
 </ul>
 
-<p><strong>From version &gt;= 0.2.0 and &lt;= 0.2.2 to &gt;= 0.3.0</strong></p>
+<p><strong>Changes in 0.3.0</strong></p>
 
 <ul>
-<li>The manage_service option has been replaced with service_enable and
-service_ensure.</li>
+<li><p>cassandra_opt_package_ensure changed from 'present' to undef.</p></li>
+<li><p>The manage_service option has been replaced with service_enable and
+service_ensure.</p></li>
 </ul>
 
 <h2>
@@ -113,33 +161,24 @@ service_ensure.</li>
 node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
 member, do something similar to this:</p>
 
-<div class="highlight highlight-puppet"><pre><span class="pl-k">if</span> <span class="pl-smi">$::osfamily</span> == <span class="pl-s"><span class="pl-pds">'</span>Debian<span class="pl-pds">'</span></span> {
-  <span class="pl-smi">$java_package_name</span> = <span class="pl-s"><span class="pl-pds">'</span>openjdk-7-jre-headless<span class="pl-pds">'</span></span>
-} <span class="pl-k">else</span> {
-  <span class="pl-smi">$java_package_name</span> = <span class="pl-s"><span class="pl-pds">'</span>java-1.7.0-openjdk<span class="pl-pds">'</span></span>
-}
+<div class="highlight highlight-puppet"><pre><span class="pl-k">include</span> cassandra::java
+<span class="pl-k">include</span> cassandra::optutils
 
 node <span class="pl-s"><span class="pl-pds">'</span>node1<span class="pl-pds">'</span></span> {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
-    <span class="pl-c1">cluster_name</span>                 =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">listen_address</span>               =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">seeds</span>                        =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">cassandra_opt_package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>present<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">java_package_name</span>            =&gt; <span class="pl-smi">$java_package_name</span>,
-    <span class="pl-c1">java_package_ensure</span>          =&gt; <span class="pl-s"><span class="pl-pds">'</span>present<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">manage_dsc_repo</span>              =&gt; true
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">manage_dsc_repo</span> =&gt; true
   }
 }
 
 node <span class="pl-s"><span class="pl-pds">'</span>node2<span class="pl-pds">'</span></span> {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
-    <span class="pl-c1">cluster_name</span>                 =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">listen_address</span>               =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">seeds</span>                        =&gt; <span class="pl-s"><span class="pl-pds">'</span>192.168.42.1<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">cassandra_opt_package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>present<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">java_package_name</span>            =&gt; <span class="pl-smi">$java_package_name</span>,
-    <span class="pl-c1">java_package_ensure</span>          =&gt; <span class="pl-s"><span class="pl-pds">'</span>present<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">manage_dsc_repo</span>              =&gt; true
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>192.168.42.1<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">manage_dsc_repo</span> =&gt; true
   }
 }</pre></div>
 
@@ -148,8 +187,6 @@ tools.</p>
 
 <h3>
 <a id="class-cassandra" class="anchor" href="#class-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra</h3>
-
-<p>Currently this is the only public class within this module.</p>
 
 <h4>
 <a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
@@ -336,50 +373,6 @@ will spread data evenly across them, subject to the granularity of
 the configured compaction strategy (default <strong>['/var/lib/cassandra/data']</strong>).</p>
 
 <h5>
-<a id="datastax_agent_package_ensure" class="anchor" href="#datastax_agent_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>datastax_agent_package_ensure</code>
-</h5>
-
-<p>If the value is anything other than undef, it is passed to a package reference
-to install the DataStax Agent package.
-(default <strong>undef</strong>).</p>
-
-<h5>
-<a id="datastax_agent_service_enable" class="anchor" href="#datastax_agent_service_enable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>datastax_agent_service_enable</code>
-</h5>
-
-<p>The datastax_agent_service_enable is passed to a service reference enable
-parameter for the DataStax Agent.  This parameter has no effect if
-datastax_agent_package_ensure is undef, absent or purged.  Valid values are
-true or false
-(default <strong>true</strong>).</p>
-
-<h5>
-<a id="datastax_agent_service_ensure" class="anchor" href="#datastax_agent_service_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>datastax_agent_service_ensure</code>
-</h5>
-
-<p>The datastax_agent_service_ensure is passed to a service reference ensure
-parameter for the DataStax Agent.  This parameter has no effect if
-datastax_agent_package_ensure is undef, absent or purged. Valid values are
-running or stopped
-(default <strong>running</strong>).</p>
-
-<h5>
-<a id="datastax_agent_package_name" class="anchor" href="#datastax_agent_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>datastax_agent_package_name</code>
-</h5>
-
-<p>The name of the datastax-agent package.  This is ignored if
-datastax_agent_ensure is set to undef.
-(default <strong>datastax-agent</strong>).</p>
-
-<h5>
-<a id="datastax_agent_service_name" class="anchor" href="#datastax_agent_service_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>datastax_agent_service_name</code>
-</h5>
-
-<p>The name of the datastax-agent service.  This is ignored if
-the agent is not installed
-(default <strong>datastax-agent</strong>).</p>
-
-<h5>
 <a id="disk_failure_policy" class="anchor" href="#disk_failure_policy" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>disk_failure_policy</code>
 </h5>
 
@@ -485,22 +478,6 @@ responsibility (default <strong>false</strong>).</p>
 </ul>
 
 <p>Default <strong>all</strong></p>
-
-<h5>
-<a id="java_package_ensure" class="anchor" href="#java_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>java_package_ensure</code>
-</h5>
-
-<p>The status of the package specified in <strong>java_package_name</strong>.  Can be
-<em>present</em>, <em>latest</em> or a specific version number.  If
-<em>java_package_name</em> is <em>undef</em>, this option has no effect (default
-<strong>present</strong>).</p>
-
-<h5>
-<a id="java_package_name" class="anchor" href="#java_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>java_package_name</code>
-</h5>
-
-<p>Optionally specify a JRE/JDK package (e.g. java-1.7.0-openjdk).  Nothing is
-executed if the default value of <strong>undef</strong> is unchanged.</p>
 
 <h5>
 <a id="listen_address" class="anchor" href="#listen_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>listen_address</code>
@@ -685,14 +662,92 @@ however is different and specified below (default <strong>true</strong>).</p>
 port to the internet.  Firewall it if needed (default <strong>7000</strong>).</p>
 
 <h3>
-<a id="class-cassandraconfig" class="anchor" href="#class-cassandraconfig" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::config</h3>
+<a id="class-cassandradatastax_agent" class="anchor" href="#class-cassandradatastax_agent" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_agent</h3>
 
-<p>A private class.</p>
+<h4>
+<a id="package_ensure" class="anchor" href="#package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
+</h4>
+
+<p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
+number
+(default <strong>present</strong>).</p>
+
+<h4>
+<a id="package_name" class="anchor" href="#package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h4>
+
+<p>Is passed to the package reference (default <strong>datastax-agent</strong>).</p>
+
+<h4>
+<a id="service_ensure-1" class="anchor" href="#service_ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_ensure</code>
+</h4>
+
+<p>Is passed to the service reference (default <strong>running</strong>).</p>
+
+<h4>
+<a id="service_enable-1" class="anchor" href="#service_enable-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_enable</code>
+</h4>
+
+<p>Is passed to the service reference (default <strong>true</strong>).</p>
+
+<h4>
+<a id="service_name-1" class="anchor" href="#service_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
+</h4>
+
+<p>Is passed to the service reference (default <strong>datastax-agent</strong>).</p>
+
+<h4>
+<a id="stomp_interface" class="anchor" href="#stomp_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stomp_interface</code>
+</h4>
+
+<p>If the value is changed from the default of <em>undef</em> then this is what is
+set as the stomp_interface setting in /var/lib/datastax-agent/conf/address.yaml
+which connects the agent to an OpsCenter instance
+(default <strong>undef</strong>).</p>
 
 <h3>
-<a id="class-cassandrainstall" class="anchor" href="#class-cassandrainstall" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::install</h3>
+<a id="class-cassandrajava" class="anchor" href="#class-cassandrajava" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::java</h3>
 
-<p>A private class.</p>
+<h4>
+<a id="ensure" class="anchor" href="#ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
+</h4>
+
+<p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
+number
+(default <strong>present</strong>).</p>
+
+<h4>
+<a id="package_name-1" class="anchor" href="#package_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h4>
+
+<p>If the default value of <em>undef</em> is left as it is, then a package called
+java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
+on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+can specify a package that is available in a package repository to the
+node
+(default <strong>undef</strong>).</p>
+
+<h3>
+<a id="class-cassandraoptutils" class="anchor" href="#class-cassandraoptutils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::optutils</h3>
+
+<h4>
+<a id="ensure-1" class="anchor" href="#ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
+</h4>
+
+<p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
+number
+(default <strong>present</strong>).</p>
+
+<h4>
+<a id="package_name-2" class="anchor" href="#package_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h4>
+
+<p>If the default value of <em>undef</em> is left as it is, then a package called
+cassandra21-tools or cassandra-tools will be installed
+on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+can specify a package that is available in a package repository to the
+node
+(default <strong>undef</strong>).</p>
 
 <h2>
 <a id="reference" class="anchor" href="#reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference</h2>
@@ -745,10 +800,16 @@ Cassandra 1.x compatible template
 <p>[2] - <em>msimonin/cassandra: Puppet module to install Apache Cassandra from
 the DataStax distribution. Forked from gini/cassandra</em>, available at
 <a href="https://forge.puppetlabs.com/msimonin/cassandra">https://forge.puppetlabs.com/msimonin/cassandra</a>, accessed 17th March 2015.</p>
-      </section>
-    </div>
 
-              <script type="text/javascript">
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/locp/cassandra">Cassandra</a> is maintained by <a href="https://github.com/locp">locp</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -761,3 +822,4 @@ the DataStax distribution. Forked from gini/cassandra</em>, available at
 
   </body>
 </html>
+
