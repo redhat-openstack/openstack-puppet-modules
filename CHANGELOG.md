@@ -1,3 +1,14 @@
+##2015-07-12 - Release 0.4.0
+### Summary
+
+* Some major changes to the API on how Java, the optional Cassandra tools and
+  the DataStax agent are installed.  See the Upgrading section of the README
+  file.
+* Non-functionally, we have integrated with Travis CI (see
+  https://travis-ci.org/locp/cassandra for details) and thanks to those guys
+  for providing such a neat service.
+* More spec tests.
+
 ##2015-06-27 - Release 0.3.0
 ### Summary
 
