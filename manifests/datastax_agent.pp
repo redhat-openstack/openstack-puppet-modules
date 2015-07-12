@@ -12,12 +12,6 @@ class cassandra::datastax_agent (
     require => Class['cassandra']
   }
 
-  service { $service_name:
-    ensure  => $service_ensure,
-    enable  => $service_enable,
-    require => Package[$package_name],
-  }
-
   if $stomp_interface != undef {
     $ensure = present
   } else {
@@ -30,6 +24,13 @@ class cassandra::datastax_agent (
     section           => '',
     key_val_separator => ': ',
     setting           => 'stomp_interface',
-    value             => $stomp_interface
+    value             => $stomp_interface,
+    require           => Package[$package_name],
+    notify            => Service[$service_name]
+  }
+
+  service { $service_name:
+    ensure => $service_ensure,
+    enable => $service_enable,
   }
 }
