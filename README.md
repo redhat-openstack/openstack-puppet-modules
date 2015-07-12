@@ -480,6 +480,12 @@ Is passed to the service reference (default **true**).
 ####`service_name`
 Is passed to the service reference (default **datastax-agent**).
 
+####`stomp_interface`
+If the value is changed from the default of *undef* then this is what is
+set as the stomp_interface setting in /var/lib/datastax-agent/conf/address.yaml
+which connects the agent to an OpsCenter instance
+(default **undef**).
+
 ## Reference
 
 This module uses the package type to install the Cassandra package, the
