@@ -4,8 +4,6 @@
 # does as part of the module and how to use it.
 #
 class cassandra::install (
-  $cassandra_opt_package_name,
-  $cassandra_opt_package_ensure,
   $cassandra_package_ensure,
   $cassandra_package_name,
   $manage_dsc_repo,
@@ -22,10 +20,6 @@ class cassandra::install (
           gpgcheck => 0,
           before   => Package[ $cassandra_package_name ],
         }
-      }
-
-      if $cassandra_opt_package_name == undef {
-        $cassandra_opt_package_name = 'cassandra21-tools'
       }
     }
     'Debian': {
@@ -57,10 +51,6 @@ class cassandra::install (
           before      => Package[ $cassandra_package_name ]
         }
       }
-
-      if $cassandra_opt_package_name == undef {
-        $cassandra_opt_package_name = 'cassandra-tools'
-      }
     }
     default: {
       fail("OS family ${::osfamily} not supported")
@@ -69,12 +59,5 @@ class cassandra::install (
 
   package { $cassandra_package_name:
     ensure => $cassandra_package_ensure,
-  }
-
-  if $cassandra_opt_package_ensure != undef {
-    package { $cassandra_opt_package_name:
-      ensure  => $cassandra_opt_package_ensure,
-      require => Package[$cassandra_package_name],
-    }
   }
 }

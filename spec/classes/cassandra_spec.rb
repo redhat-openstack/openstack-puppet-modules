@@ -81,44 +81,6 @@ describe 'cassandra' do
     }
   end
 
-  context 'With cassandra_opt_package_ensure set to present (RedHat)' do
-    let :facts do
-      {
-        :osfamily => 'RedHat',
-      }
-    end
-
-    let :params do
-      {
-        :cassandra_opt_package_ensure => 'present',
-      }
-    end
-
-    it {
-      should contain_package('cassandra21-tools')
-    }
-  end
-
-  context 'With cassandra_opt_package_ensure set to present (Ubuntu)' do
-    let :facts do
-      {
-        :osfamily => 'Debian',
-        :lsbdistid => 'Ubuntu',
-        :lsbdistrelease => '14.04'
-      }
-    end
-
-    let :params do
-      {
-        :cassandra_opt_package_ensure => 'present',
-      }
-    end
-
-    it {
-      should contain_package('cassandra-tools')
-    }
-  end
-
   context 'On an unknown OS with defaults for all parameters' do
     let :facts do
       {

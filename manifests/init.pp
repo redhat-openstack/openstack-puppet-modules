@@ -7,8 +7,6 @@ class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
-  $cassandra_opt_package_ensure          = undef,
-  $cassandra_opt_package_name            = undef,
   $cassandra_package_ensure              = 'present',
   $cassandra_package_name                = 'dsc21',
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
@@ -53,11 +51,9 @@ class cassandra (
   ) {
 
   class { 'cassandra::install':
-    cassandra_package_ensure     => $cassandra_package_ensure,
-    cassandra_package_name       => $cassandra_package_name,
-    cassandra_opt_package_ensure => $cassandra_opt_package_ensure,
-    cassandra_opt_package_name   => $cassandra_opt_package_name,
-    manage_dsc_repo              => $manage_dsc_repo,
+    cassandra_package_ensure => $cassandra_package_ensure,
+    cassandra_package_name   => $cassandra_package_name,
+    manage_dsc_repo          => $manage_dsc_repo,
   }
 
   # A hack for long arguments
