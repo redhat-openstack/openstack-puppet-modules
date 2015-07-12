@@ -76,7 +76,9 @@ describe 'basic neutron' do
         public_url => "https://${::fqdn}:5000/",
         admin_url  => "https://${::fqdn}:35357/",
       }
-
+      class { '::neutron::services::fwaas':
+        enabled => true,
+      }
       # Neutron resources
       class { '::neutron':
         rabbit_user           => 'neutron',
@@ -88,6 +90,7 @@ describe 'basic neutron' do
           'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin',
           'neutron.services.loadbalancer.plugin.LoadBalancerPlugin',
           'neutron.services.metering.metering_plugin.MeteringPlugin',
+          'firewall',
         ],
       }
       class { '::neutron::db::mysql':
@@ -102,13 +105,13 @@ describe 'basic neutron' do
         identity_uri        => 'http://127.0.0.1:35357/',
         sync_db             => true,
       }
+      class { '::neutron::agents::lbaas':
+        device_driver => 'neutron_lbaas.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
+      }
       class { '::neutron::client': }
       class { '::neutron::quota': }
       class { '::neutron::agents::dhcp': }
       class { '::neutron::agents::l3': }
-      class { '::neutron::agents::lbaas':
-        device_driver => 'neutron_lbaas.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
-      }
       class { '::neutron::agents::metering': }
       class { '::neutron::agents::ml2::ovs':
         enable_tunneling => true,

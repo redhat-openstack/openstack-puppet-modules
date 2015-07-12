@@ -77,19 +77,17 @@ class neutron::agents::lbaas (
     'haproxy/user_group':         value => $user_group;
   }
 
-  Package['neutron']            -> Package['neutron-lbaas-agent']
-  Package['neutron-lbaas-agent'] -> Neutron_config<||>
-  Package['neutron-lbaas-agent'] -> Neutron_lbaas_agent_config<||>
-  package { 'neutron-lbaas-agent':
-    ensure => $package_ensure,
-    name   => $::neutron::params::lbaas_agent_package,
-    tag    => 'openstack',
-  }
   if $manage_service {
     if $enabled {
       $service_ensure = 'running'
     } else {
       $service_ensure = 'stopped'
+    }
+  }
+
+  if ! defined(Class['::neutron::agents::lbaas::package']) {
+    class { '::neutron::agents::lbaas::package':
+      package_ensure => $package_ensure,
     }
   }
 

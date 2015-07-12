@@ -54,6 +54,11 @@ class neutron::agents::vpnaas (
 ) {
 
   include ::neutron::params
+  if ! defined(Class['::neutron::agents::vpnaas::package']) {
+    class { '::neutron::agents::vpnaas::package':
+      package_ensure => $package_ensure,
+    }
+  }
 
   Neutron_config<||>              ~> Service['neutron-vpnaas-service']
   Neutron_vpnaas_agent_config<||> ~> Service['neutron-vpnaas-service']
@@ -88,18 +93,6 @@ class neutron::agents::vpnaas (
     neutron_vpnaas_agent_config {
       'DEFAULT/external_network_bridge': ensure => absent;
     }
-  }
-
-  if $::neutron::params::vpnaas_agent_package {
-    Package['neutron']            -> Package['neutron-vpnaas-agent']
-    Package['neutron-vpnaas-agent'] -> Neutron_vpnaas_agent_config<||>
-    package { 'neutron-vpnaas-agent':
-      ensure => $package_ensure,
-      name   => $::neutron::params::vpnaas_agent_package,
-      tag    => 'openstack',
-    }
-  } else {
-    Package['neutron'] -> Neutron_vpnaas_agent_config<||>
   }
 
   if $manage_service {

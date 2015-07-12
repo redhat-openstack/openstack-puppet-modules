@@ -388,6 +388,30 @@ class neutron (
   if $service_plugins {
     if is_array($service_plugins) {
       neutron_config { 'DEFAULT/service_plugins': value => join($service_plugins, ',') }
+
+      if ('lbaas' in $service_plugins or
+          'neutron.services.loadbalancer.plugin.LoadBalancerPlugin' in $service_plugins) {
+        if ! defined(Class['::neutron::agents::lbaas::package']) {
+          class { '::neutron::agents::lbaas::package':
+            package_ensure => $package_ensure,
+          }
+        }
+      }
+
+      if ('firewall' in $service_plugins or
+          'neutron.services.firewall.fwaas_plugin.FirewallPlugin' in $service_plugins) {
+        include ::neutron::services::fwaas
+      }
+
+      if ('vpnaas' in $service_plugins or
+          'neutron_vpnaas.services.vpn.plugin:VPNDriverPlugin' in $service_plugins) {
+        if ! defined(Class['::neutron::agents::vpnaas::package']) {
+          class { '::neutron::agents::vpnaas::package':
+            package_ensure => $package_ensure,
+          }
+        }
+      }
+
     } else {
       fail('service_plugins should be an array.')
     }
