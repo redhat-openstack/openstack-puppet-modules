@@ -1,5 +1,5 @@
-# cassandra: A Puppet Module to Install and manage Cassandra and DataStax
-Agent.
+# cassandra: A Puppet Module to Install and manage Cassandra and DataStax Agent.
+[![Puppet Forge](http://img.shields.io/puppetforge/v/locp/cassandra.svg)](https://forge.puppetlabs.com/locp/cassandra)
 
 #### Table of Contents
 
