@@ -97,6 +97,9 @@
 #     (optional) Passes a string of custom configuration
 #     directives to be placed at the end of the vhost configuration.
 #     Defaults to undef.
+#   [*setup_selinux*]
+#     Setup SELinux ? (boolean)
+#     Optional. Defaults to true
 #
 # == Dependencies
 #
@@ -143,6 +146,7 @@ class keystone::wsgi::apache (
   $wsgi_script_source    = undef,
   $access_log_format     = false,
   $vhost_custom_fragment = undef,
+  $setup_selinux         = true,
 ) {
 
   include ::keystone::params
@@ -150,6 +154,20 @@ class keystone::wsgi::apache (
   include ::apache::mod::wsgi
   if $ssl {
     include ::apache::mod::ssl
+  }
+
+  if $setup_selinux and (str2bool($::selinux) == true) {
+    Selboolean <| |> ~> Service['httpd']
+    # we need httpd to connect to keystone ports
+    selboolean { 'httpd_use_openstack':
+      value      => 'on',
+      persistent => true,
+    }
+    # we need httpd to connect to databases
+    selboolean { 'httpd_can_network_connect_db':
+      value      => 'on',
+      persistent => true,
+    }
   }
 
   Package['keystone'] -> Package['httpd']
