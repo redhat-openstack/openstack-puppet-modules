@@ -271,7 +271,8 @@ describe 'keystone::wsgi::apache' do
     let :facts do
       global_facts.merge({
         :osfamily               => 'RedHat',
-        :operatingsystemrelease => '6.0'
+        :operatingsystemrelease => '6.0',
+        :selinux                => 'true'
       })
     end
 
@@ -285,6 +286,16 @@ describe 'keystone::wsgi::apache' do
     end
 
     it_configures 'apache serving keystone with mod_wsgi'
+
+    it { is_expected.to contain_selboolean('httpd_use_openstack').with(
+      'value'      => 'on',
+      'persistent' => true,
+    )}
+
+    it { is_expected.to contain_selboolean('httpd_can_network_connect_db').with(
+      'value'      => 'on',
+      'persistent' => true,
+    )}
   end
 
   context 'on Debian platforms' do
