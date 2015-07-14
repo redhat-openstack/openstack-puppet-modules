@@ -13,6 +13,10 @@
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+    * [cassandra](#class-cassandra)
+    * [cassandra::datastax_agent](#class-cassandradatastax_agent)
+    * [cassandra::java](#class-cassandrajava)
+    * [cassandra::optutils](#class-cassandraoptutils)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
 
