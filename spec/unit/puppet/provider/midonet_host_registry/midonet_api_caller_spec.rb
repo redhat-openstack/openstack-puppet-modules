@@ -16,7 +16,6 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
     }
   )}
 
-
   describe 'host registry happy path' do
     # - Single tunnelzone zones
     # - Host registered
@@ -62,7 +61,6 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       provider.create
     end
 
-
     it 'unregisters the host successfully' do
       # Expectations over the 'destroy' call
       expect(provider).to receive(:call_get_tunnelzone)
@@ -83,6 +81,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     let(:tzones) {
       [
         {
@@ -92,6 +91,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     it 'creates the tunnelzone and the host' do
       allow(provider).to receive(:call_get_tunnelzone).and_return([])
       allow(provider).to receive(:call_create_tunnelzone).and_return(tzones)
@@ -116,6 +116,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     let(:host_to_unregister) {
       [
         {
@@ -124,6 +125,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     let(:host_left_in_tunnelzone) {
       [
         {
@@ -182,6 +184,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     it 'should raise an exception' do
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
@@ -210,6 +213,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     it 'should not fail' do
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return([])
@@ -231,6 +235,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     let(:hosts) {
       [
         {
@@ -239,6 +244,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
         }
       ]
     }
+
     it 'should not fail' do
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return(hosts)
