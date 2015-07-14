@@ -77,8 +77,7 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
       message = Hash.new
       message['name'] = "uplink-spg"
       message['stateful'] = "true"
-      #TODO(carmela): replace with keystone call and tenant id
-      message['tenantId'] = "4486908d-8e15-4f01-b3b4-86f9def0fa04"
+      message['tenantId'] = call_get_tenant()
 
       spg = call_create_stateful_port_group(message)
     end
@@ -155,6 +154,13 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
       req.url "/midonet-api/login"
     end
     return JSON.parse(res.body)['key']
+  end
+
+  def call_get_tenant()
+    res = @connection.get do |req|
+      req.url "/midonet-api/tenants"
+    end
+    return JSON.parse(res.body)[0]['id']
   end
 
   def call_get_provider_router()
@@ -273,6 +279,7 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
           :call_get_host
           :call_get_stateful_port_group
           :call_get_provider_router
+          :call_get_tenant
           :call_get_uplink_port
           :define_connection
 end

@@ -78,6 +78,15 @@ describe Puppet::Type.type(:midonet_gateway).provider(:midonet_api_caller) do
       ]
     }
 
+    let(:tenants) {
+      [
+        {
+          "id"   => "4486908d-8e15-4f01-b3b4-86f9def0fa04",
+          "name" => "4486908d-8e15-4f01-b3b4-86f9def0fa04"
+        }
+      ]
+    }
+
     before :each do
       allow(provider).to receive(:call_create_uplink_port).and_return(ports)
       allow(provider).to receive(:call_get_provider_router).and_return(routers)
@@ -94,6 +103,7 @@ describe Puppet::Type.type(:midonet_gateway).provider(:midonet_api_caller) do
       allow(provider).to receive(:call_remove_ports_from_port_group)
       allow(provider).to receive(:call_get_uplink_port).and_return(ports)
       allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
+      allow(provider).to receive(:call_get_tenant).and_return(tenants)
     end
 
     it 'creates virtual ports for each remote BGP peer, advertises routes,
