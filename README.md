@@ -29,7 +29,7 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 * Optionally insures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
-  from (on RedHat).
+  from (on Red Hat).
 * Optionally configures an Apt repository to install the Cassandra packages
   from (on Ubuntu).
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
@@ -250,8 +250,8 @@ This is passed to the
 
 ##### `config_path`
 The path to the cassandra configuration file.  If this is undef, it will be
-changed to /etc/cassandra/default.conf on the RedHat family of operating
-systems or /etc/cassandra on Ubuntu.  Otherwise the user can specify the
+changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
+systems or **/etc/cassandra** on Ubuntu.  Otherwise the user can specify the
 path name
 (default **undef**).
 
@@ -467,7 +467,7 @@ There is currently no method for this module to manipulate Java options.
 
 Currently the is no configuration or customisation of the DataStax Agent.
 
-Tested on the RedHat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
+Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.5.
 
 ## Contributers
