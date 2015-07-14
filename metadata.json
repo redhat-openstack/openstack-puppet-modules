@@ -2,7 +2,7 @@
     "name": "locp-cassandra",
     "version": "0.4.0",
     "author": "locp",
-    "summary": "A Puppet Module to Install and manage Cassandra and DataStax Agent.",
+    "summary": "A Puppet module to install and manage Cassandra and DataStax Agent",
     "license": "Apache-2.0",
     "source": "https://github.com/locp/cassandra",
     "project_page": "https://github.com/locp/cassandra",
