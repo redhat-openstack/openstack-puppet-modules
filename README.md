@@ -428,12 +428,16 @@ which connects the agent to an Opscenter instance
 
 ### Class: cassandra::java
 
-####`ensure`
+A class to install a reasonably sensible Java package.
+
+#### Parameters
+
+##### `ensure`
 Is passed to the package reference.  Valid values are **present** or a version
 number
 (default **present**).
 
-####`package_name`
+##### `package_name`
 If the default value of *undef* is left as it is, then a package called
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
@@ -443,12 +447,16 @@ node
 
 ### Class: cassandra::optutils
 
-####`ensure`
+A class to install the optional Cassandra tools package.
+
+#### Parameters
+
+##### `ensure`
 Is passed to the package reference.  Valid values are **present** or a version
 number
 (default **present**).
 
-####`package_name`
+##### `package_name`
 If the default value of *undef* is left as it is, then a package called
 cassandra21-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
@@ -458,15 +466,8 @@ node
 
 ## Limitations
 
-This module currently still has somewhat limited functionality.  More
-parameters and configuration parameters will be added later.
-
-There is currently no method for this module to manipulate Java options.
-
-Currently the is no configuration or customisation of the DataStax Agent.
-
 Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
-(CE) 3.7.5 and DSC 2.1.5.
+(CE) 3.7.5 and DSC 2.1.
 
 ## Contributers
 
