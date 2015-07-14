@@ -1,4 +1,4 @@
-# cassandra: A Puppet Module to Install and manage Cassandra and DataStax Agent.
+# cassandra
 [![Puppet Forge](http://img.shields.io/puppetforge/v/locp/cassandra.svg)](https://forge.puppetlabs.com/locp/cassandra)
 [![Github Tag](https://img.shields.io/github/tag/locp/cassandra.svg)](https://github.com/locp/cassandra)
 [![Build Status](https://travis-ci.org/locp/cassandra.png?branch=master)](https://travis-ci.org/locp/cassandra)
@@ -15,14 +15,10 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
-7. [External Links](#external-links)
 
 ## Overview
 
-This module installs and configures Apache Cassandra.  The installation steps
-were taken from the installation documentation prepared by DataStax [1] and
-the configuration parameters are the same as those for the Puppet module
-developed by msimonin [2].
+A Puppet module to install and manage Cassandra and DataStax Agent.
 
 ## Setup
 
@@ -132,8 +128,10 @@ The following changes to the API have taken place.
 
 ## Usage
 
+### Create a Small Cluster
+
 To install Cassandra in a two node cluster called 'Foobar Cluster' where
-node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
+node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:
 
 ```puppet
@@ -162,22 +160,23 @@ node 'node2' {
 This would also ensure that the JDK is installed and the optional Cassandra
 tools.
 
+## Reference
+
+### Public Classes
+
+* **cassandra**
+* **cassandra::datastax_agent**
+* **cassandra::java**
+* **cassandra::optutils**
+
 ### Class: cassandra
 
 #### Parameters
 
-#####`authenticator`
-Authentication backend, implementing IAuthenticator; used to identify users
-Out of the box, Cassandra provides
-org.apache.cassandra.auth.{AllowAllAuthenticator, PasswordAuthenticator}.
-
-* AllowAllAuthenticator performs no checks - set it to disable authentication.
-* PasswordAuthenticator relies on username/password pairs to authenticate
-  users. It keeps usernames and hashed passwords in system_auth.credentials
-  table. Please increase system_auth keyspace replication factor if you use this
-  authenticator.
-
-Default: **AllowAllAuthenticator**
+##### `authenticator`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **AllowAllAuthenticator**).
 
 #####`authorizer`
 Authorization backend, implementing IAuthorizer; used to limit access/provide
@@ -197,18 +196,6 @@ Whether or not a snapshot is taken of the data before keyspace truncation
 or dropping of column families. The STRONGLY advised default of true 
 should be used to provide data safety. If you set this flag to false, you will
 lose data on truncation or drop (default **true**).
-
-#####`cassandra_opt_package_ensure`
-The status of the package specified in **cassandra_opt_package_name**.  Can be
-*present*, *latest* or a specific version number.  If
-*cassandra_opt_package_name* is *undef*, this option has no effect (default
-**present**).
-
-#####`cassandra_opt_package_name`
-If left at the default, this will change to 'cassandra21-tools' on RedHat
-or 'cassandra-tools' on Ubuntu.  Alternatively this use can specify the
-package name
-(default undef).
 
 #####`cassandra_package_ensure`
 The status of the package specified in **cassandra_package_name**.  Can be
@@ -542,19 +529,6 @@ can specify a package that is available in a package repository to the
 node
 (default **undef**).
 
-## Reference
-
-This module uses the package type to install the Cassandra package, the
-optional Cassandra tools, the DataStax agent and Java package.
-
-It optionally uses the service type to enable the cassandra service and/or the
-DataStax agent and ensure that they are running.
-
-It also uses the yumrepo type on the RedHat family of operating systems to
-(optionally) install the *DataStax Repo for Apache Cassandra*.
-
-On Ubuntu, the apt class is optionally utilised.
-
 ## Limitations
 
 This module currently still has somewhat limited functionality.  More
@@ -579,12 +553,3 @@ https://guides.github.com/activities/contributing-to-open-source.
 Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
 Cassandra 1.x compatible template
 (see [#11](https://github.com/locp/cassandra/pull/11)).
-
-## External Links
-
-[1] - *Installing DataStax Community on RHEL-based systems*, available at
-http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html, accessed 25th May 2015.
-
-[2] - *msimonin/cassandra: Puppet module to install Apache Cassandra from
-the DataStax distribution. Forked from gini/cassandra*, available at
-https://forge.puppetlabs.com/msimonin/cassandra, accessed 17th March 2015.

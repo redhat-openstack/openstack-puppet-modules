@@ -12,8 +12,8 @@ tests should pass with no errors or warnings:
 
 ```bash
 rake lint              # Run puppet-lint
-rake spec              # Run spec tests in a clean fixtures directory
 rake syntax            # Syntax check Puppet manifests and templates
+rake spec              # Run spec tests in a clean fixtures directory
 ```
 
 ## Beaker Tests
