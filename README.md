@@ -96,7 +96,9 @@ class also being included.
 
 The following changes to the API have taken place.
 
-**Changes in 0.4.0**
+#### Changes in 0.4.0
+
+There is now a cassandra::datastax_agent class, therefore:
 
 * cassandra::datastax_agent_package_ensure has now been replaced with
   cassandra::datastax_agent::package_ensure.
@@ -109,17 +111,21 @@ The following changes to the API have taken place.
 * cassandra::datastax_agent_service_name has now been replaced with
   cassandra::datastax_agent::service_name.
 
+Likewise now there is a new class for handling the installation of Java:
+
 * cassandra::java_package_ensure has now been replaced with
   cassandra::java::ensure.
 * cassandra::java_package_name has now been replaced with
   cassandra::java::package_name.
+
+Also there is now a class for installing the optional utilities:
 
 * cassandra::cassandra_opt_package_ensure has now been replaced with
   cassandra::optutils:ensure.
 * cassandra::cassandra_opt_package_name has now been replaced with
   cassandra::optutils:package_name.
 
-**Changes in 0.3.0**
+#### Changes in 0.3.0
 
 * cassandra_opt_package_ensure changed from 'present' to undef.
 
