@@ -8,10 +8,8 @@ describe 'cassandra::optutils' do
       }
     end
 
-    it {
-      should contain_class('cassandra::optutils')
-      should contain_package('cassandra21-tools')
-    }
+    it { should contain_class('cassandra::optutils') }
+    it { should contain_package('cassandra21-tools') }
   end
 
   context 'On an Ubuntu OS with defaults for all parameters' do
@@ -21,10 +19,8 @@ describe 'cassandra::optutils' do
       }
     end
 
-    it {
-      should contain_class('cassandra::optutils')
-      should contain_package('cassandra-tools')
-    }
+    it { should contain_class('cassandra::optutils') }
+    it { should contain_package('cassandra-tools') }
   end
 
   context 'With java_package_name set to foobar' do

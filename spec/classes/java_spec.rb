@@ -8,10 +8,8 @@ describe 'cassandra::java' do
       }
     end
 
-    it {
-      should contain_class('cassandra::java')
-      should contain_package('java-1.8.0-openjdk-headless')
-    }
+    it { should contain_class('cassandra::java') }
+    it { should contain_package('java-1.8.0-openjdk-headless') }
   end
 
   context 'On an Ubuntu OS with defaults for all parameters' do
@@ -21,10 +19,8 @@ describe 'cassandra::java' do
       }
     end
 
-    it {
-      should contain_class('cassandra::java')
-      should contain_package('openjdk-7-jre-headless')
-    }
+    it { should contain_class('cassandra::java') }
+    it { should contain_package('openjdk-7-jre-headless') }
   end
 
   context 'With java_package_name set to foobar' do

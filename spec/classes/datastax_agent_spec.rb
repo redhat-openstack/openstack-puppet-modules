@@ -2,14 +2,12 @@ require 'spec_helper'
 describe 'cassandra::datastax_agent' do
 
   context 'Test for cassandra::datastax_agent.' do
-    it {
-      should contain_class('cassandra::datastax_agent').with_package_ensure('present')
-      should contain_class('cassandra::datastax_agent').with_package_name('datastax-agent')
-      should contain_class('cassandra::datastax_agent').with_service_enable('true')
-      should contain_class('cassandra::datastax_agent').with_service_ensure('running')
-      should contain_class('cassandra::datastax_agent').with_service_name('datastax-agent')
-      should contain_class('cassandra::datastax_agent').with_stomp_interface()
-    }
+    it { should contain_class('cassandra::datastax_agent').with_package_ensure('present') }
+    it { should contain_class('cassandra::datastax_agent').with_package_name('datastax-agent') }
+    it { should contain_class('cassandra::datastax_agent').with_service_enable('true') }
+    it { should contain_class('cassandra::datastax_agent').with_service_ensure('running') }
+    it { should contain_class('cassandra::datastax_agent').with_service_name('datastax-agent') }
+    it { should contain_class('cassandra::datastax_agent').with_stomp_interface() }
   end
 
   context 'Test for cassandra::datastax_agent package.' do
@@ -31,10 +29,8 @@ describe 'cassandra::datastax_agent' do
       }
     end
 
-    it {
-      should contain_ini_setting('stomp_interface').with_ensure('present')
-      should contain_ini_setting('stomp_interface').with_value('192.168.0.1')
-    }
+    it { should contain_ini_setting('stomp_interface').with_ensure('present') }
+    it { should contain_ini_setting('stomp_interface').with_value('192.168.0.1') }
   end
 
   context 'Test that stomp_interface can be ignored.' do
