@@ -281,16 +281,13 @@ This is passed to the
 (default **false**).
 
 ##### `internode_compression`
-Controls whether traffic between nodes is compressed. Can be:
-
-* all  - all traffic is compressed
-* dc   - traffic between different datacenters is compressed
-* none - nothing is compressed.
-
-Default **all**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **all**).
 
 ##### `listen_address`
-Address or interface to bind to and tell other Cassandra nodes to connect to
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **localhost**).
 
 ##### `manage_dsc_repo`
@@ -298,79 +295,69 @@ If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
 
 ##### `native_transport_port`
-Port for the CQL native transport to listen for clients on
-For security reasons, you should not expose this port to the internet.
-Firewall it if needed (default **9042**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **9042**).
 
 ##### `num_tokens`
-This defines the number of tokens randomly assigned to this node on the ring
-The more tokens, relative to other nodes, the larger the proportion of data
-that this node will store. You probably want all nodes to have the same number
-of tokens assuming they have equal hardware capability.
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **256**).
 
 ##### `partitioner`
-The partitioner is responsible for distributing groups of rows (by
-partition key) across nodes in the cluster.  You should leave this
-alone for new clusters.  The partitioner can NOT be changed without
-reloading all data, so when upgrading you should set this to the
-same partitioner you were already using.
-
-Besides Murmur3Partitioner, partitioners included for backwards
-compatibility include RandomPartitioner, ByteOrderedPartitioner, and
-OrderPreservingPartitioner (default
-**org.apache.cassandra.dht.Murmur3Partitioner**)
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **org.apache.cassandra.dht.Murmur3Partitioner**)
 
 ##### `rpc_address`
-The address to bind the Thrift RPC service and native transport server to
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **localhost**).
 
 ##### `rpc_port`
-Port for Thrift to listen for clients on (default **9160**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **9160**).
 
 ##### `rpc_server_type`
-Cassandra provides two out-of-the-box options for the RPC Server:
-
-* One thread per thrift connection. For a very large number of clients,
-  memory will be your limiting factor. On a 64 bit JVM, 180KB is the minimum
-  stack size per thread, and that will correspond to your use of virtual memory
-  (but physical memory may be limited depending on use of stack space).
-* Stands for "half synchronous, half asynchronous." All thrift clients
-  are handled asynchronously using a small number of threads that does
-  not vary with the amount of thrift clients (and thus scales well to many
-  clients).  The rpc requests are still synchronous (one thread per active
-  request). If hsha is selected then it is essential that rpc_max_threads
-  is changed from the default value of unlimited.
-
-The default is sync because on Windows hsha is about 30% slower.  On Linux,
-sync/hsha performance is about the same, with hsha of course using less memory.
-
-Alternatively, you can provide your own RPC server by providing the
-fully-qualified class name of an o.a.c.t.TServerFactory that can create an
-instance of it.
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **sync**).
 
 ##### `saved_caches_directory`
-Default: **/var/lib/cassandra/saved_caches**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **/var/lib/cassandra/saved_caches**).
 
 ##### `seeds`
-Addresses of hosts that are deemed contact points.  Cassandra nodes use this
-list of hosts to find each other and learn the topology of the ring.  You must
-change this if you are running multiple nodes!  Seeds is actually a
-comma-delimited list of addresses (default **127.0.0.1**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **127.0.0.1**).
 
 ##### `server_encryption_internode`
-Enable or disable inter-node encryption (default **none**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **none**).
 
 ##### `server_encryption_keystore`
-Default: **conf/.keystore**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **conf/.keystore**).
 
 ##### `server_encryption_keystore_password`
-Default: **cassandra**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **cassandra**).
 
 ##### `server_encryption_truststore`
-Default: **conf/.truststore**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **conf/.truststore**).
 
 ##### `server_encryption_truststore_password`
-Default: **cassandra**
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **cassandra**).
 
 ##### `service_enable`
 Enable the Cassandra service to start at boot time.  Valid values are true
@@ -386,22 +373,24 @@ The name of the service that runs the Cassandra software (default
 **cassandra**).
 
 ##### `snapshot_before_compaction`
-Whether or not to take a snapshot before each compaction.  Be
-careful using this option, since Cassandra won't clean up the
-snapshots for you.  Mostly useful if you're paranoid when there
-is a data format change (default **false**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **false**).
 
 ##### `start_native_transport`
-Whether to start the native transport server.  Please note that the address on
-which the native transport is bound is the same as the rpc_address. The port
-however is different and specified below (default **true**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **true**).
 
 ##### `start_rpc`
-Whether to start the thrift rpc server (default **true**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **true**).
 
 ##### `storage_port`
-TCP port, for commands and data for security reasons, you should not expose this
-port to the internet.  Firewall it if needed (default **7000**).
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **7000**).
 
 ### Class: cassandra::datastax_agent
 
