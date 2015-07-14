@@ -1,4 +1,4 @@
-# cassandra: A Puppet Module to Install and manage Cassandra and DataStax Agent.
+# cassandra
 [![Puppet Forge](http://img.shields.io/puppetforge/v/locp/cassandra.svg)](https://forge.puppetlabs.com/locp/cassandra)
 [![Github Tag](https://img.shields.io/github/tag/locp/cassandra.svg)](https://github.com/locp/cassandra)
 [![Build Status](https://travis-ci.org/locp/cassandra.png?branch=master)](https://travis-ci.org/locp/cassandra)
@@ -15,14 +15,10 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
-7. [External Links](#external-links)
 
 ## Overview
 
-This module installs and configures Apache Cassandra.  The installation steps
-were taken from the installation documentation prepared by DataStax [1] and
-the configuration parameters are the same as those for the Puppet module
-developed by msimonin [2].
+A Puppet module to install and manage Cassandra and DataStax Agent.
 
 ## Setup
 
@@ -567,12 +563,3 @@ https://guides.github.com/activities/contributing-to-open-source.
 Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
 Cassandra 1.x compatible template
 (see [#11](https://github.com/locp/cassandra/pull/11)).
-
-## External Links
-
-[1] - *Installing DataStax Community on RHEL-based systems*, available at
-http://docs.datastax.com/en/cassandra/2.1/cassandra/install/installRHEL_t.html, accessed 25th May 2015.
-
-[2] - *msimonin/cassandra: Puppet module to install Apache Cassandra from
-the DataStax distribution. Forked from gini/cassandra*, available at
-https://forge.puppetlabs.com/msimonin/cassandra, accessed 17th March 2015.
