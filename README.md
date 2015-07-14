@@ -128,8 +128,10 @@ The following changes to the API have taken place.
 
 ## Usage
 
+### Create a Small Cluster
+
 To install Cassandra in a two node cluster called 'Foobar Cluster' where
-node1 (192.168.42.1) is the seed and node2 192.168.42.2 is also to be a
+node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:
 
 ```puppet
@@ -157,6 +159,15 @@ node 'node2' {
 
 This would also ensure that the JDK is installed and the optional Cassandra
 tools.
+
+## Reference
+
+### Public Classes
+
+* **cassandra**
+* **cassandra::datastax_agent**
+* **cassandra::java**
+* **cassandra::optutils**
 
 ### Class: cassandra
 
@@ -525,19 +536,6 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
-
-## Reference
-
-This module uses the package type to install the Cassandra package, the
-optional Cassandra tools, the DataStax agent and Java package.
-
-It optionally uses the service type to enable the cassandra service and/or the
-DataStax agent and ensure that they are running.
-
-It also uses the yumrepo type on the RedHat family of operating systems to
-(optionally) install the *DataStax Repo for Apache Cassandra*.
-
-On Ubuntu, the apt class is optionally utilised.
 
 ## Limitations
 
