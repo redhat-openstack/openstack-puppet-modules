@@ -88,7 +88,7 @@ node 'example' {
 ```
 
 By saying the cassandra class/package is mandatory, what is meant is that all
-the sub classes have a dependancy on the main class.  So for example one
+the sub classes have a dependency on the main class.  So for example one
 could not specify the cassandra::java class for a node with the cassandra
 class also being included.
 
@@ -202,7 +202,7 @@ The status of the package specified in **cassandra_package_name**.  Can be
 *present*, *latest* or a specific version number (default **present**).
 
 ##### `cassandra_package_name`
-The name of the Cassandra package.  Must be installable from a repository
+The name of the Cassandra package.  Must be available from a repository
 (default **dsc21**).
 
 ##### `cassandra_yaml_tmpl`
@@ -471,7 +471,7 @@ Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 
 ## Contributers
 
-Contributions will be greatfully accepted.  Please go to the project page,
+Contributions will be gratefully accepted.  Please go to the project page,
 fork the project, make your changes locally and then raise a pull request.
 Details on how to do this are available at
 https://guides.github.com/activities/contributing-to-open-source.
