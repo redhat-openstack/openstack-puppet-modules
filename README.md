@@ -173,18 +173,10 @@ tools.
 
 #### Parameters
 
-#####`authenticator`
-Authentication backend, implementing IAuthenticator; used to identify users
-Out of the box, Cassandra provides
-org.apache.cassandra.auth.{AllowAllAuthenticator, PasswordAuthenticator}.
-
-* AllowAllAuthenticator performs no checks - set it to disable authentication.
-* PasswordAuthenticator relies on username/password pairs to authenticate
-  users. It keeps usernames and hashed passwords in system_auth.credentials
-  table. Please increase system_auth keyspace replication factor if you use this
-  authenticator.
-
-Default: **AllowAllAuthenticator**
+##### `authenticator`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **AllowAllAuthenticator**).
 
 #####`authorizer`
 Authorization backend, implementing IAuthorizer; used to limit access/provide
