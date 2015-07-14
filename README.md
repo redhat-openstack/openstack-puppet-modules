@@ -177,6 +177,9 @@ tools.
 
 ### Class: cassandra
 
+A class for installing the Cassandra package and manipulate settings in the
+configuration file.
+
 #### Parameters
 
 ##### `authenticator`
@@ -394,27 +397,33 @@ This is passed to the
 
 ### Class: cassandra::datastax_agent
 
-#### `package_ensure`
+A class for installing the DataStax agent and to point it at an Opscenter
+instance.
+
+#### Parameters
+
+##### `package_ensure`
 Is passed to the package reference.  Valid values are **present** or a version
 number
 (default **present**).
 
-#### `package_name`
+##### `package_name`
 Is passed to the package reference (default **datastax-agent**).
 
-####`service_ensure`
+##### `service_ensure`
 Is passed to the service reference (default **running**).
 
-####`service_enable`
+##### `service_enable`
 Is passed to the service reference (default **true**).
 
-####`service_name`
+##### `service_name`
 Is passed to the service reference (default **datastax-agent**).
 
-####`stomp_interface`
+##### `stomp_interface`
 If the value is changed from the default of *undef* then this is what is
-set as the stomp_interface setting in /var/lib/datastax-agent/conf/address.yaml
-which connects the agent to an OpsCenter instance
+set as the stomp_interface setting in
+**/var/lib/datastax-agent/conf/address.yaml**
+which connects the agent to an Opscenter instance
 (default **undef**).
 
 ### Class: cassandra::java
