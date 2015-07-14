@@ -8,6 +8,7 @@ gem 'facter', '>= 1.7.0'
 gem 'metadata-json-lint'
 gem 'pry'
 gem 'vagrant-wrapper'
+gem 'coveralls', require: false
 
 group :system_tests do
   gem 'beaker-rspec',  :require => false
