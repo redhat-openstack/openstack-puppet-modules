@@ -1,0 +1,5 @@
+# Zookeeper-based attributes
+midonet::zookeeper::servers:
+  - id: 1
+    host: 'localhost'
+midonet::zookeeper::server_id: '1'

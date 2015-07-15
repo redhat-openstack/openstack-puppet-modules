@@ -88,7 +88,7 @@ Midonet Repository adds midonet's repos into target system. By default it instal
 last released version of midonet:
 
 To install other releases than the last default's Midonet OSS, you can override the
-default's midonet_repository atributes by a resource-like declaration:
+default's midonet\_repository atributes by a resource-like declaration:
 
     class { 'midonet_repository':
         midonet_repo            => 'http://repo.midonet.org/midonet/v2014.11',

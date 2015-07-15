@@ -1,7 +1,9 @@
 fixtures:
   forge_modules:
-    apt: 
+    apt:
       repo: "puppetlabs-apt"
       ref: "1.8.0"
     stdlib: "puppetlabs-stdlib"
     inifile: "puppetlabs-inifile"
+    zookeeper: "deric-zookeeper"
+    datacat: "richardc-datacat"
