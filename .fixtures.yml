@@ -1,7 +1,3 @@
 fixtures:
-  repositories:
-    apt: git://github.com/puppetlabs/puppetlabs-apt.git
-    inifile: git://github.com/puppetlabs/puppetlabs-inifile.git
-    stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
   symlinks:
     cassandra: "#{source_dir}"
