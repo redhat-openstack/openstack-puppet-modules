@@ -1,5 +1,8 @@
 require 'spec_helper'
 describe 'cassandra::datastax_agent' do
+  let(:pre_condition) { [
+    'define ini_setting ($ensure, $path, $section, $key_val_separator, $setting, $value) {}'
+  ] }
 
   context 'Test for cassandra::datastax_agent.' do
     it { should contain_class('cassandra::datastax_agent').with_package_ensure('present') }
