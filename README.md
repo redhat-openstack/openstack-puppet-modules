@@ -482,6 +482,10 @@ https://guides.github.com/activities/contributing-to-open-source.
 
 ### Additional Contributers
 
-Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
+* Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the
 Cassandra 1.x compatible template
 (see [#11](https://github.com/locp/cassandra/pull/11)).
+
+* Amos Shapira (GitHub [@amosshapira](https://github.com/amosshapira)) fixed
+a bug in the requirements metadata that caused a problem with Puppetfile
+(see [#34](https://github.com/locp/cassandra/pull/34)).
