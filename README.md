@@ -30,7 +30,7 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 
 * Installs the Cassandra package (default **dsc21**).
 * Configures settings in *${config_path}/cassandra.yaml*.
-* Optionally insures that the Cassandra service is enabled and running.
+* Optionally ensures that the Cassandra service is enabled and running.
 * Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
 * Optionally configures a Yum repository to install the Cassandra packages
   from (on Red Hat).
