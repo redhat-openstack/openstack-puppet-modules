@@ -15,8 +15,6 @@ describe 'cassandra' do
     end
 
     it { should contain_class('cassandra') }
-    it { should contain_class('cassandra::install') }
-    it { should contain_class('cassandra::config') }
     it { should contain_file('/etc/cassandra/default.conf/cassandra.yaml') }
     it { should contain_service('cassandra') }
     it { is_expected.not_to contain_yumrepo('datastax') }
@@ -31,7 +29,7 @@ describe 'cassandra' do
 
     let :params do
       {
-        :manage_dsc_repo => true
+        :manage_dsc_repo => true,
       }
     end
 
@@ -47,9 +45,8 @@ describe 'cassandra' do
 
     it { should contain_class('cassandra') }
     it { should contain_service('cassandra') }
-    it { should contain_class('cassandra::install') }
-    it { should contain_class('cassandra::config') }
     it { should contain_file('/etc/cassandra/cassandra.yaml') }
+    it { is_expected.to contain_service('cassandra') }
     it { is_expected.not_to contain_class('apt') }
     it { is_expected.not_to contain_class('apt::update') }
     it { is_expected.not_to contain_apt__key('datastaxkey') }
@@ -68,7 +65,8 @@ describe 'cassandra' do
 
     let :params do
       {
-        :manage_dsc_repo => true
+        :manage_dsc_repo => true,
+        :service_name    => 'foobar_service'
       }
     end
 
@@ -77,6 +75,7 @@ describe 'cassandra' do
     it { is_expected.to contain_apt__key('datastaxkey') }
     it { is_expected.to contain_apt__source('datastax') }
     it { is_expected.to contain_exec('update-cassandra-repos') }
+    it { is_expected.to contain_service('cassandra') }
   end
 
   context 'On an unknown OS with defaults for all parameters' do

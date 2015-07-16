@@ -49,60 +49,92 @@ class cassandra (
   $start_rpc                             = true,
   $storage_port                          = 7000
   ) {
+  case $::osfamily {
+    'RedHat': {
+      if $config_path == undef {
+        $cfg_path = '/etc/cassandra/default.conf'
+      } else {
+        $cfg_path = $config_path
+      }
 
-  class { 'cassandra::install':
-    cassandra_package_ensure => $cassandra_package_ensure,
-    cassandra_package_name   => $cassandra_package_name,
-    manage_dsc_repo          => $manage_dsc_repo,
+      if $manage_dsc_repo == true {
+        yumrepo { 'datastax':
+          ensure   => present,
+          descr    => 'DataStax Repo for Apache Cassandra',
+          baseurl  => 'http://rpm.datastax.com/community',
+          enabled  => 1,
+          gpgcheck => 0,
+          before   => Package[ $cassandra_package_name ],
+        }
+      }
+    }
+    'Debian': {
+      if $config_path == undef {
+        $cfg_path = '/etc/cassandra'
+      } else {
+        $cfg_path = $config_path
+      }
+
+      if $manage_dsc_repo == true {
+        include apt
+        include apt::update
+
+        apt::key {'datastaxkey':
+          id     => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+          source => 'http://debian.datastax.com/debian/repo_key',
+          before => Apt::Source['datastax']
+        }
+
+        apt::source {'datastax':
+          location => 'http://debian.datastax.com/community',
+          comment  => 'DataStax Repo for Apache Cassandra',
+          release  => 'stable',
+          include  => {
+            'src' => false
+          },
+          notify   => Exec['update-cassandra-repos']
+        }
+
+        # Required to wrap apt_update
+        exec {'update-cassandra-repos':
+          refreshonly => true,
+          command     => '/bin/true',
+          require     => Exec['apt_update'],
+          before      => Package[ $cassandra_package_name ]
+        }
+      }
+    }
+    default: {
+      fail("OS family ${::osfamily} not supported")
+    }
   }
 
-  # A hack for long arguments
-  $clt_enc_keystore_pass = $client_encryption_keystore_password
-  $svr_enc_keystore_pass = $server_encryption_keystore_password
-  $svr_enc_trtstore_pass = $server_encryption_truststore_password
+  package { $cassandra_package_name:
+    ensure => $cassandra_package_ensure,
+  }
 
-  class { 'cassandra::config':
-    authenticator                         => $authenticator,
-    authorizer                            => $authorizer,
-    auto_snapshot                         => $auto_snapshot,
-    cassandra_package_ensure              => $cassandra_package_ensure,
-    cassandra_package_name                => $cassandra_package_name,
-    cassandra_yaml_tmpl                   => $cassandra_yaml_tmpl,
-    client_encryption_enabled             => $client_encryption_enabled,
-    client_encryption_keystore            => $client_encryption_keystore,
-    client_encryption_keystore_password   => $clt_enc_keystore_pass,
-    cluster_name                          => $cluster_name,
-    commitlog_directory                   => $commitlog_directory,
-    concurrent_counter_writes             => $concurrent_counter_writes,
-    concurrent_reads                      => $concurrent_reads,
-    concurrent_writes                     => $concurrent_writes,
-    config_path                           => $config_path,
-    data_file_directories                 => $data_file_directories,
-    disk_failure_policy                   => $disk_failure_policy,
-    endpoint_snitch                       => $endpoint_snitch,
-    hinted_handoff_enabled                => $hinted_handoff_enabled,
-    incremental_backups                   => $incremental_backups,
-    internode_compression                 => $internode_compression,
-    listen_address                        => $listen_address,
-    native_transport_port                 => $native_transport_port,
-    num_tokens                            => $num_tokens,
-    partitioner                           => $partitioner,
-    rpc_address                           => $rpc_address,
-    rpc_port                              => $rpc_port,
-    rpc_server_type                       => $rpc_server_type,
-    saved_caches_directory                => $saved_caches_directory,
-    seeds                                 => $seeds,
-    server_encryption_internode           => $server_encryption_internode,
-    server_encryption_keystore            => $server_encryption_keystore,
-    server_encryption_keystore_password   => $svr_enc_keystore_pass,
-    server_encryption_truststore          => $server_encryption_truststore,
-    server_encryption_truststore_password => $svr_enc_trtstore_pass,
-    service_enable                        => $service_enable,
-    service_ensure                        => $service_ensure,
-    service_name                          => $service_name,
-    snapshot_before_compaction            => $snapshot_before_compaction,
-    start_native_transport                => $start_native_transport,
-    start_rpc                             => $start_rpc,
-    storage_port                          => $storage_port,
+  if $config_path != undef {
+    $cfg_path = $config_path
+  }
+
+  $config_file = "${cfg_path}/cassandra.yaml"
+
+  file { $config_file:
+    ensure  => file,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    content => template($cassandra_yaml_tmpl),
+    require => Package[$cassandra_package_name],
+    notify  => Service['cassandra'],
+  }
+
+  if $cassandra_package_ensure != 'absent'
+  and $cassandra_package_ensure != 'purged' {
+    service { 'cassandra':
+      ensure  => running,
+      name    => $service_name,
+      enable  => true,
+      require => Package[$cassandra_package_name],
+    }
   }
 }
