@@ -1,3 +1,11 @@
+##2015-07-16 - Release 0.4.2
+
+* Some minor documentation changes.
+* Fixed a problem with the module metadata that caused Puppetfile issues.
+* Integrated with Coveralls (https://coveralls.io/github/locp/cassandra).
+* Removed the deprecated config and install classes.  These were private
+  so there is no change to the API.
+
 ##2015-07-14 - Release 0.4.1
 
 * Fixed a resource ordering problem in the cassandra::datastax class.
