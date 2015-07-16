@@ -1,5 +1,11 @@
 require 'spec_helper'
 describe 'cassandra' do
+  let(:pre_condition) { [
+    'class apt () {}',
+    'class apt::update () {}',
+    'define apt::key ($id, $source) {}',
+    'define apt::source ($location, $comment, $release, $include) {}',
+  ] }
 
   context 'On a RedHat OS with defaults for all parameters' do
     let :facts do
