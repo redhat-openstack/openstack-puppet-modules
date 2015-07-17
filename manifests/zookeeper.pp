@@ -94,6 +94,7 @@ class midonet::zookeeper($servers, $server_id) {
 
     class {'::zookeeper':
       servers => zookeeper_servers($servers),
-      id      => $server_id
+      id      => $server_id,
+      cfg_dir => '/etc/zookeeper'
     }
 }
