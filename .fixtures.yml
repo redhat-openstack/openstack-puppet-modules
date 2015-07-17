@@ -6,4 +6,7 @@ fixtures:
     stdlib: "puppetlabs-stdlib"
     inifile: "puppetlabs-inifile"
     zookeeper: "deric-zookeeper"
+    cassandra: "midonet-cassandra"
     datacat: "richardc-datacat"
+    java: "puppetlabs-java"
+    module_data: "ripienaar-module_data"

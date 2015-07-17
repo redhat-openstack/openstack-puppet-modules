@@ -46,14 +46,14 @@ class midonet {
     class {'::midonet::zookeeper': }
 
     # Add cassandra
-    class {'::cassandra': }
+    class {'::midonet::cassandra': }
 
     # Add midonet-agent
     class { 'midonet::midonet_agent':
       zk_servers => [{
           'ip' => $::ipaddress}
           ],
-      require    => [Class['::cassandra'], Class['::zookeeper']]
+      require    => [Class['::midonet::cassandra'], Class['::midonet::zookeeper']]
     }
 
     # Add midonet-api

@@ -3,3 +3,8 @@ midonet::zookeeper::servers:
   - id: 1
     host: 'localhost'
 midonet::zookeeper::server_id: '1'
+
+# Cassandra-based attributes
+midonet::cassandra::seeds:
+  - 'localhost'
+midonet::cassandra::seed_address: 'localhost'

@@ -26,3 +26,7 @@ midonet::neutron_plugin::midonet_api_ip: 'localhost'
 midonet::neutron_plugin::username: 'fake_user'
 midonet::neutron_plugin::password: 'fake_password'
 midonet::neutron_plugin::project_id: 'service'
+
+midonet::cassandra::pid_dir: '/var/run/cassandra'
+midonet::cassandra::conf_dir: '/etc/cassandra/default.conf'
+midonet::cassandra::service_path: '/sbin'

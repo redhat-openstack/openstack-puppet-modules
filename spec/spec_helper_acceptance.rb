@@ -18,7 +18,9 @@ RSpec.configure do |c|
     hosts.each do |host|
       copy_module_to(host, :source => proj_root, :module_name => 'midonet')
       scp_to(host, proj_root + '/data/hiera.yaml', "#{default['puppetpath']}/hiera.yaml")
-      shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
+      scp_to(host, proj_root + '/data/common.yaml', "/var/lib/hiera")
+      scp_to(host, proj_root + '/data/osfamily', "/var/lib/hiera")
+
       on host, puppet('module install ripienaar-module_data'), {:acceptable_exit_codes => [0,1] }
       on host, puppet('module install puppetlabs-stdlib --version 4.5.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module install deric-zookeeper'), {:acceptable_exit_codes => [0,1] }

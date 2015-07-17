@@ -9,8 +9,8 @@ describe 'midonet all-in-one' do
       EOS
 
       # Run it twice for test the idempotency
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp)
+      apply_manifest(pp)
     end
   end
 end
