@@ -21,7 +21,8 @@ module Puppet::Parser::Functions
     if servers.class == Hash
       servers = Array.new(1, servers)
     end
-    return servers.map { |hash| hash["host"] }
+    servers = servers.sort_by{|server| server['id']}
+    return servers.map { |hash| hash['host'] }
   end
 
 end

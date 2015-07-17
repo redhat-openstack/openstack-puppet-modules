@@ -6,15 +6,16 @@ describe 'midonet::zookeeper' do
     let :params do
     {
       :servers   =>  [{"id" => 1, "host" => 'node_1'},
-                      {"id" => 2, "host" => 'node_2'},
-                      {"id" => 3, "host" => 'node_3'}],
+                      {"id" => 3, "host" => 'node_2'},
+                      {"id" => 2, "host" => 'node_3'}],
       :server_id => 3
     }
     end
 
     let :zookeeper_params do
     {
-      :servers => ['node_1', 'node_2', 'node_3'],
+      # Please note the output is sorted by input 'ids'
+      :servers => ['node_1', 'node_3', 'node_2'],
       :id      => 3
     }
     end
