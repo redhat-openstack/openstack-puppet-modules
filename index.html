@@ -34,6 +34,7 @@
 <p><a href="https://forge.puppetlabs.com/locp/cassandra"><img src="http://img.shields.io/puppetforge/v/locp/cassandra.svg" alt="Puppet Forge"></a>
 <a href="https://github.com/locp/cassandra"><img src="https://img.shields.io/github/tag/locp/cassandra.svg" alt="Github Tag"></a>
 <a href="https://travis-ci.org/locp/cassandra"><img src="https://travis-ci.org/locp/cassandra.png?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/locp/cassandra?branch=master"><img src="https://coveralls.io/repos/locp/cassandra/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a>
 <a href="https://gitter.im/locp/cassandra?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/locp/cassandra"></a></p>
 
 <h4>
@@ -74,19 +75,40 @@
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
 
 <h3>
-<a id="what-cassandra-affects" class="anchor" href="#what-cassandra-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What cassandra affects</h3>
+<a id="what-the-cassandra-module-affects" class="anchor" href="#what-the-cassandra-module-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra module affects</h3>
+
+<h4>
+<a id="what-the-cassandra-class-affects" class="anchor" href="#what-the-cassandra-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra class affects</h4>
 
 <ul>
 <li>Installs the Cassandra package (default <strong>dsc21</strong>).</li>
 <li>Configures settings in <em>${config_path}/cassandra.yaml</em>.</li>
-<li>Optionally insures that the Cassandra service is enabled and running.</li>
-<li>Optionally installs the Cassandra support tools (e.g. cassandra21-tools).</li>
+<li>Optionally ensures that the Cassandra service is enabled and running.</li>
 <li>Optionally configures a Yum repository to install the Cassandra packages
 from (on Red Hat).</li>
 <li>Optionally configures an Apt repository to install the Cassandra packages
 from (on Ubuntu).</li>
-<li>Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandradatastax_agent-class-affects" class="anchor" href="#what-the-cassandradatastax_agent-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::datastax_agent class affects</h4>
+
+<ul>
 <li>Optionally installs the DataStax agent.</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandrajava-class-affects" class="anchor" href="#what-the-cassandrajava-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::java class affects</h4>
+
+<ul>
+<li>Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandraoptutils-class-affects" class="anchor" href="#what-the-cassandraoptutils-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::optutils class affects</h4>
+
+<ul>
+<li>Optionally installs the Cassandra support tools (e.g. cassandra21-tools).</li>
 </ul>
 
 <h3>
@@ -707,9 +729,14 @@ Details on how to do this are available at
 <h3>
 <a id="additional-contributers" class="anchor" href="#additional-contributers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Contributers</h3>
 
-<p>Yanis Guenane (GitHub <a href="https://github.com/Spredzy">@spredzy</a>) provided the
+<ul>
+<li><p>Yanis Guenane (GitHub <a href="https://github.com/Spredzy">@spredzy</a>) provided the
 Cassandra 1.x compatible template
-(see <a href="https://github.com/locp/cassandra/pull/11">#11</a>).</p>
+(see <a href="https://github.com/locp/cassandra/pull/11">#11</a>).</p></li>
+<li><p>Amos Shapira (GitHub <a href="https://github.com/amosshapira">@amosshapira</a>) fixed
+a bug in the requirements metadata that caused a problem with Puppetfile
+(see <a href="https://github.com/locp/cassandra/pull/34">#34</a>).</p></li>
+</ul>
       </section>
     </div>
 
