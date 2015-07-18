@@ -1,3 +1,6 @@
+##2015-07-18 - Release 0.4.3
+* Module dependancy metadata was too strict.
+
 ##2015-07-16 - Release 0.4.2
 
 * Some minor documentation changes.

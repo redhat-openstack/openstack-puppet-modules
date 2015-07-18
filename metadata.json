@@ -1,6 +1,6 @@
 {
     "name": "locp-cassandra",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "author": "locp",
     "summary": "A Puppet module to install and manage Cassandra and DataStax Agent",
     "license": "Apache-2.0",
@@ -15,11 +15,11 @@
     "dependencies": [
         {
             "name": "puppetlabs-apt",
-            "version_requirement": ">= 2.1.0 < 3.0.0"
+            "version_requirement": ">= 1.0.0 < 3.0.0"
         },
         {
             "name": "puppetlabs-inifile",
-            "version_requirement": ">= 1.4.0 < 2.0.0"
+            "version_requirement": ">= 1.0.0 < 2.0.0"
         }
     ],
     "operatingsystem_support": [
