@@ -8,6 +8,7 @@ describe 'cassandra class' do
 
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
+    include '::cassandra::opscenter'
 
     class { '::cassandra::opscenter::pycrypto':
       manage_epel => true
@@ -26,6 +27,7 @@ describe 'cassandra class' do
     include 'cassandra'
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
+    include '::cassandra::opscenter'
     include '::cassandra::opscenter::pycrypto'
     include '::cassandra::optutils'
   EOS
@@ -46,4 +48,8 @@ describe 'cassandra class' do
     it { is_expected.to be_enabled }
   end
 
+  describe service('opscenterd') do
+    it { is_expected.to be_running }
+    it { is_expected.to be_enabled }
+  end
 end
