@@ -17,7 +17,8 @@
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
     * [cassandra::java](#class-cassandrajava)
-    * [cassandra::opscenter::pycrypto](#class-cassandraoptutils)
+    * [cassandra::opscenter::pycrypto](#class-cassandraopscenter)
+    * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrpto)
     * [cassandra::optutils](#class-cassandraoptutils)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
@@ -47,6 +48,13 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 #### What the cassandra::java class affects
 
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+
+#### What the cassandra::opscenter class affects
+
+* Installs the opscenter package.
+* Manages the content of the configuration file
+  (/etc/opscenter/opscenterd.conf).
+* Manages the opscenterd service.
 
 #### What the cassandra::opscenter::pycrypto class affects
 
