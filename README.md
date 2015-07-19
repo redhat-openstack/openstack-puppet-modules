@@ -17,6 +17,7 @@
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
     * [cassandra::java](#class-cassandrajava)
+    * [cassandra::opscenter::pycrypto](#class-cassandraoptutils)
     * [cassandra::optutils](#class-cassandraoptutils)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
@@ -46,6 +47,13 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 #### What the cassandra::java class affects
 
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+
+#### What the cassandra::opscenter::pycrypto class affects
+
+* On the Red Hat family it installs the pycrypto library and it's
+  pre-requisits (the python-devel and python-pip packages).
+* Optionally installs the Extra Packages for Enterprise Linux (EPEL)
+  repository.
 
 #### What the cassandra::optutils class affects
 
@@ -189,6 +197,7 @@ tools.
 * **cassandra**
 * **cassandra::datastax_agent**
 * **cassandra::java**
+* **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
 
 ### Class: cassandra
@@ -460,6 +469,40 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Class: cassandra::opscenter::pycrypto
+
+On the Red Hat family of operating systems, if one intends to use encyption
+for configuration values then the pycrypto library is required.  This class
+will install it for the user.  See
+http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html
+for more details.
+
+This class has no effect when included on nodes that are not in the Red Hat
+family.
+
+#### Parameters
+
+##### `ensure`
+This is passed to the package reference for **pycrypto**.  Valid values are
+**present** or a version number
+(default **present**).
+
+##### `manage_epel`
+If set to true, the **epel-release** package will be installed
+(default **false**).
+
+##### `package_name`
+The name of the pycrypto package
+(default **pycrypto**).
+
+##### `provider`
+The name of the provider of the pycrypto package
+(default **pip**).
+
+##### `reqd_pckgs`
+Packages that are required to install the pycrypto package
+(default **['python-devel', 'python-pip' ]**).
 
 ### Class: cassandra::optutils
 
