@@ -6,34 +6,19 @@ describe 'cassandra class' do
       manage_dsc_repo   => true,
     }
 
+    include '::cassandra::datastax_agent'
     include '::cassandra::java'
-  EOS
 
-  describe 'Install Cassandra with Java.' do
-    it 'should work with no errors' do
-      apply_manifest(cassandra_pp, :catch_failures => true)
-    end
-  end
+    class { '::cassandra::opscenter::pycrypto':
+      manage_epel => true
+    }
 
-  optutils_pp = <<-EOS
-    include '::cassandra'
     include '::cassandra::optutils'
   EOS
 
-  describe 'Install the Optional Cassandra tools.' do
+  describe 'Initial install.' do
     it 'should work with no errors' do
-      apply_manifest(optutils_pp, :catch_failures => true)
-    end
-  end
-
-  datastax_agent_pp = <<-EOS
-    include '::cassandra'
-    include '::cassandra::datastax_agent'
-  EOS
-
-  describe 'Install the DataStax Agent.' do
-    it 'should work with no errors' do
-      apply_manifest(datastax_agent_pp, :catch_failures => true)
+      apply_manifest(cassandra_pp, :catch_failures => true)
     end
   end
 
@@ -41,6 +26,7 @@ describe 'cassandra class' do
     include 'cassandra'
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
+    include '::cassandra::opscenter::pycrypto'
     include '::cassandra::optutils'
   EOS
 
