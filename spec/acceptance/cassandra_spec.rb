@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
-  pp1 = <<-EOS
+  cassandra_pp = <<-EOS
     class { 'cassandra':
       manage_dsc_repo   => true,
     }
@@ -11,38 +11,34 @@ describe 'cassandra class' do
 
   describe 'Install Cassandra with Java.' do
     it 'should work with no errors' do
-      apply_manifest(pp1, :catch_failures => true)
+      apply_manifest(cassandra_pp, :catch_failures => true)
     end
   end
 
-  pp2 = <<-EOS
+  optutils_pp = <<-EOS
     include '::cassandra'
     include '::cassandra::optutils'
   EOS
 
   describe 'Install the Optional Cassandra tools.' do
     it 'should work with no errors' do
-      apply_manifest(pp2, :catch_failures => true)
+      apply_manifest(optutils_pp, :catch_failures => true)
     end
   end
 
-  pp3 = <<-EOS
+  datastax_agent_pp = <<-EOS
     include '::cassandra'
     include '::cassandra::datastax_agent'
   EOS
 
   describe 'Install the DataStax Agent.' do
     it 'should work with no errors' do
-      apply_manifest(pp3, :catch_failures => true)
+      apply_manifest(datastax_agent_pp, :catch_failures => true)
     end
   end
 
-  pp4 = <<-EOS
-    class { 'cassandra':
-      manage_dsc_repo              => true,
-      cassandra_opt_package_ensure => 'present',
-    }
-
+  idempotency_pp = <<-EOS
+    include 'cassandra'
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
     include '::cassandra::optutils'
@@ -50,7 +46,7 @@ describe 'cassandra class' do
 
   describe 'Idempotency test.' do
     it 'should work with no errors' do
-      expect(apply_manifest(pp3, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(idempotency_pp, :catch_failures => true).exit_code).to be_zero
     end
   end
 
