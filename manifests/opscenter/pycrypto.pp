@@ -22,6 +22,7 @@ class cassandra::opscenter::pycrypto (
     package { $package_name:
       ensure   => $ensure,
       provider => $provider,
+      before   => Package['opscenter']
     }
   }
 }
