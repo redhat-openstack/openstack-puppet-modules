@@ -3,8 +3,8 @@ class cassandra::opscenter::pycrypto (
   $ensure       = 'present',
   $manage_epel  = false,
   $package_name = 'pycrypto',
-  $reqd_pckgs   = ['python-devel', 'python-pip' ],
   $provider     = 'pip',
+  $reqd_pckgs   = ['python-devel', 'python-pip' ],
   ){
   if $::osfamily == 'RedHat' {
     if $manage_epel == true {
