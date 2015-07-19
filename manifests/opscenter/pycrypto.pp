@@ -1,4 +1,6 @@
 # Class ::cassandra::opscenter::pycrypto
+#
+# Please see the README for the module for details on usage.
 class cassandra::opscenter::pycrypto (
   $ensure       = 'present',
   $manage_epel  = false,
