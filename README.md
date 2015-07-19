@@ -205,6 +205,7 @@ tools.
 * **cassandra**
 * **cassandra::datastax_agent**
 * **cassandra::java**
+* **cassandra::opscenter**
 * **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
 
@@ -430,7 +431,7 @@ This is passed to the
 
 ### Class: cassandra::datastax_agent
 
-A class for installing the DataStax agent and to point it at an Opscenter
+A class for installing the DataStax agent and to point it at an OpsCenter
 instance.
 
 #### Parameters
@@ -456,7 +457,7 @@ Is passed to the service reference (default **datastax-agent**).
 If the value is changed from the default of *undef* then this is what is
 set as the stomp_interface setting in
 **/var/lib/datastax-agent/conf/address.yaml**
-which connects the agent to an Opscenter instance
+which connects the agent to an OpsCenter instance
 (default **undef**).
 
 ### Class: cassandra::java
@@ -477,6 +478,26 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Class: cassandra::opscenter
+
+This class installs and manages the DataStax OpsCenter.
+
+#### Parameters
+
+##### `authentication_enabled`
+This value is set in the **authentication** section of the configuration file:
+
+> Set this option to True to enable OpsCenter authentication.  A default admin
+> account will be created with the username "admin" and password "admin".
+> Accounts and roles can then be created and modified from within the web UI.
+
+(default **False**).
+
+##### `ensure`
+This is passed to the package reference for **opscenter**.  Valid values are
+**present** or a version number
+(default **present**).
 
 ### Class: cassandra::opscenter::pycrypto
 
