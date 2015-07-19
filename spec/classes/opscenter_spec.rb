@@ -9,9 +9,9 @@ describe 'cassandra::opscenter' do
       $value) {}'
   ] }
 
-  context 'Test for cassandra::opscenter.' do
+  context 'Test for cassandra::opscenter with defaults.' do
     it {
-      should contain_class('cassandra::opscenter').with({
+      should contain_class('cassandra::opscenter').only_with({
         'authentication_enabled' => 'False',
         'ensure'                 => 'present',
         'config_file'            => '/etc/opscenter/opscenterd.conf',
@@ -20,10 +20,8 @@ describe 'cassandra::opscenter' do
         'port'                   => 8888,
         'service_enable'         => 'true',
         'service_ensure'         => 'running',
-        'service_name'           => 'opscenterd',
-        'ssl_keyfile'            => 'undef',
-        'ssl_certfile'           => 'undef',
-        'ssl_port'               => 'undef',
+        'ssl_keyfile'            => nil,
+        'service_name'           => 'opscenterd'
       })
     }
   end
@@ -34,26 +32,77 @@ describe 'cassandra::opscenter' do
     }
   end
 
-  context 'Test authentication setting.' do
+  context 'Test authentication enabled.' do
     it {
-      should contain_ini_setting('authentication_enabled').with({
-        'ensure'  => 'present',
-        'path'    => '/etc/opscenter/opscenterd.conf',
-        'section' => 'authentication',
-        'setting' => 'enabled',
-        'value'   => 'False',
+      should contain_cassandra__opscenter__setting('authentication enabled').only_with({
+        'name'         => 'authentication enabled',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'authentication',
+        'setting'      => 'enabled',
+        'value'        => 'False'
       })
     }
   end
 
-  context 'Test authentication setting.' do
+  context 'webserver port.' do
     it {
-      should contain_ini_setting('authentication_enabled').with({
-        'ensure'  => 'present',
-        'path'    => '/etc/opscenter/opscenterd.conf',
-        'section' => 'authentication',
-        'setting' => 'enabled',
-        'value'   => 'False',
+      should contain_cassandra__opscenter__setting('webserver port').only_with({
+        'name'         => 'webserver port',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'webserver',
+        'setting'      => 'port',
+        'value'        => 8888
+      })
+    }
+  end
+
+  context 'webserver interface.' do
+    it {
+      should contain_cassandra__opscenter__setting('webserver interface').only_with({
+        'name'         => 'webserver interface',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'webserver',
+        'setting'      => 'interface',
+        'value'        => '0.0.0.0'
+      })
+    }
+  end
+
+  context 'webserver ssl_keyfile.' do
+    it { should contain_cassandra__opscenter__setting(
+           'webserver ssl_keyfile').only_with({
+        'name'         => 'webserver ssl_keyfile',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'webserver',
+        'setting'      => 'ssl_keyfile'
+      })
+    }
+  end
+
+  context 'webserver ssl_port.' do
+    it { should contain_cassandra__opscenter__setting(
+           'webserver ssl_port').only_with({
+        'name'         => 'webserver ssl_port',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'webserver',
+        'setting'      => 'ssl_port'
+      })
+    }
+  end
+
+  context 'webserver ssl_certfile.' do
+    it { should contain_cassandra__opscenter__setting(
+           'webserver ssl_certfile').only_with({
+        'name'         => 'webserver ssl_certfile',
+        'service_name' => 'opscenterd',
+        'path'         => '/etc/opscenter/opscenterd.conf',
+        'section'      => 'webserver',
+        'setting'      => 'ssl_certfile'
       })
     }
   end

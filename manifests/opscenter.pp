@@ -11,6 +11,10 @@ class cassandra::opscenter (
     $service_enable         = true,
     $service_ensure         = 'running',
     $service_name           = 'opscenterd',
+    $ssl_keyfile            = undef,
+    $ssl_certfile           = undef,
+    $ssl_port               = undef,
+    $stat_reporter_interval = undef
   ) {
   package { 'opscenter':
     ensure  => $ensure,
@@ -18,16 +22,53 @@ class cassandra::opscenter (
     require => Class['cassandra'],
     before  => Service[$service_name]
   }
+  
+  cassandra::opscenter::setting { 'authentication enabled':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'authentication',
+    setting      => 'enabled',
+    value        => $authentication_enabled,
+  }
 
-  ini_setting { 'authentication_enabled':
-    ensure            => present,
-    path              => $config_file,
-    section           => 'authentication',
-    setting           => 'enabled',
-    value             => $authentication_enabled,
-    require           => Package['opscenter'],
-    key_val_separator => ' = ',
-    notify            => Service[$service_name],
+  cassandra::opscenter::setting { 'webserver port':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'webserver',
+    setting      => 'port',
+    value        => $port
+  }
+
+  cassandra::opscenter::setting { 'webserver interface':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'webserver',
+    setting      => 'interface',
+    value        => $interface
+  }
+
+  cassandra::opscenter::setting { 'webserver ssl_keyfile':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'webserver',
+    setting      => 'ssl_keyfile',
+    value        => $ssl_keyfile
+  }
+
+  cassandra::opscenter::setting { 'webserver ssl_certfile':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'webserver',
+    setting      => 'ssl_certfile',
+    value        => $ssl_certfile
+  }
+
+  cassandra::opscenter::setting { 'webserver ssl_port':
+    service_name => $service_name,
+    path         => $config_file,
+    section      => 'webserver',
+    setting      => 'ssl_port',
+    value        => $ssl_port
   }
 
   service { $service_name:
