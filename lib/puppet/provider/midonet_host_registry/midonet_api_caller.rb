@@ -99,7 +99,7 @@ Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
 
     @connection = Faraday.new(:url => url,
                               :ssl => { verify: false }) do |builder|
-        builder.request :retry, {
+        builder.request(:retry, {
           :max        => 5,
           :interval   => 0.05,
           :exceptions => [
@@ -108,9 +108,9 @@ Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
             Errno::ETIMEDOUT,
             'Timeout::Error',
           ],
-        }
-        builder.use Faraday::Request::BasicAuthentication, resource[:username], resource[:password]
-        builder.adapter :net_http
+        })
+        builder.use(Faraday::Request::BasicAuthentication, resource[:username], resource[:password])
+        builder.adapter(:net_http)
     end
   end
 
