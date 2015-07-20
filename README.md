@@ -493,12 +493,16 @@ configuration file.
 #### Parameters
 
 ##### `authentication_enabled`
-This value is set in the **authentication** section of the configuration file:
+This value is sets the **enabled** parameter in the **authentication** section
+of the configuration file:
 
 > Set this option to True to enable OpsCenter authentication.  A default admin
 > account will be created with the username "admin" and password "admin".
 > Accounts and roles can then be created and modified from within the web UI.
 
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
 (default **False**).
 
 ##### `ensure`
@@ -511,8 +515,63 @@ The full path to the OpsCenter configuration file
 (default **/etc/opscenter/opscenterd.conf**).
 
 ##### `interface`
-This value is set in the **webserver** section of the configuration file
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
 (default **0.0.0.0**).
+
+##### `package_name`
+The name of the OpsCenter package
+(default **opscenter**).
+
+##### `port`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **8888**).
+
+##### `service_enable`
+Enable the OpsCenter service to start at boot time.  Valid values are true
+or false
+(default: **true**)
+
+##### `service_ensure`
+Ensure the OpsCenter service is running.  Valid values are running or stopped
+(default: **running**)
+
+##### `service_name`
+The name of the service that runs the OpsCenter software (default
+**opscenterd**).
+
+##### `ssl_keyfile`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `ssl_certfile`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `ssl_port`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `stat_reporter_interval`
+This value is set as **interval** in the **stat_reporter** section of the
+configuration file.  See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
 
 ### Class: cassandra::opscenter::pycrypto
 
@@ -537,7 +596,7 @@ If set to true, the **epel-release** package will be installed
 (default **false**).
 
 ##### `package_name`
-The name of the pycrypto package
+The name of the PyCrypto package
 (default **pycrypto**).
 
 ##### `provider`
