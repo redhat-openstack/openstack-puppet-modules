@@ -98,7 +98,7 @@ Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
   def define_connection(url)
 
     @connection = Faraday.new(:url => url,
-                              :ssl => { verify: false }) do |builder|
+                              :ssl => { :verify =>false }) do |builder|
         builder.request(:retry, {
           :max        => 5,
           :interval   => 0.05,
