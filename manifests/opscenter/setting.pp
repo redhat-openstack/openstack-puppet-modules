@@ -19,15 +19,5 @@ define cassandra::opscenter::setting (
       require           => Package['opscenter'],
       notify            => Service[$service_name],
     }
-  } else {
-    ini_setting { $setting_name:
-      ensure            => absent,
-      path              => $path,
-      section           => $section,
-      setting           => $setting,
-      key_val_separator => ' = ',
-      require           => Package['opscenter'],
-      notify            => Service[$service_name],
-    }
   }
 }
