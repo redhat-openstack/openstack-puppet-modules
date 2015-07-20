@@ -481,7 +481,14 @@ node
 
 ### Class: cassandra::opscenter
 
-This class installs and manages the DataStax OpsCenter.
+This class installs and manages the DataStax OpsCenter.  For this class, when
+a field value is set to *undef*, no attempt is made to set (or remove) the
+value from the configuration file.  For example, the **ssl_port** in the
+default configuration file that is distributed with packages is commented out.
+As the default value for this class is *undef* then no attempt will be made
+to edit that value at all.  However, if one was to set the value (to **8443**
+for example), that value would be set in the relevant section of the
+configuration file.
 
 #### Parameters
 
@@ -498,6 +505,14 @@ This value is set in the **authentication** section of the configuration file:
 This is passed to the package reference for **opscenter**.  Valid values are
 **present** or a version number
 (default **present**).
+
+##### `config_file`
+The full path to the OpsCenter configuration file
+(default **/etc/opscenter/opscenterd.conf**).
+
+##### `interface`
+This value is set in the **webserver** section of the configuration file
+(default **0.0.0.0**).
 
 ### Class: cassandra::opscenter::pycrypto
 
