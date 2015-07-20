@@ -2,7 +2,7 @@ require 'uri'
 require 'faraday'
 # Host registry type
 
-Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller, parent: Puppet::Provider) do
+Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
 
   def create
     define_connection(resource[:midonet_api_url])
