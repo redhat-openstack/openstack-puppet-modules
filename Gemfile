@@ -11,6 +11,7 @@ gem 'vagrant-wrapper'
 gem 'coveralls', require: false
 
 group :system_tests do
-  gem 'beaker-rspec',  :require => false
-  gem 'serverspec',    :require => false
+  gem 'beaker-rspec',         :require => false
+  gem 'serverspec',           :require => false
+  gem 'puppet-blacksmith',    :require => false
 end
