@@ -50,6 +50,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       allow(provider).to receive(:call_delete_tunnelzone_host)
       allow(provider).to receive(:call_get_tunnelzone_hosts).and_return([])
       allow(provider).to receive(:call_delete_tunnelzone)
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
     end
 
     it 'registers the host successfully' do
@@ -96,6 +97,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       allow(provider).to receive(:call_create_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return(hosts)
       allow(provider).to receive(:call_create_tunnelzone_host)
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
 
       expect(provider).to receive(:call_create_tunnelzone).once
       expect(provider.exists?).to eq false
@@ -138,6 +140,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       allow(provider).to receive(:call_delete_tunnelzone_host)
       allow(provider).to receive(:call_get_tunnelzone_host).and_return(host_to_unregister)
       allow(provider).to receive(:call_get_tunnelzone_hosts).and_return(host_left_in_tunnelzone)
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
 
       # Set the behaviour expectations
       expect(provider).to receive(:call_delete_tunnelzone_host).with(tzones[0]['id'], host_to_unregister[0]['id'])
@@ -162,6 +165,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       # Preparing the rest responses
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return([])
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
       expect {
         provider.create
       }.to raise_error(RuntimeError)
@@ -180,6 +184,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
     }
     it 'should raise an exception' do
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
       expect {
         provider.create
       }.to raise_error(RuntimeError)
@@ -189,6 +194,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
   describe 'try to unregister a host that belongs to a tunnelzone that does not exist' do
     it 'should not fail' do
       allow(provider).to receive(:call_get_tunnelzone).and_return([])
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
       expect(provider).not_to receive(:call_delete_tunnelzone_host)
       provider.destroy
     end
@@ -207,6 +213,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
     it 'should not fail' do
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return([])
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
 
       expect(provider).not_to receive(:call_delete_tunnelzone_host)
 
@@ -236,6 +243,7 @@ describe Puppet::Type.type(:midonet_host_registry).provider(:midonet_api_caller)
       allow(provider).to receive(:call_get_tunnelzone).and_return(tzones)
       allow(provider).to receive(:call_get_host).and_return(hosts)
       allow(provider).to receive(:call_get_tunnelzone_host).and_return([])
+      allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
 
       expect(provider).to receive(:call_get_tunnelzone).once
       expect(provider).to receive(:call_get_host).once

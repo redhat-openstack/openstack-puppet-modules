@@ -114,9 +114,18 @@ Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
             'Timeout::Error',
           ],
         })
-        builder.use(Faraday::Request::BasicAuthentication, resource[:username], resource[:password])
+        builder.request(:basic_auth, resource[:username], resource[:password])
         builder.adapter(:net_http)
     end
+
+    @connection.headers['X-Auth-Token'] = call_get_token()
+  end
+
+  def call_get_token()
+    res = @connection.get do |req|
+      req.url "/midonet-api/login"
+    end
+    return JSON.parse(res.body)['key']
   end
 
   def call_get_tunnelzone()
