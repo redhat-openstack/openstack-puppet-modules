@@ -8,7 +8,6 @@ describe 'cassandra::opscenter::setting' do
     let(:title) { 'section:setting' }
     let :params do
       {
-        :service_name => 'service_name',
         :path         => '/path/to/file',
         :section      => 'section',
         :setting      => 'setting',
@@ -18,9 +17,17 @@ describe 'cassandra::opscenter::setting' do
 
     it {
       should contain_ini_setting('section:setting').with({
-        'ensure' => 'present',
-        'path' => '/path/to/file',
+        'ensure'            => 'present',
+        'path'              => '/path/to/file',
+        'section'           => 'section',
+        'setting'           => 'setting',
+        'value'             => 'value',
+        'key_val_separator' => ' = ',
       })
+    }
+
+    it {
+      should contain_ini_setting('section:setting').that_requires('Package[opscenter]')
     }
   end
 end

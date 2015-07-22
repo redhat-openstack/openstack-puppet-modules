@@ -36,7 +36,6 @@ describe 'cassandra::opscenter' do
     it {
       should contain_cassandra__opscenter__setting('authentication enabled').only_with({
         'name'         => 'authentication enabled',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'authentication',
         'setting'      => 'enabled',
@@ -49,7 +48,6 @@ describe 'cassandra::opscenter' do
     it {
       should contain_cassandra__opscenter__setting('webserver port').only_with({
         'name'         => 'webserver port',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'webserver',
         'setting'      => 'port',
@@ -62,7 +60,6 @@ describe 'cassandra::opscenter' do
     it {
       should contain_cassandra__opscenter__setting('webserver interface').only_with({
         'name'         => 'webserver interface',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'webserver',
         'setting'      => 'interface',
@@ -75,7 +72,6 @@ describe 'cassandra::opscenter' do
     it { should contain_cassandra__opscenter__setting(
            'webserver ssl_keyfile').only_with({
         'name'         => 'webserver ssl_keyfile',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'webserver',
         'setting'      => 'ssl_keyfile'
@@ -87,7 +83,6 @@ describe 'cassandra::opscenter' do
     it { should contain_cassandra__opscenter__setting(
            'webserver ssl_port').only_with({
         'name'         => 'webserver ssl_port',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'webserver',
         'setting'      => 'ssl_port'
@@ -99,7 +94,6 @@ describe 'cassandra::opscenter' do
     it { should contain_cassandra__opscenter__setting(
            'webserver ssl_certfile').only_with({
         'name'         => 'webserver ssl_certfile',
-        'service_name' => 'opscenterd',
         'path'         => '/etc/opscenter/opscenterd.conf',
         'section'      => 'webserver',
         'setting'      => 'ssl_certfile'
