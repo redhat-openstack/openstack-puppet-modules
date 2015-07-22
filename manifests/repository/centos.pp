@@ -27,8 +27,10 @@ class midonet::repository::centos (
     $midonet_openstack_repo,
     $midonet_thirdparty_repo,
     $midonet_stage,
-    $openstack_release,
-    $midonet_key_url)
+    $midonet_key_url,
+    $manage_distro_repo,
+    $manage_epel_repo,
+    $openstack_release)
     {
         # Adding repository for CentOS
         notice('Adding midonet sources for RedHat-like distribution')
@@ -58,15 +60,18 @@ class midonet::repository::centos (
                 timeout  => 60
             }
 
-            package { 'epel-release':
-                ensure   => installed
+            if $manage_epel_repo == true {
+              package { 'epel-release':
+                  ensure   => installed
+              }
             }
 
-            package { 'rdo-release':
-                ensure   => installed,
-                source   => "https://repos.fedorapeople.org/repos/openstack/openstack-${openstack_release}/rdo-release-${openstack_release}.rpm",
-                provider => 'rpm',
-                require  => Package['epel-release']
+            if $manage_distro_repo == true {
+              package { 'rdo-release':
+                  ensure   => installed,
+                  source   => "https://repos.fedorapeople.org/repos/openstack/openstack-${openstack_release}/rdo-release-${openstack_release}.rpm",
+                  provider => 'rpm'
+              }
             }
 
             exec {'update-midonet-repos':
