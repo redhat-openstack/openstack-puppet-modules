@@ -57,10 +57,12 @@ class zookeeper(
   $java_package            = undef,
   $min_session_timeout     = undef,
   $max_session_timeout     = undef,
+  $manage_systemd          = true,
 ) {
 
   validate_array($packages)
   validate_bool($ensure_cron)
+  validate_bool($manage_systemd)
 
   anchor { 'zookeeper::start': }->
   class { 'zookeeper::install':
