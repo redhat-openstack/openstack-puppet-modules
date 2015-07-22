@@ -12,16 +12,16 @@ describe 'cassandra::opscenter' do
   context 'Test for cassandra::opscenter with defaults.' do
     it {
       should contain_class('cassandra::opscenter').only_with({
-        'authentication_enabled' => 'False',
-        'ensure'                 => 'present',
-        'config_file'            => '/etc/opscenter/opscenterd.conf',
-        'interface'              => '0.0.0.0',
-        'package_name'           => 'opscenter',
-        'port'                   => 8888,
-        'service_enable'         => 'true',
-        'service_ensure'         => 'running',
-        'ssl_keyfile'            => nil,
-        'service_name'           => 'opscenterd'
+        'authentication_enabled'            => 'False',
+        'ensure'                            => 'present',
+        'config_file'                       => '/etc/opscenter/opscenterd.conf',
+        'package_name'                      => 'opscenter',
+        'service_enable'                    => 'true',
+        'service_ensure'                    => 'running',
+        'service_name'                      => 'opscenterd',
+        'webserver_interface'               => '0.0.0.0',
+        'webserver_ssl_keyfile'             => nil,
+        'webserver_port'                    => 8888,
       })
     }
   end
