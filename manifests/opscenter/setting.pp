@@ -1,6 +1,5 @@
 # cassandra::opscenter::setting
 define cassandra::opscenter::setting (
-  $service_name,
   $path,
   $section,
   $setting,
@@ -14,8 +13,8 @@ define cassandra::opscenter::setting (
       setting           => $setting,
       value             => $value,
       key_val_separator => ' = ',
-      require           => Package['opscenter'],
-      notify            => Service[$service_name],
+      require           => Package[opscenter],
+      notify            => Service['opscenterd'],
     }
   }
 }
