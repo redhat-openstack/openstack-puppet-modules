@@ -76,6 +76,8 @@ Other tips for submitting excellent pull requests:
 The testing tools have a number of dependencies. We use [Bundler][10] to make installing them easy.
 
 ```
+[~/puppet-opendaylight]$ yum install -y rubygems ruby-devel gcc-c++ zlib-devel patch
+[~/puppet-opendaylight]$ gem install bundler
 [~/puppet-opendaylight]$ bundle install
 ```
 
@@ -120,6 +122,8 @@ To run the syntax, style and unit tests in one rake task (recommended), use:
 While the [unit tests](#unit-tests) are able to quickly find many errors, they don't do much more than checking that the code compiles to a given state. To verify that the Puppet module behaves as desired once applied to a real, running system, we use [Beaker][14].
 
 Beaker stands up virtual machines using Vagrant, applies the OpenDaylight Puppet module with various combinations of params and uses [Serverspec][15] to validate the resulting system state.
+
+Beaker depends on Vagrant ([Vagrant downloads page][18]) for managing VMs, which in turn depends on VirtualBox ([VirtualBox downloads page][19]) and the `kmod-VirtualBox` package.
 
 To run our Beaker test against the primary target OS (CentOS 7) using the recommended RPM-based install method:
 
@@ -193,3 +197,5 @@ We use [Travis CI][17] to run our unit, syntax and style tests against a matrix 
 [15]: http://serverspec.org/resource_types.html
 [16]: https://github.com/puppetlabs/beaker/wiki/How-to-Write-a-Beaker-Test-for-a-Module#typical-workflow
 [17]: https://travis-ci.org/dfarrell07/puppet-opendaylight
+[18]: https://www.vagrantup.com/downloads.html
+[19]: www.virtualbox.org/wiki/Linux_Downloads
