@@ -22,8 +22,9 @@ describe 'midonet::zookeeper' do
 
     it 'should call deric/zookeeper properly' do
       is_expected.to contain_class('zookeeper').with({
-         'servers' => zookeeper_params[:servers],
-         'id'      =>  zookeeper_params[:id]
+         'servers'   => zookeeper_params[:servers],
+         'id'        => zookeeper_params[:id],
+         'client_ip' => '127.0.0.1'
       })
     end
   end

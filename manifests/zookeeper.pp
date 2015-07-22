@@ -8,6 +8,8 @@
 #   Full list of ZooKeeper servers that run in the same cluster.
 # [*server_id*]
 #   Identifier of this ZooKeeper server in the cluster.
+# [*client_ip*]
+#   IP address from where the ZooKeeper listen client requests
 #
 # === Examples
 #
@@ -90,11 +92,12 @@
 # limitations under the License.
 #
 
-class midonet::zookeeper($servers, $server_id) {
+class midonet::zookeeper($servers, $server_id, $client_ip=$::ipaddress_eth0) {
 
     class {'::zookeeper':
-      servers => zookeeper_servers($servers),
-      id      => $server_id,
-      cfg_dir => '/etc/zookeeper'
+      servers   => zookeeper_servers($servers),
+      id        => $server_id,
+      cfg_dir   => '/etc/zookeeper',
+      client_ip => $client_ip
     }
 }
