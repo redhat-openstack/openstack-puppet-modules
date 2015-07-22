@@ -20,6 +20,7 @@
     * [cassandra::opscenter](#class-cassandraopscenter)
     * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
     * [cassandra::optutils](#class-cassandraoptutils)
+    * [cassandra::opscenter::setting](#defined-type-cassandraopscentersetting)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
 
@@ -208,6 +209,10 @@ tools.
 * **cassandra::opscenter**
 * **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
+
+### Defined Types
+
+* **cassandra::opscenter::setting**
 
 ### Class: cassandra
 
@@ -625,6 +630,35 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Defined Type cassandra::opscenter::setting
+
+Simply a defined type to be used as a macro for settings in the OpsCenter
+configuration file.  This is not really supposed to be used by a user (who
+should use the API provided by cassandra::opscenter instead) but is documented
+here for completeness.
+
+#### Parameters
+
+##### `service_name`
+The name of the service to be notified if a change is made to the
+configuration file.  Typically this would by **opscenterd**.
+
+##### `path`
+The path to the configuration file.  Typically this would by
+**/etc/opscenter/opscenterd.conf**.
+
+##### `section`
+The section in the configuration file to be added to (e.g. **webserver**).
+
+##### `setting`
+The setting within the section of the configuration file to changed
+(e.g. **port**).
+
+##### `value`
+The setting value to be changed to (e.g. **8888**).  If this is set to
+**unset** then the setting is ignored.  No attempt will be made to remove
+a setting even if it is set to **undef**.
 
 ## Limitations
 
