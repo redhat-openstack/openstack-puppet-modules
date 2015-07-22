@@ -20,59 +20,54 @@ class cassandra::opscenter (
     ensure  => $ensure,
     name    => $package_name,
     require => Class['cassandra'],
-    before  => Service[$service_name]
+    before  => Service['opscenterd']
   }
   
   cassandra::opscenter::setting { 'authentication enabled':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'authentication',
-    setting      => 'enabled',
-    value        => $authentication_enabled,
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'enabled',
+    value   => $authentication_enabled,
   }
 
   cassandra::opscenter::setting { 'webserver port':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'webserver',
-    setting      => 'port',
-    value        => $port
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'port',
+    value   => $port
   }
 
   cassandra::opscenter::setting { 'webserver interface':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'webserver',
-    setting      => 'interface',
-    value        => $interface
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'interface',
+    value   => $interface
   }
 
   cassandra::opscenter::setting { 'webserver ssl_keyfile':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'webserver',
-    setting      => 'ssl_keyfile',
-    value        => $ssl_keyfile
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'ssl_keyfile',
+    value   => $ssl_keyfile
   }
 
   cassandra::opscenter::setting { 'webserver ssl_certfile':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'webserver',
-    setting      => 'ssl_certfile',
-    value        => $ssl_certfile
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'ssl_certfile',
+    value   => $ssl_certfile
   }
 
   cassandra::opscenter::setting { 'webserver ssl_port':
-    service_name => $service_name,
-    path         => $config_file,
-    section      => 'webserver',
-    setting      => 'ssl_port',
-    value        => $ssl_port
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'ssl_port',
+    value   => $ssl_port
   }
 
-  service { $service_name:
+  service { 'opscenterd':
     ensure => $service_ensure,
+    name   => $service_name,
     enable => $service_enable,
   }
 }
