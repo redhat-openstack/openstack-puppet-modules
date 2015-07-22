@@ -519,8 +519,9 @@ This is passed to the package reference for **opscenter**.  Valid values are
 The full path to the OpsCenter configuration file
 (default **/etc/opscenter/opscenterd.conf**).
 
-##### `interface`
-This value is set in the **webserver** section of the configuration file.
+##### `webserver_interface`
+This value is set in the **webserver** section of the configuration file as
+the **interface** setting.
 See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details
@@ -530,8 +531,9 @@ for details
 The name of the OpsCenter package
 (default **opscenter**).
 
-##### `port`
-This value is set in the **webserver** section of the configuration file.
+##### `webserver_port`
+This value is set in the **webserver** section of the configuration file as
+the **port** setting.
 See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details
@@ -550,22 +552,25 @@ Ensure the OpsCenter service is running.  Valid values are running or stopped
 The name of the service that runs the OpsCenter software (default
 **opscenterd**).
 
-##### `ssl_keyfile`
-This value is set in the **webserver** section of the configuration file.
+##### `webserver_ssl_keyfile`
+This value is set in the **webserver** section of the configuration file as
+the **ssl_keyfile** setting.
 See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details
 (default **undef**).
 
-##### `ssl_certfile`
-This value is set in the **webserver** section of the configuration file.
+##### `webserver_ssl_certfile`
+This value is set in the **webserver** section of the configuration file as
+the **ssl_certfile** setting.
 See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details
 (default **undef**).
 
-##### `ssl_port`
-This value is set in the **webserver** section of the configuration file.
+##### `webserver_ssl_port`
+This value is set in the **webserver** section of the configuration file as
+the **ssl_port** setting.
 See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details
