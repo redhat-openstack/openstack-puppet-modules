@@ -18,7 +18,7 @@ class zookeeper::service(
     default: { $initstyle = 'unknown' }
   }
 
-  if ($initstyle == 'systemd' and $manage_systemd) {
+  if ($initstyle == 'systemd' and $zookeeper::manage_systemd) {
     file { '/usr/lib/systemd/system/zookeeper.service':
       ensure  => 'present',
       content => template('zookeeper/zookeeper.service.erb'),
