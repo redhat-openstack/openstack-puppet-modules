@@ -125,16 +125,10 @@ Beaker stands up virtual machines using Vagrant, applies the OpenDaylight Puppet
 
 Beaker depends on Vagrant ([Vagrant downloads page][18]) for managing VMs, which in turn depends on VirtualBox ([VirtualBox downloads page][19]) and the `kmod-VirtualBox` package.
 
-To run our Beaker test against the primary target OS (CentOS 7) using the recommended RPM-based install method:
+To run our Beaker tests against the primary target OS (CentOS 7) using the recommended RPM-based install method, use:
 
 ```
-[~/puppet-opendaylight]$ bundle exec rake beaker
-```
-
-The `RS_SET` environment variable can be use to change Beaker's target OS (Fedora 20, Fedora 21, CentOS 7, Ubuntu 14.04). ODL's install method (RPM or tarball) can be configured via the `INSTALL_METHOD` environment variable.
-
-```
-[~/puppet-opendaylight]$ RS_SET=fedora-20 INSTALL_METHOD=tarball bundle exec rake beaker
+[~/puppet-opendaylight]$ bundle exec rake centos
 ```
 
 There are a number of pre-defined rake tasks to simplify running common Beaker tests.
@@ -154,7 +148,6 @@ If you'd like to preserve the Beaker VM after a test run, perhaps for manual ins
 ```
 
 You can then connect to the VM by navigating to the directory that contains its Vagrantfile and using standard Vagrant commands.
-
 
 ```
 [~/puppet-opendaylight]$ cd .vagrant/beaker_vagrant_files/centos-7.yml
