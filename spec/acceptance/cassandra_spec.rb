@@ -1,56 +1,40 @@
 require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
-  pp1 = <<-EOS
+  cassandra_pp = <<-EOS
     class { 'cassandra':
       manage_dsc_repo   => true,
     }
 
+    include '::cassandra::datastax_agent'
     include '::cassandra::java'
-  EOS
+    include '::cassandra::opscenter'
 
-  describe 'Install Cassandra with Java.' do
-    it 'should work with no errors' do
-      apply_manifest(pp1, :catch_failures => true)
-    end
-  end
+    class { '::cassandra::opscenter::pycrypto':
+      manage_epel => true
+    }
 
-  pp2 = <<-EOS
-    include '::cassandra'
     include '::cassandra::optutils'
   EOS
 
-  describe 'Install the Optional Cassandra tools.' do
+  describe 'Initial install.' do
     it 'should work with no errors' do
-      apply_manifest(pp2, :catch_failures => true)
+      apply_manifest(cassandra_pp, :catch_failures => true)
     end
   end
 
-  pp3 = <<-EOS
-    include '::cassandra'
-    include '::cassandra::datastax_agent'
-  EOS
-
-  describe 'Install the DataStax Agent.' do
-    it 'should work with no errors' do
-      apply_manifest(pp3, :catch_failures => true)
-    end
-  end
-
-  pp4 = <<-EOS
-    class { 'cassandra':
-      manage_dsc_repo              => true,
-      cassandra_opt_package_ensure => 'present',
-    }
-
+  idempotency_pp = <<-EOS
+    include 'cassandra'
     include '::cassandra::datastax_agent'
     include '::cassandra::java'
+    include '::cassandra::opscenter'
+    include '::cassandra::opscenter::pycrypto'
     include '::cassandra::optutils'
   EOS
 
   describe 'Idempotency test.' do
     it 'should work with no errors' do
-      expect(apply_manifest(pp3, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(idempotency_pp, :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -64,4 +48,8 @@ describe 'cassandra class' do
     it { is_expected.to be_enabled }
   end
 
+  describe service('opscenterd') do
+    it { is_expected.to be_running }
+    it { is_expected.to be_enabled }
+  end
 end

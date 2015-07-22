@@ -17,7 +17,10 @@
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
     * [cassandra::java](#class-cassandrajava)
+    * [cassandra::opscenter](#class-cassandraopscenter)
+    * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
     * [cassandra::optutils](#class-cassandraoptutils)
+    * [cassandra::opscenter::setting](#defined-type-cassandraopscentersetting)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Contributers](#contributers)
 
@@ -46,6 +49,20 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 #### What the cassandra::java class affects
 
 * Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+
+#### What the cassandra::opscenter class affects
+
+* Installs the opscenter package.
+* Manages the content of the configuration file
+  (/etc/opscenter/opscenterd.conf).
+* Manages the opscenterd service.
+
+#### What the cassandra::opscenter::pycrypto class affects
+
+* On the Red Hat family it installs the pycrypto library and it's
+  pre-requisits (the python-devel and python-pip packages).
+* Optionally installs the Extra Packages for Enterprise Linux (EPEL)
+  repository.
 
 #### What the cassandra::optutils class affects
 
@@ -189,7 +206,13 @@ tools.
 * **cassandra**
 * **cassandra::datastax_agent**
 * **cassandra::java**
+* **cassandra::opscenter**
+* **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
+
+### Defined Types
+
+* **cassandra::opscenter::setting**
 
 ### Class: cassandra
 
@@ -413,7 +436,7 @@ This is passed to the
 
 ### Class: cassandra::datastax_agent
 
-A class for installing the DataStax agent and to point it at an Opscenter
+A class for installing the DataStax agent and to point it at an OpsCenter
 instance.
 
 #### Parameters
@@ -439,7 +462,7 @@ Is passed to the service reference (default **datastax-agent**).
 If the value is changed from the default of *undef* then this is what is
 set as the stomp_interface setting in
 **/var/lib/datastax-agent/conf/address.yaml**
-which connects the agent to an Opscenter instance
+which connects the agent to an OpsCenter instance
 (default **undef**).
 
 ### Class: cassandra::java
@@ -461,6 +484,134 @@ can specify a package that is available in a package repository to the
 node
 (default **undef**).
 
+### Class: cassandra::opscenter
+
+This class installs and manages the DataStax OpsCenter.  For this class, when
+a field value is set to *undef*, no attempt is made to set (or remove) the
+value from the configuration file.  For example, the **ssl_port** in the
+default configuration file that is distributed with packages is commented out.
+As the default value for this class is *undef* then no attempt will be made
+to edit that value at all.  However, if one was to set the value (to **8443**
+for example), that value would be set in the relevant section of the
+configuration file.
+
+#### Parameters
+
+##### `authentication_enabled`
+This value is sets the **enabled** parameter in the **authentication** section
+of the configuration file:
+
+> Set this option to True to enable OpsCenter authentication.  A default admin
+> account will be created with the username "admin" and password "admin".
+> Accounts and roles can then be created and modified from within the web UI.
+
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **False**).
+
+##### `ensure`
+This is passed to the package reference for **opscenter**.  Valid values are
+**present** or a version number
+(default **present**).
+
+##### `config_file`
+The full path to the OpsCenter configuration file
+(default **/etc/opscenter/opscenterd.conf**).
+
+##### `interface`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **0.0.0.0**).
+
+##### `package_name`
+The name of the OpsCenter package
+(default **opscenter**).
+
+##### `port`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **8888**).
+
+##### `service_enable`
+Enable the OpsCenter service to start at boot time.  Valid values are true
+or false
+(default: **true**)
+
+##### `service_ensure`
+Ensure the OpsCenter service is running.  Valid values are running or stopped
+(default: **running**)
+
+##### `service_name`
+The name of the service that runs the OpsCenter software (default
+**opscenterd**).
+
+##### `ssl_keyfile`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `ssl_certfile`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `ssl_port`
+This value is set in the **webserver** section of the configuration file.
+See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+##### `stat_reporter_interval`
+This value is set as **interval** in the **stat_reporter** section of the
+configuration file.  See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
+for details
+(default **undef**).
+
+### Class: cassandra::opscenter::pycrypto
+
+On the Red Hat family of operating systems, if one intends to use encyption
+for configuration values then the pycrypto library is required.  This class
+will install it for the user.  See
+http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html
+for more details.
+
+This class has no effect when included on nodes that are not in the Red Hat
+family.
+
+#### Parameters
+
+##### `ensure`
+This is passed to the package reference for **pycrypto**.  Valid values are
+**present** or a version number
+(default **present**).
+
+##### `manage_epel`
+If set to true, the **epel-release** package will be installed
+(default **false**).
+
+##### `package_name`
+The name of the PyCrypto package
+(default **pycrypto**).
+
+##### `provider`
+The name of the provider of the pycrypto package
+(default **pip**).
+
+##### `reqd_pckgs`
+Packages that are required to install the pycrypto package
+(default **['python-devel', 'python-pip' ]**).
+
 ### Class: cassandra::optutils
 
 A class to install the optional Cassandra tools package.
@@ -479,6 +630,35 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Defined Type cassandra::opscenter::setting
+
+Simply a defined type to be used as a macro for settings in the OpsCenter
+configuration file.  This is not really supposed to be used by a user (who
+should use the API provided by cassandra::opscenter instead) but is documented
+here for completeness.
+
+#### Parameters
+
+##### `service_name`
+The name of the service to be notified if a change is made to the
+configuration file.  Typically this would by **opscenterd**.
+
+##### `path`
+The path to the configuration file.  Typically this would by
+**/etc/opscenter/opscenterd.conf**.
+
+##### `section`
+The section in the configuration file to be added to (e.g. **webserver**).
+
+##### `setting`
+The setting within the section of the configuration file to changed
+(e.g. **port**).
+
+##### `value`
+The setting value to be changed to (e.g. **8888**).  If this is set to
+**unset** then the setting is ignored.  No attempt will be made to remove
+a setting even if it is set to **undef**.
 
 ## Limitations
 
