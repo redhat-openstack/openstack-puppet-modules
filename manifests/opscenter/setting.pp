@@ -13,7 +13,7 @@ define cassandra::opscenter::setting (
       setting           => $setting,
       value             => $value,
       key_val_separator => ' = ',
-      require           => Package[opscenter],
+      require           => Package['opscenter'],
       notify            => Service['opscenterd'],
     }
   }

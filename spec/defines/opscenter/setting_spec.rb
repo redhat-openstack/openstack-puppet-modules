@@ -1,7 +1,12 @@
 require 'spec_helper'
 describe 'cassandra::opscenter::setting' do
   let(:pre_condition) { [
-    'define ini_setting($ensure, $path, $section, $key_val_separator, $setting, $value) {}'
+    'define ini_setting($ensure,
+       $path,
+       $section,
+       $key_val_separator,
+       $setting,
+       $value) {}'
   ] }
 
   context 'Test that settings can be set.' do
@@ -24,10 +29,6 @@ describe 'cassandra::opscenter::setting' do
         'value'             => 'value',
         'key_val_separator' => ' = ',
       })
-    }
-
-    it {
-      should contain_ini_setting('section:setting').that_requires('Package[opscenter]')
     }
   end
 end
