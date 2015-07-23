@@ -76,6 +76,7 @@ class midonet::midonet_api::run (
 
     service {$tomcat_package:
       ensure  => running,
+      enable  => true,
       require => [File['/usr/share/midonet-api/WEB-INF/web.xml'],
                   Tomcat::Config::Server::Connector['HTTP/1.1']]
     }
