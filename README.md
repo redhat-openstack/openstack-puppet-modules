@@ -541,9 +541,7 @@ default value is:
 Module Parameter            | Section        | Setting      | Default Value
 --------------------------- | -------------- | -------      | -------------
 authentication_enabled           |authentication|enabled|**False**
-
 stat_reporter_interval           |stat_reporter|interval|*undef*
-
 webserver_interface              |webserver|interface|**0.0.0.0**
 webserver_port                   |webserver|port|**8888**
 webserver_ssl_certfile           |webserver| ssl_certfile|*undef*
