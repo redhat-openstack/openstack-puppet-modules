@@ -497,19 +497,6 @@ configuration file.
 
 #### Parameters
 
-##### `authentication_enabled`
-This value is sets the **enabled** parameter in the **authentication** section
-of the configuration file:
-
-> Set this option to True to enable OpsCenter authentication.  A default admin
-> account will be created with the username "admin" and password "admin".
-> Accounts and roles can then be created and modified from within the web UI.
-
-See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **False**).
-
 ##### `ensure`
 This is passed to the package reference for **opscenter**.  Valid values are
 **present** or a version number
@@ -519,25 +506,9 @@ This is passed to the package reference for **opscenter**.  Valid values are
 The full path to the OpsCenter configuration file
 (default **/etc/opscenter/opscenterd.conf**).
 
-##### `webserver_interface`
-This value is set in the **webserver** section of the configuration file as
-the **interface** setting.
-See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **0.0.0.0**).
-
 ##### `package_name`
 The name of the OpsCenter package
 (default **opscenter**).
-
-##### `webserver_port`
-This value is set in the **webserver** section of the configuration file as
-the **port** setting.
-See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **8888**).
 
 ##### `service_enable`
 Enable the OpsCenter service to start at boot time.  Valid values are true
@@ -552,36 +523,24 @@ Ensure the OpsCenter service is running.  Valid values are running or stopped
 The name of the service that runs the OpsCenter software (default
 **opscenterd**).
 
-##### `webserver_ssl_keyfile`
-This value is set in the **webserver** section of the configuration file as
-the **ssl_keyfile** setting.
-See
+The rest of the module parameters are passed into the configuration file only
+if a default is set or the user specifies a value that is not *undef*.  See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **undef**).
+for details on a specific parameter.
 
-##### `webserver_ssl_certfile`
-This value is set in the **webserver** section of the configuration file as
-the **ssl_certfile** setting.
-See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **undef**).
+If a setting is set to *undef* then the module will ensure that the setting is
+removed.
 
-##### `webserver_ssl_port`
-This value is set in the **webserver** section of the configuration file as
-the **ssl_port** setting.
-See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **undef**).
+Leaving the defaults as they are will provide a running OpsCenter without any
+authentication.
 
-##### `stat_reporter_interval`
-This value is set as **interval** in the **stat_reporter** section of the
-configuration file.  See
-http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
-for details
-(default **undef**).
+This table shows the name of the modle parameter, specifies which section
+and setting it is associated with in the configuration file and shows what the
+default value is:
+
+Module Parameter            | Section        | Setting | Default Value
+--------------------------- | -------------- | ------- | -------------
+```authentication_enabled```| authentication | enabled | **False**
 
 ### Class: cassandra::opscenter::pycrypto
 
