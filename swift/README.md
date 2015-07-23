@@ -1,7 +1,7 @@
 swift
 =======
 
-5.1.0 - 2014.2 - Juno
+6.0.0 - 2015.1 - Kilo
 
 #### Table of Contents
 
@@ -35,7 +35,7 @@ Setup
 
 ### Installing swift
 
-    example% puppet module install puppetlabs/swift
+    example% puppet module install openstack/swift
 
 ### Beginning with swift
 

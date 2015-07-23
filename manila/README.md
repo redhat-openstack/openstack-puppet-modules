@@ -1,7 +1,7 @@
 manila
 =======
 
-1.0.0 - 2014.2.0 - Juno
+6.0.0 - 2015.1.0 - Kilo
 
 #### Table of Contents
 
@@ -34,7 +34,7 @@ Setup
 ### Installing manila
 
     manila is not currently in Puppet Forge, but is anticipated to be added soon.  Once that happens, you'll be able to install manila with:
-    puppet module install puppetlabs/manila
+    puppet module install openstack/manila
 
 ### Beginning with manila
 

@@ -29,7 +29,11 @@
 #
 # [*haproxy_global_maxconn*]
 #  The value to use as maxconn in the haproxy global config section.
-#  Defaults to 10000
+#  Defaults to 20480
+#
+# [*haproxy_default_maxconn*]
+#  The value to use as maxconn in the haproxy default config section.
+#  Defaults to 4096
 #
 # [*controller_host*]
 #  (Deprecated)Host or group of hosts to load-balance the services
@@ -231,7 +235,8 @@ class tripleo::loadbalancer (
   $storage_mgmt_virtual_ip   = false,
   $manage_vip                = true,
   $haproxy_service_manage    = true,
-  $haproxy_global_maxconn    = 10000,
+  $haproxy_global_maxconn    = 20480,
+  $haproxy_default_maxconn   = 4096,
   $controller_host           = undef,
   $controller_hosts          = undef,
   $controller_hosts_names    = undef,
@@ -612,6 +617,7 @@ class tripleo::loadbalancer (
       'retries' => '3',
       'option'  => [ 'tcpka', 'tcplog' ],
       'timeout' => [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
+      'maxconn' => $haproxy_default_maxconn,
     },
   }
 
@@ -713,10 +719,10 @@ class tripleo::loadbalancer (
   if $glance_registry {
     haproxy::listen { 'glance_registry':
       ipaddress        => hiera('glance_registry_vip', $controller_virtual_ip),
-      ports            => 9191,
       options          => {
-        'mode' => 'tcp',
+        'option' => [ ],
       },
+      ports            => 9191,
       collect_exported => false,
     }
     haproxy::balancermember { 'glance_registry':
@@ -800,6 +806,9 @@ class tripleo::loadbalancer (
   if $ceilometer {
     haproxy::listen { 'ceilometer':
       bind             => $ceilometer_bind_opts,
+      options          => {
+        'option' => [ ],
+      },
       collect_exported => false,
     }
     haproxy::balancermember { 'ceilometer':
@@ -807,7 +816,7 @@ class tripleo::loadbalancer (
       ports             => '8777',
       ipaddresses       => hiera('ceilometer_api_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
-      options           => [],
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
 
@@ -883,6 +892,7 @@ class tripleo::loadbalancer (
       bind             => $horizon_bind_opts,
       options          => {
         'option' => [ 'httpchk GET /' ],
+        'cookie' => 'SERVERID insert indirect nocache',
       },
       collect_exported => false,
     }
@@ -913,6 +923,9 @@ class tripleo::loadbalancer (
   if $ironic {
     haproxy::listen { 'ironic':
       bind             => $ironic_bind_opts,
+      options          => {
+        'option' => [ 'httpchk GET /' ],
+      },
       collect_exported => false,
     }
     haproxy::balancermember { 'ironic':
@@ -920,7 +933,7 @@ class tripleo::loadbalancer (
       ports             => '6385',
       ipaddresses       => hiera('ironic_api_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
-      options           => [],
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
 
@@ -964,7 +977,6 @@ class tripleo::loadbalancer (
       ports            => 6379,
       options          => {
         'timeout'   => [ 'client 0', 'server 0' ],
-        'mode'      => 'tcp',
         'balance'   => 'first',
         'option'    => ['tcp-check',],
         'tcp-check' => ['send info\ replication\r\n','expect string role:master'],

@@ -39,6 +39,9 @@
 # [*service_type*]
 #   Type of service. Defaults to 'management'.
 #
+# [*service_description*]
+#   Description for keystone service. Optional. Defaults to 'Tuskar Management Service'.
+#
 # [*public_protocol*]
 #   Protocol for public endpoint. Defaults to 'http'.
 #
@@ -69,20 +72,21 @@
 #
 class tuskar::keystone::auth (
   $password,
-  $auth_name          = 'tuskar',
-  $email              = 'tuskar@localhost',
-  $tenant             = 'services',
-  $configure_endpoint = true,
-  $service_type       = 'management',
-  $public_protocol    = 'http',
-  $public_address     = '127.0.0.1',
-  $admin_protocol     = 'http',
-  $admin_address      = '127.0.0.1',
-  $internal_protocol  = 'http',
-  $internal_address   = '127.0.0.1',
-  $port               = '8585',
-  $public_port        = undef,
-  $region             = 'RegionOne'
+  $auth_name           = 'tuskar',
+  $email               = 'tuskar@localhost',
+  $tenant              = 'services',
+  $configure_endpoint  = true,
+  $service_type        = 'management',
+  $service_description = 'Tuskar Management Service',
+  $public_protocol     = 'http',
+  $public_address      = '127.0.0.1',
+  $admin_protocol      = 'http',
+  $admin_address       = '127.0.0.1',
+  $internal_protocol   = 'http',
+  $internal_address    = '127.0.0.1',
+  $port                = '8585',
+  $public_port         = undef,
+  $region              = 'RegionOne'
 ) {
 
   Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'tuskar-api' |>
@@ -99,7 +103,7 @@ class tuskar::keystone::auth (
     configure_user_role => true,
     configure_endpoint  => $configure_endpoint,
     service_type        => $service_type,
-    service_description => 'Tuskar Management Service',
+    service_description => $service_description,
     region              => $region,
     password            => $password,
     email               => $email,

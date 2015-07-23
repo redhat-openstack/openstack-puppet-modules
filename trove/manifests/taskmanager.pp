@@ -70,20 +70,24 @@
 # [*guestagent_config_file*]
 #   (optional) Trove guest agent configuration file.
 #   Defaults to '/etc/trove/trove-guestmanager.conf'.
+# [*default_neutron_networks*]
+#   (optional) The network that trove will attach by default.
+#   Defaults to undef.
 #
 class trove::taskmanager(
-  $enabled                = true,
-  $manage_service         = true,
-  $debug                  = false,
-  $verbose                = false,
-  $log_file               = '/var/log/trove/trove-taskmanager.log',
-  $log_dir                = '/var/log/trove',
-  $use_syslog             = false,
-  $log_facility           = 'LOG_USER',
-  $auth_url               = 'http://localhost:5000/v2.0',
-  $heat_url               = false,
-  $ensure_package         = 'present',
-  $guestagent_config_file = '/etc/trove/trove-guestmanager.conf'
+  $enabled                  = true,
+  $manage_service           = true,
+  $debug                    = false,
+  $verbose                  = false,
+  $log_file                 = '/var/log/trove/trove-taskmanager.log',
+  $log_dir                  = '/var/log/trove',
+  $use_syslog               = false,
+  $log_facility             = 'LOG_USER',
+  $auth_url                 = 'http://localhost:5000/v2.0',
+  $heat_url                 = false,
+  $ensure_package           = 'present',
+  $guestagent_config_file   = '/etc/trove/trove-guestmanager.conf',
+  $default_neutron_networks = undef
 ) inherits trove {
 
   include ::trove::params
@@ -117,6 +121,7 @@ class trove::taskmanager(
     'DEFAULT/nova_proxy_admin_user':        value => $::trove::nova_proxy_admin_user;
     'DEFAULT/nova_proxy_admin_pass':        value => $::trove::nova_proxy_admin_pass;
     'DEFAULT/nova_proxy_admin_tenant_name': value => $::trove::nova_proxy_admin_tenant_name;
+    'DEFAULT/rpc_backend':                  value => $::trove::rpc_backend;
   }
 
   if $::trove::rpc_backend == 'trove.openstack.common.rpc.impl_kombu' {
@@ -179,17 +184,17 @@ class trove::taskmanager(
 
   if $::trove::rpc_backend == 'trove.openstack.common.rpc.impl_qpid' {
     trove_taskmanager_config {
-      'DEFAULT/qpid_hostname':               value => $::trove::qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $::trove::qpid_port;
-      'DEFAULT/qpid_username':               value => $::trove::qpid_username;
-      'DEFAULT/qpid_password':               value => $::trove::qpid_password, secret => true;
-      'DEFAULT/qpid_heartbeat':              value => $::trove::qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $::trove::qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $::trove::qpid_tcp_nodelay;
+      'oslo_messaging_qpid/qpid_hostname':    value => $::trove::qpid_hostname;
+      'oslo_messaging_qpid/qpid_port':        value => $::trove::qpid_port;
+      'oslo_messaging_qpid/qpid_username':    value => $::trove::qpid_username;
+      'oslo_messaging_qpid/qpid_password':    value => $::trove::qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat':   value => $::trove::qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':    value => $::trove::qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay': value => $::trove::qpid_tcp_nodelay;
     }
     if is_array($::trove::qpid_sasl_mechanisms) {
       trove_taskmanager_config {
-        'DEFAULT/qpid_sasl_mechanisms': value => join($::trove::qpid_sasl_mechanisms, ' ');
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($::trove::qpid_sasl_mechanisms, ' ');
       }
     }
   }
@@ -198,21 +203,25 @@ class trove::taskmanager(
     trove_config {
       'DEFAULT/network_label_regex':         value => '.*';
       'DEFAULT/network_driver':              value => 'trove.network.neutron.NeutronDriver';
+      'DEFAULT/default_neutron_networks':    value => $default_neutron_networks;
     }
 
     trove_taskmanager_config {
       'DEFAULT/network_label_regex':         value => '.*';
       'DEFAULT/network_driver':              value => 'trove.network.neutron.NeutronDriver';
+      'DEFAULT/default_neutron_networks':    value => $default_neutron_networks;
     }
   } else {
     trove_config {
       'DEFAULT/network_label_regex':         value => '^private$';
       'DEFAULT/network_driver':              value => 'trove.network.nova.NovaNetwork';
+      'DEFAULT/default_neutron_networks':    ensure => absent;
     }
 
     trove_taskmanager_config {
       'DEFAULT/network_label_regex':         value => '^private$';
       'DEFAULT/network_driver':              value => 'trove.network.nova.NovaNetwork';
+      'DEFAULT/default_neutron_networks':    ensure => absent;
     }
   }
 

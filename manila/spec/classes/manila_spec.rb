@@ -140,19 +140,19 @@ describe 'manila' do
 
     it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
     it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('manila.openstack.common.rpc.impl_qpid') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_hostname').with_value('localhost') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_port').with_value('5672') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_username').with_value('guest') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_password').with_value('guest').with_secret(true) }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect').with_value(true) }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect_timeout').with_value('0') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect_limit').with_value('0') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect_interval_min').with_value('0') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect_interval_max').with_value('0') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_reconnect_interval').with_value('0') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_heartbeat').with_value('60') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_protocol').with_value('tcp') }
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_tcp_nodelay').with_value(true) }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_port').with_value('5672') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_username').with_value('guest') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_password').with_value('guest').with_secret(true) }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect').with_value(true) }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_timeout').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_limit').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval_min').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval_max').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_heartbeat').with_value('60') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_protocol').with_value('tcp') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_tcp_nodelay').with_value(true) }
   end
 
   describe 'with qpid rpc and no qpid_sasl_mechanisms' do
@@ -164,7 +164,7 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_sasl_mechanisms').with_ensure('absent') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_ensure('absent') }
   end
 
   describe 'with qpid rpc and qpid_sasl_mechanisms string' do
@@ -177,7 +177,7 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_sasl_mechanisms').with_value('PLAIN') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('PLAIN') }
   end
 
   describe 'with qpid rpc and qpid_sasl_mechanisms array' do
@@ -190,7 +190,7 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/qpid_sasl_mechanisms').with_value('DIGEST-MD5 GSSAPI PLAIN') }
+    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('DIGEST-MD5 GSSAPI PLAIN') }
   end
 
   describe 'with SSL enabled' do
@@ -287,7 +287,7 @@ describe 'manila' do
       req_params
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/amqp_durable_queues').with_value(false) }
+    it { is_expected.to contain_manila_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(false) }
   end
 
   describe 'with amqp_durable_queues enabled' do
@@ -297,7 +297,7 @@ describe 'manila' do
       })
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/amqp_durable_queues').with_value(true) }
+    it { is_expected.to contain_manila_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(true) }
   end
 
   describe 'with sqlite' do
