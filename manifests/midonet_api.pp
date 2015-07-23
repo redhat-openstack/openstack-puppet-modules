@@ -15,6 +15,8 @@
 #   The name of the tomcat package to install. The module already inserts a
 #   value depending on the distribution used. Don't override it unless you know
 #   what you are doing.
+# [*bind_address*]
+#   Let choose the address to bind instead of all of them
 # [*api_ip*]
 #   Exposed IP address. By default, it exposes the first internet address that
 #   founds in the host.
@@ -101,6 +103,7 @@ class midonet::midonet_api(
   $keystone_tenant_name='admin',
   $api_ip=$::ipaddress,
   $api_port='8080',
+  $bind_address='0.0.0.0',
   $catalina_base) {
 
     include midonet::midonet_api::augeas
@@ -118,6 +121,7 @@ class midonet::midonet_api(
         keystone_port        => $keystone_port,
         keystone_admin_token => $keystone_admin_token,
         keystone_tenant_name => $keystone_tenant_name,
-        catalina_base        => $catalina_base
+        catalina_base        => $catalina_base,
+        bind_address         => $bind_address
     }
 }

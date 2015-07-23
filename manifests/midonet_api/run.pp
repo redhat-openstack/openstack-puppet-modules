@@ -33,7 +33,8 @@ class midonet::midonet_api::run (
   $keystone_port,
   $keystone_admin_token,
   $keystone_tenant_name,
-  $catalina_base
+  $catalina_base,
+  $bind_address
 ) {
 
     require midonet::midonet_api::install
@@ -47,6 +48,7 @@ class midonet::midonet_api::run (
       catalina_base         => $catalina_base,
       connector_ensure      => 'present',
       additional_attributes => {
+        'address'           => $bind_address,
         'connectionTimeout' => '20000',
         'URIEncoding'       => 'UTF-8',
         'redirectPort'      => '8443',
