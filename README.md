@@ -528,19 +528,26 @@ if a default is set or the user specifies a value that is not *undef*.  See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details on a specific parameter.
 
-If a setting is set to *undef* then the module will ensure that the setting is
+If a setting is *undef* then the module will ensure that the setting is
 removed.
 
 Leaving the defaults as they are will provide a running OpsCenter without any
-authentication.
+authentication on port 8888.
 
-This table shows the name of the modle parameter, specifies which section
+This table shows the name of the module parameter, specifies which section
 and setting it is associated with in the configuration file and shows what the
 default value is:
 
-Module Parameter            | Section        | Setting | Default Value
---------------------------- | -------------- | ------- | -------------
-```authentication_enabled```| authentication | enabled | **False**
+Module Parameter            | Section        | Setting      | Default Value
+--------------------------- | -------------- | -------      | -------------
+```authentication_enabled```| authentication | enabled      | **False**
+```stat_reporter_interval```| stat_reporter  | interval     | *undef*
+```webserver_interface```|webserver|interface|**0.0.0.0**
+```webserver_port```|webserver|port|**8888**
+```webserver_ssl_certfile```| webserver      | ssl_certfile | *undef*
+```webserver_ssl_keyfile``` | webserver      | ssl_keyfile  | *undef*
+```webserver_ssl_port```    | webserver      | ssl_port     | *undef*
+```webserver_staticdir```   | webserver      | staticdir    | *undef*
 
 ### Class: cassandra::opscenter::pycrypto
 
