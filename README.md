@@ -540,14 +540,18 @@ default value is:
 
 Module Parameter            | Section        | Setting      | Default Value
 --------------------------- | -------------- | -------      | -------------
-```authentication_enabled```| authentication | enabled      | **False**
-```stat_reporter_interval```| stat_reporter  | interval     | *undef*
-```webserver_interface```|webserver|interface|**0.0.0.0**
-```webserver_port```|webserver|port|**8888**
-```webserver_ssl_certfile```| webserver      | ssl_certfile | *undef*
-```webserver_ssl_keyfile``` | webserver      | ssl_keyfile  | *undef*
-```webserver_ssl_port```    | webserver      | ssl_port     | *undef*
-```webserver_staticdir```   | webserver      | staticdir    | *undef*
+authentication_enabled           |authentication|enabled|**False**
+
+stat_reporter_interval           |stat_reporter|interval|*undef*
+
+webserver_interface              |webserver|interface|**0.0.0.0**
+webserver_port                   |webserver|port|**8888**
+webserver_ssl_certfile           |webserver| ssl_certfile|*undef*
+webserver_ssl_keyfile            |webserver| ssl_keyfile|*undef*
+webserver_ssl_port               |webserver|ssl_port|*undef*
+webserver_staticdir|webserver    |staticdir|*undef*
+webserver_sub_process_timeout    |webserver|sub_process_timeout|*undef*
+webserver_tarball_process_timeout|webserver|tarball_process_timeout|*undef*
 
 ### Class: cassandra::opscenter::pycrypto
 
