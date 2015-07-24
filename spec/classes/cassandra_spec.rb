@@ -78,6 +78,24 @@ describe 'cassandra' do
     it { is_expected.to contain_service('cassandra') }
   end
 
+  context 'Install DSE on a Red Hat family OS.' do
+    let :facts do
+      {
+        :osfamily => 'RedHat'
+      }
+    end
+
+    let :params do
+      {
+        :cassandra_package_ensure => '4.7.0-1',
+        :cassandra_package_name   => 'dse-full',
+        :cluster_name             => 'DSE Cluster',
+        :config_path              => '/etc/dse/cassandra',
+        :service_name             => 'dse'
+      }
+    end
+  end
+
   context 'On an unknown OS with defaults for all parameters' do
     let :facts do
       {

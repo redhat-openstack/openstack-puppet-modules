@@ -113,10 +113,6 @@ class cassandra (
     ensure => $cassandra_package_ensure,
   }
 
-  if $config_path != undef {
-    $cfg_path = $config_path
-  }
-
   $config_file = "${cfg_path}/cassandra.yaml"
 
   file { $config_file:
