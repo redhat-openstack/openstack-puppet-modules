@@ -6,7 +6,7 @@ define cassandra::opscenter::setting (
   $value,
   ) {
   if value != undef {
-    ini_setting { "${section}:${setting}":
+    ini_setting { "${section} ${setting}":
       ensure            => present,
       path              => $path,
       section           => $section,

@@ -26,19 +26,11 @@ class cassandra::opscenter (
     require => Class['cassandra'],
     before  => Service['opscenterd']
   }
-  
-  cassandra::opscenter::setting { 'authentication enabled':
-    path    => $config_file,
-    section => 'authentication',
-    setting => 'enabled',
-    value   => $authentication_enabled,
-  }
 
-  cassandra::opscenter::setting { 'webserver port':
-    path    => $config_file,
-    section => 'webserver',
-    setting => 'port',
-    value   => $webserver_port
+  service { 'opscenterd':
+    ensure => $service_ensure,
+    name   => $service_name,
+    enable => $service_enable,
   }
 
   cassandra::opscenter::setting { 'webserver interface':
@@ -48,11 +40,18 @@ class cassandra::opscenter (
     value   => $webserver_interface
   }
 
-  cassandra::opscenter::setting { 'webserver ssl_keyfile':
+  cassandra::opscenter::setting { 'webserver log_path':
     path    => $config_file,
     section => 'webserver',
-    setting => 'ssl_keyfile',
-    value   => $webserver_ssl_keyfile
+    setting => 'log_path',
+    value   => $webserver_log_path
+  }
+
+  cassandra::opscenter::setting { 'webserver port':
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'port',
+    value   => $webserver_port
   }
 
   cassandra::opscenter::setting { 'webserver ssl_certfile':
@@ -62,6 +61,13 @@ class cassandra::opscenter (
     value   => $webserver_ssl_certfile
   }
 
+  cassandra::opscenter::setting { 'webserver ssl_keyfile':
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'ssl_keyfile',
+    value   => $webserver_ssl_keyfile
+  }
+
   cassandra::opscenter::setting { 'webserver ssl_port':
     path    => $config_file,
     section => 'webserver',
@@ -69,9 +75,24 @@ class cassandra::opscenter (
     value   => $webserver_ssl_port
   }
 
-  service { 'opscenterd':
-    ensure => $service_ensure,
-    name   => $service_name,
-    enable => $service_enable,
+  cassandra::opscenter::setting { 'webserver staticdir':
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'staticdir',
+    value   => $webserver_staticdir
+  }
+
+  cassandra::opscenter::setting { 'webserver sub_process_timeout':
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'sub_process_timeout',
+    value   => $webserver_sub_process_timeout
+  }
+
+  cassandra::opscenter::setting { 'webserver tarball_process_timeout':
+    path    => $config_file,
+    section => 'webserver',
+    setting => 'tarball_process_timeout',
+    value   => $webserver_tarball_process_timeout
   }
 }
