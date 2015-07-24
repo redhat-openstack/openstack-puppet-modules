@@ -10,7 +10,7 @@ describe 'cassandra::opscenter::setting' do
   ] }
 
   context 'Test that settings can be set.' do
-    let(:title) { 'section:setting' }
+    let(:title) { 'section setting' }
     let :params do
       {
         :path         => '/path/to/file',
@@ -21,7 +21,7 @@ describe 'cassandra::opscenter::setting' do
     end
 
     it {
-      should contain_ini_setting('section:setting').with({
+      should contain_ini_setting('section setting').with({
         'ensure'            => 'present',
         'path'              => '/path/to/file',
         'section'           => 'section',
