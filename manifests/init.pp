@@ -7,8 +7,6 @@ class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
-  $cassandra_package_ensure              = 'present',
-  $cassandra_package_name                = 'dsc21',
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
   $client_encryption_enabled             = false,
   $client_encryption_keystore            = 'conf/.keystore',
@@ -29,6 +27,8 @@ class cassandra (
   $manage_dsc_repo                       = false,
   $native_transport_port                 = 9042,
   $num_tokens                            = 256,
+  $package_ensure                        = 'present',
+  $package_name                          = 'dsc21',
   $partitioner
     = 'org.apache.cassandra.dht.Murmur3Partitioner',
   $rpc_address                           = 'localhost',
@@ -64,7 +64,7 @@ class cassandra (
           baseurl  => 'http://rpm.datastax.com/community',
           enabled  => 1,
           gpgcheck => 0,
-          before   => Package[ $cassandra_package_name ],
+          before   => Package[ $package_name ],
         }
       }
     }
@@ -100,7 +100,7 @@ class cassandra (
           refreshonly => true,
           command     => '/bin/true',
           require     => Exec['apt_update'],
-          before      => Package[ $cassandra_package_name ]
+          before      => Package[ $package_name ]
         }
       }
     }
@@ -109,32 +109,28 @@ class cassandra (
     }
   }
 
-  package { $cassandra_package_name:
-    ensure => $cassandra_package_ensure,
-  }
-
-  if $config_path != undef {
-    $cfg_path = $config_path
+  package { $package_name:
+    ensure => $package_ensure,
   }
 
   $config_file = "${cfg_path}/cassandra.yaml"
 
   file { $config_file:
-    ensure  => file,
+    ensure  => present,
     owner   => 'cassandra',
     group   => 'cassandra',
     content => template($cassandra_yaml_tmpl),
-    require => Package[$cassandra_package_name],
+    require => Package[$package_name],
     notify  => Service['cassandra'],
   }
 
-  if $cassandra_package_ensure != 'absent'
-  and $cassandra_package_ensure != 'purged' {
+  if $package_ensure != 'absent'
+  and $package_ensure != 'purged' {
     service { 'cassandra':
       ensure  => running,
       name    => $service_name,
       enable  => true,
-      require => Package[$cassandra_package_name],
+      require => Package[$package_name],
     }
   }
 }

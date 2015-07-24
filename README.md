@@ -125,9 +125,28 @@ the sub classes have a dependency on the main class.  So for example one
 could not specify the cassandra::java class for a node with the cassandra
 class also being included.
 
+#### DataStax Enterprise
+
+The following manifest works on CentOS 7 to install DSE Cassandra 4.7.0:
+
+```puppet
+class { 'cassandra':
+  package_ensure => '4.7.0-1',
+  package_name   => 'dse-full',
+  cluster_name   => 'My Cluster',
+  config_path    => '/etc/dse/cassandra',
+  service_name   => 'dse',
+}
+```
+
 ### Upgrading
 
 The following changes to the API have taken place.
+
+#### Changes in 1.0.0
+
+In the cassandra class, cassandra_package_name has been renamed to
+package_name and cassandra_package_ensure to package_ensure.
 
 #### Changes in 0.4.0
 
