@@ -11,6 +11,7 @@ class cassandra::opscenter (
     $service_name                      = 'opscenterd',
     $stat_reporter_interval            = undef,
     $webserver_interface               = '0.0.0.0',
+    $webserver_log_path                = undef,
     $webserver_port                    = 8888,
     $webserver_ssl_certfile            = undef,
     $webserver_ssl_keyfile             = undef,
