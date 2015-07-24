@@ -64,7 +64,7 @@ class cassandra (
           baseurl  => 'http://rpm.datastax.com/community',
           enabled  => 1,
           gpgcheck => 0,
-          before   => Package[ $cassandra_package_name ],
+          before   => Package[ $package_name ],
         }
       }
     }
@@ -100,7 +100,7 @@ class cassandra (
           refreshonly => true,
           command     => '/bin/true',
           require     => Exec['apt_update'],
-          before      => Package[ $cassandra_package_name ]
+          before      => Package[ $package_name ]
         }
       }
     }
@@ -109,28 +109,28 @@ class cassandra (
     }
   }
 
-  package { $cassandra_package_name:
-    ensure => $cassandra_package_ensure,
+  package { $package_name:
+    ensure => $package_ensure,
   }
 
   $config_file = "${cfg_path}/cassandra.yaml"
 
   file { $config_file:
-    ensure  => file,
+    ensure  => present,
     owner   => 'cassandra',
     group   => 'cassandra',
     content => template($cassandra_yaml_tmpl),
-    require => Package[$cassandra_package_name],
+    require => Package[$package_name],
     notify  => Service['cassandra'],
   }
 
-  if $cassandra_package_ensure != 'absent'
-  and $cassandra_package_ensure != 'purged' {
+  if $package_ensure != 'absent'
+  and $package_ensure != 'purged' {
     service { 'cassandra':
       ensure  => running,
       name    => $service_name,
       enable  => true,
-      require => Package[$cassandra_package_name],
+      require => Package[$package_name],
     }
   }
 }

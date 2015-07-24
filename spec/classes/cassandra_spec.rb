@@ -96,7 +96,9 @@ describe 'cassandra' do
     end
 
     it {
-      is_expected.to contain_file('/etc/dse/cassandra/cassandra.yml')
+      is_expected.to contain_file('/etc/dse/cassandra/cassandra.yaml')
+      is_expected.to contain_package('dse-full').with_ensure('4.7.0-1')
+      is_expected.to contain_service('cassandra').with_name('dse')
     }
   end
 
