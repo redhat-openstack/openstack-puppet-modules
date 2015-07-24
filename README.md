@@ -129,6 +129,11 @@ class also being included.
 
 The following changes to the API have taken place.
 
+#### Changes in 1.0.0
+
+In the cassandra class, cassandra_package_name has been renamed to
+package_name and cassandra_package_ensure to package_ensure.
+
 #### Changes in 0.4.0
 
 There is now a cassandra::datastax_agent class, therefore:

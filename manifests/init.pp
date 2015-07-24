@@ -7,8 +7,6 @@ class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
-  $cassandra_package_ensure              = 'present',
-  $cassandra_package_name                = 'dsc21',
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
   $client_encryption_enabled             = false,
   $client_encryption_keystore            = 'conf/.keystore',
@@ -29,6 +27,8 @@ class cassandra (
   $manage_dsc_repo                       = false,
   $native_transport_port                 = 9042,
   $num_tokens                            = 256,
+  $package_ensure                        = 'present',
+  $package_name                          = 'dsc21',
   $partitioner
     = 'org.apache.cassandra.dht.Murmur3Partitioner',
   $rpc_address                           = 'localhost',

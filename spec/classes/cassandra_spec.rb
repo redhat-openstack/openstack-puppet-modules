@@ -87,13 +87,17 @@ describe 'cassandra' do
 
     let :params do
       {
-        :cassandra_package_ensure => '4.7.0-1',
-        :cassandra_package_name   => 'dse-full',
-        :cluster_name             => 'DSE Cluster',
-        :config_path              => '/etc/dse/cassandra',
-        :service_name             => 'dse'
+        :package_ensure => '4.7.0-1',
+        :package_name   => 'dse-full',
+        :cluster_name   => 'DSE Cluster',
+        :config_path    => '/etc/dse/cassandra',
+        :service_name   => 'dse'
       }
     end
+
+    it {
+      is_expected.to contain_file('/etc/dse/cassandra/cassandra.yml')
+    }
   end
 
   context 'On an unknown OS with defaults for all parameters' do
