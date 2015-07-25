@@ -26,7 +26,7 @@
 
 ## Overview
 
-A Puppet module to install and manage Cassandra and DataStax Agent.
+A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 ## Setup
 
@@ -71,7 +71,7 @@ A Puppet module to install and manage Cassandra and DataStax Agent.
 ### Beginning with cassandra
 
 This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the *Usage*(#usage) section
+(assuming there is an available repository).  See the [Usage](#usage) section
 for more realistic scenarios.
 
 ```puppet
