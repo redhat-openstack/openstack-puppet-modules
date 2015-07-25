@@ -583,7 +583,7 @@ webserver_tarball_process_timeout|webserver|tarball_process_timeout|*undef*
 
 ### Class: cassandra::opscenter::pycrypto
 
-On the Red Hat family of operating systems, if one intends to use encyption
+On the Red Hat family of operating systems, if one intends to use encryption
 for configuration values then the pycrypto library is required.  This class
 will install it for the user.  See
 http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html
@@ -662,6 +662,10 @@ The setting within the section of the configuration file to changed
 The setting value to be changed to (e.g. **8888**).
 
 ## Limitations
+
+Currently OpsCenter configuration is confined to authentication, logging,
+stat_reporter and webserver.  The remaining sections are planned for the
+near future.
 
 Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.
