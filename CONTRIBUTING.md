@@ -33,7 +33,8 @@ done
 
 * Ensure all tests pass as expected.  There should already be a branch named
   after the release (e.g. v1.2.3) so merge all relevant branches onto it
-  beforehand.
+  beforehand.  To find out which branches require to be merged in, run the
+  following ```git branch -a --no-merged```.
 
 * Update the CHANGELOG.
 
