@@ -147,8 +147,10 @@ The following changes to the API have taken place.
 
 #### Changes in 1.0.0
 
-In the cassandra class, cassandra_package_name has been renamed to
-package_name and cassandra_package_ensure to package_ensure.
+* cassandra::cassandra_package_ensure has been renamed to
+  cassandra::package_ensure.
+* cassandra::cassandra_package_name has been renamed to
+  cassandra::package_name.
 
 #### Changes in 0.4.0
 
