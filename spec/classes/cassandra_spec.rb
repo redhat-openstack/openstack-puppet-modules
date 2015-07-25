@@ -17,6 +17,7 @@ describe 'cassandra' do
     it { should contain_class('cassandra') }
     it { should contain_file('/etc/cassandra/default.conf/cassandra.yaml') }
     it { should contain_service('cassandra') }
+    it { should contain_package('dsc22') }
     it { is_expected.not_to contain_yumrepo('datastax') }
   end
 
@@ -46,6 +47,7 @@ describe 'cassandra' do
     it { should contain_class('cassandra') }
     it { should contain_service('cassandra') }
     it { should contain_file('/etc/cassandra/cassandra.yaml') }
+    it { should contain_package('dsc22') }
     it { is_expected.to contain_service('cassandra') }
     it { is_expected.not_to contain_class('apt') }
     it { is_expected.not_to contain_class('apt::update') }
