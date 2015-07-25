@@ -570,7 +570,7 @@ webserver_tarball_process_timeout|webserver|tarball_process_timeout|*undef*
 
 ### Class: cassandra::opscenter::pycrypto
 
-On the Red Hat family of operating systems, if one intends to use encyption
+On the Red Hat family of operating systems, if one intends to use encryption
 for configuration values then the pycrypto library is required.  This class
 will install it for the user.  See
 http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html
