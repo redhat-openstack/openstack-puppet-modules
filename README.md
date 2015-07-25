@@ -259,14 +259,6 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **true**).
 
-##### `cassandra_package_ensure`
-The status of the package specified in **cassandra_package_name**.  Can be
-*present*, *latest* or a specific version number (default **present**).
-
-##### `cassandra_package_name`
-The name of the Cassandra package.  Must be available from a repository
-(default **dsc21**).
-
 ##### `cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
 allows the user to supply their own customized template.  A Cassandra 1.X
@@ -368,6 +360,14 @@ This is passed to the
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **256**).
+
+##### `package_ensure`
+The status of the package specified in **package_name**.  Can be
+*present*, *latest* or a specific version number (default **present**).
+
+##### `package_name`
+The name of the Cassandra package.  Must be available from a repository
+(default **dsc21**).
 
 ##### `partitioner`
 This is passed to the
