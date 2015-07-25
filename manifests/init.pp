@@ -27,8 +27,8 @@ class opendaylight (
 
   # Validate OS family
   case $::osfamily {
-    RedHat: {}
-    Debian: {
+    'RedHat': {}
+    'Debian': {
         warning('Debian has limited support, is less stable, less tested.')
     }
     default: {
@@ -46,7 +46,7 @@ class opendaylight (
     }
     fedora: {
       # Fedora distros < 20 are EOL as of Jan 6th 2015
-      if ! ($::operatingsystemmajrelease in [20, 21]) {
+      if ! ($::operatingsystemmajrelease in ['20', '21']) {
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
     }
