@@ -1,12 +1,12 @@
 require 'spec_helper'
 describe 'cassandra::opscenter' do
   let(:pre_condition) { [
-    'define ini_setting ($ensure,
-      $path,
-      $section,
-      $key_val_separator,
-      $setting,
-      $value) {}'
+    'define ini_setting ($ensure = nil,
+      $path = nil,
+      $section = nil,
+      $key_val_separator = nil,
+      $setting = nil,
+      $value = nil) {}'
   ] }
 
   context 'Test for cassandra::opscenter with defaults.' do
