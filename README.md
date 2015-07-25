@@ -558,10 +558,15 @@ default value is:
 Module Parameter            | Section        | Setting      | Default Value
 --------------------------- | -------------- | -------      | -------------
 authentication_enabled           |authentication|enabled|**False**
-stat_reporter_initial_sleep |stat_reporter|initial_sleep|*undef*
-stat_reporter_interval |stat_reporter|interval|*undef*
-stat_reporter_report_file |stat_reporter|report_file|*undef*
-stat_reporter_ssl_key |stat_reporter|ssl_key|*undef*
+logging_level                    |logging|level|*undef*
+logging_log_length               |logging|log_length|*undef*
+logging_log_path                 |logging|log_path|*undef*
+logging_max_rotate               |logging|max_rotate|*undef*
+logging_resource_usage_interval  |logging|resource_usage_interval|*undef*
+stat_reporter_initial_sleep      |stat_reporter|initial_sleep|*undef*
+stat_reporter_interval           |stat_reporter|interval|*undef*
+stat_reporter_report_file        |stat_reporter|report_file|*undef*
+stat_reporter_ssl_key            |stat_reporter|ssl_key|*undef*
 webserver_interface              |webserver|interface|**0.0.0.0**
 webserver_port                   |webserver|port|**8888**
 webserver_ssl_certfile           |webserver| ssl_certfile|*undef*

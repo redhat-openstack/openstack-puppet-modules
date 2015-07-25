@@ -9,7 +9,28 @@ describe 'cassandra::opscenter' do
       $value = nil) {}'
   ] }
 
-  context 'Test for cassandra::opscenter with defaults.' do
+  context 'Test params for cassandra::opscenter.' do
+    let :params do
+      {
+        :logging_level                     => 42,
+        :logging_log_length                => 42,
+        :logging_log_path                  => 42,
+        :logging_max_rotate                => 42,
+        :logging_resource_usage_interval   => 42,
+        :stat_reporter_initial_sleep       => 42,
+        :stat_reporter_interval            => 42,
+        :stat_reporter_report_file         => 42,
+        :stat_reporter_ssl_key             => 42,
+        :webserver_log_path                => 42,
+        :webserver_ssl_certfile            => 42,
+        :webserver_ssl_keyfile             => 42,
+        :webserver_ssl_port                => 42,
+        :webserver_staticdir               => 42,
+        :webserver_sub_process_timeout     => 42,
+        :webserver_tarball_process_timeout => 42
+      }
+    end
+
     it {
       should contain_class('cassandra::opscenter').with({
         'authentication_enabled'            => 'False',
@@ -19,19 +40,24 @@ describe 'cassandra::opscenter' do
         'service_enable'                    => 'true',
         'service_ensure'                    => 'running',
         'service_name'                      => 'opscenterd',
-        'stat_reporter_initial_sleep'       => nil,
-        'stat_reporter_interval'            => nil,
-        'stat_reporter_report_file'         => nil,
-        'stat_reporter_ssl_key'             => nil,
+        'logging_level'                     => 42,
+        'logging_log_length'                => 42,
+        'logging_log_path'                  => 42,
+        'logging_max_rotate'                => 42,
+        'logging_resource_usage_interval'   => 42,
+        'stat_reporter_initial_sleep'       => 42,
+        'stat_reporter_interval'            => 42,
+        'stat_reporter_report_file'         => 42,
+        'stat_reporter_ssl_key'             => 42,
         'webserver_interface'               => '0.0.0.0',
-        'webserver_log_path'                => nil,
+        'webserver_log_path'                => 42,
         'webserver_port'                    => 8888,
-        'webserver_ssl_certfile'            => nil,
-        'webserver_ssl_keyfile'             => nil,
-        'webserver_ssl_port'                => nil,
-        'webserver_staticdir'               => nil,
-        'webserver_sub_process_timeout'     => nil,
-        'webserver_tarball_process_timeout' => nil
+        'webserver_ssl_certfile'            => 42,
+        'webserver_ssl_keyfile'             => 42,
+        'webserver_ssl_port'                => 42,
+        'webserver_staticdir'               => 42,
+        'webserver_sub_process_timeout'     => 42,
+        'webserver_tarball_process_timeout' => 42
       })
     }
   end
