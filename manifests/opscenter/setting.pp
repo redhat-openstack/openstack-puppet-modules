@@ -5,16 +5,19 @@ define cassandra::opscenter::setting (
   $setting,
   $value,
   ) {
-  if value != undef {
+  Ini_setting {
+    ensure            => present,
+    path              => $path,
+    section           => $section,
+    setting           => $setting,
+    key_val_separator => ' = ',
+    require           => Package['opscenter'],
+    notify            => Service['opscenterd'],
+  }
+
+  if $value != undef {
     ini_setting { "${section} ${setting}":
-      ensure            => present,
-      path              => $path,
-      section           => $section,
-      setting           => $setting,
-      value             => $value,
-      key_val_separator => ' = ',
-      require           => Package['opscenter'],
-      notify            => Service['opscenterd'],
+      value  => $value,
     }
   }
 }
