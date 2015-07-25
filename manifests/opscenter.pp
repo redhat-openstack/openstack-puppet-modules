@@ -9,7 +9,10 @@ class cassandra::opscenter (
     $service_enable                    = true,
     $service_ensure                    = 'running',
     $service_name                      = 'opscenterd',
+    $stat_reporter_initial_sleep       = undef,
     $stat_reporter_interval            = undef,
+    $stat_reporter_report_file         = undef,
+    $stat_reporter_ssl_key             = undef,
     $webserver_interface               = '0.0.0.0',
     $webserver_log_path                = undef,
     $webserver_port                    = 8888,
@@ -31,6 +34,34 @@ class cassandra::opscenter (
     ensure => $service_ensure,
     name   => $service_name,
     enable => $service_enable,
+  }
+
+  cassandra::opscenter::setting { 'stat_reporter initial_sleep':
+    path    => $config_file,
+    section => 'stat_reporter',
+    setting => 'initial_sleep',
+    value   => $stat_reporter_initial_sleep
+  }
+
+  cassandra::opscenter::setting { 'stat_reporter interval':
+    path    => $config_file,
+    section => 'stat_reporter',
+    setting => 'interval',
+    value   => $stat_reporter_interval
+  }
+
+  cassandra::opscenter::setting { 'stat_reporter report_file':
+    path    => $config_file,
+    section => 'stat_reporter',
+    setting => 'report_file',
+    value   => $stat_reporter_report_file
+  }
+
+  cassandra::opscenter::setting { 'stat_reporter ssl_key':
+    path    => $config_file,
+    section => 'stat_reporter',
+    setting => 'ssl_key',
+    value   => $stat_reporter_ssl_key
   }
 
   cassandra::opscenter::setting { 'webserver interface':
