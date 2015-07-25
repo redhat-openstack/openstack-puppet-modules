@@ -1,3 +1,10 @@
+##2015-07-25 - Release 1.0.0
+* Changed the default installation from Cassandra 2.1 to 2.2.
+* Fixed a bug that arose when the cassandra config_path was set.
+* Created a workaround for PUP-3829.
+* Minor changes to the API (see the Upgrading section of the README).
+* Allow a basic installation of OpsCenter.
+
 ##2015-07-18 - Release 0.4.3
 * Module dependancy metadata was too strict.
 

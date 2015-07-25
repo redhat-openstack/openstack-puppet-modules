@@ -9,7 +9,7 @@ describe 'cassandra::optutils' do
     end
 
     it { should contain_class('cassandra::optutils') }
-    it { should contain_package('cassandra21-tools') }
+    it { should contain_package('cassandra22-tools') }
   end
 
   context 'On an Ubuntu OS with defaults for all parameters' do
