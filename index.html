@@ -16,7 +16,7 @@
     <header>
       <div class="container">
         <h1>Cassandra</h1>
-        <h2>A Puppet module to install and manage Cassandra and DataStax Agent</h2>
+        <h2>A Puppet module to install and manage Cassandra, DataStax Agent &amp; OpsCenter</h2>
 
         <section id="downloads">
           <a href="https://github.com/locp/cassandra/zipball/master" class="btn">Download as .zip</a>
@@ -47,7 +47,13 @@
 
 <ul>
 <li><a href="#what-cassandra-affects">What cassandra affects</a></li>
-<li><a href="#beginning-with-cassandra">Beginning with cassandra</a></li>
+<li>
+<a href="#beginning-with-cassandra">Beginning with cassandra</a>
+
+<ul>
+<li><a href="#datastax-enterprise">DataStax Enterprise</a></li>
+</ul>
+</li>
 <li><a href="#upgrading">Upgrading</a></li>
 </ul>
 </li>
@@ -59,7 +65,10 @@
 <li><a href="#class-cassandra">cassandra</a></li>
 <li><a href="#class-cassandradatastax_agent">cassandra::datastax_agent</a></li>
 <li><a href="#class-cassandrajava">cassandra::java</a></li>
+<li><a href="#class-cassandraopscenter">cassandra::opscenter</a></li>
+<li><a href="#class-cassandraopscenterpycrypto">cassandra::opscenter::pycrypto</a></li>
 <li><a href="#class-cassandraoptutils">cassandra::optutils</a></li>
+<li><a href="#defined-type-cassandraopscentersetting">cassandra::opscenter::setting</a></li>
 </ul>
 </li>
 <li><a href="#limitations">Limitations - OS compatibility, etc.</a></li>
@@ -69,7 +78,7 @@
 <h2>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
 
-<p>A Puppet module to install and manage Cassandra and DataStax Agent.</p>
+<p>A Puppet module to install and manage Cassandra, DataStax Agent &amp; OpsCenter</p>
 
 <h2>
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
@@ -81,7 +90,7 @@
 <a id="what-the-cassandra-class-affects" class="anchor" href="#what-the-cassandra-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra class affects</h4>
 
 <ul>
-<li>Installs the Cassandra package (default <strong>dsc21</strong>).</li>
+<li>Installs the Cassandra package (default <strong>dsc22</strong>).</li>
 <li>Configures settings in <em>${config_path}/cassandra.yaml</em>.</li>
 <li>Optionally ensures that the Cassandra service is enabled and running.</li>
 <li>Optionally configures a Yum repository to install the Cassandra packages
@@ -105,17 +114,42 @@ from (on Ubuntu).</li>
 </ul>
 
 <h4>
+<a id="what-the-cassandraopscenter-class-affects" class="anchor" href="#what-the-cassandraopscenter-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::opscenter class affects</h4>
+
+<ul>
+<li>Installs the opscenter package.</li>
+<li>Manages the content of the configuration file
+(/etc/opscenter/opscenterd.conf).</li>
+<li>Manages the opscenterd service.</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandraopscenterpycrypto-class-affects" class="anchor" href="#what-the-cassandraopscenterpycrypto-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::opscenter::pycrypto class affects</h4>
+
+<ul>
+<li>On the Red Hat family it installs the pycrypto library and it's
+pre-requisits (the python-devel and python-pip packages).</li>
+<li>Optionally installs the Extra Packages for Enterprise Linux (EPEL)
+repository.</li>
+<li>As a workaround for
+<a href="https://tickets.puppetlabs.com/browse/PUP-3829">PUP-3829</a> a symbolic
+link is created from <code>/usr/bin/pip</code> to
+<code>/usr/bin/pip-python</code>.  Hopefully this can be removed in the not
+too distant future.</li>
+</ul>
+
+<h4>
 <a id="what-the-cassandraoptutils-class-affects" class="anchor" href="#what-the-cassandraoptutils-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::optutils class affects</h4>
 
 <ul>
-<li>Optionally installs the Cassandra support tools (e.g. cassandra21-tools).</li>
+<li>Optionally installs the Cassandra support tools (e.g. cassandra22-tools).</li>
 </ul>
 
 <h3>
 <a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
 
 <p>This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the <em>Usage</em>(#usage) section
+(assuming there is an available repository).  See the <a href="#usage">Usage</a> section
 for more realistic scenarios.</p>
 
 <div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
@@ -159,10 +193,34 @@ the sub classes have a dependency on the main class.  So for example one
 could not specify the cassandra::java class for a node with the cassandra
 class also being included.</p>
 
+<h4>
+<a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h4>
+
+<p>After configuring the relevant repositories elsewhere in the manifest, the
+following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
+
+<div class="highlight highlight-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+  <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">package_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse-full<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>My Cluster<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">service_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse<span class="pl-pds">'</span></span>,
+}</pre></div>
+
 <h3>
 <a id="upgrading" class="anchor" href="#upgrading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading</h3>
 
 <p>The following changes to the API have taken place.</p>
+
+<h4>
+<a id="changes-in-100" class="anchor" href="#changes-in-100" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes in 1.0.0</h4>
+
+<ul>
+<li>cassandra::cassandra_package_ensure has been renamed to
+cassandra::package_ensure.</li>
+<li>cassandra::cassandra_package_name has been renamed to
+cassandra::package_name.</li>
+</ul>
 
 <h4>
 <a id="changes-in-040" class="anchor" href="#changes-in-040" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes in 0.4.0</h4>
@@ -253,7 +311,16 @@ tools.</p>
 <li><strong>cassandra</strong></li>
 <li><strong>cassandra::datastax_agent</strong></li>
 <li><strong>cassandra::java</strong></li>
+<li><strong>cassandra::opscenter</strong></li>
+<li><strong>cassandra::opscenter::pycrypto</strong></li>
 <li><strong>cassandra::optutils</strong></li>
+</ul>
+
+<h3>
+<a id="defined-types" class="anchor" href="#defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Types</h3>
+
+<ul>
+<li><strong>cassandra::opscenter::setting</strong></li>
 </ul>
 
 <h3>
@@ -288,20 +355,6 @@ configuration file.</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
 (default <strong>true</strong>).</p>
-
-<h5>
-<a id="cassandra_package_ensure" class="anchor" href="#cassandra_package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_package_ensure</code>
-</h5>
-
-<p>The status of the package specified in <strong>cassandra_package_name</strong>.  Can be
-<em>present</em>, <em>latest</em> or a specific version number (default <strong>present</strong>).</p>
-
-<h5>
-<a id="cassandra_package_name" class="anchor" href="#cassandra_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_package_name</code>
-</h5>
-
-<p>The name of the Cassandra package.  Must be available from a repository
-(default <strong>dsc21</strong>).</p>
 
 <h5>
 <a id="cassandra_yaml_tmpl" class="anchor" href="#cassandra_yaml_tmpl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_yaml_tmpl</code>
@@ -466,6 +519,20 @@ downloaded from the DataStax community edition (default <strong>false</strong>).
 (default <strong>256</strong>).</p>
 
 <h5>
+<a id="package_ensure" class="anchor" href="#package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
+</h5>
+
+<p>The status of the package specified in <strong>package_name</strong>.  Can be
+<em>present</em>, <em>latest</em> or a specific version number (default <strong>present</strong>).</p>
+
+<h5>
+<a id="package_name" class="anchor" href="#package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h5>
+
+<p>The name of the Cassandra package.  Must be available from a repository
+(default <strong>dsc22</strong>).</p>
+
+<h5>
 <a id="partitioner" class="anchor" href="#partitioner" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>partitioner</code>
 </h5>
 
@@ -610,14 +677,14 @@ or false
 <h3>
 <a id="class-cassandradatastax_agent" class="anchor" href="#class-cassandradatastax_agent" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_agent</h3>
 
-<p>A class for installing the DataStax agent and to point it at an Opscenter
+<p>A class for installing the DataStax agent and to point it at an OpsCenter
 instance.</p>
 
 <h4>
 <a id="parameters-1" class="anchor" href="#parameters-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
-<a id="package_ensure" class="anchor" href="#package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
+<a id="package_ensure-1" class="anchor" href="#package_ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
 </h5>
 
 <p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
@@ -625,7 +692,7 @@ number
 (default <strong>present</strong>).</p>
 
 <h5>
-<a id="package_name" class="anchor" href="#package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+<a id="package_name-1" class="anchor" href="#package_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
 <p>Is passed to the package reference (default <strong>datastax-agent</strong>).</p>
@@ -655,7 +722,7 @@ number
 <p>If the value is changed from the default of <em>undef</em> then this is what is
 set as the stomp_interface setting in
 <strong>/var/lib/datastax-agent/conf/address.yaml</strong>
-which connects the agent to an Opscenter instance
+which connects the agent to an OpsCenter instance
 (default <strong>undef</strong>).</p>
 
 <h3>
@@ -675,7 +742,7 @@ number
 (default <strong>present</strong>).</p>
 
 <h5>
-<a id="package_name-1" class="anchor" href="#package_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+<a id="package_name-2" class="anchor" href="#package_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
 <p>If the default value of <em>undef</em> is left as it is, then a package called
@@ -686,9 +753,9 @@ node
 (default <strong>undef</strong>).</p>
 
 <h3>
-<a id="class-cassandraoptutils" class="anchor" href="#class-cassandraoptutils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::optutils</h3>
+<a id="class-cassandraopscenter" class="anchor" href="#class-cassandraopscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::opscenter</h3>
 
-<p>A class to install the optional Cassandra tools package.</p>
+<p>This class installs and manages the DataStax OpsCenter.</p>
 
 <h4>
 <a id="parameters-3" class="anchor" href="#parameters-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
@@ -697,23 +764,341 @@ node
 <a id="ensure-1" class="anchor" href="#ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
 </h5>
 
+<p>This is passed to the package reference for <strong>opscenter</strong>.  Valid values are
+<strong>present</strong> or a version number
+(default <strong>present</strong>).</p>
+
+<h5>
+<a id="config_file" class="anchor" href="#config_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_file</code>
+</h5>
+
+<p>The full path to the OpsCenter configuration file
+(default <strong>/etc/opscenter/opscenterd.conf</strong>).</p>
+
+<h5>
+<a id="package_name-3" class="anchor" href="#package_name-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h5>
+
+<p>The name of the OpsCenter package
+(default <strong>opscenter</strong>).</p>
+
+<h5>
+<a id="service_enable-2" class="anchor" href="#service_enable-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_enable</code>
+</h5>
+
+<p>Enable the OpsCenter service to start at boot time.  Valid values are true
+or false
+(default: <strong>true</strong>)</p>
+
+<h5>
+<a id="service_ensure-2" class="anchor" href="#service_ensure-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_ensure</code>
+</h5>
+
+<p>Ensure the OpsCenter service is running.  Valid values are running or stopped
+(default: <strong>running</strong>)</p>
+
+<h5>
+<a id="service_name-2" class="anchor" href="#service_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
+</h5>
+
+<p>The name of the service that runs the OpsCenter software (default
+<strong>opscenterd</strong>).</p>
+
+<p>The rest of the module parameters are passed into the configuration file.</p>
+
+<p>If a parameter is <em>undef</em> then the module will ensure that the corresponding
+setting is removed from the configuration file.</p>
+
+<p>See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for details on a specific parameter.</p>
+
+<p>Leaving the defaults as they are will provide a running OpsCenter without any
+authentication on port 8888.</p>
+
+<p>This table shows the name of the module parameter, specifies which section
+and setting it is associated with in the configuration file and shows what the
+default value is:</p>
+
+<table>
+<thead>
+<tr>
+<th>Module Parameter</th>
+<th>Section</th>
+<th>Setting</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authentication_audit_auth</td>
+<td>authentication</td>
+<td>audit_auth</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>authentication_audit_pattern</td>
+<td>authentication</td>
+<td>audit_pattern</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>authentication_method</td>
+<td>authentication</td>
+<td>method</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>authentication_enabled</td>
+<td>authentication</td>
+<td>enabled</td>
+<td><strong>False</strong></td>
+</tr>
+<tr>
+<td>authentication_passwd_db</td>
+<td>authentication</td>
+<td>passwd_db</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>authentication_timeout</td>
+<td>authentication</td>
+<td>timeout</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>logging_level</td>
+<td>logging</td>
+<td>level</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>logging_log_length</td>
+<td>logging</td>
+<td>log_length</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>logging_log_path</td>
+<td>logging</td>
+<td>log_path</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>logging_max_rotate</td>
+<td>logging</td>
+<td>max_rotate</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>logging_resource_usage_interval</td>
+<td>logging</td>
+<td>resource_usage_interval</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>stat_reporter_initial_sleep</td>
+<td>stat_reporter</td>
+<td>initial_sleep</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>stat_reporter_interval</td>
+<td>stat_reporter</td>
+<td>interval</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>stat_reporter_report_file</td>
+<td>stat_reporter</td>
+<td>report_file</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>stat_reporter_ssl_key</td>
+<td>stat_reporter</td>
+<td>ssl_key</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_interface</td>
+<td>webserver</td>
+<td>interface</td>
+<td><strong>0.0.0.0</strong></td>
+</tr>
+<tr>
+<td>webserver_port</td>
+<td>webserver</td>
+<td>port</td>
+<td><strong>8888</strong></td>
+</tr>
+<tr>
+<td>webserver_ssl_certfile</td>
+<td>webserver</td>
+<td>ssl_certfile</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_ssl_keyfile</td>
+<td>webserver</td>
+<td>ssl_keyfile</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_ssl_port</td>
+<td>webserver</td>
+<td>ssl_port</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_staticdir</td>
+<td>webserver</td>
+<td>staticdir</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_sub_process_timeout</td>
+<td>webserver</td>
+<td>sub_process_timeout</td>
+<td><em>undef</em></td>
+</tr>
+<tr>
+<td>webserver_tarball_process_timeout</td>
+<td>webserver</td>
+<td>tarball_process_timeout</td>
+<td><em>undef</em></td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="class-cassandraopscenterpycrypto" class="anchor" href="#class-cassandraopscenterpycrypto" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::opscenter::pycrypto</h3>
+
+<p>On the Red Hat family of operating systems, if one intends to use encryption
+for configuration values then the pycrypto library is required.  This class
+will install it for the user.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html">http://docs.datastax.com/en/opscenter/5.2//opsc/configure/installPycrypto.html</a>
+for more details.</p>
+
+<p>This class has no effect when included on nodes that are not in the Red Hat
+family.</p>
+
+<h4>
+<a id="parameters-4" class="anchor" href="#parameters-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="ensure-2" class="anchor" href="#ensure-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
+</h5>
+
+<p>This is passed to the package reference for <strong>pycrypto</strong>.  Valid values are
+<strong>present</strong> or a version number
+(default <strong>present</strong>).</p>
+
+<h5>
+<a id="manage_epel" class="anchor" href="#manage_epel" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_epel</code>
+</h5>
+
+<p>If set to true, the <strong>epel-release</strong> package will be installed
+(default <strong>false</strong>).</p>
+
+<h5>
+<a id="package_name-4" class="anchor" href="#package_name-4" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+</h5>
+
+<p>The name of the PyCrypto package
+(default <strong>pycrypto</strong>).</p>
+
+<h5>
+<a id="provider" class="anchor" href="#provider" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provider</code>
+</h5>
+
+<p>The name of the provider of the pycrypto package
+(default <strong>pip</strong>).</p>
+
+<h5>
+<a id="reqd_pckgs" class="anchor" href="#reqd_pckgs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>reqd_pckgs</code>
+</h5>
+
+<p>Packages that are required to install the pycrypto package
+(default <strong>['python-devel', 'python-pip' ]</strong>).</p>
+
+<h3>
+<a id="class-cassandraoptutils" class="anchor" href="#class-cassandraoptutils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::optutils</h3>
+
+<p>A class to install the optional Cassandra tools package.</p>
+
+<h4>
+<a id="parameters-5" class="anchor" href="#parameters-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="ensure-3" class="anchor" href="#ensure-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
+</h5>
+
 <p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
 number
 (default <strong>present</strong>).</p>
 
 <h5>
-<a id="package_name-2" class="anchor" href="#package_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
+<a id="package_name-5" class="anchor" href="#package_name-5" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
 <p>If the default value of <em>undef</em> is left as it is, then a package called
-cassandra21-tools or cassandra-tools will be installed
+cassandra22-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default <strong>undef</strong>).</p>
 
+<h3>
+<a id="defined-type-cassandraopscentersetting" class="anchor" href="#defined-type-cassandraopscentersetting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::setting</h3>
+
+<p>Simply a defined type to be used as a macro for settings in the OpsCenter
+configuration file.  This is not really supposed to be used by a user (who
+should use the API provided by cassandra::opscenter instead) but is documented
+here for completeness.</p>
+
+<h4>
+<a id="parameters-6" class="anchor" href="#parameters-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="service_name-3" class="anchor" href="#service_name-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
+</h5>
+
+<p>The name of the service to be notified if a change is made to the
+configuration file.  Typically this would by <strong>opscenterd</strong>.</p>
+
+<h5>
+<a id="path" class="anchor" href="#path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>path</code>
+</h5>
+
+<p>The path to the configuration file.  Typically this would by
+<strong>/etc/opscenter/opscenterd.conf</strong>.</p>
+
+<h5>
+<a id="section" class="anchor" href="#section" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>section</code>
+</h5>
+
+<p>The section in the configuration file to be added to (e.g. <strong>webserver</strong>).</p>
+
+<h5>
+<a id="setting" class="anchor" href="#setting" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>setting</code>
+</h5>
+
+<p>The setting within the section of the configuration file to changed
+(e.g. <strong>port</strong>).</p>
+
+<h5>
+<a id="value" class="anchor" href="#value" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>value</code>
+</h5>
+
+<p>The setting value to be changed to (e.g. <strong>8888</strong>).</p>
+
 <h2>
 <a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h2>
+
+<p>Currently OpsCenter configuration is confined to authentication, logging,
+stat_reporter and webserver.  The remaining sections are planned for the
+near future.</p>
 
 <p>Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.</p>
