@@ -25,10 +25,10 @@ class cassandra::opscenter::pycrypto (
     # Nasty hack to workaround PUP-3829.  Hopefully can be removed in the
     # not too distant future.
     file { '/usr/bin/pip-python':
-      ensure => 'link',
-      target => '/usr/bin/pip',
+      ensure  => 'link',
+      target  => '/usr/bin/pip',
       require => Package['python-pip'],
-      before => Package[$package_name]
+      before  => Package[$package_name]
     }
     # End of PUP-3829 hack.
     ##########################################################################
