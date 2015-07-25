@@ -11,6 +11,7 @@
 2. [Setup - The basics of getting started with cassandra](#setup)
     * [What cassandra affects](#what-cassandra-affects)
     * [Beginning with cassandra](#beginning-with-cassandra)
+      * [DataStax Enterprise](#datastax-enterprise)
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
@@ -127,7 +128,8 @@ class also being included.
 
 #### DataStax Enterprise
 
-The following manifest works on CentOS 7 to install DSE Cassandra 4.7.0:
+After configuring the relevant repositories elsewhere in the manifest, the
+following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
 
 ```puppet
 class { 'cassandra':
