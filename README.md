@@ -64,6 +64,11 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
   pre-requisits (the python-devel and python-pip packages).
 * Optionally installs the Extra Packages for Enterprise Linux (EPEL)
   repository.
+* As a workaround for
+  [PUP-3829](https://tickets.puppetlabs.com/browse/PUP-3829) a symbolic
+  link is created from ```/usr/bin/pip``` to
+  ```/usr/bin/pip-python```.  Hopefully this can be removed in the not
+  too distant future.
 
 #### What the cassandra::optutils class affects
 
