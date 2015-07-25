@@ -557,7 +557,12 @@ default value is:
 
 Module Parameter            | Section        | Setting      | Default Value
 --------------------------- | -------------- | -------      | -------------
-authentication_enabled           |authentication|enabled|**False**
+authentication_audit_auth |authentication|audit_auth|*undef*
+authentication_audit_pattern |authentication|audit_pattern|*undef*
+authentication_method |authentication|method|*undef*
+authentication_enabled |authentication|enabled|**False**
+authentication_passwd_db |authentication|passwd_db|*undef*
+authentication_timeout |authentication|timeout|*undef*
 logging_level                    |logging|level|*undef*
 logging_log_length               |logging|log_length|*undef*
 logging_log_path                 |logging|log_path|*undef*

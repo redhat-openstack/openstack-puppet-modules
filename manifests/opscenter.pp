@@ -2,7 +2,12 @@
 #
 # See the module README for details on how to use.
 class cassandra::opscenter (
+    $authentication_audit_auth         = undef,
+    $authentication_audit_pattern      = undef,
     $authentication_enabled            = 'False',
+    $authentication_method             = undef,
+    $authentication_passwd_db          = undef,
+    $authentication_timeout            = undef,
     $ensure                            = present,
     $config_file                       = '/etc/opscenter/opscenterd.conf',
     $package_name                      = 'opscenter',
@@ -39,6 +44,48 @@ class cassandra::opscenter (
     ensure => $service_ensure,
     name   => $service_name,
     enable => $service_enable,
+  }
+
+  cassandra::opscenter::setting { 'authentication audit_auth':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'audit_auth',
+    value   => $authentication_audit_auth
+  }
+
+  cassandra::opscenter::setting { 'authentication audit_pattern':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'audit_pattern',
+    value   => $authentication_audit_pattern
+  }
+
+  cassandra::opscenter::setting { 'authentication method':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'method',
+    value   => $authentication_method
+  }
+
+  cassandra::opscenter::setting { 'authentication enabled':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'enabled',
+    value   => $authentication_enabled
+  }
+
+  cassandra::opscenter::setting { 'authentication passwd_db':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'passwd_db',
+    value   => $authentication_passwd_db
+  }
+
+  cassandra::opscenter::setting { 'authentication timeout':
+    path    => $config_file,
+    section => 'authentication',
+    setting => 'timeout',
+    value   => $authentication_timeout
   }
 
   cassandra::opscenter::setting { 'stat_reporter initial_sleep':

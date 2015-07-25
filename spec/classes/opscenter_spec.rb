@@ -12,28 +12,38 @@ describe 'cassandra::opscenter' do
   context 'Test params for cassandra::opscenter.' do
     let :params do
       {
-        :logging_level                     => 42,
-        :logging_log_length                => 42,
-        :logging_log_path                  => 42,
-        :logging_max_rotate                => 42,
-        :logging_resource_usage_interval   => 42,
-        :stat_reporter_initial_sleep       => 42,
-        :stat_reporter_interval            => 42,
-        :stat_reporter_report_file         => 42,
-        :stat_reporter_ssl_key             => 42,
-        :webserver_log_path                => 42,
-        :webserver_ssl_certfile            => 42,
-        :webserver_ssl_keyfile             => 42,
-        :webserver_ssl_port                => 42,
-        :webserver_staticdir               => 42,
-        :webserver_sub_process_timeout     => 42,
-        :webserver_tarball_process_timeout => 42
+        :authentication_audit_auth            => 42,
+        :authentication_audit_pattern         => 42,
+        :authentication_method                => 42,
+        :authentication_passwd_db             => 42,
+        :authentication_timeout               => 42,
+        :logging_level                        => 42,
+        :logging_log_length                   => 42,
+        :logging_log_path                     => 42,
+        :logging_max_rotate                   => 42,
+        :logging_resource_usage_interval      => 42,
+        :stat_reporter_initial_sleep          => 42,
+        :stat_reporter_interval               => 42,
+        :stat_reporter_report_file            => 42,
+        :stat_reporter_ssl_key                => 42,
+        :webserver_log_path                   => 42,
+        :webserver_ssl_certfile               => 42,
+        :webserver_ssl_keyfile                => 42,
+        :webserver_ssl_port                   => 42,
+        :webserver_staticdir                  => 42,
+        :webserver_sub_process_timeout        => 42,
+        :webserver_tarball_process_timeout    => 42
       }
     end
 
     it {
       should contain_class('cassandra::opscenter').with({
+        'authentication_audit_auth'         => 42,
+        'authentication_audit_pattern'      => 42,
+        'authentication_method'             => 42,
         'authentication_enabled'            => 'False',
+        'authentication_passwd_db'          => 42,
+        'authentication_timeout'            => 42,
         'ensure'                            => 'present',
         'config_file'                       => '/etc/opscenter/opscenterd.conf',
         'package_name'                      => 'opscenter',
