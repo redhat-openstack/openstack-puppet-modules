@@ -35,7 +35,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the cassandra class affects
 
-* Installs the Cassandra package (default **dsc21**).
+* Installs the Cassandra package (default **dsc22**).
 * Configures settings in *${config_path}/cassandra.yaml*.
 * Optionally ensures that the Cassandra service is enabled and running.
 * Optionally configures a Yum repository to install the Cassandra packages
@@ -67,7 +67,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the cassandra::optutils class affects
 
-* Optionally installs the Cassandra support tools (e.g. cassandra21-tools).
+* Optionally installs the Cassandra support tools (e.g. cassandra22-tools).
 
 ### Beginning with cassandra
 
@@ -265,7 +265,7 @@ The status of the package specified in **cassandra_package_name**.  Can be
 
 ##### `cassandra_package_name`
 The name of the Cassandra package.  Must be available from a repository
-(default **dsc21**).
+(default **dsc22**).
 
 ##### `cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
@@ -628,7 +628,7 @@ number
 
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
-cassandra21-tools or cassandra-tools will be installed
+cassandra22-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node

@@ -28,7 +28,7 @@ class cassandra (
   $native_transport_port                 = 9042,
   $num_tokens                            = 256,
   $package_ensure                        = 'present',
-  $package_name                          = 'dsc21',
+  $package_name                          = 'dsc22',
   $partitioner
     = 'org.apache.cassandra.dht.Murmur3Partitioner',
   $rpc_address                           = 'localhost',
