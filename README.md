@@ -650,6 +650,10 @@ The setting value to be changed to (e.g. **8888**).
 
 ## Limitations
 
+Currently OpsCenter configuration is confined to authentication, logging,
+stat_reporter and webserver.  The remaining sections are planned for the
+near future.
+
 Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.
 
