@@ -509,14 +509,7 @@ node
 
 ### Class: cassandra::opscenter
 
-This class installs and manages the DataStax OpsCenter.  For this class, when
-a field value is set to *undef*, no attempt is made to set (or remove) the
-value from the configuration file.  For example, the **ssl_port** in the
-default configuration file that is distributed with packages is commented out.
-As the default value for this class is *undef* then no attempt will be made
-to edit that value at all.  However, if one was to set the value (to **8443**
-for example), that value would be set in the relevant section of the
-configuration file.
+This class installs and manages the DataStax OpsCenter.
 
 #### Parameters
 
@@ -546,13 +539,14 @@ Ensure the OpsCenter service is running.  Valid values are running or stopped
 The name of the service that runs the OpsCenter software (default
 **opscenterd**).
 
-The rest of the module parameters are passed into the configuration file only
-if a default is set or the user specifies a value that is not *undef*.  See
+The rest of the module parameters are passed into the configuration file.
+
+If a parameter is *undef* then the module will ensure that the corresponding
+setting is removed from the configuration file.
+
+See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html
 for details on a specific parameter.
-
-If a setting is *undef* then the module will ensure that the setting is
-removed.
 
 Leaving the defaults as they are will provide a running OpsCenter without any
 authentication on port 8888.
@@ -652,9 +646,7 @@ The setting within the section of the configuration file to changed
 (e.g. **port**).
 
 ##### `value`
-The setting value to be changed to (e.g. **8888**).  If this is set to
-**unset** then the setting is ignored.  No attempt will be made to remove
-a setting even if it is set to **undef**.
+The setting value to be changed to (e.g. **8888**).
 
 ## Limitations
 
