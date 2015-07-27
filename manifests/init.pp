@@ -7,6 +7,7 @@ class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
+  $cassandra_9822                        = false,
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
   $client_encryption_enabled             = false,
   $client_encryption_keystore            = 'conf/.keystore',
@@ -101,6 +102,13 @@ class cassandra (
           command     => '/bin/true',
           require     => Exec['apt_update'],
           before      => Package[ $package_name ]
+        }
+      }
+
+      # A workaround for CASSANDRA-9822
+      if $cassandra_9822 == true {
+        file { '/etc/init.d/cassandra':
+          source => 'puppet:///modules/cassandra/CASSANDRA-9822/cassandra'
         }
       }
     }

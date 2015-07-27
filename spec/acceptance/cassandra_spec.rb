@@ -3,7 +3,8 @@ require 'spec_helper_acceptance'
 describe 'cassandra class' do
   cassandra_pp = <<-EOS
     class { 'cassandra':
-      manage_dsc_repo   => true,
+      manage_dsc_repo => true,
+      cassandra_9822  => true
     }
 
     include '::cassandra::datastax_agent'
