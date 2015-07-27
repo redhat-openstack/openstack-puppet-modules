@@ -264,6 +264,13 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **true**).
 
+##### `cassandra_9822`
+If set to true, this will apply a patch to the init file for the Cassandra
+service as a workaround for
+[CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).  This
+option is silently ignored on the Red Hat family of operating systems as
+this bug only affects Ubuntu systems (default **false**).
+
 ##### `cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
 allows the user to supply their own customized template.  A Cassandra 1.X

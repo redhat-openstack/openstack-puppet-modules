@@ -1,3 +1,7 @@
+##2015-07-27 - Release 1.0.1
+* Provided a workaround for
+  [CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).
+
 ##2015-07-25 - Release 1.0.0
 * Changed the default installation from Cassandra 2.1 to 2.2.
 * Fixed a bug that arose when the cassandra config_path was set.
