@@ -567,7 +567,7 @@ This table shows the name of the module parameter, specifies which section
 and setting it is associated with in the configuration file and shows what the
 default value is:
 
-Module Parameter            | Section        | Setting      | Default Value
+**Module Parameter** | **Section** | **Setting**| **Default Value**
 --------------------------- | -------------- | -------      | -------------
 authentication_audit_auth |authentication |audit_auth |*undef*
 authentication_audit_pattern |authentication |audit_pattern |*undef*
