@@ -12,20 +12,21 @@ shared_examples 'generic nova service' do |service|
         :name   => service[:package_name],
         :ensure => 'present',
         :notify => "Service[#{service[:name]}]",
-        :tag    => ['openstack']
+        :tag    => ['openstack', 'nova-package'],
       })
       is_expected.to contain_service(service[:name]).with({
         :name      => service[:service_name],
-        :ensure    => 'stopped',
+        :ensure    => 'running',
         :hasstatus => true,
-        :enable    => false
+        :enable    => true,
+        :tag       => 'nova-service',
       })
     end
   end
 
   context 'with overridden parameters' do
     let :params do
-      { :enabled        => true,
+      { :enabled        => false,
         :ensure_package => '2012.1-2' }
     end
 
@@ -33,13 +34,15 @@ shared_examples 'generic nova service' do |service|
       is_expected.to contain_package(service[:name]).with({
         :name   => service[:package_name],
         :ensure => '2012.1-2',
-        :notify => "Service[#{service[:name]}]"
+        :notify => "Service[#{service[:name]}]",
+        :tag    => ['openstack', 'nova-package'],
       })
       is_expected.to contain_service(service[:name]).with({
         :name      => service[:service_name],
-        :ensure    => 'running',
+        :ensure    => 'stopped',
         :hasstatus => true,
-        :enable    => true
+        :enable    => false,
+        :tag       => 'nova-service',
       })
     end
   end

@@ -68,6 +68,7 @@ define tuskar::generic_service(
         ensure => $package_ensure,
         name   => $package_name,
         notify => Service[$tuskar_title],
+        tag    => ['openstack', 'tuskar-package'],
       }
     }
   }
@@ -86,6 +87,7 @@ define tuskar::generic_service(
       name      => $service_name,
       enable    => $enabled,
       hasstatus => true,
+      tag       => 'tuskar-service',
     }
   }
 }

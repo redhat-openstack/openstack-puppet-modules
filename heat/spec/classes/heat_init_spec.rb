@@ -55,6 +55,14 @@ describe 'heat' do
       end
     end
 
+    context 'with rabbit heartbeat configured' do
+      before { params.merge!(
+        :rabbit_heartbeat_timeout_threshold => '60',
+        :rabbit_heartbeat_rate => '10' ) }
+      it_configures 'a heat base installation'
+      it_configures 'rabbit with heartbeat configured'
+    end
+
     context 'with qpid instance' do
       before {params.merge!(qpid_params) }
 
@@ -118,7 +126,7 @@ describe 'heat' do
       is_expected.to contain_package('heat-common').with(
         :ensure => 'present',
         :name   => platform_params[:common_package_name],
-        :tag    => 'openstack'
+        :tag    => ['openstack', 'heat-package'],
       )
     end
 
@@ -189,11 +197,14 @@ describe 'heat' do
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
     end
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_host').with_value( params[:rabbit_host] ) }
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_port').with_value( params[:rabbit_port] ) }
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_hosts').with_value( "#{params[:rabbit_host]}:#{params[:rabbit_port]}" ) }
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('false') }
+    it { is_expected.to contain_heat_config('DEFAULT/rpc_response_timeout').with_value('60') }
     it { is_expected.to contain_heat_config('DEFAULT/amqp_durable_queues').with_value(false) }
   end
 
@@ -208,6 +219,8 @@ describe 'heat' do
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
     end
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_host').with_ensure('absent') }
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_port').with_ensure('absent') }
@@ -227,6 +240,8 @@ describe 'heat' do
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
       is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
     end
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_host').with_ensure('absent') }
     it { is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_port').with_ensure('absent') }
@@ -235,6 +250,21 @@ describe 'heat' do
     it { is_expected.to contain_heat_config('DEFAULT/amqp_durable_queues').with_value(true) }
   end
 
+  shared_examples_for 'rabbit with heartbeat configured' do
+    it 'configures rabbit' do
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_userid').with_value( params[:rabbit_userid] )
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_password').with_value( params[:rabbit_password] )
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_password').with_secret( true )
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_virtual_host').with_value( params[:rabbit_virtual_host] )
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value(false)
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
+      is_expected.to contain_heat_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
+    end
+    it { is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('60') }
+    it { is_expected.to contain_heat_config('oslo_messaging_rabbit/heartbeat_rate').with_value('10') }
+  end
 
   shared_examples_for 'qpid as rpc backend' do
     context("with default parameters") do
@@ -247,6 +277,7 @@ describe 'heat' do
       it { is_expected.to contain_heat_config('DEFAULT/qpid_heartbeat').with_value('60') }
       it { is_expected.to contain_heat_config('DEFAULT/qpid_protocol').with_value('tcp') }
       it { is_expected.to contain_heat_config('DEFAULT/qpid_tcp_nodelay').with_value(true) }
+      it { is_expected.to contain_heat_config('DEFAULT/rpc_response_timeout').with_value('60') }
       it { is_expected.to contain_heat_config('DEFAULT/amqp_durable_queues').with_value(false) }
     end
 
@@ -457,7 +488,7 @@ describe 'heat' do
     end
   end
 
-  shared_examples_for 'with instance_user set' do
+  shared_examples_for 'with instance_user set to a string' do
     before do
       params.merge!(
         :instance_user => "fred",
@@ -466,6 +497,18 @@ describe 'heat' do
 
     it 'has instance_user set when specified' do
       is_expected.to contain_heat_config('DEFAULT/instance_user').with_value('fred')
+    end
+  end
+
+  shared_examples_for 'with instance_user set to an empty string' do
+    before do
+      params.merge!(
+        :instance_user => "",
+      )
+    end
+
+    it 'has instance_user set to an empty string when specified' do
+      is_expected.to contain_heat_config('DEFAULT/instance_user').with_value('')
     end
   end
 

@@ -33,7 +33,7 @@
 define nova::generic_service(
   $package_name,
   $service_name,
-  $enabled        = false,
+  $enabled        = true,
   $manage_service = true,
   $ensure_package = 'present'
 ) {
@@ -57,7 +57,7 @@ define nova::generic_service(
         ensure => $ensure_package,
         name   => $package_name,
         notify => Service[$nova_title],
-        tag    => ['openstack'],
+        tag    => ['openstack', 'nova-package'],
       }
     }
 
@@ -85,6 +85,7 @@ define nova::generic_service(
       enable    => $enabled,
       hasstatus => true,
       require   => [Package['nova-common']],
+      tag       => 'nova-service',
     }
   }
 }

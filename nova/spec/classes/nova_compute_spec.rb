@@ -13,13 +13,14 @@ describe 'nova::compute' do
       it 'installs nova-compute package and service' do
         is_expected.to contain_service('nova-compute').with({
           :name      => platform_params[:nova_compute_service],
-          :ensure    => 'stopped',
+          :ensure    => 'running',
           :hasstatus => true,
-          :enable    => false
+          :enable    => true,
+          :tag       => 'nova-service'
         })
         is_expected.to contain_package('nova-compute').with({
           :name => platform_params[:nova_compute_package],
-          :tag  => ['openstack']
+          :tag  => ['openstack', 'nova-package']
         })
       end
 
@@ -47,7 +48,7 @@ describe 'nova::compute' do
 
     context 'with overridden parameters' do
       let :params do
-        { :enabled                            => true,
+        { :enabled                            => false,
           :ensure_package                     => '2012.1-2',
           :vncproxy_host                      => '127.0.0.1',
           :network_device_mtu                 => 9999,
@@ -65,14 +66,15 @@ describe 'nova::compute' do
       it 'installs nova-compute package and service' do
         is_expected.to contain_service('nova-compute').with({
           :name      => platform_params[:nova_compute_service],
-          :ensure    => 'running',
+          :ensure    => 'stopped',
           :hasstatus => true,
-          :enable    => true
+          :enable    => false,
+          :tag       => 'nova-service'
         })
         is_expected.to contain_package('nova-compute').with({
           :name   => platform_params[:nova_compute_package],
           :ensure => '2012.1-2',
-          :tag    => ['openstack']
+          :tag    => ['openstack', 'nova-package']
         })
       end
 

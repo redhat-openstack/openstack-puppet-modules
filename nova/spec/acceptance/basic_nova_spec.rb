@@ -94,26 +94,22 @@ describe 'basic nova' do
         password => 'a_big_secret',
       }
       class { '::nova::api':
-        enabled        => true,
         admin_password => 'a_big_secret',
         identity_uri   => 'http://127.0.0.1:35357/',
         osapi_v3       => true,
       }
-      class { '::nova::cert': enabled => true }
+      class { '::nova::cert': }
       class { '::nova::client': }
-      class { '::nova::conductor': enabled => true }
-      class { '::nova::consoleauth': enabled => true }
+      class { '::nova::conductor': }
+      class { '::nova::consoleauth': }
       class { '::nova::cron::archive_deleted_rows': }
-      class { '::nova::compute':
-        enabled     => true,
-        vnc_enabled => true,
-      }
+      class { '::nova::compute': vnc_enabled => true }
       class { '::nova::compute::libvirt':
         migration_support => true,
         vncserver_listen  => '0.0.0.0',
       }
-      class { '::nova::scheduler': enabled => true }
-      class { '::nova::vncproxy': enabled => true }
+      class { '::nova::scheduler': }
+      class { '::nova::vncproxy': }
       # TODO: networking with neutron
       EOS
 
@@ -140,7 +136,7 @@ describe 'basic nova' do
     end
 
     describe cron do
-      it { should have_entry('1 0 * * * nova-manage db archive_deleted_rows --max_rows 100 >>/var/log/nova/nova-rowsflush.log 2>&1').with_user('nova') }
+      it { is_expected.to have_entry('1 0 * * * nova-manage db archive_deleted_rows --max_rows 100 >>/var/log/nova/nova-rowsflush.log 2>&1').with_user('nova') }
     end
 
   end

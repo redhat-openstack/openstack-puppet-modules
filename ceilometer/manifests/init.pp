@@ -27,7 +27,7 @@
 #    Defaults to 'LOG_USER'
 # [*rpc_backend*]
 #    (optional) what rpc/queuing service to use
-#    Defaults to impl_kombu (rabbitmq)
+#    Defaults to 'rabbit'
 #  [*rabbit_host*]
 #    ip or hostname of the rabbit server. Optional. Defaults to '127.0.0.1'
 #  [*rabbit_port*]
@@ -41,6 +41,22 @@
 #    password to connect to the rabbit_server. Optional. Defaults to empty.
 #  [*rabbit_virtual_host*]
 #    virtualhost to use. Optional. Defaults to '/'
+#
+# [*rabbit_heartbeat_timeout_threshold*]
+#   (optional) Number of seconds after which the RabbitMQ broker is considered
+#   down if the heartbeat keepalive fails.  Any value >0 enables heartbeats.
+#   Heartbeating helps to ensure the TCP connection to RabbitMQ isn't silently
+#   closed, resulting in missed or lost messages from the queue.
+#   (Requires kombu >= 3.0.7 and amqp >= 1.4.0)
+#   Defaults to 0
+#
+# [*rabbit_heartbeat_rate*]
+#   (optional) How often during the rabbit_heartbeat_timeout_threshold period to
+#   check the heartbeat on RabbitMQ connection.  (i.e. rabbit_heartbeat_rate=2
+#   when rabbit_heartbeat_timeout_threshold=60, the heartbeat will be checked
+#   every 30 seconds.
+#   Defaults to 2
+#
 #  [*rabbit_use_ssl*]
 #    (optional) Connect over SSL for RabbitMQ
 #    Defaults to false
@@ -58,6 +74,9 @@
 #    Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #    available on some distributions.
 #    Defaults to 'TLSv1'
+#  [*memcached_servers*]
+#    (optional) A list of memcached server(s) to use for caching.
+#    Defaults to undef
 #
 # [*qpid_hostname*]
 # [*qpid_port*]
@@ -75,39 +94,42 @@
 # (optional) various QPID options
 #
 class ceilometer(
-  $metering_secret     = false,
-  $notification_topics = ['notifications'],
-  $package_ensure      = 'present',
-  $debug               = false,
-  $log_dir             = '/var/log/ceilometer',
-  $verbose             = false,
-  $use_syslog          = false,
-  $log_facility        = 'LOG_USER',
-  $rpc_backend         = 'ceilometer.openstack.common.rpc.impl_kombu',
-  $rabbit_host         = '127.0.0.1',
-  $rabbit_port         = 5672,
-  $rabbit_hosts        = undef,
-  $rabbit_userid       = 'guest',
-  $rabbit_password     = '',
-  $rabbit_virtual_host = '/',
-  $rabbit_use_ssl      = false,
-  $kombu_ssl_ca_certs  = undef,
-  $kombu_ssl_certfile  = undef,
-  $kombu_ssl_keyfile   = undef,
-  $kombu_ssl_version   = 'TLSv1',
-  $qpid_hostname = 'localhost',
-  $qpid_port = 5672,
-  $qpid_username = 'guest',
-  $qpid_password = 'guest',
-  $qpid_heartbeat = 60,
-  $qpid_protocol = 'tcp',
-  $qpid_tcp_nodelay = true,
-  $qpid_reconnect = true,
-  $qpid_reconnect_timeout = 0,
-  $qpid_reconnect_limit = 0,
-  $qpid_reconnect_interval_min = 0,
-  $qpid_reconnect_interval_max = 0,
-  $qpid_reconnect_interval = 0
+  $metering_secret                    = false,
+  $notification_topics                = ['notifications'],
+  $package_ensure                     = 'present',
+  $debug                              = false,
+  $log_dir                            = '/var/log/ceilometer',
+  $verbose                            = false,
+  $use_syslog                         = false,
+  $log_facility                       = 'LOG_USER',
+  $rpc_backend                        = 'rabbit',
+  $rabbit_host                        = '127.0.0.1',
+  $rabbit_port                        = 5672,
+  $rabbit_hosts                       = undef,
+  $rabbit_userid                      = 'guest',
+  $rabbit_password                    = '',
+  $rabbit_virtual_host                = '/',
+  $rabbit_heartbeat_timeout_threshold = 0,
+  $rabbit_heartbeat_rate              = 2,
+  $rabbit_use_ssl                     = false,
+  $kombu_ssl_ca_certs                 = undef,
+  $kombu_ssl_certfile                 = undef,
+  $kombu_ssl_keyfile                  = undef,
+  $kombu_ssl_version                  = 'TLSv1',
+  $memcached_servers                  = undef,
+  $qpid_hostname                      = 'localhost',
+  $qpid_port                          = 5672,
+  $qpid_username                      = 'guest',
+  $qpid_password                      = 'guest',
+  $qpid_heartbeat                     = 60,
+  $qpid_protocol                      = 'tcp',
+  $qpid_tcp_nodelay                   = true,
+  $qpid_reconnect                     = true,
+  $qpid_reconnect_timeout             = 0,
+  $qpid_reconnect_limit               = 0,
+  $qpid_reconnect_interval_min        = 0,
+  $qpid_reconnect_interval_max        = 0,
+  $qpid_reconnect_interval            = 0,
 ) {
 
   validate_string($metering_secret)
@@ -159,12 +181,13 @@ class ceilometer(
   package { 'ceilometer-common':
     ensure => $package_ensure,
     name   => $::ceilometer::params::common_package_name,
-    tag    => 'openstack',
+    tag    => ['openstack', 'ceilometer-package'],
   }
 
   Package['ceilometer-common'] -> Ceilometer_config<||>
 
-  if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_kombu' {
+  # we keep "ceilometer.openstack.common.rpc.impl_kombu" for backward compatibility
+  if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
 
     if $rabbit_hosts {
       ceilometer_config { 'oslo_messaging_rabbit/rabbit_host': ensure => absent }
@@ -187,10 +210,12 @@ class ceilometer(
       }
 
       ceilometer_config {
-        'oslo_messaging_rabbit/rabbit_userid'          : value => $rabbit_userid;
-        'oslo_messaging_rabbit/rabbit_password'        : value => $rabbit_password, secret => true;
-        'oslo_messaging_rabbit/rabbit_virtual_host'    : value => $rabbit_virtual_host;
-        'oslo_messaging_rabbit/rabbit_use_ssl'         : value => $rabbit_use_ssl;
+        'oslo_messaging_rabbit/rabbit_userid':                value => $rabbit_userid;
+        'oslo_messaging_rabbit/rabbit_password':              value => $rabbit_password, secret => true;
+        'oslo_messaging_rabbit/rabbit_virtual_host':          value => $rabbit_virtual_host;
+        'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
+        'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
+        'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
       }
 
       if $rabbit_use_ssl {
@@ -230,7 +255,8 @@ class ceilometer(
 
   }
 
-  if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_qpid' {
+  # we keep "ceilometer.openstack.common.rpc.impl_qpid" for backward compatibility
+  if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
 
     ceilometer_config {
       'DEFAULT/qpid_hostname'              : value => $qpid_hostname;
@@ -282,4 +308,17 @@ class ceilometer(
     }
   }
 
+  if $memcached_servers {
+    validate_array($memcached_servers)
+  }
+
+  if $memcached_servers {
+    ceilometer_config {
+      'DEFAULT/memcached_servers': value  => join($memcached_servers, ',')
+    }
+  } else {
+    ceilometer_config {
+      'DEFAULT/memcached_servers': ensure => absent;
+    }
+  }
 }

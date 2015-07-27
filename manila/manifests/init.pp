@@ -85,30 +85,61 @@
 # ==== Various QPID options (Optional)
 #
 # [*qpid_hostname*]
+#   (Optional) hostname of the qpid server.
+#   Defaults to 'localhost'
 #
 # [*qpid_port*]
+#   (Optional) Port of the qpid server.
+#   Defaults to 5672.
 #
 # [*qpid_username*]
+#   (Optional) User to connect to the qpid server.
+#   Defaults to 'guest'
 #
 # [*qpid_password*]
+#   (Optional) Password to connect to the qpid_server.
+#   Defaults to empty.
 #
 # [*qpid_heartbeat*]
+#   (Optional) Seconds between connection keepalive heartbeats.
+#   Defaults to 60s.
 #
 # [*qpid_protocol*]
+#   (Optional) Transport to use, either 'tcp' or 'ssl'.
+#   Defaults to tcp.
 #
 # [*qpid_tcp_nodelay*]
+#   (Optional) Whether to disable the Nagle algorithm.
+#   Defaults to true.
 #
 # [*qpid_reconnect*]
+#   (Optional) Enable the experimental use of reconnect on connection
+#   lost.
+#   Defaults to true.
 #
 # [*qpid_reconnect_timeout*]
+#   (Optional) How long to wait before considering a reconnect attempt
+#   to have failed. This value should not be longer than rpc_response_timeout.
+#   Defaults to 0.
 #
 # [*qpid_reconnect_limit*]
+#   (Optional) Limit of reconnect on connection lost.
+#   Defaults to 0.
 #
 # [*qpid_reconnect_interval*]
+#   (Optional) Interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to 0.
 #
 # [*qpid_reconnect_interval_min*]
+#   (Optional) Minimal interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to 0.
 #
 # [*qpid_reconnect_interval_max*]
+#   (Optional) Miximal interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to 0.
 #
 # [*qpid_sasl_mechanisms*]
 #   (Optional) ENable one or more SASL mechanisms.
@@ -279,8 +310,8 @@ class manila (
       'oslo_messaging_rabbit/rabbit_userid':       value => $rabbit_userid;
       'oslo_messaging_rabbit/rabbit_virtual_host': value => $rabbit_virtual_host;
       'oslo_messaging_rabbit/rabbit_use_ssl':      value => $rabbit_use_ssl;
-      'DEFAULT/control_exchange':    value => $control_exchange;
-      'DEFAULT/amqp_durable_queues': value => $amqp_durable_queues;
+      'DEFAULT/control_exchange':                  value => $control_exchange;
+      'oslo_messaging_rabbit/amqp_durable_queues': value => $amqp_durable_queues;
     }
 
     if $rabbit_hosts {
@@ -337,33 +368,33 @@ class manila (
     }
 
     manila_config {
-      'DEFAULT/qpid_hostname':               value => $qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $qpid_port;
-      'DEFAULT/qpid_username':               value => $qpid_username;
-      'DEFAULT/qpid_password':               value => $qpid_password, secret => true;
-      'DEFAULT/qpid_reconnect':              value => $qpid_reconnect;
-      'DEFAULT/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
-      'DEFAULT/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
-      'DEFAULT/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'DEFAULT/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'DEFAULT/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
-      'DEFAULT/qpid_heartbeat':              value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-      'DEFAULT/amqp_durable_queues':         value => $amqp_durable_queues;
+      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
+      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
+      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/amqp_durable_queues':         value => $amqp_durable_queues;
+      'oslo_messaging_qpid/qpid_reconnect':              value => $qpid_reconnect;
+      'oslo_messaging_qpid/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
+      'oslo_messaging_qpid/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
+      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
+      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
+      'oslo_messaging_qpid/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
     }
 
     if is_array($qpid_sasl_mechanisms) {
       manila_config {
-        'DEFAULT/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
       }
     } elsif $qpid_sasl_mechanisms {
       manila_config {
-        'DEFAULT/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
       }
     } else {
       manila_config {
-        'DEFAULT/qpid_sasl_mechanisms': ensure => absent;
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
       }
     }
   }

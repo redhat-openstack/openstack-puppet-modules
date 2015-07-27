@@ -12,12 +12,13 @@ describe 'nova' do
         )
         is_expected.to contain_package('python-nova').with(
           :ensure  => 'present',
-          :require => 'Package[python-greenlet]'
+          :require => 'Package[python-greenlet]',
+          :tag     => ['openstack']
         )
         is_expected.to contain_package('nova-common').with(
           :name    => platform_params[:nova_common_package],
           :ensure  => 'present',
-          :tag    => ['openstack']
+          :tag     => ['openstack', 'nova-package']
         )
       end
 
@@ -62,6 +63,8 @@ describe 'nova' do
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_port').with_value('5672')
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_userid').with_value('guest')
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_virtual_host').with_value('/')
+        is_expected.to contain_nova_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
+        is_expected.to contain_nova_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
       end
 
       it 'configures various things' do
@@ -88,27 +91,29 @@ describe 'nova' do
     context 'with overridden parameters' do
 
       let :params do
-        { :verbose                  => true,
-          :debug                    => true,
-          :log_dir                  => '/var/log/nova2',
-          :image_service            => 'nova.image.local.LocalImageService',
-          :rabbit_host              => 'rabbit',
-          :rabbit_userid            => 'rabbit_user',
-          :rabbit_port              => '5673',
-          :rabbit_password          => 'password',
-          :rabbit_ha_queues         => 'undef',
-          :lock_path                => '/var/locky/path',
-          :state_path               => '/var/lib/nova2',
-          :service_down_time        => '120',
-          :auth_strategy            => 'foo',
-          :ensure_package           => '2012.1.1-15.el6',
-          :memcached_servers        => ['memcached01:11211', 'memcached02:11211'],
-          :install_utilities        => false,
-          :notification_driver      => 'ceilometer.compute.nova_notifier',
-          :notification_topics      => 'openstack',
-          :notify_api_faults        => true,
-          :report_interval          => '60',
-          :os_region_name           => 'MyRegion' }
+        { :verbose                            => true,
+          :debug                              => true,
+          :log_dir                            => '/var/log/nova2',
+          :image_service                      => 'nova.image.local.LocalImageService',
+          :rabbit_host                        => 'rabbit',
+          :rabbit_userid                      => 'rabbit_user',
+          :rabbit_port                        => '5673',
+          :rabbit_password                    => 'password',
+          :rabbit_ha_queues                   => 'undef',
+          :rabbit_heartbeat_timeout_threshold => '60',
+          :rabbit_heartbeat_rate              => '10',
+          :lock_path                          => '/var/locky/path',
+          :state_path                         => '/var/lib/nova2',
+          :service_down_time                  => '120',
+          :auth_strategy                      => 'foo',
+          :ensure_package                     => '2012.1.1-15.el6',
+          :memcached_servers                  => ['memcached01:11211', 'memcached02:11211'],
+          :install_utilities                  => false,
+          :notification_driver                => 'ceilometer.compute.nova_notifier',
+          :notification_topics                => 'openstack',
+          :notify_api_faults                  => true,
+          :report_interval                    => '60',
+          :os_region_name                     => 'MyRegion' }
       end
 
       it 'installs packages' do
@@ -133,6 +138,8 @@ describe 'nova' do
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_port').with_value('5673')
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_userid').with_value('rabbit_user')
         is_expected.to contain_nova_config('oslo_messaging_rabbit/rabbit_virtual_host').with_value('/')
+        is_expected.to contain_nova_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('60')
+        is_expected.to contain_nova_config('oslo_messaging_rabbit/heartbeat_rate').with_value('10')
       end
 
       it 'configures memcached_servers' do

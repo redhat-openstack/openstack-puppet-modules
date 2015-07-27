@@ -158,6 +158,37 @@
 #   (optional) Swift URL ending in AUTH_.
 #   Defaults to false.
 #
+# [*neutron_url*]
+#   (optional) Cinder URL without the tenant segment.
+#   Defaults to false.
+#
+# [*os_region_name*]
+#   (optional) Sets the os_region_name flag. For environments with
+#   more than one endpoint per service. If you don't set this and
+#   you have multiple endpoints, you will get Ambiguous Endpoint
+#   exceptions in the trove API service.
+#   Defaults to undef.
+#
+# [*nova_compute_service_type*]
+#   (optional) Nova service type to use when searching catalog.
+#   Defaults to 'compute'.
+#
+# [*cinder_service_type*]
+#   (optional) Cinder service type to use when searching catalog.
+#   Defaults to 'volumev2'.
+#
+# [*swift_service_type*]
+#   (optional) Swift service type to use when searching catalog.
+#   Defaults to 'object-store'.
+#
+# [*heat_service_type*]
+#   (optional) Heat service type to use when searching catalog.
+#   Defaults to 'orchestration'.
+#
+# [*neutron_service_type*]
+#   (optional) Neutron service type to use when searching catalog.
+#   Defaults to 'network'.
+#
 # [*use_neutron*]
 #   (optional) Use Neutron
 #   Defaults to true
@@ -181,6 +212,14 @@ class trove(
   $kombu_ssl_keyfile            = undef,
   $kombu_ssl_version            = 'TLSv1',
   $amqp_durable_queues          = false,
+  $qpid_hostname                = 'localhost',
+  $qpid_port                    = '5672',
+  $qpid_username                = 'guest',
+  $qpid_password                = 'guest',
+  $qpid_sasl_mechanisms         = false,
+  $qpid_heartbeat               = 60,
+  $qpid_protocol                = 'tcp',
+  $qpid_tcp_nodelay             = true,
   $database_connection          = 'sqlite:////var/lib/trove/trove.sqlite',
   $database_idle_timeout        = 3600,
   $rpc_backend                  = 'trove.openstack.common.rpc.impl_kombu',
@@ -190,6 +229,13 @@ class trove(
   $control_exchange             = 'trove',
   $cinder_url                   = false,
   $swift_url                    = false,
+  $neutron_url                  = false,
+  $os_region_name               = undef,
+  $nova_compute_service_type    = 'compute',
+  $cinder_service_type          = 'volumev2',
+  $swift_service_type           = 'object-store',
+  $heat_service_type            = 'orchestration',
+  $neutron_service_type         = 'network',
   $use_neutron                  = true,
   $package_ensure               = 'present',
   # DEPRECATED PARAMETERS
@@ -229,6 +275,13 @@ class trove(
     trove_config { 'DEFAULT/swift_url': ensure => absent }
   }
 
+  if $neutron_url {
+    trove_config { 'DEFAULT/neutron_url': value => $neutron_url }
+  }
+  else {
+    trove_config { 'DEFAULT/neutron_url': ensure => absent }
+  }
+
   if $::osfamily == 'RedHat' {
     # TO-DO(mmagr): Conditional should be removed as soon as following bug
     # is really fixed. On Ubuntu trove-common is not installable without already
@@ -236,7 +289,8 @@ class trove(
     # https://bugs.launchpad.net/ubuntu/+source/openstack-trove/+bug/1365561
     package { 'trove':
       ensure => $package_ensure,
-      name   => $::trove::params::common_package_name
+      name   => $::trove::params::common_package_name,
+      tag    => ['openstack', 'trove-package'],
     }
     $group_require = Package['trove']
   } else {

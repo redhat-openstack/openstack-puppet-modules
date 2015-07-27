@@ -58,10 +58,12 @@ describe 'nova::compute::libvirt' do
           :remove_unused_kernels                      => true,
           :remove_unused_resized_minimum_age_seconds  => 3600,
           :remove_unused_original_minimum_age_seconds => 3600,
-          :libvirt_service_name                       => 'custom_service'
+          :libvirt_service_name                       => 'custom_service',
+          :compute_driver                             => 'libvirt.FoobarDriver',
         }
       end
 
+      it { is_expected.to contain_nova_config('DEFAULT/compute_driver').with_value('libvirt.FoobarDriver')}
       it { is_expected.to contain_nova_config('libvirt/virt_type').with_value('qemu')}
       it { is_expected.to contain_nova_config('libvirt/cpu_mode').with_value('host-passthrough')}
       it { is_expected.to contain_nova_config('libvirt/disk_cachemodes').with_value('file=directsync,block=none')}
@@ -90,6 +92,10 @@ describe 'nova::compute::libvirt' do
         it { is_expected.to contain_class('nova::migration::libvirt')}
         it { is_expected.to contain_nova_config('DEFAULT/vncserver_listen').with_value('0.0.0.0')}
         it { is_expected.to contain_file_line('/etc/default/libvirt-bin libvirtd opts').with(:line => 'libvirtd_opts="-d -l"') }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tls').with(:line => "listen_tls = 0") }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tcp').with(:line => "listen_tcp = 1") }
+        it { is_expected.not_to contain_file_line('/etc/libvirt/libvirtd.conf auth_tls')}
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf auth_tcp').with(:line => "auth_tcp = \"none\"") }
       end
 
       context 'with vncserver_listen set to ::0' do
@@ -101,6 +107,10 @@ describe 'nova::compute::libvirt' do
         it { is_expected.to contain_class('nova::migration::libvirt')}
         it { is_expected.to contain_nova_config('DEFAULT/vncserver_listen').with_value('::0')}
         it { is_expected.to contain_file_line('/etc/default/libvirt-bin libvirtd opts').with(:line => 'libvirtd_opts="-d -l"') }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tls').with(:line => "listen_tls = 0") }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tcp').with(:line => "listen_tcp = 1") }
+        it { is_expected.not_to contain_file_line('/etc/libvirt/libvirtd.conf auth_tls')}
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf auth_tcp').with(:line => "auth_tcp = \"none\"") }
       end
 
       context 'with vncserver_listen not set to 0.0.0.0' do
@@ -225,6 +235,26 @@ describe 'nova::compute::libvirt' do
 
         it { is_expected.to contain_class('nova::migration::libvirt')}
         it { is_expected.to contain_nova_config('DEFAULT/vncserver_listen').with_value('0.0.0.0')}
+        it { is_expected.to contain_file_line('/etc/sysconfig/libvirtd libvirtd args').with(:line => 'LIBVIRTD_ARGS="--listen"') }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tls').with(:line => "listen_tls = 0") }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tcp').with(:line => "listen_tcp = 1") }
+        it { is_expected.not_to contain_file_line('/etc/libvirt/libvirtd.conf auth_tls')}
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf auth_tcp').with(:line => "auth_tcp = \"none\"") }
+      end
+
+      context 'with vncserver_listen set to ::0' do
+        let :params do
+          { :vncserver_listen  => '::0',
+            :migration_support => true }
+        end
+
+        it { is_expected.to contain_class('nova::migration::libvirt')}
+        it { is_expected.to contain_nova_config('DEFAULT/vncserver_listen').with_value('::0')}
+        it { is_expected.to contain_file_line('/etc/sysconfig/libvirtd libvirtd args').with(:line => 'LIBVIRTD_ARGS="--listen"') }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tls').with(:line => "listen_tls = 0") }
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tcp').with(:line => "listen_tcp = 1") }
+        it { is_expected.not_to contain_file_line('/etc/libvirt/libvirtd.conf auth_tls')}
+        it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf auth_tcp').with(:line => "auth_tcp = \"none\"") }
       end
 
       context 'with vncserver_listen not set to 0.0.0.0' do

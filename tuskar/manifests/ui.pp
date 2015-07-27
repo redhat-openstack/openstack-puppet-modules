@@ -39,12 +39,14 @@ class tuskar::ui (
   package { 'tuskar-ui':
     ensure => $package_ensure,
     name   => $::tuskar::params::ui_package_name,
+    tag    => ['openstack', 'tuskar-package'],
   }
 
   if $extras {
     package { 'tuskar-ui-extras':
       ensure => $package_ensure,
       name   => $::tuskar::params::ui_extras_package_name,
+      tag    => ['openstack', 'tuskar-package'],
     }
   }
 

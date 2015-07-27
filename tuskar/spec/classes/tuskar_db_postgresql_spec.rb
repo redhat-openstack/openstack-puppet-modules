@@ -24,7 +24,7 @@ describe 'tuskar::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('tuskar').with(
+      it { is_expected.to contain_postgresql__server__db('tuskar').with(
         :user     => 'tuskar',
         :password => 'md532cc9d9d42efb508bc9d6267d873d63d'
       )}
@@ -47,7 +47,7 @@ describe 'tuskar::db::postgresql' do
         req_params
       end
 
-      it { should contain_postgresql__server__db('tuskar').with(
+      it { is_expected.to contain_postgresql__server__db('tuskar').with(
         :user     => 'tuskar',
         :password => 'md532cc9d9d42efb508bc9d6267d873d63d'
       )}

@@ -9,11 +9,12 @@ describe 'tuskar::ui' do
 
     context 'with default parameters' do
       it 'installs tuskar-ui package' do
-        should contain_package('tuskar-ui').with(
+        is_expected.to contain_package('tuskar-ui').with(
           :name   => platform_params[:ui_package_name],
           :ensure => 'present',
+          :tag    => ['openstack', 'tuskar-package'],
         )
-        should_not contain_package('tuskar-ui-extras')
+        is_expected.to_not contain_package('tuskar-ui-extras')
       end
     end
 
@@ -22,13 +23,15 @@ describe 'tuskar::ui' do
         { :extras => true }
       end
       it 'installs tuskar-ui and tuskar-ui-extras packages' do
-        should contain_package('tuskar-ui').with(
+        is_expected.to contain_package('tuskar-ui').with(
           :name   => platform_params[:ui_package_name],
           :ensure => 'present',
+          :tag    => ['openstack', 'tuskar-package'],
         )
-        should contain_package('tuskar-ui-extras').with(
+        is_expected.to contain_package('tuskar-ui-extras').with(
           :name   => platform_params[:ui_extras_package_name],
           :ensure => 'present',
+          :tag    => ['openstack', 'tuskar-package'],
         )
       end
     end
@@ -38,9 +41,10 @@ describe 'tuskar::ui' do
         { :package_ensure => 'absent' }
       end
       it 'installs tuskar-ui and tuskar-ui-extras packages' do
-        should contain_package('tuskar-ui').with(
+        is_expected.to contain_package('tuskar-ui').with(
           :name   => platform_params[:ui_package_name],
           :ensure => 'absent',
+          :tag    => ['openstack', 'tuskar-package'],
         )
       end
     end
