@@ -104,6 +104,51 @@ describe 'cassandra' do
     }
   end
 
+  context 'CASSANDRA-9822 not activated on Ubuntu (default)' do
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :lsbdistid => 'Ubuntu',
+        :lsbdistrelease => '14.04'
+      }
+    end
+    it { is_expected.not_to contain_file('/etc/init.d/cassandra') }
+  end
+
+  context 'CASSANDRA-9822 activated on Ubuntu' do
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :lsbdistid => 'Ubuntu',
+        :lsbdistrelease => '14.04'
+      }
+    end
+
+    let :params do
+      {
+        :cassandra_9822 => true
+      }
+    end
+
+    it { is_expected.to contain_file('/etc/init.d/cassandra') }
+  end
+
+  context 'CASSANDRA-9822 activated on Red Hat' do
+    let :facts do
+      {
+        :osfamily => 'RedHat'
+      }
+    end
+
+    let :params do
+      {
+        :cassandra_9822 => true
+      }
+    end
+
+    it { is_expected.not_to contain_file('/etc/init.d/cassandra') }
+  end
+
   context 'On an unknown OS with defaults for all parameters' do
     let :facts do
       {
