@@ -357,6 +357,16 @@ configuration file.</p>
 (default <strong>true</strong>).</p>
 
 <h5>
+<a id="cassandra_9822" class="anchor" href="#cassandra_9822" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_9822</code>
+</h5>
+
+<p>If set to true, this will apply a patch to the init file for the Cassandra
+service as a workaround for
+<a href="https://issues.apache.org/jira/browse/CASSANDRA-9822">CASSANDRA-9822</a>.  This
+option is silently ignored on the Red Hat family of operating systems as
+this bug only affects Ubuntu systems (default <strong>false</strong>).</p>
+
+<h5>
 <a id="cassandra_yaml_tmpl" class="anchor" href="#cassandra_yaml_tmpl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_yaml_tmpl</code>
 </h5>
 
@@ -823,10 +833,10 @@ default value is:</p>
 <table>
 <thead>
 <tr>
-<th>Module Parameter</th>
-<th>Section</th>
-<th>Setting</th>
-<th>Default Value</th>
+<th><strong>Module Parameter</strong></th>
+<th><strong>Section</strong></th>
+<th><strong>Setting</strong></th>
+<th><strong>Default Value</strong></th>
 </tr>
 </thead>
 <tbody>
