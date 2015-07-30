@@ -53,6 +53,7 @@ class cassandra::opscenter (
     $failover_heartbeat_fail_window       = undef,
     $failover_heartbeat_period            = undef,
     $failover_heartbeat_reply_period      = undef,
+    $hadoop_base_job_tracker_proxy_port   = undef,
     $package_name                         = 'opscenter',
     $service_enable                       = true,
     $service_ensure                       = 'running',
