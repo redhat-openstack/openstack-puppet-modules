@@ -408,7 +408,7 @@ class cassandra::opscenter (
     path    => $config_file,
     section => 'failover',
     setting => 'failover_configuration_directory',
-    value   => $failover_failover_configuration_directory
+    value   => $failover_configuration_directory
   }
 
   cassandra::opscenter::setting { 'failover heartbeat_fail_window':
