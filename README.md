@@ -851,7 +851,7 @@ This is passed to the package reference for **opscenter**.  Valid values are
 **present** or a version number
 (default **present**).
 
-##### `failover_failover_configuration_directory`
+##### `failover_configuration_directory`
 This sets the failover_configuration_directory setting in the failover section of the
 OpsCenter configuration file.  See
 http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html

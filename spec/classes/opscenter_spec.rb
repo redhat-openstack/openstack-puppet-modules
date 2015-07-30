@@ -28,13 +28,15 @@ describe 'cassandra::opscenter' do
   context 'Test params for cassandra::opscenter special cases.' do
     let :params do
       {
-        :authentication_method => 42
+        :authentication_method            => 42,
+        :failover_configuration_directory => '/path/to',
       }
     end
 
     it {
       should contain_class('cassandra::opscenter').with({
-        'authentication_method' => 42,
+        'authentication_method'            => 42,
+        'failover_configuration_directory' => '/path/to',
       })
     }
   end
