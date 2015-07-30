@@ -35,6 +35,7 @@ class cassandra::opscenter (
     $authentication_method                = undef,
     $authentication_passwd_db             = undef,
     $authentication_timeout               = undef,
+    $cloud_accepted_certs                 = undef,
     $ensure                               = present,
     $config_file                          = '/etc/opscenter/opscenterd.conf',
     $package_name                         = 'opscenter',
