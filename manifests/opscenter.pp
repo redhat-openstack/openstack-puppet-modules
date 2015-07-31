@@ -116,6 +116,7 @@ class cassandra::opscenter (
     $security_config_encryption_active              = undef,
     $security_config_encryption_key_name            = undef,
     $security_config_encryption_key_path            = undef,
+    $spark_base_master_proxy_port                   = undef,
     $stat_reporter_initial_sleep                    = undef,
     $stat_reporter_interval                         = undef,
     $stat_reporter_report_file                      = undef,
