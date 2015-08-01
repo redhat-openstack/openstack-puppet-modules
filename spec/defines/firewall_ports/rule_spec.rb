@@ -8,7 +8,6 @@ describe 'cassandra::firewall_ports::rule' do
     let(:title) { '0.0.0.0/0' }
     let :params do
       {
-        :action => 'accept',
         :port   => 22,
       }
     end

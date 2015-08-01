@@ -1,5 +1,3 @@
 fixtures:
-  repositories:
-    firewall: "git://github.com/puppetlabs/puppetlabs-firewall"
   symlinks:
     cassandra: "#{source_dir}"
