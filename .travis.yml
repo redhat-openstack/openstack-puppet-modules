@@ -3,7 +3,7 @@ language: ruby
 bundler_args: --without development
 script:
   - "bundle exec rake lint"
-  - "bundle exec rake syntax"
+  - "bundle exec rake validate"
   - "bundle exec rake spec SPEC_OPTS='--format documentation'"
 notifications:
   email: false
