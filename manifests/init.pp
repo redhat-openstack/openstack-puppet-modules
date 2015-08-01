@@ -46,6 +46,7 @@ class cassandra (
   $service_ensure                        = 'running',
   $service_name                          = 'cassandra',
   $snapshot_before_compaction            = false,
+  $ssl_storage_port                      = 7001,
   $start_native_transport                = true,
   $start_rpc                             = true,
   $storage_port                          = 7000
