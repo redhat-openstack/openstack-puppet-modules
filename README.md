@@ -537,6 +537,8 @@ for cassandra JMX monitoring
 
 ##### `public_subnets`
 An array of the list of subnets that are to allowed connection to
+cassandra::firewall_ports::ssh_port, cassandra::opscenter::webserver_port
+and cassandra::opscenter::webserver_ssl_port
 (default **['0.0.0.0/0]**).
 
 ##### `ssh_port`
@@ -545,6 +547,8 @@ Which port does SSH operate on
 
 ##### `opscenter_subnets`
 An array of the list of subnets that are to allowed connection to
+port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
+build with cassandra::datastax_agent
 (default **['0.0.0.0/0]**).
 
 ### Class: cassandra::java
@@ -1528,6 +1532,21 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Defined Type cassandra::firewall_ports::rule
+
+Simply a defined type to be used as a macro for setting host based firewall
+rules.  This is not really supposed to be used by a user (who should use the
+API provided by cassandra::firewall_ports instead) but is documented
+here for completeness.
+
+#### Parameters
+
+##### `title`
+A text field that contains the protocol name and CIDR address of a subnet.
+
+##### `port`
+The number(s) of the port(s) to be opened.
 
 ### Defined Type cassandra::opscenter::setting
 
