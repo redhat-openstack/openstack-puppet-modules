@@ -4,8 +4,8 @@ describe 'cassandra::firewall_ports' do
     'define firewall ($action, $port, $proto, $source) {}',
   ] }
 
-  let!(:does_something) { MockFunction.new('prefix') { |f|
-      f.stubs(:call).returns('I can do the thing')
+  let!(:stdlib_stubs) { MockFunction.new('prefix') { |f|
+      f.stubbed.with(['0.0.0.0/0'], 'SSH_').returns('SSH_0.0.0.0/0')
     }
   }
 
@@ -21,13 +21,11 @@ describe 'cassandra::firewall_ports' do
         'opscenter_subnets'  => ['0.0.0.0/0']
       })
     }
-  end
 
-  context 'Ensure public_subnets can be bypassed.' do
-    let :params do
-      {
-        :public_subnets => nil
-      }
-    end
+    it {
+      should contain_cassandra__firewall_ports__rule('SSH_0.0.0.0/0').with({
+        'port' => 22
+      })
+    }
   end
 end

@@ -8,31 +8,18 @@ class cassandra::firewall_ports (
   $ssh_port           = 22,
   $opscenter_subnets  = ['0.0.0.0/0']
   ) {
-  if $public_subnets != undef {
-    $public_subnets_ssh_array = prefix($public_subnets, 'SSH_')
-    cassandra::firewall_ports::rule { $public_subnets_ssh_array:
-      port => $ssh_port
-    }
+  $public_subnets_ssh_array = prefix($public_subnets, 'SSH_')
+  cassandra::firewall_ports::rule { $public_subnets_ssh_array:
+    port => $ssh_port
+  }
 
-    if defined ( Class['::cassandra::opscenter'] ) {
-      $public_subnets_opscenter_array = prefix($public_subnets, 'OpsCenter_')
+  if defined ( Class['::cassandra::opscenter'] ) {
+    $public_subnets_opscenter_array = prefix($public_subnets, 'OpsCenter_')
+    $opscenter_port = [$::cassandra::opscenter::webserver_port,
+      $::cassandra::opscenter::webserver_ssl_port ]
 
-      if $::cassandra::opscenter::webserver_port != undef and
-        $::cassandra::opscenter::webserver_ssl_port == undef
-      {
-        $opscenter_port = $::cassandra::opscenter::webserver_port
-      } elsif $::cassandra::opscenter::webserver_port == undef and
-        $::cassandra::opscenter::webserver_ssl_port != undef
-      {
-        $opscenter_port = $::cassandra::opscenter::webserver_ssl_port
-      } else {
-        $opscenter_port = [$::cassandra::opscenter::webserver_port,
-          $::cassandra::opscenter::webserver_ssl_port ]
-      }
-
-      cassandra::firewall_ports::rule { $public_subnets_opscenter_array:
-        port => $::cassandra::opscenter::webserver_port
-      }
+    cassandra::firewall_ports::rule { $public_subnets_opscenter_array:
+      port => $::cassandra::opscenter::webserver_port
     }
   }
 }
