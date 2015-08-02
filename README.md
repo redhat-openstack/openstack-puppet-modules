@@ -534,13 +534,14 @@ cassandra::native_transport_port and cassandra::rpc_port.
 An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
 for cassandra JMX monitoring
-(default **['0.0.0.0/0]**).
+(default **['0.0.0.0/0']**).
 
 ##### `public_subnets`
 An array of the list of subnets that are to allowed connection to
-cassandra::firewall_ports::ssh_port, cassandra::opscenter::webserver_port
-and cassandra::opscenter::webserver_ssl_port
-(default **['0.0.0.0/0]**).
+cassandra::firewall_ports::ssh_port and if cassandra::opscenter has been
+included, both cassandra::opscenter::webserver_port and
+cassandra::opscenter::webserver_ssl_port
+(default **['0.0.0.0/0']**).
 
 ##### `ssh_port`
 Which port does SSH operate on
@@ -550,7 +551,7 @@ Which port does SSH operate on
 An array of the list of subnets that are to allowed connection to
 port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
 build with cassandra::datastax_agent
-(default **['0.0.0.0/0]**).
+(default **['0.0.0.0/0']**).
 
 ### Class: cassandra::java
 
