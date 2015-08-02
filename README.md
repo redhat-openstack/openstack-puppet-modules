@@ -245,9 +245,10 @@ tools.
 * **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
 
-### Defined Types
+### Private Defined Types
 
 * **cassandra::opscenter::setting**
+* **cassandra::firewall_ports::rule**
 
 ### Class: cassandra
 
