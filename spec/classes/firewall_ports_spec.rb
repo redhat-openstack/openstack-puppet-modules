@@ -14,7 +14,11 @@ describe 'cassandra::firewall_ports' do
 
     it {
       should contain_class('cassandra::firewall_ports').with({
-        'ssh_port' => 22
+        'client_subnets'     => ['0.0.0.0/0'],
+        'inter_node_subnets' => ['0.0.0.0/0'],
+        'public_subnets'     => ['0.0.0.0/0'],
+        'ssh_port'           => 22,
+        'opscenter_subnets'  => ['0.0.0.0/0']
       })
     }
   end
