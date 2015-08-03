@@ -29,7 +29,8 @@ class cassandra::firewall_ports (
   }
 
   if defined ( Class['::cassandra::opscenter'] ) {
-    $public_subnets_opscenter_array = prefix($public_subnets, 'OpsCenter_')
+    $public_subnets_opscenter_array = prefix($public_subnets,
+      'OpsCenterWeb_')
     $opscenter_port = [ $::cassandra::opscenter::webserver_port,
       $::cassandra::opscenter::webserver_ssl_port ]
 
