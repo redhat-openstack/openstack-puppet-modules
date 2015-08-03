@@ -528,7 +528,7 @@ it must be the final cassandra class included in the manifest.
 ##### `client_subnets`
 An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
-(default **['0.0.0.0/0]**).
+(default **['0.0.0.0/0']**).
 
 ##### `inter_node_subnets`
 An array of the list of subnets that are to allowed connection to
