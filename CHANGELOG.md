@@ -1,3 +1,6 @@
+##2015-08-03 - Release 1.0.0
+* Provided the cassandra::firewall_ports class.
+
 ##2015-07-27 - Release 1.0.1
 * Provided a workaround for
   [CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).
