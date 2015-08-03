@@ -85,60 +85,18 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 ### Beginning with cassandra
 
-This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the [Usage](#usage) section
-for more realistic scenarios.
-
-```puppet
-node 'example' {
-  include '::cassandra'
-}
-```
-
-To install the DataStax agent, include the specific class.
-
-```puppet
-node 'example' {
-  include '::cassandra'
-  include '::cassandra::datastax_agent'
-}
-```
-
-To install with a reasonably sensible Java environment include the java
-subclass.
-
-```puppet
-node 'example' {
-  include '::cassandra'
-  include '::cassandra::java'
-}
-```
-
-To install Cassandra with the optional utilities.
-
-```puppet
-node 'example' {
-  include '::cassandra'
-  include '::cassandra::optutils'
-}
-```
-
-To install the main cassandra package (which is mandatory) and all the
-optional packages, do the following:
+A most basic example is:
 
 ```puppet
 node 'example' {
   include '::cassandra'
   include '::cassandra::datastax_agent'
   include '::cassandra::java'
+  include '::cassandra::opscenter'
   include '::cassandra::optutils'
+  include '::cassandra::firewall_ports'
 }
 ```
-
-By saying the cassandra class/package is mandatory, what is meant is that all
-the sub classes have a dependency on the main class.  So for example one
-could not specify the cassandra::java class for a node with the cassandra
-class also being included.
 
 #### DataStax Enterprise
 
