@@ -43,6 +43,9 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
   from (on Red Hat).
 * Optionally configures an Apt repository to install the Cassandra packages
   from (on Ubuntu).
+* On Ubuntu systems, optionally replace ```/etc/init.d/cassandra``` with a
+  workaround for 
+  [CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).
 
 #### What the cassandra::datastax_agent class affects
 
