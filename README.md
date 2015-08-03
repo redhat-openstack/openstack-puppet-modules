@@ -17,6 +17,7 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
+    * [cassandra::firewall_ports](#class-cassandrafirewall_ports)
     * [cassandra::java](#class-cassandrajava)
     * [cassandra::opscenter](#class-cassandraopscenter)
     * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
@@ -46,6 +47,11 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 #### What the cassandra::datastax_agent class affects
 
 * Optionally installs the DataStax agent.
+
+#### What the cassandra::firewall_ports class affects
+
+* Optionally configures the firewall for the cassandra related network
+  ports.
 
 #### What the cassandra::java class affects
 
@@ -233,14 +239,16 @@ tools.
 
 * **cassandra**
 * **cassandra::datastax_agent**
+* **cassandra::firewall_ports**
 * **cassandra::java**
 * **cassandra::opscenter**
 * **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
 
-### Defined Types
+### Private Defined Types
 
 * **cassandra::opscenter::setting**
+* **cassandra::firewall_ports::rule**
 
 ### Class: cassandra
 
@@ -454,6 +462,11 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **false**).
 
+##### `ssl_storage_port`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
+(default **7001**).
+
 ##### `start_native_transport`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
@@ -499,6 +512,46 @@ set as the stomp_interface setting in
 **/var/lib/datastax-agent/conf/address.yaml**
 which connects the agent to an OpsCenter instance
 (default **undef**).
+
+### Class: cassandra::firewall_ports
+
+An optional class to configure incoming network ports on the hostthat are
+relevant to the cassandra installation.  If firewalls are being managed 
+already, simply do not include this module in your manifest.
+
+IMPORTANT: The full list of what ports should be configured is assessed at
+evaluation time of the configuration.  Therefore if one is to use this class,
+it must be the final cassandra class included in the manifest.
+
+#### Parameters
+
+##### `client_subnets`
+An array of the list of subnets that are to allowed connection to
+cassandra::native_transport_port and cassandra::rpc_port.
+(default **['0.0.0.0/0]**).
+
+##### `inter_node_subnets`
+An array of the list of subnets that are to allowed connection to
+cassandra::storage_port, cassandra::ssl_storage_port and port 7199
+for cassandra JMX monitoring
+(default **['0.0.0.0/0']**).
+
+##### `public_subnets`
+An array of the list of subnets that are to allowed connection to
+cassandra::firewall_ports::ssh_port and if cassandra::opscenter has been
+included, both cassandra::opscenter::webserver_port and
+cassandra::opscenter::webserver_ssl_port
+(default **['0.0.0.0/0']**).
+
+##### `ssh_port`
+Which port does SSH operate on
+(default **22**).
+
+##### `opscenter_subnets`
+An array of the list of subnets that are to allowed connection to
+port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
+build with cassandra::datastax_agent
+(default **['0.0.0.0/0']**).
 
 ### Class: cassandra::java
 
@@ -1481,6 +1534,21 @@ on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node
 (default **undef**).
+
+### Defined Type cassandra::firewall_ports::rule
+
+Simply a defined type to be used as a macro for setting host based firewall
+rules.  This is not really supposed to be used by a user (who should use the
+API provided by cassandra::firewall_ports instead) but is documented
+here for completeness.
+
+#### Parameters
+
+##### `title`
+A text field that contains the protocol name and CIDR address of a subnet.
+
+##### `port`
+The number(s) of the port(s) to be opened.
 
 ### Defined Type cassandra::opscenter::setting
 

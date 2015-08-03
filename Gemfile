@@ -12,6 +12,8 @@ gem 'coveralls', require: false
 
 group :system_tests do
   gem 'beaker-rspec',         :require => false
-  gem 'serverspec',           :require => false
   gem 'puppet-blacksmith',    :require => false
+  gem 'rspec-puppet',         :require => false
+  gem 'rspec-puppet-utils',   :require => false
+  gem 'serverspec',           :require => false
 end
