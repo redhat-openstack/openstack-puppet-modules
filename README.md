@@ -32,7 +32,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 ## Setup
 
-### What the cassandra module affects
+### What cassandra affects
 
 #### What the cassandra class affects
 
