@@ -5,6 +5,7 @@ describe 'cassandra::firewall_ports' do
   ] }
 
   let!(:stdlib_stubs) { MockFunction.new('prefix') { |f|
+      f.stubbed.with(['0.0.0.0/0'], 'Cassandra_').returns('Cassandra_0.0.0.0/0')
       f.stubbed.with(['0.0.0.0/0'], 'SSH_').returns('SSH_0.0.0.0/0')
     }
   }
