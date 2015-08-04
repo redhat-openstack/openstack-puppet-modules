@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'ntp' do
   let(:facts) {{ :is_virtual => 'false' }}
 
-  ['Debian', 'RedHat','Suse', 'FreeBSD', 'Archlinux', 'Gentoo', 'Gentoo (Facter < 1.7)'].each do |system|
+  ['Debian', 'RedHat', 'Fedora', 'Suse', 'FreeBSD', 'Archlinux', 'Gentoo', 'Gentoo (Facter < 1.7)'].each do |system|
     context "when on system #{system}" do
       if system == 'Gentoo (Facter < 1.7)'
         let :facts do
@@ -12,6 +12,10 @@ describe 'ntp' do
       elsif system == 'Suse'
         let :facts do
           super().merge({ :osfamily => system,:operatingsystem => 'SLES',:operatingsystemmajrelease => '11' })
+        end
+      elsif system == 'Fedora'
+        let :facts do
+          super().merge({ :osfamily => 'RedHat', :operatingsystem => system ,:operatingsystemmajrelease => '22' })
         end
       else
         let :facts do
@@ -147,6 +151,30 @@ describe 'ntp' do
             it 'should not contain disable auth setting' do
               should_not contain_file('/etc/ntp.conf').with({
               'content' => /^disable auth\n/,
+              })
+            end
+          end
+        end
+        describe 'with parameter disable_kernel' do
+          context 'when set to true' do
+            let(:params) {{
+              :disable_kernel => true,
+            }}
+
+            it 'should contain disable kernel setting' do
+              should contain_file('/etc/ntp.conf').with({
+              'content' => /^disable kernel\n/,
+              })
+            end
+          end
+          context 'when set to false' do
+            let(:params) {{
+              :disable_kernel => false,
+            }}
+
+            it 'should not contain disable kernel setting' do
+              should_not contain_file('/etc/ntp.conf').with({
+              'content' => /^disable kernel\n/,
               })
             end
           end
@@ -468,6 +496,32 @@ describe 'ntp' do
           end
         end
 
+        describe 'with parameter tos' do
+          context 'when set to true' do
+            let(:params) {{
+              :tos     => true,
+            }}
+
+            it 'should contain logfile setting' do
+              should contain_file('/etc/ntp.conf').with({
+              'content' => /^tos/,
+              })
+            end
+          end
+
+          context 'when set to false' do
+            let(:params) {{
+              :tos     => false,
+            }}
+
+            it 'should not contain a logfile line' do
+              should_not contain_file('/etc/ntp.conf').with({
+                'content' => /^tos/,
+              })
+            end
+          end
+        end
+
         describe 'peers' do
           context 'when empty' do
             let(:params) do
@@ -576,9 +630,9 @@ describe 'ntp' do
           super().merge({ :osfamily => 'ArchLinux' })
         end
 
-        it 'uses the NTP pool servers by default' do
+        it 'uses the ArchLinux NTP servers by default' do
           should contain_file('/etc/ntp.conf').with({
-            'content' => /server \d.pool.ntp.org/,
+            'content' => /server \d.arch.pool.ntp.org/,
           })
         end
       end

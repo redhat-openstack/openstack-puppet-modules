@@ -46,6 +46,7 @@ class manila::scheduler (
     package { 'manila-scheduler':
       ensure => $package_ensure,
       name   => $::manila::params::scheduler_package,
+      tag    => ['openstack', 'manila-package'],
     }
   }
 
@@ -63,5 +64,6 @@ class manila::scheduler (
     enable    => $enabled,
     hasstatus => true,
     require   => Package['manila'],
+    tag       => 'manila-service',
   }
 }

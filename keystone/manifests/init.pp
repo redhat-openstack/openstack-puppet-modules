@@ -832,6 +832,7 @@ class keystone(
   }
 
   if $service_name == $::keystone::params::service_name {
+    $service_name_real = $::keystone::params::service_name
     if $validate_service {
       if $validate_auth_url {
         $v_auth_url = $validate_auth_url
@@ -864,6 +865,7 @@ class keystone(
       }
     }
   } elsif $service_name == 'httpd' {
+    include ::apache::params
     class { '::keystone::service':
       ensure       => 'stopped',
       service_name => $::keystone::params::service_name,
@@ -871,6 +873,7 @@ class keystone(
       provider     => $service_provider,
       validate     => false,
     }
+    $service_name_real = $::apache::params::service_name
   } else {
     fail('Invalid service_name. Either keystone/openstack-keystone for running as a standalone service, or httpd for being run by a httpd server')
   }
@@ -963,6 +966,9 @@ class keystone(
       require    => File['/etc/keystone/keystone.conf'],
       notify     => Exec['restart_keystone'],
     }
+    anchor { 'default_domain_created':
+      require => Keystone_domain[$default_domain],
+    }
     # Update this code when https://bugs.launchpad.net/keystone/+bug/1472285 is addressed.
     # 1/ Keystone needs to be started before creating the default domain
     # 2/ Once the default domain is created, we can query Keystone to get the default domain ID
@@ -973,7 +979,7 @@ class keystone(
     if $manage_service and $enabled {
       exec { 'restart_keystone':
         path        => ['/usr/sbin', '/usr/bin', '/sbin', '/bin/'],
-        command     => "service ${service_name} restart",
+        command     => "service ${service_name_real} restart",
         refreshonly => true,
       }
     }

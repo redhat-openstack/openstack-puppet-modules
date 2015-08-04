@@ -14,9 +14,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
         EOS
         # Run it twice and test for idempotency
         apply_manifest(pp, :catch_failures => true)
-        unless fact('selinux') == 'true'
-          apply_manifest(pp, :catch_changes => true)
-        end
+        apply_manifest(pp, :catch_changes => do_catch_changes)
       end
 
       it 'finds the chain' do
@@ -35,9 +33,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
         EOS
         # Run it twice and test for idempotency
         apply_manifest(pp, :catch_failures => true)
-        unless fact('selinux') == 'true'
-          apply_manifest(pp, :catch_changes => true)
-        end
+        apply_manifest(pp, :catch_changes => do_catch_changes)
       end
 
       it 'fails to find the chain' do
@@ -64,7 +60,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
   #    EOS
   #    # Run it twice and test for idempotency
   #    apply_manifest(pp, :catch_failures => true)
-  #    apply_manifest(pp, :catch_changes => true)
+  #    apply_manifest(pp, :catch_changes => do_catch_changes)
   #  end
   #end
 
@@ -85,7 +81,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
   #      expect(r.stdout).to_not match(/removed/)
   #      expect(r.stderr).to eq('')
   #    end
-  #    apply_manifest(pp, :catch_changes => true)
+  #    apply_manifest(pp, :catch_changes => do_catch_changes)
   #  end
 
   #  it 'still has the rule' do
@@ -98,7 +94,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
   #      }
   #    EOS
   #    # Run it twice and test for idempotency
-  #    apply_manifest(pp, :catch_changes => true)
+  #    apply_manifest(pp, :catch_changes => do_catch_changes)
   #  end
   #end
 
@@ -116,9 +112,7 @@ describe 'puppet resource firewallchain command:', :unless => UNSUPPORTED_PLATFO
         EOS
         # Run it twice and test for idempotency
         apply_manifest(pp, :catch_failures => true)
-        unless fact('selinux') == 'true'
-          apply_manifest(pp, :catch_changes => true)
-        end
+        apply_manifest(pp, :catch_changes => do_catch_changes)
       end
 
       it 'finds the chain' do

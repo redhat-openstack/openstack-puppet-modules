@@ -20,6 +20,9 @@
 # [*service_type*]
 #    Type of service. Optional. Defaults to 'share'.
 #
+# [*service_description*]
+#    Description for keystone service. Optional. Defaults to 'Manila Service'.
+#
 # [*region*]
 #    Region for endpoint. Optional. Defaults to 'RegionOne'.
 #
@@ -98,6 +101,7 @@ class manila::keystone::auth (
   $tenant                = 'services',
   $configure_endpoint    = true,
   $service_type          = 'share',
+  $service_description   = 'Manila Service',
   $region                = 'RegionOne',
   $public_url            = 'http://127.0.0.1:8786/v1/%(tenant_id)s',
   $admin_url             = 'http://127.0.0.1:8786/v1/%(tenant_id)s',
@@ -182,7 +186,7 @@ class manila::keystone::auth (
     configure_user_role => true,
     configure_endpoint  => $configure_endpoint,
     service_type        => $service_type,
-    service_description => 'Manila Service',
+    service_description => $service_description,
     region              => $region,
     password            => $password,
     email               => $email,

@@ -113,6 +113,10 @@ class apache::params inherits ::apache::version {
     $mime_support_package = 'mailcap'
     $mime_types_config    = '/etc/mime.types'
     $docroot              = '/var/www/html'
+    $alias_icons_path     = $::apache::version::distrelease ? {
+      '7'     => '/usr/share/httpd/icons',
+      default => '/var/www/icons',
+    }
     $error_documents_path = $::apache::version::distrelease ? {
       '7'     => '/usr/share/httpd/error',
       default => '/var/www/error'
@@ -126,6 +130,7 @@ class apache::params inherits ::apache::version {
     $modsec_crs_package   = 'mod_security_crs'
     $modsec_crs_path      = '/usr/lib/modsecurity.d'
     $modsec_dir           = '/etc/httpd/modsecurity.d'
+    $modsec_secruleengine = 'On'
     $modsec_default_rules = [
       'base_rules/modsecurity_35_bad_robots.data',
       'base_rules/modsecurity_35_scanners.data',
@@ -210,6 +215,7 @@ class apache::params inherits ::apache::version {
     $modsec_crs_package   = 'modsecurity-crs'
     $modsec_crs_path      = '/usr/share/modsecurity-crs'
     $modsec_dir           = '/etc/modsecurity'
+    $modsec_secruleengine = 'On'
     $modsec_default_rules = [
       'base_rules/modsecurity_35_bad_robots.data',
       'base_rules/modsecurity_35_scanners.data',
@@ -233,6 +239,7 @@ class apache::params inherits ::apache::version {
       'base_rules/modsecurity_crs_59_outbound_blocking.conf',
       'base_rules/modsecurity_crs_60_correlation.conf'
     ]
+    $alias_icons_path     = '/usr/share/apache2/icons'
     $error_documents_path = '/usr/share/apache2/error'
     if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '13.10') >= 0) or ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '8') >= 0) {
       $dev_packages        = ['libaprutil1-dev', 'libapr1-dev', 'apache2-dev']
@@ -355,6 +362,7 @@ class apache::params inherits ::apache::version {
     $mime_types_config    = '/usr/local/etc/mime.types'
     $wsgi_socket_prefix   = undef
     $docroot              = '/usr/local/www/apache24/data'
+    $alias_icons_path     = '/usr/local/www/apache24/icons'
     $error_documents_path = '/usr/local/www/apache24/error'
   } elsif $::osfamily == 'Gentoo' {
     $user             = 'apache'
@@ -416,6 +424,7 @@ class apache::params inherits ::apache::version {
     $mime_types_config    = '/etc/mime.types'
     $wsgi_socket_prefix   = undef
     $docroot              = '/var/www/localhost/htdocs'
+    $alias_icons_path     = '/usr/share/apache2/icons'
     $error_documents_path = '/usr/share/apache2/error'
   } elsif $::osfamily == 'Suse' {
     $user                = 'wwwrun'
@@ -462,6 +471,7 @@ class apache::params inherits ::apache::version {
     $mime_types_config    = '/etc/mime.types'
     $docroot              = '/srv/www'
     $cas_cookie_path      = '/var/cache/apache2/mod_auth_cas/'
+    $alias_icons_path     = '/usr/share/apache2/icons'
     $error_documents_path = '/usr/share/apache2/error'
     $dev_packages        = ['libapr-util1-devel', 'libapr1-devel']
 

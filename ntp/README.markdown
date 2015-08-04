@@ -152,9 +152,13 @@ Specifies a file to act as a template for the config file. Valid options: string
 Do  not  require cryptographic authentication for broadcast client, multicast 
 client and symmetric passive associations.
 
+####`disable_auth`
+
+Disable kernel time discipline.
+
 ####`disable_monitor`
 
-Tells Puppet whether to refrain from monitoring the NTP service. Valid options: 'true' or 'false'. Default value: 'false'
+Disables the monitoring facility in NTP. Valid options: 'true' or 'false'. Default value: 'false'
 
 ####`driftfile`
 
@@ -277,6 +281,30 @@ Tells Puppet what NTP service to manage. Valid options: string. Default value: v
 
 Tells puppet to change stepout. Applies only if `tinker` value is 'true'. Valid options: unsigned shortint digit. Default value: undef.
 
+####`tos`
+
+Tells Puppet to enable tos options. Valid options: 'true' of 'false'. Default value: 'false'
+
+####`tos_minclock`
+
+Specifies the minclock tos option. Valid options: numeric. Default value: 3
+
+####`tos_minsane`
+
+Specifies the minsane tos option. Valid options: numeric. Default value: 1
+
+####`tos_floor`
+
+Specifies the floor tos option. Valid options: numeric. Default value: 1
+
+####`tos_ceiling`
+
+Specifies the ceiling tos option. Valid options: numeric. Default value: 15
+
+####`tos_cohort`
+
+Specifies the cohort tos option. Valid options: '0' or '1'. Default value: 0
+
 ####`tinker`
 
 Tells Puppet to enable tinker options. Valid options: 'true' of 'false'. Default value: 'false'
@@ -291,7 +319,7 @@ Specifies the stratum the server should operate at when using the undisciplined 
 
 ##Limitations
 
-This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix), and no issues have been identified.
+This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix), and no issues have been identified. Additionally, it is tested (but not supported) on Solaris 10 and Fedora 20-22.
 
 ##Development
 

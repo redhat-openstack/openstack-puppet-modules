@@ -1,7 +1,10 @@
 ---
 language: ruby
 bundler_args: --without system_tests
-script: "bundle exec rake spec SPEC_OPTS='--format documentation'"
+script: "bundle exec metadata-json-lint --strict-license --fail-on-warnings metadata.json && bundle exec rake spec SPEC_OPTS='--format documentation'"
+
+sudo: false
+
 rvm:
   - 1.8.7
   - 1.9.3

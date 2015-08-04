@@ -132,11 +132,9 @@ Rules are persisted automatically between reboots, although there are known issu
 
 1.) In site.pp or another top-scope file, add the following code to set up a metatype to purge unmanaged firewall resources. This will clear any existing rules and make sure that only rules defined in Puppet exist on the machine.
 
-  **Note** - This only purges IPv4 rules.
-  
   ~~~puppet
   resources { 'firewall':
-    purge => true
+    purge => true,
   }
   ~~~
 
@@ -144,7 +142,7 @@ Rules are persisted automatically between reboots, although there are known issu
 
   ~~~puppet
   resources { 'firewallchain':
-    purge => true
+    purge => true,
   }
   ~~~
   
@@ -198,17 +196,17 @@ In iptables, the title of the rule is stored using the comment feature of the un
 Basic accept ICMP request example:
 
 ~~~puppet
-firewall { "000 accept all icmp requests":
-  proto  => "icmp",
-  action => "accept",
+firewall { '000 accept all icmp requests':
+  proto  => 'icmp',
+  action => 'accept',
 }
 ~~~
 
 Drop all:
 
 ~~~puppet
-firewall { "999 drop all other requests":
-  action => "drop",
+firewall { '999 drop all other requests':
+  action => 'drop',
 }
 ~~~
 
@@ -217,7 +215,7 @@ firewall { "999 drop all other requests":
 IPv6 rules can be specified using the _ip6tables_ provider:
 
 ~~~puppet
-firewall { "006 Allow inbound SSH (v6)":
+firewall { '006 Allow inbound SSH (v6)':
   port     => 22,
   proto    => tcp,
   action   => accept,
@@ -279,7 +277,7 @@ You can apply firewall rules to specific nodes. Usually, you will want to put th
 ~~~puppet
 node 'some.node.com' {
   firewall { '111 open port 111':
-    dport => 111
+    dport => 111,
   }
 }
 ~~~
@@ -291,7 +289,7 @@ firewall { '100 snat for network foo2':
   chain    => 'POSTROUTING',
   jump     => 'MASQUERADE',
   proto    => 'all',
-  outiface => "eth0",
+  outiface => 'eth0',
   source   => '10.1.2.0/24',
   table    => 'nat',
 }
@@ -576,7 +574,7 @@ If Puppet is managing the iptables or iptables-persistent packages, and the prov
 
 * `islastfrag`: If true, matches when the packet is the last fragment of a fragmented ipv6 packet. Supported by ipv6 only. Valid values are 'true', 'false'. Requires the `islastfrag`.
 
-* `jump`: The value for the iptables `--jump` parameter. Any valid chain name is allowed, but normal values are: 'QUEUE', 'RETURN', 'DNAT', 'SNAT', 'LOG', 'MASQUERADE', 'REDIRECT', 'MARK', 'TCPMSS'.
+* `jump`: The value for the iptables `--jump` parameter. Any valid chain name is allowed, but normal values are: 'QUEUE', 'RETURN', 'DNAT', 'SNAT', 'LOG', 'MASQUERADE', 'REDIRECT', 'MARK', 'TCPMSS', 'DSCP'.
 
   For the values 'ACCEPT', 'DROP', and 'REJECT', you must use the generic `action` parameter. This is to enforce the use of generic parameters where possible for maximum cross-platform modeling.
 
@@ -688,6 +686,10 @@ firewall { '101 blacklist strange traffic':
 * `rsource`: If boolean 'true', adds the source IP address to the list. Valid values are 'true', 'false'. Requires the `recent_limiting` feature and the `recent` parameter.
 
 * `rttl`: May only be used in conjunction with `recent => 'rcheck'` or `recent => 'update'`. If boolean 'true', this will narrow the match to happen only when the address is in the list and the TTL of the current packet matches that of the packet that hit the `recent => 'set'` rule. If you have problems with DoS attacks via bogus packets from fake source addresses, this parameter may help. Valid values are 'true', 'false'. Requires the `recent_limiting` feature and the `recent` parameter.
+
+* `set_dscp`: When combined with `jump => 'DSCP'` specifies the dscp marking associated with the packet.
+
+* `set_dscp_class`: When combined with `jump => 'DSCP'` specifies the class associated with the packet (valid values found here: http://www.cisco.com/c/en/us/support/docs/quality-of-service-qos/qos-packet-marking/10103-dscpvalues.html#packetclassification).
 
 * `set_mark`: Set the Netfilter mark value associated with the packet. Accepts either  'mark/mask' or 'mark'. These will be converted to hex if they are not already. Requires the `mark` feature.
 
@@ -812,7 +814,7 @@ firewallchain { 'INPUT:filter:IPv4':
 
 ~~~puppet
 resources { 'firewallchain':
-  purge => true
+  purge => true,
 }
 ~~~
 

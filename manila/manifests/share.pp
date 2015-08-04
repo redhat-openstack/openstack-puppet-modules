@@ -35,6 +35,7 @@ class manila::share (
     package { 'manila-share':
       ensure => $package_ensure,
       name   => $::manila::params::share_package,
+      tag    => ['openstack', 'manila-package'],
     }
   }
 
@@ -52,5 +53,6 @@ class manila::share (
     enable    => $enabled,
     hasstatus => true,
     require   => Package['manila'],
+    tag       => 'manila-service',
   }
 }

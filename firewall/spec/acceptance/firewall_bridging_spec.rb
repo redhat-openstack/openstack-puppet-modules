@@ -26,9 +26,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -52,9 +50,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -79,9 +75,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -105,9 +99,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -132,9 +124,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -159,9 +149,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -187,9 +175,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
           EOS
 
           apply_manifest(pp, :catch_failures => true)
-          unless fact('selinux') == 'true'
-            apply_manifest(pp, :catch_changes => true)
-          end
+          apply_manifest(pp, :catch_changes => do_catch_changes)
         end
 
         it 'should contain the rule' do
@@ -202,7 +188,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
     end
 
     #iptables version 1.3.5 is not suppored by the ip6tables provider
-    if default['platform'] !~ /el-5/
+    if default['platform'] !~ /el-5/ and default['platform'] !~ /sles-10/
       describe 'ip6tables physdev tests' do
         context 'physdev_in eth0' do
           it 'applies' do
@@ -219,9 +205,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -246,9 +230,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -274,9 +256,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -301,9 +281,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -329,9 +307,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -357,9 +333,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -386,9 +360,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do

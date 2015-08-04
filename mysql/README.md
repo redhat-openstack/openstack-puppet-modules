@@ -146,6 +146,21 @@ mysql::db { 'mydb':
 To add custom MySQL configuration, drop additional files into
 `includedir`. Dropping files into `includedir` allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The `includedir` location is by default set to /etc/mysql/conf.d.
 
+###Working with an existing server
+
+It is possible to use the MySQL module to instantiate databases and
+users on an existing MySQL server.  For this to work, you will need an
+appropriate `.my.cnf` in `root`'s home directory containing the remote
+server address and credentials.  For example:
+
+    [client]
+    user=root
+    host=localhost
+    password=secret
+
+When working with a remote server, you will *not* use the
+`mysql::server` class in your Puppet manifests.
+
 ##Reference
 
 ###Classes
@@ -804,6 +819,7 @@ This module has been tested on:
 * Ubuntu 10.04, 12.04, 14.04
 * Scientific Linux 5, 6
 * SLES 11
+* Solaris 11.2, 11.3, 12.0
 
 Testing on other platforms has been minimal and cannot be guaranteed.
 

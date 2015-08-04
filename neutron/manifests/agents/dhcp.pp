@@ -80,7 +80,8 @@ class neutron::agents::dhcp (
   $dnsmasq_config_file    = undef,
   $dhcp_delete_namespaces = false,
   $enable_isolated_metadata = false,
-  $enable_metadata_network  = false
+  $enable_metadata_network  = false,
+  $dhcp_broadcast_reply   = false
 ) {
 
   include ::neutron::params
@@ -123,6 +124,7 @@ class neutron::agents::dhcp (
     'DEFAULT/use_namespaces':         value => $use_namespaces;
     'DEFAULT/root_helper':            value => $root_helper;
     'DEFAULT/dhcp_delete_namespaces': value => $dhcp_delete_namespaces;
+    'DEFAULT/dhcp_broadcast_reply':   value => $dhcp_broadcast_reply;
   }
 
   if $dnsmasq_config_file {
@@ -142,7 +144,7 @@ class neutron::agents::dhcp (
     package { 'neutron-dhcp-agent':
       ensure => $package_ensure,
       name   => $::neutron::params::dhcp_agent_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'neutron-package'],
     }
   } else {
     # Some platforms (RedHat) do not provide a neutron DHCP agent package.
@@ -163,5 +165,6 @@ class neutron::agents::dhcp (
     name    => $::neutron::params::dhcp_agent_service,
     enable  => $enabled,
     require => Class['neutron'],
+    tag     => 'neutron-service',
   }
 }

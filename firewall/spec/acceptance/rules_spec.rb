@@ -140,12 +140,20 @@ describe 'complex ruleset 2' do
         ],
       }
 
+      firewall { '001 ssh needed for beaker testing':
+        proto   => 'tcp',
+        dport   => '22',
+        action  => 'accept',
+        before => Firewallchain['INPUT:filter:IPv4'],
+      }
+
       firewall { '010 INPUT allow established and related':
         proto  => 'all',
         state  => ['ESTABLISHED', 'RELATED'],
         action => 'accept',
         before => Firewallchain['INPUT:filter:IPv4'],
       }
+
       firewall { "011 reject local traffic not on loopback interface":
         iniface     => '! lo',
         proto       => 'all',
@@ -164,6 +172,7 @@ describe 'complex ruleset 2' do
         action => 'accept',
         before => Firewallchain['INPUT:filter:IPv4'],
       }
+
       firewall { '025 smtp':
         outiface => '! eth0:2',
         chain    => 'OUTPUT',
@@ -194,10 +203,6 @@ describe 'complex ruleset 2' do
         state   => 'NEW',
         action  => 'accept',
         iniface => 'eth0:3',
-      }
-      firewall { '999 reject':
-        action => 'reject',
-        reject => 'icmp-host-prohibited',
       }
 
       firewallchain { 'LOCAL_INPUT_PRE:filter:IPv4': }
@@ -242,9 +247,7 @@ describe 'complex ruleset 2' do
 
     # Run it twice and test for idempotency
     apply_manifest(pp, :catch_failures => true)
-    unless fact('selinux') == 'true'
-      apply_manifest(pp, :catch_changes => true)
-    end
+    apply_manifest(pp, :catch_changes => do_catch_changes)
   end
 
   it 'contains appropriate rules' do
@@ -263,10 +266,10 @@ describe 'complex ruleset 2' do
         /-A INPUT -s 10.0.0.0\/(8|255\.0\.0\.0) -p icmp -m comment --comment \"013 icmp echo-request\" -m icmp --icmp-type 8 -j ACCEPT/,
         /-A INPUT -p icmp -m comment --comment \"013 icmp time-exceeded\" -m icmp --icmp-type 11 -j ACCEPT/,
         /-A INPUT -p tcp -m multiport --dports 22 -m comment --comment \"020 ssh\" -m state --state NEW -j ACCEPT/,
+        /-A INPUT -p tcp -m multiport --dports 22 -m comment --comment \"001 ssh needed for beaker testing\" -j ACCEPT/,
         /-A OUTPUT (! -o|-o !) eth0:2 -p tcp -m multiport --dports 25 -m comment --comment \"025 smtp\" -m state --state NEW -j ACCEPT/,
         /-A INPUT -i eth0:3 -p tcp -m multiport --dports 443 -m comment --comment \"443 ssl on aliased interface\" -m state --state NEW -j ACCEPT/,
         /-A INPUT -m comment --comment \"900 LOCAL_INPUT\" -j LOCAL_INPUT/,
-        /-A INPUT -m comment --comment \"999 reject\" -j REJECT --reject-with icmp-host-prohibited/,
         /-A FORWARD -m comment --comment \"010 allow established and related\" -m state --state RELATED,ESTABLISHED -j ACCEPT/
       ].each do |line|
         expect(r.stdout).to match(line)

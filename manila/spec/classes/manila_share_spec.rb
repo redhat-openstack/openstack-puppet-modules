@@ -9,10 +9,12 @@ describe 'manila::share' do
 
     it { is_expected.to contain_package('manila-share').with(
       :name   => platform_params[:package_name],
-      :ensure => 'present'
+      :ensure => 'present',
+      :tag    => ['openstack', 'manila-package'],
     ) }
     it { is_expected.to contain_service('manila-share').with(
-      'hasstatus' => true
+      'hasstatus' => true,
+      'tag'       => 'manila-service',
     )}
 
     describe 'with manage_service false' do

@@ -15,6 +15,7 @@ class rabbitmq(
   $erlang_cookie              = $rabbitmq::params::erlang_cookie,
   $interface                  = $rabbitmq::params::interface,
   $management_port            = $rabbitmq::params::management_port,
+  $management_ssl             = $rabbitmq::params::management_ssl,
   $node_ip_address            = $rabbitmq::params::node_ip_address,
   $package_apt_pin            = $rabbitmq::params::package_apt_pin,
   $package_ensure             = $rabbitmq::params::package_ensure,
@@ -101,9 +102,7 @@ class rabbitmq(
   }
   validate_bool($wipe_db_on_cookie_change)
   validate_bool($tcp_keepalive)
-  if ! is_integer($file_limit) {
-    validate_re($file_limit, '^(unlimited|infinity)$', '$file_limit must be an integer, \'unlimited\', or \'infinity\'.')
-  }
+  validate_re($file_limit, '^(\d+|-1|unlimited|infinity)$', '$file_limit must be a positive integer, \'-1\', \'unlimited\', or \'infinity\'.')
   # Validate service parameters.
   validate_re($service_ensure, '^(running|stopped)$')
   validate_bool($service_manage)

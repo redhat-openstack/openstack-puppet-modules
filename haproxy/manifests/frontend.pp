@@ -77,7 +77,7 @@ define haproxy::frontend (
     ],
   },
   # Deprecated
-  $bind_options     = '',
+  $bind_options     = undef,
 ) {
 
   if $ports and $bind {

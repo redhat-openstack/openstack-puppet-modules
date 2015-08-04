@@ -21,7 +21,7 @@
 #   $cps            - optional
 #   $flags          - optional
 #   $per_source     - optional
-#   $port           - required - determines the service port
+#   $port           - optional - determines the service port (required if service is not listed in /etc/services)
 #   $server         - required - determines the program to execute for this service
 #   $server_args    - optional
 #   $disable        - optional - defaults to "no"
@@ -62,8 +62,8 @@
 #   } # xinetd::service
 #
 define xinetd::service (
-  $port,
   $server,
+  $port                    = undef,
   $ensure                  = present,
   $log_on_success          = undef,
   $log_on_success_operator = '+=',

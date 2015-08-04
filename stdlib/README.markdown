@@ -99,6 +99,7 @@ All parameters are optional, unless otherwise noted.
 * `multiple`: Determines if `match` and/or `after` can change multiple lines. If set to false, an exception will be raised if more than one line matches. Valid options: 'true', 'false'. Default: Undefined.
 * `name`: Sets the name to use as the identity of the resource. This is necessary if you want the resource namevar to differ from the supplied `title` of the resource. Valid options: String. Default: Undefined.
 * `path`: **Required.** Defines the file in which Puppet will ensure the line specified by `line`. Must be an absolute path to the file.
+* `replace`: Defines whether the resource will overwrite an existing line that matches the `match` parameter. If set to false and a line is found matching the `match` param, the line will not be placed in the file. Valid options: true, false, yes, no. Default: true
 
 
 ### Functions
@@ -212,7 +213,7 @@ Takes a list of packages and only installs them if they don't already exist. It 
 
 #### `ensure_resource`
 
-Takes a resource type, title, and a list of attributes that describe a resource.
+Takes a resource type, title, and a hash of attributes that describe the resource(s).
 
 ~~~
 user { 'dan':
@@ -449,6 +450,17 @@ Loads a YAML file containing an array, string, or hash, and returns the data in 
 
 *Type*: rvalue.
 
+#### `load_module_metadata`
+
+Loads the metadata.json of a target module. Can be used to determine module version and authorship for dynamic support of modules.
+
+  ~~~
+  $metadata = load_module_metadata('archive')
+  notify { $metadata['author']: }
+  ~~~
+
+*Type*: rvalue.
+
 #### `lstrip`
 
 Strips spaces to the left of a string. *Type*: rvalue.
@@ -578,7 +590,7 @@ Randomizes the order of a string or array elements. *Type*: rvalue.
 
 #### `size`
 
-Returns the number of elements in a string or an array. *Type*: rvalue.
+Returns the number of elements in a string, an array or a hash. *Type*: rvalue.
 
 #### `sort`
 
@@ -888,7 +900,7 @@ Validates that the first argument is an integer (or an array of integers). Abort
 
   * Plus all of the above, but any combination of values passed as strings ('false' or "false").
   * Plus all of the above, but with incorrect combinations of negative integer values.
-  * Plus all of the above, but with non-integer crap in arrays or maximum / minimum argument.
+  * Plus all of the above, but with non-integer items in arrays or maximum / minimum argument.
 
   *Type*: statement.
 
@@ -938,13 +950,14 @@ test, and the second argument should be a stringified regular expression (withou
 
 #### `validate_slength`
 
-Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.
+Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.  Optionally, a minimum string length can be given as the third argument.
 
   The following values pass:
 
   ~~~
   validate_slength("discombobulate",17)
   validate_slength(["discombobulate","moo"],17)
+  validate_slength(["discombobulate","moo"],17,3)
   ~~~
 
   The following values fail:
@@ -952,6 +965,7 @@ Validates that the first argument is a string (or an array of strings), and is l
   ~~~
   validate_slength("discombobulate",1)
   validate_slength(["discombobulate","thermometer"],5)
+  validate_slength(["discombobulate","moo"],17,10)
   ~~~
 
 *Type*: statement.
@@ -1019,6 +1033,7 @@ Versions | Puppet 2.6 | Puppet 2.7 | Puppet 3.x | Puppet 4.x |
 **stdlib 2.x**  | **yes** | **yes** | no | no
 **stdlib 3.x**  | no    | **yes**  | **yes** | no
 **stdlib 4.x**  | no    | **yes**  | **yes** | no
+**stdlib 4.6+**  | no    | **yes**  | **yes** | **yes**
 **stdlib 5.x**  | no    | no  | **yes**  | **yes**
 
 **stdlib 5.x**: When released, stdlib 5.x will drop support for Puppet 2.7.x. Please see [this discussion](https://github.com/puppetlabs/puppetlabs-stdlib/pull/176#issuecomment-30251414).

@@ -82,6 +82,7 @@ define apache::vhost(
   $rack_base_uris              = undef,
   $headers                     = undef,
   $request_headers             = undef,
+  $filters                     = undef,
   $rewrites                    = undef,
   $rewrite_base                = undef,
   $rewrite_rule                = undef,
@@ -106,6 +107,7 @@ define apache::vhost(
   $fastcgi_socket              = undef,
   $fastcgi_dir                 = undef,
   $additional_includes         = [],
+  $use_optional_includes       = $::apache::use_optional_includes,
   $apache_version              = $::apache::apache_version,
   $allow_encoded_slashes       = undef,
   $suexec_user_group           = undef,
@@ -148,7 +150,7 @@ define apache::vhost(
   # Input validation begins
 
   if $suexec_user_group {
-    validate_re($suexec_user_group, '^\w+ \w+$',
+    validate_re($suexec_user_group, '^[\w-]+ [\w-]+$',
     "${suexec_user_group} is not supported for suexec_user_group.  Must be 'user group'.")
   }
 
@@ -395,6 +397,13 @@ define apache::vhost(
   if $headers or $request_headers {
     if ! defined(Class['apache::mod::headers']) {
       include ::apache::mod::headers
+    }
+  }
+
+  # Check if mod_filter is required to process $filters
+  if $filters {
+    if ! defined(Class['apache::mod::filter']) {
+      include ::apache::mod::filter
     }
   }
 
@@ -879,6 +888,16 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 320,
       content => template('apache/vhost/_security.erb')
+    }
+  }
+
+  # Template uses:
+  # - $filters
+  if $filters and ! empty($filters) {
+    concat::fragment { "${name}-filters":
+      target  => "${priority_real}${filename}.conf",
+      order   => 330,
+      content => template('apache/vhost/_filters.erb'),
     }
   }
 

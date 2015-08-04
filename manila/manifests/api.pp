@@ -109,6 +109,7 @@ class manila::api (
     package { 'manila-api':
       ensure => $package_ensure,
       name   => $::manila::params::api_package,
+      tag    => ['openstack', 'manila-package'],
     }
   }
 
@@ -139,6 +140,7 @@ class manila::api (
     enable    => $enabled,
     hasstatus => true,
     require   => Package['manila'],
+    tag       => 'manila-service',
   }
 
   manila_config {

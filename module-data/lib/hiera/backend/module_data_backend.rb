@@ -13,7 +13,7 @@ class Hiera
       def load_module_config(module_name, environment)
         default_config = {:hierarchy => ["common"]}
 
-        mod = Puppet::Module.find(module_name) unless Puppet::Module.find(module_name, environment)
+        mod = Puppet::Module.find(module_name, environment) || Puppet::Module.find(module_name)
 
         return default_config unless mod
 
@@ -36,7 +36,7 @@ class Hiera
 
         @cache.read(path, Hash, {}) do |data|
           if path.end_with? "/hiera.yaml"
-            YAML.load(data, deserialize_symbols: true)
+            YAML.load(data, :deserialize_symbols => true)
           else
             YAML.load(data)
           end
