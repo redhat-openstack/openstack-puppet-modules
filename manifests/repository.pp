@@ -25,7 +25,12 @@
 # [*midonet_key*]
 #   Midonet GPG key for validate packages. Only override it if you use a
 #   different fork of Midonet.
-#
+# [*manage_distro_repo*}
+#   Choose whether or not to manage the distros' OpenStack repositories (e.g. RDO).
+#   Defaults to true
+# [*manage_epel_repo*]
+#   Choose whether or not to manage EPEL under CentOS.
+#   Defaults to true
 # === Examples
 #
 # The easiest way to run the class is:
@@ -46,6 +51,8 @@
 #         midonet_key             => '50F18FCF',
 #         midonet_stage           => 'stable',
 #         midonet_key_url         => 'http://repo.midonet.org/packages.midokura.key',
+#         manage_distro_repo      => true,
+#         manage_epel_repo        => true,
 #         openstack_release       => 'juno'
 #     }
 #
@@ -57,6 +64,8 @@
 #     midonet::repository::midonet_key: '50F18FCF'
 #     midonet::repository::midonet_stage: 'stable'
 #     midonet::repository::midonet_key_url: 'http://repo.midonet.org/packages.midokura.key'
+#     midonet::repository::midonet_distro_repo: true
+#     midonet::repository::midonet_epel_repo: true
 #     midonet::repository::openstack_release: 'juno'
 #
 #
@@ -85,9 +94,11 @@ class midonet::repository (
     $midonet_openstack_repo,
     $midonet_thirdparty_repo,
     $midonet_stage,
-    $openstack_release,
     $midonet_key_url,
-    $midonet_key=unset) {
+    $midonet_key=unset,
+    $manage_distro_repo=true,
+    $manage_epel_repo=true,
+    $openstack_release,) {
 
     case $::osfamily {
         'Debian': {
@@ -96,9 +107,9 @@ class midonet::repository (
                 midonet_openstack_repo  => $midonet_openstack_repo,
                 midonet_thirdparty_repo => $midonet_thirdparty_repo,
                 midonet_stage           => $midonet_stage,
-                openstack_release       => $openstack_release,
                 midonet_key_url         => $midonet_key_url,
-                midonet_key             => $midonet_key
+                midonet_key             => $midonet_key,
+                openstack_release       => $openstack_release
             }
         }
 
@@ -108,8 +119,10 @@ class midonet::repository (
                 midonet_openstack_repo  => $midonet_openstack_repo,
                 midonet_thirdparty_repo => $midonet_thirdparty_repo,
                 midonet_stage           => $midonet_stage,
-                openstack_release       => $openstack_release,
-                midonet_key_url         => $midonet_key_url
+                midonet_key_url         => $midonet_key_url,
+                manage_distro_repo      => $manage_distro_repo,
+                manage_epel_repo        => $manage_epel_repo,
+                openstack_release       => $openstack_release
             }
         }
 
