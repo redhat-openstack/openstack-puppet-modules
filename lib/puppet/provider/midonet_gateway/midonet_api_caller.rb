@@ -41,6 +41,18 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
       call_add_bgp_to_port(port_id, message)
     end
 
+    # Add route for 'MidoNet Provider Router' uplink port
+    message = Hash.new
+    message['type'] = "normal"
+    message['srcNetworkAddr'] = "0.0.0.0"
+    message['srcNetworkLength'] = 0
+    message['dstNetworkAddr'] = resource[:bgp_port]["net_prefix"]
+    message['dstNetworkLength'] = resource[:bgp_port]["net_length"].to_i
+    message['weight'] = 100
+    message['nextHopPort'] = port_id
+
+    call_add_route_for_uplink_port(router_id, message)
+
     # In order to provide external connectivity for hosted
     # virtual machines, the floating IP network has to be
     # advertised to the BGP peers. BGP connection is assumed created
@@ -223,6 +235,14 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
     end
   end
 
+  def call_add_route_for_uplink_port(router_id, message)
+    res = @connection.post do |req|
+      req.url "/midonet-api/routers/#{router_id}/routes"
+      req.headers['Content-Type'] = "application/vnd.org.midonet.Route-v1+json"
+      req.body = message.to_json
+    end
+  end
+
   def call_get_bgp_connections(port_id)
     res = @connection.get do |req|
       req.url "/midonet-api/ports/#{port_id}/bgps"
@@ -272,6 +292,7 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
 
   private :call_add_bgp_to_port
           :call_add_ports_to_port_group
+          :call_add_route_for_uplink_port
           :call_advertise_route_to_bgp
           :call_bind_port_to_interface
           :call_create_stateful_port_group

@@ -102,6 +102,7 @@ describe Puppet::Type.type(:midonet_gateway).provider(:midonet_api_caller) do
       allow(provider).to receive(:call_unbind_port_from_interface)
       allow(provider).to receive(:call_remove_ports_from_port_group)
       allow(provider).to receive(:call_get_uplink_port).and_return(ports)
+      allow(provider).to receive(:call_add_route_for_uplink_port)
       allow(provider).to receive(:call_get_token).and_return('thisisafaketoken')
       allow(provider).to receive(:call_get_tenant).and_return(tenants)
     end
@@ -121,6 +122,13 @@ describe Puppet::Type.type(:midonet_gateway).provider(:midonet_api_caller) do
       expect(provider).to receive(:call_add_bgp_to_port).with(ports[0]['id'], {'localAS'  => resource[:local_as],
                                                                                'peerAS'   => resource[:remote_peers][1]['as'],
                                                                                'peerAddr' => resource[:remote_peers][1]['ip']}).once
+      expect(provider).to receive(:call_add_route_for_uplink_port).with(routers[0]['id'], {'type'             => 'normal',
+                                                                                           'srcNetworkAddr'   => '0.0.0.0',
+                                                                                           'srcNetworkLength' => 0,
+                                                                                           'dstNetworkAddr'   => resource[:bgp_port]['net_prefix'],
+                                                                                           'dstNetworkLength' => resource[:bgp_port]['net_length'].to_i,
+                                                                                           'weight'           => 100,
+                                                                                           'nextHopPort'      => ports[0]['id']})
       expect(provider).to receive(:call_advertise_route_to_bgp).with(bgps[0]['id'], {'nwPrefix'     => resource[:advertise_net][0]['net_prefix'],
                                                                                      'prefixLength' => resource[:advertise_net][0]['net_length']}).once
       expect(provider).to receive(:call_bind_port_to_interface).with(hosts[0]['id'], {'interfaceName' => resource[:interface],
