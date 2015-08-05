@@ -28,8 +28,11 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
 
     # Configure BGP on the virtual ports. Port is
     # assumed created
-
-    resource[:remote_peers].each do |rp|
+    remote_peers = resource[:remote_peers]
+    if remote_peers.class == Hash
+       remote_peers = [remote_peers]
+    end
+    remote_peers.each do |rp|
       message = Hash.new
       message['localAS'] = resource[:local_as]
       message['peerAS'] = rp["as"]

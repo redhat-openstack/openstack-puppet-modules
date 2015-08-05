@@ -87,7 +87,7 @@ Puppet::Type.newtype(:midonet_gateway) do
   newparam(:local_as) do
     desc "Local AS number"
     validate do |value|
-      unless value =~ /\d{5}/
+      unless value =~ /\d+/
         raise ArgumentError, "'%s' is not a valid AS" % value
       end
     end
@@ -95,9 +95,13 @@ Puppet::Type.newtype(:midonet_gateway) do
 
   newparam(:remote_peers) do
     desc "#to be filled"
+    defaultto []
     validate do |value|
+      if value.class == Hash
+        value = [value]
+      end
       value.each do |rp|
-        unless rp["as"] =~ /\d{5}/
+        unless rp["as"] =~ /\d+/
           raise ArgumentError, "'%s' is not a valid AS name" % rp["as"]
         end
         unless rp["ip"] =~ /^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))$/
