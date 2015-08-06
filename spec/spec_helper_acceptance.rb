@@ -18,6 +18,7 @@ RSpec.configure do |c|
     hosts.each do |host|
       copy_module_to(host, :source => proj_root, :module_name => 'midonet')
       scp_to(host, proj_root + '/data/hiera.yaml', "#{default['puppetpath']}/hiera.yaml")
+      on host, 'mkdir -p /var/lib/hiera'
       scp_to(host, proj_root + '/data/common.yaml', "/var/lib/hiera")
       scp_to(host, proj_root + '/data/osfamily', "/var/lib/hiera")
 
