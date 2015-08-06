@@ -1,6 +1,6 @@
 ---
 # Repository-based attributes
-midonet::repository::midonet_repo: 'http://repo.midonet.org/midonet/v2015.03'
+midonet::repository::midonet_repo: 'http://repo.midonet.org/midonet/v2015.06'
 midonet::repository::midonet_thirdparty_repo: 'http://repo.midonet.org/misc'
 midonet::repository::midonet_key: '35FEEF2BAD40EA777D0C5BA6FCE340D250F18FCF'
 midonet::repository::midonet_stage: 'stable'
