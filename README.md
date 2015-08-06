@@ -36,7 +36,7 @@ docs](http://docs.midonet.org/docs/latest/reference-architecture/content/index.h
 
 ### What midonet affects
 
-* This module affects the respository sources of the target system as well as
+* This module affects the repository sources of the target system as well as
   new packages and their configuration files.
 
 ### Beginning with midonet
@@ -127,13 +127,12 @@ This is a quite naive deployment, just for demo purposes. A more realistic one
 would be:
 
     class {'midonet::midonet_agent':
-        zk_servers              =>  [{'ip'   => 'host1',
-                                      'port' => '2183'},
-                                    {'ip'   => 'host2'}],
-       cassandra_seeds         =>  ['host1', 'host2', 'host3']
+      cassandra_seeds => ['host1', 'host2', 'host3'],
+      zk_servers      => [{'ip'   => 'host1', 'port' => '2183'},
+                          {'ip'   => 'host2', 'port' => '2181'}]
     }
 
-Please note that Zookeeper port is not mandatory and defaulted to 2181
+Please note that Zookeeper port's value is not mandatory and it's already defaulted to 2181
 
 You can alternatively use the Hiera's yaml style:
 
@@ -141,6 +140,7 @@ You can alternatively use the Hiera's yaml style:
         - ip: 'host1'
           port: 2183
         - ip: 'host2'
+          port: 2181
     midonet::midonet_agent::cassandra_seeds:
         - 'host1'
         - 'host2'
@@ -163,16 +163,15 @@ This is a quite naive deployment, just for demo purposes. A more realistic one
 would be:
 
     class {'midonet::midonet_api':
-        zk_servers           =>  [{'ip'   => 'host1',
-                             'port' => '2183'},
-                            {'ip'   => 'host2'}],
+        zk_servers           =>  [{'ip'   => 'host1', 'port' => '2183'},
+                                  {'ip'   => 'host2', 'port' => '2181'}],
         keystone_auth        => true,
         vtep                 => true,
         api_ip               => '92.234.12.4',
         keystone_host        => '92.234.12.9',
-        keystone_port        => 35357  (35357 is already the default)
+        keystone_port        => '35357', # Note: (35357 is already the default)
         keystone_admin_token => 'arrakis',
-        keystone_tenant_name => 'other-than-services' ('services' by default)
+        keystone_tenant_name => 'other-than-services' # Note: ('services' by default)
     }
 
 You can alternatively use the Hiera's yaml style:
@@ -181,6 +180,7 @@ You can alternatively use the Hiera's yaml style:
         - ip: 'host1'
           port: 2183
         - ip: 'host2'
+          port: 2181
     midonet::midonet_api::vtep: true
     midonet::midonet_api::keystone_auth: true
     midonet::midonet_api::api_ip: '92.234.12.4'
@@ -197,7 +197,7 @@ Install the MidonetCLI this way:
 
     include midonet::midonet_cli
 
-Module does not configure the ~/.midonetrc file that `python-midonetlcinet` needs to run right now. Please, check out how to configure the midonet client [here](http://docs.midonet.org/docs/latest/quick-start-guide/rhel-7_juno-rdo/content/_midonet_cli_installation.html)
+Module does not configure the ~/.midonetrc file that `python-midonetclient` needs to run. Please, check out how to configure the midonet client [here](http://docs.midonet.org/docs/latest/quick-start-guide/rhel-7_juno-rdo/content/_midonet_cli_installation.html)
 
 #### Neutron Plugin
 
@@ -212,7 +212,7 @@ The easiest way to run this class is:
     include midonet::neutron_plugin
 
 Although it is quite useless: it assumes that there is a Neutron server already
-configured and a MidoNet API running localhost with Mock authentication.
+configured and a MidoNet API running at localhost with Mock authentication.
 
 A more advanced call would be:
 
@@ -239,7 +239,7 @@ This module supports:
   * CentOS 6.6
   * CentOS 7
 
-This module has been tested in Puppet 3.7.3 version, but we belive that it
+This module has been tested in Puppet 3.7.3 version, but we believe that it
 should work without problems in any Puppet 3.x version.
 
 ## Development
@@ -247,7 +247,7 @@ should work without problems in any Puppet 3.x version.
 We happily will accept patches and new ideas to improve this module. Clone
 MidoNet's puppet repo in:
 
-    git clone http://github.com/midonet/arrakis
+    git clone https://github.com/midonet/puppet-midonet.git
 
 and send patches via:
 
@@ -255,7 +255,7 @@ and send patches via:
 
 You can see the state of the patch in:
 
-    https://review.gerrithub.io/#/q/status:open+project:midonet/arrakis
+    https://review.gerrithub.io/#/q/status:open+project:midonet/puppet-midonet
 
 We are using a Gerrit's rebase-based branching policy. So please, submit a
 single commit per change. If a commit has been rejected, do the changes you need
@@ -263,11 +263,12 @@ to do and squash your changes with the previous patch:
 
     git commit --amend
 
-We are using kitchen (http://kitchen.ci) for integration testing and puppet-lint
-for syntax code convention. To test the module before send a patch, execute:
+We are using beaker for integration testing, puppet-lint for syntax code convention and
+rspec por unit testing. To test the module before send a patch, execute:
 
     $ rake lint
-    $ rake test
+    $ rake spec
+    $ rake beaker
 
 inside the `midonet-midonet` directory
 
