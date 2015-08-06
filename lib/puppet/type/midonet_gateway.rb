@@ -17,7 +17,7 @@ Puppet::Type.newtype(:midonet_gateway) do
            remote_peers        => [ { 'as' => '64513', 'ip' => '198.51.100.1' },
                                     { 'as' => '64513', 'ip' => '203.0.113.1' } ],
            advertise_net       => [ { 'net_prefix' => '192.0.2.0', 'net_length' => '24' } ]
-}
+        }
   }
 
   ensurable
