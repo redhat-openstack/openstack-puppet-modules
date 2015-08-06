@@ -104,7 +104,7 @@ Puppet::Type.newtype(:midonet_gateway) do
         unless rp["as"] =~ /\d+/
           raise ArgumentError, "'%s' is not a valid AS name" % rp["as"]
         end
-        unless rp["ip"] =~ /^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))$/
+        unless rp["ip"] =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
           raise ArgumentError, "'%s' is not a valid IP address" % rp["ip"]
         end
       end
@@ -115,10 +115,10 @@ Puppet::Type.newtype(:midonet_gateway) do
     desc "#to be filled"
     validate do |value|
       [:port_address, :net_prefix, :net_length].all? {|key| value.key? key}
-      unless value["port_address"] =~  /^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))$/
+      unless value["port_address"] =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
         raise ArgumentError, "'%s' is not a valid IP address" % value["port_address"]
       end
-      unless value["net_prefix"] =~ /^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))$/
+      unless value["net_prefix"] =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
         raise ArgumentError, "'%s' is not a valid IPv4 network address" % value["net_prefix"]
       end
       unless value["net_length"] =~ /\d{2}/
@@ -146,7 +146,7 @@ Puppet::Type.newtype(:midonet_gateway) do
       end
       value.each do |an|
         unless an["net_prefix"] =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
-          raise ArgumentError, "'%s' is not a valid network prefix" % an["net_prefix"]
+          raise ArgumentError, "'%s' is not a valid IPv4 network address" % an["net_prefix"]
         end
         unless an["net_length"] =~ /\d{2}/
           raise ArgumentError, "'%s' is not a valid network prefix length" % an["net_length"]
