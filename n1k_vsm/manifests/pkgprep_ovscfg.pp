@@ -53,17 +53,8 @@ class n1k_vsm::pkgprep_ovscfg
         unless  => '/usr/bin/virsh net-info default | /bin/grep -c \'Autostart: .* no\'',
       }
 
-      package { 'Package_ovs':
-        ensure => installed,
-        name   => 'openvswitch',
-      }
-
-      # bring up OVS and perform interface configuration
-      service { 'Service_ovs':
-        ensure => running,
-        name   => 'openvswitch',
-        enable => true,
-      }
+      # Ensure OVS is present
+      require vswitch::ovs
 
       package { 'genisoimage':
         ensure => installed,
@@ -110,14 +101,22 @@ class n1k_vsm::pkgprep_ovscfg
             'set BOOTPROTO none',
             'set ONBOOT yes',
             "set NAME ${n1k_vsm::phy_if_bridge}",
-            'rm IPADDR',
+            'set DEFROUTE no',
+            'set IPADDR ""',
             'rm NETMASK',
             'rm GATEWAY',
             'set USERCTL no',
           ],
-          notify  => Service['Service_network'],
         }
-        # Make sure that networking comes fine after reboot
+        exec { 'Flap_n1kv_phy_if':
+          command => "/sbin/ifdown ${n1k_vsm::phy_if_bridge} && /sbin/ifup ${n1k_vsm::phy_if_bridge}",
+          require => augeas['Augeas_modify_ifcfg-phy_if_bridge'],
+        }
+        exec { 'Flap_n1kv_bridge':
+          command => "/sbin/ifdown ${n1k_vsm::ovsbridge} && /sbin/ifup ${n1k_vsm::ovsbridge}",
+          require => augeas['Augeas_modify_ifcfg-ovsbridge'],
+        }
+        # Make sure that networking comes fine after reboot- add init file and restart networking
         file { 'Create_Init_File':
           replace => 'yes',
           path    => '/etc/init.d/n1kv',
@@ -125,6 +124,8 @@ class n1k_vsm::pkgprep_ovscfg
           group   => 'root',
           mode    => '0775',
           source  => 'puppet:///modules/n1k_vsm/n1kv',
+          require => exec['Flap_n1kv_phy_if', 'Flap_n1kv_bridge'],
+          notify  => Service['Service_network'],
         }
       }  # endif of if "${n1k_vsm::gw_intf}" != "${n1k_vsm::ovsbridge}"
     }

@@ -80,7 +80,7 @@ class n1k_vsm::vsmprep
 
   # Now generate ovf xml file and repackage the iso
   exec { 'Exec_VSM_Repackage_Script':
-    command => "/tmp/repackiso.py -i/var/spool/cisco/vsm/${n1k_vsm::n1kv_version}.iso -d${n1k_vsm::vsm_domain_id} -n${n1k_vsm::vsmname} -m${n1k_vsm::mgmtip} -s${n1k_vsm::mgmtnetmask} -g${n1k_vsm::mgmtgateway} -p${n1k_vsm::vsm_admin_passwd} -r${n1k_vsm::vsm_role} -f/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso ",
+    command => "/tmp/repackiso.py -i${vsm_path}/n1000v-dk9.${n1k_vsm::n1kv_version}.iso -d${n1k_vsm::vsm_domain_id} -n${n1k_vsm::vsmname} -m${n1k_vsm::mgmtip} -s${n1k_vsm::mgmtnetmask} -g${n1k_vsm::mgmtgateway} -p${n1k_vsm::vsm_admin_passwd} -r${n1k_vsm::vsm_role} -f/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso ",
     unless  => "/usr/bin/virsh list --all | grep -c ${n1k_vsm::vsmname}",
   }
 
