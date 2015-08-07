@@ -122,7 +122,7 @@ describe Puppet::Type.type(:midonet_gateway).provider(:midonet_api_caller) do
       expect(provider).to receive(:call_add_bgp_to_port).with(ports[0]['id'], {'localAS'  => resource[:local_as],
                                                                                'peerAS'   => resource[:remote_peers][1]['as'],
                                                                                'peerAddr' => resource[:remote_peers][1]['ip']}).once
-      expect(provider).to receive(:call_add_route_for_uplink_port).with(routers[0]['id'], {'type'             => 'normal',
+      expect(provider).to receive(:call_add_route_for_uplink_port).with(routers[0]['id'], {'type'             => 'Normal',
                                                                                            'srcNetworkAddr'   => '0.0.0.0',
                                                                                            'srcNetworkLength' => 0,
                                                                                            'dstNetworkAddr'   => resource[:bgp_port]['net_prefix'],

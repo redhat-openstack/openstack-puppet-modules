@@ -43,7 +43,7 @@ Puppet::Type.type(:midonet_gateway).provide(:midonet_api_caller) do
 
     # Add route for 'MidoNet Provider Router' uplink port
     message = Hash.new
-    message['type'] = "normal"
+    message['type'] = "Normal"
     message['srcNetworkAddr'] = "0.0.0.0"
     message['srcNetworkLength'] = 0
     message['dstNetworkAddr'] = resource[:bgp_port]["net_prefix"]
