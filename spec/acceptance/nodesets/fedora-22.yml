@@ -1,0 +1,12 @@
+HOSTS:
+  fedora-22:
+    roles:
+      - master
+    platform: fedora-22-x86_64
+    box: boxcutter/fedora22
+    box_url: https://atlas.hashicorp.com/boxcutter/boxes/fedora22
+    hypervisor: vagrant
+
+CONFIG:
+  log_level: verbose
+  type: foss
