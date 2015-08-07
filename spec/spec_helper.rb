@@ -131,7 +131,7 @@ def tarball_install_tests(options = {})
   # Extract params
   # NB: These default values should be the same as ones in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.3-Helium-SR3/distribution-karaf-0.2.3-Helium-SR3.tar.gz')
+  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.0-Lithium/distribution-karaf-0.3.0-Lithium.tar.gz')
   unitfile_url = options.fetch(:unitfile_url, 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz')
   osfamily = options.fetch(:osfamily, 'RedHat')
 
