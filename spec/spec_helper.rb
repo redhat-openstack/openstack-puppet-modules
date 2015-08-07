@@ -262,12 +262,13 @@ end
 def rpm_install_tests(options = {})
   # Extract params
   # Choose Yum URL based on OS (CentOS vs Fedora)
+  # NB: Currently using the CentOS CBS for both Fedora and CentOS
   operatingsystem  = options.fetch(:operatingsystem, 'CentOS')
   case operatingsystem
   when 'CentOS'
-    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/epel-7-$basearch/'
+    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-3-candidate/$basearch/os/'
   when 'Fedora'
-    yum_repo = 'https://copr-be.cloud.fedoraproject.org/results/dfarrell07/OpenDaylight/fedora-$releasever-$basearch/'
+    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-3-candidate/$basearch/os/'
   else
     fail("Unknown operatingsystem: #{operatingsystem}")
   end
@@ -289,7 +290,7 @@ def rpm_install_tests(options = {})
     should contain_yumrepo('opendaylight').with(
       'enabled'     => '1',
       'gpgcheck'    => '0',
-      'descr'       => 'OpenDaylight SDN controller',
+      'descr'       => 'CentOS CBS OpenDaylight Lithium candidate repository',
       'baseurl'     => yum_repo,
     )
   }
