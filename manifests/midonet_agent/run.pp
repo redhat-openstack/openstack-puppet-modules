@@ -35,7 +35,6 @@ class midonet::midonet_agent::run (
     } ~>
 
     service {'midolman':
-        ensure => running,
-        enable => true
+        ensure => running
     }
 }
