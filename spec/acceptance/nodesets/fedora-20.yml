@@ -3,8 +3,8 @@ HOSTS:
     roles:
       - master
     platform: fedora-20-x86_64
-    box: chef/fedora-20
-    box_url: https://vagrantcloud.com/chef/boxes/fedora-20
+    box: boxcutter/fedora20
+    box_url: https://atlas.hashicorp.com/boxcutter/boxes/fedora20
     hypervisor: vagrant
 
 CONFIG:
