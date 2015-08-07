@@ -111,7 +111,7 @@ def odl_rest_port_tests(options = {})
   # Extract params
   # NB: This default value should be the same as one in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  odl_rest_port = options.fetch(:odl_rest_port, 8080)
+  odl_rest_port = options.fetch(:odl_rest_port, 8282)
 
   # Confirm properties of ODL REST port config file
   # NB: These hashes don't work with Ruby 1.8.7, but we

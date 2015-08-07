@@ -139,13 +139,12 @@ class { 'opendaylight':
 ### Ports
 
 To change the port on which OpenDaylight's northbound listens for REST API
-calls, use the `odl_rest_port` param. This was added because OpenStack's
-Swift project uses a conflicting port.
+calls, use the `odl_rest_port` param.
 
 
 ```puppet
 class { 'opendaylight':
-  odl_rest_port => '8080',
+  odl_rest_port => '8282',
 }
 ```
 
@@ -205,7 +204,7 @@ Valid options: The strings `'tarball'` or `'rpm'`.
 
 Specifies the port for the ODL northbound REST interface to listen on.
 
-Default: `'8080'`
+Default: `'8282'`
 
 Valid options: A valid port number as a string or integer.
 

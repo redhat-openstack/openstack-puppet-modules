@@ -55,7 +55,7 @@ def install_odl(options = {})
   extra_features = options.fetch(:extra_features, [])
   default_features = options.fetch(:default_features,
     ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
-  odl_rest_port = options.fetch(:odl_rest_port, 8080)
+  odl_rest_port = options.fetch(:odl_rest_port, 8282)
 
   # Build script for consumption by Puppet apply
   it 'should work idempotently with no errors' do
@@ -203,7 +203,7 @@ def port_config_validations(options = {})
   # NB: This param default should match the one used by the opendaylight
   #   class, which is defined in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  odl_rest_port = options.fetch(:odl_rest_port, 8080)
+  odl_rest_port = options.fetch(:odl_rest_port, 8282)
 
   describe file('/opt/opendaylight/configuration/tomcat-server.xml') do
     it { should be_file }
