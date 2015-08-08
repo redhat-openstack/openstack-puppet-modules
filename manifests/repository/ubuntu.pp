@@ -46,15 +46,12 @@ class midonet::repository::ubuntu (
             # time, but it ensures it will not fail for out of date repository info
             # Exec['apt_update'] -> Package<| |>
 
-            apt::key {'midonetkey':
-                key        => $midonet_key,
-                key_source => $midonet_key_url,
-            }
-
             apt::source {'midonet':
                 comment     => 'Midonet apt repository',
                 location    => $midonet_repo,
                 release     => $midonet_stage,
+                key         => $midonet_key,
+                key_source  => $midonet_key_url,
                 include_src => false,
             }
 
@@ -74,7 +71,6 @@ class midonet::repository::ubuntu (
 
             }
 
-            Apt::Key<| |> -> Apt::Source<| |>
             Apt::Source<| |> -> Exec<| command == 'update-midonet-repos' |>
 
         }
