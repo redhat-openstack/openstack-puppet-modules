@@ -3,8 +3,8 @@ HOSTS:
     roles:
       - master
     platform: ubuntu-1404-amd64
-    box: puppetlabs/ubuntu-14.04-64-nocm
-    box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-nocm
+    box: boxcutter/ubuntu1404
+    box_url: https://atlas.hashicorp.com/boxcutter/boxes/ubuntu1404
     hypervisor: vagrant
 
 CONFIG:
