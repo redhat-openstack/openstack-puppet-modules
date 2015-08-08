@@ -1,11 +1,10 @@
-require 'uri'
-require 'faraday'
-# Host registry type
-
 if RUBY_VERSION == '1.8.7'
   require 'rubygems'
-  require 'json'
 end
+
+require 'uri'
+require 'faraday'
+require 'json'
 
 Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
 
