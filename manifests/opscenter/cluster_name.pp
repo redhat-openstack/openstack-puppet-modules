@@ -29,7 +29,7 @@ class cassandra::opscenter::cluster_name(
   Ini_setting {
     path              => $cluster_file,
     key_val_separator => ' = ',
-    require           => Package['opscenter'],
+    require           => File[$config_path],
     notify            => Service['opscenterd'],
   }
 
