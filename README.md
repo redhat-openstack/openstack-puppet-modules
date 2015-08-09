@@ -62,7 +62,8 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the cassandra::java class affects
 
-* Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).
+* Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk) and the
+  Java Native Access (JNA).
 
 #### What the cassandra::opscenter class affects
 
@@ -538,17 +539,26 @@ A class to install a reasonably sensible Java package.
 #### Parameters
 
 ##### `ensure`
-Is passed to the package reference.  Valid values are **present** or a version
-number
-(default **present**).
+Is passed to the package reference for the JRE/JDK package.  Valid values are
+**present** or a version
+number (default **present**).
+
+##### `jna_ensure`
+Is passed to the package reference for the JNA package.  Valid values are
+**present** or a version number (default **present**).
+
+##### `jna_package_name`
+If the default value of *undef* is left as it is, then a package called
+jna or libjna-java will be installed on a Red Hat family or Ubuntu system
+respectively.  Alternatively, one can specify a package that is available in
+a package repository to the node (default **undef**).
 
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
-node
-(default **undef**).
+node (default **undef**).
 
 ### Class: cassandra::opscenter
 

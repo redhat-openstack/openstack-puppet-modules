@@ -1,12 +1,14 @@
 # Please see the README file for the module.
 class cassandra::java (
-  $ensure       = 'present',
-  $package_name = 'undef'
+  $ensure           = 'present',
+  $jna_ensure       = 'present',
+  $jna_package_name = undef,
+  $package_name     = undef
   ) {
-  if $package_name == 'undef' {
+  if $package_name == undef {
     if $::osfamily == 'RedHat' {
       $java_package_name = 'java-1.8.0-openjdk-headless'
-    } elsif $::operatingsystem == 'Ubuntu' {
+    } elsif $::osfamily == 'Debian' {
       $java_package_name = 'openjdk-7-jre-headless'
     } else {
       fail("OS family ${::osfamily} not supported")
@@ -15,8 +17,24 @@ class cassandra::java (
     $java_package_name = $package_name
   }
 
+  if $jna_package_name == undef {
+    if $::osfamily == 'RedHat' {
+      $jna = 'jna'
+    } elsif $::osfamily == 'Debian' {
+      $jna = 'libjna-java'
+    } else {
+      fail("OS family ${::osfamily} not supported")
+    }
+  } else {
+    $jna = $jna_package_name
+  }
+
   package { $java_package_name:
     ensure => $ensure,
-    before => Class['cassandra']
+    before => [ Class['cassandra'], Package[$jna] ]
+  }
+
+  package { $jna:
+    ensure => $jna_ensure,
   }
 }
