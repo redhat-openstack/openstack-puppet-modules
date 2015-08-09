@@ -138,7 +138,6 @@ class cassandra::opscenter (
   package { 'opscenter':
     ensure  => $ensure,
     name    => $package_name,
-    require => Class['cassandra'],
     before  => Service['opscenterd']
   }
 
