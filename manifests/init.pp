@@ -51,6 +51,12 @@ class cassandra (
   $start_rpc                             = true,
   $storage_port                          = 7000
   ) {
+  if $manage_dsc_repo == true {
+    $dep_014_url = 'https://github.com/locp/cassandra/wiki/DEP-014'
+    require '::cassandra::dsc_repo'
+    warning ('The manage_dsc_repo has been deprecated. See ${dep_014_url}')
+  }
+
   case $::osfamily {
     'RedHat': {
       if $config_path == undef {
@@ -58,52 +64,12 @@ class cassandra (
       } else {
         $cfg_path = $config_path
       }
-
-      if $manage_dsc_repo == true {
-        yumrepo { 'datastax':
-          ensure   => present,
-          descr    => 'DataStax Repo for Apache Cassandra',
-          baseurl  => 'http://rpm.datastax.com/community',
-          enabled  => 1,
-          gpgcheck => 0,
-          before   => Package[ $package_name ],
-        }
-      }
     }
     'Debian': {
       if $config_path == undef {
         $cfg_path = '/etc/cassandra'
       } else {
         $cfg_path = $config_path
-      }
-
-      if $manage_dsc_repo == true {
-        include apt
-        include apt::update
-
-        apt::key {'datastaxkey':
-          id     => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
-          source => 'http://debian.datastax.com/debian/repo_key',
-          before => Apt::Source['datastax']
-        }
-
-        apt::source {'datastax':
-          location => 'http://debian.datastax.com/community',
-          comment  => 'DataStax Repo for Apache Cassandra',
-          release  => 'stable',
-          include  => {
-            'src' => false
-          },
-          notify   => Exec['update-cassandra-repos']
-        }
-
-        # Required to wrap apt_update
-        exec {'update-cassandra-repos':
-          refreshonly => true,
-          command     => '/bin/true',
-          require     => Exec['apt_update'],
-          before      => Package[ $package_name ]
-        }
       }
 
       # A workaround for CASSANDRA-9822
