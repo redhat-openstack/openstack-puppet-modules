@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "puppetlabs/centos-7.0-64-nocm"
-  config.vm.hostname = "cassandra.locp.co.uk"
+  config.vm.hostname = "opscenter.locp.co.uk"
   config.puppet_install.puppet_version = '3.8.2'
   config.vm.synced_folder ".", "/etc/puppet/modules/cassandra"
 
@@ -35,6 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "manifests"
+    puppet.manifest_file = "vagrant.pp"
   end
 
   # Have something like the following in puppet/manifests/local.pp:
