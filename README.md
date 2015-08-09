@@ -17,6 +17,7 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
+    * [cassandra::dsc_repo](#class-cassandradsc_repo)
     * [cassandra::firewall_ports](#class-cassandrafirewall_ports)
     * [cassandra::java](#class-cassandrajava)
     * [cassandra::opscenter](#class-cassandraopscenter)
@@ -39,10 +40,6 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 * Installs the Cassandra package (default **dsc22**).
 * Configures settings in *${config_path}/cassandra.yaml*.
 * Optionally ensures that the Cassandra service is enabled and running.
-* Optionally configures a Yum repository to install the Cassandra packages
-  from (on Red Hat).
-* Optionally configures an Apt repository to install the Cassandra packages
-  from (on Ubuntu).
 * On Ubuntu systems, optionally replace ```/etc/init.d/cassandra``` with a
   workaround for 
   [CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).
@@ -50,6 +47,13 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 #### What the cassandra::datastax_agent class affects
 
 * Optionally installs the DataStax agent.
+
+#### What the cassandra::datastax_agent class affects
+
+* Optionally configures a Yum repository to install the Cassandra packages
+  from (on Red Hat).
+* Optionally configures an Apt repository to install the Cassandra packages
+  from (on Ubuntu).
 
 #### What the cassandra::firewall_ports class affects
 
@@ -91,6 +95,7 @@ A most basic example is:
 node 'example' {
   include '::cassandra'
   include '::cassandra::datastax_agent'
+  include '::cassandra::dsc_repo'
   include '::cassandra::java'
   include '::cassandra::opscenter'
   include '::cassandra::optutils'
@@ -171,13 +176,13 @@ member, do something similar to this:
 ```puppet
 include cassandra::java
 include cassandra::optutils
+include cassandra::dsc_repo
 
 node 'node1' {
   class { 'cassandra':
     cluster_name    => 'Foobar Cluster',
     listen_address  => "${::ipaddress}",
     seeds           => "${::ipaddress}",
-    manage_dsc_repo => true
   }
 }
 
@@ -186,7 +191,6 @@ node 'node2' {
     cluster_name    => 'Foobar Cluster',
     listen_address  => "${::ipaddress}",
     seeds           => '192.168.42.1',
-    manage_dsc_repo => true
   }
 }
 ```
@@ -200,6 +204,7 @@ tools.
 
 * **cassandra**
 * **cassandra::datastax_agent**
+* **cassandra::dsc_repo**
 * **cassandra::firewall_ports**
 * **cassandra::java**
 * **cassandra::opscenter**
@@ -329,6 +334,9 @@ This is passed to the
 (default **localhost**).
 
 ##### `manage_dsc_repo`
+DEPRECATION WARNING:  This option is deprecated.  Please include the
+the ::cassandra::dsc_repo instead.
+
 If set to true then a repository will be setup so that packages can be
 downloaded from the DataStax community edition (default **false**).
 
@@ -474,9 +482,18 @@ set as the stomp_interface setting in
 which connects the agent to an OpsCenter instance
 (default **undef**).
 
+### Class: cassandra::dsc_repo
+
+An optional class that will allow a suitable repository to be configured
+from which packages for the DataStax Community Edition can be downloaded.
+
+#### Parameters
+
+This class has no parameters.
+
 ### Class: cassandra::firewall_ports
 
-An optional class to configure incoming network ports on the hostthat are
+An optional class to configure incoming network ports on the host that are
 relevant to the cassandra installation.  If firewalls are being managed 
 already, simply do not include this module in your manifest.
 
