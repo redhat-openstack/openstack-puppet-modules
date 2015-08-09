@@ -21,7 +21,7 @@ class cassandra::opscenter::cluster_name(
   ) {
   file { $config_path:
     ensure  => directory,
-    require => Class['::cassandra::opscenter']
+    require => Package['opscenter'],
   }
 
   $cluster_file = "${config_path}/cluster_name.conf"
