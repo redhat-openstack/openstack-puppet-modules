@@ -93,10 +93,10 @@ A most basic example is:
 
 ```puppet
 node 'example' {
+  require '::cassandra::dsc_repo'
+  require '::cassandra::java'
   include '::cassandra'
   include '::cassandra::datastax_agent'
-  include '::cassandra::dsc_repo'
-  include '::cassandra::java'
   include '::cassandra::opscenter'
   include '::cassandra::optutils'
   include '::cassandra::firewall_ports'
@@ -174,9 +174,9 @@ node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:
 
 ```puppet
-include cassandra::java
+require cassandra::dsc_repo
+require cassandra::java
 include cassandra::optutils
-include cassandra::dsc_repo
 
 node 'node1' {
   class { 'cassandra':
