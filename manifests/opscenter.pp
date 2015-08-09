@@ -136,9 +136,9 @@ class cassandra::opscenter (
     $webserver_tarball_process_timeout              = undef
   ) {
   package { 'opscenter':
-    ensure  => $ensure,
-    name    => $package_name,
-    before  => Service['opscenterd']
+    ensure => $ensure,
+    name   => $package_name,
+    before => Service['opscenterd']
   }
 
   service { 'opscenterd':
