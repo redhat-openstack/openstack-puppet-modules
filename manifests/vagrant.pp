@@ -24,7 +24,8 @@ node /opscenter/ {
   require '::cassandra::dsc_repo'
   include '::cassandra::opscenter'
 
-  class { 'cassandra::opscenter::cluster_name':
+  cassandra::opscenter::cluster_name { 'remote_cluster':
+    cassandra_seed_hosts       => 'localhost',
     storage_cassandra_username => 'opsusr',
     storage_cassandra_password => 'opscenter',
     storage_cassandra_api_port => 9160,

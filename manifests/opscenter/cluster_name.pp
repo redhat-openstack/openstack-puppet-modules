@@ -1,6 +1,6 @@
 # cassandra::opscenter::cluster_name
-class cassandra::opscenter::cluster_name(
-  $cassandra_seed_hosts                       = 'localhost',
+define cassandra::opscenter::cluster_name(
+  $cassandra_seed_hosts,
   $config_path                                = '/etc/opscenter/clusters',
   $storage_cassandra_api_port                 = undef,
   $storage_cassandra_bind_interface           = undef,
@@ -24,7 +24,7 @@ class cassandra::opscenter::cluster_name(
     require => Package['opscenter'],
   }
 
-  $cluster_file = "${config_path}/cluster_name.conf"
+  $cluster_file = "${config_path}/${title}.conf"
 
   Ini_setting {
     path              => $cluster_file,
