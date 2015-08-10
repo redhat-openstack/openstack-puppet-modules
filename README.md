@@ -17,7 +17,7 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [cassandra](#class-cassandra)
     * [cassandra::datastax_agent](#class-cassandradatastax_agent)
-    * [cassandra::dsc_repo](#class-cassandradsc_repo)
+    * [cassandra::datastax_repo](#class-cassandradatastax_repo)
     * [cassandra::firewall_ports](#class-cassandrafirewall_ports)
     * [cassandra::java](#class-cassandrajava)
     * [cassandra::opscenter](#class-cassandraopscenter)
@@ -102,7 +102,7 @@ A most basic example is:
 
 ```puppet
 node 'example' {
-  require '::cassandra::dsc_repo'
+  require '::cassandra::datastax_repo'
   require '::cassandra::java'
   include '::cassandra'
   include '::cassandra::datastax_agent'
@@ -168,7 +168,7 @@ node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:
 
 ```puppet
-require cassandra::dsc_repo
+require cassandra::datastax_repo
 require cassandra::java
 include cassandra::optutils
 
@@ -227,7 +227,7 @@ cassandra::opscenter::cluster_name { 'remote_cluster':
 
 * **cassandra**
 * **cassandra::datastax_agent**
-* **cassandra::dsc_repo**
+* **cassandra::datastax_repo**
 * **cassandra::firewall_ports**
 * **cassandra::java**
 * **cassandra::opscenter**
@@ -361,7 +361,7 @@ This is passed to the
 
 ##### `manage_dsc_repo`
 DEPRECATION WARNING:  This option is deprecated.  Please include the
-the ::cassandra::dsc_repo instead.
+the ::cassandra::datastax_repo instead.
 
 If set to true then a repository will be setup so that packages can be
 downloaded from DataStax community (default **false**).
@@ -508,7 +508,7 @@ set as the stomp_interface setting in
 which connects the agent to an OpsCenter instance
 (default **undef**).
 
-### Class: cassandra::dsc_repo
+### Class: cassandra::datastax_repo
 
 An optional class that will allow a suitable repository to be configured
 from which packages for DataStax Community can be downloaded.

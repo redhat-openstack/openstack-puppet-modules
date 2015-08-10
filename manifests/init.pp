@@ -53,7 +53,7 @@ class cassandra (
   ) {
   if $manage_dsc_repo == true {
     $dep_014_url = 'https://github.com/locp/cassandra/wiki/DEP-014'
-    require '::cassandra::dsc_repo'
+    require '::cassandra::datastax_repo'
     warning ("manage_dsc_repo has been deprecated. See ${dep_014_url}")
   }
 

@@ -1,9 +1,9 @@
-# == Class: cassandra::dsc_repo
+# == Class: cassandra::datastax_repo
 #
 # Please see the README for this module for full details of what this class
 # does as part of the module and how to use it.
 #
-class cassandra::dsc_repo {
+class cassandra::datastax_repo {
   case $::osfamily {
     'RedHat': {
       yumrepo { 'datastax':

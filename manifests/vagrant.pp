@@ -21,7 +21,7 @@ node /cassandra/ {
 }
 
 node /opscenter/ {
-  require '::cassandra::dsc_repo'
+  require '::cassandra::datastax_repo'
   include '::cassandra::opscenter'
 
   cassandra::opscenter::cluster_name { 'remote_cluster':

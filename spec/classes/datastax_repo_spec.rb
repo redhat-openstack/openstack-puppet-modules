@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'cassandra::dsc_repo' do
+describe 'cassandra::datastax_repo' do
   let(:pre_condition) { [
     'class apt () {}',
     'class apt::update () {}',
@@ -9,7 +9,7 @@ describe 'cassandra::dsc_repo' do
 
   context 'Regardless of which OS' do
     it { should compile }
-    it { should contain_class('cassandra::dsc_repo') }
+    it { should contain_class('cassandra::datastax_repo') }
   end
 
   context 'On a RedHat OS with defaults for all parameters' do
