@@ -47,25 +47,28 @@
 
 <ul>
 <li><a href="#what-cassandra-affects">What cassandra affects</a></li>
+<li><a href="#beginning-with-cassandra">Beginning with cassandra</a></li>
+<li><a href="#upgrading">Upgrading</a></li>
+</ul>
+</li>
 <li>
-<a href="#beginning-with-cassandra">Beginning with cassandra</a>
+<a href="#usage">Usage - Configuration options and additional functionality</a>
 
 <ul>
 <li><a href="#datastax-enterprise">DataStax Enterprise</a></li>
 </ul>
 </li>
-<li><a href="#upgrading">Upgrading</a></li>
-</ul>
-</li>
-<li><a href="#usage">Usage - Configuration options and additional functionality</a></li>
 <li>
 <a href="#reference">Reference - An under-the-hood peek at what the module is doing and how</a>
 
 <ul>
 <li><a href="#class-cassandra">cassandra</a></li>
 <li><a href="#class-cassandradatastax_agent">cassandra::datastax_agent</a></li>
+<li><a href="#class-cassandradatastax_repo">cassandra::datastax_repo</a></li>
+<li><a href="#class-cassandrafirewall_ports">cassandra::firewall_ports</a></li>
 <li><a href="#class-cassandrajava">cassandra::java</a></li>
 <li><a href="#class-cassandraopscenter">cassandra::opscenter</a></li>
+<li><a href="#defined-type-cassandraopscentercluster_name">cassandra::opscenter::cluster_name</a></li>
 <li><a href="#class-cassandraopscenterpycrypto">cassandra::opscenter::pycrypto</a></li>
 <li><a href="#class-cassandraoptutils">cassandra::optutils</a></li>
 <li><a href="#defined-type-cassandraopscentersetting">cassandra::opscenter::setting</a></li>
@@ -84,7 +87,7 @@
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
 
 <h3>
-<a id="what-the-cassandra-module-affects" class="anchor" href="#what-the-cassandra-module-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra module affects</h3>
+<a id="what-cassandra-affects" class="anchor" href="#what-cassandra-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What cassandra affects</h3>
 
 <h4>
 <a id="what-the-cassandra-class-affects" class="anchor" href="#what-the-cassandra-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra class affects</h4>
@@ -93,10 +96,9 @@
 <li>Installs the Cassandra package (default <strong>dsc22</strong>).</li>
 <li>Configures settings in <em>${config_path}/cassandra.yaml</em>.</li>
 <li>Optionally ensures that the Cassandra service is enabled and running.</li>
-<li>Optionally configures a Yum repository to install the Cassandra packages
-from (on Red Hat).</li>
-<li>Optionally configures an Apt repository to install the Cassandra packages
-from (on Ubuntu).</li>
+<li>On Ubuntu systems, optionally replace <code>/etc/init.d/cassandra</code> with a
+workaround for 
+<a href="https://issues.apache.org/jira/browse/CASSANDRA-9822">CASSANDRA-9822</a>.</li>
 </ul>
 
 <h4>
@@ -107,10 +109,29 @@ from (on Ubuntu).</li>
 </ul>
 
 <h4>
+<a id="what-the-cassandradatastax_agent-class-affects-1" class="anchor" href="#what-the-cassandradatastax_agent-class-affects-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::datastax_agent class affects</h4>
+
+<ul>
+<li>Optionally configures a Yum repository to install the Cassandra packages
+from (on Red Hat).</li>
+<li>Optionally configures an Apt repository to install the Cassandra packages
+from (on Ubuntu).</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandrafirewall_ports-class-affects" class="anchor" href="#what-the-cassandrafirewall_ports-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::firewall_ports class affects</h4>
+
+<ul>
+<li>Optionally configures the firewall for the cassandra related network
+ports.</li>
+</ul>
+
+<h4>
 <a id="what-the-cassandrajava-class-affects" class="anchor" href="#what-the-cassandrajava-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::java class affects</h4>
 
 <ul>
-<li>Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk).</li>
+<li>Optionally installs a JRE/JDK package (e.g. java-1.7.0-openjdk) and the
+Java Native Access (JNA).</li>
 </ul>
 
 <h4>
@@ -121,6 +142,16 @@ from (on Ubuntu).</li>
 <li>Manages the content of the configuration file
 (/etc/opscenter/opscenterd.conf).</li>
 <li>Manages the opscenterd service.</li>
+</ul>
+
+<h4>
+<a id="what-the-cassandraopscentercluster_name-type-affects" class="anchor" href="#what-the-cassandraopscentercluster_name-type-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::opscenter::cluster_name type affects</h4>
+
+<ul>
+<li>An optional type that allows DataStax OpsCenter to connect to a remote
+key space for metrics storage.  These files will be created in
+/etc/opscenter/clusters.  The module also creates this directory if
+required.  This functionality is only valid in DataStax Enterprise.</li>
 </ul>
 
 <h4>
@@ -148,63 +179,16 @@ too distant future.</li>
 <h3>
 <a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
 
-<p>This most basic example would attempt to install the default Cassandra package
-(assuming there is an available repository).  See the <a href="#usage">Usage</a> section
-for more realistic scenarios.</p>
+<p>A most basic example is:</p>
 
 <div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  <span class="pl-k">include</span> '::cassandra'
-}</pre></div>
-
-<p>To install the DataStax agent, include the specific class.</p>
-
-<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
+  require <span class="pl-s"><span class="pl-pds">'</span>::cassandra::datastax_repo<span class="pl-pds">'</span></span>
+  require <span class="pl-s"><span class="pl-pds">'</span>::cassandra::java<span class="pl-pds">'</span></span>
   <span class="pl-k">include</span> '::cassandra'
   <span class="pl-k">include</span> '::cassandra::datastax_agent'
-}</pre></div>
-
-<p>To install with a reasonably sensible Java environment include the java
-subclass.</p>
-
-<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  <span class="pl-k">include</span> '::cassandra'
-  <span class="pl-k">include</span> '::cassandra::java'
-}</pre></div>
-
-<p>To install Cassandra with the optional utilities.</p>
-
-<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  <span class="pl-k">include</span> '::cassandra'
+  <span class="pl-k">include</span> '::cassandra::opscenter'
   <span class="pl-k">include</span> '::cassandra::optutils'
-}</pre></div>
-
-<p>To install the main cassandra package (which is mandatory) and all the
-optional packages, do the following:</p>
-
-<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  <span class="pl-k">include</span> '::cassandra'
-  <span class="pl-k">include</span> '::cassandra::datastax_agent'
-  <span class="pl-k">include</span> '::cassandra::java'
-  <span class="pl-k">include</span> '::cassandra::optutils'
-}</pre></div>
-
-<p>By saying the cassandra class/package is mandatory, what is meant is that all
-the sub classes have a dependency on the main class.  So for example one
-could not specify the cassandra::java class for a node with the cassandra
-class also being included.</p>
-
-<h4>
-<a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h4>
-
-<p>After configuring the relevant repositories elsewhere in the manifest, the
-following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
-
-<div class="highlight highlight-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
-  <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">package_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse-full<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>My Cluster<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">service_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse<span class="pl-pds">'</span></span>,
+  <span class="pl-k">include</span> '::cassandra::firewall_ports'
 }</pre></div>
 
 <h3>
@@ -277,7 +261,8 @@ service_ensure.</p></li>
 node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:</p>
 
-<div class="highlight highlight-puppet"><pre><span class="pl-k">include</span> cassandra::java
+<div class="highlight highlight-puppet"><pre>require cassandra::datastax_repo
+require cassandra::java
 <span class="pl-k">include</span> cassandra::optutils
 
 node <span class="pl-s"><span class="pl-pds">'</span>node1<span class="pl-pds">'</span></span> {
@@ -285,7 +270,6 @@ node <span class="pl-s"><span class="pl-pds">'</span>node1<span class="pl-pds">'
     <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">manage_dsc_repo</span> =&gt; true
   }
 }
 
@@ -294,12 +278,37 @@ node <span class="pl-s"><span class="pl-pds">'</span>node2<span class="pl-pds">'
     <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>192.168.42.1<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">manage_dsc_repo</span> =&gt; true
   }
 }</pre></div>
 
 <p>This would also ensure that the JDK is installed and the optional Cassandra
 tools.</p>
+
+<h4>
+<a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h4>
+
+<p>After configuring the relevant repositories elsewhere in the manifest, the
+following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
+
+<div class="highlight highlight-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+  <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">package_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse-full<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>My Cluster<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">service_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse<span class="pl-pds">'</span></span>,
+}</pre></div>
+
+<p>Also with DSE, one can specify a remote keyspace for storing the metrics for
+a cluster.  An example is:</p>
+
+<div class="highlight highlight-puppet"><pre>cassandra::opscenter::cluster_name { <span class="pl-s"><span class="pl-pds">'</span>remote_cluster<span class="pl-pds">'</span></span>:
+  <span class="pl-c1">cassandra_seed_hosts</span>       =&gt; <span class="pl-s"><span class="pl-pds">'</span>host1,host2<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">storage_cassandra_username</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opsusr<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">storage_cassandra_password</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opscenter<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">storage_cassandra_api_port</span> =&gt; 9160,
+  <span class="pl-c1">storage_cassandra_cql_port</span> =&gt; 9042,
+  <span class="pl-c1">storage_cassandra_keyspace</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>OpsCenter_Cluster1<span class="pl-pds">'</span></span>
+}</pre></div>
 
 <h2>
 <a id="reference" class="anchor" href="#reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference</h2>
@@ -310,6 +319,8 @@ tools.</p>
 <ul>
 <li><strong>cassandra</strong></li>
 <li><strong>cassandra::datastax_agent</strong></li>
+<li><strong>cassandra::datastax_repo</strong></li>
+<li><strong>cassandra::firewall_ports</strong></li>
 <li><strong>cassandra::java</strong></li>
 <li><strong>cassandra::opscenter</strong></li>
 <li><strong>cassandra::opscenter::pycrypto</strong></li>
@@ -317,10 +328,18 @@ tools.</p>
 </ul>
 
 <h3>
-<a id="defined-types" class="anchor" href="#defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Types</h3>
+<a id="public-defined-types" class="anchor" href="#public-defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public Defined Types</h3>
+
+<ul>
+<li><strong>cassandra::opscenter::cluster_name</strong></li>
+</ul>
+
+<h3>
+<a id="private-defined-types" class="anchor" href="#private-defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Private Defined Types</h3>
 
 <ul>
 <li><strong>cassandra::opscenter::setting</strong></li>
+<li><strong>cassandra::firewall_ports::rule</strong></li>
 </ul>
 
 <h3>
@@ -509,8 +528,11 @@ path name
 <a id="manage_dsc_repo" class="anchor" href="#manage_dsc_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_dsc_repo</code>
 </h5>
 
+<p>DEPRECATION WARNING:  This option is deprecated.  Please include the
+the ::cassandra::datastax_repo instead.</p>
+
 <p>If set to true then a repository will be setup so that packages can be
-downloaded from the DataStax community edition (default <strong>false</strong>).</p>
+downloaded from DataStax community (default <strong>false</strong>).</p>
 
 <h5>
 <a id="native_transport_port" class="anchor" href="#native_transport_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_port</code>
@@ -661,6 +683,14 @@ or false
 (default <strong>false</strong>).</p>
 
 <h5>
+<a id="ssl_storage_port" class="anchor" href="#ssl_storage_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ssl_storage_port</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
+(default <strong>7001</strong>).</p>
+
+<h5>
 <a id="start_native_transport" class="anchor" href="#start_native_transport" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_native_transport</code>
 </h5>
 
@@ -736,20 +766,104 @@ which connects the agent to an OpsCenter instance
 (default <strong>undef</strong>).</p>
 
 <h3>
+<a id="class-cassandradatastax_repo" class="anchor" href="#class-cassandradatastax_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_repo</h3>
+
+<p>An optional class that will allow a suitable repository to be configured
+from which packages for DataStax Community can be downloaded.</p>
+
+<h4>
+<a id="parameters-2" class="anchor" href="#parameters-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<p>This class has no parameters.</p>
+
+<h3>
+<a id="class-cassandrafirewall_ports" class="anchor" href="#class-cassandrafirewall_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::firewall_ports</h3>
+
+<p>An optional class to configure incoming network ports on the host that are
+relevant to the cassandra installation.  If firewalls are being managed 
+already, simply do not include this module in your manifest.</p>
+
+<p>IMPORTANT: The full list of what ports should be configured is assessed at
+evaluation time of the configuration.  Therefore if one is to use this class,
+it must be the final cassandra class included in the manifest.</p>
+
+<h4>
+<a id="parameters-3" class="anchor" href="#parameters-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="client_subnets" class="anchor" href="#client_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_subnets</code>
+</h5>
+
+<p>An array of the list of subnets that are to allowed connection to
+cassandra::native_transport_port and cassandra::rpc_port.
+(default <strong>['0.0.0.0/0']</strong>).</p>
+
+<h5>
+<a id="inter_node_subnets" class="anchor" href="#inter_node_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_subnets</code>
+</h5>
+
+<p>An array of the list of subnets that are to allowed connection to
+cassandra::storage_port, cassandra::ssl_storage_port and port 7199
+for cassandra JMX monitoring
+(default <strong>['0.0.0.0/0']</strong>).</p>
+
+<h5>
+<a id="public_subnets" class="anchor" href="#public_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>public_subnets</code>
+</h5>
+
+<p>An array of the list of subnets that are to allowed connection to
+cassandra::firewall_ports::ssh_port and if cassandra::opscenter has been
+included, both cassandra::opscenter::webserver_port and
+cassandra::opscenter::webserver_ssl_port
+(default <strong>['0.0.0.0/0']</strong>).</p>
+
+<h5>
+<a id="ssh_port" class="anchor" href="#ssh_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ssh_port</code>
+</h5>
+
+<p>Which port does SSH operate on
+(default <strong>22</strong>).</p>
+
+<h5>
+<a id="opscenter_subnets" class="anchor" href="#opscenter_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_subnets</code>
+</h5>
+
+<p>An array of the list of subnets that are to allowed connection to
+port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
+build with cassandra::datastax_agent
+(default <strong>['0.0.0.0/0']</strong>).</p>
+
+<h3>
 <a id="class-cassandrajava" class="anchor" href="#class-cassandrajava" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::java</h3>
 
 <p>A class to install a reasonably sensible Java package.</p>
 
 <h4>
-<a id="parameters-2" class="anchor" href="#parameters-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+<a id="parameters-4" class="anchor" href="#parameters-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
 <a id="ensure" class="anchor" href="#ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
 </h5>
 
-<p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
-number
-(default <strong>present</strong>).</p>
+<p>Is passed to the package reference for the JRE/JDK package.  Valid values are
+<strong>present</strong> or a version
+number (default <strong>present</strong>).</p>
+
+<h5>
+<a id="jna_ensure" class="anchor" href="#jna_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>jna_ensure</code>
+</h5>
+
+<p>Is passed to the package reference for the JNA package.  Valid values are
+<strong>present</strong> or a version number (default <strong>present</strong>).</p>
+
+<h5>
+<a id="jna_package_name" class="anchor" href="#jna_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>jna_package_name</code>
+</h5>
+
+<p>If the default value of <em>undef</em> is left as it is, then a package called
+jna or libjna-java will be installed on a Red Hat family or Ubuntu system
+respectively.  Alternatively, one can specify a package that is available in
+a package repository to the node (default <strong>undef</strong>).</p>
 
 <h5>
 <a id="package_name-2" class="anchor" href="#package_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
@@ -759,16 +873,474 @@ number
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
-node
-(default <strong>undef</strong>).</p>
+node (default <strong>undef</strong>).</p>
 
 <h3>
 <a id="class-cassandraopscenter" class="anchor" href="#class-cassandraopscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::opscenter</h3>
 
-<p>This class installs and manages the DataStax OpsCenter.</p>
+<p>This class installs and manages the DataStax OpsCenter.  Leaving the defaults
+as they are will provide a running OpsCenter without any authentication on
+port 8888.</p>
 
 <h4>
-<a id="parameters-3" class="anchor" href="#parameters-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+<a id="parameters-5" class="anchor" href="#parameters-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="agents_agent_certfile" class="anchor" href="#agents_agent_certfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_agent_certfile</code>
+</h5>
+
+<p>This sets the agent_certfile setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_agent_keyfile" class="anchor" href="#agents_agent_keyfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_agent_keyfile</code>
+</h5>
+
+<p>This sets the agent_keyfile setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_agent_keyfile_raw" class="anchor" href="#agents_agent_keyfile_raw" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_agent_keyfile_raw</code>
+</h5>
+
+<p>This sets the agent_keyfile_raw setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_config_sleep" class="anchor" href="#agents_config_sleep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_config_sleep</code>
+</h5>
+
+<p>This sets the config_sleep setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_fingerprint_throttle" class="anchor" href="#agents_fingerprint_throttle" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_fingerprint_throttle</code>
+</h5>
+
+<p>This sets the fingerprint_throttle setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_incoming_interface" class="anchor" href="#agents_incoming_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_incoming_interface</code>
+</h5>
+
+<p>This sets the incoming_interface setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_incoming_port" class="anchor" href="#agents_incoming_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_incoming_port</code>
+</h5>
+
+<p>This sets the incoming_port setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_install_throttle" class="anchor" href="#agents_install_throttle" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_install_throttle</code>
+</h5>
+
+<p>This sets the install_throttle setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_not_seen_threshold" class="anchor" href="#agents_not_seen_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_not_seen_threshold</code>
+</h5>
+
+<p>This sets the not_seen_threshold setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_path_to_deb" class="anchor" href="#agents_path_to_deb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_path_to_deb</code>
+</h5>
+
+<p>This sets the path_to_deb setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_path_to_find_java" class="anchor" href="#agents_path_to_find_java" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_path_to_find_java</code>
+</h5>
+
+<p>This sets the path_to_find_java setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_path_to_installscript" class="anchor" href="#agents_path_to_installscript" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_path_to_installscript</code>
+</h5>
+
+<p>This sets the path_to_installscript setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_path_to_rpm" class="anchor" href="#agents_path_to_rpm" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_path_to_rpm</code>
+</h5>
+
+<p>This sets the path_to_rpm setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_path_to_sudowrap" class="anchor" href="#agents_path_to_sudowrap" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_path_to_sudowrap</code>
+</h5>
+
+<p>This sets the path_to_sudowrap setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_reported_interface" class="anchor" href="#agents_reported_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_reported_interface</code>
+</h5>
+
+<p>This sets the reported_interface setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_runs_sudo" class="anchor" href="#agents_runs_sudo" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_runs_sudo</code>
+</h5>
+
+<p>This sets the runs_sudo setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_scp_executable" class="anchor" href="#agents_scp_executable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_scp_executable</code>
+</h5>
+
+<p>This sets the scp_executable setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_executable" class="anchor" href="#agents_ssh_executable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_executable</code>
+</h5>
+
+<p>This sets the ssh_executable setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_keygen_executable" class="anchor" href="#agents_ssh_keygen_executable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_keygen_executable</code>
+</h5>
+
+<p>This sets the ssh_keygen_executable setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_keyscan_executable" class="anchor" href="#agents_ssh_keyscan_executable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_keyscan_executable</code>
+</h5>
+
+<p>This sets the ssh_keyscan_executable setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_port" class="anchor" href="#agents_ssh_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_port</code>
+</h5>
+
+<p>This sets the ssh_port setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_sys_known_hosts_file" class="anchor" href="#agents_ssh_sys_known_hosts_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_sys_known_hosts_file</code>
+</h5>
+
+<p>This sets the ssh_sys_known_hosts_file setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssh_user_known_hosts_file" class="anchor" href="#agents_ssh_user_known_hosts_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssh_user_known_hosts_file</code>
+</h5>
+
+<p>This sets the ssh_user_known_hosts_file setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssl_certfile" class="anchor" href="#agents_ssl_certfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssl_certfile</code>
+</h5>
+
+<p>This sets the ssl_certfile setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_ssl_keyfile" class="anchor" href="#agents_ssl_keyfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_ssl_keyfile</code>
+</h5>
+
+<p>This sets the ssl_keyfile setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_tmp_dir" class="anchor" href="#agents_tmp_dir" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_tmp_dir</code>
+</h5>
+
+<p>This sets the tmp_dir setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="agents_use_ssl" class="anchor" href="#agents_use_ssl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>agents_use_ssl</code>
+</h5>
+
+<p>This sets the use_ssl setting in the agents section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="authentication_audit_auth" class="anchor" href="#authentication_audit_auth" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_audit_auth</code>
+</h5>
+
+<p>This sets the audit_auth setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="authentication_audit_pattern" class="anchor" href="#authentication_audit_pattern" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_audit_pattern</code>
+</h5>
+
+<p>This sets the audit_pattern setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="authentication_method" class="anchor" href="#authentication_method" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_method</code>
+</h5>
+
+<p>This sets the authentication_method setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="authentication_enabled" class="anchor" href="#authentication_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_enabled</code>
+</h5>
+
+<p>This sets the enabled setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value 'False'</p>
+
+<h5>
+<a id="authentication_passwd_db" class="anchor" href="#authentication_passwd_db" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_passwd_db</code>
+</h5>
+
+<p>This sets the passwd_db setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="authentication_timeout" class="anchor" href="#authentication_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authentication_timeout</code>
+</h5>
+
+<p>This sets the timeout setting in the authentication section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="cloud_accepted_certs" class="anchor" href="#cloud_accepted_certs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cloud_accepted_certs</code>
+</h5>
+
+<p>This sets the accepted_certs setting in the cloud section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="clusters_add_cluster_timeout" class="anchor" href="#clusters_add_cluster_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>clusters_add_cluster_timeout</code>
+</h5>
+
+<p>This sets the add_cluster_timeout setting in the clusters section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="clusters_startup_sleep" class="anchor" href="#clusters_startup_sleep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>clusters_startup_sleep</code>
+</h5>
+
+<p>This sets the startup_sleep setting in the clusters section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="config_file" class="anchor" href="#config_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_file</code>
+</h5>
+
+<p>The full path to the OpsCenter configuration file
+(default <strong>/etc/opscenter/opscenterd.conf</strong>).</p>
+
+<h5>
+<a id="definitions_auto_update" class="anchor" href="#definitions_auto_update" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_auto_update</code>
+</h5>
+
+<p>This sets the auto_update setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_definitions_dir" class="anchor" href="#definitions_definitions_dir" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_definitions_dir</code>
+</h5>
+
+<p>This sets the definitions_dir setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_download_filename" class="anchor" href="#definitions_download_filename" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_download_filename</code>
+</h5>
+
+<p>This sets the download_filename setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_download_host" class="anchor" href="#definitions_download_host" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_download_host</code>
+</h5>
+
+<p>This sets the download_host setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_download_port" class="anchor" href="#definitions_download_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_download_port</code>
+</h5>
+
+<p>This sets the download_port setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_hash_filename" class="anchor" href="#definitions_hash_filename" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_hash_filename</code>
+</h5>
+
+<p>This sets the hash_filename setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_sleep" class="anchor" href="#definitions_sleep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_sleep</code>
+</h5>
+
+<p>This sets the sleep setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_ssl_certfile" class="anchor" href="#definitions_ssl_certfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_ssl_certfile</code>
+</h5>
+
+<p>This sets the ssl_certfile setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="definitions_use_ssl" class="anchor" href="#definitions_use_ssl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_use_ssl</code>
+</h5>
+
+<p>This sets the use_ssl setting in the definitions section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
 <h5>
 <a id="ensure-1" class="anchor" href="#ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
@@ -779,11 +1351,334 @@ node
 (default <strong>present</strong>).</p>
 
 <h5>
-<a id="config_file" class="anchor" href="#config_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_file</code>
+<a id="failover_configuration_directory" class="anchor" href="#failover_configuration_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>failover_configuration_directory</code>
 </h5>
 
-<p>The full path to the OpsCenter configuration file
-(default <strong>/etc/opscenter/opscenterd.conf</strong>).</p>
+<p>This sets the failover_configuration_directory setting in the failover section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="failover_heartbeat_fail_window" class="anchor" href="#failover_heartbeat_fail_window" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>failover_heartbeat_fail_window</code>
+</h5>
+
+<p>This sets the heartbeat_fail_window setting in the failover section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="failover_heartbeat_period" class="anchor" href="#failover_heartbeat_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>failover_heartbeat_period</code>
+</h5>
+
+<p>This sets the heartbeat_period setting in the failover section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="failover_heartbeat_reply_period" class="anchor" href="#failover_heartbeat_reply_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>failover_heartbeat_reply_period</code>
+</h5>
+
+<p>This sets the heartbeat_reply_period setting in the failover section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="hadoop_base_job_tracker_proxy_port" class="anchor" href="#hadoop_base_job_tracker_proxy_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hadoop_base_job_tracker_proxy_port</code>
+</h5>
+
+<p>This sets the base_job_tracker_proxy_port setting in the hadoop section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_admin_group_name" class="anchor" href="#ldap_admin_group_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_admin_group_name</code>
+</h5>
+
+<p>This sets the admin_group_name setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_connection_timeout" class="anchor" href="#ldap_connection_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_connection_timeout</code>
+</h5>
+
+<p>This sets the connection_timeout setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_debug_ssl" class="anchor" href="#ldap_debug_ssl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_debug_ssl</code>
+</h5>
+
+<p>This sets the debug_ssl setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_group_name_attribute" class="anchor" href="#ldap_group_name_attribute" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_group_name_attribute</code>
+</h5>
+
+<p>This sets the group_name_attribute setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_group_search_base" class="anchor" href="#ldap_group_search_base" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_group_search_base</code>
+</h5>
+
+<p>This sets the group_search_base setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_group_search_filter" class="anchor" href="#ldap_group_search_filter" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_group_search_filter</code>
+</h5>
+
+<p>This sets the group_search_filter setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_group_search_type" class="anchor" href="#ldap_group_search_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_group_search_type</code>
+</h5>
+
+<p>This sets the group_search_type setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_ldap_security" class="anchor" href="#ldap_ldap_security" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_ldap_security</code>
+</h5>
+
+<p>This sets the ldap_security setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_opt_referrals" class="anchor" href="#ldap_opt_referrals" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_opt_referrals</code>
+</h5>
+
+<p>This sets the opt_referrals setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_protocol_version" class="anchor" href="#ldap_protocol_version" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_protocol_version</code>
+</h5>
+
+<p>This sets the protocol_version setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_search_dn" class="anchor" href="#ldap_search_dn" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_search_dn</code>
+</h5>
+
+<p>This sets the search_dn setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_search_password" class="anchor" href="#ldap_search_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_search_password</code>
+</h5>
+
+<p>This sets the search_password setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_server_host" class="anchor" href="#ldap_server_host" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_server_host</code>
+</h5>
+
+<p>This sets the server_host setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_server_port" class="anchor" href="#ldap_server_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_server_port</code>
+</h5>
+
+<p>This sets the server_port setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_ssl_cacert" class="anchor" href="#ldap_ssl_cacert" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_ssl_cacert</code>
+</h5>
+
+<p>This sets the ssl_cacert setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_ssl_cert" class="anchor" href="#ldap_ssl_cert" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_ssl_cert</code>
+</h5>
+
+<p>This sets the ssl_cert setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_ssl_key" class="anchor" href="#ldap_ssl_key" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_ssl_key</code>
+</h5>
+
+<p>This sets the ssl_key setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_tls_demand" class="anchor" href="#ldap_tls_demand" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_tls_demand</code>
+</h5>
+
+<p>This sets the tls_demand setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_tls_reqcert" class="anchor" href="#ldap_tls_reqcert" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_tls_reqcert</code>
+</h5>
+
+<p>This sets the tls_reqcert setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_uri_scheme" class="anchor" href="#ldap_uri_scheme" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_uri_scheme</code>
+</h5>
+
+<p>This sets the uri_scheme setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_user_memberof_attribute" class="anchor" href="#ldap_user_memberof_attribute" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_user_memberof_attribute</code>
+</h5>
+
+<p>This sets the user_memberof_attribute setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_user_search_base" class="anchor" href="#ldap_user_search_base" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_user_search_base</code>
+</h5>
+
+<p>This sets the user_search_base setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ldap_user_search_filter" class="anchor" href="#ldap_user_search_filter" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ldap_user_search_filter</code>
+</h5>
+
+<p>This sets the user_search_filter setting in the ldap section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="logging_level" class="anchor" href="#logging_level" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>logging_level</code>
+</h5>
+
+<p>This sets the level setting in the logging section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="logging_log_length" class="anchor" href="#logging_log_length" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>logging_log_length</code>
+</h5>
+
+<p>This sets the log_length setting in the logging section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="logging_log_path" class="anchor" href="#logging_log_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>logging_log_path</code>
+</h5>
+
+<p>This sets the log_path setting in the logging section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="logging_max_rotate" class="anchor" href="#logging_max_rotate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>logging_max_rotate</code>
+</h5>
+
+<p>This sets the max_rotate setting in the logging section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="logging_resource_usage_interval" class="anchor" href="#logging_resource_usage_interval" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>logging_resource_usage_interval</code>
+</h5>
+
+<p>This sets the resource_usage_interval setting in the logging section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
 <h5>
 <a id="package_name-3" class="anchor" href="#package_name-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
@@ -791,6 +1686,296 @@ node
 
 <p>The name of the OpsCenter package
 (default <strong>opscenter</strong>).</p>
+
+<h5>
+<a id="provisioning_agent_install_timeout" class="anchor" href="#provisioning_agent_install_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provisioning_agent_install_timeout</code>
+</h5>
+
+<p>This sets the agent_install_timeout setting in the provisioning section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="provisioning_keyspace_timeout" class="anchor" href="#provisioning_keyspace_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provisioning_keyspace_timeout</code>
+</h5>
+
+<p>This sets the keyspace_timeout setting in the provisioning section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="provisioning_private_key_dir" class="anchor" href="#provisioning_private_key_dir" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provisioning_private_key_dir</code>
+</h5>
+
+<p>This sets the private_key_dir setting in the provisioning section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_alert_on_repair_failure" class="anchor" href="#repair_service_alert_on_repair_failure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_alert_on_repair_failure</code>
+</h5>
+
+<p>This sets the alert_on_repair_failure setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_cluster_stabilization_period" class="anchor" href="#repair_service_cluster_stabilization_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_cluster_stabilization_period</code>
+</h5>
+
+<p>This sets the cluster_stabilization_period setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_error_logging_window" class="anchor" href="#repair_service_error_logging_window" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_error_logging_window</code>
+</h5>
+
+<p>This sets the error_logging_window setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_incremental_err_alert_threshold" class="anchor" href="#repair_service_incremental_err_alert_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_incremental_err_alert_threshold</code>
+</h5>
+
+<p>This sets the incremental_err_alert_threshold setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_incremental_range_repair" class="anchor" href="#repair_service_incremental_range_repair" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_incremental_range_repair</code>
+</h5>
+
+<p>This sets the incremental_range_repair setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_incremental_repair_tables" class="anchor" href="#repair_service_incremental_repair_tables" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_incremental_repair_tables</code>
+</h5>
+
+<p>This sets the incremental_repair_tables setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_ks_update_period" class="anchor" href="#repair_service_ks_update_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_ks_update_period</code>
+</h5>
+
+<p>This sets the ks_update_period setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_log_directory" class="anchor" href="#repair_service_log_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_log_directory</code>
+</h5>
+
+<p>This sets the log_directory setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_log_length" class="anchor" href="#repair_service_log_length" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_log_length</code>
+</h5>
+
+<p>This sets the log_length setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_max_err_threshold" class="anchor" href="#repair_service_max_err_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_max_err_threshold</code>
+</h5>
+
+<p>This sets the max_err_threshold setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_max_parallel_repairs" class="anchor" href="#repair_service_max_parallel_repairs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_max_parallel_repairs</code>
+</h5>
+
+<p>This sets the max_parallel_repairs setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_max_pending_repairs" class="anchor" href="#repair_service_max_pending_repairs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_max_pending_repairs</code>
+</h5>
+
+<p>This sets the max_pending_repairs setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_max_rotate" class="anchor" href="#repair_service_max_rotate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_max_rotate</code>
+</h5>
+
+<p>This sets the max_rotate setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_min_repair_time" class="anchor" href="#repair_service_min_repair_time" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_min_repair_time</code>
+</h5>
+
+<p>This sets the min_repair_time setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_min_throughput" class="anchor" href="#repair_service_min_throughput" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_min_throughput</code>
+</h5>
+
+<p>This sets the min_throughput setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_num_recent_throughputs" class="anchor" href="#repair_service_num_recent_throughputs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_num_recent_throughputs</code>
+</h5>
+
+<p>This sets the num_recent_throughputs setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_persist_directory" class="anchor" href="#repair_service_persist_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_persist_directory</code>
+</h5>
+
+<p>This sets the persist_directory setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_persist_period" class="anchor" href="#repair_service_persist_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_persist_period</code>
+</h5>
+
+<p>This sets the persist_period setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_restart_period" class="anchor" href="#repair_service_restart_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_restart_period</code>
+</h5>
+
+<p>This sets the restart_period setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_single_repair_timeout" class="anchor" href="#repair_service_single_repair_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_single_repair_timeout</code>
+</h5>
+
+<p>This sets the single_repair_timeout setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_single_task_err_threshold" class="anchor" href="#repair_service_single_task_err_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_single_task_err_threshold</code>
+</h5>
+
+<p>This sets the single_task_err_threshold setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="repair_service_snapshot_override" class="anchor" href="#repair_service_snapshot_override" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>repair_service_snapshot_override</code>
+</h5>
+
+<p>This sets the snapshot_override setting in the repair_service section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="request_tracker_queue_size" class="anchor" href="#request_tracker_queue_size" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_tracker_queue_size</code>
+</h5>
+
+<p>This sets the queue_size setting in the request_tracker section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="security_config_encryption_active" class="anchor" href="#security_config_encryption_active" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>security_config_encryption_active</code>
+</h5>
+
+<p>This sets the config_encryption_active setting in the security section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="security_config_encryption_key_name" class="anchor" href="#security_config_encryption_key_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>security_config_encryption_key_name</code>
+</h5>
+
+<p>This sets the config_encryption_key_name setting in the security section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="security_config_encryption_key_path" class="anchor" href="#security_config_encryption_key_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>security_config_encryption_key_path</code>
+</h5>
+
+<p>This sets the config_encryption_key_path setting in the security section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
 <h5>
 <a id="service_enable-2" class="anchor" href="#service_enable-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_enable</code>
@@ -814,172 +1999,185 @@ or false
 <p>The name of the service that runs the OpsCenter software (default
 <strong>opscenterd</strong>).</p>
 
-<p>The rest of the module parameters are passed into the configuration file.</p>
+<h5>
+<a id="spark_base_master_proxy_port" class="anchor" href="#spark_base_master_proxy_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>spark_base_master_proxy_port</code>
+</h5>
 
-<p>If a parameter is <em>undef</em> then the module will ensure that the corresponding
-setting is removed from the configuration file.</p>
-
-<p>See
+<p>This sets the base_master_proxy_port setting in the spark section of the
+OpsCenter configuration file.  See
 <a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
-for details on a specific parameter.</p>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
-<p>Leaving the defaults as they are will provide a running OpsCenter without any
-authentication on port 8888.</p>
+<h5>
+<a id="stat_reporter_initial_sleep" class="anchor" href="#stat_reporter_initial_sleep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stat_reporter_initial_sleep</code>
+</h5>
 
-<p>This table shows the name of the module parameter, specifies which section
-and setting it is associated with in the configuration file and shows what the
-default value is:</p>
+<p>This sets the initial_sleep setting in the stat_reporter section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
-<table>
-<thead>
-<tr>
-<th><strong>Module Parameter</strong></th>
-<th><strong>Section</strong></th>
-<th><strong>Setting</strong></th>
-<th><strong>Default Value</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>authentication_audit_auth</td>
-<td>authentication</td>
-<td>audit_auth</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>authentication_audit_pattern</td>
-<td>authentication</td>
-<td>audit_pattern</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>authentication_method</td>
-<td>authentication</td>
-<td>method</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>authentication_enabled</td>
-<td>authentication</td>
-<td>enabled</td>
-<td><strong>False</strong></td>
-</tr>
-<tr>
-<td>authentication_passwd_db</td>
-<td>authentication</td>
-<td>passwd_db</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>authentication_timeout</td>
-<td>authentication</td>
-<td>timeout</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>logging_level</td>
-<td>logging</td>
-<td>level</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>logging_log_length</td>
-<td>logging</td>
-<td>log_length</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>logging_log_path</td>
-<td>logging</td>
-<td>log_path</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>logging_max_rotate</td>
-<td>logging</td>
-<td>max_rotate</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>logging_resource_usage_interval</td>
-<td>logging</td>
-<td>resource_usage_interval</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>stat_reporter_initial_sleep</td>
-<td>stat_reporter</td>
-<td>initial_sleep</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>stat_reporter_interval</td>
-<td>stat_reporter</td>
-<td>interval</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>stat_reporter_report_file</td>
-<td>stat_reporter</td>
-<td>report_file</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>stat_reporter_ssl_key</td>
-<td>stat_reporter</td>
-<td>ssl_key</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_interface</td>
-<td>webserver</td>
-<td>interface</td>
-<td><strong>0.0.0.0</strong></td>
-</tr>
-<tr>
-<td>webserver_port</td>
-<td>webserver</td>
-<td>port</td>
-<td><strong>8888</strong></td>
-</tr>
-<tr>
-<td>webserver_ssl_certfile</td>
-<td>webserver</td>
-<td>ssl_certfile</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_ssl_keyfile</td>
-<td>webserver</td>
-<td>ssl_keyfile</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_ssl_port</td>
-<td>webserver</td>
-<td>ssl_port</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_staticdir</td>
-<td>webserver</td>
-<td>staticdir</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_sub_process_timeout</td>
-<td>webserver</td>
-<td>sub_process_timeout</td>
-<td><em>undef</em></td>
-</tr>
-<tr>
-<td>webserver_tarball_process_timeout</td>
-<td>webserver</td>
-<td>tarball_process_timeout</td>
-<td><em>undef</em></td>
-</tr>
-</tbody>
-</table>
+<h5>
+<a id="stat_reporter_interval" class="anchor" href="#stat_reporter_interval" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stat_reporter_interval</code>
+</h5>
+
+<p>This sets the interval setting in the stat_reporter section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="stat_reporter_report_file" class="anchor" href="#stat_reporter_report_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stat_reporter_report_file</code>
+</h5>
+
+<p>This sets the report_file setting in the stat_reporter section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="stat_reporter_ssl_key" class="anchor" href="#stat_reporter_ssl_key" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stat_reporter_ssl_key</code>
+</h5>
+
+<p>This sets the ssl_key setting in the stat_reporter section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ui_default_api_timeout" class="anchor" href="#ui_default_api_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ui_default_api_timeout</code>
+</h5>
+
+<p>This sets the default_api_timeout setting in the ui section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ui_max_metrics_requests" class="anchor" href="#ui_max_metrics_requests" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ui_max_metrics_requests</code>
+</h5>
+
+<p>This sets the max_metrics_requests setting in the ui section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ui_node_detail_refresh_delay" class="anchor" href="#ui_node_detail_refresh_delay" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ui_node_detail_refresh_delay</code>
+</h5>
+
+<p>This sets the node_detail_refresh_delay setting in the ui section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="ui_storagemap_ttl" class="anchor" href="#ui_storagemap_ttl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ui_storagemap_ttl</code>
+</h5>
+
+<p>This sets the storagemap_ttl setting in the ui section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_interface" class="anchor" href="#webserver_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_interface</code>
+</h5>
+
+<p>This sets the interface setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value '0.0.0.0'</p>
+
+<h5>
+<a id="webserver_log_path" class="anchor" href="#webserver_log_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_log_path</code>
+</h5>
+
+<p>This sets the log_path setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_port" class="anchor" href="#webserver_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_port</code>
+</h5>
+
+<p>This sets the port setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value '8888'</p>
+
+<h5>
+<a id="webserver_ssl_certfile" class="anchor" href="#webserver_ssl_certfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_ssl_certfile</code>
+</h5>
+
+<p>This sets the ssl_certfile setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_ssl_keyfile" class="anchor" href="#webserver_ssl_keyfile" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_ssl_keyfile</code>
+</h5>
+
+<p>This sets the ssl_keyfile setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_ssl_port" class="anchor" href="#webserver_ssl_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_ssl_port</code>
+</h5>
+
+<p>This sets the ssl_port setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_staticdir" class="anchor" href="#webserver_staticdir" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_staticdir</code>
+</h5>
+
+<p>This sets the staticdir setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_sub_process_timeout" class="anchor" href="#webserver_sub_process_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_sub_process_timeout</code>
+</h5>
+
+<p>This sets the sub_process_timeout setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="webserver_tarball_process_timeout" class="anchor" href="#webserver_tarball_process_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>webserver_tarball_process_timeout</code>
+</h5>
+
+<p>This sets the tarball_process_timeout setting in the webserver section of the
+OpsCenter configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html">http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscConfigProps_r.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not present
+in the file.  Default value <em>undef</em></p>
 
 <h3>
 <a id="class-cassandraopscenterpycrypto" class="anchor" href="#class-cassandraopscenterpycrypto" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::opscenter::pycrypto</h3>
@@ -994,7 +2192,7 @@ for more details.</p>
 family.</p>
 
 <h4>
-<a id="parameters-4" class="anchor" href="#parameters-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+<a id="parameters-6" class="anchor" href="#parameters-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
 <a id="ensure-2" class="anchor" href="#ensure-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
@@ -1038,7 +2236,7 @@ family.</p>
 <p>A class to install the optional Cassandra tools package.</p>
 
 <h4>
-<a id="parameters-5" class="anchor" href="#parameters-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+<a id="parameters-7" class="anchor" href="#parameters-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
 <a id="ensure-3" class="anchor" href="#ensure-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ensure</code>
@@ -1060,6 +2258,208 @@ node
 (default <strong>undef</strong>).</p>
 
 <h3>
+<a id="defined-type-cassandraopscentercluster_name" class="anchor" href="#defined-type-cassandraopscentercluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::cluster_name</h3>
+
+<p>With DataStax Enterprise, one can specify a remote keyspace for OpsCenter
+to store metric data (this is not available in DataStax Community).</p>
+
+<h4>
+<a id="parameters-8" class="anchor" href="#parameters-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="cassandra_seed_hosts" class="anchor" href="#cassandra_seed_hosts" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_seed_hosts</code>
+</h5>
+
+<p>This sets the seed_hosts setting in the cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_api_port" class="anchor" href="#storage_cassandra_api_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_api_port</code>
+</h5>
+
+<p>This sets the api_port setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_bind_interface" class="anchor" href="#storage_cassandra_bind_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_bind_interface</code>
+</h5>
+
+<p>This sets the bind_interface setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_connection_pool_size" class="anchor" href="#storage_cassandra_connection_pool_size" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_connection_pool_size</code>
+</h5>
+
+<p>This sets the connection_pool_size setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_connect_timeout" class="anchor" href="#storage_cassandra_connect_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_connect_timeout</code>
+</h5>
+
+<p>This sets the connect_timeout setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_cql_port" class="anchor" href="#storage_cassandra_cql_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_cql_port</code>
+</h5>
+
+<p>This sets the cql_port setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_keyspace" class="anchor" href="#storage_cassandra_keyspace" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_keyspace</code>
+</h5>
+
+<p>This sets the keyspace setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_local_dc_pref" class="anchor" href="#storage_cassandra_local_dc_pref" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_local_dc_pref</code>
+</h5>
+
+<p>This sets the local_dc_pref setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_password" class="anchor" href="#storage_cassandra_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_password</code>
+</h5>
+
+<p>This sets the password setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_retry_delay" class="anchor" href="#storage_cassandra_retry_delay" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_retry_delay</code>
+</h5>
+
+<p>This sets the retry_delay setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_send_rpc" class="anchor" href="#storage_cassandra_send_rpc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_send_rpc</code>
+</h5>
+
+<p>This sets the send_rpc setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_ssl_ca_certs" class="anchor" href="#storage_cassandra_ssl_ca_certs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_ssl_ca_certs</code>
+</h5>
+
+<p>This sets the ssl_ca_certs setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_ssl_client_key" class="anchor" href="#storage_cassandra_ssl_client_key" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_ssl_client_key</code>
+</h5>
+
+<p>This sets the ssl_client_key setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_ssl_client_pem" class="anchor" href="#storage_cassandra_ssl_client_pem" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_ssl_client_pem</code>
+</h5>
+
+<p>This sets the ssl_client_pem setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_ssl_validate" class="anchor" href="#storage_cassandra_ssl_validate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_ssl_validate</code>
+</h5>
+
+<p>This sets the ssl_validate setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_used_hosts_per_remote_dc" class="anchor" href="#storage_cassandra_used_hosts_per_remote_dc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_used_hosts_per_remote_dc</code>
+</h5>
+
+<p>This sets the used_hosts_per_remote_dc setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h5>
+<a id="storage_cassandra_username" class="anchor" href="#storage_cassandra_username" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_cassandra_username</code>
+</h5>
+
+<p>This sets the username setting in the storage_cassandra section of the
+<em>cluster_name</em>.conf configuration file.  See
+<a href="http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html">http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html</a>
+for more details.  A value of <em>undef</em> will ensure the setting is not
+present in the file.  Default value <em>undef</em></p>
+
+<h3>
+<a id="defined-type-cassandrafirewall_portsrule" class="anchor" href="#defined-type-cassandrafirewall_portsrule" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::firewall_ports::rule</h3>
+
+<p>Simply a defined type to be used as a macro for setting host based firewall
+rules.  This is not really supposed to be used by a user (who should use the
+API provided by cassandra::firewall_ports instead) but is documented
+here for completeness.</p>
+
+<h4>
+<a id="parameters-9" class="anchor" href="#parameters-9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="title" class="anchor" href="#title" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>title</code>
+</h5>
+
+<p>A text field that contains the protocol name and CIDR address of a subnet.</p>
+
+<h5>
+<a id="port" class="anchor" href="#port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>port</code>
+</h5>
+
+<p>The number(s) of the port(s) to be opened.</p>
+
+<h3>
 <a id="defined-type-cassandraopscentersetting" class="anchor" href="#defined-type-cassandraopscentersetting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::setting</h3>
 
 <p>Simply a defined type to be used as a macro for settings in the OpsCenter
@@ -1068,7 +2468,7 @@ should use the API provided by cassandra::opscenter instead) but is documented
 here for completeness.</p>
 
 <h4>
-<a id="parameters-6" class="anchor" href="#parameters-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+<a id="parameters-10" class="anchor" href="#parameters-10" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
 <a id="service_name-3" class="anchor" href="#service_name-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
@@ -1105,10 +2505,6 @@ configuration file.  Typically this would by <strong>opscenterd</strong>.</p>
 
 <h2>
 <a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h2>
-
-<p>Currently OpsCenter configuration is confined to authentication, logging,
-stat_reporter and webserver.  The remaining sections are planned for the
-near future.</p>
 
 <p>Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
 (CE) 3.7.5 and DSC 2.1.</p>
