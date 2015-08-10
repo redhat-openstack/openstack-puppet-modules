@@ -21,6 +21,7 @@
     * [cassandra::firewall_ports](#class-cassandrafirewall_ports)
     * [cassandra::java](#class-cassandrajava)
     * [cassandra::opscenter](#class-cassandraopscenter)
+    * [cassandra::opscenter::cluster_name](#class-cassandraopscentercluster_name)
     * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
     * [cassandra::optutils](#class-cassandraoptutils)
     * [cassandra::opscenter::setting](#defined-type-cassandraopscentersetting)
@@ -72,6 +73,13 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
   (/etc/opscenter/opscenterd.conf).
 * Manages the opscenterd service.
 
+#### What the cassandra::opscenter::cluster_name type affects
+
+* An optional type that allows DataStax OpsCenter to connect to a remote
+  key space for metrics storage.  These files will be created in
+  /etc/opscenter/clusters.  The module also creates this directory if
+  required.  This functionality is only valid in DataStax Enterprise.
+
 #### What the cassandra::opscenter::pycrypto class affects
 
 * On the Red Hat family it installs the pycrypto library and it's
@@ -101,21 +109,6 @@ node 'example' {
   include '::cassandra::opscenter'
   include '::cassandra::optutils'
   include '::cassandra::firewall_ports'
-}
-```
-
-#### DataStax Enterprise
-
-After configuring the relevant repositories elsewhere in the manifest, the
-following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
-
-```puppet
-class { 'cassandra':
-  package_ensure => '4.7.0-1',
-  package_name   => 'dse-full',
-  cluster_name   => 'My Cluster',
-  config_path    => '/etc/dse/cassandra',
-  service_name   => 'dse',
 }
 ```
 
@@ -199,6 +192,35 @@ node 'node2' {
 This would also ensure that the JDK is installed and the optional Cassandra
 tools.
 
+#### DataStax Enterprise
+
+After configuring the relevant repositories elsewhere in the manifest, the
+following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
+
+```puppet
+class { 'cassandra':
+  package_ensure => '4.7.0-1',
+  package_name   => 'dse-full',
+  cluster_name   => 'My Cluster',
+  config_path    => '/etc/dse/cassandra',
+  service_name   => 'dse',
+}
+```
+
+Also with DSE, one can specify a remote keyspace for storing the metrics for
+a cluster.  An example is:
+
+```puppet
+cassandra::opscenter::cluster_name { 'remote_cluster':
+  cassandra_seed_hosts       => 'host1,host2',
+  storage_cassandra_username => 'opsusr',
+  storage_cassandra_password => 'opscenter',
+  storage_cassandra_api_port => 9160,
+  storage_cassandra_cql_port => 9042,
+  storage_cassandra_keyspace => 'OpsCenter_Cluster1'
+}
+```
+
 ## Reference
 
 ### Public Classes
@@ -211,6 +233,9 @@ tools.
 * **cassandra::opscenter**
 * **cassandra::opscenter::pycrypto**
 * **cassandra::optutils**
+
+### Public Defined Types
+* **cassandra::opscenter::cluster_name**
 
 ### Private Defined Types
 
@@ -339,7 +364,7 @@ DEPRECATION WARNING:  This option is deprecated.  Please include the
 the ::cassandra::dsc_repo instead.
 
 If set to true then a repository will be setup so that packages can be
-downloaded from the DataStax community edition (default **false**).
+downloaded from DataStax community (default **false**).
 
 ##### `native_transport_port`
 This is passed to the
@@ -486,7 +511,7 @@ which connects the agent to an OpsCenter instance
 ### Class: cassandra::dsc_repo
 
 An optional class that will allow a suitable repository to be configured
-from which packages for the DataStax Community Edition can be downloaded.
+from which packages for DataStax Community can be downloaded.
 
 #### Parameters
 
@@ -1523,6 +1548,132 @@ can specify a package that is available in a package repository to the
 node
 (default **undef**).
 
+### Defined Type cassandra::opscenter::cluster_name
+
+With DataStax Enterprise, one can specify a remote keyspace for OpsCenter
+to store metric data (this is not available in DataStax Community).
+
+#### Parameters
+
+##### `cassandra_seed_hosts`
+This sets the seed_hosts setting in the cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_api_port`
+This sets the api_port setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_bind_interface`
+This sets the bind_interface setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_connection_pool_size`
+This sets the connection_pool_size setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_connect_timeout`
+This sets the connect_timeout setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_cql_port`
+This sets the cql_port setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_keyspace`
+This sets the keyspace setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_local_dc_pref`
+This sets the local_dc_pref setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_password`
+This sets the password setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_retry_delay`
+This sets the retry_delay setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_send_rpc`
+This sets the send_rpc setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_ssl_ca_certs`
+This sets the ssl_ca_certs setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_ssl_client_key`
+This sets the ssl_client_key setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_ssl_client_pem`
+This sets the ssl_client_pem setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_ssl_validate`
+This sets the ssl_validate setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_used_hosts_per_remote_dc`
+This sets the used_hosts_per_remote_dc setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
+##### `storage_cassandra_username`
+This sets the username setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
 ### Defined Type cassandra::firewall_ports::rule
 
 Simply a defined type to be used as a macro for setting host based firewall
@@ -1586,11 +1737,3 @@ Cassandra 1.x compatible template
 * Amos Shapira (GitHub [@amosshapira](https://github.com/amosshapira)) fixed
 a bug in the requirements metadata that caused a problem with Puppetfile
 (see [#34](https://github.com/locp/cassandra/pull/34)).
-
-##### `cassandra_seed_hosts`
-This sets the seed_hosts setting in the cassandra section of the
-_cluster_name_.conf configuration file.  See
-http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
-for more details.  A value of *undef* will ensure the setting is not
-present in the file.  Default value *undef*
-
