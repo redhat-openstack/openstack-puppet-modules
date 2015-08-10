@@ -1,3 +1,10 @@
+# Change Log for Puppet Module locp-cassandra
+
+##2015-08-10 - Release 1.2.0
+* Added the installation of Java Native Access (JNA) to cassandra::java
+* For DataStax Enterprise, allow the remote storage of metric data with
+  cassandra::opscenter::cluster_name.
+
 ##2015-08-03 - Release 1.1.0
 * Provided the cassandra::firewall_ports class.
 * All OpsCenter options are now configurable.
