@@ -1586,3 +1586,11 @@ Cassandra 1.x compatible template
 * Amos Shapira (GitHub [@amosshapira](https://github.com/amosshapira)) fixed
 a bug in the requirements metadata that caused a problem with Puppetfile
 (see [#34](https://github.com/locp/cassandra/pull/34)).
+
+##### `cassandra_seed_hosts`
+This sets the seed_hosts setting in the cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.1/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
