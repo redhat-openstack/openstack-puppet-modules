@@ -21,7 +21,7 @@
     * [cassandra::firewall_ports](#class-cassandrafirewall_ports)
     * [cassandra::java](#class-cassandrajava)
     * [cassandra::opscenter](#class-cassandraopscenter)
-    * [cassandra::opscenter::cluster_name](#defined-type-cassandraopscenterdefined-type)
+    * [cassandra::opscenter::cluster_name](#defined-type-cassandraopscentercluster_name)
     * [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
     * [cassandra::optutils](#class-cassandraoptutils)
     * [cassandra::opscenter::setting](#defined-type-cassandraopscentersetting)
