@@ -22,29 +22,13 @@ bundle exec rake spec     # Run spec tests in a clean fixtures directory
 ### Beaker Tests
 
 ```bash
-for node in $( rake beaker_nodes ); do
+for node in $( bundle exec rake beaker_nodes ); do
   export BEAKER_set=$node
-  BEAKER_destroy=onpass rake beaker || break
+  BEAKER_destroy=onpass bundle exec rake beaker || break
 done
 ```
 
 ## Preparing for a Release
 
-* Ensure all tests pass as expected.  There should already be a branch named
-  after the release (e.g. v1.2.3) so merge all relevant branches onto it
-  beforehand.  To find out which branches require to be merged in, run the
-  following ```git branch -a --no-merged```.
-
-* Update the CHANGELOG.
-
-* Edit the metadata with the new release number with one of the following:
-
-  ```bash
-  rake module:bump:major # Bump module version to the next MAJOR version
-  rake module:bump:minor # Bump module version to the next MINOR version
-  rake module:bump:patch # Bump module version to the next PATCH version
-  ```
-
-* Create a tag with the version number using ```rake module:tag```.
-
-* Run `spec build` and upload the package to the forge.
+The notes for preparing for a release have been moved to
+https://github.com/locp/cassandra/wiki/Preparing-for-a-Release
