@@ -1,41 +1,47 @@
-swift
-=======
+OpenStack Puppet Modules
+========================
 
+<<<<<<< HEAD
 6.0.0 - 2015.1 - Kilo
+=======
+[Puppet](http://puppetlabs.com/puppet/puppet-open-source) modules shared between
+[Packstack](https://github.com/stackforge/packstack) and [Foreman](http://theforeman.org/).
+>>>>>>> 32b9fde... Add support for swift-object-expirer service
 
-#### Table of Contents
+How to add a new Puppet module
+------------------------------
 
-1. [Overview - What is the swift module?](#overview)
-2. [Module Description - What does the module do?](#module-description)
-3. [Setup - The basics of getting started with swift](#setup)
-4. [Reference - The classes, defines,functions and facts available in this module](#reference)
-5. [Implementation - An under-the-hood peek at what the module is doing](#implementation)
-6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
-8. [Contributors - Those with commits](#contributors)
+First you have to install [bade](https://github.com/paramite/bade), a utility
+for managing Puppet modules using GIT subtrees.
 
-Overview
---------
+    git clone https://github.com/paramite/bade
+    cd bade
+    python setup.py develop
 
-The swift module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software.  The module itself is used to flexibly configure and manage the object storage service for Openstack.
+Then create a [fork of the OpenStack Puppet Modules repository](https://help.github.com/articles/fork-a-repo/)
+and [create a local clone of it](https://help.github.com/articles/fork-a-repo/#step-2-create-a-local-clone-of-your-fork).
 
-Module Description
-------------------
+    git clone git@github.com:YOUR_USERNAME/openstack-puppet-modules.git
+    cd openstack-puppet-modules
 
-The swift module is a thorough attempt to make Puppet capable of managing the entirety of swift.  This includes manifests to provision such things as keystone, storage backends, proxies, and the ring.  Types are shipped as part of the swift module to assist in manipulation of configuration files.  The classes in this module will deploy Swift using best practices for a typical deployment.
+Now create a new [branch](http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging) in your local clone.
 
-This module is tested in combination with other modules needed to build and leverage an entire Openstack software stack.  These modules can be found, all pulled together in the [openstack module](https://github.com/stackforge/puppet-openstack).  In addition, this module requires Puppet's [exported resources](http://docs.puppetlabs.com/puppet/3/reference/lang_exported.html).
+    git checkout -b NAME_OF_THE_MODULE
 
-Setup
------
+Afterwards add the new Puppet module, `puppet-module-collectd` in this example.
 
-**What the swift module affects**
+    bade add --upstream https://github.com/pdxcat/puppet-module-collectd.git --hash cf79540be4623eb9da287f6d579ec4a4f4ddc39b --commit
 
-* swift, the object storage service for Openstack.
+Finally add some more details (e.g. why you want to add this Puppet module)
+to the commit message, push the branch and [initiate a pull request](https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request).
 
+<<<<<<< HEAD
+    git commit --amend
+    git push --set-upstream origin collectd
+=======
 ### Installing swift
 
-    example% puppet module install puppetlabs/swift
+    puppet module install openstack/swift
 
 ### Beginning with swift
 
@@ -214,6 +220,15 @@ The byte size that dd uses when it creates the file system.
 ####`seek`
 The size of the file system that will be created.  Defaults to 25000.
 
+### Class: swift::objectexpirer
+Class that will set Swift object expirer, for scheduled deletion of objects.
+
+```puppet
+class { 'swift::objectexpirer': }
+```
+
+It is assumed that the object expirer service will usually be installed in a proxy node. On Red Hat-based distributions, if the class is included in a non-proxy node, the openstack-swift-proxy package will need to be installed.
+
 ### Verifying installation
 
 This modules ships with a simple Ruby script that validates whether or not your swift cluster is functional.
@@ -257,3 +272,4 @@ Contributors
 ------------
 
 * https://github.com/openstack/puppet-swift/graphs/contributors
+>>>>>>> 6f2e748... Add support for swift-object-expirer service
