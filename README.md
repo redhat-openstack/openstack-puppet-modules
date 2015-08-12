@@ -195,11 +195,11 @@ In this initial example, we are going to expand the example by:
 ```puppet
 node /^node\d+$/ {
   class { 'cassandra::datastax_repo':
-    before Class['cassandra']
+    before => Class['cassandra']
   }
 
   class { 'cassandra::java':
-    before Class['cassandra']
+    before => Class['cassandra']
   }
 
   class { 'cassandra':
@@ -209,9 +209,9 @@ node /^node\d+$/ {
     num_tokens      => 256,
     seeds           => '110.82.155.0,110.82.156.3'
   }
-}
 
-include cassandra::optutils
+  include cassandra::optutils
+}
 ```
 
 The default value for the num_tokens is already 256, but it is
