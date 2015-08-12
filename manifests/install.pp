@@ -16,7 +16,7 @@ class opendaylight::install {
     }
 
     # Add OpenDaylight's Yum repository
-    yumrepo { 'opendaylight':
+    yumrepo { 'opendaylight-3-candidate':
       # 'ensure' isn't supported with Puppet <3.5
       # Seems to default to present, but docs don't say
       # https://docs.puppetlabs.com/references/3.4.0/type.html#yumrepo
@@ -33,7 +33,7 @@ class opendaylight::install {
     # Install the OpenDaylight RPM
     package { 'opendaylight':
       ensure  => present,
-      require => Yumrepo['opendaylight'],
+      require => Yumrepo['opendaylight-3-candidate'],
     }
   }
   elsif $opendaylight::install_method == 'tarball' {

@@ -216,7 +216,7 @@ end
 
 # Shared function that handles validations specific to RPM-type installs
 def rpm_validations()
-  describe yumrepo('opendaylight') do
+  describe yumrepo('opendaylight-3-candidate') do
     it { should exist }
     it { should be_enabled }
   end
@@ -234,7 +234,7 @@ def tarball_validations()
 
   # Repo checks break (not fail) when yum doesn't make sense (Ubuntu)
   if ['centos-7', 'fedora-20', 'fedora-21'].include? ENV['RS_SET']
-    describe yumrepo('opendaylight') do
+    describe yumrepo('opendaylight-3-candidate') do
       it { should_not exist }
       it { should_not be_enabled }
     end
