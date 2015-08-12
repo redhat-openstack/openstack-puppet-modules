@@ -13,6 +13,7 @@
     * [Beginning with cassandra](#beginning-with-cassandra)
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
+    * [Create a Small Cluster](#create-a-small-cluster)
     * [DataStax Enterprise](#datastax-enterprise)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [cassandra](#class-cassandra)
@@ -192,7 +193,7 @@ node 'node2' {
 This would also ensure that the JDK is installed and the optional Cassandra
 tools.
 
-#### DataStax Enterprise
+### DataStax Enterprise
 
 After configuring the relevant repositories elsewhere in the manifest, the
 following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
