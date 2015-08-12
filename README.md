@@ -14,6 +14,7 @@
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Create a Small Cluster](#create-a-small-cluster)
+    * [OpsCenter](#opscenter)
     * [DataStax Enterprise](#datastax-enterprise)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [cassandra](#class-cassandra)
@@ -216,6 +217,48 @@ node /^node\d+$/ {
 
 The default value for the num_tokens is already 256, but it is
 included in the example for clarity.
+
+### OpsCenter
+
+To continue with the previous example, say we have an instance of OpsCenter
+running on a node called opscenter which has an IP address of 110.82.157.6.
+We add the `cassandra::datastax_agent` to the cassandra node to connect
+to OpsCenter:
+
+```puppet
+node /^node\d+$/ {
+  class { 'cassandra::datastax_repo':
+    before => Class['cassandra']
+  }
+
+  class { 'cassandra::java':
+    before => Class['cassandra']
+  }
+
+  class { 'cassandra':
+    cluster_name    => 'MyCassandraCluster',
+    endpoint_snitch => 'GossipingPropertyFileSnitch',
+    listen_address  => "${::ipaddress}",
+    num_tokens      => 256,
+    seeds           => '110.82.155.0,110.82.156.3',
+    before          => Class['cassandra::datastax_agent']
+  }
+
+  class { 'cassandra::datastax_agent':
+    stomp_interface => '110.82.157.6'
+  }
+
+  include cassandra::optutils
+}
+
+node /opscenter/ {
+  include '::cassandra::datastax_repo' ->
+  include '::cassandra' ->
+  include '::cassandra::opscenter'
+}
+```
+
+We have also added the cassandra::opscenter` class for the opscenter node.
 
 ### DataStax Enterprise
 

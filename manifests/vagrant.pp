@@ -17,7 +17,12 @@ node /^node\d+$/ {
     endpoint_snitch => 'GossipingPropertyFileSnitch',
     listen_address  => "${::ipaddress}",
     num_tokens      => 256,
-    seeds           => '110.82.155.0,110.82.156.3'
+    seeds           => '110.82.155.0,110.82.156.3',
+    before          => Class['cassandra::datastax_agent']
+  }
+
+  class { 'cassandra::datastax_agent':
+    stomp_interface => '110.82.157.6'
   }
 
   include cassandra::optutils
