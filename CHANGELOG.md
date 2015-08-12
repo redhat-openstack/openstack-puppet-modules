@@ -7,7 +7,7 @@
 
 ##2015-08-03 - Release 1.1.0
 * Provided the cassandra::firewall_ports class.
-* All OpsCenter options are now configurable.
+* All OpsCenter options are now configurable in opscenterd.conf.
 * ssl_storage_port is now configurable.
 
 ##2015-07-27 - Release 1.0.1
