@@ -16,13 +16,13 @@ class opendaylight::config {
   }
 
   # Configuration of ODL NB REST port to listen on
-  file { 'tomcat-server.xml':
+  file { 'jetty.xml':
     ensure  => file,
-    path    => '/opt/opendaylight/configuration/tomcat-server.xml',
+    path    => '/opt/opendaylight/etc/jetty.xml',
     # Set user:group owners
     owner   => 'odl',
     group   => 'odl',
     # Use a template to populate the content
-    content => template('opendaylight/tomcat-server.xml.erb'),
+    content => template('opendaylight/jetty.xml.erb'),
   }
 }

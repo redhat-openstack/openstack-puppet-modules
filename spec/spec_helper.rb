@@ -111,18 +111,18 @@ def odl_rest_port_tests(options = {})
   # Extract params
   # NB: This default value should be the same as one in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  odl_rest_port = options.fetch(:odl_rest_port, 8282)
+  odl_rest_port = options.fetch(:odl_rest_port, 8080)
 
   # Confirm properties of ODL REST port config file
   # NB: These hashes don't work with Ruby 1.8.7, but we
   #   don't support 1.8.7 so that's okay. See issue #36.
   it {
-    should contain_file('tomcat-server.xml').with(
+    should contain_file('jetty.xml').with(
       'ensure'      => 'file',
-      'path'        => '/opt/opendaylight/configuration/tomcat-server.xml',
+      'path'        => '/opt/opendaylight/etc/jetty.xml',
       'owner'   => 'odl',
       'group'   => 'odl',
-      'content'     => /Connector port="#{odl_rest_port}"/
+      'content'     => /Property name="jetty.port" default="#{odl_rest_port}"/
     )
   }
 end

@@ -143,7 +143,7 @@ calls, use the `odl_rest_port` param.
 
 ```puppet
 class { 'opendaylight':
-  odl_rest_port => '8282',
+  odl_rest_port => '8080',
 }
 ```
 
@@ -203,7 +203,7 @@ Valid options: The strings `'tarball'` or `'rpm'`.
 
 Specifies the port for the ODL northbound REST interface to listen on.
 
-Default: `'8282'`
+Default: `'8080'`
 
 Valid options: A valid port number as a string or integer.
 
