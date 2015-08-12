@@ -103,10 +103,10 @@ A most basic example is:
 
 ```puppet
 node 'example' {
-  require '::cassandra::datastax_repo'
-  require '::cassandra::java'
   include '::cassandra'
   include '::cassandra::datastax_agent'
+  include '::cassandra::datastax_repo'
+  include '::cassandra::java'
   include '::cassandra::opscenter'
   include '::cassandra::optutils'
   include '::cassandra::firewall_ports'
@@ -167,10 +167,10 @@ Also there is now a class for installing the optional utilities:
 In the DataStax documentation _Initializing a multiple node cluster (single
 data center)_
 <http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initSingleDS.html>
-there is a basic example of a cluster to be created in a single data center
-in two racks.  The nodes in the cluster are:
+there is a basic example of a six node cluster with two seeds to be created in
+a single data center spanning two racks.  The nodes in the cluster are:
 
-Node Name|IP Address----|Seed?
+Node Name|IP Address    |Seed?
 ---------|--------------|-----
 node0    | 110.82.155.0 | Yes
 node1    | 110.82.155.1 |
@@ -179,34 +179,43 @@ node3    | 110.82.156.3 | Yes
 node4    | 110.82.156.4 |
 node5    | 110.82.156.5 |
 
-To install Cassandra in a two node cluster called 'Foobar Cluster' where
-node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
-member, do something similar to this:
+Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
+nodes (vnodes).  The name of the cluster is _MyCassandraCluster_.
+
+In this initial example, we are going to expand the example by:
+
+* Ensuring that the software is installed via the DataStax Community
+  repository by including `cassandra::datastax_repo`.  This needs to be
+  executed before the Cassandra package is installed.
+* That a suitable Java Runtime environment (JRE) is installed with Java Native
+  Access (JNA) by including `cassandra::java`.  This need to be executed
+  before the Cassandra service is started.
+* Install the optional utilities by including `cassandra::optutils`.
 
 ```puppet
-require cassandra::datastax_repo
-require cassandra::java
+node /^node\d+$/ {
+  class { 'cassandra::datastax_repo':
+    before Class['cassandra']
+  }
+
+  class { 'cassandra::java':
+    before Class['cassandra']
+  }
+
+  class { 'cassandra':
+    cluster_name    => 'MyCassandraCluster',
+    endpoint_snitch => 'GossipingPropertyFileSnitch',
+    listen_address  => "${::ipaddress}",
+    num_tokens      => 256,
+    seeds           => '110.82.155.0,110.82.156.3'
+  }
+}
+
 include cassandra::optutils
-
-node 'node1' {
-  class { 'cassandra':
-    cluster_name    => 'Foobar Cluster',
-    listen_address  => "${::ipaddress}",
-    seeds           => "${::ipaddress}",
-  }
-}
-
-node 'node2' {
-  class { 'cassandra':
-    cluster_name    => 'Foobar Cluster',
-    listen_address  => "${::ipaddress}",
-    seeds           => '192.168.42.1',
-  }
-}
 ```
 
-This would also ensure that the JDK is installed and the optional Cassandra
-tools.
+The default value for the num_tokens is already 256, but it is
+included in the example for clarity.
 
 ### DataStax Enterprise
 
@@ -215,10 +224,10 @@ following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
 
 ```puppet
 class { 'cassandra':
+  cluster_name   => 'MyCassandraCluster',
+  config_path    => '/etc/dse/cassandra',
   package_ensure => '4.7.0-1',
   package_name   => 'dse-full',
-  cluster_name   => 'My Cluster',
-  config_path    => '/etc/dse/cassandra',
   service_name   => 'dse',
 }
 ```
