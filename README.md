@@ -164,6 +164,21 @@ Also there is now a class for installing the optional utilities:
 
 ### Create a Small Cluster
 
+In the DataStax documentation _Initializing a multiple node cluster (single
+data center)_
+<http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initSingleDS.html>
+there is a basic example of a cluster to be created in a single data center
+in two racks.  The nodes in the cluster are:
+
+Node Name|IP Address----|Seed?
+---------|--------------|-----
+node0    | 110.82.155.0 | Yes
+node1    | 110.82.155.1 |
+node2    | 110.82.155.2 |
+node3    | 110.82.156.3 | Yes
+node4    | 110.82.156.4 |
+node5    | 110.82.156.5 |
+
 To install Cassandra in a two node cluster called 'Foobar Cluster' where
 node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
 member, do something similar to this:
