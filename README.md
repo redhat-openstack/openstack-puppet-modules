@@ -258,7 +258,7 @@ node /opscenter/ {
 }
 ```
 
-We have also added the cassandra::opscenter` class for the opscenter node.
+We have also added the `cassandra::opscenter` class for the opscenter node.
 
 ### DataStax Enterprise
 
