@@ -15,7 +15,7 @@ node /^node\d+$/ {
   class { 'cassandra':
     cluster_name    => 'MyCassandraCluster',
     endpoint_snitch => 'GossipingPropertyFileSnitch',
-    listen_address  => "${::ipaddress}",
+    listen_address  => ${::ipaddress},
     num_tokens      => 256,
     seeds           => '110.82.155.0,110.82.156.3',
     before          => Class['cassandra::datastax_agent']
