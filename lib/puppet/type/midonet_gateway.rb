@@ -7,16 +7,16 @@ Puppet::Type.newtype(:midonet_gateway) do
       Example:
 
         midonet_gateway {'hostname':
-           midonet_api_url     => 'http://controller:8080',
-           username            => 'admin',
-           password            => 'admin',
-           tenant_name         => 'admin',
-           interface           => 'eth1',
-           local_as            => '64512',
-           bgp_port            => { 'port_address' => '198.51.100.2', 'net_prefix' => '198.51.100.0', 'net_length' => '30'},
-           remote_peers        => [ { 'as' => '64513', 'ip' => '198.51.100.1' },
+           midonet_api_url => 'http://controller:8080',
+           username        => 'admin',
+           password        => 'admin',
+           tenant_name     => 'admin',
+           interface       => 'eth1',
+           local_as        => '64512',
+           bgp_port        => { 'port_address' => '198.51.100.2', 'net_prefix' => '198.51.100.0', 'net_length' => '30'},
+           remote_peers    => [ { 'as' => '64513', 'ip' => '198.51.100.1' },
                                     { 'as' => '64513', 'ip' => '203.0.113.1' } ],
-           advertise_net       => [ { 'net_prefix' => '192.0.2.0', 'net_length' => '24' } ]
+           advertise_net   => [ { 'net_prefix' => '192.0.2.0', 'net_length' => '24' } ]
         }
   }
 

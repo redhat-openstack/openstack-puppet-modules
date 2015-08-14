@@ -8,10 +8,10 @@ Puppet::Type.newtype(:midonet_host_registry) do
       Example:
 
         midonet_host_registry {'hostname':
-          $midonet_api_url => 'http://controller:8080',
-          $username => 'admin',
-          $password => 'admin',
-          $ip_address => '123.23.43.2'
+          $midonet_api_url     => 'http://controller:8080',
+          $username            => 'admin',
+          $password            => 'admin',
+          $underlay_ip_address => '123.23.43.2'
         }
   }
   ensurable

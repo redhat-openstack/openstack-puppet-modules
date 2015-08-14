@@ -4,9 +4,9 @@
   "author": "MidoNet",
   "summary": "Configure and install MidoNet components",
   "license": "Apache-2.0",
-  "source": "https://github.com/midonet/arrakis",
-  "project_page": "http://github.com/midonet/arrakis/tree/master/modules/midonet-midonet",
-  "issues_url": "https://midonet.atlassian.net/projects/MDT",
+  "source": "https://github.com/midonet/puppet-midonet",
+  "project_page": "https://github.com/midonet/puppet-midonet",
+  "issues_url": "https://midonet.atlassian.net/projects/PUP",
   "dependencies": [
     { "name":"ripienaar-module_data","version_requirement":">=0.0.3" },
     { "name":"puppetlabs-inifile", "version_requirement": ">=1.0.0 <2.0.0" },
@@ -24,7 +24,7 @@
     },
     {
     "operatingsystem": "Ubuntu",
-    "operatingsystemrelease": ["12.04", "14.04"]
+    "operatingsystemrelease": ["14.04"]
     }
   ]
 }
