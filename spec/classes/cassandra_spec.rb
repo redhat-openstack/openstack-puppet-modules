@@ -162,4 +162,91 @@ describe 'cassandra' do
       }
     }
   end
+
+  context 'Test the cassandra.yml temlate.' do
+    let :facts do
+      {
+        :osfamily => 'RedHat'
+      }
+    end
+
+    let :params do
+      {
+        :authenticator                         => 'foo',
+        :authorizer                            => 'foo',
+        :auto_snapshot                         => 'foo',
+        :client_encryption_enabled             => 'foo',
+        :client_encryption_keystore            => 'foo',
+        :client_encryption_keystore_password   => 'foo',
+        :cluster_name                          => 'foo',
+        :commitlog_directory                   => 'foo',
+        :concurrent_counter_writes             => 'foo',
+        :concurrent_reads                      => 'foo',
+        :concurrent_writes                     => 'foo',
+        :config_path                           => '/etc',
+        :data_file_directories                 => ['foo', 'bar'],
+        :disk_failure_policy                   => 'foo',
+        :endpoint_snitch                       => 'foo',
+        :hinted_handoff_enabled                => 'foo',
+        :incremental_backups                   => 'foo',
+        :internode_compression                 => 'foo',
+        :listen_address                        => 'foo',
+        :native_transport_port                 => 'foo',
+        :num_tokens                            => 'foo',
+        :partitioner                           => 'foo',
+        :rpc_address                           => 'foo',
+        :rpc_port                              => 'foo',
+        :rpc_server_type                       => 'foo',
+        :saved_caches_directory                => 'foo',
+        :seeds                                 => 'foo',
+        :server_encryption_internode           => 'foo',
+        :server_encryption_keystore            => 'foo',
+        :server_encryption_keystore_password   => 'foo',
+        :server_encryption_truststore          => 'foo',
+        :server_encryption_truststore_password => 'foo',
+        :snapshot_before_compaction            => 'foo',
+        :ssl_storage_port                      => 'foo',
+        :start_native_transport                => 'foo',
+        :start_rpc                             => 'foo',
+        :storage_port                          => 'foo',
+      }
+    end
+
+    it { should contain_file('/etc/cassandra.yaml').with_content(/authenticator: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/authorizer: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/auto_snapshot: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/enabled: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/keystore_password: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/cluster_name: 'foo'/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_directory: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_counter_writes: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_reads: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_writes: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/^    - foo$/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/disk_failure_policy: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/endpoint_snitch: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/hinted_handoff_enabled: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/incremental_backups: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/internode_compression: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/listen_address: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/native_transport_port: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/num_tokens: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/partitioner: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_address: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_port: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_server_type: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/ - seeds: "foo"/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/internode_encryption: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/keystore_password: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/truststore: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/truststore_password: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/snapshot_before_compaction: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/ssl_storage_port: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/start_native_transport: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/start_rpc: foo/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/storage_port: foo/) }
+  end
 end
