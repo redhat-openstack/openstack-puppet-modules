@@ -1,12 +1,17 @@
 require 'spec_helper'
 describe 'cassandra::firewall_ports' do
   let(:pre_condition) { [
+    'class cassandra () {}',
     'define firewall ($action, $port, $proto, $source) {}',
   ] }
 
-  let!(:stdlib_stubs) { MockFunction.new('prefix') { |f|
+  let!(:stdlib_stubs) {
+    MockFunction.new('prefix') { |f|
       f.stubbed.with(['0.0.0.0/0'], 'Cassandra_').returns('Cassandra_0.0.0.0/0')
       f.stubbed.with(['0.0.0.0/0'], 'SSH_').returns('SSH_0.0.0.0/0')
+    }
+    MockFunction.new('concat') { |f|
+      f.stubbed().returns([7000, 7001, 7199, 9160])
     }
   }
 
@@ -15,11 +20,11 @@ describe 'cassandra::firewall_ports' do
 
     it {
       should contain_class('cassandra::firewall_ports').with({
-        'client_subnets'     => ['0.0.0.0/0'],
-        'inter_node_subnets' => ['0.0.0.0/0'],
-        'public_subnets'     => ['0.0.0.0/0'],
-        'ssh_port'           => 22,
-        'opscenter_subnets'  => ['0.0.0.0/0']
+        'client_subnets'              => ['0.0.0.0/0'],
+        'inter_node_subnets'          => ['0.0.0.0/0'],
+        'public_subnets'              => ['0.0.0.0/0'],
+        'ssh_port'                    => 22,
+        'opscenter_subnets'           => ['0.0.0.0/0']
       })
     }
 

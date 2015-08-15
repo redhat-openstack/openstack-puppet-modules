@@ -1,5 +1,9 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-MM-DD - Release 1.3.0
+* Allow additional TCP ports to be specifed for the host based firewall.
+* Fixed a problem where the client subnets were ignored by the firewall.
+
 ##2015-08-10 - Release 1.2.0
 * Added the installation of Java Native Access (JNA) to cassandra::java
 * For DataStax Enterprise, allow the remote storage of metric data with

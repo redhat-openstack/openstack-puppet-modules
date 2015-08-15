@@ -529,16 +529,31 @@ it must be the final cassandra class included in the manifest.
 
 #### Parameters
 
+##### `client_additional_ports`
+Allow additional TCP ports to be opened for traffic
+coming from the client subnets
+(default **[]**).
+
 ##### `client_subnets`
 An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
 (default **['0.0.0.0/0']**).
+
+##### `inter_node_additional_ports`
+Allow additional TCP ports to be opened for traffic
+between the Cassandra nodes
+(default **[]**).
 
 ##### `inter_node_subnets`
 An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
 for cassandra JMX monitoring
 (default **['0.0.0.0/0']**).
+
+##### `inter_node_additional_ports`
+Allow additional TCP ports to be opened for traffic
+coming from public subnets
+(default **[]**).
 
 ##### `public_subnets`
 An array of the list of subnets that are to allowed connection to
@@ -550,6 +565,11 @@ cassandra::opscenter::webserver_ssl_port
 ##### `ssh_port`
 Which port does SSH operate on
 (default **22**).
+
+##### `inter_node_additional_ports`
+Allow additional TCP ports to be opened for traffic
+coming from OpsCenter subnets
+(default **[]**).
 
 ##### `opscenter_subnets`
 An array of the list of subnets that are to allowed connection to
