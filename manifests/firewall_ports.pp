@@ -13,7 +13,8 @@ class cassandra::firewall_ports (
   $opscenter_subnets           = ['0.0.0.0/0']
   ) {
   # Public connections on any node.
-  $public_subnets_ssh_array = prefix($public_subnets, 'SSH_')
+  $public_subnets_ssh_array = prefix($public_subnets, '200_SSH_')
+
   cassandra::firewall_ports::rule { $public_subnets_ssh_array:
     ports => [$ssh_port]
   }
@@ -22,17 +23,19 @@ class cassandra::firewall_ports (
   if defined ( Class['::cassandra'] ) {
     # Inter-node connections for Cassandra
     $inter_node_subnets_array = prefix($inter_node_subnets,
-      'CassandraInterNode_')
+      '210_CassandraInterNode_')
     $inter_node_ports = [$cassandra::storage_port,
       $cassandra::ssl_storage_port, 7199]
+
     cassandra::firewall_ports::rule { $inter_node_subnets_array:
       ports => concat([$inter_node_ports], $inter_node_additional_ports)
     }
 
     # Client connections for Cassandra
-    $client_subnets_array = prefix($client_subnets, 'CassandraClient_')
+    $client_subnets_array = prefix($client_subnets, '220_CassandraClient_')
     $client_node_ports = [$cassandra::native_transport_port,
       $cassandra::rpc_port]
+
     cassandra::firewall_ports::rule {$client_subnets_array:
       ports => concat([$client_node_ports], $client_additional_ports)
     }
@@ -41,7 +44,8 @@ class cassandra::firewall_ports (
   # Connections for DataStax Agent
   if defined ( Class['::cassandra::datastax_agent'] ) {
     $opscenter_subnets_opc_agent = prefix($opscenter_subnets,
-      'OpsCenterAgent_')
+      '230_OpsCenterAgent_')
+
     cassandra::firewall_ports::rule { $opscenter_subnets_opc_agent:
       ports => concat([61621], $opscenter_additional_ports)
     }
@@ -50,7 +54,7 @@ class cassandra::firewall_ports (
   # Connections for OpsCenter
   if defined ( Class['::cassandra::opscenter'] ) {
     $public_subnets_opscenter_array = prefix($public_subnets,
-      'OpsCenterWeb_')
+      '240_OpsCenterWeb_')
     $opscenter_port = [ $cassandra::opscenter::webserver_port,
       $cassandra::opscenter::webserver_ssl_port ]
 
@@ -60,7 +64,8 @@ class cassandra::firewall_ports (
     }
 
     $opscenter_subnets_opc_server = prefix($opscenter_subnets,
-      'OpsCenterServer_')
+      '250_OpsCenterServer_')
+
     cassandra::firewall_ports::rule { $opscenter_subnets_opc_server:
       ports => concat([61620], $opscenter_additional_ports)
     }

@@ -3,11 +3,13 @@ define cassandra::firewall_ports::rule(
     $ports,
   ) {
   $array_var1 = split($title, '_')
-  $proto_name = $array_var1[0]
-  $source = $array_var1[1]
-  firewall { "${port} (${proto_name}) - ${source}":
+  $rule_number = $array_var1[1]
+  $proto_name = $array_var1[2]
+  $source = $array_var1[3]
+
+  firewall { "${rule_number} (${proto_name}) - ${source}":
     action => 'accept',
-    port   => $port,
+    port   => $ports,
     proto  => 'tcp',
     source => $source
   }
