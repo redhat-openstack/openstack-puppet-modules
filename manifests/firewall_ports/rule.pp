@@ -1,6 +1,6 @@
 # cassandra::firewall_ports::rule
 define cassandra::firewall_ports::rule(
-    $port,
+    $ports,
   ) {
   $array_var1 = split($title, '_')
   $proto_name = $array_var1[0]
