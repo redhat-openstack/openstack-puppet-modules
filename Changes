@@ -1,3 +1,8 @@
+0.6.2 Sunday 16th August, 2015
+    Corrected `template_body` error message when template is missing
+    (Github #26 - Robin Bowes)
+    Converted Metadata to metadata.json (Github #23 - Bram Vogelaar)
+
 0.6.1 Tuesday 23rd September, 2014
     Fix usage with the future parser (Github #16 - Oscar Ferrer)
 
