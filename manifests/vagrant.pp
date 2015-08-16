@@ -4,20 +4,18 @@
 #############################################################################
 
 node /cassandra/ {
+  class { '::cassandra::datastax_repo': } ->
+  class { '::cassandra::java': } ->
   class { 'cassandra':
-    manage_dsc_repo => true,
     cassandra_9822  => true
-  }
-
-  include '::cassandra::datastax_agent'
-  include '::cassandra::java'
-  include '::cassandra::opscenter'
-
+  } ->
+  class { '::cassandra::optutils': } ->
+  class { '::cassandra::datastax_agent': } ->
   class { '::cassandra::opscenter::pycrypto':
     manage_epel => true
-  }
-
-  include '::cassandra::optutils'
+  } ->
+  class { '::cassandra::opscenter': } ->
+  class { '::cassandra::firewall_ports': }
 }
 
 node /opscenter/ {
