@@ -34,7 +34,7 @@ class cassandra::firewall_ports (
     $client_node_ports = [$::cassandra::native_transport_port,
       $::cassandra::rpc_port]
     cassandra::firewall_ports::rule {$client_subnets_array:
-      port => concat([client_node_ports], $client_additional_ports)
+      port => concat([$client_node_ports], $client_additional_ports)
     }
   }
 
@@ -55,7 +55,7 @@ class cassandra::firewall_ports (
       $::cassandra::opscenter::webserver_ssl_port ]
 
     cassandra::firewall_ports::rule { $public_subnets_opscenter_array:
-      port => concat($::cassandra::opscenter::webserver_port,
+      port => concat([$::cassandra::opscenter::webserver_port],
                 $public_additional_ports)
     }
 
