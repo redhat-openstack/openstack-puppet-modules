@@ -21,7 +21,8 @@ class cassandra::firewall_ports (
   # If this is a Cassandra node.
   if defined ( Class['::cassandra'] ) {
     # Inter-node connections for Cassandra
-    $inter_node_subnets_array = prefix($inter_node_subnets, 'Cassandra_')
+    $inter_node_subnets_array = prefix($inter_node_subnets,
+      'CassandraInterNode_')
     $inter_node_ports = [$::cassandra::storage_port,
       $::cassandra::ssl_storage_port, 7199]
     cassandra::firewall_ports::rule { $inter_node_subnets_array:
@@ -29,7 +30,7 @@ class cassandra::firewall_ports (
     }
 
     # Client connections for Cassandra
-    $client_subnets_array = prefix($client_subnets, 'Cassandra_')
+    $client_subnets_array = prefix($client_subnets, 'CassandraClient_')
     $client_node_ports = [$::cassandra::native_transport_port,
       $::cassandra::rpc_port]
     cassandra::firewall_ports::rule {$client_subnets_array:
