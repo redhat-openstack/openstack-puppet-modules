@@ -524,36 +524,50 @@ relevant to the cassandra installation.  If firewalls are being managed
 already, simply do not include this module in your manifest.
 
 IMPORTANT: The full list of what ports should be configured is assessed at
-evaluation time of the configuration.  Therefore if one is to use this class,
+evaluation time of the configuration. Therefore if one is to use this class,
 it must be the final cassandra class included in the manifest.
 
 #### Parameters
 
-##### `client_additional_ports`
-Allow additional TCP ports to be opened for traffic
+##### `client_ports`
+Only has any effect if the `cassandra` class is defined on the node.
+
+Allow these TCP ports to be opened for traffic
 coming from the client subnets
-(default **[]**).
+(default **[9042, 9160]**).
 
 ##### `client_subnets`
+Only has any effect if the `cassandra` class is defined on the node.
+
 An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
 (default **['0.0.0.0/0']**).
 
-##### `inter_node_additional_ports`
-Allow additional TCP ports to be opened for traffic
+##### `inter_node_ports`
+Only has any effect if the `cassandra` class is defined on the node.
+
+Allow these TCP ports to be opened for traffic
 between the Cassandra nodes
-(default **[]**).
+(default **[7000, 7001, 7199]**).
 
 ##### `inter_node_subnets`
+Only has any effect if the `cassandra` class is defined on the node.
+
 An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
 for cassandra JMX monitoring
 (default **['0.0.0.0/0']**).
 
-##### `inter_node_additional_ports`
-Allow additional TCP ports to be opened for traffic
-coming from public subnets
-(default **[]**).
+##### `inter_node_ports`
+Allow these TCP ports to be opened for traffic
+coming from OpsCenter subnets
+(default **[7000, 7001, 7199]**).
+
+##### `public_ports`
+Allow these TCP ports to be opened for traffic
+coming from public subnets the port specified in `$ssh_port` will be
+appended to this list
+(default **[8888]**).
 
 ##### `public_subnets`
 An array of the list of subnets that are to allowed connection to
@@ -566,10 +580,14 @@ cassandra::opscenter::webserver_ssl_port
 Which port does SSH operate on
 (default **22**).
 
-##### `inter_node_additional_ports`
-Allow additional TCP ports to be opened for traffic
-coming from OpsCenter subnets
-(default **[]**).
+##### `opscenter_ports`
+Only has any effect if the `cassandra::datastax_agent` or
+`cassandra::opscenter` classes are defined.
+
+Allow these TCP ports to be opened for traffic
+coming to or from OpsCenter
+appended to this list
+(default **[61620, 61621]**).
 
 ##### `opscenter_subnets`
 An array of the list of subnets that are to allowed connection to

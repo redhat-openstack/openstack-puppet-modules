@@ -1,16 +1,18 @@
 # cassandra::firewall_ports::rule
 define cassandra::firewall_ports::rule(
-    $ports,
+    $ports
   ) {
   $array_var1 = split($title, '_')
-  $rule_number = $array_var1[1]
-  $proto_name = $array_var1[2]
-  $source = $array_var1[3]
+  $rule_number = $array_var1[0]
+  $rule_description = $array_var1[1]
+  $source = $array_var1[2]
 
-  firewall { "${rule_number} (${proto_name}) - ${source}":
-    action => 'accept',
-    port   => $ports,
-    proto  => 'tcp',
-    source => $source
+  if size($ports) > 0 {
+    firewall { "${rule_number} - Cassandra (${rule_description}) - ${source}":
+      action => 'accept',
+      port   => $ports,
+      proto  => 'tcp',
+      source => $source
+    }
   }
 }
