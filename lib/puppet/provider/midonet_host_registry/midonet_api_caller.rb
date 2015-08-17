@@ -3,10 +3,12 @@ if RUBY_VERSION == '1.8.7'
 end
 
 require 'uri'
-require 'faraday'
+require 'faraday' if Puppet.features.faraday?
 require 'json'
 
 Puppet::Type.type(:midonet_host_registry).provide(:midonet_api_caller) do
+
+  confine :feature => :faraday
 
   def create
     define_connection(resource[:midonet_api_url])

@@ -6,6 +6,8 @@ midonet::repository::midonet_repo: 'http://repo.midonet.org/midonet/v2015.06/RHE
 midonet::repository::midonet_thirdparty_repo: 'http://repo.midonet.org/misc/RHEL'
 midonet::repository::midonet_stage: 'stable'
 midonet::repository::midonet_key_url: 'http://repo.midonet.org/packages.midokura.key'
+midonet::repository::midonet_openstack_repo: 'http://repo.midonet.org/openstack-juno/RHEL'
+midonet::repository::openstack_release: 'juno'
 
 # Midonet Host Agent-based attributes
 midonet::midonet_agent::zk_servers:
@@ -32,3 +34,10 @@ midonet::neutron_plugin::project_id: 'service'
 midonet::cassandra::pid_dir: '/var/run/cassandra'
 midonet::cassandra::conf_dir: '/etc/cassandra/default.conf'
 midonet::cassandra::service_path: '/sbin'
+
+# Temporary source for faraday package and dependencies until it gets included
+# in EPEL repositories
+midonet::faraday_package: 'ruby193-rubygem-faraday'
+midonet::faraday_url: 'http://yum.theforeman.org/nightly/el7/x86_64/ruby193-rubygem-faraday-0.9.1-1.el7.noarch.rpm'
+midonet::multipart_post_package: 'ruby193-rubygem-multipart-post'
+midonet::multipart_post_url: 'http://yum.theforeman.org/nightly/el7/x86_64/ruby193-rubygem-multipart-post-1.2.0-2.el7.noarch.rpm'

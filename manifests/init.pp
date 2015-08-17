@@ -64,13 +64,30 @@ class midonet {
     # Add midonet-cli
     class {'midonet::midonet_cli':}
 
-    if ! defined(Package['faraday']) {
-      package { 'faraday':
-        ensure   => present,
-        provider => 'gem',
-        before   => Midonet_host_registry[$::hostname]
+# TODO(carmela): This workaround has been added in order to be able to handle
+# dependencies on the custom providers. Currently there's no official faraday
+# package for RHEL-based. We are working on getting it included in EPEL repos.
+# Detailed info: https://midonet.atlassian.net/browse/PUP-30
+
+    if ! defined(Package["hiera('midonet::faraday', 'ruby-faraday')"]) {
+      if $::osfamily == 'RedHat' {
+        package { "hiera('midonet::multipart', 'rubygem-multipart-post')":
+          ensure => present,
+          source => "hiera('midonet::multipart_post_url'"
+        } ->
+        package { "hiera('midonet::faraday', 'ruby-faraday')":
+          ensure => present,
+          source => "hiera('midonet::faraday_url')"
+        }
+      }
+      else {
+        package { 'ruby-faraday':
+          ensure => present,
+          before => Midonet_host_registry[$::hostname]
+        }
       }
     }
+
 
     # Register the host
     midonet_host_registry { $::hostname:
