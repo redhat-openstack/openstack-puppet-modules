@@ -243,6 +243,7 @@ should be running in the host we are registering.
 This is the way to use it:
 
     midonet_host_registry {$::fqdn:
+      $ensure              => present,
       $midonet_api_url     => 'http://controller:8080',
       $username            => 'admin',
       $password            => 'admin',
@@ -252,7 +253,7 @@ This is the way to use it:
       $tunnelzone_type     => 'gre'
     }
 
-Note:
+Notes:
 
  * **midonet\_api\_url**, **username**, **password**, **tenant\_\name**:
    Credentials to authenticate to Keystone through the MidoNet API service.
@@ -282,7 +283,8 @@ accessible from the Internet.
 
 This is the way to use it:
 
-    midonet_gateway {'hostname':
+    midonet_gateway {$::fqdn:
+      ensure          => present,
       midonet_api_url => 'http://controller:8080',
       username        => 'admin',
       password        => 'admin',
