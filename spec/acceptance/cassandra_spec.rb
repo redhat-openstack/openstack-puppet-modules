@@ -2,19 +2,21 @@ require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
   cassandra_pp = <<-EOS
+    require '::cassandra::datastax_repo'
+    require '::cassandra::java'
+
     class { 'cassandra':
-      manage_dsc_repo => true,
       cassandra_9822  => true
     }
 
     include '::cassandra::datastax_agent'
-    include '::cassandra::java'
-    include '::cassandra::opscenter'
 
     class { '::cassandra::opscenter::pycrypto':
-      manage_epel => true
+      manage_epel => true,
+      before      => Class['::cassandra::opscenter']
     }
 
+    include '::cassandra::opscenter'
     include '::cassandra::optutils'
     include '::cassandra::firewall_ports'
   EOS
@@ -26,11 +28,21 @@ describe 'cassandra class' do
   end
 
   idempotency_pp = <<-EOS
-    include 'cassandra'
+    require '::cassandra::datastax_repo'
+    require '::cassandra::java'
+
+    class { 'cassandra':
+      cassandra_9822  => true
+    }
+
     include '::cassandra::datastax_agent'
-    include '::cassandra::java'
+
+    class { '::cassandra::opscenter::pycrypto':
+      manage_epel => true,
+      before      => Class['::cassandra::opscenter']
+    }
+
     include '::cassandra::opscenter'
-    include '::cassandra::opscenter::pycrypto'
     include '::cassandra::optutils'
     include '::cassandra::firewall_ports'
   EOS
