@@ -76,10 +76,11 @@ class n1k_vsm(
     $ovsbridge          = 'vsm-br'
 
     #VSM installation will be done only once. Will not respond to puppet sync
-    $_phy_ip_addr       = inline_template("<%= scope.lookupvar('::ipaddress_${n1k_vsm::phy_if_bridge}') %>")
+    $_phy_if_bridge     = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')
+    $_phy_ip_addr       = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
     if $_phy_ip_addr != '' {
-      $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${n1k_vsm::phy_if_bridge}') %>")
-      $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${n1k_vsm::phy_if_bridge}') %>")
+      $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
+      $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${_phy_if_bridge}') %>")
       $gw_intf          = $n1k_vsm::phy_gateway
       include n1k_vsm::pkgprep_ovscfg
     }
