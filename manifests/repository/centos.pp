@@ -36,11 +36,6 @@ class midonet::repository::centos (
         notice('Adding midonet sources for RedHat-like distribution')
         if ($::operatingsystemmajrelease == 6 or
             $::operatingsystemmajrelease == 7) {
-            if ($::operatingsystemmajrelease == 6 and
-                $openstack_release == 'juno') {
-                fail ("CentOS/Redhat 6 only supports
-                      'openstack_release => icehouse'")
-            }
 
             yumrepo { 'midonet':
                 baseurl  => "${midonet_repo}/${::operatingsystemmajrelease}/${midonet_stage}",
