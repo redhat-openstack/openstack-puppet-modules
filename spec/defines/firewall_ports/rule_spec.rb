@@ -4,21 +4,31 @@ describe 'cassandra::firewall_ports::rule' do
     'define firewall ($action, $port, $proto, $source) {}',
   ] }
 
+  let!(:stdlib_stubs) {
+    MockFunction.new('prefix') { |f|
+      f.stubbed.with(['0.0.0.0/0'],
+        '200_Public_').returns('200_Public_0.0.0.0/0')
+      f.stubbed.with(['0.0.0.0/0'],
+        '210_InterNode_').returns('210_InterNode__0.0.0.0/0')
+      f.stubbed.with(['0.0.0.0/0'],
+        '220_Client_').returns('220_Client__0.0.0.0/0')
+    }
+    MockFunction.new('concat') { |f|
+      f.stubbed().returns([8888, 22])
+    }
+    MockFunction.new('size') { |f|
+      f.stubbed().returns(42)
+    }
+  }
+
   context 'Test that rules can be set.' do
-    let(:title) { 'SSH_0.0.0.0/0' }
+    let(:title) { '200_Public_0.0.0.0/0' }
     let :params do
       {
-        :port   => 22,
+        :ports => [8888, 22],
       }
     end
 
     it { should compile }
-
-    it {
-      should contain_firewall('22 (SSH) - 0.0.0.0/0').with({
-        'port'   => 22,
-        'source' => '0.0.0.0/0',
-      })
-    }
   end
 end

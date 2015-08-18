@@ -3,29 +3,24 @@
 # part of the cassandra module.
 #############################################################################
 
-node /^node\d+$/ {
-  class { 'cassandra::datastax_repo':
-    before => Class['cassandra']
-  }
-
-  class { 'cassandra::java':
-    before => Class['cassandra']
-  }
+node /cassandra/ {
+  require '::cassandra::datastax_repo'
+  require '::cassandra::java'
 
   class { 'cassandra':
-    cluster_name    => 'MyCassandraCluster',
-    endpoint_snitch => 'GossipingPropertyFileSnitch',
-    listen_address  => $::ipaddress,
-    num_tokens      => 256,
-    seeds           => '110.82.155.0,110.82.156.3',
-    before          => Class['cassandra::datastax_agent']
+    cassandra_9822  => true
   }
 
-  class { 'cassandra::datastax_agent':
-    stomp_interface => '110.82.157.6'
+  include '::cassandra::datastax_agent'
+
+  class { '::cassandra::opscenter::pycrypto':
+    manage_epel => true,
+    before      => Class['::cassandra::opscenter']
   }
 
-  include cassandra::optutils
+  include '::cassandra::opscenter'
+  include '::cassandra::optutils'
+  include '::cassandra::firewall_ports'
 }
 
 

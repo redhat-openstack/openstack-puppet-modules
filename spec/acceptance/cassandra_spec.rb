@@ -16,6 +16,7 @@ describe 'cassandra class' do
     }
 
     include '::cassandra::optutils'
+    include '::cassandra::firewall_ports'
   EOS
 
   describe 'Initial install.' do
@@ -31,6 +32,7 @@ describe 'cassandra class' do
     include '::cassandra::opscenter'
     include '::cassandra::opscenter::pycrypto'
     include '::cassandra::optutils'
+    include '::cassandra::firewall_ports'
   EOS
 
   describe 'Idempotency test.' do
