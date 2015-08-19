@@ -12,10 +12,10 @@ describe 'cassandra::optutils' do
     it { should contain_package('cassandra22-tools') }
   end
 
-  context 'On an Ubuntu OS with defaults for all parameters' do
+  context 'On a Debian OS with defaults for all parameters' do
     let :facts do
       {
-        :operatingsystem => 'Ubuntu'
+        :osfamily => 'Debian'
       }
     end
 

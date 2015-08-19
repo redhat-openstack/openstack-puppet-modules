@@ -6,7 +6,7 @@ class cassandra::optutils (
   if $package_name == 'undef' {
     if $::osfamily == 'RedHat' {
       $real_package_name = 'cassandra22-tools'
-    } elsif $::operatingsystem == 'Ubuntu' {
+    } elsif $::osfamily == 'Debian' {
       $real_package_name = 'cassandra-tools'
     } else {
       fail("OS family ${::osfamily} not supported")

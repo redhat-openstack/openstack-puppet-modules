@@ -117,42 +117,42 @@ class cassandra (
   $dc_rack_properties_file = "${cfg_path}/${snitch_properties_file}"
 
   ini_setting { 'rackdc.properties.dc':
-    path     => $dc_rack_properties_file,
-    section  => '',
-    setting  => 'dc',
-    value    => $dc,
-    require  => Package[$package_name],
-    notify   => Service['cassandra']
+    path    => $dc_rack_properties_file,
+    section => '',
+    setting => 'dc',
+    value   => $dc,
+    require => Package[$package_name],
+    notify  => Service['cassandra']
   }
 
   ini_setting { 'rackdc.properties.rack':
-    path     => $dc_rack_properties_file,
-    section  => '',
-    setting  => 'rack',
-    value    => $rack,
-    require  => Package[$package_name],
-    notify   => Service['cassandra']
+    path    => $dc_rack_properties_file,
+    section => '',
+    setting => 'rack',
+    value   => $rack,
+    require => Package[$package_name],
+    notify  => Service['cassandra']
   }
 
   if $dc_suffix != undef {
     ini_setting { 'rackdc.properties.dc_suffix':
-      path     => $dc_rack_properties_file,
-      section  => '',
-      setting  => 'dc_suffix',
-      value    => $dc_suffix,
-      require  => Package[$package_name],
-      notify   => Service['cassandra']
+      path    => $dc_rack_properties_file,
+      section => '',
+      setting => 'dc_suffix',
+      value   => $dc_suffix,
+      require => Package[$package_name],
+      notify  => Service['cassandra']
     }
   }
 
   if $prefer_local != undef {
     ini_setting { 'rackdc.properties.prefer_local':
-      path     => $dc_rack_properties_file,
-      section  => '',
-      setting  => 'prefer_local',
-      value    => $prefer_local,
-      require  => Package[$package_name],
-      notify   => Service['cassandra']
+      path    => $dc_rack_properties_file,
+      section => '',
+      setting => 'prefer_local',
+      value   => $prefer_local,
+      require => Package[$package_name],
+      notify  => Service['cassandra']
     }
   }
 }
