@@ -619,6 +619,8 @@ This class has no parameters.
 
 ### Class: cassandra::firewall_ports
 
+WARNING: This feature is currently experimental.
+
 An optional class to configure incoming network ports on the host that are
 relevant to the cassandra installation.  If firewalls are being managed 
 already, simply do not include this module in your manifest.
