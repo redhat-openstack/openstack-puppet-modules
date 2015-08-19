@@ -5,6 +5,12 @@ describe 'cassandra' do
     'class apt::update () {}',
     'define apt::key ($id, $source) {}',
     'define apt::source ($location, $comment, $release, $include) {}',
+    'define ini_setting($ensure = nil,
+       $path,
+       $section,
+       $key_val_separator       = nil,
+       $setting,
+       $value                   = nil) {}',
   ] }
 
   context 'On a RedHat OS with defaults for all parameters' do
@@ -19,6 +25,22 @@ describe 'cassandra' do
     it { should contain_service('cassandra') }
     it { should contain_package('dsc22') }
     it { is_expected.not_to contain_yumrepo('datastax') }
+    it {
+      should contain_ini_setting('rackdc.properties.dc').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-rackdc.properties',
+        'section' => '',
+        'setting' => 'dc',
+        'value'   => 'DC1'
+      })
+    }
+    it {
+      should contain_ini_setting('rackdc.properties.rack').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-rackdc.properties',
+        'section' => '',
+        'setting' => 'rack',
+        'value'   => 'RAC1'
+      })
+    }
   end
 
   context 'On a RedHat OS with manage_dsc_repo set to true' do
@@ -54,6 +76,22 @@ describe 'cassandra' do
     it { is_expected.not_to contain_apt__key('datastaxkey') }
     it { is_expected.not_to contain_apt__source('datastax') }
     it { is_expected.not_to contain_exec('update-cassandra-repos') }
+    it {
+      should contain_ini_setting('rackdc.properties.dc').with({
+        'path'    => '/etc/cassandra/cassandra-rackdc.properties',
+        'section' => '',
+        'setting' => 'dc',
+        'value'   => 'DC1'
+      })
+    }
+    it {
+      should contain_ini_setting('rackdc.properties.rack').with({
+        'path'    => '/etc/cassandra/cassandra-rackdc.properties',
+        'section' => '',
+        'setting' => 'rack',
+        'value'   => 'RAC1'
+      })
+    }
   end
 
   context 'On a Debian OS with manage_dsc_repo set to true' do
@@ -330,5 +368,55 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/start_native_transport: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/start_rpc: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/storage_port: foo/) }
+  end
+
+  context 'Test the dc and rack properties.' do
+    let :facts do
+      {
+        :osfamily => 'RedHat'
+      }
+    end
+
+    let :params do
+      {
+        :snitch_properties_file => 'cassandra-topology.properties',
+        :dc                     => 'NYC',
+        :rack                   => 'R101',
+        :dc_suffix              => '_1_cassandra',
+        :prefer_local           => 'true'
+      }
+    end
+    it {
+      should contain_ini_setting('rackdc.properties.dc').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
+        'section' => '',
+        'setting' => 'dc',
+        'value'   => 'NYC'
+      })
+    }
+    it {
+      should contain_ini_setting('rackdc.properties.rack').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
+        'section' => '',
+        'setting' => 'rack',
+        'value'   => 'R101'
+      })
+    }
+    it {
+      should contain_ini_setting('rackdc.properties.dc_suffix').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
+        'section' => '',
+        'setting' => 'dc_suffix',
+        'value'   => '_1_cassandra'
+      })
+    }
+    it {
+      should contain_ini_setting('rackdc.properties.prefer_local').with({
+        'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
+        'section' => '',
+        'setting' => 'prefer_local',
+        'value'   => 'true'
+      })
+    }
   end
 end

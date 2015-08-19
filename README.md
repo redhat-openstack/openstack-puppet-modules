@@ -397,6 +397,19 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **['/var/lib/cassandra/data']**).
 
+##### `dc`
+Sets the value for dc in *config_path*/*snitch_properties_file* see
+http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+for more details
+(default **DC1**).
+
+##### `dc_suffix`
+Sets the value for dc_suffix in *config_path*/*snitch_properties_file* see
+http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+for more details.  If the value is *undef* then change will be made to the
+snitch properties file for this setting
+(default *undef*).
+
 ##### `disk_failure_policy`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
@@ -456,6 +469,20 @@ The name of the Cassandra package.  Must be available from a repository
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **org.apache.cassandra.dht.Murmur3Partitioner**)
+
+##### `prefer_local`
+Sets the value for prefer_local in *config_path*/*snitch_properties_file* see
+http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+for more details.  Valid values are true, false or *undef*.  If the value is
+*undef* then change will be made to the snitch properties file for this
+setting
+(default *undef*).
+
+##### `rack`
+Sets the value for rack in *config_path*/*snitch_properties_file* see
+http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+for more details
+(default **RAC1**).
 
 ##### `rpc_address`
 This is passed to the
@@ -524,6 +551,11 @@ The name of the service that runs the Cassandra software (default
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file
 (default **false**).
+
+##### `snitch_properties_file`
+The name of the snitch properties file.  The full path name would be
+*config_path*/*snitch_properties_file*
+(default **cassandra-rackdc.properties**).
 
 ##### `ssl_storage_port`
 This is passed to the

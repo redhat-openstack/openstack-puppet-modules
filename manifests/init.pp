@@ -19,6 +19,8 @@ class cassandra (
   $concurrent_writes                     = 32,
   $config_path                           = undef,
   $data_file_directories                 = ['/var/lib/cassandra/data'],
+  $dc                                    = 'DC1',
+  $dc_suffix                             = undef,
   $disk_failure_policy                   = 'stop',
   $endpoint_snitch                       = 'SimpleSnitch',
   $hinted_handoff_enabled                = true,
@@ -32,6 +34,8 @@ class cassandra (
   $package_name                          = 'dsc22',
   $partitioner
     = 'org.apache.cassandra.dht.Murmur3Partitioner',
+  $prefer_local                          = undef,
+  $rack                                  = 'RAC1',
   $rpc_address                           = 'localhost',
   $rpc_port                              = 9160,
   $rpc_server_type                       = 'sync',
@@ -46,6 +50,7 @@ class cassandra (
   $service_ensure                        = 'running',
   $service_name                          = 'cassandra',
   $snapshot_before_compaction            = false,
+  $snitch_properties_file                = 'cassandra-rackdc.properties',
   $ssl_storage_port                      = 7001,
   $start_native_transport                = true,
   $start_rpc                             = true,
@@ -106,6 +111,48 @@ class cassandra (
       name    => $service_name,
       enable  => true,
       require => Package[$package_name],
+    }
+  }
+
+  $dc_rack_properties_file = "${cfg_path}/${snitch_properties_file}"
+
+  ini_setting { 'rackdc.properties.dc':
+    path     => $dc_rack_properties_file,
+    section  => '',
+    setting  => 'dc',
+    value    => $dc,
+    require  => Package[$package_name],
+    notify   => Service['cassandra']
+  }
+
+  ini_setting { 'rackdc.properties.rack':
+    path     => $dc_rack_properties_file,
+    section  => '',
+    setting  => 'rack',
+    value    => $rack,
+    require  => Package[$package_name],
+    notify   => Service['cassandra']
+  }
+
+  if $dc_suffix != undef {
+    ini_setting { 'rackdc.properties.dc_suffix':
+      path     => $dc_rack_properties_file,
+      section  => '',
+      setting  => 'dc_suffix',
+      value    => $dc_suffix,
+      require  => Package[$package_name],
+      notify   => Service['cassandra']
+    }
+  }
+
+  if $prefer_local != undef {
+    ini_setting { 'rackdc.properties.prefer_local':
+      path     => $dc_rack_properties_file,
+      section  => '',
+      setting  => 'prefer_local',
+      value    => $prefer_local,
+      require  => Package[$package_name],
+      notify   => Service['cassandra']
     }
   }
 }
