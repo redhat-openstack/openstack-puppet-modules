@@ -2,10 +2,10 @@ require 'spec_helper'
 describe 'cassandra::opscenter' do
   let(:pre_condition) { [
     'define ini_setting ($ensure = nil,
-      $path = nil,
-      $section = nil,
+      $path,
+      $section,
       $key_val_separator = nil,
-      $setting = nil,
+      $setting,
       $value = nil) {}'
   ] }
 
