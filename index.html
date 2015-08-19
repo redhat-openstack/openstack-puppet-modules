@@ -55,6 +55,8 @@
 <a href="#usage">Usage - Configuration options and additional functionality</a>
 
 <ul>
+<li><a href="#create-a-small-cluster">Create a Small Cluster</a></li>
+<li><a href="#opscenter">OpsCenter</a></li>
 <li><a href="#datastax-enterprise">DataStax Enterprise</a></li>
 </ul>
 </li>
@@ -182,10 +184,10 @@ too distant future.</li>
 <p>A most basic example is:</p>
 
 <div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  require <span class="pl-s"><span class="pl-pds">'</span>::cassandra::datastax_repo<span class="pl-pds">'</span></span>
-  require <span class="pl-s"><span class="pl-pds">'</span>::cassandra::java<span class="pl-pds">'</span></span>
   <span class="pl-k">include</span> '::cassandra'
   <span class="pl-k">include</span> '::cassandra::datastax_agent'
+  <span class="pl-k">include</span> '::cassandra::datastax_repo'
+  <span class="pl-k">include</span> '::cassandra::java'
   <span class="pl-k">include</span> '::cassandra::opscenter'
   <span class="pl-k">include</span> '::cassandra::optutils'
   <span class="pl-k">include</span> '::cassandra::firewall_ports'
@@ -257,44 +259,144 @@ service_ensure.</p></li>
 <h3>
 <a id="create-a-small-cluster" class="anchor" href="#create-a-small-cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a Small Cluster</h3>
 
-<p>To install Cassandra in a two node cluster called 'Foobar Cluster' where
-node1 (192.168.42.1) is the seed and node2 (192.168.42.2) is also to be a
-member, do something similar to this:</p>
+<p>In the DataStax documentation <em>Initializing a multiple node cluster (single
+data center)</em>
+<a href="http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initSingleDS.html">http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initSingleDS.html</a>
+there is a basic example of a six node cluster with two seeds to be created in
+a single data center spanning two racks.  The nodes in the cluster are:</p>
 
-<div class="highlight highlight-puppet"><pre>require cassandra::datastax_repo
-require cassandra::java
-<span class="pl-k">include</span> cassandra::optutils
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>IP Address</th>
+<th>Seed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>node0</td>
+<td>110.82.155.0</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>node1</td>
+<td>110.82.155.1</td>
+<td></td>
+</tr>
+<tr>
+<td>node2</td>
+<td>110.82.155.2</td>
+<td></td>
+</tr>
+<tr>
+<td>node3</td>
+<td>110.82.156.3</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>node4</td>
+<td>110.82.156.4</td>
+<td></td>
+</tr>
+<tr>
+<td>node5</td>
+<td>110.82.156.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
-node <span class="pl-s"><span class="pl-pds">'</span>node1<span class="pl-pds">'</span></span> {
-  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
-    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+<p>Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
+nodes (vnodes).  The name of the cluster is <em>MyCassandraCluster</em>.</p>
+
+<p>In this initial example, we are going to expand the example by:</p>
+
+<ul>
+<li>Ensuring that the software is installed via the DataStax Community
+repository by including <code>cassandra::datastax_repo</code>.  This needs to be
+executed before the Cassandra package is installed.</li>
+<li>That a suitable Java Runtime environment (JRE) is installed with Java Native
+Access (JNA) by including <code>cassandra::java</code>.  This need to be executed
+before the Cassandra service is started.</li>
+<li>Install the optional utilities by including <code>cassandra::optutils</code>.</li>
+</ul>
+
+<div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
+    <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
   }
-}
 
-node <span class="pl-s"><span class="pl-pds">'</span>node2<span class="pl-pds">'</span></span> {
-  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
-    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>Foobar Cluster<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
-    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>192.168.42.1<span class="pl-pds">'</span></span>,
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra::java'</span>:
+    <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
   }
+
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">num_tokens</span>      =&gt; 256,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>
+  }
+
+  <span class="pl-k">include</span> cassandra::optutils
 }</pre></div>
 
-<p>This would also ensure that the JDK is installed and the optional Cassandra
-tools.</p>
+<p>The default value for the num_tokens is already 256, but it is
+included in the example for clarity.</p>
 
-<h4>
-<a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h4>
+<h3>
+<a id="opscenter" class="anchor" href="#opscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>OpsCenter</h3>
+
+<p>To continue with the previous example, say we have an instance of OpsCenter
+running on a node called opscenter which has an IP address of 110.82.157.6.
+We add the <code>cassandra::datastax_agent</code> to the cassandra node to connect
+to OpsCenter:</p>
+
+<div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
+    <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
+  }
+
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra::java'</span>:
+    <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
+  }
+
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">num_tokens</span>      =&gt; 256,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">before</span>          =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra::datastax_agent<span class="pl-pds">'</span></span>]
+  }
+
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_agent'</span>:
+    <span class="pl-c1">stomp_interface</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.157.6<span class="pl-pds">'</span></span>
+  }
+
+  <span class="pl-k">include</span> cassandra::optutils
+}
+
+node /opscenter/ {
+  <span class="pl-k">include</span> '::cassandra::datastax_repo' -&gt;
+  <span class="pl-k">include</span> '::cassandra' -&gt;
+  <span class="pl-k">include</span> '::cassandra::opscenter'
+}</pre></div>
+
+<p>We have also added the <code>cassandra::opscenter</code> class for the opscenter node.</p>
+
+<h3>
+<a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h3>
 
 <p>After configuring the relevant repositories elsewhere in the manifest, the
 following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
 
 <div class="highlight highlight-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+  <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
   <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
   <span class="pl-c1">package_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse-full<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>My Cluster<span class="pl-pds">'</span></span>,
-  <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
   <span class="pl-c1">service_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>dse<span class="pl-pds">'</span></span>,
 }</pre></div>
 
@@ -477,6 +579,25 @@ path name
 (default <strong>['/var/lib/cassandra/data']</strong>).</p>
 
 <h5>
+<a id="dc" class="anchor" href="#dc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dc</code>
+</h5>
+
+<p>Sets the value for dc in <em>config_path</em>/<em>snitch_properties_file</em> see
+<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details
+(default <strong>DC1</strong>).</p>
+
+<h5>
+<a id="dc_suffix" class="anchor" href="#dc_suffix" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dc_suffix</code>
+</h5>
+
+<p>Sets the value for dc_suffix in <em>config_path</em>/<em>snitch_properties_file</em> see
+<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details.  If the value is <em>undef</em> then change will be made to the
+snitch properties file for this setting
+(default <em>undef</em>).</p>
+
+<h5>
 <a id="disk_failure_policy" class="anchor" href="#disk_failure_policy" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>disk_failure_policy</code>
 </h5>
 
@@ -571,6 +692,26 @@ downloaded from DataStax community (default <strong>false</strong>).</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
 (default <strong>org.apache.cassandra.dht.Murmur3Partitioner</strong>)</p>
+
+<h5>
+<a id="prefer_local" class="anchor" href="#prefer_local" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>prefer_local</code>
+</h5>
+
+<p>Sets the value for prefer_local in <em>config_path</em>/<em>snitch_properties_file</em> see
+<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details.  Valid values are true, false or <em>undef</em>.  If the value is
+<em>undef</em> then change will be made to the snitch properties file for this
+setting
+(default <em>undef</em>).</p>
+
+<h5>
+<a id="rack" class="anchor" href="#rack" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rack</code>
+</h5>
+
+<p>Sets the value for rack in <em>config_path</em>/<em>snitch_properties_file</em> see
+<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details
+(default <strong>RAC1</strong>).</p>
 
 <h5>
 <a id="rpc_address" class="anchor" href="#rpc_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_address</code>
@@ -683,6 +824,14 @@ or false
 (default <strong>false</strong>).</p>
 
 <h5>
+<a id="snitch_properties_file" class="anchor" href="#snitch_properties_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>snitch_properties_file</code>
+</h5>
+
+<p>The name of the snitch properties file.  The full path name would be
+<em>config_path</em>/<em>snitch_properties_file</em>
+(default <strong>cassandra-rackdc.properties</strong>).</p>
+
+<h5>
 <a id="ssl_storage_port" class="anchor" href="#ssl_storage_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ssl_storage_port</code>
 </h5>
 
@@ -779,33 +928,76 @@ from which packages for DataStax Community can be downloaded.</p>
 <h3>
 <a id="class-cassandrafirewall_ports" class="anchor" href="#class-cassandrafirewall_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::firewall_ports</h3>
 
+<p>WARNING: This feature is currently experimental.</p>
+
 <p>An optional class to configure incoming network ports on the host that are
 relevant to the cassandra installation.  If firewalls are being managed 
 already, simply do not include this module in your manifest.</p>
 
 <p>IMPORTANT: The full list of what ports should be configured is assessed at
-evaluation time of the configuration.  Therefore if one is to use this class,
+evaluation time of the configuration. Therefore if one is to use this class,
 it must be the final cassandra class included in the manifest.</p>
 
 <h4>
 <a id="parameters-3" class="anchor" href="#parameters-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
 <h5>
+<a id="client_ports" class="anchor" href="#client_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_ports</code>
+</h5>
+
+<p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
+
+<p>Allow these TCP ports to be opened for traffic
+coming from the client subnets
+(default <strong>[9042, 9160]</strong>).</p>
+
+<h5>
 <a id="client_subnets" class="anchor" href="#client_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_subnets</code>
 </h5>
+
+<p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
 
 <p>An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
 (default <strong>['0.0.0.0/0']</strong>).</p>
 
 <h5>
+<a id="inter_node_ports" class="anchor" href="#inter_node_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_ports</code>
+</h5>
+
+<p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
+
+<p>Allow these TCP ports to be opened for traffic
+between the Cassandra nodes
+(default <strong>[7000, 7001, 7199]</strong>).</p>
+
+<h5>
 <a id="inter_node_subnets" class="anchor" href="#inter_node_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_subnets</code>
 </h5>
+
+<p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
 
 <p>An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
 for cassandra JMX monitoring
 (default <strong>['0.0.0.0/0']</strong>).</p>
+
+<h5>
+<a id="inter_node_ports-1" class="anchor" href="#inter_node_ports-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_ports</code>
+</h5>
+
+<p>Allow these TCP ports to be opened for traffic
+coming from OpsCenter subnets
+(default <strong>[7000, 7001, 7199]</strong>).</p>
+
+<h5>
+<a id="public_ports" class="anchor" href="#public_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>public_ports</code>
+</h5>
+
+<p>Allow these TCP ports to be opened for traffic
+coming from public subnets the port specified in <code>$ssh_port</code> will be
+appended to this list
+(default <strong>[8888]</strong>).</p>
 
 <h5>
 <a id="public_subnets" class="anchor" href="#public_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>public_subnets</code>
@@ -823,6 +1015,18 @@ cassandra::opscenter::webserver_ssl_port
 
 <p>Which port does SSH operate on
 (default <strong>22</strong>).</p>
+
+<h5>
+<a id="opscenter_ports" class="anchor" href="#opscenter_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_ports</code>
+</h5>
+
+<p>Only has any effect if the <code>cassandra::datastax_agent</code> or
+<code>cassandra::opscenter</code> classes are defined.</p>
+
+<p>Allow these TCP ports to be opened for traffic
+coming to or from OpsCenter
+appended to this list
+(default <strong>[61620, 61621]</strong>).</p>
 
 <h5>
 <a id="opscenter_subnets" class="anchor" href="#opscenter_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_subnets</code>
