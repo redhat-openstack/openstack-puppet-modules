@@ -2,23 +2,18 @@ require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
   cassandra_pp = <<-EOS
-    require '::cassandra::datastax_repo'
-    require '::cassandra::java'
-
+    class { '::cassandra::datastax_repo': } ->
+    class { '::cassandra::java': } ->
     class { 'cassandra':
       cassandra_9822  => true
-    }
-
-    include '::cassandra::datastax_agent'
-
+    } ->
+    class { '::cassandra::optutils': } ->
+    class { '::cassandra::datastax_agent': } ->
     class { '::cassandra::opscenter::pycrypto':
       manage_epel => true,
-      before      => Class['::cassandra::opscenter']
-    }
-
-    include '::cassandra::opscenter'
-    include '::cassandra::optutils'
-    include '::cassandra::firewall_ports'
+    } ->
+    class { '::cassandra::opscenter': } ->
+    class { '::cassandra::firewall_ports': }
   EOS
 
   describe 'Initial install.' do
@@ -27,29 +22,9 @@ describe 'cassandra class' do
     end
   end
 
-  idempotency_pp = <<-EOS
-    require '::cassandra::datastax_repo'
-    require '::cassandra::java'
-
-    class { 'cassandra':
-      cassandra_9822  => true
-    }
-
-    include '::cassandra::datastax_agent'
-
-    class { '::cassandra::opscenter::pycrypto':
-      manage_epel => true,
-      before      => Class['::cassandra::opscenter']
-    }
-
-    include '::cassandra::opscenter'
-    include '::cassandra::optutils'
-    include '::cassandra::firewall_ports'
-  EOS
-
   describe 'Idempotency test.' do
     it 'should work with no errors' do
-      expect(apply_manifest(idempotency_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(cassandra_pp, :catch_failures => true).exit_code).to be_zero
     end
   end
 
