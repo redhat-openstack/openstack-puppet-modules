@@ -1,7 +1,6 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
-gem 'travis'
-gem 'coveralls'
+gem 'coveralls', require: false
 
 def location_for(place, fake_version = nil)
   if place =~ /^(git:[^#]*)#(.*)/
@@ -19,6 +18,7 @@ group :development, :unit_tests do
   gem 'simplecov',               :require => false
   gem 'puppet_facts',            :require => false
   gem 'json',                    :require => false
+  gem 'travis',                  :require => false
   gem 'puppet-blacksmith',       :require => false
 end
 
