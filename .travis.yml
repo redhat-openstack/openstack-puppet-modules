@@ -1,18 +1,22 @@
----
 language: ruby
 bundler_args: --without development
 script:
-  - "bundle exec rake lint"
-  - "bundle exec rake validate"
-  - "bundle exec rake spec SPEC_OPTS='--format documentation'"
+- bundle exec rake lint
+- bundle exec rake validate
+- bundle exec rake spec SPEC_OPTS='--format documentation'
+- git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-relen
+- .forge-releng/publish
 notifications:
   email: false
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/3477acef6dd93b015c9b
-    on_success: change  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: false     # default: false
+    - https://webhooks.gitter.im/e/3477acef6dd93b015c9b
+    on_success: change
+    on_failure: always
 sudo: false
 rvm:
-  - "2.0.0"
+- 2.0.0
+env:
+  global:
+  - PUBLISHER_LOGIN=locp
+  - secure: r6Tp/drrMoHApBCKBg+1ZlKfeo8NR7RRh+71gQcbhUrvl4Murpqd00rIIuURZDa5bX8dnguX8bTx4euPbZnK967HCzYBrEgWzSOxAqX4QLsf7rq+OBm9qa7rZMbLjlsXTsfgA7HVSzvjreFcZbXOI3lzIzVlyGmFHYSWLZovMoLMtBbhb47zstn6oMR2QF7m4IW6AfOt4ss1F8TyBpCo3r2amtbTItItHb88xqdJPR9SWmc/iYCMTw0bfJ2kt6RheGzyhQlznFJqD8X5c+kie5FQMttB8JUCEULQFCxO3SEo787lR4w5jW0lKox9wdPbfaENq1NYyjdnjq3NrJE0Udu/Lg0XQX/CdBn2boDuWt/Tkkwdydyl9sHADlxs4jQdz2PYCYiopEaVBt00FGMS/IDf9NSWaAttPB3m9mY10pBS2vRsxOYE11ev1jJ/MBEpSgs3iWQUifaxh0Eo+bt68X2Quc2uJAswpYZpfLB3KNC2XGQpC3LdSyssBW9e6o1SXYS9B3g2fy3k1C5nuw2f0QHtSAN6LYZC4jzGWjP3G6uxvilzub9tgGPRVM8ILvUi66R/B7JvcibHBU8Ex876Rl17edmWryEqIVp0zN7eEPsrKdY2MuCkKrXjvIcRGO0Mjr4IOWa9clfCYlJOt3SgJekbMVA2sdnVffZUhfYqTXg=
