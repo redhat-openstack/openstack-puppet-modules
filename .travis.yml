@@ -15,8 +15,6 @@ notifications:
     on_success: change
     on_failure: always
 sudo: false
-rvm:
-- 2.0.0
 env:
   global:
   - PUBLISHER_LOGIN=locp
@@ -31,3 +29,20 @@ env:
        NC2XGQpC3LdSyssBW9e6o1SXYS9B3g2fy3k1C5nuw2f0QHtSAN6LYZC4jzGWjP3G6uxvil
        zub9tgGPRVM8ILvUi66R/B7JvcibHBU8Ex876Rl17edmWryEqIVp0zN7eEPsrKdY2MuCkK
        rXjvIcRGO0Mjr4IOWa9clfCYlJOt3SgJekbMVA2sdnVffZUhfYqTXg='
+matrix:
+  fast_finish: true
+  include:
+  - rvm: 1.8.7
+    env: PUPPET_GEM_VERSION="~> 3.0"
+  - rvm: 1.9.3
+    env: PUPPET_GEM_VERSION="~> 3.0"
+  - rvm: 2.1.5
+    env: PUPPET_GEM_VERSION="~> 3.0"
+  - rvm: 2.1.5
+    env: PUPPET_GEM_VERSION="~> 3.0" FUTURE_PARSER="yes"
+  - rvm: 2.1.6
+    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+  - rvm: 1.8.7
+    env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.6.0"
+  - rvm: 1.8.7
+    env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.7.0"
