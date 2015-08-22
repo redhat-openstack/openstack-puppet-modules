@@ -16,9 +16,11 @@ describe 'cassandra class' do
     class { '::cassandra::firewall_ports': }
 
     # A workaround for Issue79.
-    exec { '/bin/chown root:root /etc/apt/sources.list.d/datastax.list':
-      refreshonly => true,
-      subscribe   => Class[::cassandra::datastax_agent]
+    if $::osfamily == 'Debian' {
+      exec { '/bin/chown root:root /etc/apt/sources.list.d/datastax.list':
+        refreshonly => true,
+        subscribe   => Class[::cassandra::datastax_agent]
+      }
     }
   EOS
 
