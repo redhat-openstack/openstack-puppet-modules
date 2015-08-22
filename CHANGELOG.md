@@ -1,5 +1,9 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-08-22 - Release 1.3.1
+This was mainly a non-functional change.  The biggest thing to say is that
+Debian 7 is now supported.
+
 ##2015-08-19 - Release 1.3.0
 * Allow additional TCP ports to be specifed for the host based firewall.
 * Fixed a problem where the client subnets were ignored by the firewall.
