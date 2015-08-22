@@ -19,7 +19,7 @@ group :development, :unit_tests do
   gem 'simplecov',               :require => false
   gem 'puppet_facts',            :require => false
   gem 'json',                    :require => false
-  gem 'puppet-blacksmith'        :require => false
+  gem 'puppet-blacksmith',       :require => false
 end
 
 group :system_tests do
