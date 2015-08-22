@@ -64,6 +64,12 @@
       ]
     },
     {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
       "operatingsystem": "Scientific",
       "operatingsystemrelease": [
         "6",
