@@ -4,8 +4,9 @@ script:
 - bundle exec rake lint
 - bundle exec rake validate
 - bundle exec rake spec SPEC_OPTS='--format documentation'
-- git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-relen
-- ./.forge-releng/publish
+after_success:
+- git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-releng
+- .forge-releng/publish
 notifications:
   email: false
   webhooks:
