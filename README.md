@@ -100,18 +100,15 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 ### Beginning with cassandra
 
-A most basic example is:
+A basic example is as follows:
 
 ```puppet
-node 'example' {
-  include '::cassandra'
-  include '::cassandra::datastax_agent'
-  include '::cassandra::datastax_repo'
-  include '::cassandra::java'
-  include '::cassandra::opscenter'
-  include '::cassandra::optutils'
-  include '::cassandra::firewall_ports'
-}
+  class { 'cassandra':
+    cluster_name    => 'MyCassandraCluster',
+    endpoint_snitch => 'GossipingPropertyFileSnitch',
+    listen_address  => "${::ipaddress}",
+    seeds           => '110.82.155.0,110.82.156.3'
+  }
 ```
 
 ### Upgrading
