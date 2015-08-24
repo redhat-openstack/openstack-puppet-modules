@@ -14,6 +14,7 @@
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Create a Cluster in a Single Data Center](#create-a-cluster-in-a-single-data-center)
+    * [Create a Cluster in Multiple Data Centers](#create-a-cluster-in-multiple-data-centers)
     * [OpsCenter](#opscenter)
     * [DataStax Enterprise](#datastax-enterprise)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
@@ -168,14 +169,14 @@ data center)_
 there is a basic example of a six node cluster with two seeds to be created in
 a single data center spanning two racks.  The nodes in the cluster are:
 
-**Node Name** | **IP Address** |
---------------|----------------|
-node0 (seed)  | 110.82.155.0   |
-node1         | 110.82.155.1   |
-node2         | 110.82.155.2   |
-node3 (seed)  | 110.82.156.3   |
-node4         | 110.82.156.4   |
-node5         | 110.82.156.5   |
+**Node Name**  | **IP Address** |
+---------------|----------------|
+node0 (seed 1) | 110.82.155.0   |
+node1          | 110.82.155.1   |
+node2          | 110.82.155.2   |
+node3 (seed 2) | 110.82.156.3   |
+node4          | 110.82.156.4   |
+node5          | 110.82.156.5   |
 
 Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
 nodes (vnodes).  The name of the cluster is _MyCassandraCluster_.
@@ -212,12 +213,20 @@ node /^node\d+$/ {
 The default value for the num_tokens is already 256, but it is
 included in the example for clarity.
 
+### Create a Cluster in Multiple Data Centers
+
+To continue with the examples provided by DataStax, we look at the example
+for a cluster across multiple data centers
+<http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initMultipleDS.html>.
+
+TODO
+
 ### OpsCenter
 
-To continue with the previous example, say we have an instance of OpsCenter
-running on a node called opscenter which has an IP address of 110.82.157.6.
-We add the `cassandra::datastax_agent` to the cassandra node to connect
-to OpsCenter:
+To continue with the original example within a single data center, say we
+have an instance of OpsCenter running on a node called opscenter which has
+an IP address of 110.82.157.6.  We add the `cassandra::datastax_agent` to
+the cassandra node to connect to OpsCenter:
 
 ```puppet
 node /^node\d+$/ {
