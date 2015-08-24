@@ -4,9 +4,6 @@ script:
 - bundle exec rake lint
 - bundle exec rake validate
 - bundle exec rake spec SPEC_OPTS='--format documentation'
-after_success:
-- git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-releng
-- .forge-releng/publish
 notifications:
   email: false
   webhooks:
@@ -15,10 +12,6 @@ notifications:
     on_success: change
     on_failure: always
 sudo: false
-env:
-  global:
-  - PUBLISHER_LOGIN=locp
-  - secure: W2cVmdBi9ryG1QlXlVpYt3OoqM2WfKEtXM3Eqwwv8JUE65FvtdNhYRrsdaoyuyXAmXDK5oYuCDyYYvZYHqYwma9yjBGCt9kZvC7I4xWmt1xSpGePdW6fuzws5rUEllTeRMMogZjkiDmZCEmqyM/uot4L85ByCCwCpw4ktFyhM8KxrV9HzohWbYzAGnDN3MNU+MvLNTROFdkhIWKhDRYHVmfAwxGxRywS7phdveDVtiTx24IMIvnArmfYnSH5sHfrxjQEewuV36fCRKGmdDBxRx5mb/iWJkqdSWOgUkHwcneVmWwJd9j4HnBrrNwJ+hEDwQo+x8/Xqi4HFkb519/S0Wak9DX0NI9e3iRerpl4KxB2ecofJez9VdC01V9G4ElltqUJ0VMERhGjDoUR+ocNXyP/e9kzUEgqXFKiAwFu4my4OqJEfLWMwsvS1deIm/dy3eMjavs/Y7jz9RcN/Zvhe4hJQ29/aKjbVHIX+ADJ/mlFR+NJkpQ1mUfb+eNMBgebB9nPKoLnkJElIKLw4rX8WLQaHpki6qL+s/cZRc1NG7aIDsw+36AjRjrzCwpUlV/uOhlha6Pgo+pbHXGfr0wrpdJIAzay/8+7C0WuU80sXjxK57wUdUlTS1MvUijK6GDggzLIG6eVBdeen8K2FhiZRUaGEqhlQr5lqBg7jbAQ2SI=
 matrix:
   fast_finish: true
   include:
