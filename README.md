@@ -188,7 +188,6 @@ In this initial example, we are going to expand the example by:
 * That a suitable Java Runtime environment (JRE) is installed with Java Native
   Access (JNA) by including `cassandra::java`.  This need to be executed
   before the Cassandra service is started.
-* Install the optional utilities by including `cassandra::optutils`.
 
 ```puppet
 node /^node\d+$/ {
@@ -207,8 +206,6 @@ node /^node\d+$/ {
     num_tokens      => 256,
     seeds           => '110.82.155.0,110.82.156.3'
   }
-
-  include cassandra::optutils
 }
 ```
 
@@ -226,12 +223,10 @@ to OpsCenter:
 node /^node\d+$/ {
   class { 'cassandra::datastax_repo':
     before => Class['cassandra']
-  }
-
+  } ->
   class { 'cassandra::java':
     before => Class['cassandra']
-  }
-
+  } ->
   class { 'cassandra':
     cluster_name    => 'MyCassandraCluster',
     endpoint_snitch => 'GossipingPropertyFileSnitch',
@@ -239,13 +234,10 @@ node /^node\d+$/ {
     num_tokens      => 256,
     seeds           => '110.82.155.0,110.82.156.3',
     before          => Class['cassandra::datastax_agent']
-  }
-
+  } ->
   class { 'cassandra::datastax_agent':
     stomp_interface => '110.82.157.6'
   }
-
-  include cassandra::optutils
 }
 
 node /opscenter/ {
