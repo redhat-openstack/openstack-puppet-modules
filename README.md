@@ -1856,8 +1856,8 @@ The setting value to be changed to (e.g. **8888**).
 
 ## Limitations
 
-Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
-(CE) 3.7.5 and DSC 2.1.
+Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04,
+Debian 7 Puppet (CE) 3.7.5 and DSC 2.
 
 ## Contributers
 
