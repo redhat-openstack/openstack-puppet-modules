@@ -168,14 +168,14 @@ data center)_
 there is a basic example of a six node cluster with two seeds to be created in
 a single data center spanning two racks.  The nodes in the cluster are:
 
-Node Name|IP Address    |Seed?
----------|--------------|-----
-node0    | 110.82.155.0 | Yes
-node1    | 110.82.155.1 |
-node2    | 110.82.155.2 |
-node3    | 110.82.156.3 | Yes
-node4    | 110.82.156.4 |
-node5    | 110.82.156.5 |
+**Node Name** | **IP Address** |
+--------------|----------------|
+node0 (seed)  | 110.82.155.0   |
+node1         | 110.82.155.1   |
+node2         | 110.82.155.2   |
+node3 (seed)  | 110.82.156.3   |
+node4         | 110.82.156.4   |
+node5         | 110.82.156.5   |
 
 Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
 nodes (vnodes).  The name of the cluster is _MyCassandraCluster_.
