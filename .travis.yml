@@ -18,17 +18,7 @@ sudo: false
 env:
   global:
   - PUBLISHER_LOGIN=locp
-  - secure: :-
-       'r6Tp/drrMoHApBCKBg+1ZlKfeo8NR7RRh+71gQcbhUrvl4Murpqd00rIIuURZDa5bX8dn
-       guX8bTx4euPbZnK967HCzYBrEgWzSOxAqX4QLsf7rq+OBm9qa7rZMbLjlsXTsfgA7HVSzv
-       jreFcZbXOI3lzIzVlyGmFHYSWLZovMoLMtBbhb47zstn6oMR2QF7m4IW6AfOt4ss1F8TyB
-       pCo3r2amtbTItItHb88xqdJPR9SWmc/iYCMTw0bfJ2kt6RheGzyhQlznFJqD8X5c+kie5F
-       QMttB8JUCEULQFCxO3SEo787lR4w5jW0lKox9wdPbfaENq1NYyjdnjq3NrJE0Udu/Lg0XQ
-       X/CdBn2boDuWt/Tkkwdydyl9sHADlxs4jQdz2PYCYiopEaVBt00FGMS/IDf9NSWaAttPB3
-       m9mY10pBS2vRsxOYE11ev1jJ/MBEpSgs3iWQUifaxh0Eo+bt68X2Quc2uJAswpYZpfLB3K
-       NC2XGQpC3LdSyssBW9e6o1SXYS9B3g2fy3k1C5nuw2f0QHtSAN6LYZC4jzGWjP3G6uxvil
-       zub9tgGPRVM8ILvUi66R/B7JvcibHBU8Ex876Rl17edmWryEqIVp0zN7eEPsrKdY2MuCkK
-       rXjvIcRGO0Mjr4IOWa9clfCYlJOt3SgJekbMVA2sdnVffZUhfYqTXg='
+  - secure: W2cVmdBi9ryG1QlXlVpYt3OoqM2WfKEtXM3Eqwwv8JUE65FvtdNhYRrsdaoyuyXAmXDK5oYuCDyYYvZYHqYwma9yjBGCt9kZvC7I4xWmt1xSpGePdW6fuzws5rUEllTeRMMogZjkiDmZCEmqyM/uot4L85ByCCwCpw4ktFyhM8KxrV9HzohWbYzAGnDN3MNU+MvLNTROFdkhIWKhDRYHVmfAwxGxRywS7phdveDVtiTx24IMIvnArmfYnSH5sHfrxjQEewuV36fCRKGmdDBxRx5mb/iWJkqdSWOgUkHwcneVmWwJd9j4HnBrrNwJ+hEDwQo+x8/Xqi4HFkb519/S0Wak9DX0NI9e3iRerpl4KxB2ecofJez9VdC01V9G4ElltqUJ0VMERhGjDoUR+ocNXyP/e9kzUEgqXFKiAwFu4my4OqJEfLWMwsvS1deIm/dy3eMjavs/Y7jz9RcN/Zvhe4hJQ29/aKjbVHIX+ADJ/mlFR+NJkpQ1mUfb+eNMBgebB9nPKoLnkJElIKLw4rX8WLQaHpki6qL+s/cZRc1NG7aIDsw+36AjRjrzCwpUlV/uOhlha6Pgo+pbHXGfr0wrpdJIAzay/8+7C0WuU80sXjxK57wUdUlTS1MvUijK6GDggzLIG6eVBdeen8K2FhiZRUaGEqhlQr5lqBg7jbAQ2SI=
 matrix:
   fast_finish: true
   include:
