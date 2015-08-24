@@ -13,7 +13,7 @@
     * [Beginning with cassandra](#beginning-with-cassandra)
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
-    * [Create a Small Cluster](#create-a-small-cluster)
+    * [Create a Cluster in a Single Data Center](#create-a-cluster-in-a-single-data-center)
     * [OpsCenter](#opscenter)
     * [DataStax Enterprise](#datastax-enterprise)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
@@ -160,7 +160,7 @@ Also there is now a class for installing the optional utilities:
 
 ## Usage
 
-### Create a Small Cluster
+### Create a Cluster in a Single Data Center
 
 In the DataStax documentation _Initializing a multiple node cluster (single
 data center)_
