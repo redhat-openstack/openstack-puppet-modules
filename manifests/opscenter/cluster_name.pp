@@ -19,273 +19,402 @@ define cassandra::opscenter::cluster_name(
   $storage_cassandra_used_hosts_per_remote_dc = undef,
   $storage_cassandra_username                 = undef,
   ) {
-  file { $config_path:
-    ensure  => directory,
-    require => Package['opscenter'],
+  if ! defined( File[$config_path] ) {
+    file { $config_path:
+      ensure => directory
+    }
   }
 
   $cluster_file = "${config_path}/${title}.conf"
 
-  Ini_setting {
-    path              => $cluster_file,
-    key_val_separator => ' = ',
-    require           => File[$config_path],
-    notify            => Service['opscenterd'],
-  }
-
   if $cassandra_seed_hosts != undef {
-    ini_setting { 'cassandra_seed_hosts':
-      ensure  => present,
-      section => 'cassandra',
-      setting => 'seed_hosts',
-      value   => $cassandra_seed_hosts
+    ini_setting { "${title}:cassandra_seed_hosts":
+      ensure            => present,
+      section           => 'cassandra',
+      setting           => 'seed_hosts',
+      value             => $cassandra_seed_hosts,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'cassandra_seed_hosts':
-      ensure  => absent,
-      section => 'cassandra',
-      setting => 'seed_hosts'
+    ini_setting { "${title}:cassandra_seed_hosts":
+      ensure            => absent,
+      section           => 'cassandra',
+      setting           => 'seed_hosts',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_api_port != undef {
-    ini_setting { 'storage_cassandra_api_port':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'api_port',
-      value   => $storage_cassandra_api_port
+    ini_setting { "${title}:storage_cassandra_api_port":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'api_port',
+      value             => $storage_cassandra_api_port,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_api_port':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'api_port'
+    ini_setting { "${title}:storage_cassandra_api_port":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'api_port',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_bind_interface != undef {
-    ini_setting { 'storage_cassandra_bind_interface':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'bind_interface',
-      value   => $storage_cassandra_bind_interface
+    ini_setting { "${title}:storage_cassandra_bind_interface":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'bind_interface',
+      value             => $storage_cassandra_bind_interface,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_bind_interface':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'bind_interface'
+    ini_setting { "${title}:storage_cassandra_bind_interface":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'bind_interface',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_connection_pool_size != undef {
-    ini_setting { 'storage_cassandra_connection_pool_size':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'connection_pool_size',
-      value   => $storage_cassandra_connection_pool_size
+    ini_setting { "${title}:storage_cassandra_connection_pool_size":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'connection_pool_size',
+      value             => $storage_cassandra_connection_pool_size,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_connection_pool_size':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'connection_pool_size'
+    ini_setting { "${title}:storage_cassandra_connection_pool_size":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'connection_pool_size',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_connect_timeout != undef {
-    ini_setting { 'storage_cassandra_connect_timeout':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'connect_timeout',
-      value   => $storage_cassandra_connect_timeout
+    ini_setting { "${title}:storage_cassandra_connect_timeout":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'connect_timeout',
+      value             => $storage_cassandra_connect_timeout,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_connect_timeout':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'connect_timeout'
+    ini_setting { "${title}:storage_cassandra_connect_timeout":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'connect_timeout',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_cql_port != undef {
-    ini_setting { 'storage_cassandra_cql_port':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'cql_port',
-      value   => $storage_cassandra_cql_port
+    ini_setting { "${title}:storage_cassandra_cql_port":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'cql_port',
+      value             => $storage_cassandra_cql_port,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_cql_port':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'cql_port'
+    ini_setting { "${title}:storage_cassandra_cql_port":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'cql_port',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_keyspace != undef {
-    ini_setting { 'storage_cassandra_keyspace':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'keyspace',
-      value   => $storage_cassandra_keyspace
+    ini_setting { "${title}:storage_cassandra_keyspace":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'keyspace',
+      value             => $storage_cassandra_keyspace,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_keyspace':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'keyspace'
+    ini_setting { "${title}:storage_cassandra_keyspace":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'keyspace',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_local_dc_pref != undef {
-    ini_setting { 'storage_cassandra_local_dc_pref':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'local_dc_pref',
-      value   => $storage_cassandra_local_dc_pref
+    ini_setting { "${title}:storage_cassandra_local_dc_pref":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'local_dc_pref',
+      value             => $storage_cassandra_local_dc_pref,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_local_dc_pref':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'local_dc_pref'
+    ini_setting { "${title}:storage_cassandra_local_dc_pref":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'local_dc_pref',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_password != undef {
-    ini_setting { 'storage_cassandra_password':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'password',
-      value   => $storage_cassandra_password
+    ini_setting { "${title}:storage_cassandra_password":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'password',
+      value             => $storage_cassandra_password,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_password':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'password'
+    ini_setting { "${title}:storage_cassandra_password":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'password',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_retry_delay != undef {
-    ini_setting { 'storage_cassandra_retry_delay':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'retry_delay',
-      value   => $storage_cassandra_retry_delay
+    ini_setting { "${title}:storage_cassandra_retry_delay":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'retry_delay',
+      value             => $storage_cassandra_retry_delay,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_retry_delay':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'retry_delay'
+    ini_setting { "${title}:storage_cassandra_retry_delay":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'retry_delay',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_send_rpc != undef {
-    ini_setting { 'storage_cassandra_send_rpc':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'send_rpc',
-      value   => $storage_cassandra_send_rpc
+    ini_setting { "${title}:storage_cassandra_send_rpc":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'send_rpc',
+      value             => $storage_cassandra_send_rpc,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_send_rpc':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'send_rpc'
+    ini_setting { "${title}:storage_cassandra_send_rpc":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'send_rpc',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_ssl_ca_certs != undef {
-    ini_setting { 'storage_cassandra_ssl_ca_certs':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'ssl_ca_certs',
-      value   => $storage_cassandra_ssl_ca_certs
+    ini_setting { "${title}:storage_cassandra_ssl_ca_certs":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_ca_certs',
+      value             => $storage_cassandra_ssl_ca_certs,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_ssl_ca_certs':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'ssl_ca_certs'
+    ini_setting { "${title}:storage_cassandra_ssl_ca_certs":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_ca_certs',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_ssl_client_key != undef {
-    ini_setting { 'storage_cassandra_ssl_client_key':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'ssl_client_key',
-      value   => $storage_cassandra_ssl_client_key
+    ini_setting { "${title}:storage_cassandra_ssl_client_key":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_client_key',
+      value             => $storage_cassandra_ssl_client_key,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_ssl_client_key':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'ssl_client_key'
+    ini_setting { "${title}:storage_cassandra_ssl_client_key":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_client_key',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_ssl_client_pem != undef {
-    ini_setting { 'storage_cassandra_ssl_client_pem':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'ssl_client_pem',
-      value   => $storage_cassandra_ssl_client_pem
+    ini_setting { "${title}:storage_cassandra_ssl_client_pem":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_client_pem',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
+      value             => $storage_cassandra_ssl_client_pem,
     }
   } else {
-    ini_setting { 'storage_cassandra_ssl_client_pem':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'ssl_client_pem'
+    ini_setting { "${title}:storage_cassandra_ssl_client_pem":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_client_pem',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_ssl_validate != undef {
-    ini_setting { 'storage_cassandra_ssl_validate':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'ssl_validate',
-      value   => $storage_cassandra_ssl_validate
+    ini_setting { "${title}:storage_cassandra_ssl_validate":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_validate',
+      value             => $storage_cassandra_ssl_validate,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_ssl_validate':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'ssl_validate'
+    ini_setting { "${title}:storage_cassandra_ssl_validate":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'ssl_validate',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_used_hosts_per_remote_dc != undef {
-    ini_setting { 'storage_cassandra_used_hosts_per_remote_dc':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'used_hosts_per_remote_dc',
-      value   => $storage_cassandra_used_hosts_per_remote_dc
+    ini_setting { "${title}:storage_cassandra_used_hosts_per_remote_dc":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'used_hosts_per_remote_dc',
+      value             => $storage_cassandra_used_hosts_per_remote_dc,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_used_hosts_per_remote_dc':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'used_hosts_per_remote_dc'
+    ini_setting { "${title}:storage_cassandra_used_hosts_per_remote_dc":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'used_hosts_per_remote_dc',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
 
   if $storage_cassandra_username != undef {
-    ini_setting { 'storage_cassandra_username':
-      ensure  => present,
-      section => 'storage_cassandra',
-      setting => 'username',
-      value   => $storage_cassandra_username
+    ini_setting { "${title}:storage_cassandra_username":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'username',
+      value             => $storage_cassandra_username,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   } else {
-    ini_setting { 'storage_cassandra_username':
-      ensure  => absent,
-      section => 'storage_cassandra',
-      setting => 'username'
+    ini_setting { "${title}:storage_cassandra_username":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'username',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
     }
   }
-
 }

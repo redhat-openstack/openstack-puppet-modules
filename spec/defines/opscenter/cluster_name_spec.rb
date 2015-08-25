@@ -10,10 +10,10 @@ describe 'cassandra::opscenter::cluster_name' do
   ] }
 
   context 'Test that settings can be set.' do
-    let(:title) { 'section setting' }
+    let(:title) { 'MyCluster' }
     let :params do
       {
-        :cassandra_seed_hosts       => 'host1,host2',
+        :cassandra_seed_hosts => 'host1,host2',
       }
     end
 
@@ -24,11 +24,107 @@ describe 'cassandra::opscenter::cluster_name' do
     }
 
     it {
-      should contain_ini_setting('cassandra_seed_hosts').with({
+      should contain_ini_setting('MyCluster:cassandra_seed_hosts').with({
         'ensure'  => 'present',
         'section' => 'cassandra',
         'setting' => 'seed_hosts',
         'value'   => 'host1,host2',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_api_port').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_bind_interface').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_connection_pool_size').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_connect_timeout').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_cql_port').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_keyspace').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_local_dc_pref').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_password').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_retry_delay').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_send_rpc').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_ssl_ca_certs').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_ssl_client_key').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_ssl_client_pem').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_ssl_validate').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_used_hosts_per_remote_dc').with({
+        'ensure'  => 'absent',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_username').with({
+        'ensure'  => 'absent',
       })
     }
   end
