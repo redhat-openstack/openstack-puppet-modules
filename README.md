@@ -220,6 +220,43 @@ for a cluster across multiple data centers
 <http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initMultipleDS.html>.
 
 TODO
+**Node Name**  | **IP Address** | **Data Center** | **Rack** |
+---------------|----------------|-----------------|----------|
+node0 (seed 1) | 10.168.66.41   | DC1             | RAC1     |
+node1          | 10.176.43.66   | DC1             | RAC1     |
+node2          | 10.168.247.41  | DC1             | RAC1     |
+node3 (seed 2) | 10.176.170.59  | DC2             | RAC1     |
+node4          | 10.169.61.170  | DC2             | RAC1     |
+node5          | 10.169.30.138  | DC2             | RAC1     |
+
+For the sake of simplicity, we will confine this example actual nodes:
+
+```puppet
+node /^node[012]$/ {
+  class { 'cassandra':
+    cluster_name    => 'MyCassandraCluster',
+    endpoint_snitch => 'GossipingPropertyFileSnitch',
+    listen_address  => "${::ipaddress}",
+    num_tokens      => 256,
+    seeds           => '10.168.66.41,10.176.170.59',
+    dc              => 'DC1'
+  }
+}
+
+node /^node[345]$/ {
+  class { 'cassandra':
+    cluster_name    => 'MyCassandraCluster',
+    endpoint_snitch => 'GossipingPropertyFileSnitch',
+    listen_address  => "${::ipaddress}",
+    num_tokens      => 256,
+    seeds           => '10.168.66.41,10.176.170.59',
+    dc              => 'DC2'
+  }
+}
+```
+
+We don't need to specify the rack name (with the rack parameter) as RAC1 is
+the default value.
 
 ### OpsCenter
 
