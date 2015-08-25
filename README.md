@@ -219,7 +219,6 @@ To continue with the examples provided by DataStax, we look at the example
 for a cluster across multiple data centers
 <http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initMultipleDS.html>.
 
-TODO
 **Node Name**  | **IP Address** | **Data Center** | **Rack** |
 ---------------|----------------|-----------------|----------|
 node0 (seed 1) | 10.168.66.41   | DC1             | RAC1     |
@@ -229,7 +228,7 @@ node3 (seed 2) | 10.176.170.59  | DC2             | RAC1     |
 node4          | 10.169.61.170  | DC2             | RAC1     |
 node5          | 10.169.30.138  | DC2             | RAC1     |
 
-For the sake of simplicity, we will confine this example actual nodes:
+For the sake of simplicity, we will confine this example to the nodes:
 
 ```puppet
 node /^node[012]$/ {
