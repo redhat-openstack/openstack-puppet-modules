@@ -279,7 +279,7 @@ Also with DSE, one can specify a remote keyspace for storing the metrics for
 a cluster.  An example is:
 
 ```puppet
-cassandra::opscenter::cluster_name { 'remote_cluster':
+cassandra::opscenter::cluster_name { 'Cluster1':
   cassandra_seed_hosts       => 'host1,host2',
   storage_cassandra_username => 'opsusr',
   storage_cassandra_password => 'opscenter',

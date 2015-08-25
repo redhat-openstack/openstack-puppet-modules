@@ -5,22 +5,25 @@ define cassandra::opscenter::setting (
   $setting,
   $value   = undef,
   ) {
-  Ini_setting {
-    path              => $path,
-    section           => $section,
-    setting           => $setting,
-    key_val_separator => ' = ',
-    require           => Package['opscenter'],
-    notify            => Service['opscenterd'],
-  }
-
   if $value != undef {
     ini_setting { "${section} ${setting}":
-      value  => $value,
+      path              => $path,
+      section           => $section,
+      setting           => $setting,
+      key_val_separator => ' = ',
+      require           => Package['opscenter'],
+      notify            => Service['opscenterd'],
+      value             => $value,
     }
   } else {
     ini_setting { "${section} ${setting}":
-      ensure  => absent,
+      ensure            => absent,
+      path              => $path,
+      section           => $section,
+      setting           => $setting,
+      key_val_separator => ' = ',
+      require           => Package['opscenter'],
+      notify            => Service['opscenterd'],
     }
   }
 }
