@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'cassandra::firewall_ports::rule' do
   let(:pre_condition) { [
-    'define firewall ($action, $port, $proto, $source) {}',
+    'define firewall ($action, $dport, $proto, $source) {}',
   ] }
 
   let!(:stdlib_stubs) {
