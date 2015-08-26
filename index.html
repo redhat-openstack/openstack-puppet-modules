@@ -55,7 +55,8 @@
 <a href="#usage">Usage - Configuration options and additional functionality</a>
 
 <ul>
-<li><a href="#create-a-small-cluster">Create a Small Cluster</a></li>
+<li><a href="#create-a-cluster-in-a-single-data-center">Create a Cluster in a Single Data Center</a></li>
+<li><a href="#create-a-cluster-in-multiple-data-centers">Create a Cluster in Multiple Data Centers</a></li>
 <li><a href="#opscenter">OpsCenter</a></li>
 <li><a href="#datastax-enterprise">DataStax Enterprise</a></li>
 </ul>
@@ -181,17 +182,14 @@ too distant future.</li>
 <h3>
 <a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
 
-<p>A most basic example is:</p>
+<p>A basic example is as follows:</p>
 
-<div class="highlight highlight-puppet"><pre>node <span class="pl-s"><span class="pl-pds">'</span>example<span class="pl-pds">'</span></span> {
-  <span class="pl-k">include</span> '::cassandra'
-  <span class="pl-k">include</span> '::cassandra::datastax_agent'
-  <span class="pl-k">include</span> '::cassandra::datastax_repo'
-  <span class="pl-k">include</span> '::cassandra::java'
-  <span class="pl-k">include</span> '::cassandra::opscenter'
-  <span class="pl-k">include</span> '::cassandra::optutils'
-  <span class="pl-k">include</span> '::cassandra::firewall_ports'
-}</pre></div>
+<div class="highlight highlight-puppet"><pre>  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>
+  }</pre></div>
 
 <h3>
 <a id="upgrading" class="anchor" href="#upgrading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading</h3>
@@ -257,7 +255,7 @@ service_ensure.</p></li>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <h3>
-<a id="create-a-small-cluster" class="anchor" href="#create-a-small-cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a Small Cluster</h3>
+<a id="create-a-cluster-in-a-single-data-center" class="anchor" href="#create-a-cluster-in-a-single-data-center" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a Cluster in a Single Data Center</h3>
 
 <p>In the DataStax documentation <em>Initializing a multiple node cluster (single
 data center)</em>
@@ -268,41 +266,34 @@ a single data center spanning two racks.  The nodes in the cluster are:</p>
 <table>
 <thead>
 <tr>
-<th>Node Name</th>
-<th>IP Address</th>
-<th>Seed?</th>
+<th><strong>Node Name</strong></th>
+<th><strong>IP Address</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>node0</td>
+<td>node0 (seed 1)</td>
 <td>110.82.155.0</td>
-<td>Yes</td>
 </tr>
 <tr>
 <td>node1</td>
 <td>110.82.155.1</td>
-<td></td>
 </tr>
 <tr>
 <td>node2</td>
 <td>110.82.155.2</td>
-<td></td>
 </tr>
 <tr>
-<td>node3</td>
+<td>node3 (seed 2)</td>
 <td>110.82.156.3</td>
-<td>Yes</td>
 </tr>
 <tr>
 <td>node4</td>
 <td>110.82.156.4</td>
-<td></td>
 </tr>
 <tr>
 <td>node5</td>
 <td>110.82.156.5</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -319,7 +310,6 @@ executed before the Cassandra package is installed.</li>
 <li>That a suitable Java Runtime environment (JRE) is installed with Java Native
 Access (JNA) by including <code>cassandra::java</code>.  This need to be executed
 before the Cassandra service is started.</li>
-<li>Install the optional utilities by including <code>cassandra::optutils</code>.</li>
 </ul>
 
 <div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
@@ -338,30 +328,109 @@ before the Cassandra service is started.</li>
     <span class="pl-c1">num_tokens</span>      =&gt; 256,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>
   }
-
-  <span class="pl-k">include</span> cassandra::optutils
 }</pre></div>
 
 <p>The default value for the num_tokens is already 256, but it is
 included in the example for clarity.</p>
 
 <h3>
+<a id="create-a-cluster-in-multiple-data-centers" class="anchor" href="#create-a-cluster-in-multiple-data-centers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a Cluster in Multiple Data Centers</h3>
+
+<p>To continue with the examples provided by DataStax, we look at the example
+for a cluster across multiple data centers
+<a href="http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initMultipleDS.html">http://docs.datastax.com/en/cassandra/2.2/cassandra/initialize/initMultipleDS.html</a>.</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Node Name</strong></th>
+<th><strong>IP Address</strong></th>
+<th><strong>Data Center</strong></th>
+<th><strong>Rack</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>node0 (seed 1)</td>
+<td>10.168.66.41</td>
+<td>DC1</td>
+<td>RAC1</td>
+</tr>
+<tr>
+<td>node1</td>
+<td>10.176.43.66</td>
+<td>DC1</td>
+<td>RAC1</td>
+</tr>
+<tr>
+<td>node2</td>
+<td>10.168.247.41</td>
+<td>DC1</td>
+<td>RAC1</td>
+</tr>
+<tr>
+<td>node3 (seed 2)</td>
+<td>10.176.170.59</td>
+<td>DC2</td>
+<td>RAC1</td>
+</tr>
+<tr>
+<td>node4</td>
+<td>10.169.61.170</td>
+<td>DC2</td>
+<td>RAC1</td>
+</tr>
+<tr>
+<td>node5</td>
+<td>10.169.30.138</td>
+<td>DC2</td>
+<td>RAC1</td>
+</tr>
+</tbody>
+</table>
+
+<p>For the sake of simplicity, we will confine this example to the nodes:</p>
+
+<div class="highlight highlight-puppet"><pre>node /^node[012]$/ {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">num_tokens</span>      =&gt; 256,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>10.168.66.41,10.176.170.59<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC1<span class="pl-pds">'</span></span>
+  }
+}
+
+node /^node[345]$/ {
+  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+    <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
+    <span class="pl-c1">num_tokens</span>      =&gt; 256,
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>10.168.66.41,10.176.170.59<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC2<span class="pl-pds">'</span></span>
+  }
+}</pre></div>
+
+<p>We don't need to specify the rack name (with the rack parameter) as RAC1 is
+the default value.</p>
+
+<h3>
 <a id="opscenter" class="anchor" href="#opscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>OpsCenter</h3>
 
-<p>To continue with the previous example, say we have an instance of OpsCenter
-running on a node called opscenter which has an IP address of 110.82.157.6.
-We add the <code>cassandra::datastax_agent</code> to the cassandra node to connect
-to OpsCenter:</p>
+<p>To continue with the original example within a single data center, say we
+have an instance of OpsCenter running on a node called opscenter which has
+an IP address of 110.82.157.6.  We add the <code>cassandra::datastax_agent</code> to
+the cassandra node to connect to OpsCenter:</p>
 
 <div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
     <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
-  }
-
+  } -&gt;
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra::java'</span>:
     <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
-  }
-
+  } -&gt;
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
     <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
     <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
@@ -369,13 +438,10 @@ to OpsCenter:</p>
     <span class="pl-c1">num_tokens</span>      =&gt; 256,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>,
     <span class="pl-c1">before</span>          =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra::datastax_agent<span class="pl-pds">'</span></span>]
-  }
-
+  } -&gt;
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_agent'</span>:
     <span class="pl-c1">stomp_interface</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.157.6<span class="pl-pds">'</span></span>
   }
-
-  <span class="pl-k">include</span> cassandra::optutils
 }
 
 node /opscenter/ {
@@ -403,7 +469,7 @@ following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
 <p>Also with DSE, one can specify a remote keyspace for storing the metrics for
 a cluster.  An example is:</p>
 
-<div class="highlight highlight-puppet"><pre>cassandra::opscenter::cluster_name { <span class="pl-s"><span class="pl-pds">'</span>remote_cluster<span class="pl-pds">'</span></span>:
+<div class="highlight highlight-puppet"><pre>cassandra::opscenter::cluster_name { <span class="pl-s"><span class="pl-pds">'</span>Cluster1<span class="pl-pds">'</span></span>:
   <span class="pl-c1">cassandra_seed_hosts</span>       =&gt; <span class="pl-s"><span class="pl-pds">'</span>host1,host2<span class="pl-pds">'</span></span>,
   <span class="pl-c1">storage_cassandra_username</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opsusr<span class="pl-pds">'</span></span>,
   <span class="pl-c1">storage_cassandra_password</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opscenter<span class="pl-pds">'</span></span>,
@@ -2710,8 +2776,8 @@ configuration file.  Typically this would by <strong>opscenterd</strong>.</p>
 <h2>
 <a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h2>
 
-<p>Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04, Puppet
-(CE) 3.7.5 and DSC 2.1.</p>
+<p>Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04,
+Debian 7 Puppet (CE) 3.7.5 and DSC 2.</p>
 
 <h2>
 <a id="contributers" class="anchor" href="#contributers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributers</h2>
