@@ -1,5 +1,11 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-08-26 - Release 1.3.2
+* Fixed bug in cassandra::opscenter::cluster_name (#84).
+* Fixed code in cassandra::firewall_ports::rule to avoid deprecation
+  warnings concerning the use of puppetlabs-firewall => port (#85).
+* Added more examples to the README
+
 ##2015-08-22 - Release 1.3.1
 This was mainly a non-functional change.  The biggest thing to say is that
 Debian 7 is now supported.
