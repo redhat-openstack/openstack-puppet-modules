@@ -1911,3 +1911,7 @@ Cassandra 1.x compatible template
 * Amos Shapira (GitHub [@amosshapira](https://github.com/amosshapira)) fixed
 a bug in the requirements metadata that caused a problem with Puppetfile
 (see [#34](https://github.com/locp/cassandra/pull/34)).
+
+* Dylan Griffith (GitHub [@DylanGriffith](https://github.com/DylanGriffith))
+identified that the dependency for puppetlabs-apt was incorrect
+(s [#88](https://github.com/locp/cassandra/pull/88)).

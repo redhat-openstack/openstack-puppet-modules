@@ -1,5 +1,8 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-08-27 - Release 1.3.3
+* Corrected dependency version for puppetlabs-apt.
+
 ##2015-08-26 - Release 1.3.2
 * Fixed bug in cassandra::opscenter::cluster_name (#84).
 * Fixed code in cassandra::firewall_ports::rule to avoid deprecation
