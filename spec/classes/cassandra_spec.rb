@@ -112,8 +112,22 @@ describe 'cassandra' do
 
     it { should contain_class('apt') }
     it { should contain_class('apt::update') }
-    it { is_expected.to contain_apt__key('datastaxkey') }
-    it { is_expected.to contain_apt__source('datastax') }
+
+    it {
+      is_expected.to contain_apt__key('datastaxkey').with({
+        'id'     => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+        'source' => 'http://debian.datastax.com/debian/repo_key',
+      })
+    }
+
+    it {
+      is_expected.to contain_apt__source('datastax').with({
+        'location' => 'http://debian.datastax.com/community',
+        'comment'  => 'DataStax Repo for Apache Cassandra',
+        'release'  => 'stable',
+      })
+    }
+
     it { is_expected.to contain_exec('update-cassandra-repos') }
     it { is_expected.to contain_service('cassandra') }
   end
