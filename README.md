@@ -1914,4 +1914,4 @@ a bug in the requirements metadata that caused a problem with Puppetfile
 
 * Dylan Griffith (GitHub [@DylanGriffith](https://github.com/DylanGriffith))
 identified that the dependency for puppetlabs-apt was incorrect
-(s [#88](https://github.com/locp/cassandra/pull/88)).
+([#87](https://github.com/locp/cassandra/pull/87)).
