@@ -66,6 +66,7 @@ class rabbitmq::params {
   #install
   $admin_enable               = true
   $management_port            = '15672'
+  $management_ssl             = true
   $package_apt_pin            = ''
   $package_gpg_key            = 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
   $repos_ensure               = true
@@ -117,5 +118,5 @@ class rabbitmq::params {
   $environment_variables      = {}
   $config_variables           = {}
   $config_kernel_variables    = {}
-  $file_limit                 = 16384
+  $file_limit                 = '16384'
 }

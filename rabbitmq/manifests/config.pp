@@ -17,6 +17,7 @@ class rabbitmq::config {
   $erlang_cookie              = $rabbitmq::erlang_cookie
   $interface                  = $rabbitmq::interface
   $management_port            = $rabbitmq::management_port
+  $management_ssl             = $rabbitmq::management_ssl
   $node_ip_address            = $rabbitmq::node_ip_address
   $plugin_dir                 = $rabbitmq::plugin_dir
   $rabbitmq_user              = $rabbitmq::rabbitmq_user
@@ -138,35 +139,31 @@ class rabbitmq::config {
           notify      => Class['Rabbitmq::Service'],
           refreshonly => true,
         }
-      } else {
-        file { '/etc/security/limits.d/rabbitmq-server.conf':
-          content => template('rabbitmq/limits.conf'),
-          owner   => '0',
-          group   => '0',
-          mode    => '0644',
-          notify  => Class['Rabbitmq::Service'],
-        }
+      }
+      file { '/etc/security/limits.d/rabbitmq-server.conf':
+        content => template('rabbitmq/limits.conf'),
+        owner   => '0',
+        group   => '0',
+        mode    => '0644',
+        notify  => Class['Rabbitmq::Service'],
       }
     }
     default: {
     }
   }
 
-  if $config_cluster {
-
-    if $erlang_cookie == undef {
-      fail('You must set the $erlang_cookie value in order to configure clustering.')
-    } else {
-      rabbitmq_erlang_cookie { "${rabbitmq_home}/.erlang.cookie":
-        content        => $erlang_cookie,
-        force          => $wipe_db_on_cookie_change,
-        rabbitmq_user  => $rabbitmq_user,
-        rabbitmq_group => $rabbitmq_group,
-        rabbitmq_home  => $rabbitmq_home,
-        service_name   => $service_name,
-        before         => File['rabbitmq.config'],
-        notify         => Class['rabbitmq::service'],
-      }
+  if $erlang_cookie == undef and $config_cluster {
+    fail('You must set the $erlang_cookie value in order to configure clustering.')
+  } elsif $erlang_cookie != undef {
+    rabbitmq_erlang_cookie { "${rabbitmq_home}/.erlang.cookie":
+      content        => $erlang_cookie,
+      force          => $wipe_db_on_cookie_change,
+      rabbitmq_user  => $rabbitmq_user,
+      rabbitmq_group => $rabbitmq_group,
+      rabbitmq_home  => $rabbitmq_home,
+      service_name   => $service_name,
+      before         => File['rabbitmq.config'],
+      notify         => Class['rabbitmq::service'],
     }
   }
 }
