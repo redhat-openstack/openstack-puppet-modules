@@ -1,5 +1,11 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-08-28 - Release 1.3.4
+* Minor corrections to the README.
+* The addtion of the storage_cassandra_seed_hosts parameter to
+  cassandra::opscenter::cluster_name which is part of a bigger part of
+  work but is urgently require by a client.
+
 ##2015-08-27 - Release 1.3.3
 * Corrected dependency version for puppetlabs-apt.
 
