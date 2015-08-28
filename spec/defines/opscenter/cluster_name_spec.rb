@@ -13,7 +13,9 @@ describe 'cassandra::opscenter::cluster_name' do
     let(:title) { 'MyCluster' }
     let :params do
       {
-        :cassandra_seed_hosts => 'host1,host2',
+        :cassandra_seed_hosts         => 'host1,host2',
+        :storage_cassandra_keyspace   => 'MyCluster_opc_keyspace',
+        :storage_cassandra_seed_hosts => 'host1,host2',
       }
     end
 
@@ -27,6 +29,24 @@ describe 'cassandra::opscenter::cluster_name' do
       should contain_ini_setting('MyCluster:cassandra_seed_hosts').with({
         'ensure'  => 'present',
         'section' => 'cassandra',
+        'setting' => 'seed_hosts',
+        'value'   => 'host1,host2',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_keyspace').with({
+        'ensure'  => 'present',
+        'section' => 'storage_cassandra',
+        'setting' => 'keyspace',
+        'value'   => 'MyCluster_opc_keyspace',
+      })
+    }
+
+    it {
+      should contain_ini_setting('MyCluster:storage_cassandra_seed_hosts').with({
+        'ensure'  => 'present',
+        'section' => 'storage_cassandra',
         'setting' => 'seed_hosts',
         'value'   => 'host1,host2',
       })
@@ -58,12 +78,6 @@ describe 'cassandra::opscenter::cluster_name' do
 
     it {
       should contain_ini_setting('MyCluster:storage_cassandra_cql_port').with({
-        'ensure'  => 'absent',
-      })
-    }
-
-    it {
-      should contain_ini_setting('MyCluster:storage_cassandra_keyspace').with({
         'ensure'  => 'absent',
       })
     }

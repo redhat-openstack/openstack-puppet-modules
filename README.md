@@ -1799,6 +1799,13 @@ http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscStoringCollectionDa
 for more details.  A value of *undef* will ensure the setting is not
 present in the file.  Default value *undef*
 
+##### `storage_cassandra_seed_hosts`
+This sets the seed_hosts setting in the storage_cassandra section of the
+_cluster_name_.conf configuration file.  See
+http://docs.datastax.com/en/opscenter/5.2/opsc/configure/opscStoringCollectionDataDifferentCluster_t.html
+for more details.  A value of *undef* will ensure the setting is not
+present in the file.  Default value *undef*
+
 ##### `storage_cassandra_send_rpc`
 This sets the send_rpc setting in the storage_cassandra section of the
 _cluster_name_.conf configuration file.  See

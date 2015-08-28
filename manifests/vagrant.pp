@@ -24,12 +24,13 @@ node /opscenter/ {
   include '::cassandra::opscenter'
 
   cassandra::opscenter::cluster_name { 'remote_cluster':
-    cassandra_seed_hosts       => 'localhost',
-    storage_cassandra_username => 'opsusr',
-    storage_cassandra_password => 'opscenter',
-    storage_cassandra_api_port => 9160,
-    storage_cassandra_cql_port => 9042,
-    storage_cassandra_keyspace => 'OpsCenter_Cluster1'
+    cassandra_seed_hosts         => 'localhost',
+    storage_cassandra_username   => 'opsusr',
+    storage_cassandra_password   => 'opscenter',
+    storage_cassandra_api_port   => 9160,
+    storage_cassandra_cql_port   => 9042,
+    storage_cassandra_keyspace   => 'remote_cluster_opc_keyspace',
+    storage_cassandra_seed_hosts => 'localhost'
   }
 
   class { '::cassandra::opscenter::pycrypto':
