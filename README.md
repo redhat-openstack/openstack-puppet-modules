@@ -8,9 +8,9 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Setup - The basics of getting started with cassandra](#setup)
-    * [What cassandra affects](#what-cassandra-affects)
-    * [Beginning with cassandra](#beginning-with-cassandra)
+2. [Setup - The basics of getting started with Cassandra](#setup)
+    * [What Cassandra affects](#what-cassandra-affects)
+    * [Beginning with Cassandra](#beginning-with-cassandra)
     * [Upgrading](#upgrading)
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Create a Cluster in a Single Data Center](#create-a-cluster-in-a-single-data-center)
@@ -37,9 +37,9 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 ## Setup
 
-### What cassandra affects
+### What Cassandra affects
 
-#### What the cassandra class affects
+#### What the Cassandra class affects
 
 * Installs the Cassandra package (default **dsc22**).
 * Configures settings in *${config_path}/cassandra.yaml*.
@@ -61,7 +61,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the cassandra::firewall_ports class affects
 
-* Optionally configures the firewall for the cassandra related network
+* Optionally configures the firewall for the Cassandra related network
   ports.
 
 #### What the cassandra::java class affects
@@ -71,7 +71,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the cassandra::opscenter class affects
 
-* Installs the opscenter package.
+* Installs the OpsCenter package.
 * Manages the content of the configuration file
   (/etc/opscenter/opscenterd.conf).
 * Manages the opscenterd service.
@@ -99,7 +99,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 * Optionally installs the Cassandra support tools (e.g. cassandra22-tools).
 
-### Beginning with cassandra
+### Beginning with Cassandra
 
 A basic example is as follows:
 
@@ -613,7 +613,7 @@ This is passed to the
 
 ### Class: cassandra::datastax_agent
 
-A class for installing the DataStax agent and to point it at an OpsCenter
+A class for installing the DataStax Agent and to point it at an OpsCenter
 instance.
 
 #### Parameters
@@ -656,10 +656,10 @@ This class has no parameters.
 WARNING: This feature is currently experimental.
 
 An optional class to configure incoming network ports on the host that are
-relevant to the cassandra installation.  If firewalls are being managed 
+relevant to the Cassandra installation.  If firewalls are being managed 
 already, simply do not include this module in your manifest.
 
-IMPORTANT: The full list of what ports should be configured is assessed at
+IMPORTANT: The full list of which ports should be configured is assessed at
 evaluation time of the configuration. Therefore if one is to use this class,
 it must be the final cassandra class included in the manifest.
 
@@ -726,14 +726,14 @@ appended to this list
 (default **[61620, 61621]**).
 
 ##### `opscenter_subnets`
-An array of the list of subnets that are to allowed connection to
+A list of subnets that are to be allowed connection to
 port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
-build with cassandra::datastax_agent
+built with cassandra::datastax_agent
 (default **['0.0.0.0/0']**).
 
 ### Class: cassandra::java
 
-A class to install a reasonably sensible Java package.
+A class to install an appropriate Java package.
 
 #### Parameters
 
