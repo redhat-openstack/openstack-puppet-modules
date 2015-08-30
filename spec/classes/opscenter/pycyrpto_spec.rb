@@ -12,6 +12,7 @@ describe 'cassandra::opscenter::pycrypto' do
     it { should contain_class('cassandra::opscenter::pycrypto').with_manage_epel('false') }
     it { should contain_class('cassandra::opscenter::pycrypto').with_provider('pip') }
     it { should contain_package('pycrypto') }
+    it { should contain_file('/usr/bin/pip-python') }
   end
 
   context 'Test for cassandra::opscenter::pycrypto on Debian.' do
