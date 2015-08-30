@@ -9,6 +9,16 @@ describe 'cassandra::opscenter::cluster_name' do
        $value                   = nil) {}'
   ] }
 
+  context 'Called with defaults.' do
+    let(:title) { 'MyCluster' }
+    let :params do
+      {
+        :cassandra_seed_hosts         => 'host1,host2',
+      }
+    end
+     it { should contain_cassandra__opscenter__cluster_name('MyCluster') }
+  end
+  
   context 'Test that settings can be set.' do
     let(:title) { 'MyCluster' }
     let :params do
