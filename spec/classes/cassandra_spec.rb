@@ -22,7 +22,11 @@ describe 'cassandra' do
 
     it { should contain_class('cassandra') }
     it { should contain_file('/etc/cassandra/default.conf/cassandra.yaml') }
-    it { should contain_service('cassandra') }
+    it {
+      should contain_service('cassandra').with({
+        'ensure' => 'running'
+      })
+    }
     it { should contain_package('dsc22') }
     it { is_expected.not_to contain_yumrepo('datastax') }
     it {
@@ -67,7 +71,11 @@ describe 'cassandra' do
     end
 
     it { should contain_class('cassandra') }
-    it { should contain_service('cassandra') }
+    it {
+      should contain_service('cassandra').with({
+        'ensure' => 'running'
+      })
+    }
     it { should contain_file('/etc/cassandra/cassandra.yaml') }
     it { should contain_package('dsc22') }
     it { is_expected.to contain_service('cassandra') }
@@ -430,6 +438,25 @@ describe 'cassandra' do
         'section' => '',
         'setting' => 'prefer_local',
         'value'   => 'true'
+      })
+    }
+  end
+
+  context 'Ensure cassandra service can be stopped.' do
+    let :facts do
+      {
+        :osfamily => 'Debian'
+      }
+    end
+
+    let :params do
+      {
+        :service_ensure => 'stopped'
+      }
+    end
+    it {
+      should contain_service('cassandra').with({
+        'ensure' => 'stopped'
       })
     }
   end
