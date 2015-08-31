@@ -11,6 +11,7 @@ define cassandra::opscenter::cluster_name(
   $storage_cassandra_local_dc_pref            = undef,
   $storage_cassandra_password                 = undef,
   $storage_cassandra_retry_delay              = undef,
+  $storage_cassandra_seed_hosts               = undef,
   $storage_cassandra_send_rpc                 = undef,
   $storage_cassandra_ssl_ca_certs             = undef,
   $storage_cassandra_ssl_client_key           = undef,
@@ -250,6 +251,29 @@ define cassandra::opscenter::cluster_name(
       ensure            => absent,
       section           => 'storage_cassandra',
       setting           => 'retry_delay',
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
+    }
+  }
+
+  if $storage_cassandra_seed_hosts != undef {
+    ini_setting { "${title}:storage_cassandra_seed_hosts":
+      ensure            => present,
+      section           => 'storage_cassandra',
+      setting           => 'seed_hosts',
+      value             => $storage_cassandra_seed_hosts,
+      path              => $cluster_file,
+      key_val_separator => ' = ',
+      require           => File[$config_path],
+      notify            => Service['opscenterd'],
+    }
+  } else {
+    ini_setting { "${title}:storage_cassandra_seed_hosts":
+      ensure            => absent,
+      section           => 'storage_cassandra',
+      setting           => 'seed_hosts',
       path              => $cluster_file,
       key_val_separator => ' = ',
       require           => File[$config_path],
