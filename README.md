@@ -1539,8 +1539,8 @@ Ensure the OpsCenter service is running.  Valid values are running or stopped
 (default: **running**)
 
 ##### `service_name`
-The name of the service that runs the OpsCenter software (default
-**opscenterd**).
+The name of the service that runs the OpsCenter software 
+(default: **opscenterd**).
 
 ##### `spark_base_master_proxy_port`
 This sets the base_master_proxy_port setting in the spark section of the
@@ -1725,7 +1725,7 @@ node
 ### Defined Type cassandra::opscenter::cluster_name
 
 With DataStax Enterprise, one can specify a remote keyspace for OpsCenter
-to store metric data (this is not available in DataStax Community).
+to store metric data (this is not available in the DataStax Community Edition).
 
 #### Parameters
 
@@ -1857,8 +1857,8 @@ present in the file.  Default value *undef*
 
 ### Defined Type cassandra::firewall_ports::rule
 
-Simply a defined type to be used as a macro for setting host based firewall
-rules.  This is not really supposed to be used by a user (who should use the
+A defined type to be used as a macro for setting host based firewall
+rules.  This is not intended to be used by a user (who should use the
 API provided by cassandra::firewall_ports instead) but is documented
 here for completeness.
 
@@ -1872,8 +1872,8 @@ The number(s) of the port(s) to be opened.
 
 ### Defined Type cassandra::opscenter::setting
 
-Simply a defined type to be used as a macro for settings in the OpsCenter
-configuration file.  This is not really supposed to be used by a user (who
+A defined type to be used as a macro for settings in the OpsCenter
+configuration file.  This is not intended to be used by a user (who
 should use the API provided by cassandra::opscenter instead) but is documented
 here for completeness.
 
