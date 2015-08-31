@@ -35,6 +35,8 @@ describe 'cassandra::firewall_ports' do
       })
     }
 
+    it { should contain_firewall('200 - Cassandra (Public) - 0.0.0.0/0') }
+
     it {
       should contain_cassandra__firewall_ports__rule('200_Public_0.0.0.0/0').with({
         'ports' => [8888, 22]
