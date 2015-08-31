@@ -107,7 +107,7 @@ class cassandra (
   if $package_ensure != 'absent'
   and $package_ensure != 'purged' {
     service { 'cassandra':
-      ensure  => running,
+      ensure  => $service_ensure,
       name    => $service_name,
       enable  => true,
       require => Package[$package_name],
