@@ -26,6 +26,26 @@ describe 'cassandra::opscenter::setting' do
     }
   end
 
+  context 'section setting' do
+    let(:title) { 'section setting' }
+    let :params do
+      {
+        :path    => '/path/to/file',
+        :section => 'section',
+        :setting => 'section',
+      }
+    end
+
+    it {
+      should contain_ini_setting('section setting').with({
+        'ensure'  => 'absent',
+        'path'    => '/path/to/file',
+        'section' => 'section',
+        'setting' => 'setting',
+      })
+    }
+  end
+
   context 'agents agent_certfile' do
     let(:title) { 'agents agent_certfile' }
     let :params do
