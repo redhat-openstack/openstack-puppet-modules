@@ -109,7 +109,7 @@ class cassandra (
     service { 'cassandra':
       ensure  => $service_ensure,
       name    => $service_name,
-      enable  => true,
+      enable  => $service_enable,
       require => Package[$package_name],
     }
   }
