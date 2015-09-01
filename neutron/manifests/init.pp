@@ -75,6 +75,10 @@
 #   (optional) Allow sending resource operation notification to DHCP agent.
 #   Defaults to true
 #
+# [*advertise_mtu*]
+#   (optional) VMs will receive DHCP and RA MTU option when the network's preferred MTU is known
+#   Defaults to false
+#
 # [*allow_bulk*]
 #   (optional) Enable bulk crud operations
 #   Defaults to true
@@ -96,6 +100,12 @@
 #   module in use needs to load.
 #   Defaults to undef
 #
+# [*root_helper*]
+#  (optional) Use "sudo neutron-rootwrap /etc/neutron/rootwrap.conf" to use the real
+#  root filter facility. Change to "sudo" to skip the filtering and just run the command
+#  directly
+#  Defaults to 'sudo neutron-rootwrap /etc/neutron/rootwrap.conf'.
+#
 # [*report_interval*]
 #   (optional) Seconds between nodes reporting state to server; should be less than
 #   agent_down_time, best if it is half or less than agent_down_time.
@@ -103,7 +113,7 @@
 #   report_interval is a config for neutron agents, set by class neutron
 #   Defaults to: 30
 #
-# [memcache_servers]
+# [*memcache_servers*]
 #   List of memcache servers in format of server:port.
 #   Optional. Defaults to false. Example: ['localhost:11211']
 #
@@ -120,6 +130,10 @@
 # [*rabbit_port*]
 # [*rabbit_user*]
 #   (optional) Various rabbitmq settings
+#
+# [*rabbit_virtual_host*]
+#   (optional) virtualhost to use.
+#   Defaults to '/'
 #
 # [*rabbit_hosts*]
 #   (optional) array of rabbitmq servers for HA.
@@ -206,6 +220,10 @@
 #   (optional) Use syslog for logging
 #   Defaults to false
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   (optional) Syslog facility to receive log lines
 #   Defaults to LOG_USER
@@ -245,6 +263,7 @@ class neutron (
   $dhcp_agents_per_network            = 1,
   $network_device_mtu                 = undef,
   $dhcp_agent_notification            = true,
+  $advertise_mtu                      = false,
   $allow_bulk                         = true,
   $allow_pagination                   = false,
   $allow_sorting                      = false,
@@ -287,6 +306,7 @@ class neutron (
   $key_file                           = false,
   $ca_file                            = false,
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $log_file                           = false,
   $log_dir                            = '/var/log/neutron',
@@ -344,12 +364,13 @@ class neutron (
   package { 'neutron':
     ensure => $package_ensure,
     name   => $::neutron::params::package_name,
-    tag    => 'openstack',
+    tag    => ['openstack', 'neutron-package'],
   }
 
   neutron_config {
     'DEFAULT/verbose':                 value => $verbose;
     'DEFAULT/debug':                   value => $debug;
+    'DEFAULT/use_stderr':              value => $use_stderr;
     'DEFAULT/bind_host':               value => $bind_host;
     'DEFAULT/bind_port':               value => $bind_port;
     'DEFAULT/auth_strategy':           value => $auth_strategy;
@@ -359,6 +380,7 @@ class neutron (
     'DEFAULT/dhcp_lease_duration':     value => $dhcp_lease_duration;
     'DEFAULT/dhcp_agents_per_network': value => $dhcp_agents_per_network;
     'DEFAULT/dhcp_agent_notification': value => $dhcp_agent_notification;
+    'DEFAULT/advertise_mtu':           value => $advertise_mtu;
     'DEFAULT/allow_bulk':              value => $allow_bulk;
     'DEFAULT/allow_pagination':        value => $allow_pagination;
     'DEFAULT/allow_sorting':           value => $allow_sorting;

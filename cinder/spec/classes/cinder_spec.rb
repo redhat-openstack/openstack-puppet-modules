@@ -1,7 +1,11 @@
 require 'spec_helper'
 describe 'cinder' do
   let :req_params do
-    {:rabbit_password => 'guest', :database_connection => 'mysql://user:password@host/database'}
+    {
+      :rabbit_password => 'guest',
+      :database_connection => 'mysql://user:password@host/database',
+      :lock_path => '/var/lock/cinder',
+    }
   end
 
   let :facts do
@@ -37,10 +41,12 @@ describe 'cinder' do
       is_expected.to contain_cinder_config('database/max_overflow').with_ensure('absent')
       is_expected.to contain_cinder_config('DEFAULT/verbose').with(:value => false)
       is_expected.to contain_cinder_config('DEFAULT/debug').with(:value => false)
+      is_expected.to contain_cinder_config('DEFAULT/use_stderr').with(:value => true)
       is_expected.to contain_cinder_config('DEFAULT/storage_availability_zone').with(:value => 'nova')
       is_expected.to contain_cinder_config('DEFAULT/default_availability_zone').with(:value => 'nova')
       is_expected.to contain_cinder_config('DEFAULT/api_paste_config').with(:value => '/etc/cinder/api-paste.ini')
       is_expected.to contain_cinder_config('DEFAULT/log_dir').with(:value => '/var/log/cinder')
+      is_expected.to contain_cinder_config('DEFAULT/lock_path').with(:value => '/var/lock/cinder')
     end
 
   end
@@ -236,6 +242,11 @@ describe 'cinder' do
   describe 'with log_dir disabled' do
     let(:params) { req_params.merge!({:log_dir => false}) }
     it { is_expected.to contain_cinder_config('DEFAULT/log_dir').with_ensure('absent') }
+  end
+
+  describe 'with different lock_path' do
+    let(:params) { req_params.merge!({:lock_path => '/var/run/cinder.locks'}) }
+    it { is_expected.to contain_cinder_config('DEFAULT/lock_path').with_value('/var/run/cinder.locks') }
   end
 
   describe 'with amqp_durable_queues disabled' do

@@ -45,6 +45,9 @@
 # [*service_type*]
 #   Type of service. Defaults to 'gnocchi'.
 #
+# [*service_description*]
+#   Description for keystone service. Optional. Defaults to 'OpenStack Datapoint Service'.
+#
 # [*public_protocol*]
 #   Protocol for public endpoint. Defaults to 'http'.
 #
@@ -88,6 +91,7 @@ class gnocchi::keystone::auth (
   $configure_user      = true,
   $configure_user_role = true,
   $service_type        = 'gnocchi',
+  $service_description = 'OpenStack Datapoint Service',
   $public_protocol     = 'http',
   $public_address      = '127.0.0.1',
   $public_port         = '8041',
@@ -108,7 +112,7 @@ class gnocchi::keystone::auth (
     configure_user_role => true,
     configure_endpoint  => $configure_endpoint,
     service_type        => $service_type,
-    service_description => 'OpenStack Datapoint Service',
+    service_description => $service_description,
     region              => $region,
     password            => $password,
     email               => $email,

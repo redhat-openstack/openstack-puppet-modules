@@ -35,7 +35,7 @@
 # [*port*]
 #   (optional) The port for the Ironic API server.
 #   Should be an valid port
-#   Defaults to '0.0.0.0'.
+#   Defaults to '6385'.
 #
 # [*max_limit*]
 #   (optional) The maximum number of items returned in a single response
@@ -119,11 +119,10 @@ class ironic::api (
   if $::ironic::params::api_package {
     Package['ironic-api'] -> Class['ironic::policy']
     Package['ironic-api'] -> Service['ironic-api']
-    Package['ironic-api'] -> Ironic_config<||>
     package { 'ironic-api':
       ensure => $package_ensure,
       name   => $::ironic::params::api_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'ironic-package'],
     }
   }
 
@@ -139,6 +138,7 @@ class ironic::api (
     name      => $::ironic::params::api_service,
     enable    => $enabled,
     hasstatus => true,
+    tag       => 'ironic-service',
   }
 
   if $neutron_url {

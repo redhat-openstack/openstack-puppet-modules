@@ -98,17 +98,17 @@ class manila::api (
 ) {
 
   include ::manila::params
+  require ::keystone::python
 
   Manila_config<||> ~> Service['manila-api']
   Manila_api_paste_ini<||> ~> Service['manila-api']
 
   if $::manila::params::api_package {
-    Package['manila-api'] -> Manila_config<||>
-    Package['manila-api'] -> Manila_api_paste_ini<||>
     Package['manila-api'] -> Service['manila-api']
     package { 'manila-api':
       ensure => $package_ensure,
       name   => $::manila::params::api_package,
+      tag    => ['openstack', 'manila-package'],
     }
   }
 
@@ -139,6 +139,7 @@ class manila::api (
     enable    => $enabled,
     hasstatus => true,
     require   => Package['manila'],
+    tag       => 'manila-service',
   }
 
   manila_config {

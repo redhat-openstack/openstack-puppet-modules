@@ -33,7 +33,7 @@ describe 'neutron::agents::ml2::sriov' do
 
     it { is_expected.to contain_class('neutron::params') }
 
-    it 'configures ovs_neutron_plugin.ini' do
+    it 'configures plugins/ml2/openvswitch_agent.ini' do
       is_expected.to contain_neutron_plugin_ml2('sriov_nic/polling_interval').with_value(p[:polling_interval])
       is_expected.to contain_neutron_plugin_ml2('sriov_nic/exclude_devices').with_value(p[:exclude_devices].join(','))
       is_expected.to contain_neutron_plugin_ml2('sriov_nic/physical_device_mappings').with_value(p[:physical_device_mappings].join(','))
@@ -43,7 +43,7 @@ describe 'neutron::agents::ml2::sriov' do
       is_expected.to contain_package('neutron-sriov-nic-agent').with(
         :name   => platform_params[:sriov_nic_agent_package],
         :ensure => p[:package_ensure],
-        :tag    => 'openstack'
+        :tag    => ['openstack', 'neutron-package'],
       )
       is_expected.to contain_package('neutron-sriov-nic-agent').with_before(/Neutron_plugin_ml2\[.+\]/)
     end
@@ -53,7 +53,8 @@ describe 'neutron::agents::ml2::sriov' do
         :name    => platform_params[:sriov_nic_agent_service],
         :enable  => true,
         :ensure  => 'running',
-        :require => 'Class[Neutron]'
+        :require => 'Class[Neutron]',
+        :tag     => 'neutron-service',
       )
     end
 

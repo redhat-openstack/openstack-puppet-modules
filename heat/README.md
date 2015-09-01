@@ -31,13 +31,41 @@ Setup
 
 **What the heat module affects**
 
-* heat, the orchestration service for OpenStack
+* [Heat](https://wiki.openstack.org/wiki/Heat), the orchestration service for OpenStack
 
-### Installing heat 
+### Installing heat
 
-  example% puppet module install puppetlabs/heat
+    puppet module install openstack/heat
 
 ### Beginning with heat
+
+To utilize the heat module's functionality you will need to declare multiple resources.
+The following is a modified excerpt from the [openstack module](httpd://github.com/stackforge/puppet-openstack).
+This is not an exhaustive list of all the components needed. We recommend that you consult and understand the
+[openstack module](https://github.com/stackforge/puppet-openstack) and the [core openstack](http://docs.openstack.org)
+documentation to assist you in understanding the available deployment options.
+
+```puppet
+# enable heat resources
+class { '::heat':
+  rabbit_userid       => 'heat',
+  rabbit_password     => 'an_even_bigger_secret',
+  rabbit_host         => '127.0.0.1',
+  database_connection => 'mysql://heat:a_big_secret@127.0.0.1/heat?charset=utf8',
+  identity_uri        => 'http://127.0.0.1:35357/',
+  keystone_password   => 'a_big_secret',
+}
+
+class { '::heat::api': }
+
+class { '::heat::engine':
+  auth_encryption_key => '1234567890AZERTYUIOPMLKJHGFDSQ12',
+}
+
+class { '::heat::api_cloudwatch': }
+
+class { '::heat::api_cfn': }
+```
 
 Implementation
 --------------
@@ -46,6 +74,36 @@ Implementation
 
 heat is a combination of Puppet manifests and Ruby code to deliver configuration and
 extra functionality through types and providers.
+
+### Types
+
+#### heat_config
+
+The `heat_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/heat/heat.conf` file.
+
+```puppet
+heat_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `heat.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
 
 Limitations
 -----------

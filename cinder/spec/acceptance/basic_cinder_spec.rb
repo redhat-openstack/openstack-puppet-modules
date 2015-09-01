@@ -12,15 +12,29 @@ describe 'basic cinder' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'kilo',
-            package_require => true,
+          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
+            # it's false by default in 2.x series but true in 1.8.x
+            package_manage => false,
           }
+          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
-            release => 'kilo',
+            manage_rdo => false,
+            repo_hash => {
+              # we need kilo repo to be installed for dependencies
+              'rdo-kilo' => {
+                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
+                'descr'   => 'RDO kilo',
+                'gpgcheck' => 'no',
+              },
+              'rdo-liberty' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
+                'descr'    => 'RDO trunk',
+                'gpgcheck' => 'no',
+              },
+            },
           }
           package { 'openstack-selinux': ensure => 'latest' }
           $package_provider = 'yum'
@@ -83,6 +97,8 @@ describe 'basic cinder' do
         rabbit_userid       => 'cinder',
         rabbit_password     => 'an_even_bigger_secret',
         rabbit_host         => '127.0.0.1',
+        debug               => true,
+        verbose             => true,
       }
       class { '::cinder::keystone::auth':
         password => 'a_big_secret',
@@ -102,6 +118,7 @@ describe 'basic cinder' do
       class { '::cinder::scheduler': }
       class { '::cinder::scheduler::filter': }
       class { '::cinder::volume': }
+      class { '::cinder::cron::db_purge': }
       # TODO: create a backend and spawn a volume
       EOS
 
@@ -114,6 +131,11 @@ describe 'basic cinder' do
     describe port(8776) do
       it { is_expected.to be_listening.with('tcp') }
     end
+
+    describe cron do
+      it { is_expected.to have_entry('1 0 * * * cinder-manage db purge 30 >>/var/log/cinder/cinder-rowsflush.log 2>&1').with_user('cinder') }
+    end
+
 
   end
 end

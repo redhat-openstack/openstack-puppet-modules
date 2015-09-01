@@ -173,6 +173,10 @@
 #   Use syslog for logging.
 #   (Optional) Defaults to false.
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   Syslog facility to receive log lines.
 #   (Optional) Defaults to LOG_USER.
@@ -220,6 +224,11 @@
 # [*enable_v2_api*]
 #   (Optional) Whether to enable the v1 API (true/false).
 #   Defaults to 'true'.
+#
+# [*lock_path*]
+#   (optional) Where to store lock files. This directory must be writeable
+#   by the user executing the agent
+#   Defaults to: $::cinder::params::lock_path
 #
 # === Deprecated Parameters
 #
@@ -271,6 +280,7 @@ class cinder (
   $key_file                           = false,
   $api_paste_config                   = '/etc/cinder/api-paste.ini',
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $log_dir                            = '/var/log/cinder',
   $verbose                            = false,
@@ -279,14 +289,12 @@ class cinder (
   $default_availability_zone          = false,
   $enable_v1_api                      = true,
   $enable_v2_api                      = true,
+  $lock_path                          = $::cinder::params::lock_path,
   # DEPRECATED PARAMETERS
   $mysql_module                       = undef,
 ) {
 
   include ::cinder::params
-
-  Package['cinder'] -> Cinder_config<||>
-  Package['cinder'] -> Cinder_api_paste_ini<||>
 
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
@@ -424,6 +432,7 @@ class cinder (
     'database/retry_interval':           value => $database_retry_interval;
     'DEFAULT/verbose':                   value => $verbose;
     'DEFAULT/debug':                     value => $debug;
+    'DEFAULT/use_stderr':                value => $use_stderr;
     'DEFAULT/api_paste_config':          value => $api_paste_config;
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
@@ -509,6 +518,7 @@ class cinder (
   cinder_config {
     'DEFAULT/enable_v1_api':        value => $enable_v1_api;
     'DEFAULT/enable_v2_api':        value => $enable_v2_api;
+    'DEFAULT/lock_path':            value => $lock_path;
   }
 
 }

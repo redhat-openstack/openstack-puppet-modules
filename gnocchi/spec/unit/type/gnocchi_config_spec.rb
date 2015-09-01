@@ -49,4 +49,15 @@ describe 'Puppet::Type.type(:gnocchi_config)' do
       @gnocchi_config[:ensure] = :latest
     }.to raise_error(Puppet::Error, /Invalid value/)
   end
+
+  it 'should autorequire the package that install the file' do
+    catalog = Puppet::Resource::Catalog.new
+    package = Puppet::Type.type(:package).new(:name => 'gnocchi-api')
+    catalog.add_resource package, @gnocchi_config
+    dependency = @gnocchi_config.autorequire
+    expect(dependency.size).to eq(1)
+    expect(dependency[0].target).to eq(@gnocchi_config)
+    expect(dependency[0].source).to eq(package)
+  end
+
 end

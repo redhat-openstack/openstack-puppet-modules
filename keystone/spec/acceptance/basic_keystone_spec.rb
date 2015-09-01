@@ -8,18 +8,39 @@ describe 'basic keystone server with resources' do
       pp= <<-EOS
       Exec { logoutput => 'on_failure' }
 
+      # make sure apache is stopped before keystone eventlet
+      # in case of wsgi was run before
+      class { '::apache':
+        service_ensure => 'stopped',
+      }
+      Service['httpd'] -> Service['keystone']
+
       # Common resources
       case $::osfamily {
         'Debian': {
           include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release => 'kilo',
-            package_require => true,
+          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
+            # it's false by default in 2.x series but true in 1.8.x
+            package_manage => false,
           }
+          Exec['apt_update'] -> Package<||>
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
-            release => 'kilo',
+            manage_rdo => false,
+            repo_hash => {
+              # we need kilo repo to be installed for dependencies
+              'rdo-kilo' => {
+                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
+                'descr'   => 'RDO kilo',
+                'gpgcheck' => 'no',
+              },
+              'rdo-liberty' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
+                'descr'    => 'RDO trunk',
+                'gpgcheck' => 'no',
+              },
+            },
           }
           package { 'openstack-selinux': ensure => 'latest' }
         }
@@ -42,6 +63,7 @@ describe 'basic keystone server with resources' do
         database_connection => 'mysql://keystone:keystone@127.0.0.1/keystone',
         admin_token         => 'admin_token',
         enabled             => true,
+        default_domain      => 'default_domain',
       }
       # "v2" admin and service
       class { '::keystone::roles::admin':
@@ -206,11 +228,11 @@ describe 'basic keystone server with resources' do
     end
     describe 'with v2 admin with v3 credentials' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username admin --os-password a_big_secret --os-project-name openstack --os-user-domain-name Default --os-project-domain-name Default'
+                       '--os-username admin --os-password a_big_secret --os-project-name openstack --os-user-domain-name default_domain --os-project-domain-name default_domain'
     end
     describe "with v2 service with v3 credentials" do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username beaker-ci --os-password secret --os-project-name services --os-user-domain-name Default --os-project-domain-name Default'
+                       '--os-username beaker-ci --os-password secret --os-project-name services --os-user-domain-name default_domain --os-project-domain-name default_domain'
     end
     describe 'with v3 admin with v3 credentials' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',

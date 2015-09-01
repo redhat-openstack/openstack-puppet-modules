@@ -27,9 +27,9 @@ describe 'keystone' do
       'admin_bind_host'                     => '0.0.0.0',
       'public_port'                         => '5000',
       'admin_port'                          => '35357',
-      'admin_token'                         => 'service_token',
       'verbose'                             => false,
       'debug'                               => false,
+      'use_stderr'                          => true,
       'catalog_type'                        => 'sql',
       'catalog_driver'                      => false,
       'token_provider'                      => 'keystone.token.providers.uuid.Provider',
@@ -71,6 +71,7 @@ describe 'keystone' do
       'admin_token'                         => 'service_token_override',
       'verbose'                             => true,
       'debug'                               => true,
+      'use_stderr'                          => false,
       'catalog_type'                        => 'template',
       'token_provider'                      => 'keystone.token.providers.uuid.Provider',
       'token_driver'                        => 'keystone.token.backends.kvs.Token',
@@ -110,9 +111,8 @@ describe 'keystone' do
       'tag'    => ['openstack', 'keystone-package'],
     ) }
 
-    it { is_expected.to contain_package('python-openstackclient').with(
+    it { is_expected.to contain_class('keystone::client').with(
       'ensure' => param_hash['client_package_ensure'],
-      'tag'    => 'openstack',
     ) }
 
     it { is_expected.to contain_group('keystone').with(
@@ -156,7 +156,8 @@ describe 'keystone' do
        'public_port',
        'admin_port',
        'verbose',
-       'debug'
+       'debug',
+       'use_stderr'
       ].each do |config|
         is_expected.to contain_keystone_config("DEFAULT/#{config}").with_value(param_hash[config])
       end
@@ -224,6 +225,7 @@ describe 'keystone' do
 
     if param_hash['default_domain']
       it { is_expected.to contain_keystone_domain(param_hash['default_domain']).with(:is_default => true) }
+      it { is_expected.to contain_anchor('default_domain_created') }
     end
   end
 
@@ -863,20 +865,38 @@ describe 'keystone' do
     end
   end
 
-  describe 'when configuring default domain' do
+  shared_examples_for "when configuring default domain" do
     describe 'with default config' do
       let :params do
         default_params
       end
       it { is_expected.to_not contain_exec('restart_keystone') }
     end
-    describe 'with default domain and service is managed and enabled' do
+    describe 'with default domain and eventlet service is managed and enabled' do
       let :params do
         default_params.merge({
           'default_domain'=> 'test',
         })
       end
-      it { is_expected.to contain_exec('restart_keystone') }
+      it { is_expected.to contain_exec('restart_keystone').with(
+        'command' => "service #{platform_parameters[:service_name]} restart",
+      ) }
+      it { is_expected.to contain_anchor('default_domain_created') }
+    end
+    describe 'with default domain and wsgi service is managed and enabled' do
+      let :pre_condition do
+        'include ::apache'
+      end
+      let :params do
+        default_params.merge({
+          'default_domain'=> 'test',
+          'service_name'  => 'httpd',
+        })
+      end
+      it { is_expected.to contain_exec('restart_keystone').with(
+        'command' => "service #{platform_parameters[:httpd_service_name]} restart",
+      ) }
+      it { is_expected.to contain_anchor('default_domain_created') }
     end
     describe 'with default domain and service is not managed' do
       let :params do
@@ -886,6 +906,7 @@ describe 'keystone' do
         })
       end
       it { is_expected.to_not contain_exec('restart_keystone') }
+      it { is_expected.to contain_anchor('default_domain_created') }
     end
   end
 
@@ -899,11 +920,13 @@ describe 'keystone' do
 
     let :platform_parameters do
       {
-        :service_name => 'openstack-keystone'
+        :service_name       => 'openstack-keystone',
+        :httpd_service_name => 'httpd',
       }
     end
 
     it_configures 'when using default class parameters for httpd'
+    it_configures 'when configuring default domain'
   end
 
   context 'on Debian platforms' do
@@ -917,10 +940,12 @@ describe 'keystone' do
 
     let :platform_parameters do
       {
-        :service_name => 'keystone'
+        :service_name       => 'keystone',
+        :httpd_service_name => 'apache2',
       }
     end
 
     it_configures 'when using default class parameters for httpd'
+    it_configures 'when configuring default domain'
   end
 end

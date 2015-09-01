@@ -4,6 +4,17 @@
 #
 # == parameters
 #
+#  [*http_timeout*]
+#    timeout seconds for HTTP requests
+#     Defaults to 600
+#  [*event_time_to_live*]
+#    number of seconds that events are kept in the database for
+#    (<= 0 means forever)
+#    Defaults to -1
+#  [*metering_time_to_live*]
+#    number of seconds that samples are kept in the database for
+#    (<= 0 means forever)
+#    Defaults to -1
 #  [*metering_secret*]
 #    secret key for signing messages. Mandatory.
 #  [*notification_topics*]
@@ -22,6 +33,9 @@
 #  [*use_syslog*]
 #    (optional) Use syslog for logging
 #    Defaults to false
+#  [*use_stderr*]
+#    (optional) Use stderr for logging
+#    Defaults to true
 #  [*log_facility*]
 #    (optional) Syslog facility to receive log lines.
 #    Defaults to 'LOG_USER'
@@ -94,6 +108,9 @@
 # (optional) various QPID options
 #
 class ceilometer(
+  $http_timeout                       = '600',
+  $event_time_to_live                 = '-1',
+  $metering_time_to_live              = '-1',
   $metering_secret                    = false,
   $notification_topics                = ['notifications'],
   $package_ensure                     = 'present',
@@ -101,6 +118,7 @@ class ceilometer(
   $log_dir                            = '/var/log/ceilometer',
   $verbose                            = false,
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $rpc_backend                        = 'rabbit',
   $rabbit_host                        = '127.0.0.1',
@@ -183,8 +201,6 @@ class ceilometer(
     name   => $::ceilometer::params::common_package_name,
     tag    => ['openstack', 'ceilometer-package'],
   }
-
-  Package['ceilometer-common'] -> Ceilometer_config<||>
 
   # we keep "ceilometer.openstack.common.rpc.impl_kombu" for backward compatibility
   if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
@@ -278,11 +294,15 @@ class ceilometer(
 
   # Once we got here, we can act as an honey badger on the rpc used.
   ceilometer_config {
+    'DEFAULT/http_timeout'           : value => $http_timeout;
     'DEFAULT/rpc_backend'            : value => $rpc_backend;
     'publisher/metering_secret'      : value => $metering_secret, secret => true;
     'DEFAULT/debug'                  : value => $debug;
     'DEFAULT/verbose'                : value => $verbose;
+    'DEFAULT/use_stderr'             : value => $use_stderr;
     'DEFAULT/notification_topics'    : value => join($notification_topics, ',');
+    'database/event_time_to_live'    : value => $event_time_to_live;
+    'database/metering_time_to_live' : value => $metering_time_to_live;
   }
 
   # Log configuration

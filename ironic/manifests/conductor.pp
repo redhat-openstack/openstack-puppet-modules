@@ -58,11 +58,10 @@ class ironic::conductor (
   # Install package
   if $::ironic::params::conductor_package {
     Package['ironic-conductor'] -> Service['ironic-conductor']
-    Package['ironic-conductor'] -> Ironic_config<||>
     package { 'ironic-conductor':
       ensure => $package_ensure,
       name   => $::ironic::params::conductor_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'ironic-package'],
     }
   }
 
@@ -78,6 +77,7 @@ class ironic::conductor (
     name      => $::ironic::params::conductor_service,
     enable    => $enabled,
     hasstatus => true,
+    tag       => 'ironic-service',
   }
 
 }

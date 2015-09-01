@@ -155,6 +155,10 @@
 #   (Optional) Use syslog for logging.
 #   Defaults to false.
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   (Optional) Syslog facility to receive log lines.
 #   Defaults to LOG_USER.
@@ -252,6 +256,7 @@ class heat(
   $database_connection                = 'sqlite:////var/lib/heat/heat.sqlite',
   $database_idle_timeout              = 3600,
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $flavor                             = undef,
   $region_name                        = undef,
@@ -320,8 +325,6 @@ class heat(
     name   => $::heat::params::common_package_name,
     tag    => ['openstack', 'heat-package'],
   }
-
-  Package['heat-common'] -> Heat_config<||>
 
   if $rpc_backend == 'heat.openstack.common.rpc.impl_kombu' {
 
@@ -477,6 +480,7 @@ class heat(
     'DEFAULT/rpc_response_timeout'         : value => $rpc_response_timeout;
     'DEFAULT/debug'                        : value => $debug;
     'DEFAULT/verbose'                      : value => $verbose;
+    'DEFAULT/use_stderr'                   : value => $use_stderr;
     'ec2authtoken/auth_uri'                : value => $keystone_ec2_uri;
     'keystone_authtoken/admin_tenant_name' : value => $keystone_tenant;
     'keystone_authtoken/admin_user'        : value => $keystone_user;
@@ -539,17 +543,7 @@ class heat(
     }
 
     if $sync_db {
-      $subscribe_sync_db = Exec['heat-dbsync']
-      Heat_config['database/connection'] ~> Exec['heat-dbsync']
-
-      exec { 'heat-dbsync':
-        command     => $::heat::params::dbsync_command,
-        path        => '/usr/bin',
-        user        => 'heat',
-        refreshonly => true,
-        logoutput   => on_failure,
-        subscribe   => Package['heat-common'],
-      }
+      include ::heat::db::sync
     }
   }
 

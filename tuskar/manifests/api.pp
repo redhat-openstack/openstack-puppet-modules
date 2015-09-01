@@ -111,7 +111,6 @@ class tuskar::api(
 
   Tuskar_config<||> ~> Exec['post-tuskar_config']
   Tuskar_config<||> ~> Service['tuskar-api']
-  Package['tuskar-api'] -> Tuskar_config<||>
 
   if $::tuskar::database_connection {
     if($::tuskar::database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {

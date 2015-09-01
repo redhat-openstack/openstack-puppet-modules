@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe 'tempest' do
   shared_examples 'tempest' do
+
+    let :pre_condition do
+      "include ::glance"
+    end
+
     context 'without parameters' do
       describe "should raise error" do
         it { expect { is_expected.to contain_class('tempest::params') }.to raise_error(Puppet::Error, /A value for either image_name or image_ref/) }
@@ -142,15 +147,6 @@ describe 'tempest' do
           )
         end
 
-        it 'load configuration' do
-          is_expected.to contain_file('/var/lib/tempest/etc/tempest.conf').with(
-            :replace => false,
-            :source  => '/var/lib/tempest/etc/tempest.conf.sample',
-            :require => "Vcsrepo[/var/lib/tempest]",
-            :owner   => 'root'
-          )
-        end
-
         it 'configure tempest config' do
           is_expected.to contain_tempest_config('compute/change_password_available').with(:value => nil)
           is_expected.to contain_tempest_config('compute/flavor_ref').with(:value => nil)
@@ -162,10 +158,12 @@ describe 'tempest' do
           is_expected.to contain_tempest_config('compute/resize_available').with(:value => nil)
           is_expected.to contain_tempest_config('compute/allow_tenant_isolation').with(:value => nil)
           is_expected.to contain_tempest_config('identity/admin_password').with(:value => nil)
+          is_expected.to contain_tempest_config('identity/admin_domain_name').with(:value => nil)
           is_expected.to contain_tempest_config('identity/admin_password').with_secret( true )
           is_expected.to contain_tempest_config('identity/admin_tenant_name').with(:value => nil)
           is_expected.to contain_tempest_config('identity/admin_username').with(:value => nil)
           is_expected.to contain_tempest_config('identity/admin_role').with(:value => nil)
+          is_expected.to contain_tempest_config('identity/auth_version').with(:value => 'v2')
           is_expected.to contain_tempest_config('identity/alt_password').with(:value => nil)
           is_expected.to contain_tempest_config('identity/alt_password').with_secret( true )
           is_expected.to contain_tempest_config('identity/alt_tenant_name').with(:value => nil)
@@ -174,6 +172,7 @@ describe 'tempest' do
           is_expected.to contain_tempest_config('identity/password').with_secret( true )
           is_expected.to contain_tempest_config('identity/tenant_name').with(:value => nil)
           is_expected.to contain_tempest_config('identity/uri').with(:value => nil)
+          is_expected.to contain_tempest_config('identity/uri_v3').with(:value => nil)
           is_expected.to contain_tempest_config('identity/username').with(:value => nil)
           is_expected.to contain_tempest_config('identity-feature-enabled/api_v2').with(:value => true)
           is_expected.to contain_tempest_config('identity-feature-enabled/api_v3').with(:value => true)
@@ -202,14 +201,12 @@ describe 'tempest' do
             :ensure            => 'present',
             :tempest_conf_path => '/var/lib/tempest/etc/tempest.conf',
             :image_name        => 'image name',
-            :require           => 'File[/var/lib/tempest/etc/tempest.conf]'
           )
 
           is_expected.to contain_tempest_glance_id_setter('image_ref_alt').with(
             :ensure            => 'present',
             :tempest_conf_path => '/var/lib/tempest/etc/tempest.conf',
             :image_name        => 'image name alt',
-            :require           => 'File[/var/lib/tempest/etc/tempest.conf]'
           )
         end
 
@@ -218,7 +215,6 @@ describe 'tempest' do
             :ensure            => 'present',
             :tempest_conf_path => '/var/lib/tempest/etc/tempest.conf',
             :network_name      => 'network name',
-            :require           => 'File[/var/lib/tempest/etc/tempest.conf]'
           )
         end
       end
