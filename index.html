@@ -29,7 +29,7 @@
     <div class="container">
       <section id="main_content">
         <h1>
-<a id="cassandra" class="anchor" href="#cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>cassandra</h1>
+<a id="cassandra" class="anchor" href="#cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cassandra</h1>
 
 <p><a href="https://forge.puppetlabs.com/locp/cassandra"><img src="http://img.shields.io/puppetforge/v/locp/cassandra.svg" alt="Puppet Forge"></a>
 <a href="https://github.com/locp/cassandra"><img src="https://img.shields.io/github/tag/locp/cassandra.svg" alt="Github Tag"></a>
@@ -43,11 +43,11 @@
 <ol>
 <li><a href="#overview">Overview</a></li>
 <li>
-<a href="#setup">Setup - The basics of getting started with cassandra</a>
+<a href="#setup">Setup - The basics of getting started with Cassandra</a>
 
 <ul>
-<li><a href="#what-cassandra-affects">What cassandra affects</a></li>
-<li><a href="#beginning-with-cassandra">Beginning with cassandra</a></li>
+<li><a href="#what-cassandra-affects">What Cassandra affects</a></li>
+<li><a href="#beginning-with-cassandra">Beginning with Cassandra</a></li>
 <li><a href="#upgrading">Upgrading</a></li>
 </ul>
 </li>
@@ -90,10 +90,10 @@
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
 
 <h3>
-<a id="what-cassandra-affects" class="anchor" href="#what-cassandra-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What cassandra affects</h3>
+<a id="what-cassandra-affects" class="anchor" href="#what-cassandra-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Cassandra affects</h3>
 
 <h4>
-<a id="what-the-cassandra-class-affects" class="anchor" href="#what-the-cassandra-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra class affects</h4>
+<a id="what-the-cassandra-class-affects" class="anchor" href="#what-the-cassandra-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the Cassandra class affects</h4>
 
 <ul>
 <li>Installs the Cassandra package (default <strong>dsc22</strong>).</li>
@@ -125,7 +125,7 @@ from (on Ubuntu).</li>
 <a id="what-the-cassandrafirewall_ports-class-affects" class="anchor" href="#what-the-cassandrafirewall_ports-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::firewall_ports class affects</h4>
 
 <ul>
-<li>Optionally configures the firewall for the cassandra related network
+<li>Optionally configures the firewall for the Cassandra related network
 ports.</li>
 </ul>
 
@@ -141,7 +141,7 @@ Java Native Access (JNA).</li>
 <a id="what-the-cassandraopscenter-class-affects" class="anchor" href="#what-the-cassandraopscenter-class-affects" aria-hidden="true"><span class="octicon octicon-link"></span></a>What the cassandra::opscenter class affects</h4>
 
 <ul>
-<li>Installs the opscenter package.</li>
+<li>Installs the OpsCenter package.</li>
 <li>Manages the content of the configuration file
 (/etc/opscenter/opscenterd.conf).</li>
 <li>Manages the opscenterd service.</li>
@@ -180,7 +180,7 @@ too distant future.</li>
 </ul>
 
 <h3>
-<a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with cassandra</h3>
+<a id="beginning-with-cassandra" class="anchor" href="#beginning-with-cassandra" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning with Cassandra</h3>
 
 <p>A basic example is as follows:</p>
 
@@ -932,7 +932,7 @@ or false
 <h3>
 <a id="class-cassandradatastax_agent" class="anchor" href="#class-cassandradatastax_agent" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_agent</h3>
 
-<p>A class for installing the DataStax agent and to point it at an OpsCenter
+<p>A class for installing the DataStax Agent and to point it at an OpsCenter
 instance.</p>
 
 <h4>
@@ -997,10 +997,10 @@ from which packages for DataStax Community can be downloaded.</p>
 <p>WARNING: This feature is currently experimental.</p>
 
 <p>An optional class to configure incoming network ports on the host that are
-relevant to the cassandra installation.  If firewalls are being managed 
+relevant to the Cassandra installation.  If firewalls are being managed 
 already, simply do not include this module in your manifest.</p>
 
-<p>IMPORTANT: The full list of what ports should be configured is assessed at
+<p>IMPORTANT: The full list of which ports should be configured is assessed at
 evaluation time of the configuration. Therefore if one is to use this class,
 it must be the final cassandra class included in the manifest.</p>
 
@@ -1098,15 +1098,15 @@ appended to this list
 <a id="opscenter_subnets" class="anchor" href="#opscenter_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_subnets</code>
 </h5>
 
-<p>An array of the list of subnets that are to allowed connection to
+<p>A list of subnets that are to be allowed connection to
 port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
-build with cassandra::datastax_agent
+built with cassandra::datastax_agent
 (default <strong>['0.0.0.0/0']</strong>).</p>
 
 <h3>
 <a id="class-cassandrajava" class="anchor" href="#class-cassandrajava" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::java</h3>
 
-<p>A class to install a reasonably sensible Java package.</p>
+<p>A class to install an appropriate Java package.</p>
 
 <h4>
 <a id="parameters-4" class="anchor" href="#parameters-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
@@ -2266,8 +2266,8 @@ or false
 <a id="service_name-2" class="anchor" href="#service_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
 </h5>
 
-<p>The name of the service that runs the OpsCenter software (default
-<strong>opscenterd</strong>).</p>
+<p>The name of the service that runs the OpsCenter software 
+(default: <strong>opscenterd</strong>).</p>
 
 <h5>
 <a id="spark_base_master_proxy_port" class="anchor" href="#spark_base_master_proxy_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>spark_base_master_proxy_port</code>
@@ -2531,7 +2531,7 @@ node
 <a id="defined-type-cassandraopscentercluster_name" class="anchor" href="#defined-type-cassandraopscentercluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::cluster_name</h3>
 
 <p>With DataStax Enterprise, one can specify a remote keyspace for OpsCenter
-to store metric data (this is not available in DataStax Community).</p>
+to store metric data (this is not available in the DataStax Community Edition).</p>
 
 <h4>
 <a id="parameters-8" class="anchor" href="#parameters-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
@@ -2719,8 +2719,8 @@ present in the file.  Default value <em>undef</em></p>
 <h3>
 <a id="defined-type-cassandrafirewall_portsrule" class="anchor" href="#defined-type-cassandrafirewall_portsrule" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::firewall_ports::rule</h3>
 
-<p>Simply a defined type to be used as a macro for setting host based firewall
-rules.  This is not really supposed to be used by a user (who should use the
+<p>A defined type to be used as a macro for setting host based firewall
+rules.  This is not intended to be used by a user (who should use the
 API provided by cassandra::firewall_ports instead) but is documented
 here for completeness.</p>
 
@@ -2742,8 +2742,8 @@ here for completeness.</p>
 <h3>
 <a id="defined-type-cassandraopscentersetting" class="anchor" href="#defined-type-cassandraopscentersetting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::setting</h3>
 
-<p>Simply a defined type to be used as a macro for settings in the OpsCenter
-configuration file.  This is not really supposed to be used by a user (who
+<p>A defined type to be used as a macro for settings in the OpsCenter
+configuration file.  This is not intended to be used by a user (who
 should use the API provided by cassandra::opscenter instead) but is documented
 here for completeness.</p>
 
@@ -2809,7 +2809,11 @@ a bug in the requirements metadata that caused a problem with Puppetfile
 (see <a href="https://github.com/locp/cassandra/pull/34">#34</a>).</p></li>
 <li><p>Dylan Griffith (GitHub <a href="https://github.com/DylanGriffith">@DylanGriffith</a>)
 identified that the dependency for puppetlabs-apt was incorrect
-(<a href="https://github.com/locp/cassandra/pull/87">#87</a>).</p></li>
+(see <a href="https://github.com/locp/cassandra/pull/87">#87</a>).</p></li>
+<li><p>Sam Powers (GitHub <a href="https://github.com/sampowers">@sampowers</a>) reported a
+bug in the ability to set the running state of the Cassandra service and
+subsequently submitted a pull request with a fix
+(see <a href="https://github.com/locp/cassandra/issues/93">#93</a>).</p></li>
 </ul>
       </section>
     </div>
