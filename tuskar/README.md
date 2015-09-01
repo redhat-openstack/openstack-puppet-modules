@@ -35,6 +35,36 @@ Implementation
 
 tuskar is a combination of Puppet manifest and ruby code to delivery configuration and extra functionality through types and providers.
 
+### Types
+
+#### tuskar_config
+
+The `tuskar_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/tuskar/tuskar.conf` file.
+
+```puppet
+tuskar_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `tuskar.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
+
 Limitations
 -----------
 

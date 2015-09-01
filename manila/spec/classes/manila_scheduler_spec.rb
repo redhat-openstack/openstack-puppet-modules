@@ -15,7 +15,8 @@ describe 'manila::scheduler' do
       it { is_expected.to contain_package('manila-scheduler').with(
         :name      => 'manila-scheduler',
         :ensure    => 'present',
-        :before    => ["Service[manila-scheduler]"]
+        :before    => ["Service[manila-scheduler]"],
+        :tag       => ['openstack', 'manila-package'],
       ) }
 
       it { is_expected.to contain_service('manila-scheduler').with(
@@ -23,7 +24,8 @@ describe 'manila::scheduler' do
         :enable    => true,
         :ensure    => 'running',
         :require   => 'Package[manila]',
-        :hasstatus => true
+        :hasstatus => true,
+        :tag       => 'manila-service',
       ) }
     end
 
@@ -65,7 +67,8 @@ describe 'manila::scheduler' do
         :name    => 'openstack-manila-scheduler',
         :enable  => true,
         :ensure  => 'running',
-        :require => 'Package[manila]'
+        :require => 'Package[manila]',
+        :tag     => 'manila-service',
       ) }
     end
 

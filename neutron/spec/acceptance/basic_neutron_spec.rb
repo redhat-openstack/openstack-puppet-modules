@@ -12,15 +12,29 @@ describe 'basic neutron' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'kilo',
-            package_require => true,
+          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
+            # it's false by default in 2.x series but true in 1.8.x
+            package_manage => false,
           }
+          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
-            release => 'kilo',
+            manage_rdo => false,
+            repo_hash => {
+              # we need kilo repo to be installed for dependencies
+              'rdo-kilo' => {
+                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
+                'descr'   => 'RDO kilo',
+                'gpgcheck' => 'no',
+              },
+              'rdo-liberty' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
+                'descr'    => 'RDO trunk',
+                'gpgcheck' => 'no',
+              },
+            },
           }
           package { 'openstack-selinux': ensure => 'latest' }
           $package_provider = 'yum'
@@ -84,6 +98,8 @@ describe 'basic neutron' do
         rabbit_host           => '127.0.0.1',
         allow_overlapping_ips => true,
         core_plugin           => 'ml2',
+        debug                 => true,
+        verbose               => true,
         service_plugins => [
           'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin',
           'neutron.services.loadbalancer.plugin.LoadBalancerPlugin',
@@ -104,12 +120,13 @@ describe 'basic neutron' do
       }
       class { '::neutron::client': }
       class { '::neutron::quota': }
-      class { '::neutron::agents::dhcp': }
-      class { '::neutron::agents::l3': }
+      class { '::neutron::agents::dhcp': debug => true }
+      class { '::neutron::agents::l3': debug => true }
       class { '::neutron::agents::lbaas':
         device_driver => 'neutron_lbaas.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
+        debug         => true,
       }
-      class { '::neutron::agents::metering': }
+      class { '::neutron::agents::metering': debug => true }
       class { '::neutron::agents::ml2::ovs':
         enable_tunneling => true,
         local_ip         => '127.0.0.1',
@@ -126,6 +143,15 @@ describe 'basic neutron' do
       # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true)
+    end
+
+    describe 'test Neutron OVS agent bridges' do
+      it 'should list OVS bridges' do
+        shell("ovs-vsctl show") do |r|
+          expect(r.stdout).to match(/br-int/)
+          expect(r.stdout).to match(/br-tun/)
+        end
+      end
     end
 
   end

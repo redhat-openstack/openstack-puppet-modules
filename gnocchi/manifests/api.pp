@@ -101,7 +101,6 @@ class gnocchi::api(
 
   Gnocchi_config<||> ~> Exec['post-gnocchi_config']
   Gnocchi_config<||> ~> Service['gnocchi-api']
-  Package['gnocchi-api'] -> Gnocchi_config<||>
 
   if $::gnocchi::database_connection {
     if($::gnocchi::database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {

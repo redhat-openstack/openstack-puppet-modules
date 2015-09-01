@@ -16,7 +16,8 @@ describe 'manila::api' do
 
     it { is_expected.to contain_service('manila-api').with(
       'hasstatus' => true,
-      'ensure' => 'running'
+      'ensure' => 'running',
+      'tag' => 'manila-service',
     )}
 
     it 'should configure manila api correctly' do

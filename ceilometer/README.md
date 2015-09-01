@@ -33,13 +33,41 @@ Setup
 
 **What the ceilometer module affects**
 
-* ceilometer, the metering service for OpenStack
+* [Ceilometer](https://wiki.openstack.org/wiki/Ceilometer), the metering service for OpenStack
 
 ### Installing ceilometer
 
-  example% puppet module install openstack/ceilometer
+    puppet module install openstack/ceilometer
 
 ### Beginning with ceilometer
+
+To utilize the ceilometer module's functionality you will need to declare multiple resources.
+The following is a modified excerpt from the [openstack module](httpd://github.com/stackforge/puppet
+-openstack).
+This is not an exhaustive list of all the components needed. We recommend that you consult and under
+stand the [openstack module](https://github.com/stackforge/puppet-openstack) and the [core](http://d
+ocs.openstack.org) documentation to assist you in understanding the available deployment options.
+
+```puppet
+class { '::ceilometer':
+  metering_secret     => 'secrete',
+  rabbit_userid       => 'ceilometer',
+  rabbit_password     => 'an_even_bigger_secret',
+  rabbit_host         => '127.0.0.1',
+}
+class { '::ceilometer::client': }
+class { '::ceilometer::collector': }
+class { '::ceilometer::expirer': }
+class { '::ceilometer::alarm::evaluator': }
+class { '::ceilometer::alarm::notifier': }
+class { '::ceilometer::agent::central': }
+class { '::ceilometer::agent::notification': }
+class { '::ceilometer::api':
+  enabled               => true,
+  keystone_password     => 'a_big_secret',
+  keystone_identity_uri => 'http://127.0.0.1:35357/',
+}
+```
 
 Implementation
 --------------
@@ -48,6 +76,36 @@ Implementation
 
 ceilometer is a combination of Puppet manifests and Ruby code to deliver configuration and
 extra functionality through types and providers.
+
+### Types
+
+#### ceilometer_config
+
+The `ceilometer_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/ceilometer/ceilometer.conf` file.
+
+```puppet
+ceilometer_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `ceilometer.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
 
 Limitations
 -----------

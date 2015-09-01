@@ -188,8 +188,6 @@ class nova::api(
   require ::keystone::python
   include ::cinder::client
 
-  Package<| title == 'nova-api' |> -> Nova_paste_api_ini<| |>
-
   Package<| title == 'nova-common' |> -> Class['nova::api']
   Package<| title == 'nova-common' |> -> Class['nova::policy']
 
@@ -346,14 +344,7 @@ class nova::api(
   # Added arg and if statement prevents this from being run
   # where db is not active i.e. the compute
   if $sync_db {
-    Package<| title == $::nova::params::api_package_name |>    ~> Exec['nova-db-sync']
-    Package<| title == $::nova::params::common_package_name |> ~> Exec['nova-db-sync']
-
-    exec { 'nova-db-sync':
-      command     => '/usr/bin/nova-manage db sync',
-      refreshonly => true,
-      subscribe   => Exec['post-nova_config'],
-    }
+    include ::nova::db::sync
   }
 
   # Remove auth configuration from api-paste.ini

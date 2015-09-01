@@ -39,7 +39,7 @@ Puppet::Type.newtype(:keystone_tenant) do
     desc 'Domain for tenant.'
     newvalues(nil, /\S+/)
     def insync?(is)
-      raise(Puppet::Error, "The domain cannot be changed from #{self.should} to #{is}") unless self.should == is
+      raise(Puppet::Error, "[keystone_tenant]: The domain cannot be changed from #{self.should} to #{is}") unless self.should == is
       true
     end
   end
@@ -54,6 +54,6 @@ Puppet::Type.newtype(:keystone_tenant) do
   # If there is no keystone config, authentication credentials
   # need to come from another source.
   autorequire(:anchor) do
-    ['keystone_started']
+    ['keystone_started','default_domain_created']
   end
 end

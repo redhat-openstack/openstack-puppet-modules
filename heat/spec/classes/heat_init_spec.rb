@@ -7,6 +7,7 @@ describe 'heat' do
       :package_ensure        => 'present',
       :verbose               => 'False',
       :debug                 => 'False',
+      :use_stderr            => 'True',
       :log_dir               => '/var/log/heat',
       :rabbit_host           => '127.0.0.1',
       :rabbit_port           => 5672,
@@ -131,14 +132,16 @@ describe 'heat' do
     end
 
     it 'has db_sync enabled' do
-      is_expected.to contain_exec('heat-dbsync').with(
-        :subscribe => 'Package[heat-common]',
-      )
+      is_expected.to contain_class('heat::db::sync')
     end
 
     it 'configures debug and verbose' do
       is_expected.to contain_heat_config('DEFAULT/debug').with_value( params[:debug] )
       is_expected.to contain_heat_config('DEFAULT/verbose').with_value( params[:verbose] )
+    end
+
+    it 'configures use_stderr option' do
+      is_expected.to contain_heat_config('DEFAULT/use_stderr').with_value( params[:use_stderr] )
     end
 
     it 'configures auth_uri' do

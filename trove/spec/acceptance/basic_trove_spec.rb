@@ -12,15 +12,29 @@ describe 'basic trove' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'kilo',
-            package_require => true,
+          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
+            # it's false by default in 2.x series but true in 1.8.x
+            package_manage => false,
           }
+          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
-            release => 'kilo',
+            manage_rdo => false,
+            repo_hash => {
+              # we need kilo repo to be installed for dependencies
+              'rdo-kilo' => {
+                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
+                'descr'   => 'RDO kilo',
+                'gpgcheck' => 'no',
+              },
+              'rdo-liberty' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
+                'descr'    => 'RDO trunk',
+                'gpgcheck' => 'no',
+              },
+            },
           }
           package { 'openstack-selinux': ensure => 'latest' }
           $package_provider = 'yum'
@@ -94,10 +108,18 @@ describe 'basic trove' do
       class { '::trove::api':
         keystone_password => 'a_big_secret',
         auth_url          => 'http://127.0.0.1:35357/',
+        debug             => true,
+        verbose           => true,
       }
       class { '::trove::client': }
-      class { '::trove::conductor': }
-      class { '::trove::taskmanager': }
+      class { '::trove::conductor':
+        debug   => true,
+        verbose => true,
+      }
+      class { '::trove::taskmanager':
+        debug   => true,
+        verbose => true,
+      }
       class { '::trove::quota': }
       EOS
 

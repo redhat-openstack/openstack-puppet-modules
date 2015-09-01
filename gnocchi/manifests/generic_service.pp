@@ -68,6 +68,7 @@ define gnocchi::generic_service(
         ensure => $ensure_package,
         name   => $package_name,
         notify => Service[$gnocchi_title],
+        tag    => ['openstack', 'gnocchi-package'],
       }
     }
   }
@@ -86,6 +87,7 @@ define gnocchi::generic_service(
       name      => $service_name,
       enable    => $enabled,
       hasstatus => true,
+      tag       => 'gnocchi-service',
     }
   }
 }

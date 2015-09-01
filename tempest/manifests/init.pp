@@ -5,8 +5,122 @@
 # Note that only parameters for which values are provided will be
 # managed in tempest.conf.
 #
+#  [*install_from_source*]
+#   Defaults to true
+#  [*git_clone*]
+#   Defaults to true
+#  [*tempest_config_file*]
+#   Defaults to '/var/lib/tempest/etc/tempest.conf'
+#  [*tempest_repo_uri*]
+#   Defaults to 'git://github.com/openstack/tempest.git'
+#  [*tempest_repo_revision*]
+#   Defaults to undef
+#  [*tempest_clone_path*]
+#   Defaults to '/var/lib/tempest'
+#  [*tempest_clone_owner*]
+#   Defaults to 'root'
+#  [*setup_venv*]
+#   Defaults to false
+#  [*configure_images*]
+#   Defaults to true
+#  [*image_name*]
+#   Defaults to undef
+#  [*image_name_alt*]
+#   Defaults to undef
+#  [*configure_networks*]
+#   Defaults to true
+#  [*public_network_name*]
+#   Defaults to undef
+#  [*identity_uri*]
+#   Defaults to undef
+#  [*identity_uri_v3*]
+#   Defaults to undef
+#  [*cli_dir*]
+#   Defaults to undef
+#  [*lock_path*]
+#   Defaults to '/var/lib/tempest'
+#  [*debug*]
+#   Defaults to false
+#  [*verbose*]
+#   Defaults to false
+#  [*use_stderr*]
+#   Defaults to true
+#  [*use_syslog*]
+#   Defaults to false
+#  [*log_file*]
+#   Defaults to undef
+#  [*username*]
+#   Defaults to undef
+#  [*password*]
+#   Defaults to undef
+#  [*tenant_name*]
+#   Defaults to undef
+#  [*alt_username*]
+#   Defaults to undef
+#  [*alt_password*]
+#   Defaults to undef
+#  [*alt_tenant_name*]
+#   Defaults to undef
+#  [*admin_username*]
+#   Defaults to undef
+#  [*admin_password*]
+#   Defaults to undef
+#  [*admin_tenant_name*]
+#   Defaults to undef
+#  [*admin_role*]
+#   Defaults to undef
+#  [*admin_domain_name*]
+#   Defaults to undef
+#  [*image_ref*]
+#   Defaults to undef
+#  [*image_ref_alt*]
+#   Defaults to undef
+#  [*image_ssh_user*]
+#   Defaults to undef
+#  [*image_alt_ssh_user*]
+#   Defaults to undef
+#  [*flavor_ref*]
+#   Defaults to undef
+#  [*flavor_ref_alt*]
+#   Defaults to undef
+#  [*whitebox_db_uri*]
+#   Defaults to undef
+#  [*resize_available*]
+#   Defaults to undef
+#  [*change_password_available*]
+#   Defaults to undef
+#  [*allow_tenant_isolation*]
+#   Defaults to undef
+#  [*public_network_id*]
+#   Defaults to undef
+#  [*public_router_id*]
+#   Defaults to ''
+#  [*cinder_available*]
+#   Defaults to true
+#  [*glance_available*]
+#   Defaults to true
+#  [*heat_available*]
+#   Defaults to false
+#  [*ceilometer_available*]
+#   Defaults to false
+#  [*horizon_available*]
+#   Defaults to true
+#  [*neutron_available*]
+#   Defaults to false
+#  [*nova_available*]
+#   Defaults to true
+#  [*swift_available*]
+#   Defaults to false
+#  [*keystone_v2*]
+#   Defaults to true
+#  [*keystone_v3*]
+#   Defaults to true
+#  [*auth_version*]
+#   Defaults to 'v2'
+#
 class tempest(
   $install_from_source       = true,
+  $git_clone                 = true,
   $tempest_config_file       = '/var/lib/tempest/etc/tempest.conf',
 
   # Clone config
@@ -32,6 +146,7 @@ class tempest(
   # tempest.conf parameters
   #
   $identity_uri              = undef,
+  $identity_uri_v3           = undef,
   $cli_dir                   = undef,
   $lock_path                 = '/var/lib/tempest',
   $debug                     = false,
@@ -52,6 +167,7 @@ class tempest(
   $admin_password            = undef,
   $admin_tenant_name         = undef,
   $admin_role                = undef,
+  $admin_domain_name         = undef,
   # image information
   $image_ref                 = undef,
   $image_ref_alt             = undef,
@@ -80,6 +196,7 @@ class tempest(
   $swift_available           = false,
   $keystone_v2               = true,
   $keystone_v3               = true,
+  $auth_version              = 'v2',
 ) {
 
   include '::tempest::params'
@@ -104,13 +221,16 @@ class tempest(
       require => Exec['install-pip'],
     }
 
-    vcsrepo { $tempest_clone_path:
-      ensure   => 'present',
-      source   => $tempest_repo_uri,
-      revision => $tempest_repo_revision,
-      provider => 'git',
-      require  => Package['git'],
-      user     => $tempest_clone_owner,
+    if $git_clone {
+      vcsrepo { $tempest_clone_path:
+        ensure   => 'present',
+        source   => $tempest_repo_uri,
+        revision => $tempest_repo_revision,
+        provider => 'git',
+        require  => Package['git'],
+        user     => $tempest_clone_owner,
+      }
+      Vcsrepo<||> -> Tempest_config<||>
     }
 
     if $setup_venv {
@@ -120,25 +240,19 @@ class tempest(
         cwd     => $tempest_clone_path,
         unless  => "/usr/bin/test -d ${tempest_clone_path}/.venv",
         require => [
-          Vcsrepo[$tempest_clone_path],
           Exec['install-tox'],
           Package[$tempest::params::dev_packages],
         ],
+      }
+      if $git_clone {
+        Vcsrepo<||> -> Exec['setup-venv']
       }
     }
 
     $tempest_conf = "${tempest_clone_path}/etc/tempest.conf"
 
-    file { $tempest_conf:
-      replace => false,
-      source  => "${tempest_conf}.sample",
-      require => Vcsrepo[$tempest_clone_path],
-      owner   => $tempest_clone_owner,
-    }
-
     Tempest_config {
       path    => $tempest_conf,
-      require => File[$tempest_conf],
     }
   } else {
     Tempest_config {
@@ -160,13 +274,16 @@ class tempest(
     'identity/admin_tenant_name':        value => $admin_tenant_name;
     'identity/admin_username':           value => $admin_username;
     'identity/admin_role':               value => $admin_role;
+    'identity/admin_domain_name':        value => $admin_domain_name;
     'identity/alt_password':             value => $alt_password, secret => true;
     'identity/alt_tenant_name':          value => $alt_tenant_name;
     'identity/alt_username':             value => $alt_username;
     'identity/password':                 value => $password, secret => true;
     'identity/tenant_name':              value => $tenant_name;
     'identity/uri':                      value => $identity_uri;
+    'identity/uri_v3':                   value => $identity_uri_v3;
     'identity/username':                 value => $username;
+    'identity/auth_version':             value => $auth_version;
     'identity-feature-enabled/api_v2':   value => $keystone_v2;
     'identity-feature-enabled/api_v3':   value => $keystone_v3;
     'network/public_network_id':         value => $public_network_id;
@@ -197,8 +314,9 @@ class tempest(
         ensure            => present,
         tempest_conf_path => $tempest_conf,
         image_name        => $image_name,
-        require           => File[$tempest_conf],
       }
+      Glance_image<||> -> Tempest_glance_id_setter['image_ref']
+      Tempest_config<||> -> Tempest_glance_id_setter['image_ref']
     } elsif ($image_name and $image_ref) or (! $image_name and ! $image_ref) {
       fail('A value for either image_name or image_ref must be provided.')
     }
@@ -207,8 +325,9 @@ class tempest(
         ensure            => present,
         tempest_conf_path => $tempest_conf,
         image_name        => $image_name_alt,
-        require           => File[$tempest_conf],
       }
+      Glance_image<||> -> Tempest_glance_id_setter['image_ref_alt']
+      Tempest_config<||> -> Tempest_glance_id_setter['image_ref_alt']
     } elsif ($image_name_alt and $image_ref_alt) or (! $image_name_alt and ! $image_ref_alt) {
         fail('A value for either image_name_alt or image_ref_alt must \
 be provided.')
@@ -221,8 +340,8 @@ be provided.')
         ensure            => present,
         tempest_conf_path => $tempest_conf,
         network_name      => $public_network_name,
-        require           => File[$tempest_conf],
       }
+      Tempest_config<||> -> Tempest_neutron_net_id_setter['public_network_id']
     } elsif ($public_network_name and $public_network_id) or (! $public_network_name and ! $public_network_id) {
       fail('A value for either public_network_id or public_network_name \
   must be provided.')

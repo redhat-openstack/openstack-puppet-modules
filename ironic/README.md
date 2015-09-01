@@ -26,7 +26,57 @@ Setup
 
 **What the ironic module affects:**
 
-* ironic, the baremetal service for Openstack.
+* [Ironic](https://wiki.openstack.org/wiki/Ironic), the baremetal service for Openstack.
+
+### Installing Ironic
+
+    puppet module install openstack/ironic
+
+### Beginning with ironic
+
+To utilize the ironic module's functionality you will need to declare multiple resources.
+The following is a modified excerpt from the [openstack module](httpd://github.com/stackforge/puppet-openstack).
+This is not an exhaustive list of all the components needed. We recommend that you consult and understand the
+[openstack module](https://github.com/stackforge/puppet-openstack) and the [core openstack](http://docs.openstack.org)
+documentation to assist you in understanding the available deployment options.
+
+```puppet
+# enable Ironic resources
+class { '::ironic':
+  rabbit_userid       => 'ironic',
+  rabbit_password     => 'an_even_bigger_secret',
+  rabbit_host         => '127.0.0.1',
+  database_connection => 'mysql://ironic:a_big_secret@127.0.0.1/ironic?charset=utf8',
+}
+
+class { '::ironic::db::mysql':
+  password => 'a_big_secret',
+}
+
+class { '::ironic::keystone::auth':
+  password => 'a_big_secret',
+}
+
+class { '::ironic::client': }
+
+class { '::ironic::conductor': }
+
+class { '::ironic::api':
+  admin_password => 'a_big_secret',
+}
+
+class { '::ironic::drivers::ipmi': }
+
+# alternatively, you can deploy Ironic with Bifrost. It's a collection of Ansible playbooks to configure
+# and install Ironic in a stand-alone fashion (for more information visit http://git.openstack.org/openstack/bifrost)
+class { 'ironic::bifrost':
+  ironic_db_password => 'a_big_secret',
+  mysql_password => 'yet_another_big_secret',
+  baremetal_json_hosts => hiera('your_hiera_var_containing_bm_json_hosts'),
+}
+```
+
+Examples of usage also can be found in the *examples* directory.
 
 Implementation
 --------------
@@ -34,6 +84,36 @@ Implementation
 ### puppet-ironic
 
 puppet-ironic is a combination of Puppet manifest and ruby code to delivery configuration and extra functionality through types and providers.
+
+### Types
+
+#### ironic_config
+
+The `ironic_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/ironic/ironic.conf` file.
+
+```puppet
+ironic_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `ironic.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
 
 Limitations
 -----------

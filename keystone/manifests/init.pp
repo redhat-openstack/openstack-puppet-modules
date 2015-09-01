@@ -41,6 +41,10 @@
 #   (optional) Use syslog for logging.
 #   Defaults to false.
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   (optional) Syslog facility to receive log lines.
 #   Defaults to 'LOG_USER'.
@@ -428,6 +432,7 @@ class keystone(
   $log_dir                            = '/var/log/keystone',
   $log_file                           = false,
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $catalog_type                       = 'sql',
   $catalog_driver                     = false,
@@ -526,7 +531,7 @@ class keystone(
     }
   }
 
-  File['/etc/keystone/keystone.conf'] -> Keystone_config<||> ~> Service[$service_name]
+  Keystone_config<||> ~> Service[$service_name]
   Keystone_config<||> ~> Exec<| title == 'keystone-manage db_sync'|>
   Keystone_config<||> ~> Exec<| title == 'keystone-manage pki_setup'|>
   Keystone_config<||> ~> Exec<| title == 'keystone-manage fernet_setup'|>
@@ -539,10 +544,10 @@ class keystone(
     tag    => ['openstack', 'keystone-package'],
   }
   if $client_package_ensure == 'present' {
-    include '::openstacklib::openstackclient'
+    include '::keystone::client'
   } else {
-    class { '::openstacklib::openstackclient':
-      package_ensure => $client_package_ensure,
+    class { '::keystone::client':
+      ensure => $client_package_ensure,
     }
   }
 
@@ -585,6 +590,7 @@ class keystone(
     'DEFAULT/admin_port':       value => $admin_port;
     'DEFAULT/verbose':          value => $verbose;
     'DEFAULT/debug':            value => $debug;
+    'DEFAULT/use_stderr':       value => $use_stderr;
   }
 
   if $compute_port {
@@ -832,6 +838,7 @@ class keystone(
   }
 
   if $service_name == $::keystone::params::service_name {
+    $service_name_real = $::keystone::params::service_name
     if $validate_service {
       if $validate_auth_url {
         $v_auth_url = $validate_auth_url
@@ -863,7 +870,9 @@ class keystone(
         validate     => false,
       }
     }
+    warning('Keystone under Eventlet has been drepecated during the Kilo cycle. Support for deploying under eventlet will be dropped as of the M-release of OpenStack.')
   } elsif $service_name == 'httpd' {
+    include ::apache::params
     class { '::keystone::service':
       ensure       => 'stopped',
       service_name => $::keystone::params::service_name,
@@ -871,6 +880,7 @@ class keystone(
       provider     => $service_provider,
       validate     => false,
     }
+    $service_name_real = $::apache::params::service_name
   } else {
     fail('Invalid service_name. Either keystone/openstack-keystone for running as a standalone service, or httpd for being run by a httpd server')
   }
@@ -963,6 +973,9 @@ class keystone(
       require    => File['/etc/keystone/keystone.conf'],
       notify     => Exec['restart_keystone'],
     }
+    anchor { 'default_domain_created':
+      require => Keystone_domain[$default_domain],
+    }
     # Update this code when https://bugs.launchpad.net/keystone/+bug/1472285 is addressed.
     # 1/ Keystone needs to be started before creating the default domain
     # 2/ Once the default domain is created, we can query Keystone to get the default domain ID
@@ -973,7 +986,7 @@ class keystone(
     if $manage_service and $enabled {
       exec { 'restart_keystone':
         path        => ['/usr/sbin', '/usr/bin', '/sbin', '/bin/'],
-        command     => "service ${service_name} restart",
+        command     => "service ${service_name_real} restart",
         refreshonly => true,
       }
     }

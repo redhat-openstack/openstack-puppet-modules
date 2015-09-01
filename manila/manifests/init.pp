@@ -197,6 +197,52 @@
 #   (optional) Location to store Manila locks
 #   Defaults to '/tmp/manila/manila_locks'
 #
+# [*amqp_server_request_prefix*]
+#   address prefix used when sending to a specific server
+#   Defaults to 'exclusive'
+#
+# [*amqp_broadcast_prefix*]
+#   address prefix used when broadcasting to all servers
+#   Defaults to 'broadcast'
+#
+# [*amqp_group_request_prefix*]
+#   address prefix when sending to any server in group
+#   Defaults to 'unicast'
+#
+# [*amqp_container_name*]
+#   Name for the AMQP container
+#   Defaults to guest
+#
+# [*amqp_idle_timeout*]
+#   Timeout for inactive connections (in seconds)
+#   Defaults to 0
+#
+# [*amqp_trace*]
+#   Debug: dump AMQP frames to stdout
+#   Defaults to false
+#
+# [*amqp_ssl_ca_file*]
+#   (optional) CA certificate PEM file to verify server certificate
+#   Defaults to undef
+#
+# [*amqp_ssl_cert_file*]
+#   (optional) Identifying certificate PEM file to present to clients
+#   Defaults to undef
+#
+# [*amqp_ssl_key_file*]
+#   (optional) Private key PEM file used to sign cert_file certificate
+#   Defaults to undef
+#
+# [*amqp_ssl_key_password*]
+#   (optional) Password for decrypting ssl_key_file (if encrypted)
+#   Defaults to undef
+#
+# [*amqp_allow_insecure_clients*]
+#   (optional) Accept clients using either SSL or plain TCP
+#   Defaults to false
+#
+
+
 class manila (
   $sql_connection              = 'sqlite:////var/lib/manila/manila.sqlite',
   $sql_idle_timeout            = '3600',
@@ -244,12 +290,20 @@ class manila (
   $rootwrap_config             = '/etc/manila/rootwrap.conf',
   $state_path                  = '/var/lib/manila',
   $lock_path                   = '/tmp/manila/manila_locks',
+  $amqp_server_request_prefix  = 'exclusive',
+  $amqp_broadcast_prefix       = 'broadcast',
+  $amqp_group_request_prefix   = 'unicast',
+  $amqp_container_name         = 'guest',
+  $amqp_idle_timeout           = '0',
+  $amqp_trace                  = false,
+  $amqp_allow_insecure_clients = false,
+  $amqp_ssl_ca_file            = undef,
+  $amqp_ssl_cert_file          = undef,
+  $amqp_ssl_key_file           = undef,
+  $amqp_ssl_key_password       = undef,
 ) {
 
   include ::manila::params
-
-  Package['manila'] -> Manila_config<||>
-  Package['manila'] -> Manila_api_paste_ini<||>
 
   if $use_ssl {
     if !$cert_file {
@@ -281,6 +335,7 @@ class manila (
     ensure  => $package_ensure,
     name    => $::manila::params::package_name,
     require => Anchor['manila-start'],
+    tag     => ['openstack', 'manila-package'],
   }
 
   file { $::manila::params::manila_conf:
@@ -398,6 +453,43 @@ class manila (
       }
     }
   }
+
+
+  manila_config {
+    'oslo_messaging_amqp/server_request_prefix':  value => $amqp_server_request_prefix;
+    'oslo_messaging_amqp/broadcast_prefix':       value => $amqp_broadcast_prefix;
+    'oslo_messaging_amqp/group_request_prefix':   value => $amqp_group_request_prefix;
+    'oslo_messaging_amqp/container_name':         value => $amqp_container_name;
+    'oslo_messaging_amqp/idle_timeout':           value => $amqp_idle_timeout;
+    'oslo_messaging_amqp/trace':                  value => $amqp_trace;
+    'oslo_messaging_amqp/allow_insecure_clients': value => $amqp_allow_insecure_clients,
+  }
+
+
+  if $amqp_ssl_ca_file {
+    manila_config { 'oslo_messaging_amqp/ssl_ca_file': value => $amqp_ssl_ca_file; }
+  } else {
+    manila_config { 'oslo_messaging_amqp/ssl_ca_file': ensure => absent; }
+  }
+
+  if $amqp_ssl_key_password {
+    manila_config { 'oslo_messaging_amqp/ssl_key_password': value => $amqp_ssl_key_password; }
+  } else {
+    manila_config { 'oslo_messaging_amqp/ssl_key_password': ensure => absent; }
+  }
+
+  if $amqp_ssl_cert_file {
+    manila_config { 'oslo_messaging_amqp/ssl_cert_file': value => $amqp_ssl_cert_file; }
+  } else {
+    manila_config { 'oslo_messaging_amqp/ssl_cert_file': ensure => absent; }
+  }
+
+  if $amqp_ssl_key_file {
+    manila_config { 'oslo_messaging_amqp/ssl_key_file': value => $amqp_ssl_key_file; }
+  } else {
+    manila_config { 'oslo_messaging_amqp/ssl_key_file': ensure => absent; }
+  }
+
 
   manila_config {
     'DEFAULT/sql_connection':            value => $sql_connection, secret => true;

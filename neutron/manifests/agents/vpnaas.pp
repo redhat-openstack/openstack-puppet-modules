@@ -37,7 +37,7 @@
 # [*interface_driver*]
 #  (optional) Defaults to 'neutron.agent.linux.interface.OVSInterfaceDriver'.
 #
-# [*external_network_bridge]
+# [*external_network_bridge*]
 #  (optional) Defaults to undef
 #
 # [*ipsec_status_check_interval*]
@@ -96,7 +96,7 @@ class neutron::agents::vpnaas (
     package { 'neutron-vpnaas-agent':
       ensure => $package_ensure,
       name   => $::neutron::params::vpnaas_agent_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'neutron-package'],
     }
   } else {
     Package['neutron'] -> Neutron_vpnaas_agent_config<||>
@@ -115,5 +115,6 @@ class neutron::agents::vpnaas (
     name    => $::neutron::params::vpnaas_agent_service,
     enable  => $enabled,
     require => Class['neutron'],
+    tag     => 'neutron-service',
   }
 }
