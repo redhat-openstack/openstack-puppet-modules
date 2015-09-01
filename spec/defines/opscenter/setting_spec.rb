@@ -9,23 +9,6 @@ describe 'cassandra::opscenter::setting' do
        $value                   = nil) {}'
   ] }
 
-  context 'Test that settings can be removed.' do
-    let(:title) { 'section setting' }
-    let :params do
-      {
-        :path    => '/path/to/file',
-        :section => 'not',
-        :setting => 'wanted',
-      }
-    end
-
-    it {
-      should contain_ini_setting('not wanted').with({
-        'ensure' => 'absent',
-      })
-    }
-  end
-
   context 'agents agent_certfile' do
     let(:title) { 'agents agent_certfile' }
     let :params do
