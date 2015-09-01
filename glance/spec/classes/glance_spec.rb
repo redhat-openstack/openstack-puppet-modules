@@ -31,6 +31,10 @@ describe 'glance' do
         'mode'    => '0770'
       )}
 
+      it { is_expected.to contain_package('python-openstackclient').with(
+        :tag => 'openstack'
+      )}
+
     end
   end
 

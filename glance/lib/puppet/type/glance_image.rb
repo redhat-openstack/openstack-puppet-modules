@@ -1,3 +1,4 @@
+File.expand_path('../../../../openstacklib/lib', File.dirname(__FILE__)).tap { |dir| $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include?(dir) }
 Puppet::Type.newtype(:glance_image) do
   desc <<-EOT
     This allows manifests to declare an image to be
@@ -43,13 +44,15 @@ Puppet::Type.newtype(:glance_image) do
 
   newproperty(:is_public) do
     desc "Whether the image is public or not. Default true"
-    newvalues(/(y|Y)es/, /(n|N)o/)
-    defaultto('Yes')
+    newvalues(/(y|Y)es/, /(n|N)o/, /(t|T)rue/, /(f|F)alse/, true, false)
+    defaultto(true)
     munge do |v|
       if v =~ /^(y|Y)es$/
-        'True'
+        :true
       elsif v =~ /^(n|N)o$/
-        'False'
+        :false
+      else
+        v.to_s.downcase.to_sym
       end
     end
   end
