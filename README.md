@@ -1921,4 +1921,9 @@ a bug in the requirements metadata that caused a problem with Puppetfile
 
 * Dylan Griffith (GitHub [@DylanGriffith](https://github.com/DylanGriffith))
 identified that the dependency for puppetlabs-apt was incorrect
-([#87](https://github.com/locp/cassandra/pull/87)).
+(see [#87](https://github.com/locp/cassandra/pull/87)).
+
+* Sam Powers (GitHub [@sampowers](https://github.com/sampowers)) reported a
+bug in the ability to set the running state of the Cassandra service and
+subsequenly submitted a pull request with a fix
+(see [#93](https://github.com/locp/cassandra/issues/93)).
