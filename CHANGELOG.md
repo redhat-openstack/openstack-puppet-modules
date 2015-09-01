@@ -1,5 +1,11 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-09-01 - Release 1.3.5
+* Fixed a bug allowing the user to set the running state of the Cassandra
+  service.
+* More automated testing with spec tests.
+* A refactoring of the README.
+
 ##2015-08-28 - Release 1.3.4
 * Minor corrections to the README.
 * The addtion of the storage_cassandra_seed_hosts parameter to
