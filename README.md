@@ -1925,5 +1925,5 @@ identified that the dependency for puppetlabs-apt was incorrect
 
 * Sam Powers (GitHub [@sampowers](https://github.com/sampowers)) reported a
 bug in the ability to set the running state of the Cassandra service and
-subsequenly submitted a pull request with a fix
+subsequently submitted a pull request with a fix
 (see [#93](https://github.com/locp/cassandra/issues/93)).
