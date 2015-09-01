@@ -24,7 +24,8 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra/default.conf/cassandra.yaml') }
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'running'
+        'ensure' => 'running',
+        'enable' => 'true'
       })
     }
     it { should contain_package('dsc22') }
@@ -73,7 +74,8 @@ describe 'cassandra' do
     it { should contain_class('cassandra') }
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'running'
+        'ensure' => 'running',
+        'enable' => 'true'
       })
     }
     it { should contain_file('/etc/cassandra/cassandra.yaml') }
@@ -442,7 +444,7 @@ describe 'cassandra' do
     }
   end
 
-  context 'Ensure cassandra service can be stopped.' do
+  context 'Ensure cassandra service can be stopped and disabled.' do
     let :facts do
       {
         :osfamily => 'Debian'
@@ -451,12 +453,14 @@ describe 'cassandra' do
 
     let :params do
       {
-        :service_ensure => 'stopped'
+        :service_ensure => 'stopped',
+        :service_enable => 'false'
       }
     end
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'stopped'
+        'ensure' => 'stopped',
+        'enable' => 'false'
       })
     }
   end
