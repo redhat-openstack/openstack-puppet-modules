@@ -434,13 +434,13 @@ Default value '['/var/lib/cassandra/data']'
 
 ##### `dc`
 Sets the value for dc in *config_path*/*snitch_properties_file* see
-http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.
 Default value 'DC1'
 
 ##### `dc_suffix`
 Sets the value for dc_suffix in *config_path*/*snitch_properties_file* see
-http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.  If the value is *undef* then change will be made to the
 snitch properties file for this setting.
 Default value *undef*
@@ -509,7 +509,7 @@ Default value 'org.apache.cassandra.dht.Murmur3Partitioner'
 
 ##### `prefer_local`
 Sets the value for prefer_local in *config_path*/*snitch_properties_file* see
-http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.  Valid values are true, false or *undef*.  If the value is
 *undef* then change will be made to the snitch properties file for this
 setting.
@@ -517,7 +517,7 @@ Default value *undef*
 
 ##### `rack`
 Sets the value for rack in *config_path*/*snitch_properties_file* see
-http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
+http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.
 Default value 'RAC1'
 
