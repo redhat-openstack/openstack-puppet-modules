@@ -341,8 +341,8 @@ cassandra::opscenter::cluster_name { 'Cluster1':
 
 ### Private Defined Types
 
-* **cassandra::opscenter::setting**
-* **cassandra::firewall_ports::rule**
+* cassandra::opscenter::setting
+* cassandra::firewall_ports::rule
 
 ### Class: cassandra
 
