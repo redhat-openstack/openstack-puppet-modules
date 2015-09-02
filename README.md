@@ -327,17 +327,17 @@ cassandra::opscenter::cluster_name { 'Cluster1':
 
 ### Public Classes
 
-* **cassandra**
-* **cassandra::datastax_agent**
-* **cassandra::datastax_repo**
-* **cassandra::firewall_ports**
-* **cassandra::java**
-* **cassandra::opscenter**
-* **cassandra::opscenter::pycrypto**
-* **cassandra::optutils**
+* [cassandra](#class-cassandra)
+* [cassandra::datastax_agent](#class-cassandradatastax_agent)
+* [cassandra::datastax_repo](#class-cassandradatastax_repo)
+* [cassandra::firewall_ports](#class-cassandrafirewall_ports)
+* [cassandra::java](#class-cassandrajava)
+* [cassandra::opscenter](#class-cassandraopscenter)
+* [cassandra::opscenter::pycrypto](#class-cassandraopscenterpycrypto)
+* [cassandra::optutils](#class-cassandraoptutils)
 
 ### Public Defined Types
-* **cassandra::opscenter::cluster_name**
+* [cassandra::opscenter::cluster_name](#defined-type-cassandraopscentercluster_name)
 
 ### Private Defined Types
 
