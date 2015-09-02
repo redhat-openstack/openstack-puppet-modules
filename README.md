@@ -425,7 +425,7 @@ The path to the cassandra configuration file.  If this is undef, it will be
 changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
 systems or **/etc/cassandra** on Ubuntu.  Otherwise the user can specify the
 path name.
-Default value 'undef'
+Default value *undef*
 
 ##### `data_file_directories`
 This is passed to the
@@ -647,7 +647,7 @@ If the value is changed from the default of *undef* then this is what is
 set as the stomp_interface setting in
 **/var/lib/datastax-agent/conf/address.yaml**
 which connects the agent to an OpsCenter instance.
-Default value 'undef'
+Default value *undef*
 
 ### Class: cassandra::datastax_repo
 
@@ -757,7 +757,7 @@ If the default value of *undef* is left as it is, then a package called
 jna or libjna-java will be installed on a Red Hat family or Ubuntu system
 respectively.  Alternatively, one can specify a package that is available in
 a package repository to the node.
-Default value 'undef'
+Default value *undef*
 
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
@@ -765,7 +765,7 @@ java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
-Default value 'undef'
+Default value *undef*
 
 ### Class: cassandra::opscenter
 
@@ -1728,7 +1728,7 @@ cassandra22-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
-Default value 'undef'
+Default value *undef*
 
 ### Defined Type cassandra::opscenter::cluster_name
 
