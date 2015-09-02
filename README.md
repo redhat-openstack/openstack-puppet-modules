@@ -372,71 +372,71 @@ service as a workaround for
 [CASSANDRA-9822](https://issues.apache.org/jira/browse/CASSANDRA-9822).  This
 option is silently ignored on the Red Hat family of operating systems as
 this bug only affects Ubuntu systems.
-Default 'false'
+Default value 'false'
 
 ##### `cassandra_yaml_tmpl`
 The path to the Puppet template for the Cassandra configuration file.  This
 allows the user to supply their own customized template.  A Cassandra 1.X
 compatible template called cassandra1.yaml.erb has been provided by @Spredzy.
-Default 'cassandra/cassandra.yaml.erb'
+Default value 'cassandra/cassandra.yaml.erb'
 
 ##### `client_encryption_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'false'
+Default value 'false'
 
 ##### `client_encryption_keystore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'conf/.keystore'
+Default value 'conf/.keystore'
 
 ##### `client_encryption_keystore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'cassandra'
+Default value 'cassandra'
 
 ##### `cluster_name`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'Test Cluster'
+Default value 'Test Cluster'
 
 ##### `commitlog_directory`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '/var/lib/cassandra/commitlog'
+Default value '/var/lib/cassandra/commitlog'
 
 ##### `concurrent_counter_writes`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '32'
+Default value '32'
 
 ##### `concurrent_reads`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '32'
+Default value '32'
 
 ##### `concurrent_writes`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '32'
+Default value '32'
 
 ##### `config_path`
 The path to the cassandra configuration file.  If this is undef, it will be
 changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
 systems or **/etc/cassandra** on Ubuntu.  Otherwise the user can specify the
 path name.
-Default 'undef'
+Default value 'undef'
 
 ##### `data_file_directories`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '['/var/lib/cassandra/data']'
+Default value '['/var/lib/cassandra/data']'
 
 ##### `dc`
 Sets the value for dc in *config_path*/*snitch_properties_file* see
 http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.
-Default 'DC1'
+Default value 'DC1'
 
 ##### `dc_suffix`
 Sets the value for dc_suffix in *config_path*/*snitch_properties_file* see
@@ -448,32 +448,32 @@ Default *undef*
 ##### `disk_failure_policy`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'stop'
+Default value 'stop'
 
 ##### `endpoint_snitch`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'SimpleSnitch'
+Default value 'SimpleSnitch'
 
 ##### `hinted_handoff_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'true'
+Default value 'true'
 
 ##### `incremental_backups`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'false'
+Default value 'false'
 
 ##### `internode_compression`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'all'
+Default value 'all'
 
 ##### `listen_address`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'localhost'
+Default value 'localhost'
 
 ##### `manage_dsc_repo`
 DEPRECATION WARNING:  This option is deprecated.  Please include the
@@ -481,31 +481,31 @@ the ::cassandra::datastax_repo instead.
 
 If set to true then a repository will be setup so that packages can be
 downloaded from DataStax community.
-Default 'false'
+Default value 'false'
 
 ##### `native_transport_port`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '9042'
+Default value '9042'
 
 ##### `num_tokens`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '256'
+Default value '256'
 
 ##### `package_ensure`
 The status of the package specified in **package_name**.  Can be
 *present*, *latest* or a specific version number.
-Default 'present'
+Default value 'present'
 
 ##### `package_name`
 The name of the Cassandra package.  Must be available from a repository.
-Default 'dsc22'
+Default value 'dsc22'
 
 ##### `partitioner`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'org.apache.cassandra.dht.Murmur3Partitioner'
+Default value 'org.apache.cassandra.dht.Murmur3Partitioner'
 
 ##### `prefer_local`
 Sets the value for prefer_local in *config_path*/*snitch_properties_file* see
@@ -519,100 +519,100 @@ setting.
 Sets the value for rack in *config_path*/*snitch_properties_file* see
 http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.
-Default 'RAC1'
+Default value 'RAC1'
 
 ##### `rpc_address`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'localhost'
+Default value 'localhost'
 
 ##### `rpc_port`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '9160'
+Default value '9160'
 
 ##### `rpc_server_type`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'sync'
+Default value 'sync'
 
 ##### `saved_caches_directory`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '/var/lib/cassandra/saved_caches'
+Default value '/var/lib/cassandra/saved_caches'
 
 ##### `seeds`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '127.0.0.1'
+Default value '127.0.0.1'
 
 ##### `server_encryption_internode`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'none'
+Default value 'none'
 
 ##### `server_encryption_keystore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'conf/.keystore'
+Default value 'conf/.keystore'
 
 ##### `server_encryption_keystore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'cassandra'
+Default value 'cassandra'
 
 ##### `server_encryption_truststore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'conf/.truststore'
+Default value 'conf/.truststore'
 
 ##### `server_encryption_truststore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'cassandra'
+Default value 'cassandra'
 
 ##### `service_enable`
 Enable the Cassandra service to start at boot time.  Valid values are true
 or false.
-Default 'true'
+Default value 'true'
 
 ##### `service_ensure`
 Ensure the Cassandra service is running.  Valid values are running or stopped.
-Default 'running'
+Default value 'running'
 
 ##### `service_name`
 The name of the service that runs the Cassandra software.
-Default 'cassandra'
+Default value 'cassandra'
 
 ##### `snapshot_before_compaction`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'false'
+Default value 'false'
 
 ##### `snitch_properties_file`
 The name of the snitch properties file.  The full path name would be
 *config_path*/*snitch_properties_file*.
-Default 'cassandra-rackdc.properties'
+Default value 'cassandra-rackdc.properties'
 
 ##### `ssl_storage_port`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '7001'
+Default value '7001'
 
 ##### `start_native_transport`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'true'
+Default value 'true'
 
 ##### `start_rpc`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default 'true'
+Default value 'true'
 
 ##### `storage_port`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-Default '7000'
+Default value '7000'
 
 ### Class: cassandra::datastax_agent
 
@@ -624,30 +624,30 @@ instance.
 ##### `package_ensure`
 Is passed to the package reference.  Valid values are **present** or a version
 number.
-Default 'present'
+Default value 'present'
 
 ##### `package_name`
 Is passed to the package reference.
-Default 'datastax-agent'
+Default value 'datastax-agent'
 
 ##### `service_ensure`
 Is passed to the service reference.
-Default 'running'
+Default value 'running'
 
 ##### `service_enable`
 Is passed to the service reference.
-Default 'true'
+Default value 'true'
 
 ##### `service_name`
 Is passed to the service reference.
-Default 'datastax-agent'
+Default value 'datastax-agent'
 
 ##### `stomp_interface`
 If the value is changed from the default of *undef* then this is what is
 set as the stomp_interface setting in
 **/var/lib/datastax-agent/conf/address.yaml**
 which connects the agent to an OpsCenter instance.
-Default 'undef'
+Default value 'undef'
 
 ### Class: cassandra::datastax_repo
 
@@ -677,21 +677,21 @@ Only has any effect if the `cassandra` class is defined on the node.
 
 Allow these TCP ports to be opened for traffic
 coming from the client subnets.
-Default '[9042, 9160]'
+Default value '[9042, 9160]'
 
 ##### `client_subnets`
 Only has any effect if the `cassandra` class is defined on the node.
 
 An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
-Default '['0.0.0.0/0']'
+Default value '['0.0.0.0/0']'
 
 ##### `inter_node_ports`
 Only has any effect if the `cassandra` class is defined on the node.
 
 Allow these TCP ports to be opened for traffic
 between the Cassandra nodes.
-Default '[7000, 7001, 7199]'
+Default value '[7000, 7001, 7199]'
 
 ##### `inter_node_subnets`
 Only has any effect if the `cassandra` class is defined on the node.
@@ -699,29 +699,29 @@ Only has any effect if the `cassandra` class is defined on the node.
 An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
 for cassandra JMX monitoring.
-Default '['0.0.0.0/0']'
+Default value '['0.0.0.0/0']'
 
 ##### `inter_node_ports`
 Allow these TCP ports to be opened for traffic
 coming from OpsCenter subnets.
-Default '[7000, 7001, 7199]'
+Default value '[7000, 7001, 7199]'
 
 ##### `public_ports`
 Allow these TCP ports to be opened for traffic
 coming from public subnets the port specified in `$ssh_port` will be
 appended to this list.
-Default '[8888]'
+Default value '[8888]'
 
 ##### `public_subnets`
 An array of the list of subnets that are to allowed connection to
 cassandra::firewall_ports::ssh_port and if cassandra::opscenter has been
 included, both cassandra::opscenter::webserver_port and
 cassandra::opscenter::webserver_ssl_port.
-Default '['0.0.0.0/0']'
+Default value '['0.0.0.0/0']'
 
 ##### `ssh_port`
 Which port does SSH operate on.
-Default '22'
+Default value '22'
 
 ##### `opscenter_ports`
 Only has any effect if the `cassandra::datastax_agent` or
@@ -730,13 +730,13 @@ Only has any effect if the `cassandra::datastax_agent` or
 Allow these TCP ports to be opened for traffic
 coming to or from OpsCenter
 appended to this list.
-Default '[61620, 61621]'
+Default value '[61620, 61621]'
 
 ##### `opscenter_subnets`
 A list of subnets that are to be allowed connection to
 port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
 built with cassandra::datastax_agent.
-Default '['0.0.0.0/0']'
+Default value '['0.0.0.0/0']'
 
 ### Class: cassandra::java
 
@@ -747,19 +747,19 @@ A class to install an appropriate Java package.
 ##### `ensure`
 Is passed to the package reference for the JRE/JDK package.  Valid values are
 **present** or a version number.
-Default 'present'
+Default value 'present'
 
 ##### `jna_ensure`
 Is passed to the package reference for the JNA package.  Valid values are
 **present** or a version number.
-Default 'present'
+Default value 'present'
 
 ##### `jna_package_name`
 If the default value of *undef* is left as it is, then a package called
 jna or libjna-java will be installed on a Red Hat family or Ubuntu system
 respectively.  Alternatively, one can specify a package that is available in
 a package repository to the node.
-Default 'undef'
+Default value 'undef'
 
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
@@ -767,7 +767,7 @@ java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
-Default 'undef'
+Default value 'undef'
 
 ### Class: cassandra::opscenter
 
@@ -1031,7 +1031,7 @@ in the file.  Default value *undef*
 
 ##### `config_file`
 The full path to the OpsCenter configuration file.
-Default '/etc/opscenter/opscenterd.conf'
+Default value '/etc/opscenter/opscenterd.conf'
 
 ##### `definitions_auto_update`
 This sets the auto_update setting in the definitions section of the
@@ -1099,7 +1099,7 @@ in the file.  Default value *undef*
 ##### `ensure`
 This is passed to the package reference for **opscenter**.  Valid values are
 **present** or a version number.
-Default 'present'
+Default value 'present'
 
 ##### `failover_configuration_directory`
 This sets the failover_configuration_directory setting in the failover section of the
@@ -1334,7 +1334,7 @@ in the file.  Default value *undef*
 
 ##### `package_name`
 The name of the OpsCenter package.
-Default 'opscenter'
+Default value 'opscenter'
 
 ##### `provisioning_agent_install_timeout`
 This sets the agent_install_timeout setting in the provisioning section of the
@@ -1542,15 +1542,15 @@ in the file.  Default value *undef*
 ##### `service_enable`
 Enable the OpsCenter service to start at boot time.  Valid values are true
 or false.
-Default 'true**)
+Default value 'true**)
 
 ##### `service_ensure`
 Ensure the OpsCenter service is running.  Valid values are running or stopped.
-Default 'running**)
+Default value 'running**)
 
 ##### `service_name`
 The name of the service that runs the OpsCenter software.
-Default 'opscenterd'
+Default value 'opscenterd'
 
 ##### `spark_base_master_proxy_port`
 This sets the base_master_proxy_port setting in the spark section of the
@@ -1695,23 +1695,23 @@ family.
 ##### `ensure`
 This is passed to the package reference for **pycrypto**.  Valid values are
 **present** or a version number.
-Default 'present'
+Default value 'present'
 
 ##### `manage_epel`
 If set to true, the **epel-release** package will be installed.
-Default 'false'
+Default value 'false'
 
 ##### `package_name`
 The name of the PyCrypto package.
-Default 'pycrypto'
+Default value 'pycrypto'
 
 ##### `provider`
 The name of the provider of the pycrypto package.
-Default 'pip'
+Default value 'pip'
 
 ##### `reqd_pckgs`
 Packages that are required to install the pycrypto package.
-Default '['python-devel', 'python-pip' ]'
+Default value '['python-devel', 'python-pip' ]'
 
 ### Class: cassandra::optutils
 
@@ -1722,7 +1722,7 @@ A class to install the optional Cassandra tools package.
 ##### `ensure`
 Is passed to the package reference.  Valid values are **present** or a version
 number.
-Default 'present'
+Default value 'present'
 
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
@@ -1730,7 +1730,7 @@ cassandra22-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
-Default 'undef'
+Default value 'undef'
 
 ### Defined Type cassandra::opscenter::cluster_name
 
