@@ -443,7 +443,7 @@ Sets the value for dc_suffix in *config_path*/*snitch_properties_file* see
 http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.  If the value is *undef* then change will be made to the
 snitch properties file for this setting.
-Default *undef*
+Default value *undef*
 
 ##### `disk_failure_policy`
 This is passed to the
@@ -513,7 +513,7 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSni
 for more details.  Valid values are true, false or *undef*.  If the value is
 *undef* then change will be made to the snitch properties file for this
 setting.
-(default *undef*).
+Default value *undef*
 
 ##### `rack`
 Sets the value for rack in *config_path*/*snitch_properties_file* see
@@ -1542,11 +1542,11 @@ in the file.  Default value *undef*
 ##### `service_enable`
 Enable the OpsCenter service to start at boot time.  Valid values are true
 or false.
-Default value 'true**)
+Default value 'true'
 
 ##### `service_ensure`
 Ensure the OpsCenter service is running.  Valid values are running or stopped.
-Default value 'running**)
+Default value 'running'
 
 ##### `service_name`
 The name of the service that runs the OpsCenter software.
