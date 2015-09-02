@@ -25,10 +25,9 @@ Many applications use INI-style configuration files to store their settings. Thi
 
 ###Beginning with inifile
 
-
 To manage a single setting in an INI file, add the `ini_setting` type to a class:
 
-~~~
+~~~puppet
 ini_setting { "sample setting":
   ensure  => present,
   path    => '/tmp/foo.ini',
@@ -51,9 +50,7 @@ The inifile module tries hard not to manipulate your file any more than it needs
 
 Use the `ini_subsetting` type:
 
-~~~
-JAVA_ARGS="-Xmx192m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/pe-puppetdb/puppetdb-oom.hprof "
-
+~~~puppet
 ini_subsetting {'sample subsetting':
   ensure            => present,
   section           => '',
@@ -65,13 +62,16 @@ ini_subsetting {'sample subsetting':
 }
 ~~~
 
+Results in managing this `-Xmx` subsetting:
+
+~~~puppet
+JAVA_ARGS="-Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/pe-puppetdb/puppetdb-oom.hprof"
+~~~
+
+
 ###Use a non-standard section header
 
-~~~
-default:
-   minage = 1
-   maxage = 13
-
+~~~puppet
 ini_setting { 'default minage':
   ensure         => present,
   path           => '/etc/security/users',
@@ -83,8 +83,14 @@ ini_setting { 'default minage':
 }
 ~~~
 
-###Implement child providers
+Results in:
 
+~~~puppet
+default:
+   minage = 1
+~~~
+
+###Implement child providers
 
 You might want to create child providers that inherit the `ini_setting` provider, for one or both of these purposes:
 
@@ -94,7 +100,7 @@ You might want to create child providers that inherit the `ini_setting` provider
 
 To implement child providers, first specify a custom type. Have it implement a namevar called `name` and a property called `value`:
 
-~~~
+~~~ruby
 #my_module/lib/puppet/type/glance_api_config.rb
 Puppet::Type.newtype(:glance_api_config) do
   ensurable
@@ -114,7 +120,7 @@ end
 
 Your type also needs a provider that uses the `ini_setting` provider as its parent:
 
-~~~
+~~~ruby
 # my_module/lib/puppet/provider/glance_api_config/ini_setting.rb
 Puppet::Type.type(:glance_api_config).provide(
   :ini_setting,
@@ -138,7 +144,7 @@ end
 
 Now the settings in /etc/glance/glance-api.conf file can be managed as individual resources:
 
-~~~
+~~~puppet
 glance_api_config { 'HEADER/important_config':
   value => 'secret_value',
 }
@@ -146,11 +152,119 @@ glance_api_config { 'HEADER/important_config':
 
 If you've implemented self.file_path, you can have Puppet purge the file of all lines that aren't implemented as Puppet resources:
 
-~~~
+~~~puppet
 resources { 'glance_api_config'
   purge => true,
 }
 ~~~
+
+### Manage multiple ini_settings
+
+To manage multiple ini_settings, use the [`create_ini_settings`](#function-create_ini_settings) function.
+
+~~~puppet
+$defaults = { 'path' => '/tmp/foo.ini' }
+$example = { 'section1' => { 'setting1' => 'value1' } }
+create_ini_settings($example, $defaults)
+~~~
+
+results in:
+
+~~~puppet
+ini_setting { '[section1] setting1':
+  ensure  => present,
+  section => 'section1',
+  setting => 'setting1',
+  value   => 'value1',
+  path    => '/tmp/foo.ini',
+}
+~~~
+
+To include special parameters, the following code:
+
+~~~puppet
+$defaults = { 'path' => '/tmp/foo.ini' }
+$example = {
+  'section1' => {
+    'setting1'  => 'value1',
+    'settings2' => {
+      'ensure' => 'absent'
+    }
+  }
+}
+create_ini_settings($example, $defaults)
+~~~
+
+results in:
+
+~~~puppet
+ini_setting { '[section1] setting1':
+  ensure  => present,
+  section => 'section1',
+  setting => 'setting1',
+  value   => 'value1',
+  path    => '/tmp/foo.ini',
+}
+ini_setting { '[section1] setting2':
+  ensure  => absent,
+  section => 'section1',
+  setting => 'setting2',
+  path    => '/tmp/foo.ini',
+}
+~~~
+
+#### Manage multiple ini_settings with Hiera
+
+This example requires Puppet 3.x/4.x, as it uses automatic retrieval of Hiera data for class parameters and `puppetlabs/stdlib`.
+
+For the profile `example`:
+
+~~~puppet
+class profile::example (
+  $settings,
+) {
+  validate_hash($settings)
+  $defaults = { 'path' => '/tmp/foo.ini' }
+  create_ini_settings($settings, $defaults)
+}
+~~~
+
+Provide this in your Hiera data:
+
+~~~puppet
+profile::example::settings:
+  section1:
+    setting1: value1
+    setting2: value2
+    setting3:
+      ensure: absent
+~~~
+
+Results in:
+
+~~~puppet
+ini_setting { '[section1] setting1':
+  ensure  => present,
+  section => 'section1',
+  setting => 'setting1',
+  value   => 'value1',
+  path    => '/tmp/foo.ini',
+}
+ini_setting { '[section1] setting2':
+  ensure  => present,
+  section => 'section1',
+  setting => 'setting2',
+  value   => 'value2',
+  path    => '/tmp/foo.ini',
+}
+ini_setting { '[section1] setting3':
+  ensure  => absent,
+  section => 'section1',
+  setting => 'setting3',
+  path    => '/tmp/foo.ini',
+}
+~~~
+
 
 ##Reference
 
@@ -159,6 +273,10 @@ resources { 'glance_api_config'
  * [`ini_setting`](#type-ini_setting)
 
  * [`ini_subsetting`](#type-ini_subsetting)
+
+###Public Functions
+
+ * [`create_ini_settings`](#function-create_ini_settings)
 
 ### Type: ini_setting
 
@@ -184,11 +302,11 @@ Determines whether the specified setting should exist. Valid options: 'present' 
 
 ##### `section`
 
-*Required.* Designates a section of the specified INI file containing the setting to manage. To manage a global setting (at the beginning of the file, before any named sections) enter "". Valid options: a string.
+*Optional.* Designates a section of the specified INI file containing the setting to manage. To manage a global setting (at the beginning of the file, before any named sections) enter "". Defaults to "". Valid options: a string.
 
 ##### `setting`
 
-*Optional.* Designates a section of the specified INI file containing the setting to manage. To manage a global setting (at the beginning of the file, before any named sections) enter "". Defaults to "". Valid options: a string.
+*Required.* Designates a setting to manage within the specified INI file and section. Valid options: a string.
 
 ##### `value`
 
@@ -200,12 +318,11 @@ Determines whether the specified setting should exist. Valid options: 'present' 
 
 ##### `section_suffix`
 
-*Optional.*  Designates the string that will appear after the section's name.  Default value: "]"
+*Optional.*  Designates the string that will appear after the section's name.  Default value: "]".
 
-**NOTE:** The way this type finds all sections in the file is by looking for lines like `${section_prefix}${title}${section_suffix}`
+**NOTE:** This type finds all sections in the file by looking for lines like `${section_prefix}${title}${section_suffix}`.
 
 ### Type: ini_subsetting
-
 
 Manages multiple values within the same INI setting.
 
@@ -217,7 +334,7 @@ Specifies whether the subsetting should be present. Valid options: 'present' and
 
 ##### `key_val_separator`
 
-*Optional.* Specifies a string to use between subsetting name and value (e.g., to determine whether the separator includes whitespace). Valid options: a string. Default value: ' = '.
+*Optional.* Specifies a string to use between setting name and value (e.g., to determine whether the separator includes whitespace). Valid options: a string. Default value: ' = '.
 
 ##### `path`
 
@@ -239,22 +356,51 @@ Specifies whether the subsetting should be present. Valid options: 'present' and
 
 *Required.* Designates a subsetting to manage within the specified setting. Valid options: a string.
 
-
 ##### `subsetting_separator`
 
 *Optional.* Specifies a string to use between subsettings. Valid options: a string. Default value: " ".
+
+##### `use_exact_match`
+
+*Optional.* Whether to use partial or exact matching for subsetting. Should be set to true if the subsettings do not have values. Valid options: true, false. Default value: false.
 
 ##### `value`
 
 *Optional.* Supplies a value for the specified subsetting. Valid options: a string. Default value: undefined.
 
+### Function: create_ini_settings
+
+Manages multiple `ini_setting` resources from a hash. Note that this cannot be used with ini_subsettings.
+
+`create_ini_settings($settings, $defaults)`
+
+#### Arguments
+
+##### First argument: `settings`
+
+*Required.* Specify a hash representing the `ini_setting` resources you want to create.
+
+##### Second argument: `defaults`
+
+*Optional.* Accepts a hash to be used as the values for any attributes not defined in the first argument.
+
+~~~puppet
+$example = {
+  'section1' => {
+    'setting1' => {
+      'value' => 'value1', 'path' => '/tmp/foo.ini'
+    }
+  }
+}
+~~~
+
+Default value: '{}'.
+
 ##Limitations
 
-This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix), and no issues have been identified. Additionally, it is tested (but not supported) on Windows 7 and Mac OS X 10.9.
+This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix), and no issues have been identified. Additionally, it is tested (but not supported) on Windows 7, Mac OS X 10.9, and Solaris 12.
 
 ##Development
-
-#Development
 
 Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
 

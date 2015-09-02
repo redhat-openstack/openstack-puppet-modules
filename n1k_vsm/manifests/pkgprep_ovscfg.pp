@@ -19,7 +19,7 @@ class n1k_vsm::pkgprep_ovscfg
       # VSM dependent packages installation section
       package { 'Package_qemu-kvm':
         ensure => installed,
-        name   => 'qemu-kvm',
+        name   => 'qemu-kvm-rhev',
       }
 
       package {'Package_libvirt':
@@ -64,8 +64,11 @@ class n1k_vsm::pkgprep_ovscfg
       notify { "Debug br ${n1k_vsm::ovsbridge} intf ${n1k_vsm::phy_if_bridge} ." : withpath => true }
       notify { "Debug ${n1k_vsm::vsmname} ip ${n1k_vsm::phy_ip_addr} mask ${n1k_vsm::phy_ip_mask} gw_intf ${n1k_vsm::gw_intf}" : withpath => true }
 
-      # Check if we've already configured the ovs
-      if $n1k_vsm::gw_intf != $n1k_vsm::ovsbridge {
+      $_ovsbridge     = regsubst($n1k_vsm::ovsbridge, '[.:-]+', '_', 'G')
+      $_ovsbridge_mac = inline_template("<%= scope.lookupvar('::macaddress_${_ovsbridge}') %>")
+
+      # Check if we've already configured the vsm bridge, skip configuration if so
+      if ($_ovsbridge_mac == '') {
         # Modify Ovs bridge inteface configuation file
         augeas { 'Augeas_modify_ifcfg-ovsbridge':
           name    => $n1k_vsm::ovsbridge,
@@ -87,47 +90,50 @@ class n1k_vsm::pkgprep_ovscfg
             'set USERCTL no',
           ],
         }
-
-        # Modify Physical Interface config file
-        augeas { 'Augeas_modify_ifcfg-phy_if_bridge':
-          name    => $n1k_vsm::phy_if_bridge,
-          context => "/files/etc/sysconfig/network-scripts/ifcfg-${n1k_vsm::phy_if_bridge}",
-          changes => [
-            'set TYPE OVSPort',
-            "set DEVICE ${n1k_vsm::phy_if_bridge}",
-            'set DEVICETYPE ovs',
-            "set OVS_BRIDGE ${n1k_vsm::ovsbridge}",
-            'set NM_CONTROLLED no',
-            'set BOOTPROTO none',
-            'set ONBOOT yes',
-            "set NAME ${n1k_vsm::phy_if_bridge}",
-            'set DEFROUTE no',
-            'set IPADDR ""',
-            'rm NETMASK',
-            'rm GATEWAY',
-            'set USERCTL no',
-          ],
-        }
-        exec { 'Flap_n1kv_phy_if':
-          command => "/sbin/ifdown ${n1k_vsm::phy_if_bridge} && /sbin/ifup ${n1k_vsm::phy_if_bridge}",
-          require => augeas['Augeas_modify_ifcfg-phy_if_bridge'],
-        }
         exec { 'Flap_n1kv_bridge':
           command => "/sbin/ifdown ${n1k_vsm::ovsbridge} && /sbin/ifup ${n1k_vsm::ovsbridge}",
-          require => augeas['Augeas_modify_ifcfg-ovsbridge'],
+          require => Augeas['Augeas_modify_ifcfg-ovsbridge'],
         }
-        # Make sure that networking comes fine after reboot- add init file and restart networking
-        file { 'Create_Init_File':
-          replace => 'yes',
-          path    => '/etc/init.d/n1kv',
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0775',
-          source  => 'puppet:///modules/n1k_vsm/n1kv',
-          require => exec['Flap_n1kv_phy_if', 'Flap_n1kv_bridge'],
-          notify  => Service['Service_network'],
+
+        if !($n1k_vsm::existing_bridge) {
+          # If there isn't an existing bridge, the interface is a port, and we
+          # need to add it to vsm-br
+          # Modify Physical Interface config file
+          augeas { 'Augeas_modify_ifcfg-phy_if_bridge':
+            name    => $n1k_vsm::phy_if_bridge,
+            context => "/files/etc/sysconfig/network-scripts/ifcfg-${n1k_vsm::phy_if_bridge}",
+            changes => [
+              'set TYPE OVSPort',
+              "set DEVICE ${n1k_vsm::phy_if_bridge}",
+              'set DEVICETYPE ovs',
+              "set OVS_BRIDGE ${n1k_vsm::ovsbridge}",
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              "set NAME ${n1k_vsm::phy_if_bridge}",
+              'set DEFROUTE no',
+              'set IPADDR ""',
+              'rm NETMASK',
+              'rm GATEWAY',
+              'set USERCTL no',
+            ],
+          }
+          exec { 'Flap_n1kv_phy_if':
+            command => "/sbin/ifdown ${n1k_vsm::phy_if_bridge} && /sbin/ifup ${n1k_vsm::phy_if_bridge}",
+            require => Augeas['Augeas_modify_ifcfg-phy_if_bridge'],
+          }
+        } else {
+          # If there is an existing bridge- create patch ports to connect vsm-br to it
+          exec { 'Create_patch_port_on_existing_bridge':
+            command => "/bin/ovs-vsctl --may-exist add-port ${n1k_vsm::phy_if_bridge} ${n1k_vsm::phy_if_bridge}-${n1k_vsm::ovsbridge} -- set Interface ${n1k_vsm::phy_if_bridge}-${n1k_vsm::ovsbridge} type=patch options:peer=${n1k_vsm::ovsbridge}-${n1k_vsm::phy_if_bridge}",
+            require => Exec['Flap_n1kv_bridge'],
+          }
+          exec { 'Create_patch_port_on_vsm_bridge':
+            command => "/bin/ovs-vsctl --may-exist add-port ${n1k_vsm::ovsbridge} ${n1k_vsm::ovsbridge}-${n1k_vsm::phy_if_bridge} -- set Interface ${n1k_vsm::ovsbridge}-${n1k_vsm::phy_if_bridge} type=patch options:peer=${n1k_vsm::phy_if_bridge}-${n1k_vsm::ovsbridge}",
+            require => Exec['Flap_n1kv_bridge'],
+          }
         }
-      }  # endif of if "${n1k_vsm::gw_intf}" != "${n1k_vsm::ovsbridge}"
+      }  # endif of if "${n1k_vsm::gw_intf}" != "${n1k_vsm::ovsbridge}" or ($n1k_vsm::existing_bridge == 'true')
     }
     'Ubuntu': {
     }

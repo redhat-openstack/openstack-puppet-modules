@@ -11,6 +11,9 @@ class mongodb::globals (
   $service_ensure        = undef,
   $service_name          = undef,
   $mongos_service_manage = undef,
+  $mongos_service_enable = undef,
+  $mongos_service_ensure = undef,
+  $mongos_service_status = undef,
   $mongos_service_name   = undef,
   $service_provider      = undef,
   $service_status        = undef,
@@ -23,6 +26,7 @@ class mongodb::globals (
   $version               = undef,
 
   $manage_package_repo   = undef,
+  $manage_package        = undef,
 
   $use_enterprise_repo   = undef,
 ) {

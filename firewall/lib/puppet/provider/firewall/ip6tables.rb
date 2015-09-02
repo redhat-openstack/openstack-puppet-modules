@@ -37,7 +37,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
 
   confine :kernel => :linux
 
-  ip6tables_version = Facter.fact('ip6tables_version').value
+  ip6tables_version = Facter.value('ip6tables_version')
   if (ip6tables_version and Puppet::Util::Package.versioncmp(ip6tables_version, '1.4.1') < 0)
     mark_flag = '--set-mark'
   else
@@ -109,6 +109,8 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :rseconds           => "--seconds",
     :rsource            => "--rsource",
     :rttl               => "--rttl",
+    :set_dscp           => '--set-dscp',
+    :set_dscp_class     => '--set-dscp-class',
     :set_mark           => mark_flag,
     :set_mss            => '--set-mss',
     :socket             => "-m socket",
@@ -218,7 +220,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :dst_type, :socket, :pkttype, :name, :ipsec_dir, :ipsec_policy, :state,
     :ctstate, :icmp, :hop_limit, :limit, :burst, :recent, :rseconds, :reap,
     :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :clamp_mss_to_pmtu, :gateway, :todest,
-    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :reject, :set_mss, :mss,
+    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :reject, :set_mss, :set_dscp, :set_dscp_class, :mss,
     :set_mark, :match_mark, :connlimit_above, :connlimit_mask, :connmark, :time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
 
 end

@@ -24,6 +24,9 @@
 # [*service_manage*]
 #   Chooses whether the haproxy service state should be managed by puppet at all. Defaults to true
 #
+# [*service_options*]
+#   Contents for the `/etc/defaults/haproxy` file on Debian. Defaults to "ENABLED=1\n" on Debian, and is ignored on other systems.
+#
 # [*global_options*]
 #   A hash of all the haproxy global options. If you want to specify more
 #    than one option (i.e. multiple timeout or stats options), pass those
@@ -83,6 +86,7 @@ class haproxy (
   $package_name     = $haproxy::params::package_name,
   $service_ensure   = 'running',
   $service_manage   = true,
+  $service_options  = "ENABLED=1\n",
   $global_options   = $haproxy::params::global_options,
   $defaults_options = $haproxy::params::defaults_options,
   $restart_command  = undef,
@@ -101,6 +105,7 @@ class haproxy (
   }
   validate_string($package_name,$package_ensure)
   validate_bool($service_manage)
+  validate_string($service_options)
 
   # To support deprecating $enable
   if $enable != undef {

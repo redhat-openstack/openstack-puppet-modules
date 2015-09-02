@@ -41,6 +41,9 @@
                     <virtualport type='openvswitch' />
                     <target dev='<%= @ctrltap %>'/>
                     <model type='e1000'/>
+                    <% if scope.lookupvar('n1k_vsm::pacemaker_control') == true %>
+                    <mac address='<%= @ctrlmac %>'/>
+                    <% end %>
                     <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
           </interface>
 
@@ -49,6 +52,9 @@
                     <virtualport type='openvswitch' />
                     <target dev='<%= @mgmttap %>'/>
                     <model type='e1000'/>
+                    <% if scope.lookupvar('n1k_vsm::pacemaker_control') == true %>
+                    <mac address='<%= @mgmtmac %>'/>
+                    <% end %>
                     <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
           </interface> 
 
@@ -57,6 +63,9 @@
                     <virtualport type='openvswitch' />
                     <target dev='<%= @pkttap %>'/>
                     <model type='e1000'/>
+                    <% if scope.lookupvar('n1k_vsm::pacemaker_control') == true %>
+                    <mac address='<%= @pktmac %>'/>
+                    <% end %>
                     <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
           </interface> 
 

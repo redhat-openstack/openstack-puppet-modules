@@ -12,7 +12,7 @@ class mysql::server::service {
     $service_ensure = undef
   }
 
-  if $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['user'] {
+  if $mysql::server::override_options and $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['user'] {
     $mysqluser = $mysql::server::override_options['mysqld']['user']
   } else {
     $mysqluser = $options['mysqld']['user']
@@ -31,7 +31,14 @@ class mysql::server::service {
     name     => $mysql::server::service_name,
     enable   => $mysql::server::real_service_enabled,
     provider => $mysql::server::service_provider,
-    require  => Package['mysql-server'],
+  }
+
+  # only establish ordering between service and package if
+  # we're managing the package.
+  if $mysql::server::package_manage {
+    Service['mysqld'] {
+      require  => Package['mysql-server'],
+    }
   }
 
   # only establish ordering between config file and service if

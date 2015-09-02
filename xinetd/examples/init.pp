@@ -1,1 +1,1 @@
-include xinetd
+include ::xinetd

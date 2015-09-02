@@ -69,17 +69,19 @@
       "version_requirement": ">= 3.2.0"
     }
   ],
-  "name": "pdxcat-collectd",
-  "version": "3.4.0",
-  "source": "https://github.com/pdxcat/puppet-module-collectd",
-  "author": "Computer Action Team",
+  "name": "puppet-collectd",
+  "version": "4.1.2",
+  "source": "https://github.com/puppet-community/puppet-collectd",
+  "author": "puppetcommunity",
   "license": "Apache-2.0",
   "summary": "Puppet module for Collectd",
-  "project_page": "https://github.com/pdxcat/puppet-module-collectd",
+  "project_page": "https://github.com/puppet-community/puppet-collectd",
+  "issues_url": "https://github.com/puppet-community/puppet-collectd/issues",
+  "tags": ["collectd", "puppet-community"],
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 3.0.0"
+      "version_requirement": ">= 3.2.0"
     },
     {
       "name": "puppetlabs/concat",

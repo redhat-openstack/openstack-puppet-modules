@@ -161,8 +161,6 @@ class cinder::api (
 
   if $::cinder::params::api_package {
     Package['cinder-api'] -> Class['cinder::policy']
-    Package['cinder-api'] -> Cinder_config<||>
-    Package['cinder-api'] -> Cinder_api_paste_ini<||>
     Package['cinder-api'] -> Service['cinder-api']
     Package['cinder-api'] ~> Exec<| title == 'cinder-manage db_sync' |>
     package { 'cinder-api':
@@ -173,17 +171,7 @@ class cinder::api (
   }
 
   if $sync_db {
-    Cinder_config<||> ~> Exec['cinder-manage db_sync']
-
-    exec { 'cinder-manage db_sync':
-      command     => $::cinder::params::db_sync_command,
-      path        => '/usr/bin',
-      user        => 'cinder',
-      refreshonly => true,
-      logoutput   => 'on_failure',
-      subscribe   => Package['cinder'],
-      before      => Service['cinder-api'],
-    }
+    include ::cinder::db::sync
   }
 
   if $enabled {

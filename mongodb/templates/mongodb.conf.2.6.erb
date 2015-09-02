@@ -44,7 +44,7 @@ storage.journal.enabled: false
 storage.journal.enabled: true
 <% end -%>
 <% if @noprealloc -%>
-storage.preallocDataFiles: <%= @noprealloc %>
+storage.preallocDataFiles: <%= !@noprealloc %>
 <% end -%>
 <% if @nssize -%>
 storage.nsSize: <%= @nssize %>
@@ -60,6 +60,9 @@ storage.quota.enforced: <%= @quota %>
 <% if @quotafiles -%>
 storage.quota.maxFilesPerDB: <%= @quotafiles %>
 <% end -%>
+<% end -%>
+<% if @storage_engine_internal -%>
+storage.engine: <%= @storage_engine_internal %>
 <% end -%>
 
 

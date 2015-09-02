@@ -21,7 +21,7 @@
 #   $cps            - optional
 #   $flags          - optional
 #   $per_source     - optional
-#   $port           - required - determines the service port
+#   $port           - optional - determines the service port (required if service is not listed in /etc/services)
 #   $server         - required - determines the program to execute for this service
 #   $server_args    - optional
 #   $disable        - optional - defaults to "no"
@@ -38,7 +38,7 @@
 #   $access_times   - optional
 #   $log_type       - optional
 #   $bind           - optional
-#   $nice           - optional
+#   $nice           - optional - integer between -20 and 19, inclusive.
 #
 # Actions:
 #   setups up a xinetd service by creating a file in /etc/xinetd.d/
@@ -58,12 +58,12 @@
 #     cps         => '100 2',
 #     flags       => 'IPv4',
 #     per_source  => '11',
-#     nice        => '19',
+#     nice        => 19,
 #   } # xinetd::service
 #
 define xinetd::service (
-  $port,
   $server,
+  $port                    = undef,
   $ensure                  = present,
   $log_on_success          = undef,
   $log_on_success_operator = '+=',
@@ -93,24 +93,26 @@ define xinetd::service (
   $env                     = undef,
 ) {
 
-  include xinetd
+  include ::xinetd
 
   if $wait {
     $_wait = $wait
   } else {
     validate_re($protocol, '(tcp|udp)')
     $_wait = $protocol ? {
-      tcp => 'no',
-      udp => 'yes'
+      'tcp' => 'no',
+      'udp' => 'yes'
     }
   }
 
   if $xtype {
     warning ('The $xtype parameter to xinetd::service is deprecated. Use the service_type parameter instead.')
   }
-  if $nice {
-    validate_re($nice,'^-?[0-9]+$')
-    if !is_numeric($nice) or $nice < -19 or $nice > 19 {
+
+  if $nice != undef {
+    validate_integer($nice)
+
+    if $nice < -20 or $nice > 19 {
       fail("Invalid value for nice, ${nice}")
     }
   }

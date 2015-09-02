@@ -12,15 +12,29 @@ describe 'basic sahara' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'kilo',
-            package_require => true,
+          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
+            # it's false by default in 2.x series but true in 1.8.x
+            package_manage => false,
           }
+          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
-            release => 'kilo',
+            manage_rdo => false,
+            repo_hash => {
+              # we need kilo repo to be installed for dependencies
+              'rdo-kilo' => {
+                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
+                'descr'   => 'RDO kilo',
+                'gpgcheck' => 'no',
+              },
+              'rdo-liberty' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
+                'descr'    => 'RDO trunk',
+                'gpgcheck' => 'no',
+              },
+            },
           }
           package { 'openstack-selinux': ensure => 'latest' }
           $package_provider = 'yum'
@@ -79,8 +93,12 @@ describe 'basic sahara' do
 
       # Sahara resources
       class { '::sahara':
+        rabbit_userid       => 'sahara',
+        rabbit_password     => 'an_even_bigger_secret',
+        rabbit_host         => '127.0.0.1',
+        rpc_backend         => 'rabbit',
         database_connection => 'mysql://sahara:a_big_secret@127.0.0.1/sahara?charset=utf8',
-        keystone_password   => 'a_big_secret',
+        admin_password      => 'a_big_secret',
       }
       class { '::sahara::db::mysql':
         password => 'a_big_secret',
@@ -89,10 +107,8 @@ describe 'basic sahara' do
         password => 'a_big_secret',
       }
       class { '::sahara::client': }
-      class { '::sahara::notify::rabbitmq':
-        rabbit_userid       => 'sahara',
-        rabbit_password     => 'an_even_bigger_secret',
-        rabbit_host         => '127.0.0.1',
+      class { '::sahara::notify':
+        enable_notifications => true,
       }
       EOS
 

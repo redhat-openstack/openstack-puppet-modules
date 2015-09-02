@@ -450,6 +450,19 @@ describe 'redis', :type => :class do
     }
   end
 
+  describe 'with parameter hz' do
+    let (:params) {
+      {
+        :hz=> '_VALUE_'
+      }
+    }
+
+    it { should contain_file('/etc/redis/redis.conf').with(
+        'content' => /hz.*_VALUE_/
+      )
+    }
+  end
+
   describe 'with parameter rdbcompression' do
     let (:params) {
       {
@@ -500,6 +513,34 @@ describe 'redis', :type => :class do
         'content' => /requirepass.*_VALUE_/
       )
     }
+  end
+
+  describe 'with parameter save_db_to_disk' do
+    context 'true' do
+      let (:params) {
+        {
+          :save_db_to_disk => true
+        }
+      }
+
+      it { should contain_file('/etc/redis/redis.conf').with(
+          'content' => /^save/
+        )
+      }
+    end
+
+    context 'false' do
+      let (:params) {
+        {
+          :save_db_to_disk => false
+        }
+      }
+
+      it { should contain_file('/etc/redis/redis.conf').with(
+          'content' => /^(?!save)/
+        )
+      }
+    end
   end
 
   describe 'with parameter: service_manage (set to false)' do

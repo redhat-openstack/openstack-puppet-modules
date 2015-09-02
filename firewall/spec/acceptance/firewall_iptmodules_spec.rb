@@ -34,9 +34,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
         EOS
 
         apply_manifest(pp, :catch_failures => true)
-        unless fact('selinux') == 'true'
-          apply_manifest(pp, :catch_changes => true)
-        end
+        apply_manifest(pp, :catch_changes => do_catch_changes)
       end
 
       it 'should contain the rule' do
@@ -64,9 +62,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
         EOS
 
         apply_manifest(pp, :catch_failures => true)
-        unless fact('selinux') == 'true'
-          apply_manifest(pp, :catch_changes => true)
-        end
+        apply_manifest(pp, :catch_changes => do_catch_changes)
       end
 
       it 'should contain the rule' do
@@ -103,9 +99,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -134,9 +128,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -148,7 +140,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
       end
     # Older OSes don't have addrtype so we leave those properties out.
     # el-5 doesn't support ipv6 by default
-    elsif default['platform'] !~ /el-5/
+    elsif default['platform'] !~ /el-5/ and default['platform'] !~ /sles-10/
       describe 'ip6tables ipt_modules tests' do
         context 'all the modules with multiple args' do
           it 'applies' do
@@ -171,9 +163,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do
@@ -201,9 +191,7 @@ describe 'firewall type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
             EOS
 
             apply_manifest(pp, :catch_failures => true)
-            unless fact('selinux') == 'true'
-              apply_manifest(pp, :catch_changes => true)
-            end
+            apply_manifest(pp, :catch_changes => do_catch_changes)
           end
 
           it 'should contain the rule' do

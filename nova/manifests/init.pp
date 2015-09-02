@@ -187,6 +187,10 @@
 #   (optional) Use syslog for logging
 #   Defaults to false
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   (optional) Syslog facility to receive log lines.
 #   Defaults to 'LOG_USER'
@@ -312,15 +316,16 @@ class nova(
   $nova_public_key                    = undef,
   $nova_private_key                   = undef,
   $use_syslog                         = false,
+  $use_stderr                         = true,
   $log_facility                       = 'LOG_USER',
   $install_utilities                  = true,
   $notification_driver                = [],
   $notification_topics                = 'notifications',
   $notify_api_faults                  = false,
   $notify_on_state_change             = undef,
+  $os_region_name                     = undef,
   # DEPRECATED PARAMETERS
   $mysql_module                       = undef,
-  $os_region_name                     = undef,
 ) inherits nova::params {
 
   # maintain backward compatibility
@@ -406,12 +411,6 @@ class nova(
     }
   }
 
-
-  # all nova_config resources should be applied
-  # after the nova common package
-  # before the file resource for nova.conf is managed
-  # and before the post config resource
-  Package['nova-common'] -> Nova_config<| |> -> File['/etc/nova/nova.conf']
   Nova_config<| |> ~> Exec['post-nova_config']
 
   # TODO - see if these packages can be removed
@@ -613,6 +612,7 @@ class nova(
   nova_config {
     'DEFAULT/verbose':             value => $verbose;
     'DEFAULT/debug':               value => $debug;
+    'DEFAULT/use_stderr':          value => $use_stderr;
     'DEFAULT/rpc_backend':         value => $rpc_backend;
     'DEFAULT/notification_driver': value => $notification_driver_real;
     'DEFAULT/notification_topics': value => $notification_topics;
@@ -647,13 +647,17 @@ class nova(
 
   if $os_region_name {
     nova_config {
-      'DEFAULT/os_region_name':       value => $os_region_name;
+      'cinder/os_region_name':       value => $os_region_name;
     }
   }
   else {
     nova_config {
-      'DEFAULT/os_region_name':       ensure => absent;
+      'cinder/os_region_name':        ensure => absent;
     }
+  }
+  # Deprecated in Juno, removed in Kilo
+  nova_config {
+    'DEFAULT/os_region_name':       ensure => absent;
   }
 
   exec { 'post-nova_config':

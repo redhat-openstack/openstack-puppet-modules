@@ -209,7 +209,7 @@ haproxy::frontend { 'puppet00':
   bind_options  => 'accept-proxy',
   options       => {
     'default_backend' => 'puppet_backend00',
-    'timeout client'  => '30',
+    'timeout client'  => '30s',
     'option'          => [
       'tcplog',
       'accept-invalid-http-request',
@@ -228,7 +228,7 @@ haproxy::frontend { 'puppet00':
   bind_options  => 'accept-proxy',
   options       => [
     { 'default_backend' => 'puppet_backend00' },
-    { 'timeout client'  => '30' },
+    { 'timeout client'  => '30s' },
     { 'option'          => [
         'tcplog',
         'accept-invalid-http-request',
@@ -357,6 +357,8 @@ Main class, includes all other classes.
 
 * `service_manage`: Specifies whether the state of the HAProxy service should be managed by Puppet. Valid options: 'true' and 'false'. Default: 'true'.
 
+* `service_options`: Contents for the `/etc/defaults/haproxy` file on Debian. Defaults to "ENABLED=1\n" on Debian, and is ignored on other systems.
+
 #### Define: `haproxy::balancermember`
 
 Configures a service inside a listening or backend service configuration block in haproxy.cfg.
@@ -401,7 +403,7 @@ Sets up a backend service configuration block inside haproxy.cfg. Each backend s
 
 #### Define: `haproxy::frontend`
 
-Sets up a backend service configuration block inside haproxy.cfg. Each backend service needs one or more balancermember services (declared with the [`haproxy::balancermember` define](#define-haproxybalancermember)).
+Sets up a frontend service configuration block inside haproxy.cfg. Each frontend service needs one or more balancermember services (declared with the [`haproxy::balancermember` define](#define-haproxybalancermember)).
 
 ##### Parameters
 

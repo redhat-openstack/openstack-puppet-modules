@@ -16,11 +16,13 @@ class mongodb::params inherits mongodb::globals {
   $mongos_configdb       = '127.0.0.1:27019'
   $mongos_restart        = true
 
+  $manage_package        = pick($mongodb::globals::manage_package, $mongodb::globals::manage_package_repo, false)
+
   # Amazon Linux's OS Family is 'Linux', operating system 'Amazon'.
   case $::osfamily {
     'RedHat', 'Linux': {
 
-      if $mongodb::globals::manage_package_repo {
+      if $manage_package {
         $user        = pick($::mongodb::globals::user, 'mongod')
         $group       = pick($::mongodb::globals::group, 'mongod')
         if ($::mongodb::globals::version == undef) {
@@ -105,7 +107,7 @@ class mongodb::params inherits mongodb::globals {
       }
     }
     'Debian': {
-      if $::mongodb::globals::manage_package_repo {
+      if $manage_package {
         $user  = pick($::mongodb::globals::user, 'mongodb')
         $group = pick($::mongodb::globals::group, 'mongodb')
         if ($::mongodb::globals::version == undef) {
@@ -142,6 +144,7 @@ class mongodb::params inherits mongodb::globals {
         $mongos_config           = '/etc/mongodb-shard.conf'
         $dbpath                  = '/var/lib/mongodb'
         $logpath                 = '/var/log/mongodb/mongodb.log'
+        $pidfilepath             = '/var/run/mongod.pid'
         $bind_ip                 = pick($::mongodb::globals::bind_ip, ['127.0.0.1'])
       } else {
         # although we are living in a free world,
@@ -173,6 +176,7 @@ class mongodb::params inherits mongodb::globals {
       }
       # avoid using fork because of the init scripts design
       $fork                    = undef
+      $journal                 = undef
       $mongos_pidfilepath      = undef
       $mongos_unixsocketprefix = undef
       $mongos_logpath          = undef
@@ -184,6 +188,16 @@ class mongodb::params inherits mongodb::globals {
   }
 
   case $::operatingsystem {
+    'Debian': {
+      case $::operatingsystemmajrelease {
+        '8': {
+          $service_provider = pick($service_provider, 'systemd')
+        }
+        default: {
+          $service_provider = pick($service_provider, 'debian')
+        }
+      }
+    }
     'Ubuntu': {
       $service_provider = pick($service_provider, 'upstart')
     }
@@ -191,5 +205,4 @@ class mongodb::params inherits mongodb::globals {
       $service_provider = undef
     }
   }
-
 }

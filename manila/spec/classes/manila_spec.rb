@@ -362,4 +362,76 @@ describe 'manila' do
     it_raises 'a Puppet::Error', /The cert_file parameter is required when use_ssl is set to true/
   end
 
+  describe 'with amqp rpc supplied' do
+
+    let :params do
+      {
+        :sql_connection         => 'mysql://user:password@host/database',
+        :rpc_backend            => 'manila.openstack.common.rpc.impl_zmq',
+      }
+    end
+
+    it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
+    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('manila.openstack.common.rpc.impl_zmq') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/server_request_prefix').with_value('exclusive') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/broadcast_prefix').with_value('broadcast') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/group_request_prefix').with_value('unicast') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/container_name').with_value('guest') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/idle_timeout').with_value('0') }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/trace').with_value(false) }
+    it { is_expected.to contain_manila_config('oslo_messaging_amqp/allow_insecure_clients').with_value(false) }
+  end
+
+  describe 'with amqp SSL disable' do
+    let :params do
+      {
+        :rabbit_password => 'guest',
+      }
+    end
+
+    it do
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_password').with_ensure('absent')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_ca_file').with_ensure('absent')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_cert_file').with_ensure('absent')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_file').with_ensure('absent')
+    end
+  end
+
+  describe 'with amqp SSL enabled' do
+    let :params do
+      {
+        :rabbit_password       => 'guest',
+        :amqp_ssl_ca_file      => '/path/to/ssl/ca/certs',
+        :amqp_ssl_cert_file    => '/path/to/ssl/cert/file',
+        :amqp_ssl_key_file     => '/path/to/ssl/keyfile',
+        :amqp_ssl_key_password => 'guest',
+      }
+    end
+
+    it do
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_password').with_value('guest')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_ca_file').with_value('/path/to/ssl/ca/certs')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_cert_file').with_value('/path/to/ssl/cert/file')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_file').with_value('/path/to/ssl/keyfile')
+    end
+  end
+
+  describe 'with amqp SSL enabled without amqp_ssl_key_password' do
+    let :params do
+      {
+        :rabbit_password        => 'guest',
+        :amqp_ssl_ca_file      => '/path/to/ssl/ca/certs',
+        :amqp_ssl_cert_file    => '/path/to/ssl/cert/file',
+        :amqp_ssl_key_file     => '/path/to/ssl/keyfile',
+      }
+    end
+
+    it do
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_password').with_ensure('absent')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_ca_file').with_value('/path/to/ssl/ca/certs')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_cert_file').with_value('/path/to/ssl/cert/file')
+      is_expected.to contain_manila_config('oslo_messaging_amqp/ssl_key_file').with_value('/path/to/ssl/keyfile')
+    end
+  end
+
 end

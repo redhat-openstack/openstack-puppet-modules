@@ -206,7 +206,7 @@ branches
     before do
       expects_chdir('/tmp/test')
       resource[:revision] = 'currentsha'
-      resource.delete(:source)
+      resource[:source] = 'http://example.com'
       provider.stubs(:git).with('config', 'remote.origin.url').returns('')
       provider.stubs(:git).with('fetch', 'origin') # FIXME
       provider.stubs(:git).with('fetch', '--tags', 'origin')
@@ -272,6 +272,14 @@ branches
       end
     end
 
+    context "when there's no source" do
+      it 'should return the revision' do
+        resource.delete(:source)
+        provider.expects(:git).with('status')
+        provider.expects(:git).with('rev-parse', resource.value(:revision)).returns('currentsha')
+        expect(provider.revision).to eq(resource.value(:revision))
+      end
+    end
   end
 
   context "setting the revision property" do

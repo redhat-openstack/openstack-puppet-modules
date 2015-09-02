@@ -28,13 +28,12 @@ class manila::share (
   Exec<| title == 'manila-manage db_sync' |> ~> Service['manila-share']
 
   if $::manila::params::share_package {
-    Package['manila-share'] -> Manila_config<||>
-    Package['manila-share'] -> Manila_api_paste_ini<||>
     Package['manila']        -> Package['manila-share']
     Package['manila-share'] -> Service['manila-share']
     package { 'manila-share':
       ensure => $package_ensure,
       name   => $::manila::params::share_package,
+      tag    => ['openstack', 'manila-package'],
     }
   }
 
@@ -52,5 +51,6 @@ class manila::share (
     enable    => $enabled,
     hasstatus => true,
     require   => Package['manila'],
+    tag       => 'manila-service',
   }
 }

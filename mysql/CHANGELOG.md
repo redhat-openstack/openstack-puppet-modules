@@ -1,3 +1,30 @@
+## 2015-08-10 - Supported Release 3.6.0
+### Summary
+This release adds the ability to use mysql::db and `mysql_*` types against unmanaged or external mysql instances.
+
+#### Features
+- Add ability to use mysql::db WITHOUT mysql::server (ie, externally)
+- Add prescript attribute to mysql::server::backup for xtrabackup
+- Add postscript ability to xtrabackup provider.
+
+#### Bugfixes
+- Fix default root passwords blocking puppet on mysql 5.8
+- Fix service dependency when package_manage is false
+- Fix selinux permissions on my.cnf
+
+##2015-07-23 - Supported Release 3.5.0
+###Summary
+A small release to add explicit support to newer Puppet versions and accumulated patches.
+
+####Features/Improvements
+- Start running tests against puppet 4
+- Support longer usernames on newer MariaDB versions
+- Add parameters for Solaris 11 and 12
+
+####Bugfixes
+- Fix references to the mysql-server package
+- mysql_server_id doesn't throw and error on machines without macaddress
+
 ##2015-05-19 - Supported Release 3.4.0
 ###Summary
 This release includes the addition of extra facts, OpenBSD compatibility, and a number of other features, improvements and bug fixes.
@@ -104,7 +131,7 @@ Added several new features including MariaDB support and future parser
 * `mysql::db` now has an import\_timeout feature that defaults to 300
 * The `mysql` class has been removed
 * `mysql::server` now takes an `override_options` hash that will affect the installation
-* Ability to install both dev and client dev 
+* Ability to install both dev and client dev
 
 ####BugFix
 * `mysql::server::backup` now passes `ensure` param to the nested `mysql_grant`

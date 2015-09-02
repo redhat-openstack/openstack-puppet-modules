@@ -70,6 +70,7 @@ page.
  * `instances`    - optional - defaults to "UNLIMITED"
  * `wait`         - optional - based on $protocol will default to "yes" for udp and "no" for tcp
  * `service_type` - optional - type setting in xinetd
+ * `nice`         - optional - integer between -20 and 19, inclusive.
 
 ### Sample Usage
 

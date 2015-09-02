@@ -1,3 +1,28 @@
+## 2015-09-01 - Supported Release 1.4.2
+### Summary
+This release adds some bugfixes.
+
+####Bugfixes
+- MODULES-2212 Add use_exact_match parameter for subsettings
+- MODULES-1908 Munge the setting to ensure we always strip the whitespace
+- MODULES-2369 Support a space as a key_val_separator
+
+## 2015-07-15 - Supported Release 1.4.1
+### Summary
+This release bumps the metadata for PE up.
+
+##2015-07-07 - Supported Releases 1.4.0
+###Summary
+
+This is primarily a release which includes acceptance tests updates, but also includes some minor bug fixes and improvements
+
+####Features
+- Solaris 12 Support
+- Acceptance testing improvements
+
+####Bugfixes
+- MODULES-1599 Match only on space and tab whitespace after k/v separator
+
 ##2015-06-09 - Supported Releases 1.3.0
 ###Summary
 

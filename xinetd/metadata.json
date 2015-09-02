@@ -9,6 +9,6 @@
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "description": "Puppet module to configure xinetd services",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">=2.2.1"}
+    {"name":"puppetlabs/stdlib","version_requirement":">=4.6.0"}
   ]
 }

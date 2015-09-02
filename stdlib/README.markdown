@@ -99,6 +99,7 @@ All parameters are optional, unless otherwise noted.
 * `multiple`: Determines if `match` and/or `after` can change multiple lines. If set to false, an exception will be raised if more than one line matches. Valid options: 'true', 'false'. Default: Undefined.
 * `name`: Sets the name to use as the identity of the resource. This is necessary if you want the resource namevar to differ from the supplied `title` of the resource. Valid options: String. Default: Undefined.
 * `path`: **Required.** Defines the file in which Puppet will ensure the line specified by `line`. Must be an absolute path to the file.
+* `replace`: Defines whether the resource will overwrite an existing line that matches the `match` parameter. If set to false and a line is found matching the `match` param, the line will not be placed in the file. Valid options: true, false, yes, no. Default: true
 
 
 ### Functions
@@ -154,6 +155,12 @@ Appends the contents of multiple arrays onto the first array given. For example:
   * `concat(['1','2','3'],'4',['5','6','7'])` returns ['1','2','3','4','5','6','7'].
   *Type*: rvalue.
 
+#### `convert_base`
+
+Converts a given integer or base 10 string representing an integer to a specified base, as a string. For example:
+  * `convert_base(5, 2)` results in: '101'
+  * `convert_base('254', '16')` results in: 'fe'
+
 #### `count`
 
 If called with only an array, it counts the number of elements that are **not** nil/undef. If called with a second argument, counts the number of elements in an array that matches the second argument. *Type*: rvalue.
@@ -198,6 +205,19 @@ Returns the difference between two arrays. The returned array is a copy of the o
 
 Returns the `dirname` of a path. For example, `dirname('/path/to/a/file.ext')` returns '/path/to/a'. *Type*: rvalue.
 
+#### `dos2unix`
+
+Returns the Unix version of the given string. Very useful when using a File resource with a cross-platform template. *Type*: rvalue.
+
+~~~
+file{$config_file:
+  ensure  => file,
+  content => dos2unix(template('my_module/settings.conf.erb')),
+}
+~~~
+
+See also [unix2dos](#unix2dos).
+
 #### `downcase`
 
 Converts the case of a string or of all strings in an array to lowercase. *Type*: rvalue.
@@ -212,7 +232,7 @@ Takes a list of packages and only installs them if they don't already exist. It 
 
 #### `ensure_resource`
 
-Takes a resource type, title, and a list of attributes that describe a resource.
+Takes a resource type, title, and a hash of attributes that describe the resource(s).
 
 ~~~
 user { 'dan':
@@ -449,6 +469,17 @@ Loads a YAML file containing an array, string, or hash, and returns the data in 
 
 *Type*: rvalue.
 
+#### `load_module_metadata`
+
+Loads the metadata.json of a target module. Can be used to determine module version and authorship for dynamic support of modules.
+
+  ~~~
+  $metadata = load_module_metadata('archive')
+  notify { $metadata['author']: }
+  ~~~
+
+*Type*: rvalue.
+
 #### `lstrip`
 
 Strips spaces to the left of a string. *Type*: rvalue.
@@ -459,7 +490,7 @@ Returns the highest value of all arguments. Requires at least one argument. *Typ
 
 #### `member`
 
-This function determines if a variable is a member of an array. The variable can be either a string, array, or fixnum. For example, `member(['a','b'], 'b')` and `member(['a','b','c'], ['b','c'])` return 'true', while `member(['a','b'], 'c')` and `member(['a','b','c'], ['c','d'])` return 'false'. *Note*: This function does not support nested arrays. If the first argument contains nested arrays, it will not recurse through them. 
+This function determines if a variable is a member of an array. The variable can be either a string, array, or fixnum. For example, `member(['a','b'], 'b')` and `member(['a','b','c'], ['b','c'])` return 'true', while `member(['a','b'], 'c')` and `member(['a','b','c'], ['c','d'])` return 'false'. *Note*: This function does not support nested arrays. If the first argument contains nested arrays, it will not recurse through them.
 
 *Type*: rvalue.
 
@@ -507,10 +538,10 @@ From a list of values, returns the first value that is not undefined or an empty
 
 #### `prefix`
 
-Applies a prefix to all elements in an array, or to the keys in a hash.  
-For example: 
+Applies a prefix to all elements in an array, or to the keys in a hash.
+For example:
 * `prefix(['a','b','c'], 'p')` returns ['pa','pb','pc']
-* `prefix({'a'=>'b','b'=>'c','c'=>'d'}, 'p')` returns {'pa'=>'b','pb'=>'c','pc'=>'d'}.  
+* `prefix({'a'=>'b','b'=>'c','c'=>'d'}, 'p')` returns {'pa'=>'b','pb'=>'c','pc'=>'d'}.
 
 *Type*: rvalue.
 
@@ -548,6 +579,8 @@ The second argument to this function is which type of hash to use. It will be co
 
 The third argument to this function is the salt to use.
 
+*Type*: rvalue.
+
 **Note:** this uses the Puppet master's implementation of crypt(3). If your environment contains several different operating systems, ensure that they are compatible before using this function.
 
 #### `range`
@@ -578,7 +611,7 @@ Randomizes the order of a string or array elements. *Type*: rvalue.
 
 #### `size`
 
-Returns the number of elements in a string or an array. *Type*: rvalue.
+Returns the number of elements in a string, an array or a hash. *Type*: rvalue.
 
 #### `sort`
 
@@ -669,6 +702,40 @@ Returns the current Unix epoch time as an integer. For example, `time()` returns
 
 Converts the argument into bytes, for example "4 kB" becomes "4096". Takes a single string value as an argument. *Type*: rvalue.
 
+#### `try_get_value`
+
+*Type*: rvalue.
+
+Looks up into a complex structure of arrays and hashes and returns a value
+or the default value if nothing was found.
+
+Key can contain slashes to describe path components. The function will go down
+the structure and try to extract the required value.
+
+$data = {
+  'a' => {
+    'b' => [
+      'b1',
+      'b2',
+      'b3',
+    ]
+  }
+}
+
+$value = try_get_value($data, 'a/b/2', 'not_found', '/')
+=> $value = 'b3'
+
+a -> first hash key
+b -> second hash key
+2 -> array index starting with 0
+
+not_found -> (optional) will be returned if there is no value or the path did not match. Defaults to nil.
+/ -> (optional) path delimiter. Defaults to '/'.
+
+In addition to the required "key" argument, "try_get_value" accepts default
+argument. It will be returned if no value was found or a path component is
+missing. And the fourth argument can set a variable path separator.
+
 #### `type3x`
 
 Returns a string description of the type when passed a value. Type can be a string, array, hash, float, integer, or boolean. This function will be removed when Puppet 3 support is dropped and the new type system can be used. *Type*: rvalue.
@@ -679,11 +746,24 @@ Returns the literal type when passed a value. Requires the new parser. Useful fo
 
 #### `union`
 
-Returns a union of two arrays, without duplicates. For example, `union(["a","b","c"],["b","c","d"])` returns ["a","b","c","d"].
+Returns a union of two or more arrays, without duplicates. For example, `union(["a","b","c"],["b","c","d"])` returns ["a","b","c","d"]. *Type*: rvalue.
 
 #### `unique`
 
 Removes duplicates from strings and arrays. For example, `unique("aabbcc")` returns 'abc', and `unique(["a","a","b","b","c","c"])` returns ["a","b","c"]. *Type*: rvalue.
+
+#### `unix2dos`
+
+Returns the DOS version of the given string. Very useful when using a File resource with a cross-platform template. *Type*: rvalue.
+
+~~~
+file{$config_file:
+  ensure  => file,
+  content => unix2dos(template('my_module/settings.conf.erb')),
+}
+~~~
+
+See also [dos2unix](#dos2unix).
 
 #### `upcase`
 
@@ -888,7 +968,7 @@ Validates that the first argument is an integer (or an array of integers). Abort
 
   * Plus all of the above, but any combination of values passed as strings ('false' or "false").
   * Plus all of the above, but with incorrect combinations of negative integer values.
-  * Plus all of the above, but with non-integer crap in arrays or maximum / minimum argument.
+  * Plus all of the above, but with non-integer items in arrays or maximum / minimum argument.
 
   *Type*: statement.
 
@@ -938,13 +1018,14 @@ test, and the second argument should be a stringified regular expression (withou
 
 #### `validate_slength`
 
-Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.
+Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.  Optionally, a minimum string length can be given as the third argument.
 
   The following values pass:
 
   ~~~
   validate_slength("discombobulate",17)
   validate_slength(["discombobulate","moo"],17)
+  validate_slength(["discombobulate","moo"],17,3)
   ~~~
 
   The following values fail:
@@ -952,6 +1033,7 @@ Validates that the first argument is a string (or an array of strings), and is l
   ~~~
   validate_slength("discombobulate",1)
   validate_slength(["discombobulate","thermometer"],5)
+  validate_slength(["discombobulate","moo"],17,10)
   ~~~
 
 *Type*: statement.
@@ -988,7 +1070,7 @@ Instead, use:
 
 #### `values`
 
-Returns the values of a given hash. For example, given `$hash = {'a'=1, 'b'=2, 'c'=3} values($hash)` returns [1,2,3]. 
+Returns the values of a given hash. For example, given `$hash = {'a'=1, 'b'=2, 'c'=3} values($hash)` returns [1,2,3].
 
 *Type*: rvalue.
 
@@ -1019,6 +1101,7 @@ Versions | Puppet 2.6 | Puppet 2.7 | Puppet 3.x | Puppet 4.x |
 **stdlib 2.x**  | **yes** | **yes** | no | no
 **stdlib 3.x**  | no    | **yes**  | **yes** | no
 **stdlib 4.x**  | no    | **yes**  | **yes** | no
+**stdlib 4.6+**  | no    | **yes**  | **yes** | **yes**
 **stdlib 5.x**  | no    | no  | **yes**  | **yes**
 
 **stdlib 5.x**: When released, stdlib 5.x will drop support for Puppet 2.7.x. Please see [this discussion](https://github.com/puppetlabs/puppetlabs-stdlib/pull/176#issuecomment-30251414).
@@ -1033,7 +1116,3 @@ To report or research a bug with any part of this module, please go to
 ##Contributors
 
 The list of contributors can be found at: https://github.com/puppetlabs/puppetlabs-stdlib/graphs/contributors
-
-
-
-

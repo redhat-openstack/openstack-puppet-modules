@@ -5,6 +5,7 @@ class mysql::params {
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
+  $install_secret_file    = '/.mysql_secret'
   $server_package_ensure  = 'present'
   $server_package_manage  = true
   $server_service_manage  = true
@@ -279,6 +280,32 @@ class mysql::params {
       $php_package_name    = 'php-mysql'
       $python_package_name = 'py-mysql'
       $ruby_package_name   = 'ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
+    }
+
+    'Solaris': {
+      $client_package_name = 'database/mysql-55/client'
+      $server_package_name = 'database/mysql-55'
+      $basedir             = undef
+      $config_file         = '/etc/mysql/5.5/my.cnf'
+      $datadir             = '/var/mysql/5.5/data'
+      $log_error           = "/var/mysql/5.5/data/${::hostname}.err"
+      $pidfile             = "/var/mysql/5.5/data/${::hostname}.pid"
+      $root_group          = 'bin'
+      $server_service_name = 'application/database/mysql:version_55'
+      $socket              = '/tmp/mysql.sock'
+      $ssl_ca              = undef
+      $ssl_cert            = undef
+      $ssl_key             = undef
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = undef
+      $perl_package_name   = undef
+      $php_package_name    = 'web/php-53/extension/php-mysql'
+      $python_package_name = 'library/python/python-mysql'
+      $ruby_package_name   = undef
       # The libraries installed by these packages are included in client and server packages, no installation required.
       $client_dev_package_name     = undef
       $daemon_dev_package_name     = undef

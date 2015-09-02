@@ -19,6 +19,7 @@ class redis::params {
   $extra_config_file            = undef
   $hash_max_ziplist_entries     = 512
   $hash_max_ziplist_value       = 64
+  $hz                           = 10
   $list_max_ziplist_entries     = 512
   $list_max_ziplist_value       = 64
   $log_dir                      = '/var/log/redis'
@@ -34,6 +35,7 @@ class redis::params {
   $port                         = 6379
   $rdbcompression               = true
   $requirepass                  = undef
+  $save_db_to_disk              = true
   $sentinel_auth_pass           = undef
   $sentinel_config_file_mode    = '0644'
   $sentinel_config_group        = 'root'

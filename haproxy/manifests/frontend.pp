@@ -56,7 +56,7 @@
 #        'tcplog',
 #        'accept-invalid-http-request',
 #      ],
-#      'timeout client' => '30',
+#      'timeout client' => '30s',
 #      'balance'    => 'roundrobin'
 #    },
 #  }
@@ -77,7 +77,7 @@ define haproxy::frontend (
     ],
   },
   # Deprecated
-  $bind_options     = '',
+  $bind_options     = undef,
 ) {
 
   if $ports and $bind {

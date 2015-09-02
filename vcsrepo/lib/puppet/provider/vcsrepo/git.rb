@@ -3,7 +3,9 @@ require File.join(File.dirname(__FILE__), '..', 'vcsrepo')
 Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) do
   desc "Supports Git repositories"
 
-  commands :git => 'git'
+  has_command(:git, 'git') do
+    environment({ 'HOME' => ENV['HOME'] })
+  end
 
   has_features :bare_repositories, :reference_tracking, :ssh_identity, :multiple_remotes, :user, :depth, :branch, :submodules
 
@@ -45,7 +47,11 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
   #
   # @return [String] Returns the target sha/tag/branch
   def latest
-    @resource.value(:revision)
+    if not @resource.value(:revision) and branch = on_branch?
+      return branch
+    else
+      return @resource.value(:revision)
+    end
   end
 
   # Get the current revision of the repo (tag/branch/sha)
@@ -72,7 +78,11 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
       #updated and authoritative.
       #TODO might be worthwhile to have an allow_local_changes param to decide
       #whether to reset or pull when we're ensuring latest.
-      at_path { git_with_identity('reset', '--hard', "#{@resource.value(:remote)}/#{desired}") }
+      if @resource.value(:source)
+        at_path { git_with_identity('reset', '--hard', "#{@resource.value(:remote)}/#{desired}") }
+      else
+        at_path { git_with_identity('reset', '--hard', "#{desired}") }
+      end
     end
     #TODO Would this ever reach here if it is bare?
     if @resource.value(:ensure) != :bare && @resource.value(:submodules) == :true
@@ -103,7 +113,7 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
 
   def working_copy_exists?
     if @resource.value(:source) and File.exists?(File.join(@resource.value(:path), '.git', 'config'))
-      File.readlines(File.join(@resource.value(:path), '.git', 'config')).grep(/#{default_url}/).any?
+      File.readlines(File.join(@resource.value(:path), '.git', 'config')).grep(/#{Regexp.escape(default_url)}/).any?
     else
       File.directory?(File.join(@resource.value(:path), '.git'))
     end
@@ -281,7 +291,7 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
   # handle upstream branch changes
   # @!visibility private
   def checkout(revision = @resource.value(:revision))
-    if !local_branch_revision? && remote_branch_revision?
+    if !local_branch_revision?(revision) && remote_branch_revision?(revision)
       #non-locally existant branches (perhaps switching to a branch that has never been checked out)
       at_path { git_with_identity('checkout', '--force', '-b', revision, '--track', "#{@resource.value(:remote)}/#{revision}") }
     else
@@ -329,11 +339,13 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
     at_path { git_with_identity('branch', '-a') }.gsub('*', ' ').split(/\n/).map { |line| line.strip }
   end
 
+  # git < 2.4 returns 'detached from'
+  # git 2.4+ returns 'HEAD detached at'
   # @!visibility private
   def on_branch?
     at_path {
       matches = git_with_identity('branch', '-a').match /\*\s+(.*)/
-      matches[1] unless matches[1].match /(\(detached from|\(no branch)/
+      matches[1] unless matches[1].match /(\(detached from|\(HEAD detached at|\(no branch)/
     }
   end
 
@@ -386,7 +398,17 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
   # @return [String] Returns the tag/branch of the current repo if it's up to
   #                  date; otherwise returns the sha of the requested revision.
   def get_revision(rev = 'HEAD')
-    update_references
+    if @resource.value(:source)
+      update_references
+    else
+      status = at_path { git_with_identity('status')}
+      is_it_new = status =~ /Initial commit/
+      if is_it_new
+        status =~ /On branch (.*)/
+        branch = $1
+        return branch
+      end
+    end
     current = at_path { git_with_identity('rev-parse', rev).strip }
     if @resource.value(:revision)
       if tag_revision?
@@ -423,6 +445,7 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
     if @resource.value(:identity)
       Tempfile.open('git-helper', Puppet[:statedir]) do |f|
         f.puts '#!/bin/sh'
+        f.puts 'export SSH_AUTH_SOCKET='
         f.puts "exec ssh -oStrictHostKeyChecking=no -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oChallengeResponseAuthentication=no -oConnectTimeout=120 -i #{@resource.value(:identity)} $*"
         f.close
 
@@ -437,7 +460,8 @@ Puppet::Type.type(:vcsrepo).provide(:git, :parent => Puppet::Provider::Vcsrepo) 
         return ret
       end
     elsif @resource.value(:user) and @resource.value(:user) != Facter['id'].value
-      Puppet::Util::Execution.execute("git #{args.join(' ')}", :uid => @resource.value(:user), :failonfail => true)
+      env = Etc.getpwnam(@resource.value(:user))
+      Puppet::Util::Execution.execute("git #{args.join(' ')}", :uid => @resource.value(:user), :failonfail => true, :custom_environment => {'HOME' => env['dir']})
     else
       git(*args)
     end

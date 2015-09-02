@@ -3,7 +3,9 @@
 
 service <%= @service_name %>
 {
+<% if @port -%>
         port            = <%= @port %>
+<% end -%>
         disable         = <%= @disable %>
         socket_type     = <%= @socket_type %>
         protocol        = <%= @protocol %>
@@ -56,5 +58,8 @@ service <%= @service_name %>
 <% end -%>
 <% if @env -%>
         env             = <%= @env %>
+<% end -%>
+<% if @instances -%>
+        instances       = <%= @instances %>
 <% end -%>
 }

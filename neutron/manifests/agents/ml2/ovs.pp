@@ -38,7 +38,7 @@
 #   bridge mapping.
 #   Defaults to empty list
 #
-# [*bridge_mapping*]
+# [*bridge_mappings*]
 #   (optional) List of <physical_network>:<bridge>
 #   Defaults to empty list
 #
@@ -118,8 +118,8 @@ class neutron::agents::ml2::ovs (
     fail('Local ip for ovs agent must be set when tunneling is enabled')
   }
 
-  if $enable_distributed_routing and ! $l2_population {
-    fail('L2 population must be enabled when DVR is enabled')
+  if $enable_tunneling and $enable_distributed_routing and ! $l2_population {
+    fail('L2 population must be enabled when DVR and tunneling are enabled')
   }
 
   Package['neutron-ovs-agent'] -> Neutron_agent_ovs<||>
@@ -197,7 +197,7 @@ class neutron::agents::ml2::ovs (
     package { 'neutron-ovs-agent':
       ensure => $package_ensure,
       name   => $::neutron::params::ovs_agent_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'neutron-package'],
     }
   } else {
     # Some platforms (RedHat) do not provide a separate
@@ -207,7 +207,7 @@ class neutron::agents::ml2::ovs (
       package { 'neutron-ovs-agent':
         ensure => $package_ensure,
         name   => $::neutron::params::ovs_server_package,
-        tag    => 'openstack',
+        tag    => ['openstack', 'neutron-package'],
       }
     }
   }
@@ -225,6 +225,7 @@ class neutron::agents::ml2::ovs (
     name    => $::neutron::params::ovs_agent_service,
     enable  => $enabled,
     require => Class['neutron'],
+    tag     => 'neutron-service',
   }
 
   if $::neutron::params::ovs_cleanup_service {

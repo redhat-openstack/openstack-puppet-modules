@@ -195,6 +195,10 @@
 #   (optional) CIDR of the administrative network if HA mode is enabled.
 #   Defaults to '169.254.192.0/18'
 #
+# [*report_interval*]
+#   (optional) Deprecated, does nothing.
+#   Defaults to 'undef'.
+#
 class neutron::server (
   $package_ensure                   = 'present',
   $enabled                          = true,
@@ -336,7 +340,7 @@ class neutron::server (
     package { 'neutron-server':
       ensure => $package_ensure,
       name   => $::neutron::params::server_package,
-      tag    => 'openstack',
+      tag    => ['openstack', 'neutron-package'],
     }
   } else {
     # Some platforms (RedHat) does not provide a neutron-server package.
@@ -503,5 +507,6 @@ class neutron::server (
     hasstatus  => true,
     hasrestart => true,
     require    => Class['neutron'],
+    tag        => 'neutron-service',
   }
 }

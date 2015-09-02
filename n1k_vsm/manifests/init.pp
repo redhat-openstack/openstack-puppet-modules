@@ -36,6 +36,19 @@
 # [*n1kv_version*]
 #  (required) Version of the Nexus1000v VSM
 #
+# [*pacemaker_control*]
+#  (optional) Set to determine if pacemaker will control the VSM. If true will deploy both
+#  primary and secondary VSMs on all nodes and will not start VSM. Defaults to false and
+#  thus is optional unless this functionality is being used.
+#
+# [*existing_bridge*]
+#  (required) If VSM should be installed behind an existing bridge, this should be set to
+#  true and the bridge name should be provided in phy_if_bridge.
+#
+# [*vsm_mac_base*]
+#  (optional) If set, provides randomization for the MAC addresses for the VSM VM(s).
+#  Should be a (random) hexadecimal number of at least 7 digits (more is fine).
+#
 class n1k_vsm(
     $n1kv_source       = '',
     $n1kv_version      = 'latest',
@@ -47,12 +60,24 @@ class n1k_vsm(
     $vsm_mgmt_ip,
     $vsm_mgmt_netmask,
     $vsm_mgmt_gateway,
+    $pacemaker_control = false,
+    $existing_bridge   = false,
+    $vsm_mac_base      = ''
 ) {
 
     if($::osfamily != 'Redhat') {
       #current support exists for Redhat family.
       #Support for Debian will be added soon.
       fail("Unsupported osfamily ${::osfamily}")
+    }
+
+    # Ensure role is set to primary for pacemaker controlled deployment
+    # Additionally setup the extra variables for the secondary VSM
+    if ($n1k_vsm::pacemaker_control) {
+      $vsm_role_s = 'secondary'
+      $vsmname_s  = 'vsm-s'
+      $imgfile_s  = "/var/spool/cisco/vsm/${vsm_role_s}_repacked.iso"
+      $diskfile_s = "/var/spool/cisco/vsm/${vsm_role_s}_disk"
     }
 
     if ($n1k_vsm::vsm_role == 'primary') or ($n1k_vsm::vsm_role == 'standalone') {
@@ -73,7 +98,9 @@ class n1k_vsm(
     $disksize           = 4
     $imgfile            = "/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso"
     $diskfile           = "/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_disk"
-    $ovsbridge          = 'vsm-br'
+
+    #Set bridge name properly
+    $ovsbridge        = 'vsm-br'
 
     #VSM installation will be done only once. Will not respond to puppet sync
     $_phy_if_bridge     = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')

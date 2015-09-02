@@ -1,7 +1,7 @@
 Collectd module for Puppet
 ==========================
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/pdxcat/collectd.svg)](https://forge.puppetlabs.com/pdxcat/collectd) [![Build Status](https://travis-ci.org/pdxcat/puppet-module-collectd.png?branch=master)](https://travis-ci.org/pdxcat/puppet-module-collectd)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/puppet/collectd.svg)](https://forge.puppetlabs.com/puppet/collectd) [![Build Status](https://travis-ci.org/puppet-community/puppet-collectd.png?branch=master)](https://travis-ci.org/puppet-community/puppet-collectd)
 
 Description
 -----------
@@ -55,9 +55,12 @@ Configurable Plugins
 Parameters will vary widely between plugins. See the collectd
 documentation for each plugin for configurable attributes.
 
+* `aggregation`  (see [collectd::plugin::aggregation](#class-collectdpluginaggregation) below)
 * `amqp`  (see [collectd::plugin::amqp](#class-collectdpluginamqp) below)
 * `apache`  (see [collectd::plugin::apache](#class-collectdpluginapache) below)
 * `bind`  (see [collectd::plugin::bind](#class-collectdpluginbind) below)
+* `ceph`  (see [collectd::plugin::ceph](#class-ceph) below)
+* `chain`  (see [collectd::plugin::chain](#class-chain) below)
 * `conntrack`  (see [collectd::plugin::conntrack](#class-conntrack) below)
 * `cpu`  (see [collectd::plugin::cpu](#class-collectdplugincpu) below)
 * `cpufreq`  (see [collectd::plugin::cpufreq](#class-collectdplugincpufreq) below)
@@ -81,6 +84,7 @@ documentation for each plugin for configurable attributes.
 * `memcached`(see [collectd::plugin::memcached](#class-collectdpluginmemcached) below )
 * `memory`(see [collectd::plugin::memory](#class-collectdpluginmemory) below )
 * `mysql` (see [collectd::plugin::mysql](#class-collectdpluginmysql) below)
+* `netlink` (see [collectd::plugin::netlink](#class-collectdpluginnetlink) below)
 * `network` (see [collectd::plugin::network](#class-collectdpluginnetwork) below)
 * `nfs`  (see [collectd::plugin::nfs](#class-collectdpluginnfs) below)
 * `nginx` (see [collectd::plugin::nginx](#class-collectdpluginnginx) below)
@@ -114,6 +118,33 @@ documentation for each plugin for configurable attributes.
 * `write_riemann` (see [collectd::plugin::write_riemann](#class-collectdpluginwrite_riemann) below)
 * `zfs_arc` (see [collectd::plugin::zfs_arc](#class-collectdpluginzfs_arc) below)
 
+####Class: `collectd::plugin::aggregation`
+
+```puppet
+collectd::plugin::aggregation::aggregator {
+  cpu':
+    plugin           => 'cpu',
+    type             => 'cpu',
+    groupby          => ["Host", "TypeInstance",],
+    calculateaverage => true,
+}
+```
+
+You can as well configure this plugin with a parameterized class :
+
+```puppet
+class { 'collectd::plugin::aggregation':
+  aggregators => {
+    cpu' => {
+      plugin           => 'cpu',
+      type             => 'cpu',
+      groupby          => ["Host", "TypeInstance",],
+      calculateaverage => true,
+    },
+  },
+}
+```
+
 ####Class: `collectd::plugin::amqp`
 
 ```puppet
@@ -146,6 +177,45 @@ class { 'collectd::plugin::apache':
 class { 'collectd::plugin::bind':
   url    => 'http://localhost:8053/',
 }
+```
+
+####Class: `collectd::plugin::ceph`
+
+```puppet
+class { 'collectd::plugin::ceph':
+  osds          => [ 'osd.0', 'osd.1', 'osd.2'],
+}
+```
+
+####Class: `collectd::plugin::chain`
+
+```puppet
+class { 'collectd::plugin::chain':
+    chainname     => "PostCache",
+    defaulttarget => "write",
+    rules         => [
+      {
+        'match'   => {
+          'type'    => 'regex',
+          'matches' => {
+            'Plugin'         => "^cpu$",
+            'PluginInstance' => "^[0-9]+$",
+          },
+        },
+        'targets' => [
+          {
+            'type'       => "write",
+            'attributes' => {
+              "Plugin" => "aggregation",
+            },
+          },
+          {
+            'type' => "stop",
+          },
+        ],
+      },
+    ],
+  }
 ```
 
 ####Class: `collectd::plugin::conntrack`
@@ -258,7 +328,8 @@ class { 'collectd::plugin::df':
 ```puppet
 class { 'collectd::plugin::disk':
   disks          => ['/^dm/'],
-  ignoreselected => true
+  ignoreselected => true,
+  udevnameattr   => 'DM_NAME',
 }
 ```
 
@@ -272,11 +343,29 @@ class { 'collectd::plugin::entropy':
 ####Class: `collectd::plugin::exec`
 
 ```puppet
-collectd::plugin::exec {
+collectd::plugin::exec::cmd {
   'dummy':
     user => nobody,
     group => nogroup,
     exec => ["/bin/echo", "PUTVAL myhost/foo/gauge-flat N:1"],
+}
+
+```
+You can also configure this plugin with a parameterized class:
+```puppet
+class { 'collectd::plugin::exec':
+  commands => {
+    'dummy1' => {
+      user  => nobody,
+      group => nogroup,
+      exec  => ["/bin/echo", "PUTVAL myhost/foo/gauge-flat1 N:1"],
+    },
+    'dummy2' => {
+      user  => nobody,
+      group => nogroup,
+      exec  => ["/bin/echo", "PUTVAL myhost/foo/gauge-flat2 N:1"],
+    },
+  }
 }
 ```
 
@@ -447,6 +536,19 @@ collectd::plugin::mysql::database { 'betadase':
 }
 ```
 
+####Class: `collectd::plugin::netlink`
+
+```puppet
+class { 'collectd::plugin::netlink':
+  interfaces        => ['eth0', 'eth1'],
+  verboseinterfaces => ['ppp0'],
+  qdiscs            => ['"eth0" "pfifo_fast-1:0"', '"ppp0"'],
+  classes           => ['"ppp0" "htb-1:10"'],
+  filters           => ['"ppp0" "u32-1:0"'],
+  ignoreselected    => false,
+}
+```
+
 ####Class: `collectd::plugin::network`
 
 ```puppet
@@ -513,12 +615,31 @@ class { 'collectd::plugin::ntpd':
 
 ####Class: `collectd::plugin::openvpn`
 
+ * `statusfile` (String or Array) Status file(s) to collect data from. (Default `/etc/openvpn/openvpn-status.log`)
+ * `improvednamingschema` (Bool) When enabled, the filename of the status file will be used as plugin instance and the client's "common name" will be used as type instance. This is required when reading multiple status files. (Default: `false`)
+ * `collectcompression` Sets whether or not statistics about the compression used by OpenVPN should be collected. This information is only available in single mode. (Default `true`)
+ * `collectindividualusers` Sets whether or not traffic information is collected for each connected client individually. If set to false, currently no traffic data is collected at all because aggregating this data in a save manner is tricky. (Default `true`)
+ * `collectusercount` When enabled, the number of currently connected clients or users is collected.  This is especially interesting when CollectIndividualUsers is disabled, but can be configured independently from that option. (Default `false`)
+
+Watch multiple `statusfile`s:
+
+```puppet
+class { 'collectd::plugin::openvpn':
+  statusfile             => [ '/etc/openvpn/openvpn-status-tcp.log', '/etc/openvpn/openvpn-status-udp.log' ],
+  collectindividualusers => false,
+  collectusercount       => true,
+}
+```
+
+Watch the single default `statusfile`:
+
 ```puppet
 class { 'collectd::plugin::openvpn':
   collectindividualusers => false,
   collectusercount       => true,
 }
 ```
+
 
 ####Class: `collectd::plugin::perl`
 
@@ -649,6 +770,8 @@ class { 'collectd::plugin::postgresql':
 
 ####Class: `collectd::plugin::processes`
 
+You can either specify processes / process matches at once:
+
 ```puppet
 class { 'collectd::plugin::processes':
   processes => ['process1', 'process2'],
@@ -657,6 +780,18 @@ class { 'collectd::plugin::processes':
   ],
 }
 ```
+
+Or define single processes / process matches:
+```puppet
+collectd::plugin::processes::process { 'collectd' : }
+```
+
+```puppet
+collectd::plugin::processes::processmatch { 'elasticsearch' :
+  regex => '.*java.*org.elasticsearch.bootstrap.Elasticsearch'
+}
+```
+
 ####Class: `collectd::plugin::protocols`
 
  * `values` is an array of `Protocol` names, `Protocol:ValueName` pairs, or a regex
@@ -687,11 +822,11 @@ NOTE: Since `v3.4.0` the syntax of this plugin has changed. Make sure to update 
 class { 'collectd::plugin::python':
   modulepaths => ['/usr/share/collectd/python'],
   modules     => {
-    'elasticsearch': {
+    'elasticsearch' => {
       'script_source' => 'puppet:///modules/myorg/elasticsearch_collectd_python.py',
       'config'        => {'Cluster' => 'elasticsearch'},
     },
-    'another-module': {
+    'another-module' => {
       'config'        => {'Verbose' => 'true'},
     }
   }
@@ -921,9 +1056,29 @@ class { 'collectd::plugin::vmem':
 
 ####Class: `collectd::plugin::write_graphite`
 
+The `write_graphite` plugin writes data to Graphite, an open-source metrics storage and graphing project.
 ```puppet
-class { 'collectd::plugin::write_graphite':
-  graphitehost => 'graphite.example.org',
+collectd::plugin::write_graphite::carbon {'my_graphite':
+  graphitehost   => 'graphite.example.org',
+  graphiteport   => 2003,
+  graphiteprefix => '',
+  protocol       => 'tcp'
+}
+```
+
+You can define multiple Graphite backends where will be metrics send. Each backend should have unique title:
+
+```puppet
+collectd::plugin::write_graphite::carbon {'secondary_graphite':
+  graphitehost      => 'graphite.example.org',
+  graphiteport      => 2004,
+  graphiteprefix    => '',
+  protocol          => 'udp',
+  escapecharacter   => '_',
+  alwaysappendds    => true,
+  storerates        => true,
+  separateinstances => false,
+  logsenderrors     => true
 }
 ```
 
@@ -974,7 +1129,7 @@ See metadata.json for supported platforms
 
 ##Known issues
 
-Some plugins will need two runs of Puppet to fully generate the configuration for collectd. See [this issue](https://github.com/pdxcat/puppet-module-collectd/issues/162).
+Some plugins will need two runs of Puppet to fully generate the configuration for collectd. See [this issue](https://github.com/puppet-community/puppet-collectd/issues/162).
 
 ##Development
 
@@ -996,7 +1151,7 @@ bundle exec rake spec SPEC_OPTS='--format documentation'
 
 Some plugins or some options in plugins are only available for recent versions of collectd.
 
-This module shall not use unsupported configuration directives. Look at [templates/loadplugin.conf.erb](https://github.com/pdxcat/puppet-module-collectd/blob/master/templates/loadplugin.conf.erb) for a hands-on example.
+This module shall not use unsupported configuration directives. Look at [templates/loadplugin.conf.erb](https://github.com/puppet-community/puppet-collectd/blob/master/templates/loadplugin.conf.erb) for a hands-on example.
 
 Please make use of the search by branch/tags on the collectd github to see when a function has been first released.
 

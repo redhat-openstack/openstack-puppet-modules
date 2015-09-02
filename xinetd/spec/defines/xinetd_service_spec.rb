@@ -87,24 +87,28 @@ describe 'xinetd::service' do
   end
 
   # nice values, good
-  ['-19','9','19'].each do |i|
+  [-20,0,9,19].each do |i|
     describe "with nice #{i}" do
       let :params do
         default_params.merge({ :nice => i })
       end
-      it {
-        should contain_file('/etc/xinetd.d/httpd').with_content(
-          /nice\s*=\s*#{i}/)
-      }
+
+      it { should contain_file('/etc/xinetd.d/httpd').with_content(/nice\s*=\s*#{i}/) }
     end
   end
+
   # nice values, bad
-  ['-20','90','foo'].each do |i|
+  ['-21','90','foo',-21,90,20].each do |i|
     describe "with nice #{i}" do
       let :params do
         default_params.merge({ :nice => i })
       end
-      it { expect { should compile }.to raise_error(Puppet::Error) }
+
+      it 'should fail' do
+        expect {
+          should contain_class('xinetd')
+        }.to raise_error(Puppet::Error)
+      end
     end
   end
 end

@@ -14,6 +14,7 @@ class xinetd::params {
       $service_hasstatus  = false
       $service_name       = 'xinetd'
       $service_restart    = "/usr/sbin/service ${service_name} reload"
+      $service_status     = undef
     }
     'FreeBSD': {
       $confdir            = '/usr/local/etc/xinetd.d'

@@ -92,6 +92,19 @@ class {'::mongodb::server': }->
 class {'::mongodb::client': }
 ```
 
+Having a local copy of MongoDB repository (that is managed by your private modules)
+you can still enjoy the charms of `mongodb::params` that manage packages.
+To disable managing of repository, but still enable managing packages:
+
+```puppet
+class {'::mongodb::globals':
+  manage_package_repo => false,
+  manage_package      => true,
+}->
+class {'::mongodb::server': }->
+class {'::mongodb::client': }
+```
+
 ## Usage
 
 Most of the interaction for the server is done via `mongodb::server`. For
@@ -434,6 +447,12 @@ Default: <>
 Whether or not the MongoDB service resource should be part of the catalog.
 Default: true
 
+#####`storage_engine`
+Only needed for MongoDB 3.x versions, where it's possible to select the
+'wiredTiger' engine in addition to the default 'mmapv1' engine. If not set, the
+config is left out and mongo will default to 'mmapv1'.
+You should not set this for MongoDB versions < 3.x
+
 #####`restart`
 Specifies whether the service should be restarted on config changes. Default: 'true'
 
@@ -531,7 +550,7 @@ The maximum amount of two second tries to wait MongoDB startup. Default: 10
 
 ```puppet
 mongodb_user { testuser:
-  username      => 'testuser',
+  name          => 'testuser',
   ensure        => present,
   password_hash => mongodb_password('testuser', 'p@ssw0rd'),
   database      => testdb,

@@ -3,3 +3,5 @@ pkg/
 *.swp
 Gemfile.lock
 .rspec_system/
+.bundle/
+.ruby-version

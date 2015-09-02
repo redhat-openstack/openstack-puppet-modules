@@ -2,7 +2,6 @@ class ntp::params {
 
   $autoupdate        = false
   $config_template   = 'ntp/ntp.conf.erb'
-  $disable_monitor   = false
   $keys_enable       = false
   $keys_controlkey   = ''
   $keys_requestkey   = ''
@@ -21,7 +20,14 @@ class ntp::params {
   $udlc_stratum      = '10'
   $interfaces        = []
   $disable_auth      = false
+  $disable_kernel    = false
   $broadcastclient   = false
+  $tos               = false
+  $tos_minclock      = '3'
+  $tos_minsane       = '1'
+  $tos_floor         = '1'
+  $tos_ceiling       = '15'
+  $tos_cohort        = '0'
 
   # Allow a list of fudge options
   $fudge             = []
@@ -48,23 +54,24 @@ class ntp::params {
 
   case $::osfamily {
     'AIX': {
-      $config        = $default_config
-      $keys_file     = '/etc/ntp.keys'
-      $driftfile     = '/etc/ntp.drift'
-      $package_name  = [ 'bos.net.tcp.client' ]
-      $restrict      = [
+      $config          = $default_config
+      $keys_file       = '/etc/ntp.keys'
+      $driftfile       = '/etc/ntp.drift'
+      $package_name    = [ 'bos.net.tcp.client' ]
+      $restrict        = [
         'default nomodify notrap nopeer noquery',
         '127.0.0.1',
       ]
-      $service_name  = 'xntpd'
-      $iburst_enable = true
-      $servers       = [
+      $service_name    = 'xntpd'
+      $iburst_enable   = true
+      $servers         = [
         '0.debian.pool.ntp.org',
         '1.debian.pool.ntp.org',
         '2.debian.pool.ntp.org',
         '3.debian.pool.ntp.org',
       ]
-      $maxpoll       = undef
+      $maxpoll         = undef
+      $disable_monitor = false
     }
     'Debian': {
       $config          = $default_config
@@ -86,6 +93,7 @@ class ntp::params {
         '3.debian.pool.ntp.org',
       ]
       $maxpoll         = undef
+      $disable_monitor = false
     }
     'RedHat': {
       $config          = $default_config
@@ -93,32 +101,70 @@ class ntp::params {
       $driftfile       = $default_driftfile
       $package_name    = $default_package_name
       $service_name    = $default_service_name
-      $restrict        = [
-        'default kod nomodify notrap nopeer noquery',
-        '-6 default kod nomodify notrap nopeer noquery',
-        '127.0.0.1',
-        '-6 ::1',
-      ]
-      $iburst_enable   = false
-      $servers         = [
-        '0.centos.pool.ntp.org',
-        '1.centos.pool.ntp.org',
-        '2.centos.pool.ntp.org',
-      ]
       $maxpoll         = undef
+
+      case $::operatingsystem {
+        'Fedora': {
+          $restrict        = [
+            'default nomodify notrap nopeer noquery',
+            '127.0.0.1',
+            '::1',
+          ]
+          $iburst_enable   = true
+          $servers         = [
+            '0.fedora.pool.ntp.org',
+            '1.fedora.pool.ntp.org',
+            '2.fedora.pool.ntp.org',
+            '3.fedora.pool.ntp.org',
+          ]
+          $disable_monitor = true
+        }
+        default: {
+          $restrict        = [
+            'default kod nomodify notrap nopeer noquery',
+            '-6 default kod nomodify notrap nopeer noquery',
+            '127.0.0.1',
+            '-6 ::1',
+          ]
+          $iburst_enable   = false
+          $servers         = [
+            '0.centos.pool.ntp.org',
+            '1.centos.pool.ntp.org',
+            '2.centos.pool.ntp.org',
+          ]
+          $disable_monitor = false
+        }
+      }
     }
     'Suse': {
-      if $::operatingsystem == 'SLES' and $::operatingsystemmajrelease == '12'
-      {
-        $service_name  = 'ntpd'
-        $keys_file     = '/etc/ntp.keys'
-      } else{
+      if $::operatingsystem == 'SLES' {
+        case $::operatingsystemmajrelease {
+          '10': {
+            $service_name  = 'ntp'
+            $keys_file     = '/etc/ntp.keys'
+            $package_name  = [ 'xntp' ]
+          }
+          '11': {
+            $service_name  = 'ntp'
+            $keys_file     = $default_keys_file
+            $package_name  = $default_package_name
+          }
+          '12': {
+            $service_name  = 'ntpd'
+            $keys_file     = '/etc/ntp.keys'
+            $package_name  = $default_package_name
+          }
+          default: {
+            fail("The ${module_name} module is not supported on an ${::operatingsystem} ${::operatingsystemmajrelease} distribution.")
+          }
+        }
+      } else {
         $service_name  = 'ntp'
         $keys_file     = $default_keys_file
+        $package_name  = $default_package_name
       }
       $config          = $default_config
       $driftfile       = '/var/lib/ntp/drift/ntp.drift'
-      $package_name    = $default_package_name
       $restrict        = [
         'default kod nomodify notrap nopeer noquery',
         '-6 default kod nomodify notrap nopeer noquery',
@@ -133,6 +179,7 @@ class ntp::params {
         '3.opensuse.pool.ntp.org',
       ]
       $maxpoll         = undef
+      $disable_monitor = false
     }
     'FreeBSD': {
       $config          = $default_config
@@ -154,11 +201,12 @@ class ntp::params {
         '3.freebsd.pool.ntp.org',
       ]
       $maxpoll         = 9
+      $disable_monitor = false
     }
     'Archlinux': {
       $config          = $default_config
       $keys_file       = $default_keys_file
-      $driftfile       = $default_driftfile
+      $driftfile       = '/var/lib/ntp/ntp.drift'
       $package_name    = $default_package_name
       $service_name    = $default_service_name
       $restrict        = [
@@ -169,26 +217,36 @@ class ntp::params {
       ]
       $iburst_enable   = false
       $servers         = [
-        '0.pool.ntp.org',
-        '1.pool.ntp.org',
-        '2.pool.ntp.org',
+        '0.arch.pool.ntp.org',
+        '1.arch.pool.ntp.org',
+        '2.arch.pool.ntp.org',
+        '3.arch.pool.ntp.org',
       ]
       $maxpoll         = undef
+      $disable_monitor = false
     }
     'Solaris': {
       $config        = '/etc/inet/ntp.conf'
       $driftfile     = '/var/ntp/ntp.drift'
       $keys_file     = '/etc/inet/ntp.keys'
-      $package_name  = $::operatingsystemrelease ? {
-        /^(5\.10|10|10_u\d+)$/ => [ 'SUNWntpr', 'SUNWntpu' ],
-        /^(5\.11|11|11\.\d+)$/ => [ 'service/network/ntp' ]
+      if $::kernelrelease == '5.10'
+      {
+        # Solaris 10
+        $package_name = [ 'SUNWntpr', 'SUNWntpu' ]
+        $restrict     = [
+          'default nomodify notrap nopeer noquery',
+          '127.0.0.1',
+        ]
+      } else {
+        # Solaris 11...
+        $package_name = [ 'service/network/ntp' ]
+        $restrict     = [
+          'default kod nomodify notrap nopeer noquery',
+          '-6 default kod nomodify notrap nopeer noquery',
+          '127.0.0.1',
+          '-6 ::1',
+        ]
       }
-      $restrict      = [
-        'default kod nomodify notrap nopeer noquery',
-        '-6 default kod nomodify notrap nopeer noquery',
-        '127.0.0.1',
-        '-6 ::1',
-      ]
       $service_name  = 'network/ntp'
       $iburst_enable = false
       $servers       = [
@@ -198,6 +256,7 @@ class ntp::params {
         '3.pool.ntp.org',
       ]
       $maxpoll       = undef
+      $disable_monitor = false
     }
   # Gentoo was added as its own $::osfamily in Facter 1.7.0
     'Gentoo': {
@@ -220,6 +279,7 @@ class ntp::params {
         '3.gentoo.pool.ntp.org',
       ]
       $maxpoll         = undef
+      $disable_monitor = false
     }
     'Linux': {
     # Account for distributions that don't have $::osfamily specific settings.
@@ -245,6 +305,28 @@ class ntp::params {
             '3.gentoo.pool.ntp.org',
           ]
           $maxpoll         = undef
+          $disable_monitor = false
+        }
+        'Amazon': {
+          $config          = $default_config
+          $keys_file       = $default_keys_file
+          $driftfile       = $default_driftfile
+          $package_name    = $default_package_name
+          $service_name    = $default_service_name
+          $restrict        = [
+            'default kod nomodify notrap nopeer noquery',
+            '-6 default kod nomodify notrap nopeer noquery',
+            '127.0.0.1',
+            '-6 ::1',
+          ]
+          $iburst_enable   = false
+          $servers         = [
+            '0.centos.pool.ntp.org',
+            '1.centos.pool.ntp.org',
+            '2.centos.pool.ntp.org',
+          ]
+          $maxpoll         = undef
+          $disable_monitor = false
         }
         default: {
           fail("The ${module_name} module is not supported on an ${::operatingsystem} distribution.")

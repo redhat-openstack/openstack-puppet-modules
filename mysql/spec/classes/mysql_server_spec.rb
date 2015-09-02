@@ -43,7 +43,15 @@ describe 'mysql::server' do
           context 'with defaults' do
             it { is_expected.to contain_service('mysqld') }
           end
-
+          context 'with package_manage set to true' do
+            let(:params) {{ :package_manage => true }}
+            it { is_expected.to contain_service('mysqld').that_requires('Package[mysql-server]') }
+          end
+          context 'with package_manage set to false' do
+            let(:params) {{ :package_manage => false }}
+            it { is_expected.to contain_service('mysqld') }
+            it { is_expected.not_to contain_service('mysqld').that_requires('Package[mysql-server]') }
+          end
           context 'service_enabled set to false' do
             let(:params) {{ :service_enabled => false }}
 
@@ -61,6 +69,13 @@ describe 'mysql::server' do
 
         context 'mysql::server::root_password' do
           describe 'when defaults' do
+            it {
+               is_expected.to contain_exec('remove install pass').with(
+                 :command => 'mysqladmin -u root --password=$(grep -o \'[^ ]\\+$\' /.mysql_secret) password \'\' && rm -f /.mysql_secret',
+                 :onlyif  => 'test -f /.mysql_secret',
+                 :path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin'
+               )
+             }
             it { is_expected.not_to contain_mysql_user('root@localhost') }
             it { is_expected.not_to contain_file('/root/.my.cnf') }
           end
@@ -84,6 +99,15 @@ describe 'mysql::server' do
             it { is_expected.not_to contain_mysql_user('root@localhost') }
             it { is_expected.not_to contain_file('/root/.my.cnf') }
           end
+          describe 'when install_secret_file set to /root/.mysql_secret' do
+            let(:params) {{ :install_secret_file => '/root/.mysql_secret' }}
+            it {
+              is_expected.to contain_exec('remove install pass').with(
+                 :command => 'mysqladmin -u root --password=$(grep -o \'[^ ]\\+$\' /root/.mysql_secret) password \'\' && rm -f /root/.mysql_secret',
+                 :onlyif  => 'test -f /root/.mysql_secret'
+              )
+            }
+          end 
         end
 
         context 'mysql::server::providers' do
