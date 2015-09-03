@@ -485,29 +485,29 @@ a cluster.  An example is:</p>
 <a id="public-classes" class="anchor" href="#public-classes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public Classes</h3>
 
 <ul>
-<li><strong>cassandra</strong></li>
-<li><strong>cassandra::datastax_agent</strong></li>
-<li><strong>cassandra::datastax_repo</strong></li>
-<li><strong>cassandra::firewall_ports</strong></li>
-<li><strong>cassandra::java</strong></li>
-<li><strong>cassandra::opscenter</strong></li>
-<li><strong>cassandra::opscenter::pycrypto</strong></li>
-<li><strong>cassandra::optutils</strong></li>
+<li><a href="#class-cassandra">cassandra</a></li>
+<li><a href="#class-cassandradatastax_agent">cassandra::datastax_agent</a></li>
+<li><a href="#class-cassandradatastax_repo">cassandra::datastax_repo</a></li>
+<li><a href="#class-cassandrafirewall_ports">cassandra::firewall_ports</a></li>
+<li><a href="#class-cassandrajava">cassandra::java</a></li>
+<li><a href="#class-cassandraopscenter">cassandra::opscenter</a></li>
+<li><a href="#class-cassandraopscenterpycrypto">cassandra::opscenter::pycrypto</a></li>
+<li><a href="#class-cassandraoptutils">cassandra::optutils</a></li>
 </ul>
 
 <h3>
 <a id="public-defined-types" class="anchor" href="#public-defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public Defined Types</h3>
 
 <ul>
-<li><strong>cassandra::opscenter::cluster_name</strong></li>
+<li><a href="#defined-type-cassandraopscentercluster_name">cassandra::opscenter::cluster_name</a></li>
 </ul>
 
 <h3>
 <a id="private-defined-types" class="anchor" href="#private-defined-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Private Defined Types</h3>
 
 <ul>
-<li><strong>cassandra::opscenter::setting</strong></li>
-<li><strong>cassandra::firewall_ports::rule</strong></li>
+<li>cassandra::opscenter::setting</li>
+<li>cassandra::firewall_ports::rule</li>
 </ul>
 
 <h3>
@@ -524,24 +524,24 @@ configuration file.</p>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>AllowAllAuthenticator</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'AllowAllAuthenticator.</p>
 
 <h5>
 <a id="authorizer" class="anchor" href="#authorizer" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>authorizer</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default: <strong>AllowAllAuthorizer</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'AllowAllAuthorizer'</p>
 
 <h5>
 <a id="auto_snapshot" class="anchor" href="#auto_snapshot" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>auto_snapshot</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>true</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'true'</p>
 
 <h5>
 <a id="cassandra_9822" class="anchor" href="#cassandra_9822" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_9822</code>
@@ -551,7 +551,8 @@ configuration file.</p>
 service as a workaround for
 <a href="https://issues.apache.org/jira/browse/CASSANDRA-9822">CASSANDRA-9822</a>.  This
 option is silently ignored on the Red Hat family of operating systems as
-this bug only affects Ubuntu systems (default <strong>false</strong>).</p>
+this bug only affects Ubuntu systems.
+Default value 'false'</p>
 
 <h5>
 <a id="cassandra_yaml_tmpl" class="anchor" href="#cassandra_yaml_tmpl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_yaml_tmpl</code>
@@ -559,72 +560,72 @@ this bug only affects Ubuntu systems (default <strong>false</strong>).</p>
 
 <p>The path to the Puppet template for the Cassandra configuration file.  This
 allows the user to supply their own customized template.  A Cassandra 1.X
-compatible template called cassandra1.yaml.erb has been provided by <a href="https://github.com/Spredzy" class="user-mention">@Spredzy</a>
-(default <strong>cassandra/cassandra.yaml.erb</strong>).</p>
+compatible template called cassandra1.yaml.erb has been provided by <a href="https://github.com/Spredzy" class="user-mention">@Spredzy</a>.
+Default value 'cassandra/cassandra.yaml.erb'</p>
 
 <h5>
 <a id="client_encryption_enabled" class="anchor" href="#client_encryption_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_enabled</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>false</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'false'</p>
 
 <h5>
 <a id="client_encryption_keystore" class="anchor" href="#client_encryption_keystore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_keystore</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>conf/.keystore</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'conf/.keystore'</p>
 
 <h5>
 <a id="client_encryption_keystore_password" class="anchor" href="#client_encryption_keystore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_keystore_password</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>cassandra</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'cassandra'</p>
 
 <h5>
 <a id="cluster_name" class="anchor" href="#cluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cluster_name</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>Test Cluster</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'Test Cluster'</p>
 
 <h5>
 <a id="commitlog_directory" class="anchor" href="#commitlog_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_directory</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>/var/lib/cassandra/commitlog</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '/var/lib/cassandra/commitlog'</p>
 
 <h5>
 <a id="concurrent_counter_writes" class="anchor" href="#concurrent_counter_writes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_counter_writes</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>32</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '32'</p>
 
 <h5>
 <a id="concurrent_reads" class="anchor" href="#concurrent_reads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_reads</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>32</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '32'</p>
 
 <h5>
 <a id="concurrent_writes" class="anchor" href="#concurrent_writes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_writes</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>32</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '32'</p>
 
 <h5>
 <a id="config_path" class="anchor" href="#config_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_path</code>
@@ -633,83 +634,83 @@ compatible template called cassandra1.yaml.erb has been provided by <a href="htt
 <p>The path to the cassandra configuration file.  If this is undef, it will be
 changed to <strong>/etc/cassandra/default.conf</strong> on the Red Hat family of operating
 systems or <strong>/etc/cassandra</strong> on Ubuntu.  Otherwise the user can specify the
-path name
-(default <strong>undef</strong>).</p>
+path name.
+Default value <em>undef</em></p>
 
 <h5>
 <a id="data_file_directories" class="anchor" href="#data_file_directories" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>data_file_directories</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>['/var/lib/cassandra/data']</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '['/var/lib/cassandra/data']'</p>
 
 <h5>
 <a id="dc" class="anchor" href="#dc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dc</code>
 </h5>
 
 <p>Sets the value for dc in <em>config_path</em>/<em>snitch_properties_file</em> see
-<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
-for more details
-(default <strong>DC1</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details.
+Default value 'DC1'</p>
 
 <h5>
 <a id="dc_suffix" class="anchor" href="#dc_suffix" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dc_suffix</code>
 </h5>
 
 <p>Sets the value for dc_suffix in <em>config_path</em>/<em>snitch_properties_file</em> see
-<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html</a>
 for more details.  If the value is <em>undef</em> then change will be made to the
-snitch properties file for this setting
-(default <em>undef</em>).</p>
+snitch properties file for this setting.
+Default value <em>undef</em></p>
 
 <h5>
 <a id="disk_failure_policy" class="anchor" href="#disk_failure_policy" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>disk_failure_policy</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default: <strong>stop</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'stop'</p>
 
 <h5>
 <a id="endpoint_snitch" class="anchor" href="#endpoint_snitch" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>endpoint_snitch</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default: <strong>SimpleSnitch</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'SimpleSnitch'</p>
 
 <h5>
 <a id="hinted_handoff_enabled" class="anchor" href="#hinted_handoff_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hinted_handoff_enabled</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(defaults to <strong>'true'</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'true'</p>
 
 <h5>
 <a id="incremental_backups" class="anchor" href="#incremental_backups" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>incremental_backups</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>false</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'false'</p>
 
 <h5>
 <a id="internode_compression" class="anchor" href="#internode_compression" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_compression</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>all</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'all'</p>
 
 <h5>
 <a id="listen_address" class="anchor" href="#listen_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>listen_address</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>localhost</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'localhost'</p>
 
 <h5>
 <a id="manage_dsc_repo" class="anchor" href="#manage_dsc_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_dsc_repo</code>
@@ -719,215 +720,217 @@ snitch properties file for this setting
 the ::cassandra::datastax_repo instead.</p>
 
 <p>If set to true then a repository will be setup so that packages can be
-downloaded from DataStax community (default <strong>false</strong>).</p>
+downloaded from DataStax community.
+Default value 'false'</p>
 
 <h5>
 <a id="native_transport_port" class="anchor" href="#native_transport_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_port</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>9042</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '9042'</p>
 
 <h5>
 <a id="num_tokens" class="anchor" href="#num_tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>num_tokens</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>256</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '256'</p>
 
 <h5>
 <a id="package_ensure" class="anchor" href="#package_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
 </h5>
 
 <p>The status of the package specified in <strong>package_name</strong>.  Can be
-<em>present</em>, <em>latest</em> or a specific version number (default <strong>present</strong>).</p>
+<em>present</em>, <em>latest</em> or a specific version number.
+Default value 'present'</p>
 
 <h5>
 <a id="package_name" class="anchor" href="#package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
-<p>The name of the Cassandra package.  Must be available from a repository
-(default <strong>dsc22</strong>).</p>
+<p>The name of the Cassandra package.  Must be available from a repository.
+Default value 'dsc22'</p>
 
 <h5>
 <a id="partitioner" class="anchor" href="#partitioner" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>partitioner</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>org.apache.cassandra.dht.Murmur3Partitioner</strong>)</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'org.apache.cassandra.dht.Murmur3Partitioner'</p>
 
 <h5>
 <a id="prefer_local" class="anchor" href="#prefer_local" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>prefer_local</code>
 </h5>
 
 <p>Sets the value for prefer_local in <em>config_path</em>/<em>snitch_properties_file</em> see
-<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html</a>
 for more details.  Valid values are true, false or <em>undef</em>.  If the value is
 <em>undef</em> then change will be made to the snitch properties file for this
-setting
-(default <em>undef</em>).</p>
+setting.
+Default value <em>undef</em></p>
 
 <h5>
 <a id="rack" class="anchor" href="#rack" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rack</code>
 </h5>
 
 <p>Sets the value for rack in <em>config_path</em>/<em>snitch_properties_file</em> see
-<a href="http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.0/cassandra/architecture/architectureSnitchesAbout_c.html</a>
-for more details
-(default <strong>RAC1</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html</a>
+for more details.
+Default value 'RAC1'</p>
 
 <h5>
 <a id="rpc_address" class="anchor" href="#rpc_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_address</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>localhost</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'localhost'</p>
 
 <h5>
 <a id="rpc_port" class="anchor" href="#rpc_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_port</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>9160</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '9160'</p>
 
 <h5>
 <a id="rpc_server_type" class="anchor" href="#rpc_server_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_server_type</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>sync</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'sync'</p>
 
 <h5>
 <a id="saved_caches_directory" class="anchor" href="#saved_caches_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>saved_caches_directory</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>/var/lib/cassandra/saved_caches</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '/var/lib/cassandra/saved_caches'</p>
 
 <h5>
 <a id="seeds" class="anchor" href="#seeds" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>seeds</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>127.0.0.1</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '127.0.0.1'</p>
 
 <h5>
 <a id="server_encryption_internode" class="anchor" href="#server_encryption_internode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_internode</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>none</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'none'</p>
 
 <h5>
 <a id="server_encryption_keystore" class="anchor" href="#server_encryption_keystore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_keystore</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>conf/.keystore</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'conf/.keystore'</p>
 
 <h5>
 <a id="server_encryption_keystore_password" class="anchor" href="#server_encryption_keystore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_keystore_password</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>cassandra</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'cassandra'</p>
 
 <h5>
 <a id="server_encryption_truststore" class="anchor" href="#server_encryption_truststore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_truststore</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>conf/.truststore</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'conf/.truststore'</p>
 
 <h5>
 <a id="server_encryption_truststore_password" class="anchor" href="#server_encryption_truststore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_truststore_password</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>cassandra</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'cassandra'</p>
 
 <h5>
 <a id="service_enable" class="anchor" href="#service_enable" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_enable</code>
 </h5>
 
 <p>Enable the Cassandra service to start at boot time.  Valid values are true
-or false
-(default: <strong>true</strong>)</p>
+or false.
+Default value 'true'</p>
 
 <h5>
 <a id="service_ensure" class="anchor" href="#service_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_ensure</code>
 </h5>
 
-<p>Ensure the Cassandra service is running.  Valid values are running or stopped
-(default: <strong>running</strong>)</p>
+<p>Ensure the Cassandra service is running.  Valid values are running or stopped.
+Default value 'running'</p>
 
 <h5>
 <a id="service_name" class="anchor" href="#service_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
 </h5>
 
-<p>The name of the service that runs the Cassandra software (default
-<strong>cassandra</strong>).</p>
+<p>The name of the service that runs the Cassandra software.
+Default value 'cassandra'</p>
 
 <h5>
 <a id="snapshot_before_compaction" class="anchor" href="#snapshot_before_compaction" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>snapshot_before_compaction</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>false</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'false'</p>
 
 <h5>
 <a id="snitch_properties_file" class="anchor" href="#snitch_properties_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>snitch_properties_file</code>
 </h5>
 
 <p>The name of the snitch properties file.  The full path name would be
-<em>config_path</em>/<em>snitch_properties_file</em>
-(default <strong>cassandra-rackdc.properties</strong>).</p>
+<em>config_path</em>/<em>snitch_properties_file</em>.
+Default value 'cassandra-rackdc.properties'</p>
 
 <h5>
 <a id="ssl_storage_port" class="anchor" href="#ssl_storage_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ssl_storage_port</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>7001</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '7001'</p>
 
 <h5>
 <a id="start_native_transport" class="anchor" href="#start_native_transport" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_native_transport</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>true</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'true'</p>
 
 <h5>
 <a id="start_rpc" class="anchor" href="#start_rpc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_rpc</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>true</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 'true'</p>
 
 <h5>
 <a id="storage_port" class="anchor" href="#storage_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>storage_port</code>
 </h5>
 
 <p>This is passed to the
-<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file
-(default <strong>7000</strong>).</p>
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value '7000'</p>
 
 <h3>
 <a id="class-cassandradatastax_agent" class="anchor" href="#class-cassandradatastax_agent" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_agent</h3>
@@ -943,32 +946,36 @@ instance.</p>
 </h5>
 
 <p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
-number
-(default <strong>present</strong>).</p>
+number.
+Default value 'present'</p>
 
 <h5>
 <a id="package_name-1" class="anchor" href="#package_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
-<p>Is passed to the package reference (default <strong>datastax-agent</strong>).</p>
+<p>Is passed to the package reference.
+Default value 'datastax-agent'</p>
 
 <h5>
 <a id="service_ensure-1" class="anchor" href="#service_ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_ensure</code>
 </h5>
 
-<p>Is passed to the service reference (default <strong>running</strong>).</p>
+<p>Is passed to the service reference.
+Default value 'running'</p>
 
 <h5>
 <a id="service_enable-1" class="anchor" href="#service_enable-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_enable</code>
 </h5>
 
-<p>Is passed to the service reference (default <strong>true</strong>).</p>
+<p>Is passed to the service reference.
+Default value 'true'</p>
 
 <h5>
 <a id="service_name-1" class="anchor" href="#service_name-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
 </h5>
 
-<p>Is passed to the service reference (default <strong>datastax-agent</strong>).</p>
+<p>Is passed to the service reference.
+Default value 'datastax-agent'</p>
 
 <h5>
 <a id="stomp_interface" class="anchor" href="#stomp_interface" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>stomp_interface</code>
@@ -977,8 +984,8 @@ number
 <p>If the value is changed from the default of <em>undef</em> then this is what is
 set as the stomp_interface setting in
 <strong>/var/lib/datastax-agent/conf/address.yaml</strong>
-which connects the agent to an OpsCenter instance
-(default <strong>undef</strong>).</p>
+which connects the agent to an OpsCenter instance.
+Default value <em>undef</em></p>
 
 <h3>
 <a id="class-cassandradatastax_repo" class="anchor" href="#class-cassandradatastax_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_repo</h3>
@@ -993,8 +1000,6 @@ from which packages for DataStax Community can be downloaded.</p>
 
 <h3>
 <a id="class-cassandrafirewall_ports" class="anchor" href="#class-cassandrafirewall_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::firewall_ports</h3>
-
-<p>WARNING: This feature is currently experimental.</p>
 
 <p>An optional class to configure incoming network ports on the host that are
 relevant to the Cassandra installation.  If firewalls are being managed 
@@ -1014,8 +1019,8 @@ it must be the final cassandra class included in the manifest.</p>
 <p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
 
 <p>Allow these TCP ports to be opened for traffic
-coming from the client subnets
-(default <strong>[9042, 9160]</strong>).</p>
+coming from the client subnets.
+Default value '[9042, 9160]'</p>
 
 <h5>
 <a id="client_subnets" class="anchor" href="#client_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_subnets</code>
@@ -1025,7 +1030,7 @@ coming from the client subnets
 
 <p>An array of the list of subnets that are to allowed connection to
 cassandra::native_transport_port and cassandra::rpc_port.
-(default <strong>['0.0.0.0/0']</strong>).</p>
+Default value '['0.0.0.0/0']'</p>
 
 <h5>
 <a id="inter_node_ports" class="anchor" href="#inter_node_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_ports</code>
@@ -1034,8 +1039,8 @@ cassandra::native_transport_port and cassandra::rpc_port.
 <p>Only has any effect if the <code>cassandra</code> class is defined on the node.</p>
 
 <p>Allow these TCP ports to be opened for traffic
-between the Cassandra nodes
-(default <strong>[7000, 7001, 7199]</strong>).</p>
+between the Cassandra nodes.
+Default value '[7000, 7001, 7199]'</p>
 
 <h5>
 <a id="inter_node_subnets" class="anchor" href="#inter_node_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_subnets</code>
@@ -1045,16 +1050,16 @@ between the Cassandra nodes
 
 <p>An array of the list of subnets that are to allowed connection to
 cassandra::storage_port, cassandra::ssl_storage_port and port 7199
-for cassandra JMX monitoring
-(default <strong>['0.0.0.0/0']</strong>).</p>
+for cassandra JMX monitoring.
+Default value '['0.0.0.0/0']'</p>
 
 <h5>
 <a id="inter_node_ports-1" class="anchor" href="#inter_node_ports-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_node_ports</code>
 </h5>
 
 <p>Allow these TCP ports to be opened for traffic
-coming from OpsCenter subnets
-(default <strong>[7000, 7001, 7199]</strong>).</p>
+coming from OpsCenter subnets.
+Default value '[7000, 7001, 7199]'</p>
 
 <h5>
 <a id="public_ports" class="anchor" href="#public_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>public_ports</code>
@@ -1062,8 +1067,8 @@ coming from OpsCenter subnets
 
 <p>Allow these TCP ports to be opened for traffic
 coming from public subnets the port specified in <code>$ssh_port</code> will be
-appended to this list
-(default <strong>[8888]</strong>).</p>
+appended to this list.
+Default value '[8888]'</p>
 
 <h5>
 <a id="public_subnets" class="anchor" href="#public_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>public_subnets</code>
@@ -1072,15 +1077,15 @@ appended to this list
 <p>An array of the list of subnets that are to allowed connection to
 cassandra::firewall_ports::ssh_port and if cassandra::opscenter has been
 included, both cassandra::opscenter::webserver_port and
-cassandra::opscenter::webserver_ssl_port
-(default <strong>['0.0.0.0/0']</strong>).</p>
+cassandra::opscenter::webserver_ssl_port.
+Default value '['0.0.0.0/0']'</p>
 
 <h5>
 <a id="ssh_port" class="anchor" href="#ssh_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>ssh_port</code>
 </h5>
 
-<p>Which port does SSH operate on
-(default <strong>22</strong>).</p>
+<p>Which port does SSH operate on.
+Default value '22'</p>
 
 <h5>
 <a id="opscenter_ports" class="anchor" href="#opscenter_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_ports</code>
@@ -1091,8 +1096,8 @@ cassandra::opscenter::webserver_ssl_port
 
 <p>Allow these TCP ports to be opened for traffic
 coming to or from OpsCenter
-appended to this list
-(default <strong>[61620, 61621]</strong>).</p>
+appended to this list.
+Default value '[61620, 61621]'</p>
 
 <h5>
 <a id="opscenter_subnets" class="anchor" href="#opscenter_subnets" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>opscenter_subnets</code>
@@ -1100,8 +1105,8 @@ appended to this list
 
 <p>A list of subnets that are to be allowed connection to
 port 61620 for nodes built with cassandra::opscenter and 61621 for nodes
-built with cassandra::datastax_agent
-(default <strong>['0.0.0.0/0']</strong>).</p>
+built with cassandra::datastax_agent.
+Default value '['0.0.0.0/0']'</p>
 
 <h3>
 <a id="class-cassandrajava" class="anchor" href="#class-cassandrajava" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::java</h3>
@@ -1116,15 +1121,16 @@ built with cassandra::datastax_agent
 </h5>
 
 <p>Is passed to the package reference for the JRE/JDK package.  Valid values are
-<strong>present</strong> or a version
-number (default <strong>present</strong>).</p>
+<strong>present</strong> or a version number.
+Default value 'present'</p>
 
 <h5>
 <a id="jna_ensure" class="anchor" href="#jna_ensure" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>jna_ensure</code>
 </h5>
 
 <p>Is passed to the package reference for the JNA package.  Valid values are
-<strong>present</strong> or a version number (default <strong>present</strong>).</p>
+<strong>present</strong> or a version number.
+Default value 'present'</p>
 
 <h5>
 <a id="jna_package_name" class="anchor" href="#jna_package_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>jna_package_name</code>
@@ -1133,7 +1139,8 @@ number (default <strong>present</strong>).</p>
 <p>If the default value of <em>undef</em> is left as it is, then a package called
 jna or libjna-java will be installed on a Red Hat family or Ubuntu system
 respectively.  Alternatively, one can specify a package that is available in
-a package repository to the node (default <strong>undef</strong>).</p>
+a package repository to the node.
+Default value <em>undef</em></p>
 
 <h5>
 <a id="package_name-2" class="anchor" href="#package_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
@@ -1143,7 +1150,8 @@ a package repository to the node (default <strong>undef</strong>).</p>
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
-node (default <strong>undef</strong>).</p>
+node.
+Default value <em>undef</em></p>
 
 <h3>
 <a id="class-cassandraopscenter" class="anchor" href="#class-cassandraopscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::opscenter</h3>
@@ -1519,8 +1527,8 @@ in the file.  Default value <em>undef</em></p>
 <a id="config_file" class="anchor" href="#config_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_file</code>
 </h5>
 
-<p>The full path to the OpsCenter configuration file
-(default <strong>/etc/opscenter/opscenterd.conf</strong>).</p>
+<p>The full path to the OpsCenter configuration file.
+Default value '/etc/opscenter/opscenterd.conf'</p>
 
 <h5>
 <a id="definitions_auto_update" class="anchor" href="#definitions_auto_update" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>definitions_auto_update</code>
@@ -1617,8 +1625,8 @@ in the file.  Default value <em>undef</em></p>
 </h5>
 
 <p>This is passed to the package reference for <strong>opscenter</strong>.  Valid values are
-<strong>present</strong> or a version number
-(default <strong>present</strong>).</p>
+<strong>present</strong> or a version number.
+Default value 'present'</p>
 
 <h5>
 <a id="failover_configuration_directory" class="anchor" href="#failover_configuration_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>failover_configuration_directory</code>
@@ -1954,8 +1962,8 @@ in the file.  Default value <em>undef</em></p>
 <a id="package_name-3" class="anchor" href="#package_name-3" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
-<p>The name of the OpsCenter package
-(default <strong>opscenter</strong>).</p>
+<p>The name of the OpsCenter package.
+Default value 'opscenter'</p>
 
 <h5>
 <a id="provisioning_agent_install_timeout" class="anchor" href="#provisioning_agent_install_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provisioning_agent_install_timeout</code>
@@ -2252,22 +2260,22 @@ in the file.  Default value <em>undef</em></p>
 </h5>
 
 <p>Enable the OpsCenter service to start at boot time.  Valid values are true
-or false
-(default: <strong>true</strong>)</p>
+or false.
+Default value 'true'</p>
 
 <h5>
 <a id="service_ensure-2" class="anchor" href="#service_ensure-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_ensure</code>
 </h5>
 
-<p>Ensure the OpsCenter service is running.  Valid values are running or stopped
-(default: <strong>running</strong>)</p>
+<p>Ensure the OpsCenter service is running.  Valid values are running or stopped.
+Default value 'running'</p>
 
 <h5>
 <a id="service_name-2" class="anchor" href="#service_name-2" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_name</code>
 </h5>
 
-<p>The name of the service that runs the OpsCenter software 
-(default: <strong>opscenterd</strong>).</p>
+<p>The name of the service that runs the OpsCenter software.
+Default value 'opscenterd'</p>
 
 <h5>
 <a id="spark_base_master_proxy_port" class="anchor" href="#spark_base_master_proxy_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>spark_base_master_proxy_port</code>
@@ -2469,36 +2477,36 @@ family.</p>
 </h5>
 
 <p>This is passed to the package reference for <strong>pycrypto</strong>.  Valid values are
-<strong>present</strong> or a version number
-(default <strong>present</strong>).</p>
+<strong>present</strong> or a version number.
+Default value 'present'</p>
 
 <h5>
 <a id="manage_epel" class="anchor" href="#manage_epel" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>manage_epel</code>
 </h5>
 
-<p>If set to true, the <strong>epel-release</strong> package will be installed
-(default <strong>false</strong>).</p>
+<p>If set to true, the <strong>epel-release</strong> package will be installed.
+Default value 'false'</p>
 
 <h5>
 <a id="package_name-4" class="anchor" href="#package_name-4" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
 </h5>
 
-<p>The name of the PyCrypto package
-(default <strong>pycrypto</strong>).</p>
+<p>The name of the PyCrypto package.
+Default value 'pycrypto'</p>
 
 <h5>
 <a id="provider" class="anchor" href="#provider" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>provider</code>
 </h5>
 
-<p>The name of the provider of the pycrypto package
-(default <strong>pip</strong>).</p>
+<p>The name of the provider of the pycrypto package.
+Default value 'pip'</p>
 
 <h5>
 <a id="reqd_pckgs" class="anchor" href="#reqd_pckgs" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>reqd_pckgs</code>
 </h5>
 
-<p>Packages that are required to install the pycrypto package
-(default <strong>['python-devel', 'python-pip' ]</strong>).</p>
+<p>Packages that are required to install the pycrypto package.
+Default value '['python-devel', 'python-pip' ]'</p>
 
 <h3>
 <a id="class-cassandraoptutils" class="anchor" href="#class-cassandraoptutils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::optutils</h3>
@@ -2513,8 +2521,8 @@ family.</p>
 </h5>
 
 <p>Is passed to the package reference.  Valid values are <strong>present</strong> or a version
-number
-(default <strong>present</strong>).</p>
+number.
+Default value 'present'</p>
 
 <h5>
 <a id="package_name-5" class="anchor" href="#package_name-5" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_name</code>
@@ -2524,8 +2532,8 @@ number
 cassandra22-tools or cassandra-tools will be installed
 on a Red Hat family or Ubuntu system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
-node
-(default <strong>undef</strong>).</p>
+node.
+Default value <em>undef</em></p>
 
 <h3>
 <a id="defined-type-cassandraopscentercluster_name" class="anchor" href="#defined-type-cassandraopscentercluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defined Type cassandra::opscenter::cluster_name</h3>
