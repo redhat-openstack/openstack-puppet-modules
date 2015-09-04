@@ -7,6 +7,7 @@ class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
   $auto_snapshot                         = true,
+  $batch_size_warn_threshold             = '5',
   $cassandra_9822                        = false,
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
   $client_encryption_enabled             = false,
