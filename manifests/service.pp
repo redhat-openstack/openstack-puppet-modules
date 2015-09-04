@@ -22,6 +22,7 @@ class zookeeper::service(
     file { '/usr/lib/systemd/system/zookeeper.service':
       ensure  => 'present',
       content => template('zookeeper/zookeeper.service.erb'),
+      replace => "no"
     } ~>
     exec { 'systemctl daemon-reload # for zookeeper':
       refreshonly => true,
