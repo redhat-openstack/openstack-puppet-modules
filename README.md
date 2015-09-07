@@ -552,31 +552,37 @@ Default value '/var/lib/cassandra/saved_caches'
 ##### `seeds`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `seed_provider -> parameters -> seeds`.
 Default value '127.0.0.1'
 
 ##### `server_encryption_internode`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `server_encryption_options -> internode_encryption`.
 Default value 'none'
 
 ##### `server_encryption_keystore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `server_encryption_options -> keystore`.
 Default value 'conf/.keystore'
 
 ##### `server_encryption_keystore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `server_encryption_options -> keystore_password`.
 Default value 'cassandra'
 
 ##### `server_encryption_truststore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `server_encryption_options -> truststore`.
 Default value 'conf/.truststore'
 
 ##### `server_encryption_truststore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `server_encryption_options -> truststore_password`.
 Default value 'cassandra'
 
 ##### `service_enable`
