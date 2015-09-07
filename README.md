@@ -179,7 +179,9 @@ node4          | 110.82.156.4   |
 node5          | 110.82.156.5   |
 
 Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
-nodes (vnodes).  The name of the cluster is _MyCassandraCluster_.
+nodes (vnodes).  The name of the cluster is _MyCassandraCluster_.  Also,
+while building the initial cluster, we are setting the auto_bootstrap
+to false.
 
 In this initial example, we are going to expand the example by:
 
@@ -205,13 +207,16 @@ node /^node\d+$/ {
     endpoint_snitch => 'GossipingPropertyFileSnitch',
     listen_address  => "${::ipaddress}",
     num_tokens      => 256,
-    seeds           => '110.82.155.0,110.82.156.3'
+    seeds           => '110.82.155.0,110.82.156.3',
+    auto_bootstrap  => false
   }
 }
 ```
 
 The default value for the num_tokens is already 256, but it is
-included in the example for clarity.
+included in the example for clarity.  Do not forget to either
+set auto_bootstrap to true or not set the parameter at all
+after initializing the cluster.
 
 ### Create a Cluster in Multiple Data Centers
 
@@ -238,7 +243,8 @@ node /^node[012]$/ {
     listen_address  => "${::ipaddress}",
     num_tokens      => 256,
     seeds           => '10.168.66.41,10.176.170.59',
-    dc              => 'DC1'
+    dc              => 'DC1',
+    auto_bootstrap  => false
   }
 }
 
@@ -249,13 +255,15 @@ node /^node[345]$/ {
     listen_address  => "${::ipaddress}",
     num_tokens      => 256,
     seeds           => '10.168.66.41,10.176.170.59',
-    dc              => 'DC2'
+    dc              => 'DC2',
+    auto_bootstrap  => false
   }
 }
 ```
 
 We don't need to specify the rack name (with the rack parameter) as RAC1 is
-the default value.
+the default value.  Again, do not forget to either set auto_bootstrap to
+true or not set the parameter at all after initializing the cluster.
 
 ### OpsCenter
 
@@ -360,6 +368,14 @@ Default value: 'AllowAllAuthenticator.
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: 'AllowAllAuthorizer'
+
+##### `auto_bootstrap`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `auto_snapshot`
 This is passed to the

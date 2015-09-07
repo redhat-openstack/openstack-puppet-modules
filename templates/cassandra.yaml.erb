@@ -793,3 +793,8 @@ internode_compression: <%= @internode_compression %>
 # reducing overhead from the TCP protocol itself, at the cost of increasing
 # latency if you block for cross-datacenter responses.
 inter_dc_tcp_nodelay: false
+
+# This setting has been removed from default configuration. It makes new
+# (non-seed) nodes automatically migrate the right data to themselves. When
+# initializing a fresh cluster without data, add auto_bootstrap: false.
+<% if @auto_bootstrap != nil %>auto_bootstrap: <%= @auto_bootstrap %><% else %>#auto_bootstrap: true<% end %>
