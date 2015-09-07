@@ -388,16 +388,19 @@ Default value 'cassandra/cassandra.yaml.erb'
 ##### `client_encryption_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `client_encryption_options -> enabled`.
 Default value 'false'
 
 ##### `client_encryption_keystore`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `client_encryption_options -> keystore`.
 Default value 'conf/.keystore'
 
 ##### `client_encryption_keystore_password`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `client_encryption_options -> keystore_password`.
 Default value 'cassandra'
 
 ##### `cluster_name`
