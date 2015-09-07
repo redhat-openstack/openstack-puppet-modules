@@ -366,6 +366,11 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'true'
 
+##### `batch_size_warn_threshold_in_kb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value 5
+
 ##### `cassandra_9822`
 If set to true, this will apply a patch to the init file for the Cassandra
 service as a workaround for
