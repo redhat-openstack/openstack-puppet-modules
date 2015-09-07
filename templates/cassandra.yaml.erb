@@ -547,7 +547,7 @@ column_index_size_in_kb: 64
 
 # Log WARN on any batch size exceeding this value. 5kb per batch by default.
 # Caution should be taken on increasing the size of this threshold as it can lead to node instability.
-batch_size_warn_threshold_in_kb: <%= @batch_size_warn_threshold %>
+batch_size_warn_threshold_in_kb: <%= @batch_size_warn_threshold_in_kb %>
 
 # Number of simultaneous compactions to allow, NOT including
 # validation "compactions" for anti-entropy repair.  Simultaneous

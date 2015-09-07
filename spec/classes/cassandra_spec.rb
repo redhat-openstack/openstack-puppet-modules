@@ -281,7 +281,7 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/enabled: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore_password: foo/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/batch_size_warn_threshold_in_kb: '42'/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/batch_size_warn_threshold_in_kb: 42/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/cluster_name: 'foo'/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_directory: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_counter_writes: foo/) }
