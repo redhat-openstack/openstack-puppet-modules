@@ -93,6 +93,7 @@ describe 'keystone' do
       'rabbit_host'           => '127.0.0.1',
       'rabbit_password'       => 'openstack',
       'rabbit_userid'         => 'admin',
+      'default_domain'        => 'other_domain',
     }
 
   httpd_params = {'service_name' => 'httpd'}.merge(default_params)
@@ -175,7 +176,7 @@ describe 'keystone' do
     end
 
     it 'should contain correct revoke driver' do
-      should contain_keystone_config('revoke/driver').with_value(param_hash['revoke_driver'])
+      is_expected.to contain_keystone_config('revoke/driver').with_value(param_hash['revoke_driver'])
     end
 
     it 'should ensure proper setting of admin_endpoint and public_endpoint' do
@@ -211,6 +212,11 @@ describe 'keystone' do
         is_expected.to contain_keystone_config('DEFAULT/public_workers').with_value('2')
       end
     end
+
+    if param_hash['default_domain']
+      it { is_expected.to contain_keystone_domain(param_hash['default_domain']).with(:is_default => true) }
+      it { is_expected.to contain_anchor('default_domain_created') }
+    end
   end
 
   [default_params, override_params].each do |param_hash|
@@ -229,6 +235,8 @@ describe 'keystone' do
         'hasrestart' => true
       ) }
 
+      it { is_expected.to contain_anchor('keystone_started') }
+
     end
   end
 
@@ -245,11 +253,11 @@ describe 'keystone' do
 
     it do
       expect {
-        should contain_service(platform_parameters[:service_name]).with('ensure' => 'running')
+        is_expected.to contain_service(platform_parameters[:service_name]).with('ensure' => 'running')
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError, /expected that the catalogue would contain Service\[#{platform_parameters[:service_name]}\]/)
     end
 
-    it { should contain_class('keystone::service').with(
+    it { is_expected.to contain_class('keystone::service').with(
       'ensure'          => 'stopped',
       'service_name'    => platform_parameters[:service_name],
       'enable'          => false,
@@ -276,6 +284,7 @@ describe 'keystone' do
       'hasstatus'  => true,
       'hasrestart' => true
     ) }
+    it { is_expected.to contain_anchor('keystone_started') }
   end
 
   describe 'when configuring signing token provider' do
@@ -845,6 +854,51 @@ describe 'keystone' do
     end
   end
 
+  shared_examples_for "when configuring default domain" do
+    describe 'with default config' do
+      let :params do
+        default_params
+      end
+      it { is_expected.to_not contain_exec('restart_keystone') }
+    end
+    describe 'with default domain and eventlet service is managed and enabled' do
+      let :params do
+        default_params.merge({
+          'default_domain'=> 'test',
+        })
+      end
+      it { is_expected.to contain_exec('restart_keystone').with(
+        'command' => "service #{platform_parameters[:service_name]} restart",
+      ) }
+      it { is_expected.to contain_anchor('default_domain_created') }
+    end
+    describe 'with default domain and wsgi service is managed and enabled' do
+      let :pre_condition do
+        'include ::apache'
+      end
+      let :params do
+        default_params.merge({
+          'default_domain'=> 'test',
+          'service_name'  => 'httpd',
+        })
+      end
+      it { is_expected.to contain_exec('restart_keystone').with(
+        'command' => "service #{platform_parameters[:httpd_service_name]} restart",
+      ) }
+      it { is_expected.to contain_anchor('default_domain_created') }
+    end
+    describe 'with default domain and service is not managed' do
+      let :params do
+        default_params.merge({
+          'default_domain' => 'test',
+          'manage_service' => false,
+        })
+      end
+      it { is_expected.to_not contain_exec('restart_keystone') }
+      it { is_expected.to contain_anchor('default_domain_created') }
+    end
+  end
+
   context 'on RedHat platforms' do
     let :facts do
       global_facts.merge({
@@ -855,11 +909,13 @@ describe 'keystone' do
 
     let :platform_parameters do
       {
-        :service_name => 'openstack-keystone'
+        :service_name       => 'openstack-keystone',
+        :httpd_service_name => 'httpd',
       }
     end
 
     it_configures 'when using default class parameters for httpd'
+    it_configures 'when configuring default domain'
   end
 
   context 'on Debian platforms' do
@@ -873,10 +929,12 @@ describe 'keystone' do
 
     let :platform_parameters do
       {
-        :service_name => 'keystone'
+        :service_name       => 'keystone',
+        :httpd_service_name => 'apache2',
       }
     end
 
     it_configures 'when using default class parameters for httpd'
+    it_configures 'when configuring default domain'
   end
 end

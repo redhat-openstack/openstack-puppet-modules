@@ -287,7 +287,7 @@ describe 'manila' do
       req_params
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/amqp_durable_queues').with_value(false) }
+    it { is_expected.to contain_manila_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(false) }
   end
 
   describe 'with amqp_durable_queues enabled' do
@@ -297,7 +297,7 @@ describe 'manila' do
       })
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/amqp_durable_queues').with_value(true) }
+    it { is_expected.to contain_manila_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(true) }
   end
 
   describe 'with sqlite' do
