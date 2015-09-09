@@ -1,5 +1,8 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-09-08 - Release 1.3.7
+* Made the auto_bootstrap parameter available.
+
 ##2015-09-03 - Release 1.3.6
 * Fixed a bug, now allowing the user to set the enabled state of the Cassandra
   service.

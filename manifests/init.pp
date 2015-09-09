@@ -6,6 +6,7 @@
 class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
+  $auto_bootstrap                        = undef,
   $auto_snapshot                         = true,
   $batch_size_warn_threshold_in_kb       = '5',
   $cassandra_9822                        = false,

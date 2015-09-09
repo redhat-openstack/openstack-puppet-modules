@@ -87,6 +87,9 @@ describe 'cassandra' do
     it { is_expected.not_to contain_apt__source('datastax') }
     it { is_expected.not_to contain_exec('update-cassandra-repos') }
     it {
+      should contain_file('/etc/cassandra/cassandra.yaml').with_content(/#auto_bootstrap: true/)
+    }
+    it {
       should contain_ini_setting('rackdc.properties.dc').with({
         'path'    => '/etc/cassandra/cassandra-rackdc.properties',
         'section' => '',
@@ -236,6 +239,7 @@ describe 'cassandra' do
       {
         :authenticator                         => 'foo',
         :authorizer                            => 'foo',
+        :auto_bootstrap                        => false,
         :auto_snapshot                         => 'foo',
         :batch_size_warn_threshold_in_kb       => '42',
         :client_encryption_enabled             => 'foo',
@@ -277,6 +281,9 @@ describe 'cassandra' do
 
     it { should contain_file('/etc/cassandra.yaml').with_content(/authenticator: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/authorizer: foo/) }
+    it {
+      should contain_file('/etc/cassandra.yaml').with_content(/auto_bootstrap: false/)
+    }
     it { should contain_file('/etc/cassandra.yaml').with_content(/auto_snapshot: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/enabled: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
@@ -325,6 +332,7 @@ describe 'cassandra' do
       {
         :authenticator                         => 'foo',
         :authorizer                            => 'foo',
+        :auto_bootstrap                        => false,
         :auto_snapshot                         => 'foo',
         :cassandra_yaml_tmpl                   => 'cassandra/cassandra1.yaml.erb',
         :client_encryption_enabled             => 'foo',
@@ -363,6 +371,9 @@ describe 'cassandra' do
 
     it { should contain_file('/etc/cassandra.yaml').with_content(/authenticator: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/authorizer: foo/) }
+    it {
+      should contain_file('/etc/cassandra.yaml').with_content(/auto_bootstrap: false/)
+    }
     it { should contain_file('/etc/cassandra.yaml').with_content(/auto_snapshot: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/enabled: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
