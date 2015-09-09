@@ -382,10 +382,20 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'true'
 
+##### `batchlog_replay_throttle_in_kb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '1024'
+
 ##### `batch_size_warn_threshold_in_kb`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 5
+
+##### `cas_contention_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '1000'
 
 ##### `cassandra_9822`
 If set to true, this will apply a patch to the init file for the Cassandra
@@ -424,10 +434,25 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'Test Cluster'
 
+##### `column_index_size_in_kb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '64'
+
+##### `commit_failure_policy`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 'stop'
+
 ##### `commitlog_directory`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '/var/lib/cassandra/commitlog'
+
+##### `compaction_throughput_mb_per_sec`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '16'
 
 ##### `concurrent_counter_writes`
 This is passed to the
@@ -450,6 +475,21 @@ changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
 systems or **/etc/cassandra** on Ubuntu.  Otherwise the user can specify the
 path name.
 Default value *undef*
+
+##### `counter_cache_save_period`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '7200'
+
+##### `counter_write_request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '5000'
+
+##### `cross_node_timeout`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 'false'
 
 ##### `data_file_directories`
 This is passed to the
@@ -474,6 +514,21 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'stop'
 
+##### `dynamic_snitch_badness_threshold`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '0.1'
+
+##### `dynamic_snitch_reset_interval_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '600000'
+
+##### `dynamic_snitch_update_interval_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '100'
+
 ##### `endpoint_snitch`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -484,10 +539,25 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'true'
 
+##### `hinted_handoff_throttle_in_kb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '1024'
+
+##### `index_summary_resize_interval_in_minutes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '60'
+
 ##### `incremental_backups`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'false'
+
+##### `inter_dc_tcp_nodelay`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 'false'
 
 ##### `internode_compression`
 This is passed to the
@@ -506,6 +576,16 @@ the ::cassandra::datastax_repo instead.
 If set to true then a repository will be setup so that packages can be
 downloaded from DataStax community.
 Default value 'false'
+
+##### `max_hints_delivery_threads`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '2'
+
+##### `max_hint_window_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '10800000'
 
 ##### `native_transport_port`
 This is passed to the
@@ -531,6 +611,11 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'org.apache.cassandra.dht.Murmur3Partitioner'
 
+##### `permissions_validity_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '2000'
+
 ##### `prefer_local`
 Sets the value for prefer_local in *config_path*/*snitch_properties_file* see
 http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
@@ -544,6 +629,36 @@ Sets the value for rack in *config_path*/*snitch_properties_file* see
 http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html
 for more details.
 Default value 'RAC1'
+
+##### `range_request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '10000'
+
+##### `read_request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '5000'
+
+##### `request_scheduler`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 'org.apache.cassandra.scheduler.NoScheduler'
+
+##### `request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '10000'
+
+##### `row_cache_save_period`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '0'
+
+##### `row_cache_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '0'
 
 ##### `rpc_address`
 This is passed to the
@@ -629,6 +744,11 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '7001'
 
+##### `sstable_preemptive_open_interval_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '50'
+
 ##### `start_native_transport`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -643,6 +763,36 @@ Default value 'true'
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '7000'
+
+##### `tombstone_failure_threshold`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '100000'
+
+##### `tombstone_warn_threshold`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '1000'
+
+##### `trickle_fsync`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 'false'
+
+##### `trickle_fsync_interval_in_kb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '10240'
+
+##### `truncate_request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '60000'
+
+##### `write_request_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: '2000'
 
 ### Class: cassandra::datastax_agent
 
