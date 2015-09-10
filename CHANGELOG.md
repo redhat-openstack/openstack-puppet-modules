@@ -1,5 +1,42 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-09-10 - Release 1.4.0
+
+* Ensured that directories specified in the directory parameters
+  are controlled with file resources.
+
+* Added the following parameters to the cassandra.yml file:
+  * batchlog_replay_throttle_in_kb
+  * cas_contention_timeout_in_ms
+  * column_index_size_in_kb
+  * commit_failure_policy
+  * compaction_throughput_mb_per_sec
+  * counter_cache_save_period
+  * counter_write_request_timeout_in_ms
+  * cross_node_timeout
+  * dynamic_snitch_badness_threshold
+  * dynamic_snitch_reset_interval_in_ms
+  * dynamic_snitch_update_interval_in_ms
+  * hinted_handoff_throttle_in_kb
+  * index_summary_resize_interval_in_minutes
+  * inter_dc_tcp_nodelay
+  * max_hints_delivery_threads
+  * max_hint_window_in_ms
+  * permissions_validity_in_ms
+  * range_request_timeout_in_ms
+  * read_request_timeout_in_ms
+  * request_scheduler
+  * request_timeout_in_ms
+  * row_cache_save_period
+  * row_cache_size_in_mb
+  * sstable_preemptive_open_interval_in_mb
+  * tombstone_failure_threshold
+  * tombstone_warn_threshold
+  * trickle_fsync
+  * trickle_fsync_interval_in_kb
+  * truncate_request_timeout_in_ms
+  * write_request_timeout_in_ms
+
 ##2015-09-08 - Release 1.3.7
 * Made the auto_bootstrap parameter available.
 
