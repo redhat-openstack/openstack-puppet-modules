@@ -46,6 +46,30 @@ describe 'cassandra' do
         'value'   => 'RAC1'
       })
     }
+    it {
+      should contain_file('/var/lib/cassandra/data').with({
+        'ensure' => 'directory',
+        'owner'  => 'cassandra',
+        'group'  => 'cassandra',
+        'mode'   => '0750'
+      })
+    }
+    it {
+      should contain_file('/var/lib/cassandra/commitlog').with({
+        'ensure' => 'directory',
+        'owner'  => 'cassandra',
+        'group'  => 'cassandra',
+        'mode'   => '0750'
+      })
+    }
+    it {
+      should contain_file('/var/lib/cassandra/saved_caches').with({
+        'ensure' => 'directory',
+        'owner'  => 'cassandra',
+        'group'  => 'cassandra',
+        'mode'   => '0750'
+      })
+    }
   end
 
   context 'On a RedHat OS with manage_dsc_repo set to true' do
@@ -336,12 +360,10 @@ describe 'cassandra' do
         :client_encryption_keystore               => 'foo',
         :client_encryption_keystore_password      => 'foo',
         :cluster_name                             => 'foo',
-        :commitlog_directory                      => 'foo',
         :concurrent_counter_writes                => 'foo',
         :concurrent_reads                         => 'foo',
         :concurrent_writes                        => 'foo',
         :config_path                              => '/etc',
-        :data_file_directories                    => ['foo', 'bar'],
         :disk_failure_policy                      => 'foo',
         :endpoint_snitch                          => 'foo',
         :hinted_handoff_enabled                   => 'foo',
@@ -354,7 +376,6 @@ describe 'cassandra' do
         :rpc_address                              => 'foo',
         :rpc_port                                 => 'foo',
         :rpc_server_type                          => 'foo',
-        :saved_caches_directory                   => 'foo',
         :seeds                                    => 'foo',
         :server_encryption_internode              => 'foo',
         :server_encryption_keystore               => 'foo',
@@ -410,11 +431,9 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore_password: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/batch_size_warn_threshold_in_kb: 42/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/cluster_name: 'foo'/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_directory: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_counter_writes: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_reads: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_writes: foo/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/^    - foo$/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/disk_failure_policy: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/endpoint_snitch: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/hinted_handoff_enabled: foo/) }
@@ -427,7 +446,6 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_address: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_port: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_server_type: foo/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/ - seeds: "foo"/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/internode_encryption: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
@@ -489,9 +507,7 @@ describe 'cassandra' do
         :client_encryption_keystore               => 'foo',
         :client_encryption_keystore_password      => 'foo',
         :cluster_name                             => 'foo',
-        :commitlog_directory                      => 'foo',
         :config_path                              => '/etc',
-        :data_file_directories                    => ['foo', 'bar'],
         :disk_failure_policy                      => 'foo',
         :endpoint_snitch                          => 'foo',
         :hinted_handoff_enabled                   => 'foo',
@@ -504,7 +520,6 @@ describe 'cassandra' do
         :rpc_address                              => 'foo',
         :rpc_port                                 => 'foo',
         :rpc_server_type                          => 'foo',
-        :saved_caches_directory                   => 'foo',
         :seeds                                    => 'foo',
         :server_encryption_internode              => 'foo',
         :server_encryption_keystore               => 'foo',
@@ -559,8 +574,6 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore_password: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/cluster_name: 'foo'/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_directory: foo/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/^    - foo$/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/disk_failure_policy: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/endpoint_snitch: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/hinted_handoff_enabled: foo/) }
@@ -573,7 +586,6 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_address: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_port: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_server_type: foo/) }
-    it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/ - seeds: "foo"/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/internode_encryption: foo/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/keystore: foo/) }
