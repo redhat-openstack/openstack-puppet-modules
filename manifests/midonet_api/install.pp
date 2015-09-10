@@ -22,23 +22,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class midonet::midonet_api::install {
+class midonet::midonet_api::install (
+  $install_java      = true,
+  $manage_app_server = true
+) {
 
     require midonet::repository
     require midonet::midonet_api::augeas
 
-    if ! defined(Class['java']) {
-      class {'java':
-        distribution => 'jre',
-        require      => Exec['update-midonet-repos']
+    if ($manage_app_server == true) {
+      if ($install_java == true) {
+        if ! defined(Class['java']) {
+          class { 'java':
+            distribution => 'jre',
+            require      => Exec['update-midonet-repos']
+          } ->
+
+          class { 'tomcat':
+            install_from_source => false,
+            require             => Exec['update-midonet-repos']
+          }
+        } else {
+          class { 'tomcat':
+            install_from_source => false,
+            require             => Exec['update-midonet-repos']
+          }
+        }
       }
     }
-
-    class {'tomcat':
-      install_from_source => false,
-      require             => [Class['java'],
-                              Exec['update-midonet-repos']]
-    } ->
 
     package {'midonet-api':
       ensure  => present,

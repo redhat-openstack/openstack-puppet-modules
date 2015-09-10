@@ -22,19 +22,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class midonet::midonet_agent::install {
+class midonet::midonet_agent::install (
+  $install_java = true
+) {
 
-    require midonet::repository
+  require midonet::repository
 
+  if ($install_java == true) {
     if ! defined(Class['java']) {
-        class {'java':
-            distribution => 'jre',
-            require      => Exec['update-midonet-repos']
-        }
+      class { 'java':
+        distribution => 'jre',
+        require      => Exec['update-midonet-repos']
+      }
     }
+  }
 
-    package {'midolman':
-        ensure  => present,
-        require => Class['java']
-    }
+  package {'midolman':
+    ensure  => present,
+  }
+
 }
+

@@ -139,6 +139,21 @@ You can alternatively use the Hiera's yaml style:
         - 'host2'
         - 'host3'
 
+Note: midonet\_agent class already makes a call to midonet\_agent::install.
+This class allows to choose whether you want it to install and manage Java, or
+use an existing installations instead.
+
+For this purpose a param has been added and its value has been defaulted to
+'true'. Should you want to manage the Java installation from another puppet
+module and avoid duplicated class declaration, change the value to 'false':
+
+    class { 'midonet::midonet_agent::install':
+      install_java      => false
+    }
+
+You can alternatively use the Hiera's yaml style:
+
+  midonet::midonet_agent::install::install_java: false
 
 #### MidoNet API
 
@@ -183,6 +198,25 @@ You can alternatively use the Hiera's yaml style:
     midonet::midonet_api::keystone_tenant_name: 'other-than-services'
 
 Please note that Zookeeper port is not mandatory and defaulted to 2181.
+
+Note: midonet\_api class already makes a call to midonet\_api::install. This
+class allows you to choose whether you want it to install and manage Tomcat and
+Java, or use existing installations of both instead.
+
+For this purpose 2 parameters have been added and their values have been
+defaulted to 'true'. Should you want to manage Tomcat and Java installation
+from another puppet module and avoid duplicated class declaration, change the
+values to 'false':
+
+    class { 'midonet::midonet_api::install':
+      install_java      => false,
+      manage_app_server => false
+    }
+
+You can alternatively use the Hiera's yaml style:
+
+  midonet::midonet_api::install::install_java: false
+  midonet::midonet_api::install::manage_app_server: false
 
 #### MidoNet CLI
 
