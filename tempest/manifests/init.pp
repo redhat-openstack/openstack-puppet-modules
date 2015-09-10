@@ -117,6 +117,10 @@
 #   Defaults to true
 #  [*auth_version*]
 #   Defaults to 'v2'
+#  [*img_dir*]
+#   Defaults to '/var/lib/tempest'
+#  [*img_file*]
+#   Defaults to 'cirros-0.3.4-x86_64-disk.img'
 #
 class tempest(
   $install_from_source       = true,
@@ -197,6 +201,9 @@ class tempest(
   $keystone_v2               = true,
   $keystone_v3               = true,
   $auth_version              = 'v2',
+  # scenario options
+  $img_dir                   = '/var/lib/tempest',
+  $img_file                  = 'cirros-0.3.4-x86_64-disk.img',
 ) {
 
   include '::tempest::params'
@@ -304,6 +311,8 @@ class tempest(
     'DEFAULT/use_stderr':                value => $use_stderr;
     'DEFAULT/use_syslog':                value => $use_syslog;
     'DEFAULT/log_file':                  value => $log_file;
+    'scenario/img_dir':                  value => $img_dir;
+    'scenario/img_file':                 value => $img_file;
   }
 
   if $configure_images {
@@ -341,6 +350,7 @@ be provided.')
         tempest_conf_path => $tempest_conf,
         network_name      => $public_network_name,
       }
+      Neutron_network<||> -> Tempest_neutron_net_id_setter['public_network_id']
       Tempest_config<||> -> Tempest_neutron_net_id_setter['public_network_id']
     } elsif ($public_network_name and $public_network_id) or (! $public_network_name and ! $public_network_id) {
       fail('A value for either public_network_id or public_network_name \

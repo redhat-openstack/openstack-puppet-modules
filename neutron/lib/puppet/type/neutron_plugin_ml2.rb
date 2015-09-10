@@ -7,8 +7,6 @@ Puppet::Type.newtype(:neutron_plugin_ml2) do
     newvalues(/\S+\/\S+/)
   end
 
-  autorequire(:package) do ['neutron'] end
-
   newproperty(:value) do
     desc 'The value of the setting to be defined.'
     munge do |value|
@@ -17,4 +15,14 @@ Puppet::Type.newtype(:neutron_plugin_ml2) do
       value
     end
   end
+
+  newparam(:ensure_absent_val) do
+    desc 'A value that is specified as the value property will behave as if ensure => absent was specified'
+    defaultto('<SERVICE DEFAULT>')
+  end
+
+  autorequire(:package) do
+    ['neutron', 'neutron-plugin-ml2']
+  end
+
 end

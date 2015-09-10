@@ -1332,7 +1332,7 @@ Installs and configures [`mod_deflate`][].
 
 **Parameters within `apache::mod::deflate`:**
 
-- `types`: An [array][] of [MIME types][MIME `content-type`] to be deflated. Default: [ 'text/html text/plain text/xml', 'text/css', 'application/x-javascript application/javascript application/ecmascript', 'application/rss+xml' ].
+- `types`: An [array][] of [MIME types][MIME `content-type`] to be deflated. Default: [ 'text/html text/plain text/xml', 'text/css', 'application/x-javascript application/javascript application/ecmascript', 'application/rss+xml', 'application/json' ].
 - `notes`: A [Hash][] where the key represents the type and the value represents the note name. Default: { 'Input'  => 'instream', 'Output' => 'outstream', 'Ratio'  => 'ratio' }
 
 ##### Class: `apache::mod::expires`
@@ -2707,6 +2707,7 @@ apache::vhost{'sample.example.net':
     }
   ]
 }
+~~~
 
 ###### `mellon_cond`
 
@@ -2984,6 +2985,17 @@ Sets the [SSLVerifyDepth](http://httpd.apache.org/docs/current/mod/mod_ssl.html#
     apache::vhost { 'sample.example.net':
       …
       ssl_verify_depth => 1,
+    }
+~~~
+
+##### `ssl_proxy_machine_cert`
+
+Sets the [SSLProxyMachineCertificateFile](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxymachinecertificatefile) directive, which specifies an all-in-one file where you keep the certs and keys used for this server to authenticate itself to remote servers.  This file should be a concatenation of the PEM-encoded certificate files in order of preference.  Defaults to 'undef'.
+
+~~~ puppet
+    apache::vhost { 'sample.example.net':
+      …
+      ssl_proxy_machine_cert => '/etc/httpd/ssl/client_certificate.pem',
     }
 ~~~
 

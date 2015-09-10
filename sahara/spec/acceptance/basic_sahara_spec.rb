@@ -12,11 +12,11 @@ describe 'basic sahara' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
-            # it's false by default in 2.x series but true in 1.8.x
-            package_manage => false,
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'liberty',
+            repo            => 'proposed',
+            package_require => true,
           }
-          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
@@ -92,6 +92,9 @@ describe 'basic sahara' do
       }
 
       # Sahara resources
+      class { '::sahara::db::mysql':
+        password => 'a_big_secret',
+      }
       class { '::sahara':
         rabbit_userid       => 'sahara',
         rabbit_password     => 'an_even_bigger_secret',
@@ -100,9 +103,8 @@ describe 'basic sahara' do
         database_connection => 'mysql://sahara:a_big_secret@127.0.0.1/sahara?charset=utf8',
         admin_password      => 'a_big_secret',
       }
-      class { '::sahara::db::mysql':
-        password => 'a_big_secret',
-      }
+      class { '::sahara::service::api': }
+      class { '::sahara::service::engine': }
       class { '::sahara::keystone::auth':
         password => 'a_big_secret',
       }

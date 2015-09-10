@@ -28,13 +28,17 @@ class mongodb::globals (
   $manage_package_repo   = undef,
   $manage_package        = undef,
 
+  $repo_location         = undef,
   $use_enterprise_repo   = undef,
+
+  $pidfilepath           = undef,
 ) {
 
   # Setup of the repo only makes sense globally, so we are doing it here.
   if($manage_package_repo) {
     class { '::mongodb::repo':
-      ensure  => present,
+      ensure        => present,
+      repo_location => $repo_location,
     }
   }
 }

@@ -316,7 +316,6 @@ class neutron (
 
   include ::neutron::params
 
-  Package['neutron'] -> Neutron_config<||>
   Package['neutron'] -> Nova_Admin_Tenant_Id_Setter<||>
 
   if $use_ssl {
@@ -348,18 +347,6 @@ class neutron (
   if $memcache_servers {
     validate_array($memcache_servers)
   }
-
-  File {
-    require => Package['neutron'],
-    owner   => 'root',
-    group   => 'neutron',
-  }
-
-  file { '/etc/neutron':
-    ensure => directory,
-  }
-
-  file { '/etc/neutron/neutron.conf': }
 
   package { 'neutron':
     ensure => $package_ensure,

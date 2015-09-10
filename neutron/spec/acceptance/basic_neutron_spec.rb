@@ -12,11 +12,11 @@ describe 'basic neutron' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
-            # it's false by default in 2.x series but true in 1.8.x
-            package_manage => false,
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'liberty',
+            repo            => 'proposed',
+            package_require => true,
           }
-          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
@@ -102,7 +102,7 @@ describe 'basic neutron' do
         verbose               => true,
         service_plugins => [
           'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin',
-          'neutron.services.loadbalancer.plugin.LoadBalancerPlugin',
+          'neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPlugin',
           'neutron.services.metering.metering_plugin.MeteringPlugin',
         ],
       }
@@ -123,8 +123,7 @@ describe 'basic neutron' do
       class { '::neutron::agents::dhcp': debug => true }
       class { '::neutron::agents::l3': debug => true }
       class { '::neutron::agents::lbaas':
-        device_driver => 'neutron_lbaas.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
-        debug         => true,
+        debug => true,
       }
       class { '::neutron::agents::metering': debug => true }
       class { '::neutron::agents::ml2::ovs':

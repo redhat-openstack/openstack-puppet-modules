@@ -7,12 +7,6 @@ Puppet::Type.newtype(:neutron_plugin_opencontrail) do
     newvalues(/\S+\/\S+/)
   end
 
-  autorequire(:file) do
-    ['/etc/neutron/plugins/opencontrail']
-  end
-
-  autorequire(:package) do ['neutron'] end
-
   newproperty(:value) do
     desc 'The value of the setting to be defined.'
     munge do |value|
@@ -44,6 +38,19 @@ Puppet::Type.newtype(:neutron_plugin_opencontrail) do
     newvalues(:true, :false)
 
     defaultto false
+  end
+
+  newparam(:ensure_absent_val) do
+    desc 'A value that is specified as the value property will behave as if ensure => absent was specified'
+    defaultto('<SERVICE DEFAULT>')
+  end
+
+  autorequire(:file) do
+    ['/etc/neutron/plugins/opencontrail']
+  end
+
+  autorequire(:package) do
+    'neutron-plugin-opencontrail'
   end
 
 end

@@ -4,7 +4,8 @@ describe 'tempest' do
   shared_examples 'tempest' do
 
     let :pre_condition do
-      "include ::glance"
+      "include ::glance
+       class { 'neutron': rabbit_password => 'passw0rd' }"
     end
 
     context 'without parameters' do
@@ -194,6 +195,8 @@ describe 'tempest' do
           is_expected.to contain_tempest_config('DEFAULT/use_stderr').with(:value => true)
           is_expected.to contain_tempest_config('DEFAULT/use_syslog').with(:value => false)
           is_expected.to contain_tempest_config('DEFAULT/log_file').with(:value => nil)
+          is_expected.to contain_tempest_config('scenario/img_dir').with(:value => '/var/lib/tempest')
+          is_expected.to contain_tempest_config('scenario/img_file').with(:value => 'cirros-0.3.4-x86_64-disk.img')
         end
 
         it 'set glance id' do
@@ -241,7 +244,8 @@ describe 'tempest' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      { :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7' }
     end
 
     let :platform_params do

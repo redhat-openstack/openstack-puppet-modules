@@ -12,11 +12,11 @@ describe 'basic manila' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
-            # it's false by default in 2.x series but true in 1.8.x
-            package_manage => false,
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'liberty',
+            repo            => 'proposed',
+            package_require => true,
           }
-          Exec['apt_update'] -> Package<||>
           $package_provider = 'apt'
         }
         'RedHat': {
@@ -97,6 +97,8 @@ describe 'basic manila' do
         rabbit_userid       => 'manila',
         rabbit_password     => 'an_even_bigger_secret',
         rabbit_host         => '127.0.0.1',
+        debug               => true,
+        verbose             => true,
       }
       class { '::manila::db::mysql':
         password => 'a_big_secret',

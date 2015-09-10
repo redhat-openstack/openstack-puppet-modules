@@ -6,7 +6,9 @@
 # [*cluster_name*]
 #   The name of the cluster (no whitespace)
 # [*cluster_members*]
-#   A space-separted list of cluster IP's or names
+#   A space-separted list of cluster IP's or names to run the authentication against
+# [*cluster_members_rrp*]
+#   A space-separated list of cluster IP's or names pair where each component represent a resource on respectively ring0 and ring1
 # [*setup_cluster*]
 #   If your cluster includes pcsd, this should be set to true for just
 #    one node in cluster.  Else set to true for all nodes.
@@ -21,12 +23,13 @@
 
 class pacemaker::corosync(
   $cluster_members,
-  $cluster_name     = 'clustername',
-  $setup_cluster    = true,
-  $manage_fw        = true,
-  $settle_timeout   = '3600',
-  $settle_tries     = '360',
-  $settle_try_sleep = '10',
+  $cluster_members_rrp = undef,
+  $cluster_name        = 'clustername',
+  $setup_cluster       = true,
+  $manage_fw           = true,
+  $settle_timeout      = '3600',
+  $settle_tries        = '360',
+  $settle_try_sleep    = '10',
 ) inherits pacemaker {
   include ::pacemaker::params
 
@@ -69,9 +72,16 @@ class pacemaker::corosync(
   }
 
   if $setup_cluster {
+
+    if ! $cluster_members_rrp {
+      $cluster_members_rrp_real = $cluster_members
+    } else {
+      $cluster_members_rrp_real = $cluster_members_rrp
+    }
+
     exec {"Create Cluster $cluster_name":
       creates => "/etc/cluster/cluster.conf",
-      command => "/usr/sbin/pcs cluster setup --name $cluster_name $cluster_members",
+      command => "/usr/sbin/pcs cluster setup --name $cluster_name $cluster_members_rrp_real",
       unless => "/usr/bin/test -f /etc/corosync/corosync.conf",
       require => Class["::pacemaker::install"],
     }
