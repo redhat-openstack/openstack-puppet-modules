@@ -138,6 +138,33 @@ class cassandra (
     notify  => Service['cassandra'],
   }
 
+  file { $commitlog_directory:
+    ensure  => directory,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    mode    => '0750',
+    require => Package[$package_name],
+    notify  => Service['cassandra'],
+  }
+
+  file { $data_file_directories:
+    ensure  => directory,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    mode    => '0750',
+    require => Package[$package_name],
+    notify  => Service['cassandra'],
+  }
+
+  file { $saved_caches_directory:
+    ensure  => directory,
+    owner   => 'cassandra',
+    group   => 'cassandra',
+    mode    => '0750',
+    require => Package[$package_name],
+    notify  => Service['cassandra'],
+  }
+
   if $package_ensure != 'absent'
   and $package_ensure != 'purged' {
     service { 'cassandra':
