@@ -2115,3 +2115,7 @@ identified that the dependency for puppetlabs-apt was incorrect
 bug in the ability to set the running state of the Cassandra service and
 subsequently submitted a pull request with a fix
 (see [#93](https://github.com/locp/cassandra/issues/93)).
+
+* [@markasammut](https://github.com/markasammut) contributed a pull request
+to set the batch_size_warn_threshold_in_kb parameter (see
+[#100](https://github.com/locp/cassandra/pull/100)).
