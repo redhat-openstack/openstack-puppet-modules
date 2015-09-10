@@ -563,6 +563,30 @@ Default value: <em>undef</em></p>
 Default value 'true'</p>
 
 <h5>
+<a id="batchlog_replay_throttle_in_kb" class="anchor" href="#batchlog_replay_throttle_in_kb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>batchlog_replay_throttle_in_kb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '1024'</p>
+
+<h5>
+<a id="batch_size_warn_threshold_in_kb" class="anchor" href="#batch_size_warn_threshold_in_kb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>batch_size_warn_threshold_in_kb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value 5</p>
+
+<h5>
+<a id="cas_contention_timeout_in_ms" class="anchor" href="#cas_contention_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cas_contention_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '1000'</p>
+
+<h5>
 <a id="cassandra_9822" class="anchor" href="#cassandra_9822" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cassandra_9822</code>
 </h5>
 
@@ -588,6 +612,7 @@ Default value 'cassandra/cassandra.yaml.erb'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>client_encryption_options -&gt; enabled</code>.
 Default value 'false'</p>
 
 <h5>
@@ -596,6 +621,7 @@ Default value 'false'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>client_encryption_options -&gt; keystore</code>.
 Default value 'conf/.keystore'</p>
 
 <h5>
@@ -604,6 +630,7 @@ Default value 'conf/.keystore'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>client_encryption_options -&gt; keystore_password</code>.
 Default value 'cassandra'</p>
 
 <h5>
@@ -615,12 +642,36 @@ Default value 'cassandra'</p>
 Default value 'Test Cluster'</p>
 
 <h5>
+<a id="column_index_size_in_kb" class="anchor" href="#column_index_size_in_kb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>column_index_size_in_kb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '64'</p>
+
+<h5>
+<a id="commit_failure_policy" class="anchor" href="#commit_failure_policy" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commit_failure_policy</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'stop'</p>
+
+<h5>
 <a id="commitlog_directory" class="anchor" href="#commitlog_directory" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_directory</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value '/var/lib/cassandra/commitlog'</p>
+
+<h5>
+<a id="compaction_throughput_mb_per_sec" class="anchor" href="#compaction_throughput_mb_per_sec" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>compaction_throughput_mb_per_sec</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '16'</p>
 
 <h5>
 <a id="concurrent_counter_writes" class="anchor" href="#concurrent_counter_writes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_counter_writes</code>
@@ -655,6 +706,30 @@ changed to <strong>/etc/cassandra/default.conf</strong> on the Red Hat family of
 systems or <strong>/etc/cassandra</strong> on Ubuntu.  Otherwise the user can specify the
 path name.
 Default value <em>undef</em></p>
+
+<h5>
+<a id="counter_cache_save_period" class="anchor" href="#counter_cache_save_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_cache_save_period</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '7200'</p>
+
+<h5>
+<a id="counter_write_request_timeout_in_ms" class="anchor" href="#counter_write_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_write_request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '5000'</p>
+
+<h5>
+<a id="cross_node_timeout" class="anchor" href="#cross_node_timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cross_node_timeout</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'false'</p>
 
 <h5>
 <a id="data_file_directories" class="anchor" href="#data_file_directories" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>data_file_directories</code>
@@ -692,6 +767,30 @@ Default value <em>undef</em></p>
 Default value 'stop'</p>
 
 <h5>
+<a id="dynamic_snitch_badness_threshold" class="anchor" href="#dynamic_snitch_badness_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dynamic_snitch_badness_threshold</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '0.1'</p>
+
+<h5>
+<a id="dynamic_snitch_reset_interval_in_ms" class="anchor" href="#dynamic_snitch_reset_interval_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dynamic_snitch_reset_interval_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '600000'</p>
+
+<h5>
+<a id="dynamic_snitch_update_interval_in_ms" class="anchor" href="#dynamic_snitch_update_interval_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dynamic_snitch_update_interval_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '100'</p>
+
+<h5>
 <a id="endpoint_snitch" class="anchor" href="#endpoint_snitch" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>endpoint_snitch</code>
 </h5>
 
@@ -708,12 +807,36 @@ Default value 'SimpleSnitch'</p>
 Default value 'true'</p>
 
 <h5>
+<a id="hinted_handoff_throttle_in_kb" class="anchor" href="#hinted_handoff_throttle_in_kb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hinted_handoff_throttle_in_kb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '1024'</p>
+
+<h5>
+<a id="index_summary_resize_interval_in_minutes" class="anchor" href="#index_summary_resize_interval_in_minutes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>index_summary_resize_interval_in_minutes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '60'</p>
+
+<h5>
 <a id="incremental_backups" class="anchor" href="#incremental_backups" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>incremental_backups</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value 'false'</p>
+
+<h5>
+<a id="inter_dc_tcp_nodelay" class="anchor" href="#inter_dc_tcp_nodelay" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_dc_tcp_nodelay</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'false'</p>
 
 <h5>
 <a id="internode_compression" class="anchor" href="#internode_compression" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_compression</code>
@@ -741,6 +864,22 @@ the ::cassandra::datastax_repo instead.</p>
 <p>If set to true then a repository will be setup so that packages can be
 downloaded from DataStax community.
 Default value 'false'</p>
+
+<h5>
+<a id="max_hints_delivery_threads" class="anchor" href="#max_hints_delivery_threads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>max_hints_delivery_threads</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '2'</p>
+
+<h5>
+<a id="max_hint_window_in_ms" class="anchor" href="#max_hint_window_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>max_hint_window_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '10800000'</p>
 
 <h5>
 <a id="native_transport_port" class="anchor" href="#native_transport_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_port</code>
@@ -782,6 +921,14 @@ Default value 'dsc22'</p>
 Default value 'org.apache.cassandra.dht.Murmur3Partitioner'</p>
 
 <h5>
+<a id="permissions_validity_in_ms" class="anchor" href="#permissions_validity_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>permissions_validity_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '2000'</p>
+
+<h5>
 <a id="prefer_local" class="anchor" href="#prefer_local" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>prefer_local</code>
 </h5>
 
@@ -800,6 +947,54 @@ Default value <em>undef</em></p>
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html">http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html</a>
 for more details.
 Default value 'RAC1'</p>
+
+<h5>
+<a id="range_request_timeout_in_ms" class="anchor" href="#range_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>range_request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '10000'</p>
+
+<h5>
+<a id="read_request_timeout_in_ms" class="anchor" href="#read_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>read_request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '5000'</p>
+
+<h5>
+<a id="request_scheduler" class="anchor" href="#request_scheduler" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_scheduler</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'org.apache.cassandra.scheduler.NoScheduler'</p>
+
+<h5>
+<a id="request_timeout_in_ms" class="anchor" href="#request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '10000'</p>
+
+<h5>
+<a id="row_cache_save_period" class="anchor" href="#row_cache_save_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>row_cache_save_period</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '0'</p>
+
+<h5>
+<a id="row_cache_size_in_mb" class="anchor" href="#row_cache_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>row_cache_size_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '0'</p>
 
 <h5>
 <a id="rpc_address" class="anchor" href="#rpc_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_address</code>
@@ -839,6 +1034,7 @@ Default value '/var/lib/cassandra/saved_caches'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>seed_provider -&gt; parameters -&gt; seeds</code>.
 Default value '127.0.0.1'</p>
 
 <h5>
@@ -847,6 +1043,7 @@ Default value '127.0.0.1'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>server_encryption_options -&gt; internode_encryption</code>.
 Default value 'none'</p>
 
 <h5>
@@ -855,6 +1052,7 @@ Default value 'none'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>server_encryption_options -&gt; keystore</code>.
 Default value 'conf/.keystore'</p>
 
 <h5>
@@ -863,6 +1061,7 @@ Default value 'conf/.keystore'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>server_encryption_options -&gt; keystore_password</code>.
 Default value 'cassandra'</p>
 
 <h5>
@@ -871,6 +1070,7 @@ Default value 'cassandra'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>server_encryption_options -&gt; truststore</code>.
 Default value 'conf/.truststore'</p>
 
 <h5>
@@ -879,6 +1079,7 @@ Default value 'conf/.truststore'</p>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>server_encryption_options -&gt; truststore_password</code>.
 Default value 'cassandra'</p>
 
 <h5>
@@ -928,6 +1129,14 @@ Default value 'cassandra-rackdc.properties'</p>
 Default value '7001'</p>
 
 <h5>
+<a id="sstable_preemptive_open_interval_in_mb" class="anchor" href="#sstable_preemptive_open_interval_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>sstable_preemptive_open_interval_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '50'</p>
+
+<h5>
 <a id="start_native_transport" class="anchor" href="#start_native_transport" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>start_native_transport</code>
 </h5>
 
@@ -950,6 +1159,54 @@ Default value 'true'</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value '7000'</p>
+
+<h5>
+<a id="tombstone_failure_threshold" class="anchor" href="#tombstone_failure_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>tombstone_failure_threshold</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '100000'</p>
+
+<h5>
+<a id="tombstone_warn_threshold" class="anchor" href="#tombstone_warn_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>tombstone_warn_threshold</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '1000'</p>
+
+<h5>
+<a id="trickle_fsync" class="anchor" href="#trickle_fsync" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>trickle_fsync</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 'false'</p>
+
+<h5>
+<a id="trickle_fsync_interval_in_kb" class="anchor" href="#trickle_fsync_interval_in_kb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>trickle_fsync_interval_in_kb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '10240'</p>
+
+<h5>
+<a id="truncate_request_timeout_in_ms" class="anchor" href="#truncate_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>truncate_request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '60000'</p>
+
+<h5>
+<a id="write_request_timeout_in_ms" class="anchor" href="#write_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>write_request_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: '2000'</p>
 
 <h3>
 <a id="class-cassandradatastax_agent" class="anchor" href="#class-cassandradatastax_agent" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_agent</h3>
@@ -2841,6 +3098,9 @@ identified that the dependency for puppetlabs-apt was incorrect
 bug in the ability to set the running state of the Cassandra service and
 subsequently submitted a pull request with a fix
 (see <a href="https://github.com/locp/cassandra/issues/93">#93</a>).</p></li>
+<li><p><a href="https://github.com/markasammut">@markasammut</a> contributed a pull request
+to set the batch_size_warn_threshold_in_kb parameter (see
+<a href="https://github.com/locp/cassandra/pull/100">#100</a>).</p></li>
 </ul>
       </section>
     </div>
