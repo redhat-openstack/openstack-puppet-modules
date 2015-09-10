@@ -299,7 +299,9 @@ a single data center spanning two racks.  The nodes in the cluster are:</p>
 </table>
 
 <p>Each node is configured to use the GossipingPropertyFileSnitch and 256 virtual
-nodes (vnodes).  The name of the cluster is <em>MyCassandraCluster</em>.</p>
+nodes (vnodes).  The name of the cluster is <em>MyCassandraCluster</em>.  Also,
+while building the initial cluster, we are setting the auto_bootstrap
+to false.</p>
 
 <p>In this initial example, we are going to expand the example by:</p>
 
@@ -326,12 +328,15 @@ before the Cassandra service is started.</li>
     <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
     <span class="pl-c1">num_tokens</span>      =&gt; 256,
-    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>
+    <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>110.82.155.0,110.82.156.3<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">auto_bootstrap</span>  =&gt; false
   }
 }</pre></div>
 
 <p>The default value for the num_tokens is already 256, but it is
-included in the example for clarity.</p>
+included in the example for clarity.  Do not forget to either
+set auto_bootstrap to true or not set the parameter at all
+after initializing the cluster.</p>
 
 <h3>
 <a id="create-a-cluster-in-multiple-data-centers" class="anchor" href="#create-a-cluster-in-multiple-data-centers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a Cluster in Multiple Data Centers</h3>
@@ -398,7 +403,8 @@ for a cluster across multiple data centers
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
     <span class="pl-c1">num_tokens</span>      =&gt; 256,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>10.168.66.41,10.176.170.59<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC1<span class="pl-pds">'</span></span>
+    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC1<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">auto_bootstrap</span>  =&gt; false
   }
 }
 
@@ -409,12 +415,14 @@ node /^node[345]$/ {
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
     <span class="pl-c1">num_tokens</span>      =&gt; 256,
     <span class="pl-c1">seeds</span>           =&gt; <span class="pl-s"><span class="pl-pds">'</span>10.168.66.41,10.176.170.59<span class="pl-pds">'</span></span>,
-    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC2<span class="pl-pds">'</span></span>
+    <span class="pl-c1">dc</span>              =&gt; <span class="pl-s"><span class="pl-pds">'</span>DC2<span class="pl-pds">'</span></span>,
+    <span class="pl-c1">auto_bootstrap</span>  =&gt; false
   }
 }</pre></div>
 
 <p>We don't need to specify the rack name (with the rack parameter) as RAC1 is
-the default value.</p>
+the default value.  Again, do not forget to either set auto_bootstrap to
+true or not set the parameter at all after initializing the cluster.</p>
 
 <h3>
 <a id="opscenter" class="anchor" href="#opscenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>OpsCenter</h3>
@@ -534,6 +542,17 @@ Default value: 'AllowAllAuthenticator.</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value: 'AllowAllAuthorizer'</p>
+
+<h5>
+<a id="auto_bootstrap" class="anchor" href="#auto_bootstrap" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>auto_bootstrap</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="auto_snapshot" class="anchor" href="#auto_snapshot" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>auto_snapshot</code>

@@ -6,6 +6,7 @@
 class cassandra (
   $authenticator                         = 'AllowAllAuthenticator',
   $authorizer                            = 'AllowAllAuthorizer',
+  $auto_bootstrap                        = undef,
   $auto_snapshot                         = true,
   $cassandra_9822                        = false,
   $cassandra_yaml_tmpl                   = 'cassandra/cassandra.yaml.erb',
