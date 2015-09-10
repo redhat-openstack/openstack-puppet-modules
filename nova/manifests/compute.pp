@@ -212,10 +212,6 @@ class nova::compute (
     }
   }
 
-  package { 'pm-utils':
-    ensure => present,
-  }
-
   nova_config {
     'DEFAULT/force_raw_images': value => $force_raw_images;
   }
