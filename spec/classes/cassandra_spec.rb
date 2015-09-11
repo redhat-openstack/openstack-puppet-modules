@@ -19,6 +19,11 @@ describe 'cassandra' do
         :osfamily => 'Darwin'
       }
     end
+    let :params do
+      {
+        :fail_on_non_suppoted_os => true
+      }
+    end
 
     it {
       expect {
