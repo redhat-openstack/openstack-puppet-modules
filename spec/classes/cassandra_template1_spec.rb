@@ -85,6 +85,9 @@ describe 'cassandra' do
         :trickle_fsync_interval_in_kb             => 'trickle_fsync_interval_in_kb',
         :truncate_request_timeout_in_ms           => 'truncate_request_timeout_in_ms',
         :write_request_timeout_in_ms              => 'write_request_timeout_in_ms',
+        :commitlog_directory                      => 'commitlog_directory',
+        :saved_caches_directory                   => 'saved_caches_directory',
+        :data_file_directories                    => ['datadir1', 'datadir2'],
       }
     end
 
@@ -142,5 +145,9 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/trickle_fsync_interval_in_kb: trickle_fsync_interval_in_kb/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/truncate_request_timeout_in_ms: truncate_request_timeout_in_ms/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/write_request_timeout_in_ms: write_request_timeout_in_ms/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_directory: commitlog_directory/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: saved_caches_directory/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir1/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir2/) }
   end
 end
