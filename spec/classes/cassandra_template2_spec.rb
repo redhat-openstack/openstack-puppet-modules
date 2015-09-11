@@ -165,5 +165,9 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: saved_caches_directory/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir1/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir2/) }
+    it { should contain_file('commitlog_directory') }
+    it { should contain_file('saved_caches_directory') }
+    it { should contain_file('datadir1') }
+    it { should contain_file('datadir2') }
   end
 end
