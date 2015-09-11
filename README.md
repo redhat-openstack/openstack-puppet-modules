@@ -534,6 +534,10 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'SimpleSnitch'
 
+##### `fail_on_non_suppoted_os`
+A flag that dictates if the module should fail if it is not RedHat or Debian.
+Default value 'true'
+
 ##### `hinted_handoff_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.

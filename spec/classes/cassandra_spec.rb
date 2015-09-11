@@ -27,6 +27,23 @@ describe 'cassandra' do
     }
   end
 
+  context 'On an unsupported OS pleading tolerance' do
+    let :facts do
+      {
+        :osfamily => 'Darwin'
+      }
+    end
+    let :params do
+      {
+        :fail_on_non_suppoted_os => false
+      }
+    end
+
+    it {
+      should compile
+    }
+  end
+
   context 'Test the dc and rack properties.' do
     let :facts do
       {
