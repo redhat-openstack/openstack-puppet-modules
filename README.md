@@ -536,6 +536,8 @@ Default value 'SimpleSnitch'
 
 ##### `fail_on_non_suppoted_os`
 A flag that dictates if the module should fail if it is not RedHat or Debian.
+If you set this option to false then you must also at least set the
+`config_path` parameter as well.
 Default value 'true'
 
 ##### `hinted_handoff_enabled`

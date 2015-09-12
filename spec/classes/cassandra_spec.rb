@@ -40,6 +40,7 @@ describe 'cassandra' do
     end
     let :params do
       {
+        :config_path             => '/etc/cassandra',
         :fail_on_non_suppoted_os => false
       }
     end
