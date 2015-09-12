@@ -123,6 +123,7 @@ class cassandra (
       if $fail_on_non_suppoted_os {
         fail("OS family ${::osfamily} not supported")
       } else {
+        $cfg_path = $config_path
         warning("OS family ${::osfamily} not supported")
       }
     }

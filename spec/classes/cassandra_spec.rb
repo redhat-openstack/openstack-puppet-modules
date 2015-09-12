@@ -46,7 +46,7 @@ describe 'cassandra' do
     end
 
     it {
-      should compile
+      should contain_file('/etc/cassandra/cassandra.yaml')
     }
   end
 
