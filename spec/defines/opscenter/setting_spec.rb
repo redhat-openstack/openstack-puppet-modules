@@ -19,6 +19,8 @@ describe 'cassandra::opscenter::setting' do
       }
     end
 
+    it { should have_resource_count(2) }
+
     it {
       should contain_ini_setting('agents agent_certfile').with({
         'ensure'  => 'absent',

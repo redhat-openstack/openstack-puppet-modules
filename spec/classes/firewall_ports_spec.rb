@@ -42,5 +42,6 @@ describe 'cassandra::firewall_ports' do
         'ports' => [8888, 22]
       })
     }
+    it { should have_resource_count(2) }
   end
 end

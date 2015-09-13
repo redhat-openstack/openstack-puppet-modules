@@ -29,6 +29,7 @@ describe 'cassandra::firewall_ports::rule' do
       }
     end
 
-    it { should compile }
+    it { should contain_firewall('200 - Cassandra (Public) - 0.0.0.0/0') }
+    it { should have_resource_count(2) }
   end
 end

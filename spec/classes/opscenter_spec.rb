@@ -24,6 +24,8 @@ describe 'cassandra::opscenter' do
       })
     }
 
+    it { should have_resource_count(252) }
+
     it {
       should contain_cassandra__opscenter__setting('agents agent_certfile')
     }

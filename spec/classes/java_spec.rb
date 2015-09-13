@@ -22,6 +22,7 @@ describe 'cassandra::java' do
     it { should contain_class('cassandra::java') }
     it { should contain_package('openjdk-7-jre-headless') }
     it { should contain_package('libjna-java') }
+    it { should have_resource_count(2) }
   end
 
   context 'With package names set to foobar' do

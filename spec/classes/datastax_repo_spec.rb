@@ -20,6 +20,7 @@ describe 'cassandra::datastax_repo' do
     end
 
     it { should contain_yumrepo('datastax') }
+    it { should have_resource_count(1) }
   end
 
   context 'On a Debian OS with defaults for all parameters' do
@@ -36,5 +37,6 @@ describe 'cassandra::datastax_repo' do
     it { is_expected.to contain_apt__key('datastaxkey') }
     it { is_expected.to contain_apt__source('datastax') }
     it { is_expected.to contain_exec('update-cassandra-repos') }
+    it { should have_resource_count(3) }
   end
 end

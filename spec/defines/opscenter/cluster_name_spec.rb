@@ -17,6 +17,7 @@ describe 'cassandra::opscenter::cluster_name' do
       }
     end
      it { should contain_cassandra__opscenter__cluster_name('MyCluster') }
+     it { should have_resource_count(20) }
   end
   
   context 'Test that settings can be set.' do

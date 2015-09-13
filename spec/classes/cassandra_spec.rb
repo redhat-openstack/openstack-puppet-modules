@@ -39,6 +39,7 @@ describe 'cassandra' do
     it {
       should contain_file('/etc/cassandra/cassandra.yaml')
     }
+    it { should have_resource_count(8) }
   end
 
   context 'Test the dc and rack properties.' do

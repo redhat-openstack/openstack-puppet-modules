@@ -11,6 +11,7 @@ describe 'cassandra::datastax_agent' do
     it { should contain_class('cassandra::datastax_agent').with_service_ensure('running') }
     it { should contain_class('cassandra::datastax_agent').with_service_name('datastax-agent') }
     it { should contain_class('cassandra::datastax_agent').with_stomp_interface() }
+    it { should have_resource_count(3) }
   end
 
   context 'Test for cassandra::datastax_agent package.' do
