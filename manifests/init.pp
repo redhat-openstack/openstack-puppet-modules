@@ -9,7 +9,7 @@ class cassandra (
   $auto_bootstrap                           = undef,
   $auto_snapshot                            = true,
   $batchlog_replay_throttle_in_kb           = 1024,
-  $batch_size_warn_threshold_in_kb          = '5',
+  $batch_size_warn_threshold_in_kb          = 5,
   $cas_contention_timeout_in_ms             = 1000,
   $cassandra_9822                           = false,
   $cassandra_yaml_tmpl                      = 'cassandra/cassandra.yaml.erb',
