@@ -9,7 +9,12 @@ describe 'cassandra::optutils' do
     end
 
     it { should have_resource_count(1) }
-    it { should contain_class('cassandra::optutils') }
+    it {
+      should contain_class('cassandra::optutils').with({
+        'ensure'       => 'present',
+        'package_name' => 'undef',
+      })
+    }
     it { should contain_package('cassandra22-tools') }
   end
 
