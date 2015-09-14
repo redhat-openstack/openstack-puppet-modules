@@ -5,13 +5,17 @@ describe 'cassandra::datastax_agent' do
   ] }
 
   context 'Test for cassandra::datastax_agent.' do
-    it { should contain_class('cassandra::datastax_agent').with_package_ensure('present') }
-    it { should contain_class('cassandra::datastax_agent').with_package_name('datastax-agent') }
-    it { should contain_class('cassandra::datastax_agent').with_service_enable('true') }
-    it { should contain_class('cassandra::datastax_agent').with_service_ensure('running') }
-    it { should contain_class('cassandra::datastax_agent').with_service_name('datastax-agent') }
-    it { should contain_class('cassandra::datastax_agent').with_stomp_interface() }
     it { should have_resource_count(3) }
+    it {
+      should contain_class('cassandra::datastax_agent').only_with(
+        'package_ensure'  => 'present',
+        'package_name'    => 'datastax-agent',
+        'service_ensure'  => 'running',
+        'service_enable'  => true,
+        'service_name'    => 'datastax-agent',
+        'stomp_interface' => nil,
+      )
+    }
   end
 
   context 'Test for cassandra::datastax_agent package.' do
