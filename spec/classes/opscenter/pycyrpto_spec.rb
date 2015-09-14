@@ -8,10 +8,15 @@ describe 'cassandra::opscenter::pycrypto' do
     end
 
     it { should have_resource_count(4) }
-    it {should contain_class('cassandra::opscenter::pycrypto').with_package_name('pycrypto') }
-    it { should contain_class('cassandra::opscenter::pycrypto').with_ensure('present') }
-    it { should contain_class('cassandra::opscenter::pycrypto').with_manage_epel('false') }
-    it { should contain_class('cassandra::opscenter::pycrypto').with_provider('pip') }
+    it {
+      should contain_class('cassandra::opscenter::pycrypto').only_with({
+        'ensure'       => 'present',
+        'manage_epel'  => false,
+        'package_name' => 'pycrypto',
+        'provider'     => 'pip',
+        'reqd_pckgs'   => ['python-devel', 'python-pip'],
+      })
+    }
     it { should contain_package('pycrypto') }
     it { should contain_file('/usr/bin/pip-python') }
     it { should contain_package('python-devel') }
