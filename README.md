@@ -2103,6 +2103,10 @@ fork the project, make your changes locally and then raise a pull request.
 Details on how to do this are available at
 https://guides.github.com/activities/contributing-to-open-source.
 
+Please also see the
+[CONTRIBUTING.md](https://github.com/locp/cassandra/blob/master/CONTRIBUTING.md)
+page for project specific requirements.
+
 ### Additional Contributers
 
 * Yanis Guenane (GitHub [@spredzy](https://github.com/Spredzy)) provided the

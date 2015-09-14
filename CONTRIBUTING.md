@@ -8,7 +8,7 @@ https://guides.github.com/activities/contributing-to-open-source.
 However, we do ask that:
 
 * All tests pass correctly (see below and also see
-  https://travis-ci.org/locp/cassandra).
+  https://travis-ci.org/locp/cassandra/pull_requests).
 * Unit test coverage does not drop as a result of a push of your branch (see
   https://coveralls.io/github/locp/cassandra).
 * Any parameters are documented.
