@@ -1,9 +1,9 @@
 # Please see the README file for the module.
 class cassandra::optutils (
   $ensure       = 'present',
-  $package_name = 'undef'
+  $package_name = undef
   ) {
-  if $package_name == 'undef' {
+  if $package_name == undef {
     if $::osfamily == 'RedHat' {
       $real_package_name = 'cassandra22-tools'
     } elsif $::osfamily == 'Debian' {
