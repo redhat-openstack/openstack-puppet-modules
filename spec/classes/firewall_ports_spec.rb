@@ -23,15 +23,19 @@ describe 'cassandra::firewall_ports' do
   }
 
   context 'Run with defaults.' do
-    it { should compile }
+    it { should have_resource_count(2) }
 
     it {
       should contain_class('cassandra::firewall_ports').with({
-        'client_subnets'              => ['0.0.0.0/0'],
-        'inter_node_subnets'          => ['0.0.0.0/0'],
-        'public_subnets'              => ['0.0.0.0/0'],
-        'ssh_port'                    => 22,
-        'opscenter_subnets'           => ['0.0.0.0/0']
+        'client_ports'        => [9042, 9160],
+        'client_subnets'      => ['0.0.0.0/0'],
+        'inter_node_ports'    => [7000, 7001, 7199],
+        'inter_node_subnets'  => ['0.0.0.0/0'],
+        'public_ports'        => [ 8888 ],
+        'public_subnets'      => ['0.0.0.0/0'],
+        'ssh_port'            => 22,
+        'opscenter_ports'     => [61620, 61621],
+        'opscenter_subnets'   => ['0.0.0.0/0'],
       })
     }
 
@@ -42,6 +46,5 @@ describe 'cassandra::firewall_ports' do
         'ports' => [8888, 22]
       })
     }
-    it { should have_resource_count(2) }
   end
 end
