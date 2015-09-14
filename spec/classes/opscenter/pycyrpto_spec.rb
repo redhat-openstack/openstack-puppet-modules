@@ -9,7 +9,7 @@ describe 'cassandra::opscenter::pycrypto' do
 
     it { should have_resource_count(4) }
     it {
-      should contain_class('cassandra::opscenter::pycrypto').only_with({
+      should contain_class('cassandra::opscenter::pycrypto').with({
         'ensure'       => 'present',
         'manage_epel'  => false,
         'package_name' => 'pycrypto',
