@@ -1,5 +1,26 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-09-15 - Release 1.4.2
+
+### Summary
+
+Fixed a problem identified whilst releasing 1.4.1 and a bug fixed by a
+contributed pull request.
+
+### Features
+
+* n/a
+
+### Bugfixes
+
+* Fixed a problem with the acceptance tests.
+* The datastax-agent service is restarted if the package is updated.
+
+### Improvements
+
+* n/a
+
+
 ##2015-09-15 - Release 1.4.1
 
 ### Summary

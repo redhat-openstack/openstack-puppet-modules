@@ -2131,5 +2131,5 @@ to set the batch_size_warn_threshold_in_kb parameter (see
 [#100](https://github.com/locp/cassandra/pull/100)).
 
 * [@markasammut](https://github.com/markasammut) also contributed a pull
-request to restart service if the datastax-agent package is upgraded
+request to restart the service if the datastax-agent package is upgraded
 (see [#110](https://github.com/locp/cassandra/pull/110)).
