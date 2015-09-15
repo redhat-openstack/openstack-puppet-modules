@@ -31,7 +31,7 @@ class cassandra::datastax_agent (
   }
 
   service { $service_name:
-    ensure    => $service_ensure,
-    enable    => $service_enable,
+    ensure => $service_ensure,
+    enable => $service_enable,
   }
 }
