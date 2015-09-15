@@ -1,5 +1,29 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-09-15 - Release 1.4.1
+
+### Summary
+
+This release fixes a minor bug (possibly better described as a typing mistake)
+and makes some non-functional improvements.  It also allows the user to
+override the default behaviour of failing on a non-supported operating system.
+
+### Features
+
+* A new flag called `fail_on_non_suppoted_os` has been added to the
+  `cassandra` class and can be set to **false** so that an attempt can be
+  made to use this module on an operating system that is not in the Debian
+  or Red Hat families.
+
+### Bugfixes
+
+* Changed the default value for the `package_name` of the
+  `cassandra::optutils` class from `'undef'` to *undef*.
+
+### Improvements
+
+* Unit test improvements.
+
 ##2015-09-10 - Release 1.4.0
 
 * Ensured that directories specified in the directory parameters
