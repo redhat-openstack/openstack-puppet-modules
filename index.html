@@ -184,7 +184,7 @@ too distant future.</li>
 
 <p>A basic example is as follows:</p>
 
-<div class="highlight highlight-puppet"><pre>  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+<div class="highlight highlight-source-puppet"><pre>  <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
     <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
     <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
     <span class="pl-c1">listen_address</span>  =&gt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${::ipaddress}</span><span class="pl-pds">"</span></span>,
@@ -314,7 +314,7 @@ Access (JNA) by including <code>cassandra::java</code>.  This need to be execute
 before the Cassandra service is started.</li>
 </ul>
 
-<div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
+<div class="highlight highlight-source-puppet"><pre>node /^node\d+$/ {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
     <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
   }
@@ -396,7 +396,7 @@ for a cluster across multiple data centers
 
 <p>For the sake of simplicity, we will confine this example to the nodes:</p>
 
-<div class="highlight highlight-puppet"><pre>node /^node[012]$/ {
+<div class="highlight highlight-source-puppet"><pre>node /^node[012]$/ {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
     <span class="pl-c1">cluster_name</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
     <span class="pl-c1">endpoint_snitch</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>GossipingPropertyFileSnitch<span class="pl-pds">'</span></span>,
@@ -432,7 +432,7 @@ have an instance of OpsCenter running on a node called opscenter which has
 an IP address of 110.82.157.6.  We add the <code>cassandra::datastax_agent</code> to
 the cassandra node to connect to OpsCenter:</p>
 
-<div class="highlight highlight-puppet"><pre>node /^node\d+$/ {
+<div class="highlight highlight-source-puppet"><pre>node /^node\d+$/ {
   <span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
     <span class="pl-c1">before</span> =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>]
   } -&gt;
@@ -466,7 +466,7 @@ node /opscenter/ {
 <p>After configuring the relevant repositories elsewhere in the manifest, the
 following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
 
-<div class="highlight highlight-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+<div class="highlight highlight-source-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
   <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
   <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
   <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
@@ -477,7 +477,7 @@ following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
 <p>Also with DSE, one can specify a remote keyspace for storing the metrics for
 a cluster.  An example is:</p>
 
-<div class="highlight highlight-puppet"><pre>cassandra::opscenter::cluster_name { <span class="pl-s"><span class="pl-pds">'</span>Cluster1<span class="pl-pds">'</span></span>:
+<div class="highlight highlight-source-puppet"><pre>cassandra::opscenter::cluster_name { <span class="pl-s"><span class="pl-pds">'</span>Cluster1<span class="pl-pds">'</span></span>:
   <span class="pl-c1">cassandra_seed_hosts</span>       =&gt; <span class="pl-s"><span class="pl-pds">'</span>host1,host2<span class="pl-pds">'</span></span>,
   <span class="pl-c1">storage_cassandra_username</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opsusr<span class="pl-pds">'</span></span>,
   <span class="pl-c1">storage_cassandra_password</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>opscenter<span class="pl-pds">'</span></span>,
@@ -797,6 +797,15 @@ Default value: '100'</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value 'SimpleSnitch'</p>
+
+<h5>
+<a id="fail_on_non_suppoted_os" class="anchor" href="#fail_on_non_suppoted_os" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>fail_on_non_suppoted_os</code>
+</h5>
+
+<p>A flag that dictates if the module should fail if it is not RedHat or Debian.
+If you set this option to false then you must also at least set the
+<code>config_path</code> parameter as well.
+Default value 'true'</p>
 
 <h5>
 <a id="hinted_handoff_enabled" class="anchor" href="#hinted_handoff_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hinted_handoff_enabled</code>
@@ -3080,6 +3089,10 @@ Debian 7 Puppet (CE) 3.7.5 and DSC 2.</p>
 fork the project, make your changes locally and then raise a pull request.
 Details on how to do this are available at
 <a href="https://guides.github.com/activities/contributing-to-open-source">https://guides.github.com/activities/contributing-to-open-source</a>.</p>
+
+<p>Please also see the
+<a href="https://github.com/locp/cassandra/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>
+page for project specific requirements.</p>
 
 <h3>
 <a id="additional-contributers" class="anchor" href="#additional-contributers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Contributers</h3>
