@@ -148,7 +148,6 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
-    mode    => '0750',
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
@@ -157,7 +156,6 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
-    mode    => '0750',
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
@@ -166,7 +164,6 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
-    mode    => '0750',
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }

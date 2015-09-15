@@ -51,7 +51,6 @@ describe 'cassandra' do
         'ensure' => 'directory',
         'owner'  => 'cassandra',
         'group'  => 'cassandra',
-        'mode'   => '0750'
       })
     }
     it {
@@ -59,7 +58,6 @@ describe 'cassandra' do
         'ensure' => 'directory',
         'owner'  => 'cassandra',
         'group'  => 'cassandra',
-        'mode'   => '0750'
       })
     }
     it {
@@ -67,7 +65,6 @@ describe 'cassandra' do
         'ensure' => 'directory',
         'owner'  => 'cassandra',
         'group'  => 'cassandra',
-        'mode'   => '0750'
       })
     }
   end
