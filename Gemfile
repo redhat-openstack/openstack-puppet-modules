@@ -8,7 +8,7 @@ group :test do
   gem "metadata-json-lint"
 end
 
-group :development do
+group :local_only do
   gem "travis"
   gem "travis-lint"
   gem "beaker"

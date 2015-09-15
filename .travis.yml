@@ -1,6 +1,6 @@
 ---
 language: ruby
-bundler_args: --without development
+bundler_args: --without local_only
 before_install: rm Gemfile.lock || true
 rvm:
   - 1.9.3

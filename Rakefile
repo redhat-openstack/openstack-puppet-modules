@@ -9,7 +9,7 @@ require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
 
 # These two gems aren't always present, for instance
-# on Travis with --without development
+# on Travis with `--without local_only`
 begin
   require 'puppet_blacksmith/rake_tasks'
 rescue LoadError
