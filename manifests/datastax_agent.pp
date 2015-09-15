@@ -9,7 +9,8 @@ class cassandra::datastax_agent (
   ){
   package { $package_name:
     ensure  => $package_ensure,
-    require => Class['cassandra']
+    require => Class['cassandra'],
+    notify  => Service[$service_name]
   }
 
   if $stomp_interface != undef {
