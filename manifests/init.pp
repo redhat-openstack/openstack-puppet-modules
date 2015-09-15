@@ -39,7 +39,7 @@ class opendaylight (
   # Validate OS
   case $::operatingsystem {
     centos, redhat: {
-      if $::operatingsystemmajrelease != 7 {
+      if $::operatingsystemmajrelease != '7' {
         # RHEL/CentOS versions < 7 not supported as they lack systemd
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
