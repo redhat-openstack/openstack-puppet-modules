@@ -22,6 +22,7 @@ override the default behaviour of failing on a non-supported operating system.
 
 ### Improvements
 
+* Clarified the expectations of submitted contributions.
 * Unit test improvements.
 
 ##2015-09-10 - Release 1.4.0
