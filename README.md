@@ -7,8 +7,8 @@ A puppet receipt for [Apache Zookeeper](http://zookeeper.apache.org/). ZooKeeper
 
 ## Requirements
 
-  * Puppet 2.7, Puppet 3.x
-  * Ruby 1.8.7, 1.9.3, 2.0.0, 2.1.x
+  * Puppet >= 2.7, Puppet 3.x
+  * Ruby 1.9.3, 2.0.0, 2.1.x
   * binary package of ZooKeeper
 
 ## Basic Usage:
