@@ -65,4 +65,17 @@ describe 'zookeeper', :type => :class do
       '/etc/zookeeper/conf/zoo.cfg'
     ).with_content(/maxSessionTimeout=60000/) }
   end
+
+  context 'disable service management' do
+    let(:user) { 'zookeeper' }
+    let(:group) { 'zookeeper' }
+
+    let(:params) { {
+      :manage_service => false,
+    } }
+
+    it { should contain_package('zookeeper').with({:ensure => 'present'}) }
+    it { should_not contain_service('zookeeper').with({:ensure => 'running'}) }
+    it { should_not contain_class('zookeeper::service') }
+  end
 end

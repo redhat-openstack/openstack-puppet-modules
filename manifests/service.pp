@@ -18,11 +18,11 @@ class zookeeper::service(
     default: { $initstyle = 'unknown' }
   }
 
-  if ($initstyle == 'systemd' and $zookeeper::manage_systemd) {
+  if ($initstyle == 'systemd') {
     file { '/usr/lib/systemd/system/zookeeper.service':
       ensure  => 'present',
       content => template('zookeeper/zookeeper.service.erb'),
-      replace => "no"
+      replace => 'no'
     } ~>
     exec { 'systemctl daemon-reload # for zookeeper':
       refreshonly => true,

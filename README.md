@@ -90,12 +90,13 @@ This is a workaround for a a [Facter issue](https://tickets.puppetlabs.com/brows
 
    - `id` - cluster-unique zookeeper's instance id (1-255)
    - `datastore`
-   - `datalogstore` - specifying this configures the dataLogDir Zookeeper config values and allows for transaction logs to be stored in a different location, improving IO performance
+   - `datalogstore` - specifying this configures the dataLogDir ZooKeeper config values and allows for transaction logs to be stored in a different location, improving IO performance
    - `log_dir`
-   - `purge_interval` - automatically will delete zookeeper logs (available since 3.4.0)
-   - `snap_retain_count` - number of snapshots that will be kept after purging (since 3.4.0)
-   - `min_session_timeout` - the minimum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 2 times the **tickTime** (since 3.3.0)
-   - `max_session_timeout` - the maximum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 20 times the **tickTime** (since 3.3.0)
+   - `purge_interval` - automatically will delete zookeeper logs (available since ZooKeeper 3.4.0)
+   - `snap_retain_count` - number of snapshots that will be kept after purging (since ZooKeeper 3.4.0)
+   - `min_session_timeout` - the minimum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 2 times the **tickTime** (since ZooKeeper 3.3.0)
+   - `max_session_timeout` - the maximum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 20 times the **tickTime** (since ZooKeeper 3.3.0)
+   - `manage_service` (default: `true`) whether Puppet should ensure running service, on RHEL 7.0 a service configuration will be created if none exists
 
 and many others, see the `init.pp` file for more details.
 

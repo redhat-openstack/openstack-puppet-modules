@@ -57,12 +57,12 @@ class zookeeper(
   $java_package            = undef,
   $min_session_timeout     = undef,
   $max_session_timeout     = undef,
-  $manage_systemd          = true,
+  $manage_service          = true,
 ) {
 
   validate_array($packages)
   validate_bool($ensure_cron)
-  validate_bool($manage_systemd)
+  validate_bool($manage_service)
 
   anchor { 'zookeeper::start': }->
   class { 'zookeeper::install':
@@ -108,12 +108,16 @@ class zookeeper(
     peer_type               => $peer_type,
     min_session_timeout     => $min_session_timeout,
     max_session_timeout     => $max_session_timeout,
-  }->
-  class { 'zookeeper::service':
-    cfg_dir      => $cfg_dir,
-    service_name => $service_name,
   }
-  ->
+
+  if ($manage_service) {
+    class { 'zookeeper::service':
+      cfg_dir      => $cfg_dir,
+      service_name => $service_name,
+      require      => Class['zookeeper::config'],
+      before       => Anchor['zookeeper::end'],
+    }
+  }
   anchor { 'zookeeper::end': }
 
 }
