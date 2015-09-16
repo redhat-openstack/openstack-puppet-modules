@@ -392,6 +392,22 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 5
 
+##### `broadcast_address`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `broadcast_rpc_address`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `cas_contention_timeout_in_ms`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -449,6 +465,30 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '/var/lib/cassandra/commitlog'
 
+##### `commitlog_sync`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `commitlog_sync_batch_window_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `commitlog_total_space_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `compaction_throughput_mb_per_sec`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -476,10 +516,26 @@ systems or **/etc/cassandra** on Ubuntu.  Otherwise the user can specify the
 path name.
 Default value *undef*
 
+##### `concurrent_compactors`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `counter_cache_save_period`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: '7200'
+
+##### `counter_cache_keys_to_save`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `counter_write_request_timeout_in_ms`
 This is passed to the
@@ -540,6 +596,14 @@ If you set this option to false then you must also at least set the
 `config_path` parameter as well.
 Default value 'true'
 
+##### `file_cache_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `hinted_handoff_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -560,15 +624,47 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'false'
 
+##### `initial_token`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `inter_dc_tcp_nodelay`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: 'false'
 
+##### `internode_authenticator`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `internode_compression`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'all'
+
+##### `internode_recv_buff_size_in_bytes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `internode_send_buff_size_in_bytes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `listen_address`
 This is passed to the
@@ -592,6 +688,78 @@ Default value: '2'
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: '10800000'
+
+##### `memory_allocator`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `memtable_cleanup_threshold`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `memtable_flush_writers`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `memtable_heap_space_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `memtable_offheap_space_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `native_transport_max_concurrent_connections`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `native_transport_max_concurrent_connections_per_ip`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `native_transport_max_frame_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `native_transport_max_threads`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `native_transport_port`
 This is passed to the
@@ -617,10 +785,26 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'org.apache.cassandra.dht.Murmur3Partitioner'
 
+##### `permissions_update_interval_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `permissions_validity_in_ms`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: '2000'
+
+##### `phi_convict_threshold`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `prefer_local`
 Sets the value for prefer_local in *config_path*/*snitch_properties_file* see
@@ -651,10 +835,34 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: 'org.apache.cassandra.scheduler.NoScheduler'
 
+##### `request_scheduler_options_default_weight`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `request_scheduler_options_throttle_limit`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `request_timeout_in_ms`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: '10000'
+
+##### `row_cache_keys_to_save`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `row_cache_save_period`
 This is passed to the
@@ -671,10 +879,42 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'localhost'
 
+##### `rpc_max_threads`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `rpc_min_threads`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
 ##### `rpc_port`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '9160'
+
+##### `rpc_recv_buff_size_in_bytes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `rpc_send_buff_size_in_bytes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `rpc_server_type`
 This is passed to the
@@ -769,6 +1009,14 @@ Default value 'true'
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '7000'
+
+##### `streaming_socket_timeout_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
 
 ##### `tombstone_failure_threshold`
 This is passed to the
