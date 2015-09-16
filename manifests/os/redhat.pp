@@ -1,5 +1,5 @@
 #
-# ZooKeeper installation on Debian
+# ZooKeeper installation on Redhat
 class zookeeper::os::redhat(
   $ensure            = present,
   $snap_retain_count = 3,
@@ -30,12 +30,12 @@ class zookeeper::os::redhat(
     if versioncmp($::puppetversion, '3.6.0') >= 0 {
       ensure_resource('package', $java_package,
         {'ensure' => $ensure, 'allow_virtual' => true,
-        'before' => Anchor['zookeeper::os::debian::java']}
+        'before' => Anchor['zookeeper::os::redhat::java']}
       )
     } else {
       ensure_resource('package', $java_package,
         {'ensure' => $ensure,
-        'before' => Anchor['zookeeper::os::debian::java']}
+        'before' => Anchor['zookeeper::os::redhat::java']}
       )
     }
 
