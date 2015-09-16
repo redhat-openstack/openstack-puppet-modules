@@ -40,5 +40,18 @@ describe 'zookeeper::service' do
       :ensure => 'running',
       :enable => true
     )}
+
+    context 'do not manage systemd' do
+      let(:params){{
+          :manage_systemd => false,
+      }}
+
+      it { should_not contain_file(
+        '/usr/lib/systemd/system/zookeeper.service'
+        ).with({
+          'ensure'  => 'present',
+        })
+      }
+    end
   end
 end

@@ -58,6 +58,7 @@ class zookeeper(
   $min_session_timeout     = undef,
   $max_session_timeout     = undef,
   $manage_service          = true,
+  $manage_systemd          = true,
 ) {
 
   validate_array($packages)
@@ -112,10 +113,11 @@ class zookeeper(
 
   if ($manage_service) {
     class { 'zookeeper::service':
-      cfg_dir      => $cfg_dir,
-      service_name => $service_name,
-      require      => Class['zookeeper::config'],
-      before       => Anchor['zookeeper::end'],
+      cfg_dir        => $cfg_dir,
+      service_name   => $service_name,
+      require        => Class['zookeeper::config'],
+      before         => Anchor['zookeeper::end'],
+      manage_systemd => $manage_systemd,
     }
   }
   anchor { 'zookeeper::end': }

@@ -96,7 +96,8 @@ This is a workaround for a a [Facter issue](https://tickets.puppetlabs.com/brows
    - `snap_retain_count` - number of snapshots that will be kept after purging (since ZooKeeper 3.4.0)
    - `min_session_timeout` - the minimum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 2 times the **tickTime** (since ZooKeeper 3.3.0)
    - `max_session_timeout` - the maximum session timeout in milliseconds that the server will allow the client to negotiate. Defaults to 20 times the **tickTime** (since ZooKeeper 3.3.0)
-   - `manage_service` (default: `true`) whether Puppet should ensure running service, on RHEL 7.0 a service configuration will be created if none exists
+   - `manage_service` (default: `true`) whether Puppet should ensure running service
+   - `manage_systemd` when enabled on RHEL 7.0 a service configuration will be managed
 
 and many others, see the `init.pp` file for more details.
 

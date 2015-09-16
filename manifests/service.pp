@@ -4,6 +4,7 @@ class zookeeper::service(
   $cfg_dir        = '/etc/zookeeper/conf',
   $service_name   = 'zookeeper',
   $service_ensure = 'running',
+  $manage_systemd = true,
 ){
   require zookeeper::install
 
@@ -18,11 +19,10 @@ class zookeeper::service(
     default: { $initstyle = 'unknown' }
   }
 
-  if ($initstyle == 'systemd') {
+  if ($initstyle == 'systemd' and $manage_systemd == true) {
     file { '/usr/lib/systemd/system/zookeeper.service':
       ensure  => 'present',
       content => template('zookeeper/zookeeper.service.erb'),
-      replace => 'no'
     } ~>
     exec { 'systemctl daemon-reload # for zookeeper':
       refreshonly => true,
