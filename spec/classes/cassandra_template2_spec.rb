@@ -91,6 +91,39 @@ describe 'cassandra' do
         :commitlog_directory                      => 'commitlog_directory',
         :saved_caches_directory                   => 'saved_caches_directory',
         :data_file_directories                    => ['datadir1', 'datadir2'],
+        :initial_token => 'initial_token',
+        :permissions_update_interval_in_ms => 'permissions_update_interval_in_ms',
+        :row_cache_keys_to_save => 'row_cache_keys_to_save',
+        :counter_cache_keys_to_save => 'counter_cache_keys_to_save',
+        :memory_allocator => 'memory_allocator',
+        :commitlog_sync => 'commitlog_sync',
+        :commitlog_sync_batch_window_in_ms => 'commitlog_sync_batch_window_in_ms',
+        :file_cache_size_in_mb => 'file_cache_size_in_mb',
+        :memtable_heap_space_in_mb => 'memtable_heap_space_in_mb',
+        :memtable_offheap_space_in_mb => 'memtable_offheap_space_in_mb',
+        :memtable_cleanup_threshold => 'memtable_cleanup_threshold',
+        :commitlog_total_space_in_mb => 'commitlog_total_space_in_mb',
+        :memtable_flush_writers => 'memtable_flush_writers',
+        :broadcast_address => 'broadcast_address',
+        :internode_authenticator => 'internode_authenticator',
+        :native_transport_max_threads => 'native_transport_max_threads',
+        :native_transport_max_frame_size_in_mb => 'native_transport_max_frame_size_in_mb',
+        :native_transport_max_concurrent_connections => 'native_transport_max_concurrent_connections',
+        :native_transport_max_concurrent_connections_per_ip => 'native_transport_max_concurrent_connections_per_ip',
+        :broadcast_rpc_address => 'broadcast_rpc_address',
+        :rpc_min_threads => 'rpc_min_threads',
+        :rpc_max_threads => 'rpc_max_threads',
+        :rpc_send_buff_size_in_bytes => 'rpc_send_buff_size_in_bytes',
+        :rpc_recv_buff_size_in_bytes => 'rpc_recv_buff_size_in_bytes',
+        :internode_send_buff_size_in_bytes => 'internode_send_buff_size_in_bytes',
+        :internode_recv_buff_size_in_bytes => 'internode_recv_buff_size_in_bytes',
+        :concurrent_compactors => 'concurrent_compactors',
+        :stream_throughput_outbound_megabits_per_sec => 'stream_throughput_outbound_megabits_per_sec',
+        :inter_dc_stream_throughput_outbound_megabits_per_sec => 'inter_dc_stream_throughput_outbound_megabits_per_sec',
+        :streaming_socket_timeout_in_ms => 'streaming_socket_timeout_in_ms',
+        :phi_convict_threshold => 'phi_convict_threshold',
+        :request_scheduler_options_throttle_limit => 'request_scheduler_options_throttle_limit',
+        :request_scheduler_options_default_weight => 'request_scheduler_options_default_weight',
       }
     end
 
@@ -165,5 +198,38 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/saved_caches_directory: saved_caches_directory/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir1/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/    - datadir2/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/initial_token: initial_token/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/permissions_update_interval_in_ms: permissions_update_interval_in_ms/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/row_cache_keys_to_save: row_cache_keys_to_save/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/counter_cache_keys_to_save: counter_cache_keys_to_save/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/memory_allocator: memory_allocator/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_sync: commitlog_sync/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_sync_batch_window_in_ms: commitlog_sync_batch_window_in_ms/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/file_cache_size_in_mb: file_cache_size_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/memtable_heap_space_in_mb: memtable_heap_space_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/memtable_offheap_space_in_mb: memtable_offheap_space_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/memtable_cleanup_threshold: memtable_cleanup_threshold/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_total_space_in_mb: commitlog_total_space_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/memtable_flush_writers: memtable_flush_writers/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/broadcast_address: broadcast_address/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/internode_authenticator: internode_authenticator/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/native_transport_max_threads: native_transport_max_threads/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/native_transport_max_frame_size_in_mb: native_transport_max_frame_size_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/native_transport_max_concurrent_connections: native_transport_max_concurrent_connections/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/native_transport_max_concurrent_connections_per_ip: native_transport_max_concurrent_connections_per_ip/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/broadcast_rpc_address: broadcast_rpc_address/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_min_threads: rpc_min_threads/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_max_threads: rpc_max_threads/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_send_buff_size_in_bytes: rpc_send_buff_size_in_bytes/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/rpc_recv_buff_size_in_bytes: rpc_recv_buff_size_in_bytes/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/internode_send_buff_size_in_bytes: internode_send_buff_size_in_bytes/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/internode_recv_buff_size_in_bytes: internode_recv_buff_size_in_bytes/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/concurrent_compactors: concurrent_compactors/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/stream_throughput_outbound_megabits_per_sec: stream_throughput_outbound_megabits_per_sec/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/inter_dc_stream_throughput_outbound_megabits_per_sec: inter_dc_stream_throughput_outbound_megabits_per_sec/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/streaming_socket_timeout_in_ms: streaming_socket_timeout_in_ms/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/phi_convict_threshold: phi_convict_threshold/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/request_scheduler_options_throttle_limit: request_scheduler_options_throttle_limit/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/request_scheduler_options_default_weight: request_scheduler_options_default_weight/) }
   end
 end

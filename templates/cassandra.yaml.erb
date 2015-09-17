@@ -28,7 +28,7 @@ num_tokens: <%= @num_tokens %>
 # vnodes (num_tokens > 1, above) -- in which case you should provide a 
 # comma-separated list -- it's primarily used when adding nodes # to legacy clusters 
 # that do not have vnodes enabled.
-# initial_token:
+<% if @initial_token != nil %>initial_token: <%= @initial_token %><% else %># initial_token:<% end %>
 
 # See http://wiki.apache.org/cassandra/HintedHandoff
 # May either be "true" or "false" to enable globally, or contain a list
@@ -85,7 +85,7 @@ permissions_validity_in_ms: <%= @permissions_validity_in_ms %>
 # completes. If permissions_validity_in_ms is non-zero, then this must be
 # also.
 # Defaults to the same value as permissions_validity_in_ms.
-# permissions_update_interval_in_ms: 1000
+<% if @permissions_update_interval_in_ms != nil %>permissions_update_interval_in_ms: <%= @permissions_update_interval_in_ms %><% else %># permissions_update_interval_in_ms: 1000<% end %>
 
 # The partitioner is responsible for distributing groups of rows (by
 # partition key) across nodes in the cluster.  You should leave this
@@ -182,7 +182,7 @@ row_cache_save_period: <%= @row_cache_save_period %>
 
 # Number of keys from the row cache to save
 # Disabled by default, meaning all keys are going to be saved
-# row_cache_keys_to_save: 100
+<% if @row_cache_keys_to_save != nil %>row_cache_keys_to_save: <%= @row_cache_keys_to_save %><% else %># row_cache_keys_to_save: 100<% end %>
 
 # Maximum size of the counter cache in memory.
 #
@@ -208,7 +208,7 @@ counter_cache_save_period: <%= @counter_cache_save_period %>
 
 # Number of keys from the counter cache to save
 # Disabled by default, meaning all keys are going to be saved
-# counter_cache_keys_to_save: 100
+<% if @counter_cache_keys_to_save != nil %>counter_cache_keys_to_save: <%= @counter_cache_keys_to_save %><% else %># counter_cache_keys_to_save: 100<% end %>
 
 # The off-heap memory allocator.  Affects storage engine metadata as
 # well as caches.  Experiments show that JEMAlloc saves some memory
@@ -221,7 +221,7 @@ counter_cache_save_period: <%= @counter_cache_save_period %>
 # modify cassandra-env.sh as directed in the file.
 #
 # Defaults to NativeAllocator
-# memory_allocator: NativeAllocator
+<% if @memory_allocator != nil %>memory_allocator: <%= @memory_allocator %><% else %># memory_allocator: NativeAllocator<% end %>
 
 # saved caches
 # If not set, the default directory is $CASSANDRA_HOME/data/saved_caches.
@@ -233,8 +233,8 @@ saved_caches_directory: <%= @saved_caches_directory %>
 # commitlog_sync_batch_window_in_ms milliseconds for other writes, before
 # performing the sync.
 #
-# commitlog_sync: batch
-# commitlog_sync_batch_window_in_ms: 50
+<% if @commitlog_sync != nil %>commitlog_sync: <%= @commitlog_sync %><% else %># commitlog_sync: batch<% end %>
+<% if @commitlog_sync_batch_window_in_ms != nil %>commitlog_sync_batch_window_in_ms: <%= @commitlog_sync_batch_window_in_ms %><% else %># commitlog_sync_batch_window_in_ms: 50<% end %>
 #
 # the other option is "periodic" where writes may be acked immediately
 # and the CommitLog is simply synced every commitlog_sync_period_in_ms
@@ -283,14 +283,14 @@ concurrent_counter_writes: <%= @concurrent_counter_writes %>
 
 # Total memory to use for sstable-reading buffers.  Defaults to
 # the smaller of 1/4 of heap or 512MB.
-# file_cache_size_in_mb: 512
+<% if @file_cache_size_in_mb != nil %>file_cache_size_in_mb: <%= @file_cache_size_in_mb %><% else %># file_cache_size_in_mb: 512<% end %>
 
 # Total permitted memory to use for memtables. Cassandra will stop 
 # accepting writes when the limit is exceeded until a flush completes,
 # and will trigger a flush based on memtable_cleanup_threshold
 # If omitted, Cassandra will set both to 1/4 the size of the heap.
-# memtable_heap_space_in_mb: 2048
-# memtable_offheap_space_in_mb: 2048
+<% if @memtable_heap_space_in_mb != nil %>memtable_heap_space_in_mb: <%= @memtable_heap_space_in_mb %><% else %># memtable_heap_space_in_mb: 2048<% end %>
+<% if @memtable_offheap_space_in_mb != nil %>memtable_offheap_space_in_mb: <%= @memtable_offheap_space_in_mb %><% else %># memtable_offheap_space_in_mb: 2048<% end %>
 
 # Ratio of occupied non-flushing memtable size to total permitted size
 # that will trigger a flush of the largest memtable.  Lager mct will
@@ -299,7 +299,7 @@ concurrent_counter_writes: <%= @concurrent_counter_writes %>
 # under heavy write load.
 #
 # memtable_cleanup_threshold defaults to 1 / (memtable_flush_writers + 1)
-# memtable_cleanup_threshold: 0.11
+<% if @memtable_cleanup_threshold != nil %>memtable_cleanup_threshold: <%= @memtable_cleanup_threshold %><% else %># memtable_cleanup_threshold: 0.11<% end %>
 
 # Specify the way Cassandra allocates and manages memtable memory.
 # Options are:
@@ -316,7 +316,7 @@ memtable_allocation_type: heap_buffers
 # segment multiple), Cassandra will flush every dirty CF in the oldest
 # segment and remove it.  So a small total commitlog space will tend
 # to cause more flush activity on less-active columnfamilies.
-# commitlog_total_space_in_mb: 8192
+<% if @commitlog_total_space_in_mb != nil %>commitlog_total_space_in_mb: <%= @commitlog_total_space_in_mb %><% else %># commitlog_total_space_in_mb: 8192<% end %>
 
 # This sets the amount of memtable flush writer threads.  These will
 # be blocked by disk io, and each one will hold a memtable in memory
@@ -327,7 +327,7 @@ memtable_allocation_type: heap_buffers
 # 
 # If your data directories are backed by SSD, you should increase this
 # to the number of cores.
-#memtable_flush_writers: 8
+<% if @memtable_flush_writers != nil %>memtable_flush_writers: <%= @memtable_flush_writers %><% else %>#memtable_flush_writers: 8<% end %>
 
 # A fixed memory pool size in MB for for SSTable index summaries. If left
 # empty, this will default to 5% of the heap size. If the memory usage of
@@ -383,11 +383,11 @@ listen_address: <%= @listen_address %>
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-# broadcast_address: 1.2.3.4
+<% if @broadcast_address != nil %>broadcast_address: <%= @broadcast_address %><% else %># broadcast_address: 1.2.3.4<% end %>
 
 # Internode authentication backend, implementing IInternodeAuthenticator;
 # used to allow/disallow connections from peer nodes.
-# internode_authenticator: org.apache.cassandra.auth.AllowAllInternodeAuthenticator
+<% if @internode_authenticator != nil %>internode_authenticator: <%= @internode_authenticator %><% else %># internode_authenticator: org.apache.cassandra.auth.AllowAllInternodeAuthenticator<% end %>
 
 # Whether to start the native transport server.
 # Please note that the address on which the native transport is bound is the
@@ -400,19 +400,19 @@ native_transport_port: <%= @native_transport_port %>
 # This is similar to rpc_max_threads though the default differs slightly (and
 # there is no native_transport_min_threads, idle threads will always be stopped
 # after 30 seconds).
-# native_transport_max_threads: 128
+<% if @native_transport_max_threads != nil %>native_transport_max_threads: <%= @native_transport_max_threads %><% else %># native_transport_max_threads: 128<% end %>
 #
 # The maximum size of allowed frame. Frame (requests) larger than this will
 # be rejected as invalid. The default is 256MB.
-# native_transport_max_frame_size_in_mb: 256
+<% if @native_transport_max_frame_size_in_mb != nil %>native_transport_max_frame_size_in_mb: <%= @native_transport_max_frame_size_in_mb %><% else %># native_transport_max_frame_size_in_mb: 256<% end %>
 
 # The maximum number of concurrent client connections.
 # The default is -1, which means unlimited.
-# native_transport_max_concurrent_connections: -1
+<% if @native_transport_max_concurrent_connections != nil %>native_transport_max_concurrent_connections: <%= @native_transport_max_concurrent_connections %><% else %># native_transport_max_concurrent_connections: -1<% end %>
 
 # The maximum number of concurrent client connections per source ip.
 # The default is -1, which means unlimited.
-# native_transport_max_concurrent_connections_per_ip: -1
+<% if @native_transport_max_concurrent_connections_per_ip != nil %>native_transport_max_concurrent_connections_per_ip: <%= @native_transport_max_concurrent_connections_per_ip %><% else %># native_transport_max_concurrent_connections_per_ip: -1<% end %>
 
 # Whether to start the thrift rpc server.
 start_rpc: <%= @start_rpc %>
@@ -446,7 +446,7 @@ rpc_port: <%= @rpc_port %>
 # be set to 0.0.0.0. If left blank, this will be set to the value of
 # rpc_address. If rpc_address is set to 0.0.0.0, broadcast_rpc_address must
 # be set.
-# broadcast_rpc_address: 1.2.3.4
+<% if @broadcast_rpc_address != nil %>broadcast_rpc_address: <%= @broadcast_rpc_address %><% else %># broadcast_rpc_address: 1.2.3.4<% end %>
 
 # enable or disable keepalive on rpc/native connections
 rpc_keepalive: true
@@ -481,12 +481,12 @@ rpc_server_type: <%= @rpc_server_type %>
 # encouraged to set a maximum that makes sense for you in production, but do keep in mind that
 # rpc_max_threads represents the maximum number of client requests this server may execute concurrently.
 #
-# rpc_min_threads: 16
-# rpc_max_threads: 2048
+<% if @rpc_min_threads != nil %>rpc_min_threads: <%= @rpc_min_threads %><% else %># rpc_min_threads: 16<% end %>
+<% if @rpc_max_threads != nil %>rpc_max_threads: <%= @rpc_max_threads %><% else %># rpc_max_threads: 2048<% end %>
 
 # uncomment to set socket buffer sizes on rpc connections
-# rpc_send_buff_size_in_bytes:
-# rpc_recv_buff_size_in_bytes:
+<% if @rpc_send_buff_size_in_bytes != nil %>rpc_send_buff_size_in_bytes: <%= @rpc_send_buff_size_in_bytes %><% else %># rpc_send_buff_size_in_bytes:<% end %>
+<% if @rpc_recv_buff_size_in_bytes != nil %>rpc_recv_buff_size_in_bytes: <%= @rpc_recv_buff_size_in_bytes %><% else %># rpc_recv_buff_size_in_bytes:<% end %>
 
 # Uncomment to set socket buffer size for internode communication
 # Note that when setting this, the buffer size is limited by net.core.wmem_max
@@ -497,8 +497,8 @@ rpc_server_type: <%= @rpc_server_type %>
 # /proc/sys/net/ipv4/tcp_wmem
 # /proc/sys/net/ipv4/tcp_wmem
 # and: man tcp
-# internode_send_buff_size_in_bytes:
-# internode_recv_buff_size_in_bytes:
+<% if @internode_send_buff_size_in_bytes != nil %>internode_send_buff_size_in_bytes: <%= @internode_send_buff_size_in_bytes %><% else %># internode_send_buff_size_in_bytes:<% end %>
+<% if @internode_recv_buff_size_in_bytes != nil %>internode_recv_buff_size_in_bytes: <%= @internode_recv_buff_size_in_bytes %><% else %># internode_recv_buff_size_in_bytes:<% end %>
 
 # Frame size for thrift (maximum message length).
 thrift_framed_transport_size_in_mb: 15
@@ -563,7 +563,7 @@ batch_size_warn_threshold_in_kb: <%= @batch_size_warn_threshold_in_kb %>
 # 
 # If your data directories are backed by SSD, you should increase this
 # to the number of cores.
-#concurrent_compactors: 1
+<% if @concurrent_compactors != nil %>concurrent_compactors: <%= @concurrent_compactors %><% else %>#concurrent_compactors: 1<% end %>
 
 # Throttles compaction to the given total throughput across the entire
 # system. The faster you insert data, the faster you need to compact in
@@ -584,13 +584,13 @@ sstable_preemptive_open_interval_in_mb: <%= @sstable_preemptive_open_interval_in
 # mostly sequential IO when streaming data during bootstrap or repair, which
 # can lead to saturating the network connection and degrading rpc performance.
 # When unset, the default is 200 Mbps or 25 MB/s.
-# stream_throughput_outbound_megabits_per_sec: 200
+<% if @stream_throughput_outbound_megabits_per_sec != nil %>stream_throughput_outbound_megabits_per_sec: <%= @stream_throughput_outbound_megabits_per_sec %><% else %># stream_throughput_outbound_megabits_per_sec: 200<% end %>
 
 # Throttles all streaming file transfer between the datacenters,
 # this setting allows users to throttle inter dc stream throughput in addition
 # to throttling all network stream traffic as configured with
 # stream_throughput_outbound_megabits_per_sec
-# inter_dc_stream_throughput_outbound_megabits_per_sec:
+<% if @inter_dc_stream_throughput_outbound_megabits_per_sec != nil %>inter_dc_stream_throughput_outbound_megabits_per_sec: <%= @inter_dc_stream_throughput_outbound_megabits_per_sec %><% else %># inter_dc_stream_throughput_outbound_megabits_per_sec:<% end %>
 
 # How long the coordinator should wait for read operations to complete
 read_request_timeout_in_ms: <%= @read_request_timeout_in_ms %>
@@ -625,11 +625,11 @@ cross_node_timeout: <%= @cross_node_timeout %>
 # of the current file. This _can_ involve re-streaming an important amount of
 # data, so you should avoid setting the value too low.
 # Default value is 0, which never timeout streams.
-# streaming_socket_timeout_in_ms: 0
+<% if @streaming_socket_timeout_in_ms != nil %>streaming_socket_timeout_in_ms: <%= @streaming_socket_timeout_in_ms %><% else %># streaming_socket_timeout_in_ms: 0<% end %>
 
 # phi value that must be reached for a host to be marked down.
 # most users should never need to adjust this.
-# phi_convict_threshold: 8
+<% if @phi_convict_threshold != nil %>phi_convict_threshold: <%= @phi_convict_threshold %><% else %># phi_convict_threshold: 8<% end %>
 
 # endpoint_snitch -- Set this to a class that implements
 # IEndpointSnitch.  The snitch has two functions:
@@ -728,8 +728,8 @@ request_scheduler: <%= @request_scheduler %>
 #               RoundRobin, based on the scheduler id.
 #
 # request_scheduler_options:
-#    throttle_limit: 80
-#    default_weight: 5
+<% if @request_scheduler_options_throttle_limit != nil %>request_scheduler_options_throttle_limit: <%= @request_scheduler_options_throttle_limit %><% else %>#    throttle_limit: 80<% end %>
+<% if @request_scheduler_options_default_weight != nil %>request_scheduler_options_default_weight: <%= @request_scheduler_options_default_weight %><% else %>#    default_weight: 5<% end %>
 #    weights:
 #      Keyspace1: 1
 #      Keyspace2: 5

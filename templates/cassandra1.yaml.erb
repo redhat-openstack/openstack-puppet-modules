@@ -34,7 +34,7 @@ num_tokens: <%= @num_tokens %>
 # the heaviest-loaded existing node.  If there is no load information
 # available, such as is the case with a new cluster, it will pick
 # a random token, which will lead to hot spots.
-# initial_token: <%= @database_initial_token %>
+<% if @initial_token != nil %>initial_token: <%= @initial_token %><% else %># initial_token:<% end %>
 
 # See http://wiki.apache.org/cassandra/HintedHandoff
 hinted_handoff_enabled: <%= @hinted_handoff_enabled %>
@@ -173,7 +173,7 @@ row_cache_save_period: <%= @row_cache_save_period %>
 
 # Number of keys from the row cache to save
 # Disabled by default, meaning all keys are going to be saved
-# row_cache_keys_to_save: 100
+<% if @row_cache_keys_to_save != nil %>row_cache_keys_to_save: <%= @row_cache_keys_to_save %><% else %># row_cache_keys_to_save: 100<% end %>
 
 # The provider for the row cache to use.
 #
@@ -202,8 +202,8 @@ saved_caches_directory: <%= @saved_caches_directory %>
 # commitlog_sync_batch_window_in_ms milliseconds for other writes, before
 # performing the sync.
 #
-# commitlog_sync: batch
-# commitlog_sync_batch_window_in_ms: 50
+<% if @commitlog_sync != nil %>commitlog_sync: <%= @commitlog_sync %><% else %># commitlog_sync: batch<% end %>
+<% if @commitlog_sync_batch_window_in_ms != nil %>commitlog_sync_batch_window_in_ms: <%= @commitlog_sync_batch_window_in_ms %><% else %># commitlog_sync_batch_window_in_ms: 50<% end %>
 #
 # the other option is "periodic" where writes may be acked immediately
 # and the CommitLog is simply synced every commitlog_sync_period_in_ms
@@ -289,14 +289,14 @@ concurrent_writes: 32
 # segment multiple), Cassandra will flush every dirty CF in the oldest
 # segment and remove it.  So a small total commitlog space will tend
 # to cause more flush activity on less-active columnfamilies.
-# commitlog_total_space_in_mb: 4096
+<% if @commitlog_total_space_in_mb != nil %>commitlog_total_space_in_mb: <%= @commitlog_total_space_in_mb %><% else %># commitlog_total_space_in_mb: 8192<% end %>
 
 # This sets the amount of memtable flush writer threads.  These will
 # be blocked by disk io, and each one will hold a memtable in memory
 # while blocked. If you have a large heap and many data directories,
 # you can increase this value for better flush performance.
 # By default this will be set to the amount of data directories defined.
-#memtable_flush_writers: 1
+<% if @memtable_flush_writers != nil %>memtable_flush_writers: <%= @memtable_flush_writers %><% else %>#memtable_flush_writers: 8<% end %>
 
 # the number of full memtables to allow pending flush, that is,
 # waiting for a writer thread.  At a minimum, this should be set to
@@ -332,11 +332,11 @@ listen_address: <%= @listen_address %>
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-# broadcast_address: 1.2.3.4
+<% if @broadcast_address != nil %>broadcast_address: <%= @broadcast_address %><% else %># broadcast_address: 1.2.3.4<% end %>
 
 # Internode authentication backend, implementing IInternodeAuthenticator;
 # used to allow/disallow connections from peer nodes.
-# internode_authenticator: org.apache.cassandra.auth.AllowAllInternodeAuthenticator
+<% if @internode_authenticator != nil %>internode_authenticator: <%= @internode_authenticator %><% else %># internode_authenticator: org.apache.cassandra.auth.AllowAllInternodeAuthenticator<% end %>
 
 # Whether to start the native transport server.
 # Please note that the address on which the native transport is bound is the
@@ -350,7 +350,7 @@ native_transport_port: <%= @native_transport_port %>
 # NOTE: native_transport_min_threads is now deprecated and ignored (but kept
 # in the 1.2.x series for compatibility sake).
 # native_transport_min_threads: 16
-# native_transport_max_threads: 128
+<% if @native_transport_max_threads != nil %>native_transport_max_threads: <%= @native_transport_max_threads %><% else %># native_transport_max_threads: 128<% end %>
 
 # Whether to start the thrift rpc server.
 start_rpc: <%= @start_rpc %>
@@ -400,12 +400,12 @@ rpc_server_type: <%= @rpc_server_type %>
 # encouraged to set a maximum that makes sense for you in production, but do keep in mind that
 # rpc_max_threads represents the maximum number of client requests this server may execute concurrently.
 #
-# rpc_min_threads: 16
-# rpc_max_threads: 2048
+<% if @rpc_min_threads != nil %>rpc_min_threads: <%= @rpc_min_threads %><% else %># rpc_min_threads: 16<% end %>
+<% if @rpc_max_threads != nil %>rpc_max_threads: <%= @rpc_max_threads %><% else %># rpc_max_threads: 2048<% end %>
 
 # uncomment to set socket buffer sizes on rpc connections
-# rpc_send_buff_size_in_bytes:
-# rpc_recv_buff_size_in_bytes:
+<% if @rpc_send_buff_size_in_bytes != nil %>rpc_send_buff_size_in_bytes: <%= @rpc_send_buff_size_in_bytes %><% else %># rpc_send_buff_size_in_bytes:<% end %>
+<% if @rpc_recv_buff_size_in_bytes != nil %>rpc_recv_buff_size_in_bytes: <%= @rpc_recv_buff_size_in_bytes %><% else %># rpc_recv_buff_size_in_bytes:<% end %>
 
 # Uncomment to set socket buffer size for internode communication
 # Note that when setting this, the buffer size is limited by net.core.wmem_max
@@ -416,8 +416,8 @@ rpc_server_type: <%= @rpc_server_type %>
 # /proc/sys/net/ipv4/tcp_wmem
 # /proc/sys/net/ipv4/tcp_wmem
 # and: man tcp
-# internode_send_buff_size_in_bytes:
-# internode_recv_buff_size_in_bytes:
+<% if @internode_send_buff_size_in_bytes != nil %>internode_send_buff_size_in_bytes: <%= @internode_send_buff_size_in_bytes %><% else %># internode_send_buff_size_in_bytes:<% end %>
+<% if @internode_recv_buff_size_in_bytes != nil %>internode_recv_buff_size_in_bytes: <%= @internode_recv_buff_size_in_bytes %><% else %># internode_recv_buff_size_in_bytes:<% end %>
 
 # Frame size for thrift (maximum message length).
 thrift_framed_transport_size_in_mb: 15
@@ -470,7 +470,7 @@ in_memory_compaction_limit_in_mb: 64
 #
 # concurrent_compactors defaults to the number of cores.
 # Uncomment to make compaction mono-threaded, the pre-0.8 default.
-#concurrent_compactors: 1
+<% if @concurrent_compactors != nil %>concurrent_compactors: <%= @concurrent_compactors %><% else %>#concurrent_compactors: 1<% end %>
 
 # Multi-threaded compaction. When enabled, each compaction will use
 # up to one thread per core, plus one thread per sstable being merged.
@@ -497,7 +497,7 @@ compaction_preheat_key_cache: true
 # mostly sequential IO when streaming data during bootstrap or repair, which
 # can lead to saturating the network connection and degrading rpc performance.
 # When unset, the default is 200 Mbps or 25 MB/s.
-# stream_throughput_outbound_megabits_per_sec: 200
+<% if @stream_throughput_outbound_megabits_per_sec != nil %>stream_throughput_outbound_megabits_per_sec: <%= @stream_throughput_outbound_megabits_per_sec %><% else %># stream_throughput_outbound_megabits_per_sec: 200<% end %>
 
 # How long the coordinator should wait for read operations to complete
 read_request_timeout_in_ms: <%= @read_request_timeout_in_ms %>
@@ -525,11 +525,11 @@ cross_node_timeout: <%= @cross_node_timeout %>
 # of the current file. This _can_ involve re-streaming an important amount of
 # data, so you should avoid setting the value too low.
 # Default value is 0, which never timeout streams.
-# streaming_socket_timeout_in_ms: 0
+<% if @streaming_socket_timeout_in_ms != nil %>streaming_socket_timeout_in_ms: <%= @streaming_socket_timeout_in_ms %><% else %># streaming_socket_timeout_in_ms: 0<% end %>
 
 # phi value that must be reached for a host to be marked down.
 # most users should never need to adjust this.
-# phi_convict_threshold: 8
+<% if @phi_convict_threshold != nil %>phi_convict_threshold: <%= @phi_convict_threshold %><% else %># phi_convict_threshold: 8<% end %>
 
 # endpoint_snitch -- Set this to a class that implements
 # IEndpointSnitch.  The snitch has two functions:
