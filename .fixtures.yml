@@ -1,0 +1,13 @@
+fixtures:
+  repositories:
+    'concat':
+      'repo': 'git://github.com/puppetlabs/puppetlabs-concat.git'
+      'ref': '1.2.2'
+    'inifile':  'git://github.com/puppetlabs/puppetlabs-inifile'
+    'keystone': 'git://github.com/openstack/puppet-keystone.git'
+    'mysql': 'git://github.com/puppetlabs/puppetlabs-mysql.git'
+    'openstacklib': 'git://github.com/openstack/puppet-openstacklib.git'
+    'postgresql': 'git://github.com/puppetlabs/puppetlabs-postgresql.git'
+    'stdlib': 'git://github.com/puppetlabs/puppetlabs-stdlib.git'
+  symlinks:
+    aodh: "#{source_dir}"
