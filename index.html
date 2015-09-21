@@ -579,6 +579,28 @@ Default value: '1024'</p>
 Default value 5</p>
 
 <h5>
+<a id="broadcast_address" class="anchor" href="#broadcast_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>broadcast_address</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="broadcast_rpc_address" class="anchor" href="#broadcast_rpc_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>broadcast_rpc_address</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="cas_contention_timeout_in_ms" class="anchor" href="#cas_contention_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cas_contention_timeout_in_ms</code>
 </h5>
 
@@ -666,6 +688,39 @@ Default value: 'stop'</p>
 Default value '/var/lib/cassandra/commitlog'</p>
 
 <h5>
+<a id="commitlog_sync" class="anchor" href="#commitlog_sync" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="commitlog_sync_batch_window_in_ms" class="anchor" href="#commitlog_sync_batch_window_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync_batch_window_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="commitlog_total_space_in_mb" class="anchor" href="#commitlog_total_space_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_total_space_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="compaction_throughput_mb_per_sec" class="anchor" href="#compaction_throughput_mb_per_sec" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>compaction_throughput_mb_per_sec</code>
 </h5>
 
@@ -708,12 +763,34 @@ path name.
 Default value <em>undef</em></p>
 
 <h5>
+<a id="concurrent_compactors" class="anchor" href="#concurrent_compactors" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>concurrent_compactors</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="counter_cache_save_period" class="anchor" href="#counter_cache_save_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_cache_save_period</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value: '7200'</p>
+
+<h5>
+<a id="counter_cache_keys_to_save" class="anchor" href="#counter_cache_keys_to_save" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_cache_keys_to_save</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="counter_write_request_timeout_in_ms" class="anchor" href="#counter_write_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_write_request_timeout_in_ms</code>
@@ -808,6 +885,17 @@ If you set this option to false then you must also at least set the
 Default value 'true'</p>
 
 <h5>
+<a id="file_cache_size_in_mb" class="anchor" href="#file_cache_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>file_cache_size_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="hinted_handoff_enabled" class="anchor" href="#hinted_handoff_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>hinted_handoff_enabled</code>
 </h5>
 
@@ -840,6 +928,17 @@ Default value: '60'</p>
 Default value 'false'</p>
 
 <h5>
+<a id="initial_token" class="anchor" href="#initial_token" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>initial_token</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="inter_dc_tcp_nodelay" class="anchor" href="#inter_dc_tcp_nodelay" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>inter_dc_tcp_nodelay</code>
 </h5>
 
@@ -848,12 +947,45 @@ Default value 'false'</p>
 Default value: 'false'</p>
 
 <h5>
+<a id="internode_authenticator" class="anchor" href="#internode_authenticator" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_authenticator</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="internode_compression" class="anchor" href="#internode_compression" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_compression</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value 'all'</p>
+
+<h5>
+<a id="internode_recv_buff_size_in_bytes" class="anchor" href="#internode_recv_buff_size_in_bytes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_recv_buff_size_in_bytes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="internode_send_buff_size_in_bytes" class="anchor" href="#internode_send_buff_size_in_bytes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_send_buff_size_in_bytes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="listen_address" class="anchor" href="#listen_address" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>listen_address</code>
@@ -889,6 +1021,105 @@ Default value: '2'</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value: '10800000'</p>
+
+<h5>
+<a id="memory_allocator" class="anchor" href="#memory_allocator" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>memory_allocator</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="memtable_cleanup_threshold" class="anchor" href="#memtable_cleanup_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>memtable_cleanup_threshold</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="memtable_flush_writers" class="anchor" href="#memtable_flush_writers" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>memtable_flush_writers</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="memtable_heap_space_in_mb" class="anchor" href="#memtable_heap_space_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>memtable_heap_space_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="memtable_offheap_space_in_mb" class="anchor" href="#memtable_offheap_space_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>memtable_offheap_space_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="native_transport_max_concurrent_connections" class="anchor" href="#native_transport_max_concurrent_connections" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_max_concurrent_connections</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="native_transport_max_concurrent_connections_per_ip" class="anchor" href="#native_transport_max_concurrent_connections_per_ip" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_max_concurrent_connections_per_ip</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="native_transport_max_frame_size_in_mb" class="anchor" href="#native_transport_max_frame_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_max_frame_size_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="native_transport_max_threads" class="anchor" href="#native_transport_max_threads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_max_threads</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="native_transport_port" class="anchor" href="#native_transport_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>native_transport_port</code>
@@ -930,12 +1161,34 @@ Default value 'dsc22'</p>
 Default value 'org.apache.cassandra.dht.Murmur3Partitioner'</p>
 
 <h5>
+<a id="permissions_update_interval_in_ms" class="anchor" href="#permissions_update_interval_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>permissions_update_interval_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="permissions_validity_in_ms" class="anchor" href="#permissions_validity_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>permissions_validity_in_ms</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value: '2000'</p>
+
+<h5>
+<a id="phi_convict_threshold" class="anchor" href="#phi_convict_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>phi_convict_threshold</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="prefer_local" class="anchor" href="#prefer_local" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>prefer_local</code>
@@ -982,12 +1235,45 @@ Default value: '5000'</p>
 Default value: 'org.apache.cassandra.scheduler.NoScheduler'</p>
 
 <h5>
+<a id="request_scheduler_options_default_weight" class="anchor" href="#request_scheduler_options_default_weight" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_scheduler_options_default_weight</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="request_scheduler_options_throttle_limit" class="anchor" href="#request_scheduler_options_throttle_limit" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_scheduler_options_throttle_limit</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="request_timeout_in_ms" class="anchor" href="#request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>request_timeout_in_ms</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value: '10000'</p>
+
+<h5>
+<a id="row_cache_keys_to_save" class="anchor" href="#row_cache_keys_to_save" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>row_cache_keys_to_save</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="row_cache_save_period" class="anchor" href="#row_cache_save_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>row_cache_save_period</code>
@@ -1014,12 +1300,56 @@ Default value: '0'</p>
 Default value 'localhost'</p>
 
 <h5>
+<a id="rpc_max_threads" class="anchor" href="#rpc_max_threads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_max_threads</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="rpc_min_threads" class="anchor" href="#rpc_min_threads" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_min_threads</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="rpc_port" class="anchor" href="#rpc_port" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_port</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value '9160'</p>
+
+<h5>
+<a id="rpc_recv_buff_size_in_bytes" class="anchor" href="#rpc_recv_buff_size_in_bytes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_recv_buff_size_in_bytes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="rpc_send_buff_size_in_bytes" class="anchor" href="#rpc_send_buff_size_in_bytes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_send_buff_size_in_bytes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="rpc_server_type" class="anchor" href="#rpc_server_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>rpc_server_type</code>
@@ -1168,6 +1498,17 @@ Default value 'true'</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value '7000'</p>
+
+<h5>
+<a id="streaming_socket_timeout_in_ms" class="anchor" href="#streaming_socket_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>streaming_socket_timeout_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="tombstone_failure_threshold" class="anchor" href="#tombstone_failure_threshold" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>tombstone_failure_threshold</code>
