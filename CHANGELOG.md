@@ -1,6 +1,6 @@
 # Change Log for Puppet Module locp-cassandra
 
-##YYYY-MM-DD - Release 1.5.0 ([diff](https://github.com/locp/cassandra/compare/1.4.2...1.5.0))
+##2015-09-21 - Release 1.5.0 ([diff](https://github.com/locp/cassandra/compare/1.4.2...1.5.0))
 
 ### Summary
 
@@ -51,7 +51,7 @@ cassandra.yaml file.
 
 ### Improvements
 
-* Clarity of changes per release.
+* Clarity of changes per release in the change log (this document).
 
 ##2015-09-15 - Release 1.4.2 ([diff](https://github.com/locp/cassandra/compare/1.4.1...1.4.2))
 
