@@ -24,8 +24,8 @@ describe 'neutron::plugins::ml2::cisco::nexus' do
           "nve_src_intf" => 1,
           "physnet" => "physnet1",
           "servers" => {
-            "control02" => "portchannel:20",
-            "control01" => "portchannel:10"
+            "control02" => {"ports" => "portchannel:20"},
+            "control01" => {"ports" => "portchannel:10"}
           }
         }
       },
@@ -76,14 +76,11 @@ describe 'neutron::plugins::ml2::cisco::nexus' do
       is_expected.to contain_neutron_plugin_ml2('ml2_cisco/host_key_checks').with_value(params[:host_key_checks])
     end
 
-    it { should contain_file('nexus_config').with({
-         :path => platform_params[:cisco_ml2_config_file]}) }
-
     it {
       # Stored as an array of arrays with the first element consisting of the name and
       # the second element consisting of the config hash
       params[:nexus_config].each do |switch_config|
-        should contain_neutron__plugins__ml2__cisco__nexus_creds(switch_config.first)
+        is_expected.to contain_neutron__plugins__ml2__cisco__nexus_creds(switch_config.first)
       end
     }
 

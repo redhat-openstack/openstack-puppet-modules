@@ -41,7 +41,6 @@ describe 'horizon' do
         is_expected.to contain_class('horizon::wsgi::apache').with({
           :servername    => 'some.host.tld',
           :listen_ssl    => false,
-          :servername    => 'some.host.tld',
           :extra_params  => {},
           :redirect_type => 'permanent',
         })
@@ -56,13 +55,13 @@ describe 'horizon' do
           'OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"',
           "    'can_set_mount_point': True,",
           "    'can_set_password': False,",
-          "    'enable_lb': False,",
+          "    'enable_distributed_router': False,",
           "    'enable_firewall': False,",
+          "    'enable_ha_router': False,",
+          "    'enable_lb': False,",
           "    'enable_quotas': True,",
           "    'enable_security_group': True,",
           "    'enable_vpn': False,",
-          "    'enable_distributed_router': False,",
-          "    'enable_ha_router': False,",
           'API_RESULT_LIMIT = 1000',
           "LOGIN_URL = '#{platforms_params[:root_url]}/auth/login/'",
           "LOGOUT_URL = '#{platforms_params[:root_url]}/auth/logout/'",
@@ -90,6 +89,7 @@ describe 'horizon' do
           :django_session_engine   => 'django.contrib.sessions.backends.cache',
           :keystone_default_role   => 'SwiftOperator',
           :keystone_url            => 'https://keystone.example.com:4682',
+          :ssl_no_verify           => true,
           :log_handler             => 'syslog',
           :log_level               => 'DEBUG',
           :openstack_endpoint_type => 'internalURL',
@@ -122,11 +122,12 @@ describe 'horizon' do
           'SESSION_ENGINE = "django.contrib.sessions.backends.cache"',
           'OPENSTACK_KEYSTONE_URL = "https://keystone.example.com:4682"',
           'OPENSTACK_KEYSTONE_DEFAULT_ROLE = "SwiftOperator"',
+          'OPENSTACK_SSL_NO_VERIFY = True',
           "    'can_set_mount_point': False,",
           "    'can_set_password': True,",
           "    'enable_backup': True,",
-          "    'enable_lb': True,",
           "    'enable_firewall': True,",
+          "    'enable_lb': True,",
           "    'enable_quotas': False,",
           "    'enable_security_group': False,",
           "    'enable_vpn': True,",
@@ -138,7 +139,7 @@ describe 'horizon' do
           "            'level': 'DEBUG',",
           "            'handlers': ['syslog'],",
           'COMPRESS_OFFLINE = False',
-          "FILE_UPLOAD_TEMP_DIR = '/var/spool/horizon'"
+          "FILE_UPLOAD_TEMP_DIR = '/var/spool/horizon'",
         ])
       end
 

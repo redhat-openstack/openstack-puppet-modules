@@ -13,6 +13,7 @@ describe 'sahara' do
 
   shared_examples_for 'sahara' do
     it { is_expected.to contain_class('sahara::params') }
+    it { is_expected.to contain_class('sahara::db') }
     it { is_expected.to contain_class('sahara::policy') }
     it { is_expected.to contain_class('mysql::bindings::python') }
     it { is_expected.to contain_exec('sahara-dbmanage') }
@@ -29,18 +30,20 @@ describe 'sahara' do
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('admin') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_tenant_name').with_value('admin') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_password').with_value('secrete').with_secret(true) }
+      it { is_expected.to contain_sahara_config('DEFAULT/plugins').with_ensure('absent') }
     end
 
     context 'with passing params' do
       let :params do {
-        :use_neutron       => 'true',
-        :host              => 'localhost',
-        :port              => '8387',
-        :auth_uri          => 'http://8.8.8.8:5000/v2.0/',
-        :identity_uri      => 'http://8.8.8.8:35357/',
-        :admin_user        => 'sahara',
-        :admin_tenant_name => 'sahara-tenant',
-        :admin_password    => 'new_password',
+        :use_neutron           => 'true',
+        :host                  => 'localhost',
+        :port                  => '8387',
+        :auth_uri              => 'http://8.8.8.8:5000/v2.0/',
+        :identity_uri          => 'http://8.8.8.8:35357/',
+        :admin_user            => 'sahara',
+        :admin_tenant_name     => 'sahara-tenant',
+        :admin_password        => 'new_password',
+        :plugins               => ['plugin1', 'plugin2'],
       }
       end
 
@@ -52,6 +55,7 @@ describe 'sahara' do
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('sahara') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_tenant_name').with_value('sahara-tenant') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_password').with_value('new_password').with_secret(true) }
+      it { is_expected.to contain_sahara_config('DEFAULT/plugins').with_value('plugin1,plugin2') }
     end
 
     context 'with deprecated params' do

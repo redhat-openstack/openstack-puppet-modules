@@ -10,6 +10,8 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
 
   INI_FILENAME = '/etc/keystone/keystone.conf'
 
+  @@default_domain_id = nil
+
   def self.admin_endpoint
     @admin_endpoint ||= get_admin_endpoint
   end
@@ -31,28 +33,36 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
   end
 
   def self.default_domain
-    domain_hash[default_domain_id]
+    domain_name_from_id(default_domain_id)
   end
 
   def self.default_domain_id
-    return @default_domain_id if @default_domain_id
-    if keystone_file and keystone_file['identity'] and keystone_file['identity']['default_domain_id']
-      @default_domain_id = "#{keystone_file['identity']['default_domain_id'].strip}"
+    if @@default_domain_id
+      @@default_domain_id
+    elsif keystone_file and keystone_file['identity'] and keystone_file['identity']['default_domain_id']
+      keystone_file['identity']['default_domain_id'].strip
     else
-      @default_domain_id = 'default'
+      'default'
     end
-    @default_domain_id
   end
 
-  def self.domain_hash
-    return @domain_hash if @domain_hash
-    list = request('domain', 'list')
-    @domain_hash = Hash[list.collect{|domain| [domain[:id], domain[:name]]}]
-    @domain_hash
+  def self.default_domain_id=(id)
+    @@default_domain_id = id
   end
 
   def self.domain_name_from_id(id)
-    domain_hash[id]
+    unless @domain_hash
+      list = request('domain', 'list')
+      @domain_hash = Hash[list.collect{|domain| [domain[:id], domain[:name]]}]
+    end
+    unless @domain_hash.include?(id)
+      name = request('domain', 'show', id)[:name]
+      @domain_hash[id] = name if name
+    end
+    unless @domain_hash.include?(id)
+      err("Could not find domain with id [#{id}]")
+    end
+    @domain_hash[id]
   end
 
   def self.get_admin_endpoint
@@ -86,7 +96,7 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
   end
 
   def self.get_section(group, name)
-    if keystone_file && keystone_file[group] && keystone_file['DEFAULT'][name]
+    if keystone_file && keystone_file[group] && keystone_file[group][name]
       return keystone_file[group][name].strip
     end
     return nil

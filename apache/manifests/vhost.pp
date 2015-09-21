@@ -81,6 +81,7 @@ define apache::vhost(
   $redirectmatch_regexp        = undef,
   $redirectmatch_dest          = undef,
   $rack_base_uris              = undef,
+  $passenger_base_uris         = undef,
   $headers                     = undef,
   $request_headers             = undef,
   $filters                     = undef,
@@ -123,6 +124,13 @@ define apache::vhost(
   $modsec_disable_ids          = undef,
   $modsec_disable_ips          = undef,
   $modsec_body_limit           = undef,
+  $auth_kerb                   = false,
+  $krb_method_negotiate        = 'on',
+  $krb_method_k5passwd         = 'on',
+  $krb_authoritative           = 'on',
+  $krb_auth_realms             = [],
+  $krb_5keytab                 = undef,
+  $krb_local_user_mapping      = undef,
 ) {
   # The base class must be included first because it is used by parameter defaults
   if ! defined(Class['apache']) {
@@ -213,12 +221,17 @@ define apache::vhost(
     validate_re($allow_encoded_slashes, '(^on$|^off$|^nodecode$)', "${allow_encoded_slashes} is not permitted for allow_encoded_slashes. Allowed values are 'on', 'off' or 'nodecode'.")
   }
 
+  validate_bool($auth_kerb)
   # Input validation ends
 
   if $ssl and $ensure == 'present' {
     include ::apache::mod::ssl
     # Required for the AddType lines.
     include ::apache::mod::mime
+  }
+
+  if $auth_kerb and $ensure == 'present' {
+    include ::apache::mod::auth_kerb
   }
 
   if $virtual_docroot {
@@ -385,6 +398,11 @@ define apache::vhost(
     if ! defined(Class['apache::mod::passenger']) {
       include ::apache::mod::passenger
     }
+  }
+
+  # Load mod_passenger if needed and not yet loaded
+  if $passenger_base_uris {
+      include ::apache::mod::passenger
   }
 
   # Load mod_fastci if needed and not yet loaded
@@ -657,6 +675,16 @@ define apache::vhost(
   }
 
   # Template uses:
+  # - $passenger_base_uris
+  if $passenger_base_uris {
+    concat::fragment { "${name}-passenger_uris":
+      target  => "${priority_real}${filename}.conf",
+      order   => 155,
+      content => template('apache/vhost/_passenger_base_uris.erb'),
+    }
+  }
+
+  # Template uses:
   # - $redirect_source
   # - $redirect_dest
   # - $redirect_status
@@ -748,6 +776,22 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 210,
       content => template('apache/vhost/_ssl.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $auth_kerb
+  # - $krb_method_negotiate
+  # - $krb_method_k5passwd
+  # - $krb_authoritative
+  # - $krb_auth_realms
+  # - $krb_5keytab 
+  # - $krb_local_user_mapping
+  if $auth_kerb {
+    concat::fragment { "${name}-auth_kerb":
+      target  => "${priority_real}${filename}.conf",
+      order   => 210,
+      content => template('apache/vhost/_auth_kerb.erb'),
     }
   }
 

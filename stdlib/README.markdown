@@ -403,6 +403,29 @@ Converts an array into a hash. For example, `hash(['a',1,'b',2,'c',3])` returns 
 
 Returns an array an intersection of two. For example, `intersection(["a","b","c"],["b","c","d"])` returns ["b","c"]. *Type*: rvalue.
 
+#### `is_a`
+
+Boolean check to determine whether a variable is of a given data type. This is equivalent to the `=~` type checks.
+
+  ~~~
+  foo = 3
+  $bar = [1,2,3]
+  $baz = 'A string!'
+
+  if $foo.is_a(Integer) {
+    notify  { 'foo!': }
+  }
+  if $bar.is_a(Array) {
+    notify { 'bar!': }
+  }
+  if $baz.is_a(String) {
+    notify { 'baz!': }
+  }
+  ~~~
+
+See the documentation for "The Puppet Type System" for more information about types.
+See the `assert_type()` function for flexible ways to assert the type of a value.
+
 #### `is_array`
 
 Returns 'true' if the variable passed to this function is an array. *Type*: rvalue.
@@ -521,10 +544,12 @@ Converts a number or a string representation of a number into a true boolean. Ze
 #### `parsejson`
 
 Converts a string of JSON into the correct Puppet structure. *Type*: rvalue.
+The optional second argument will be returned if the data was not correct.
 
 #### `parseyaml`
 
 Converts a string of YAML into the correct Puppet structure. *Type*: rvalue.
+The optional second argument will be returned if the data was not correct.
 
 #### `pick`
 
@@ -1027,6 +1052,13 @@ test, and the second argument should be a stringified regular expression (withou
 
   ~~~
   validate_re($::puppetversion, '^2.7', 'The $puppetversion fact value does not match 2.7')
+  ~~~
+
+  Note: Compilation will also abort, if the first argument is not a String. Always use
+  quotes to force stringification:
+
+  ~~~
+  validate_re("${::operatingsystemmajrelease}", '^[57]$')
   ~~~
 
 *Type*: statement.

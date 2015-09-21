@@ -3,6 +3,8 @@ require 'spec_helper'
 require 'puppet/provider/keystone_user/openstack'
 require 'puppet/provider/openstack'
 
+setup_provider_tests
+
 provider_class = Puppet::Type.type(:keystone_user).provider(:openstack)
 
 def project_class
@@ -16,6 +18,11 @@ describe provider_class do
     ENV['OS_PASSWORD']     = 'abc123'
     ENV['OS_PROJECT_NAME'] = 'test'
     ENV['OS_AUTH_URL']     = 'http://127.0.0.1:5000'
+  end
+
+  after :each do
+    provider_class.reset
+    project_class.reset
   end
 
   let(:user_attrs) do
@@ -38,10 +45,27 @@ describe provider_class do
     provider_class.new(resource)
   end
 
-  def before_hook(delete, missing, noproject, user_cached)
+  def before_hook(delete, missing, noproject, user_cached, project_only)
+    unless noproject
+      project_class.expects(:openstack).once
+                   .with('domain', 'list', '--quiet', '--format', 'csv', [])
+                   .returns('"ID","Name","Enabled","Description"
+"default","Default",True,"default"
+"foo_domain_id","foo_domain",True,"foo domain"
+"bar_domain_id","bar_domain",True,"bar domain"
+"another_domain_id","another_domain",True,"another domain"
+"disabled_domain_id","disabled_domain",False,"disabled domain"
+')
+    end
+
+    if project_only
+      return
+    end
+
     provider.class.expects(:openstack).once
                   .with('domain', 'list', '--quiet', '--format', 'csv', [])
                   .returns('"ID","Name","Enabled","Description"
+"default","Default",True,"default"
 "foo_domain_id","foo_domain",True,"foo domain"
 "bar_domain_id","bar_domain",True,"bar domain"
 "another_domain_id","another_domain",True,"another domain"
@@ -75,39 +99,37 @@ describe provider_class do
   end
 
   before :each, :default => true do
-    before_hook(false, false, false, false)
+    before_hook(false, false, false, false, false)
   end
   before :each, :delete => true do
-    before_hook(true, false, false, false)
+    before_hook(true, false, false, false, false)
   end
   before :each, :missing => true do
-    before_hook(false, true, false, false)
+    before_hook(false, true, false, false, false)
   end
   before :each, :noproject => true do
-    before_hook(false, false, true, false)
+    before_hook(false, false, true, false, false)
   end
   before :each, :default_https => true do
-    before_hook(false, false, false, false)
+    before_hook(false, false, false, false, false)
   end
   before :each, :user_cached => true do
-    before_hook(false, false, false, true)
+    before_hook(false, false, false, true, false)
   end
   before :each, :nohooks => true do
     # do nothing
   end
+  before :each, :project_only => true do
+    before_hook(false, false, false, false, true)
+  end
+  before :each, :noproject_user_cached => true do
+    before_hook(false, false, true, true, false)
+  end
 
   describe 'when managing a user' do
     it_behaves_like 'authenticated with environment variables' do
-      describe '#create' do
+      describe '#create', :project_only => true do
         it 'creates a user' do
-          project_class.expects(:openstack).once
-                       .with('domain', 'list', '--quiet', '--format', 'csv', [])
-                       .returns('"ID","Name","Enabled","Description"
-"foo_domain_id","foo_domain",True,"foo domain"
-"bar_domain_id","bar_domain",True,"bar domain"
-"another_domain_id","another_domain",True,"another domain"
-"disabled_domain_id","disabled_domain",False,"disabled domain"
-')
           project_class.expects(:openstack)
                        .with('project', 'list', '--quiet', '--format', 'csv', '--long')
                        .returns('"ID","Name","Domain ID","Description","Enabled"
@@ -155,7 +177,7 @@ username="foo"
         end
       end
 
-      describe '#instances', :default => true do
+      describe '#instances', :noproject => true do
         it 'finds every user' do
           instances = provider.class.instances
           expect(instances.count).to eq(3)
@@ -167,10 +189,10 @@ username="foo"
       end
 
       describe '#tenant' do
-        it 'gets the tenant with default backend', :nohooks => true do
-            project_class.expects(:openstack)
-                         .with('project', 'list', '--quiet', '--format', 'csv', '--long')
-                         .returns('"ID","Name","Domain ID","Description","Enabled"
+        it 'gets the tenant with default backend', :user_cached => true do
+          project_class.expects(:openstack)
+                       .with('project', 'list', '--quiet', '--format', 'csv', '--long')
+                       .returns('"ID","Name","Domain ID","Description","Enabled"
 "1cb05cfed7c24279be884ba4f6520262","foo","foo_domain_id","foo",True
 "2cb05cfed7c24279be884ba4f6520262","bar","bar_domain_id","bar",True
 ')
@@ -184,11 +206,11 @@ username="foo"
           expect(tenant).to eq('foo')
         end
 
-        it 'gets the tenant with LDAP backend', :nohooks => true do
+        it 'gets the tenant with LDAP backend', :user_cached => true do
           provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
-            project_class.expects(:openstack)
-                         .with('project', 'list', '--quiet', '--format', 'csv', '--long')
-                         .returns('"ID","Name","Domain ID","Description","Enabled"
+          project_class.expects(:openstack)
+                       .with('project', 'list', '--quiet', '--format', 'csv', '--long')
+                       .returns('"ID","Name","Domain ID","Description","Enabled"
 "1cb05cfed7c24279be884ba4f6520262","foo","foo_domain_id","foo",True
 "2cb05cfed7c24279be884ba4f6520262","bar","bar_domain_id","bar",True
 ')
@@ -203,8 +225,8 @@ username="foo"
           expect(tenant).to eq('foo')
         end
       end
-      describe '#tenant=' do
-        context 'when using default backend', :nohooks => true do
+      describe '#tenant=', :project_only => true do
+        context 'when using default backend' do
           it 'sets the tenant' do
             provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
             provider.instance_variable_get('@property_hash')[:domain] = 'foo_domain'
@@ -222,7 +244,7 @@ username="foo"
             provider.tenant=('bar')
           end
         end
-        context 'when using LDAP read-write backend', :nohooks => true do
+        context 'when using LDAP read-write backend' do
           it 'sets the tenant when _member_ role exists' do
             provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
             provider.instance_variable_get('@property_hash')[:domain] = 'foo_domain'
@@ -281,7 +303,7 @@ username="foo"
     end
   end
 
-  describe "#password", :nohooks => true do
+  describe "#password" do
     let(:user_attrs) do
       {
         :name         => 'foo',
@@ -307,7 +329,7 @@ username="foo"
     end
 
     it_behaves_like 'with auth-url environment variable' do
-      it 'checks the password' do
+      it 'checks the password', :noproject_user_cached => true do
         provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
         mock_creds = Puppet::Provider::Openstack::CredentialsV3.new
         mock_creds.auth_url='http://127.0.0.1:5000'
@@ -332,7 +354,7 @@ ac43ec53d5a74a0b9f51523ae41a29f0
         expect(password).to eq('foo')
       end
 
-      it 'fails the password check' do
+      it 'fails the password check', :noproject_user_cached => true do
         provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
         Puppet::Provider::Openstack.expects(:openstack)
                       .with('project', 'list', '--quiet', '--format', 'csv', ['--user', '1cb05cfed7c24279be884ba4f6520262', '--long'])
@@ -346,7 +368,7 @@ ac43ec53d5a74a0b9f51523ae41a29f0
         expect(password).to eq(nil)
       end
 
-      it 'checks the password with domain scoped token' do
+      it 'checks the password with domain scoped token', :nohooks => true do
         provider.instance_variable_get('@property_hash')[:id] = '1cb05cfed7c24279be884ba4f6520262'
         provider.instance_variable_get('@property_hash')[:domain] = 'foo_domain'
         mock_creds = Puppet::Provider::Openstack::CredentialsV3.new
@@ -405,7 +427,7 @@ ac43ec53d5a74a0b9f51523ae41a29f0
   end
 
   it_behaves_like 'authenticated with environment variables' do
-    describe 'v3 domains with no domain in resource', :nohooks => true do
+    describe 'v3 domains with no domain in resource', :user_cached => true do
       let(:user_attrs) do
         {
           :name         => 'foo',
@@ -418,9 +440,6 @@ ac43ec53d5a74a0b9f51523ae41a29f0
       end
 
       it 'adds default domain to commands' do
-        provider_class.class_exec {
-          @default_domain_id = nil
-        }
         mock = {
           'identity' => {'default_domain_id' => 'foo_domain_id'}
         }
@@ -458,7 +477,7 @@ username="foo"
       end
     end
 
-    describe 'v3 domains with domain in resource' do
+    describe 'v3 domains with domain in resource', :project_only => true do
       let(:user_attrs) do
         {
           :name         => 'foo',
@@ -499,7 +518,7 @@ username="foo"
       end
     end
 
-    describe 'v3 domains with domain in name/title' do
+    describe 'v3 domains with domain in name/title', :project_only => true do
       let(:user_attrs) do
         {
           :name         => 'foo::bar_domain',
@@ -536,10 +555,11 @@ username="foo"
         provider.create
         expect(provider.exists?).to be_truthy
         expect(provider.id).to eq("2cb05cfed7c24279be884ba4f6520262")
+        expect(provider.name).to eq('foo::bar_domain')
       end
     end
 
-    describe 'v3 domains with domain in name/title and in resource' do
+    describe 'v3 domains with domain in name/title and in resource', :project_only => true do
       let(:user_attrs) do
         {
           :name         => 'foo::bar_domain',
@@ -577,10 +597,11 @@ username="foo"
         provider.create
         expect(provider.exists?).to be_truthy
         expect(provider.id).to eq("2cb05cfed7c24279be884ba4f6520262")
+        expect(provider.name).to eq('foo::bar_domain')
       end
     end
 
-    describe 'v3 domains with domain in name/title and in resource and in tenant' do
+    describe 'v3 domains with domain in name/title and in resource and in tenant', :project_only => true do
       let(:user_attrs) do
         {
           :name         => 'foo::bar_domain',
@@ -618,6 +639,7 @@ username="foo"
         provider.create
         expect(provider.exists?).to be_truthy
         expect(provider.id).to eq("2cb05cfed7c24279be884ba4f6520262")
+        expect(provider.name).to eq('foo::bar_domain')
       end
     end
   end
