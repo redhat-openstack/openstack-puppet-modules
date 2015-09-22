@@ -8,6 +8,8 @@ describe 'cassandra::datastax_agent' do
     it { should have_resource_count(3) }
     it {
       should contain_class('cassandra::datastax_agent').only_with(
+        'defaults_file'   => '/etc/default/datastax-agent',
+        #'java_home'       => nil,
         'package_ensure'  => 'present',
         'package_name'    => 'datastax-agent',
         'service_ensure'  => 'running',
@@ -16,15 +18,9 @@ describe 'cassandra::datastax_agent' do
         'stomp_interface' => nil,
       )
     }
-  end
-
-  context 'Test for cassandra::datastax_agent package.' do
     it {
       should contain_package('datastax-agent')
     }
-  end
-
-  context 'Test for cassandra::datastax_agent service.' do
     it {
       should contain_service('datastax-agent')
     }
@@ -38,12 +34,30 @@ describe 'cassandra::datastax_agent' do
     end
 
     it { should contain_ini_setting('stomp_interface').with_ensure('present') }
-    it { should contain_ini_setting('stomp_interface').with_value('192.168.0.1') }
+    it {
+      should contain_ini_setting('stomp_interface').with_value('192.168.0.1')
+    }
   end
 
   context 'Test that stomp_interface can be ignored.' do
     it {
       should contain_ini_setting('stomp_interface').with_ensure('absent')
+    }
+  end
+
+  context 'Test that the JAVA_HOME can be set.' do
+    let :params do
+      {
+        :java_home => '/usr/lib/jvm/java-8-oracle'
+      }
+    end
+
+    it {
+      should contain_ini_setting('java_home').with(
+        'ensure' => 'present',
+        'path'   => '/etc/default/datastax-agent',
+        'value'  => '/usr/lib/jvm/java-8-oracle'
+      )
     }
   end
 end

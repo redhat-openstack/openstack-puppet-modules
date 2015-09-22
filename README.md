@@ -51,6 +51,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 #### What the cassandra::datastax_agent class affects
 
 * Optionally installs the DataStax agent.
+* Optionally sets JAVA_HOME in **/etc/default/datastax-agent**.
 
 #### What the cassandra::datastax_agent class affects
 
@@ -1054,6 +1055,15 @@ A class for installing the DataStax Agent and to point it at an OpsCenter
 instance.
 
 #### Parameters
+
+##### `defaults_file`
+The full path name to the file where `java_home` is set.
+Default value '/etc/default/datastax-agent'
+
+##### `java_home`
+If the value of this variable is left as *undef*, no action is taken.
+Otherwise the value is set as JAVA_HOME in `defaults_file`.
+Default value *undef*
 
 ##### `package_ensure`
 Is passed to the package reference.  Valid values are **present** or a version
