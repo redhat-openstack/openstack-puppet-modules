@@ -34,12 +34,14 @@ Puppet::Type.type(:keystone_user).provide(
       properties << user_domain
     end
     @property_hash = self.class.request('user', 'create', properties)
+    @property_hash[:name] = resource[:name]
     @property_hash[:domain] = user_domain
     if resource[:tenant]
       # DEPRECATED - To be removed in next release (Liberty)
       # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
       project_id = Puppet::Resource.indirection.find("Keystone_tenant/#{resource[:tenant]}")[:id]
       set_project(resource[:tenant], project_id)
+      @property_hash[:tenant] = resource[:tenant]
     end
     @property_hash[:ensure] = :present
   end
@@ -92,17 +94,22 @@ Puppet::Type.type(:keystone_user).provide(
   end
 
   def password
-    res = nil
-    return res if resource[:password] == nil
+    passwd = nil
+    return passwd if resource[:password] == nil
     if resource[:enabled] == :false || resource[:replace_password] == :false
       # Unchanged password
-      res = resource[:password]
+      passwd = resource[:password]
     else
       # Password validation
-      credentials                  = Puppet::Provider::Openstack::CredentialsV3.new
-      credentials.auth_url         = self.class.get_endpoint
-      credentials.password         = resource[:password]
-      credentials.user_id          = id
+      credentials = Puppet::Provider::Openstack::CredentialsV3.new
+      unless auth_url = self.class.get_auth_url
+        raise(Puppet::Error::OpenstackAuthInputError, "Could not find authentication url to validate user's password.")
+      end
+      auth_url << "/v#{credentials.version}" unless auth_url =~ /\/v\d(\.\d)?$/
+      credentials.auth_url = auth_url
+      credentials.password = resource[:password]
+      credentials.user_id = id
+
       # NOTE: The only reason we use username is so that the openstack provider
       # will know we are doing v3password auth - otherwise, it is not used.  The
       # user_id uniquely identifies the user including domain.
@@ -121,10 +128,10 @@ Puppet::Type.type(:keystone_user).provide(
       rescue Puppet::Error::OpenstackUnauthorizedError
         # password is invalid
       else
-        res = resource[:password] unless token.empty?
+        passwd = resource[:password] unless token.empty?
       end
     end
-    return res
+    return passwd
   end
 
   def password=(value)
@@ -147,7 +154,7 @@ Puppet::Type.type(:keystone_user).provide(
     self.class.request('project', 'list', ['--user', id, '--long']).each do |project|
       if (project_id == project[:id]) ||
          ((projname == project_name) && (project_domain == self.class.domain_name_from_id(project[:domain_id])))
-        return project[:name]
+        return projname
       end
     end
     return nil

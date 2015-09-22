@@ -59,7 +59,7 @@ mod 'haproxy',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => '108e9b092698e423840cef6ac24233313b9470b1',
+  :commit => '3ced80f2eb6fc8a0694e8586c212d1a3ec5a3bdc',
   :git => 'https://github.com/openstack/puppet-heat.git'
 
 mod 'horizon',
@@ -83,7 +83,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => '5f9080f3adf14921f025038533bfcb9ebdee564c',
+  :commit => '1fb920c38df80a75779ea34b5181534ff9207738',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'manila',

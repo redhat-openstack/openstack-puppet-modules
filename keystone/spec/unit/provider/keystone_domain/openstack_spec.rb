@@ -2,25 +2,11 @@ require 'puppet'
 require 'spec_helper'
 require 'puppet/provider/keystone_domain/openstack'
 
+setup_provider_tests
+
 provider_class = Puppet::Type.type(:keystone_domain).provider(:openstack)
 
-class Puppet::Provider::Keystone
-  def self.reset
-    @admin_endpoint = nil
-    @tenant_hash    = nil
-    @admin_token    = nil
-    @keystone_file  = nil
-    @domain_id_to_name = nil
-    @default_domain_id = nil
-    @domain_hash = nil
-  end
-end
-
 describe provider_class do
-
-  after :each do
-    provider_class.reset
-  end
 
   shared_examples 'authenticated with environment variables' do
     ENV['OS_USERNAME']     = 'test'
@@ -46,6 +32,18 @@ describe provider_class do
 
     let(:provider) do
       provider_class.new(resource)
+    end
+
+    let(:another_class) do
+      class AnotherKlass < Puppet::Provider::Keystone
+        @credentials = Puppet::Provider::Openstack::CredentialsV3.new
+      end
+      AnotherKlass
+    end
+
+    after :each do
+      provider_class.reset
+      another_class.reset
     end
 
     it_behaves_like 'authenticated with environment variables' do
@@ -115,12 +113,12 @@ enabled=True
         end
 
         it 'creates a default domain' do
-          File.expects(:exists?).returns(true)
+          File.expects(:exists?).twice.returns(true)
           mock = {
             'identity' => {'default_domain_id' => ' default'}
           }
-          Puppet::Util::IniConfig::File.expects(:new).returns(mock)
-          mock.expects(:read).with('/etc/keystone/keystone.conf')
+          Puppet::Util::IniConfig::File.expects(:new).twice.returns(mock)
+          mock.expects(:read).twice.with('/etc/keystone/keystone.conf')
           mock.expects(:store)
           provider.class.expects(:openstack)
                         .with('domain', 'create', '--format', 'shell', ['foo', '--enable', '--description', 'foo'])
@@ -129,9 +127,13 @@ name="foo"
 description="foo"
 enabled=True
 ')
+          expect(provider.class.default_domain_id).to eq('default')
+          expect(another_class.default_domain_id).to eq('default')
           provider.create
           expect(provider.exists?).to be_truthy
           expect(mock['identity']['default_domain_id']).to eq('1cb05cfed7c24279be884ba4f6520262')
+          expect(provider.class.default_domain_id).to eq('1cb05cfed7c24279be884ba4f6520262')
+          expect(another_class.default_domain_id).to eq('1cb05cfed7c24279be884ba4f6520262')
         end
       end
 
@@ -154,6 +156,8 @@ enabled=True
           provider.destroy
           expect(provider.exists?).to be_falsey
           expect(kcmock['identity']['default_domain_id']).to eq('default')
+          expect(provider.class.default_domain_id).to eq('default')
+          expect(another_class.default_domain_id).to eq('default')
         end
       end
 
