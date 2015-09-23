@@ -109,6 +109,7 @@ workaround for
 
 <ul>
 <li>Optionally installs the DataStax agent.</li>
+<li>Optionally sets JAVA_HOME in <strong>/etc/default/datastax-agent</strong>.</li>
 </ul>
 
 <h4>
@@ -688,6 +689,13 @@ Default value: 'stop'</p>
 Default value '/var/lib/cassandra/commitlog'</p>
 
 <h5>
+<a id="commitlog_directory_mode" class="anchor" href="#commitlog_directory_mode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_directory_mode</code>
+</h5>
+
+<p>The mode for the directory specified in <code>commitlog_directory</code>.
+Default value '0750'</p>
+
+<h5>
 <a id="commitlog_sync" class="anchor" href="#commitlog_sync" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync</code>
 </h5>
 
@@ -815,6 +823,13 @@ Default value: 'false'</p>
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 Default value '['/var/lib/cassandra/data']'</p>
+
+<h5>
+<a id="data_file_directories_mode" class="anchor" href="#data_file_directories_mode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>data_file_directories_mode</code>
+</h5>
+
+<p>The mode for the directories specified in <code>data_file_directories</code>.
+Default value '0750'</p>
 
 <h5>
 <a id="dc" class="anchor" href="#dc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>dc</code>
@@ -1368,6 +1383,13 @@ Default value 'sync'</p>
 Default value '/var/lib/cassandra/saved_caches'</p>
 
 <h5>
+<a id="saved_caches_directory_mode" class="anchor" href="#saved_caches_directory_mode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>saved_caches_directory_mode</code>
+</h5>
+
+<p>The mode for the directory specified in <code>saved_caches_directory</code>.
+Default value '0750'</p>
+
+<h5>
 <a id="seeds" class="anchor" href="#seeds" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>seeds</code>
 </h5>
 
@@ -1566,6 +1588,21 @@ instance.</p>
 
 <h4>
 <a id="parameters-1" class="anchor" href="#parameters-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<h5>
+<a id="defaults_file" class="anchor" href="#defaults_file" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>defaults_file</code>
+</h5>
+
+<p>The full path name to the file where <code>java_home</code> is set.
+Default value '/etc/default/datastax-agent'</p>
+
+<h5>
+<a id="java_home" class="anchor" href="#java_home" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>java_home</code>
+</h5>
+
+<p>If the value of this variable is left as <em>undef</em>, no action is taken.
+Otherwise the value is set as JAVA_HOME in <code>defaults_file</code>.
+Default value <em>undef</em></p>
 
 <h5>
 <a id="package_ensure-1" class="anchor" href="#package_ensure-1" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>package_ensure</code>
