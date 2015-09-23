@@ -9,8 +9,11 @@
   "issues_url": "https://github.com/locp/cassandra/issues",
   "tags": [
     "cassandra",
+    "cluster",
+    "database",
     "datastax",
     "datastax-agent",
+    "nosql",
     "opscenter"
   ],
   "requirements": [
