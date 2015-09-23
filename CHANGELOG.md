@@ -1,5 +1,23 @@
 # Change Log for Puppet Module locp-cassandra
 
+##YYYY-MM-DD - Release X.Y.Z ([diff](https://github.com/locp/cassandra/compare/1.5.0...X.Y.Z))
+
+### Summary
+
+A short summary of what has been changed in this release.
+
+### Features
+
+* N/A
+
+### Bugfixes
+
+* Uncovered resources in the unit testing are now tested.
+
+### Improvements
+
+* N/A
+
 ##2015-09-21 - Release 1.5.0 ([diff](https://github.com/locp/cassandra/compare/1.4.2...1.5.0))
 
 ### Summary
