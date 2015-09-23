@@ -231,5 +231,9 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/phi_convict_threshold: phi_convict_threshold/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/request_scheduler_options_throttle_limit: request_scheduler_options_throttle_limit/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/request_scheduler_options_default_weight: request_scheduler_options_default_weight/) }
+    it { should contain_file('commitlog_directory') }
+    it { should contain_file('datadir1') }
+    it { should contain_file('datadir2') }
+    it { should contain_file('saved_caches_directory') }
   end
 end
