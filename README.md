@@ -465,6 +465,10 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '/var/lib/cassandra/commitlog'
 
+##### `commitlog_directory_mode`
+The mode for the directory specified in `commitlog_directory`.
+Default value '0750'
+
 ##### `commitlog_sync`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -551,6 +555,10 @@ Default value: 'false'
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '['/var/lib/cassandra/data']'
+
+##### `data_file_directories_mode`
+The mode for the directories specified in `data_file_directories`.
+Default value '0750'
 
 ##### `dc`
 Sets the value for dc in *config_path*/*snitch_properties_file* see
@@ -925,6 +933,10 @@ Default value 'sync'
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '/var/lib/cassandra/saved_caches'
+
+##### `saved_caches_directory_mode`
+The mode for the directory specified in `saved_caches_directory`.
+Default value '0750'
 
 ##### `seeds`
 This is passed to the

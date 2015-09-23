@@ -5,7 +5,10 @@ describe 'cassandra class' do
     class { '::cassandra::datastax_repo': } ->
     class { '::cassandra::java': } ->
     class { 'cassandra':
-      cassandra_9822  => true
+      cassandra_9822              => true,
+      commitlog_directory_mode    => '0770',
+      data_file_directories_mode  => '0770',
+      saved_caches_directory_mode => '0770'
     } ->
     class { '::cassandra::optutils': } ->
     class { '::cassandra::datastax_agent': } ->
