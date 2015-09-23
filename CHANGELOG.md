@@ -1,22 +1,27 @@
 # Change Log for Puppet Module locp-cassandra
 
-##YYYY-MM-DD - Release X.Y.Z ([diff](https://github.com/locp/cassandra/compare/1.5.0...X.Y.Z))
+##2015-09-23 - Release 1.6.0 ([diff](https://github.com/locp/cassandra/compare/1.5.0...1.6.0))
 
 ### Summary
 
-A short summary of what has been changed in this release.
+More parameters for ::cassandra and ::cassandra::datastax_agent.  Also some
+non-functional improvements in the automated unit tests.
 
 ### Features
 
-* N/A
+* The JAVA_HOME can now be set for the datastax_agent (see the
+  cassandra::datastax_agent => java_home parameter).
+* The file mode for the directories can now be specified for the
+  commitlog_directory, data_file_directories and the saved_caches_directory
+  in the casssandra class.
 
 ### Bugfixes
 
-* Uncovered resources in the unit testing are now tested.
+* N/A
 
 ### Improvements
 
-* N/A
+* Uncovered resources in the unit testing are now tested.
 
 ##2015-09-21 - Release 1.5.0 ([diff](https://github.com/locp/cassandra/compare/1.4.2...1.5.0))
 
