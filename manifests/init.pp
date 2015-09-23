@@ -25,6 +25,7 @@ class cassandra (
   $column_index_size_in_kb                              = 64,
   $commitlog_directory
     = '/var/lib/cassandra/commitlog',
+  $commitlog_directory_mode                             = '0750',
   $commitlog_sync_batch_window_in_ms                    = undef,
   $commitlog_sync                                       = undef,
   $commitlog_total_space_in_mb                          = undef,
@@ -41,6 +42,7 @@ class cassandra (
   $cross_node_timeout                                   = false,
   $data_file_directories
     = ['/var/lib/cassandra/data'],
+  $data_file_directories_mode                           = '0750',
   $dc                                                   = 'DC1',
   $dc_suffix                                            = undef,
   $disk_failure_policy                                  = 'stop',
@@ -104,6 +106,7 @@ class cassandra (
   $rpc_server_type                                      = 'sync',
   $saved_caches_directory
     = '/var/lib/cassandra/saved_caches',
+  $saved_caches_directory_mode                          = '0750',
   $seeds                                                = '127.0.0.1',
   $server_encryption_internode                          = 'none',
   $server_encryption_keystore                           = 'conf/.keystore',
@@ -187,6 +190,7 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
+    mode    => $commitlog_directory_mode,
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
@@ -195,6 +199,7 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
+    mode    => $data_file_directories_mode,
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
@@ -203,6 +208,7 @@ class cassandra (
     ensure  => directory,
     owner   => 'cassandra',
     group   => 'cassandra',
+    mode    => $saved_caches_directory_mode,
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
