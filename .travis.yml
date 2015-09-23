@@ -4,6 +4,7 @@ script:
 - bundle exec rake lint
 - bundle exec rake validate
 - bundle exec rake spec SPEC_OPTS='--format documentation'
+- sh tests/acceptance.sh
 notifications:
   email: false
   webhooks:
