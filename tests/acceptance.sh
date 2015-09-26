@@ -10,28 +10,31 @@ export FOG_RC=./secrets/fog.rc
 export GITBRANCH='master'
 export GITREPO='https://github.com/puppetlabs/puppetlabs-ntp.git'
 
-#############################################################################
-# Check if we are to run this at all.
-#############################################################################
-
-if [ -z "$BEAKER_TEST" ]; then
-  echo "Skipping acceptance tests."
-  exit 0
-fi
-
 echo "TRAVIS_BUILD_ID     : $TRAVIS_BUILD_ID"
 echo "TRAVIS_BUILD_NUMBER : $TRAVIS_BUILD_ID"
 echo "TRAVIS_JOB_ID       : $TRAVIS_JOB_ID"
 echo "TRAVIS_JOB_NUMBER   : $TRAVIS_JOB_NUMBER"
 echo "TRAVIS_TEST_RESULT  : $TRAVIS_TEST_RESULT"
 
-if [ "$TRAVIS_TEST_RESULT" != 0 ]; then
+#############################################################################
+# Check if we are to run this at all.
+#############################################################################
+
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  echo "This is a pull request, skipping acceptance tests."
+  exit 0
+fi
+
+sub_job_number=$( echo $TRAVIS_JOB_NUMBER | cut -d. -f2 )
+
+if [ "$sub_job_number" != 1 ]; then
   echo "Skipping acceptance tests."
   exit 0
 fi
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "This is a pull request, skipping acceptance tests."
+if [ "$TRAVIS_TEST_RESULT" != 0 ]; then
+  echo "Travis has already detected a failure."
+  echo "Skipping acceptance tests."
   exit 0
 fi
 
