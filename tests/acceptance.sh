@@ -19,6 +19,11 @@ if [ -z "$BEAKER_TEST" ]; then
   exit 0
 fi
 
+if [ "$TRAVIS_BUILD_NUMBER" != 1 ]; then
+  echo "Skipping because build number $TRAVIS_BUILD_NUMBER"
+  exit 0
+fi
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "This is a pull request, skipping acceptance tests."
   exit 0
