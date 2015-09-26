@@ -3,9 +3,9 @@ HOSTS:
     roles:
       - master
     platform: ubuntu-1204-amd64
-    box: puppetlabs/ubuntu-12.04-64-nocm
-    box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-12.04-64-nocm
-    hypervisor: vagrant
+    image: ubuntu-upstart:12.04
+    hypervisor: docker
+    docker_cmd: '["/sbin/init"]'
 CONFIG:
   type: foss
-  vagrant_memsize: 2048
+  log_level: debug
