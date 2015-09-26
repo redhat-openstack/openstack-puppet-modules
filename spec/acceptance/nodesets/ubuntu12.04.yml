@@ -8,4 +8,4 @@ HOSTS:
     docker_cmd: '["/sbin/init"]'
 CONFIG:
   type: foss
-  log_level: debug
+  log_level: info

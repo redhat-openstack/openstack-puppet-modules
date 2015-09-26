@@ -9,4 +9,4 @@ HOSTS:
       - 'yum -y install tar'
 CONFIG:
   type: foss
-  log_level: debug
+  log_level: info
