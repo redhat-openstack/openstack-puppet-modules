@@ -4,8 +4,8 @@
 #############################################################################
 
 # Setup global variables
-export DEBUG=1
-export EXCON_DEBUG=1
+#export DEBUG=1
+#export EXCON_DEBUG=1
 export FOG_RC=./secrets/fog.rc
 export GITBRANCH='master'
 export GITREPO='https://github.com/puppetlabs/puppetlabs-ntp.git'
