@@ -7,8 +7,7 @@
 #export DEBUG=1
 #export EXCON_DEBUG=1
 export FOG_RC=./secrets/fog.rc
-export GITBRANCH='master'
-export GITREPO='https://github.com/puppetlabs/puppetlabs-ntp.git'
+export GITREPO='https://github.com/${TRAVIS_REPO_SLUG}.git'
 export REMOTE_USER="ec2-user"
 
 echo "TRAVIS_BUILD_ID     : $TRAVIS_BUILD_ID"
@@ -80,7 +79,7 @@ done
 # Execute Payload
 ssh -i ./secrets/travis.pem -o "StrictHostKeyChecking no" \
   $REMOTE_USER@${instance_public_ip_address} /var/tmp/payload.sh \
-  $GITREPO $GITBRANCH
+  $GITREPO $TRAVIS_BRANCH
 status=$?
 
 ruby tests/destroy.rb $instance_id
