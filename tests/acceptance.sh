@@ -9,6 +9,7 @@ export EXCON_DEBUG=1
 export FOG_RC=./secrets/fog.rc
 export GITBRANCH='master'
 export GITREPO='https://github.com/puppetlabs/puppetlabs-ntp.git'
+export REMOTE_USER="ec2-user"
 
 echo "TRAVIS_BUILD_ID     : $TRAVIS_BUILD_ID"
 echo "TRAVIS_BUILD_NUMBER : $TRAVIS_BUILD_ID"
@@ -20,6 +21,10 @@ echo "TRAVIS_TEST_RESULT  : $TRAVIS_TEST_RESULT"
 # Check if we are to run this at all.
 #############################################################################
 
+if [ "$ACCEPTANCE_TESTS_ENABLED" != 1 ]; then
+  echo "Acceptances tests are disabled, skipping acceptance tests."
+fi
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "This is a pull request, skipping acceptance tests."
   exit 0
@@ -28,13 +33,12 @@ fi
 sub_job_number=$( echo $TRAVIS_JOB_NUMBER | cut -d. -f2 )
 
 if [ "$sub_job_number" != 1 ]; then
-  echo "Skipping acceptance tests."
+  echo "Not the primary job, skipping acceptance tests."
   exit 0
 fi
 
 if [ "$TRAVIS_TEST_RESULT" != 0 ]; then
-  echo "Travis has already detected a failure."
-  echo "Skipping acceptance tests."
+  echo "Travis has already detected a failure, skipping acceptance tests."
   exit 0
 fi
 
@@ -60,7 +64,7 @@ sleep_period=10
 
 while [ $ssh_attempt -lt $ssh_retries ]; do
   scp -i secrets/travis.pem -B -o "StrictHostKeyChecking no" tests/payload.sh \
-    ubuntu@${instance_public_ip_address}:/var/tmp
+    $REMOTE_USER@${instance_public_ip_address}:/var/tmp
 
   if [ $? -ne 0 ]; then
     echo "Attempt $ssh_attempt of $ssh_retries failed."
@@ -75,7 +79,8 @@ done
 
 # Execute Payload
 ssh -i ./secrets/travis.pem -o "StrictHostKeyChecking no" \
-  ubuntu@${instance_public_ip_address} /var/tmp/payload.sh $GITREPO $GITBRANCH
+  $REMOTE_USER@${instance_public_ip_address} /var/tmp/payload.sh \
+  $GITREPO $GITBRANCH
 status=$?
 
 ruby tests/destroy.rb $instance_id
