@@ -178,7 +178,7 @@ class cassandra (
   $config_file = "${cfg_path}/cassandra.yaml"
 
   file { $config_file:
-    ensure   => present,
+    ensure  => present,
     owner   => 'cassandra',
     group   => 'cassandra',
     content => template($cassandra_yaml_tmpl),
