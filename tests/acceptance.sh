@@ -22,6 +22,7 @@ echo "TRAVIS_TEST_RESULT  : $TRAVIS_TEST_RESULT"
 
 if [ "$ACCEPTANCE_TESTS_ENABLED" != 1 ]; then
   echo "Acceptances tests are disabled, skipping acceptance tests."
+  exit 0
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
