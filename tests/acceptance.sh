@@ -19,14 +19,11 @@ if [ -z "$BEAKER_TEST" ]; then
   exit 0
 fi
 
-echo "TRAVIS_JOB_ID: $TRAVIS_JOB_ID"
-
-if [ "$TRAVIS_JOB_ID" != 1 ]; then
-  echo "Skipping acceptance tests."
-  exit 0
-fi
-
-echo "TRAVIS_JOB_ID: $TRAVIS_TEST_RESULT"
+echo "TRAVIS_BUILD_ID     : $TRAVIS_BUILD_ID"
+echo "TRAVIS_BUILD_NUMBER : $TRAVIS_BUILD_ID"
+echo "TRAVIS_JOB_ID       : $TRAVIS_JOB_ID"
+echo "TRAVIS_JOB_NUMBER   : $TRAVIS_JOB_NUMBER"
+echo "TRAVIS_TEST_RESULT  : $TRAVIS_TEST_RESULT"
 
 if [ "$TRAVIS_TEST_RESULT" != 0 ]; then
   echo "Skipping acceptance tests."
