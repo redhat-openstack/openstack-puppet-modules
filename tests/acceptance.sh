@@ -7,7 +7,7 @@
 #export DEBUG=1
 #export EXCON_DEBUG=1
 export FOG_RC=./secrets/fog.rc
-export GITREPO='https://github.com/${TRAVIS_REPO_SLUG}.git'
+export GITREPO='https://github.com/locp/cassandra.git'
 export REMOTE_USER="ec2-user"
 
 echo "TRAVIS_BUILD_ID     : $TRAVIS_BUILD_ID"
@@ -67,13 +67,12 @@ while [ $ssh_attempt -lt $ssh_retries ]; do
 
   if [ $? -ne 0 ]; then
     echo "Attempt $ssh_attempt of $ssh_retries failed."
+    ssh_attempt=`expr $ssh_attempt + 1`
     echo "Will retry in $sleep_period seconds."
     sleep $sleep_period
   else
     break
   fi
-
-  (( ssh_attempt = ssh_attempt + 1 ))
 done
 
 # Execute Payload
