@@ -19,8 +19,17 @@ if [ -z "$BEAKER_TEST" ]; then
   exit 0
 fi
 
-if [ "$TRAVIS_BUILD_NUMBER" != 1 ]; then
-  echo "Skipping because build number $TRAVIS_BUILD_NUMBER"
+echo "TRAVIS_JOB_ID: $TRAVIS_JOB_ID"
+
+if [ "$TRAVIS_JOB_ID" != 1 ]; then
+  echo "Skipping acceptance tests."
+  exit 0
+fi
+
+echo "TRAVIS_JOB_ID: $TRAVIS_TEST_RESULT"
+
+if [ "$TRAVIS_TEST_RESULT" != 0 ]; then
+  echo "Skipping acceptance tests."
   exit 0
 fi
 
