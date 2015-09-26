@@ -8,7 +8,7 @@ ec2 = Fog::Compute.new({
 })
 
 response = ec2.run_instances(
-  'ami-47a23a30',
+  'ami-23e5cd54',
   1,
   1,
   'InstanceType'  => 't2.micro',
