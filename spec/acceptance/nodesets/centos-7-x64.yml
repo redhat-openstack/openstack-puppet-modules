@@ -3,8 +3,9 @@ HOSTS:
     roles:
       - master
     platform: el-7-x86_64
-    box : puppetlabs/centos-7.0-64-nocm
-    hypervisor : vagrant
+    image: centos:7
+    hypervisor: docker
+    docker_cmd: '["/sbin/init"]'
 CONFIG:
   type: foss
-  vagrant_memsize: 2048
+  log_level: debug
