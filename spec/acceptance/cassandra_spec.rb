@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'cassandra class' do
-  cassandra_pp = <<-EOS
+  install_pp = <<-EOS
     class { '::cassandra::datastax_repo': } ->
     class { '::cassandra::java': } ->
     class { 'cassandra':
@@ -34,13 +34,35 @@ describe 'cassandra class' do
 
   describe 'Initial install.' do
     it 'should work with no errors' do
-      apply_manifest(cassandra_pp, :catch_failures => true)
+      apply_manifest(install_pp, :catch_failures => true)
     end
   end
 
+  idempotent_pp = <<-EOS
+    class { '::cassandra::datastax_repo': } ->
+    class { '::cassandra::java': } ->
+    class { 'cassandra':
+      service_ensure              => 'stopped',
+      cassandra_9822              => true,
+      commitlog_directory_mode    => '0770',
+      data_file_directories_mode  => '0770',
+      saved_caches_directory_mode => '0770'
+    } ->
+    class { '::cassandra::optutils': } ->
+    class { '::cassandra::datastax_agent':
+      service_ensure => 'stopped',
+    } ->
+    class { '::cassandra::opscenter::pycrypto':
+      manage_epel => true,
+    } ->
+    class { '::cassandra::opscenter':
+      service_ensure => 'stopped',
+    }
+  EOS
+
   describe 'Idempotency test.' do
     it 'should work with no errors' do
-      expect(apply_manifest(cassandra_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(idempotent_pp, :catch_failures => true).exit_code).to be_zero
     end
   end
 
