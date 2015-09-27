@@ -11,12 +11,11 @@ response = ec2.run_instances(
   'ami-23e5cd54',
   1,
   1,
-  'InstanceType'  => 't2.micro',
+  'InstanceType'  => 'c3.xlarge',
   'SecurityGroup' => 'ssh',
   'KeyName'       => 'travis'
 )
 
-# TODO tags={"Name"=>"travis"},
 instance_id = response.body["instancesSet"].first["instanceId"]
 instance = ec2.servers.get(instance_id)
 instance.wait_for { ready? }
