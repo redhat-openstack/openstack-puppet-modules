@@ -6,7 +6,7 @@ gem 'facter', '>= 1.7.0'
 
 group :system_tests do
   gem 'coveralls',              :require => false
-  gem 'docker-api'              :require => false
+  gem 'docker-api',             :require => false
   gem 'beaker-rspec',           :require => false
   gem 'fog',                    :require => false
   gem 'pry',                    :require => false
@@ -18,8 +18,8 @@ group :system_tests do
 end
 
 group :development do
-  gem 'metadata-json-lint'    :require => false
+  gem 'metadata-json-lint',   :require => false
   gem 'puppet-lint',          :require => false
-  gem 'travis'                :require => false
-  gem 'travis-lint'           :require => false
+  gem 'travis',               :require => false
+  gem 'travis-lint',          :require => false
 end
