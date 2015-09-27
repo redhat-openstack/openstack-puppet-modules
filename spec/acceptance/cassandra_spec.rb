@@ -6,6 +6,7 @@ describe 'cassandra class' do
     class { '::cassandra::java': } ->
     class { 'cassandra':
       service_ensure              => 'stopped',
+      service_enable              => false,
       cassandra_9822              => true,
       commitlog_directory_mode    => '0770',
       data_file_directories_mode  => '0770',
@@ -14,12 +15,14 @@ describe 'cassandra class' do
     class { '::cassandra::optutils': } ->
     class { '::cassandra::datastax_agent':
       service_ensure => 'stopped',
+      service_enable => false,
     } ->
     class { '::cassandra::opscenter::pycrypto':
       manage_epel => true,
     } ->
     class { '::cassandra::opscenter':
       service_ensure => 'stopped',
+      service_enable => false,
     } ->
     class { '::cassandra::firewall_ports': }
 
@@ -43,6 +46,7 @@ describe 'cassandra class' do
     class { '::cassandra::java': } ->
     class { 'cassandra':
       service_ensure              => 'stopped',
+      service_enable              => false,
       cassandra_9822              => true,
       commitlog_directory_mode    => '0770',
       data_file_directories_mode  => '0770',
@@ -51,12 +55,14 @@ describe 'cassandra class' do
     class { '::cassandra::optutils': } ->
     class { '::cassandra::datastax_agent':
       service_ensure => 'stopped',
+      service_enable => false,
     } ->
     class { '::cassandra::opscenter::pycrypto':
       manage_epel => true,
     } ->
     class { '::cassandra::opscenter':
       service_ensure => 'stopped',
+      service_enable => false,
     }
   EOS
 
