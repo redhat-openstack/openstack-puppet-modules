@@ -5,17 +5,22 @@ describe 'cassandra class' do
     class { '::cassandra::datastax_repo': } ->
     class { '::cassandra::java': } ->
     class { 'cassandra':
+      service_ensure              => 'stopped',
       cassandra_9822              => true,
       commitlog_directory_mode    => '0770',
       data_file_directories_mode  => '0770',
       saved_caches_directory_mode => '0770'
     } ->
     class { '::cassandra::optutils': } ->
-    class { '::cassandra::datastax_agent': } ->
+    class { '::cassandra::datastax_agent':
+      service_ensure => 'stopped',
+    } ->
     class { '::cassandra::opscenter::pycrypto':
       manage_epel => true,
     } ->
-    class { '::cassandra::opscenter': } ->
+    class { '::cassandra::opscenter':
+      service_ensure => 'stopped',
+    } ->
     class { '::cassandra::firewall_ports': }
 
     # A workaround for Issue79.
@@ -39,18 +44,18 @@ describe 'cassandra class' do
     end
   end
 
-  describe service('cassandra') do
-    it { is_expected.to be_running }
-    it { is_expected.to be_enabled }
-  end
+  #describe service('cassandra') do
+    #it { is_expected.to be_running }
+    #it { is_expected.to be_enabled }
+  #end
 
-  describe service('datastax-agent') do
-    it { is_expected.to be_running }
-    it { is_expected.to be_enabled }
-  end
+  #describe service('datastax-agent') do
+    #it { is_expected.to be_running }
+    #it { is_expected.to be_enabled }
+  #end
 
-  describe service('opscenterd') do
-    it { is_expected.to be_running }
-    it { is_expected.to be_enabled }
-  end
+  #describe service('opscenterd') do
+    #it { is_expected.to be_running }
+    #it { is_expected.to be_enabled }
+  #end
 end
