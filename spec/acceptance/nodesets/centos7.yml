@@ -6,6 +6,8 @@ HOSTS:
     image: centos:7
     hypervisor: docker
     docker_cmd: '["/sbin/init"]'
+    docker_image_commands:
+      - 'yum -y install gcc tar'
 CONFIG:
   type: foss
   log_level: info
