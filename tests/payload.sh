@@ -21,7 +21,6 @@ for node in $( bundle exec rake beaker_nodes ); do
 
   if [ $? != 0 ]; then
     status=1
-    break
   fi
 done
 
