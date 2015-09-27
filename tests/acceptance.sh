@@ -20,8 +20,10 @@ echo "TRAVIS_TEST_RESULT  : $TRAVIS_TEST_RESULT"
 # Check if we are to run this at all.
 #############################################################################
 
-if [ "$ACCEPTANCE_TESTS_ENABLED" != 1 ]; then
-  echo "Acceptances tests are disabled, skipping acceptance tests."
+echo "v1.2.3" | grep -q "^v[0-9]"
+
+if [ $? != 0 ]; then
+  echo "Not on a release branch, skipping acceptance tests."
   exit 0
 fi
 
