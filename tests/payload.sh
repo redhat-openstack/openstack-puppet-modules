@@ -21,7 +21,13 @@ for node in $( bundle exec rake beaker_nodes ); do
 
   if [ $? != 0 ]; then
     status=1
+    echo "$node: FAILED" >> /tmp/beaker-sumary.txt
+  else
+    echo "$node: OK" >> /tmp/beaker-sumary.txt
   fi
 done
 
+echo "Node Results Summary"
+echo "===================="
+cat /tmp/beaker-sumary.txt
 exit $status
