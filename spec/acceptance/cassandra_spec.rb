@@ -100,7 +100,13 @@ describe 'cassandra class' do
     include '::cassandra::datastax_agent'
     include '::cassandra::opscenter'
     include '::cassandra::opscenter::pycrypto'
-    include '::cassandra::firewall_ports'
+
+    # This really sucks but Docker, CentOS 6 and iptables don't play nicely
+    # together.  Therefore we can't test the firewall on this platform :-(
+    if $::operatingsystem != CentOS and $::operatingsystemmajrelease != 6 {
+      include '::cassandra::firewall_ports'
+    }
+
   EOS
 
   describe 'Firewall configuration.' do
