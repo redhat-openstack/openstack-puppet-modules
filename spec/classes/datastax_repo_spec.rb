@@ -19,7 +19,15 @@ describe 'cassandra::datastax_repo' do
       }
     end
 
-    it { should contain_yumrepo('datastax') }
+    it {
+      should contain_yumrepo('datastax').with({
+        'ensure'   => 'present',
+        'descr'    => 'DataStax Repo for Apache Cassandra',
+        'baseurl'  => 'http://rpm.datastax.com/community',
+        'enabled'  => 1,
+        'gpgcheck' => 0
+      })
+    }
     it { should have_resource_count(1) }
   end
 
@@ -34,9 +42,23 @@ describe 'cassandra::datastax_repo' do
 
     it { should contain_class('apt') }
     it { should contain_class('apt::update') }
-    it { is_expected.to contain_apt__key('datastaxkey') }
-    it { is_expected.to contain_apt__source('datastax') }
-    it { is_expected.to contain_exec('update-cassandra-repos') }
+
+    it {
+      should contain_apt__key('datastaxkey').with({
+        'id'     => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+        'source' => 'http://debian.datastax.com/debian/repo_key'
+      })
+    }
+
+    it {
+      should contain_apt__source('datastax').with({
+        'location' => 'http://debian.datastax.com/community',
+        'comment'  => 'DataStax Repo for Apache Cassandra',
+        'release'  => 'stable'
+      })
+    }
+
+    it { should contain_exec('update-cassandra-repos') }
     it { should have_resource_count(3) }
   end
 end
