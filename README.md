@@ -304,10 +304,16 @@ We have also added the `cassandra::opscenter` class for the opscenter node.
 
 ### DataStax Enterprise
 
-After configuring the relevant repositories elsewhere in the manifest, the
-following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
+After configuring the relevant repository, the following snippet works on
+CentOS 7 to install DSE Cassandra 4.7.0:
 
 ```puppet
+class { 'cassandra::datastax_repo':
+  name    => 'DataStax Repo for DataStax Enterprise',
+  baseurl => 'https://username:password@rpm.datastax.com/enterprise',
+  before  => Class['cassandra'],
+}
+
 class { 'cassandra':
   cluster_name   => 'MyCassandraCluster',
   config_path    => '/etc/dse/cassandra',
