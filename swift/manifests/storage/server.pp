@@ -47,8 +47,8 @@
 #
 # [*mount_check*]
 #   (optional) Whether or not check if the devices are mounted to prevent accidentally
-#   writing to the root device
-#   Defaults to false.
+#   writing to the root device.
+#   Defaults to false. Soon to be changed to 'true' to match Swift defaults.
 #
 # [*user*]
 #   (optional) User to run as
@@ -102,6 +102,11 @@
 #   (optional) Port value for UDP receiver, if enabled.
 #   Defaults to undef.
 #
+# [*log_requests*]
+#   (optional) Whether or not log every request. reduces logging output if false,
+#   good for seeing errors if true
+#   Defaults to true.
+#
 # [*config_file_path*]
 #   (optional) The configuration file name.
 #   Defaults to "${type}-server/${name}.conf".
@@ -116,7 +121,7 @@ define swift::storage::server(
   $outgoing_chmod         = '0644',
   $max_connections        = 25,
   $pipeline               = ["${type}-server"],
-  $mount_check            = false,
+  $mount_check            = undef,
   $user                   = 'swift',
   $workers                = '1',
   $allow_versions         = false,
@@ -129,6 +134,7 @@ define swift::storage::server(
   $log_name               = "${type}-server",
   $log_udp_host           = undef,
   $log_udp_port           = undef,
+  $log_requests           = true,
   # this parameters needs to be specified after type and name
   $config_file_path       = "${type}-server/${name}.conf"
 ) {
@@ -139,6 +145,14 @@ define swift::storage::server(
 
   if ($outgoing_chmod == '0644') {
     warning('The default outgoing_chmod set to 0644 may yield in error prone directories and will be changed in a later release.')
+  }
+
+  if (!$mount_check) {
+    warning('The default for the mount_check parameter will change from false to true in the next release to match upstream. To disable this warning, set mount_check=false.')
+    $mount_check_real = false
+  }
+  else {
+    $mount_check_real = $mount_check
   }
 
   # Warn if ${type-server} isn't included in the pipeline

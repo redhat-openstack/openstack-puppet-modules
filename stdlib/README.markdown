@@ -224,7 +224,7 @@ Converts the case of a string or of all strings in an array to lowercase. *Type*
 
 #### `empty`
 
-Returns 'true' if the variable is empty. *Type*: rvalue.
+Returns true if the argument is an array or hash that contains no elements, or an empty string. Returns false when the argument is a numerical value. *Type*: rvalue.
 
 #### `ensure_packages`
 
@@ -405,7 +405,7 @@ Returns an array an intersection of two. For example, `intersection(["a","b","c"
 
 #### `is_a`
 
-Boolean check to determine whether a variable is of a given data type. This is equivalent to the `=~` type checks.
+Boolean check to determine whether a variable is of a given data type. This is equivalent to the `=~` type checks. This function is only available in Puppet 4, or when using the "future" parser. 
 
   ~~~
   foo = 3

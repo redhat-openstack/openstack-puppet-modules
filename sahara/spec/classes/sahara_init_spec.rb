@@ -27,8 +27,8 @@ describe 'sahara' do
       it { is_expected.to contain_sahara_config('DEFAULT/port').with_value('8386') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/auth_uri').with_value('http://127.0.0.1:5000/v2.0/') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/identity_uri').with_value('http://127.0.0.1:35357/') }
-      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('admin') }
-      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_tenant_name').with_value('admin') }
+      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('sahara') }
+      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_tenant_name').with_value('services') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_password').with_value('secrete').with_secret(true) }
       it { is_expected.to contain_sahara_config('DEFAULT/plugins').with_ensure('absent') }
     end
@@ -40,7 +40,7 @@ describe 'sahara' do
         :port                  => '8387',
         :auth_uri              => 'http://8.8.8.8:5000/v2.0/',
         :identity_uri          => 'http://8.8.8.8:35357/',
-        :admin_user            => 'sahara',
+        :admin_user            => 'sahara-user',
         :admin_tenant_name     => 'sahara-tenant',
         :admin_password        => 'new_password',
         :plugins               => ['plugin1', 'plugin2'],
@@ -52,7 +52,7 @@ describe 'sahara' do
       it { is_expected.to contain_sahara_config('DEFAULT/port').with_value('8387') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/auth_uri').with_value('http://8.8.8.8:5000/v2.0/') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/identity_uri').with_value('http://8.8.8.8:35357/') }
-      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('sahara') }
+      it { is_expected.to contain_sahara_config('keystone_authtoken/admin_user').with_value('sahara-user') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_tenant_name').with_value('sahara-tenant') }
       it { is_expected.to contain_sahara_config('keystone_authtoken/admin_password').with_value('new_password').with_secret(true) }
       it { is_expected.to contain_sahara_config('DEFAULT/plugins').with_value('plugin1,plugin2') }
@@ -287,45 +287,6 @@ describe 'sahara' do
     end
   end
 
-  shared_examples_for 'sahara logging' do
-    context 'with use_stderr enabled' do
-      it { is_expected.to contain_sahara_config('DEFAULT/use_stderr').with_value(true) }
-    end
-
-    context 'with syslog disabled' do
-      it { is_expected.to contain_sahara_config('DEFAULT/use_syslog').with_value(false) }
-    end
-
-    context 'with syslog enabled' do
-      let :params do
-        { :use_syslog   => 'true' }
-      end
-
-      it { is_expected.to contain_sahara_config('DEFAULT/use_syslog').with_value(true) }
-      it { is_expected.to contain_sahara_config('DEFAULT/syslog_log_facility').with_value('LOG_USER') }
-    end
-
-    context 'with syslog enabled and custom settings' do
-      let :params do
-        {
-          :use_syslog   => 'true',
-          :log_facility => 'LOG_LOCAL0'
-        }
-      end
-
-      it { is_expected.to contain_sahara_config('DEFAULT/use_syslog').with_value(true) }
-      it { is_expected.to contain_sahara_config('DEFAULT/syslog_log_facility').with_value('LOG_LOCAL0') }
-    end
-
-    context 'with log_dir disabled' do
-      let :params do
-        { :log_dir => false }
-      end
-      it { is_expected.to contain_sahara_config('DEFAULT/log_dir').with_ensure('absent') }
-    end
-
-  end
-
   shared_examples_for 'sahara ssl' do
     context 'without ssl' do
       it { is_expected.to contain_sahara_config('ssl/ca_file').with_ensure('absent') }
@@ -418,7 +379,6 @@ describe 'sahara' do
 
     it_configures 'sahara'
     it_configures 'sahara config'
-    it_configures 'sahara logging'
     it_configures 'sahara ssl'
     it_configures 'sahara rpc_backend'
 
@@ -434,7 +394,6 @@ describe 'sahara' do
 
     it_configures 'sahara'
     it_configures 'sahara config'
-    it_configures 'sahara logging'
     it_configures 'sahara ssl'
     it_configures 'sahara rpc_backend'
 

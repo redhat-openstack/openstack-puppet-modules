@@ -12,7 +12,6 @@ describe 'ceilometer::agent::auth' do
       :auth_user        => 'ceilometer',
       :auth_password    => 'password',
       :auth_tenant_name => 'services',
-      :enabled          => true,
     }
   end
 
@@ -30,11 +29,31 @@ describe 'ceilometer::agent::auth' do
 
     context 'when overriding parameters' do
       before do
-        params.merge!(:auth_cacert => '/tmp/dummy.pem')
+        params.merge!(
+          :auth_cacert        => '/tmp/dummy.pem',
+          :auth_endpoint_type => 'internalURL',
+        )
       end
       it { is_expected.to contain_ceilometer_config('service_credentials/os_cacert').with_value(params[:auth_cacert]) }
+      it { is_expected.to contain_ceilometer_config('service_credentials/os_endpoint_type').with_value(params[:auth_endpoint_type]) }
     end
 
+  end
+
+  context 'on Debian platforms' do
+    let :facts do
+      { :osfamily => 'Debian' }
+    end
+
+    it_configures 'ceilometer-agent-auth'
+  end
+
+  context 'on RedHat platforms' do
+    let :facts do
+      { :osfamily => 'RedHat' }
+    end
+
+    it_configures 'ceilometer-agent-auth'
   end
 
 end

@@ -92,6 +92,7 @@ describe 'neutron::agents::vpnaas' do
         :require => 'Class[Neutron]',
         :tag     => 'neutron-service',
       )
+      is_expected.to contain_service('neutron-vpnaas-service').that_subscribes_to('Package[neutron]')
     end
 
     context 'with manage_service as false' do
@@ -128,6 +129,9 @@ describe 'neutron::agents::vpnaas' do
     end
 
     it_configures 'neutron vpnaas agent'
+    it 'configures subscription to neutron-vpnaas-agent package' do
+      is_expected.to contain_service('neutron-vpnaas-service').that_subscribes_to('Package[neutron-vpnaas-agent]')
+    end
   end
 
   context 'on RedHat 6 platforms' do
@@ -140,7 +144,7 @@ describe 'neutron::agents::vpnaas' do
 
     let :platform_params do
       { :openswan_package     => 'openswan',
-        :vpnaas_agent_package => 'openstack-neutron-vpn-agent',
+        :vpnaas_agent_package => 'openstack-neutron-vpnaas',
         :vpnaas_agent_service => 'neutron-vpn-agent'}
     end
 
@@ -157,7 +161,7 @@ describe 'neutron::agents::vpnaas' do
 
     let :platform_params do
       { :openswan_package     => 'libreswan',
-        :vpnaas_agent_package => 'openstack-neutron-vpn-agent',
+        :vpnaas_agent_package => 'openstack-neutron-vpnaas',
         :vpnaas_agent_service => 'neutron-vpn-agent'}
     end
 

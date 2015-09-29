@@ -10,28 +10,28 @@
 #
 # [*verbose*]
 #   (Optional) Should the daemons log verbose messages
-#   Defaults to 'false'.
+#   Defaults to undef.
 #
 # [*debug*]
 #   (Optional) Should the daemons log debug messages
-#   Defaults to 'false'.
+#   Defaults to undef.
 #
 # [*use_syslog*]
 #   Use syslog for logging.
-#   (Optional) Defaults to false.
+#   (Optional) Defaults to undef.
 #
 # [*use_stderr*]
 #   (optional) Use stderr for logging
-#   Defaults to true
+#   Defaults to undef
 #
 # [*log_facility*]
 #   Syslog facility to receive log lines.
-#   (Optional) Defaults to LOG_USER.
+#   (Optional) Defaults to undef.
 #
 # [*log_dir*]
 #   (optional) Directory where logs should be stored.
 #   If set to boolean false, it will not log to any directory.
-#   Defaults to '/var/log/sahara'
+#   Defaults to undef.
 #
 # [*host*]
 #   (Optional) Hostname for sahara to listen on
@@ -109,7 +109,7 @@
 #
 # [*admin_user*]
 #   (Optional) Service user name
-#   Defaults to 'admin'.
+#   Defaults to 'sahara'.
 #
 # [*admin_password*]
 #   (Optional) Service user password.
@@ -117,7 +117,7 @@
 #
 # [*admin_tenant_name*]
 #   (Optional) Service tenant name.
-#   Defaults to 'admin'.
+#   Defaults to 'services'.
 #
 # [*auth_uri*]
 #   (Optional) Complete public Identity API endpoint.
@@ -332,12 +332,12 @@
 #
 class sahara(
   $package_ensure          = 'present',
-  $verbose                 = false,
-  $debug                   = false,
-  $use_syslog              = false,
-  $use_stderr              = true,
-  $log_facility            = 'LOG_USER',
-  $log_dir                 = '/var/log/sahara',
+  $verbose                 = undef,
+  $debug                   = undef,
+  $use_syslog              = undef,
+  $use_stderr              = undef,
+  $log_facility            = undef,
+  $log_dir                 = undef,
   $host                    = '0.0.0.0',
   $port                    = '8386',
   $plugins                 = undef,
@@ -356,9 +356,9 @@ class sahara(
   $database_retry_interval = undef,
   $database_max_overflow   = undef,
   $sync_db                 = true,
-  $admin_user              = 'admin',
+  $admin_user              = 'sahara',
   $admin_password          = false,
-  $admin_tenant_name       = 'admin',
+  $admin_tenant_name       = 'services',
   $auth_uri                = 'http://127.0.0.1:5000/v2.0/',
   $identity_uri            = 'http://127.0.0.1:35357/',
   $rpc_backend             = undef,
@@ -410,6 +410,7 @@ class sahara(
   $identity_url        = undef,
 ) {
   include ::sahara::params
+  include ::sahara::logging
   include ::sahara::db
   include ::sahara::policy
 
@@ -462,44 +463,11 @@ class sahara(
     $identity_uri_real = $identity_uri
   }
 
-  group { 'sahara':
-    ensure => 'present',
-    name   => 'sahara',
-  }
-
-  file { '/etc/sahara/':
-    ensure                  => directory,
-    owner                   => 'root',
-    group                   => 'sahara',
-    require                 => Group['sahara'],
-    selinux_ignore_defaults => true
-  }
-
-  file { '/etc/sahara/sahara.conf':
-    owner                   => 'root',
-    group                   => 'sahara',
-    require                 => File['/etc/sahara'],
-    selinux_ignore_defaults => true
-  }
-
   package { 'sahara-common':
     ensure => $package_ensure,
     name   => $::sahara::params::common_package_name,
     tag    => ['openstack', 'sahara-package'],
   }
-
-  # Because Sahara does not support SQLite, sahara-common will fail to be installed
-  # if /etc/sahara/sahara.conf does not contain valid database connection and if the
-  # database does not actually exist.
-  # So we first manage the configuration file existence, then we configure Sahara and
-  # then we install Sahara. This is a very ugly hack to fix packaging issue.
-  # https://bugs.launchpad.net/cloud-archive/+bug/1450945
-  File['/etc/sahara/sahara.conf'] -> Sahara_config<| |>
-
-  # degorenko: temporarily hack to avoid the problem with group mode for /etc/sahara
-  # folder, because of incorrect mode in RPM package. Will be deleted as soon as
-  # possible.
-  Package['sahara-common'] -> Group['sahara']
 
   Package['sahara-common'] -> Class['sahara::policy']
 
@@ -518,9 +486,6 @@ class sahara(
     'DEFAULT/use_floating_ips': value => $use_floating_ips;
     'DEFAULT/host':             value => $host_real;
     'DEFAULT/port':             value => $port_real;
-    'DEFAULT/debug':            value => $debug;
-    'DEFAULT/verbose':          value => $verbose;
-    'DEFAULT/use_stderr':       value => $use_stderr;
   }
 
   if $admin_password_real {
@@ -636,27 +601,6 @@ class sahara(
       'DEFAULT/rpc_zmq_ipc_dir':       value => $zeromq_ipc_dir;
       'DEFAULT/rpc_zmq_host':          value => $zeromq_host;
       'DEFAULT/rpc_cast_timeout':      value => $cast_timeout;
-    }
-  }
-
-  if $log_dir {
-    sahara_config {
-      'DEFAULT/log_dir': value => $log_dir;
-    }
-  } else {
-    sahara_config {
-      'DEFAULT/log_dir': ensure => absent;
-    }
-  }
-
-  if $use_syslog {
-    sahara_config {
-      'DEFAULT/use_syslog':          value => true;
-      'DEFAULT/syslog_log_facility': value => $log_facility;
-    }
-  } else {
-    sahara_config {
-      'DEFAULT/use_syslog': value => false;
     }
   }
 

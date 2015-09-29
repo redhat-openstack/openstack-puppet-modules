@@ -21,7 +21,8 @@ describe 'neutron::agents::ml2::ovs' do
       :drop_flows_on_start        => false,
       :enable_distributed_routing => false,
       :firewall_driver            => 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
-      :manage_vswitch             => true }
+      :manage_vswitch             => true,
+      :prevent_arp_spoofing       => true }
   end
 
   let :default_facts do
@@ -45,6 +46,7 @@ describe 'neutron::agents::ml2::ovs' do
       is_expected.to contain_neutron_agent_ovs('agent/polling_interval').with_value(p[:polling_interval])
       is_expected.to contain_neutron_agent_ovs('agent/l2_population').with_value(p[:l2_population])
       is_expected.to contain_neutron_agent_ovs('agent/arp_responder').with_value(p[:arp_responder])
+      is_expected.to contain_neutron_agent_ovs('agent/prevent_arp_spoofing').with_value(p[:prevent_arp_spoofing])
       is_expected.to contain_neutron_agent_ovs('agent/drop_flows_on_start').with_value(p[:drop_flows_on_start])
       is_expected.to contain_neutron_agent_ovs('ovs/integration_bridge').with_value(p[:integration_bridge])
       is_expected.to contain_neutron_agent_ovs('securitygroup/firewall_driver').\
@@ -73,6 +75,7 @@ describe 'neutron::agents::ml2::ovs' do
         :require => 'Class[Neutron]',
         :tag     => 'neutron-service',
       )
+      is_expected.to contain_service('neutron-ovs-agent-service').that_subscribes_to( [ 'Package[neutron]', 'Package[neutron-ovs-agent]' ] )
     end
 
     context 'with manage_service as false' do
@@ -99,6 +102,15 @@ describe 'neutron::agents::ml2::ovs' do
       end
       it 'should enable ARP responder' do
         is_expected.to contain_neutron_agent_ovs('agent/arp_responder').with_value(true)
+      end
+    end
+
+    context 'when disabling ARP Spoofing Protection' do
+      before :each do
+        params.merge!(:prevent_arp_spoofing => false)
+      end
+      it 'should disable ARP Spoofing Protection' do
+        is_expected.to contain_neutron_agent_ovs('agent/prevent_arp_spoofing').with_value(false)
       end
     end
 

@@ -289,7 +289,7 @@ You can customize parameters when declaring the `apache` class. For instance, th
 
 ~~~ puppet
 class { 'apache':
-  default_vhosts => false,
+  default_vhost => false,
 }
 ~~~
 
@@ -2009,6 +2009,10 @@ Location of the Kerberos V5 keytab file. Not set by default.
 
 Strips @REALM from username for further use. Not set by default.
 
+##### `limit_request_field_size`
+
+[Limits](http://httpd.apache.org/docs/2.4/mod/core.html#limitrequestfieldsize) the size of the HTTP request header allowed from the client. Default is 'undef'.
+
 ##### `logroot`
 
 Specifies the location of the virtual host's logfiles. Defaults to '/var/log/<apache log location>/'.
@@ -2916,7 +2920,7 @@ Allows an valid content setting to be set or altered for the application request
       docroot     => '/path/to/directory',
       directories => [
         { path                  => '/path/to/directory',
-          shib_require_setting  => 'requiresession 1',
+          shib_request_settings => { 'requiresession' => 'On' },
           shib_use_headers      => 'On',
         },
       ],

@@ -27,9 +27,10 @@ declaration:
 
 ```puppet
 class { '::collectd':
-  purge        => true,
-  recurse      => true,
-  purge_config => true,
+  purge           => true,
+  recurse         => true,
+  purge_config    => true,
+  minimum_version => '5.4',
 }
 ```
 
@@ -37,6 +38,10 @@ Set purge, recurse, and purge_config to true in order to override
 the default configurations shipped in collectd.conf and use
 custom configurations stored in conf.d. From here you can set up
 additional plugins as shown below.
+
+Specifying the version or minimum_version of collectd as shown above reduces the need for
+two puppet runs to coverge. See [Puppet needs two runs to correctly write my conf, why?](#puppet-needs-two-runs-to-correctly-write-my-conf,-why?) below.
+
 
 Simple Plugins
 --------------
@@ -67,11 +72,13 @@ documentation for each plugin for configurable attributes.
 * `csv`  (see [collectd::plugin::csv](#class-collectdplugincsv) below)
 * `curl` (see [collectd::plugin::curl](#class-collectdplugincurl) below)
 * `curl_json` (see [collectd::plugin::curl_json](#class-collectdplugincurl_json) below)
+* `dbi`  (see [collectd::plugin::dbi](#class-collectdplugindbi) below)
 * `df`  (see [collectd::plugin::df](#class-collectdplugindf) below)
 * `disk` (see [collectd::plugin::disk](#class-collectdplugindisk) below)
 * `entropy`  (see [collectd::plugin::entropy](#class-collectdpluginentropy) below)
 * `exec`  (see [collectd::plugin::exec](#class-collectdpluginexec) below)
 * `filecount` (see [collectd::plugin::filecount](#class-collectdpluginfilecount) below)
+* `filter`  (see [collectd::plugin::filter](#class-collectdpluginfilter) below)
 * `genericjmx` (see [collectd::plugin::genericjmx](#class-collectdplugingenericjmx) below)
 * `interface` (see [collectd::plugin::interface](#class-collectdplugininterface) below)
 * `iptables` (see [collectd::plugin::iptables](#class-collectdpluginiptables) below)
@@ -314,6 +321,50 @@ collectd::plugin::curl_json {
 }
 ```
 
+####Class: `collectd::plugin::dbi`
+
+```puppet
+collectd::plugin::dbi::database{'monitoring_node1':
+  driver       => 'mysql',
+  driveroption => {
+    'host' => 'hostname',
+    'username' => 'user',
+    'password' => 'password',
+    'dbname'   => 'monitoring'
+  },
+  query    => ['log_delay'],
+}
+collectd::plugin::dbi::query{'log_delay':
+  statement => 'SELECT * FROM log_delay_repli;',
+  results   => [{
+    type           => 'gauge',
+    instanceprefix => 'log_delay',
+    instancesfrom  => 'inet_server_port',
+    valuesfrom     => 'log_delay',
+  }],
+}
+```
+
+You can as well configure this plugin as a parameterized class :
+
+```puppet
+class { 'collectd::plugin::dbi':
+  package   => 'libdbd-mysql',
+  databases => {
+    'monitoring_node1' => {
+      driver       => 'mysql',
+      driveroption => {
+        'host' => 'hostname',
+        'username' => 'user',
+        'password' => 'password',
+        'dbname'   => 'monitoring'
+      },
+      query    => ['log_delay'],
+    }
+  },
+}
+```
+
 ####Class: `collectd::plugin::df`
 
 ```puppet
@@ -405,6 +456,137 @@ class { 'collectd::plugin::filecount':
   },
 }
 ```
+
+#### Class: `collectd::plugin::filter`
+
+The filter plugin implements the powerful filter configuration of collectd. For further details have a look on the [collectd manpage](https://collectd.org/documentation/manpages/collectd.conf.5.shtml#filter_configuration).
+
+##### Parameters:
+
+* `ensure` (`"ensure"`,`"absent"`): Ob absent it will remove all references of the filter plugins. `Note`: The Chain config needs to be purged by the chain define.
+* `precachechain` (String): The Name of the default Pre Chain.
+* `postcachechain` (String): The Name of the default Post Chain.
+
+##### Examples:
+
+###### Overwrite default chains:
+```puppet
+class { 'collectd::plugin::filter':
+    ensure          => 'present',
+    precachechain   => 'PreChain',
+    postcachechain  => 'PostChain',
+}
+```
+
+###### Full Example:
+
+This Example will rename the hostname of the mysql plugin.
+
+```puppet
+include collectd::plugin::filter
+
+# define default chains with default target
+collectd::plugin::filter::chain { 'PreChain':
+    target => 'return'
+}
+collectd::plugin::filter::chain { 'PostChain':
+    target => 'write'
+}
+
+# create a third chain,
+$chainname = 'MyAweseomeChain'
+collectd::plugin::filter::chain { $chainname:
+    ensure => present,
+    target => 'return'
+}
+
+# add a new rule to chain
+$rulename = 'MyAweseomeRule'
+collectd::plugin::filter::rule { $rulename:
+    chain => $chainname,
+}
+
+# add a new match rule, match metrics of the mysql plugin
+collectd::plugin::filter::match { "Match mysql plugin":
+    chain   => $chainname,
+    rule    => $rulename,
+    plugin  => 'regex',
+    options => {
+        'Plugin' => '^mysql',
+    }
+}
+
+#rewrite hostname
+collectd::plugin::filter::target{ "overwrite hostname":
+    chain   => $chainname,
+    rule    => $rulename,
+    plugin  => 'set',
+    options => {
+        'Host' => 'hostname.domain',
+    },
+}
+
+# hook the configured chain in the prechain
+collectd::plugin::filter::target{ "1_prechain_jump_${chainname}":
+    chain   => 'PreChain',
+    plugin  => 'jump',
+    options => {
+        'Chain' => $chainname,
+    },
+}
+```
+
+#### Define: `collectd::plugin::filter::chain`
+
+This define will create a new chain, which is required by targets, matches and rules.
+
+##### Parameters:
+
+* `ensure` (`"ensure"`,`"absent"`): When set to absent it will remove the chain with all assigned rules, targets and matches.
+* `target` (`'notification','replace','set','return','stop','write','jump'`): Optional. Set default target if no target has been applied. Strongly recommend for default chains.
+* `target_options` (Hash): If target is specified, pass optional hash to define.
+
+##### Example:
+see [collectd::plugin::filter](#class-collectdpluginfilter) above
+
+#### Define: `collectd::plugin::filter::rule`
+
+This define will add a new rule to a specific chain
+
+##### Parameters:
+
+* `chain` (String): Assign to this chain.
+
+##### Example:
+see [collectd::plugin::filter](#class-collectdpluginfilter) above
+
+#### Define: `collectd::plugin::filter::target`
+
+This define will add a target to a chain or rule.
+
+##### Parameters:
+
+* `chain` (String): Assign to this chain.
+* `plugin` (`'notification','replace','set','return','stop','write','jump'`): The plugin of the target.
+* `options` (Hash): Optional parameters of the target plugin.
+* `rule` (String): Optional. Assign to this rule. If not present, target will be applied at the end of chain without rule matching.
+
+##### Example:
+see [collectd::plugin::filter](#class-collectdpluginfilter) above
+
+#### Define: `collectd::plugin::filter::match`
+
+This define will add a match rule.
+
+##### Parameters:
+
+* `chain` (String): Assign to this chain.
+* `rule` (String): Assign to this rule.
+* `plugin` (`'regex','timediff','value','empty_counter','hashed'`): The plugin of the match.
+* `options` (Hash): Optional parameters of the match plugin.
+
+##### Example:
+see [collectd::plugin::filter](#class-collectdpluginfilter) above
 
 ####Class: `collectd::plugin::genericjmx`
 
@@ -1168,7 +1350,12 @@ See metadata.json for supported platforms
 
 ##Known issues
 
-Some plugins will need two runs of Puppet to fully generate the configuration for collectd. See [this issue](https://github.com/puppet-community/puppet-collectd/issues/162).
+###Puppet needs two runs to correctly write my conf, why?
+
+Some plugins will need two runs of Puppet to fully generate the configuration for collectd. See [this issue](https://github.com/pdxcat/puppet-module-collectd/issues/162).
+This can be avoided by specifying an explicit version (`$version`) or a minimum version (`$minimum_version`) for the collectd class. e.g. Setting either of these to 1.2.3 will
+make this module assume on the first run (when the fact responsible to provide the collectd version is not yet available) that your systems are running collectd 1.2.3
+and generate the configuration accordingly.
 
 ##Development
 

@@ -1,3 +1,10 @@
+2015-9-23 1.0.3
+- Add SSL Support.
+- Improve dependencies so the NSS database is always created first.
+- Use the Nssdb::Create resource as a dependency rather than File
+- Enable service on boot
+- Increase the number of max_connections
+
 2013-7-23 1.0.2
 - Allow custer configuration to be optional (ggillies)
 

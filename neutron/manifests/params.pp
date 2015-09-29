@@ -29,7 +29,7 @@ class neutron::params {
     $cisco_server_package                   = 'openstack-neutron-cisco'
     $cisco_config_file                      = '/etc/neutron/plugins/cisco/cisco_plugins.ini'
     # Add templated Cisco Nexus ML2 config to confdir
-    $cisco_ml2_mech_cisco_nexus_config_file = '/etc/neutron/conf.d/neutron-server/ml2_mech_cisco_nexus.ini'
+    $cisco_ml2_mech_cisco_nexus_config_file = '/etc/neutron/conf.d/neutron-server/ml2_mech_cisco_nexus.conf'
 
     $opencontrail_plugin_package = 'neutron-plugin-contrail'
     $opencontrail_config_file    = '/etc/neutron/plugins/opencontrail/ContrailPlugin.ini'
@@ -56,7 +56,7 @@ class neutron::params {
     $metering_agent_package = 'openstack-neutron-metering-agent'
     $metering_agent_service = 'neutron-metering-agent'
 
-    $vpnaas_agent_package = 'openstack-neutron-vpn-agent'
+    $vpnaas_agent_package = 'openstack-neutron-vpnaas'
     $vpnaas_agent_service = 'neutron-vpn-agent'
     if $::operatingsystemrelease =~ /^7.*/ or $::operatingsystem == 'Fedora' {
       $openswan_package     = 'libreswan'
@@ -74,6 +74,9 @@ class neutron::params {
     $cliff_package      = 'python-cliff'
 
     $kernel_headers     = "linux-headers-${::kernelrelease}"
+
+    $psycopg_package_name = 'python-psycopg2'
+    $sqlite_package_name  = undef
 
   } elsif($::osfamily == 'Debian') {
 
@@ -152,6 +155,8 @@ class neutron::params {
     $cliff_package      = 'python-cliff'
     $kernel_headers     = "linux-headers-${::kernelrelease}"
 
+    $psycopg_package_name = 'python-psycopg2'
+    $sqlite_package_name  = 'python-pysqlite2'
   } else {
 
     fail("Unsupported osfamily ${::osfamily}")

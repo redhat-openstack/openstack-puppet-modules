@@ -109,6 +109,8 @@
 #   Defaults to false
 #  [*nova_available*]
 #   Defaults to true
+#  [*sahara_available*]
+#   Defaults to false
 #  [*swift_available*]
 #   Defaults to false
 #  [*keystone_v2*]
@@ -121,6 +123,10 @@
 #   Defaults to '/var/lib/tempest'
 #  [*img_file*]
 #   Defaults to 'cirros-0.3.4-x86_64-disk.img'
+#  [*login_url*]
+#   Defaults to undef
+#  [*dashboard_url*]
+#   Defaults to undef
 #
 class tempest(
   $install_from_source       = true,
@@ -146,6 +152,10 @@ class tempest(
   #
   $configure_networks        = true,
   $public_network_name       = undef,
+
+  # Horizon dashboard config
+  $login_url                 = undef,
+  $dashboard_url             = undef,
 
   # tempest.conf parameters
   #
@@ -197,6 +207,7 @@ class tempest(
   $horizon_available         = true,
   $neutron_available         = false,
   $nova_available            = true,
+  $sahara_available          = false,
   $swift_available           = false,
   $keystone_v2               = true,
   $keystone_v3               = true,
@@ -295,6 +306,8 @@ class tempest(
     'identity-feature-enabled/api_v3':   value => $keystone_v3;
     'network/public_network_id':         value => $public_network_id;
     'network/public_router_id':          value => $public_router_id;
+    'dashboard/login_url':               value => $login_url;
+    'dashboard/dashboard_url':           value => $dashboard_url;
     'service_available/cinder':          value => $cinder_available;
     'service_available/glance':          value => $glance_available;
     'service_available/heat':            value => $heat_available;
@@ -302,6 +315,7 @@ class tempest(
     'service_available/horizon':         value => $horizon_available;
     'service_available/neutron':         value => $neutron_available;
     'service_available/nova':            value => $nova_available;
+    'service_available/sahara':          value => $sahara_available;
     'service_available/swift':           value => $swift_available;
     'whitebox/db_uri':                   value => $whitebox_db_uri;
     'cli/cli_dir':                       value => $cli_dir;

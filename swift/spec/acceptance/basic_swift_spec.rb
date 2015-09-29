@@ -33,7 +33,7 @@ describe 'basic swift' do
                 'gpgcheck' => 'no',
               },
               'openstack-liberty-trunk' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current/',
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
                 'descr'    => 'openstack-liberty-trunk',
                 'gpgcheck' => 'no',
               },
@@ -109,14 +109,17 @@ describe 'basic swift' do
       }
       class { '::swift::proxy':
         proxy_local_net_ip => '127.0.0.1',
-        pipeline           => ['healthcheck', 'cache', 'tempauth', 'proxy-server'],
+        pipeline           => ['healthcheck', 'cache', 'tempauth', 'dlo', 'proxy-server'],
         account_autocreate => true,
         require            => Class['swift::ringbuilder'],
       }
       class { '::swift::proxy::authtoken':
         admin_password => 'a_big_secret',
       }
-      class { ['::swift::proxy::healthcheck', '::swift::proxy::cache', '::swift::proxy::tempauth']: }
+      class {
+        [ '::swift::proxy::healthcheck', '::swift::proxy::cache',
+        '::swift::proxy::tempauth', '::swift::proxy::dlo' ]:
+      }
       EOS
 
 

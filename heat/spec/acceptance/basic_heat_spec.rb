@@ -34,7 +34,7 @@ describe 'basic heat' do
                 'gpgcheck' => 'no',
               },
               'openstack-liberty-trunk' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current/',
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
                 'descr'    => 'openstack-liberty-trunk',
                 'gpgcheck' => 'no',
               },
@@ -112,7 +112,8 @@ describe 'basic heat' do
         password => 'a_big_secret',
       }
       class { '::heat::keystone::auth':
-        password => 'a_big_secret',
+        password                  => 'a_big_secret',
+        configure_delegated_roles => true,
       }
       class { '::heat::keystone::domain':
         domain_password => 'oh_my_no_secret',
