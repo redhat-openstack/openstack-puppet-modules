@@ -1113,10 +1113,11 @@ On the Debian family, this is passed as the `source` parameter to an
 Default value 'http://debian.datastax.com/debian/repo_key'
 
 ##### `pkg_url`
-If left as the default, this will set the `baseurl` on a `yumrepo` resource
+If left as the default, this will set the `baseurl` to
+'http://rpm.datastax.com/community' on a `yumrepo` resource
 on the Red Hat familiy.  On the Debian family, leaving this as the default
-will set the `location` parameter on an `apt::source`.
-Default value *undef*
+will set the `location` parameter on an `apt::source` to
+'http://debian.datastax.com/community'.  Default value *undef*
 
 ##### `release`
 On the Debian family, this is passed as the `release` parameter to an
