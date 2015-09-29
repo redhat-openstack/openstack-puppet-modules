@@ -9,7 +9,15 @@ describe 'cassandra::datastax_repo' do
 
   context 'Regardless of which OS' do
     it { should compile }
-    it { should contain_class('cassandra::datastax_repo') }
+    it {
+      should contain_class('cassandra::datastax_repo').only_with({
+        'descr'   => 'DataStax Repo for Apache Cassandra',
+        'key_id'  => '7E41C00F85BFC1706C4FFFB3350200F2B999A372',
+        'key_url' => 'http://debian.datastax.com/debian/repo_key',
+        'pkg_url' => nil,
+        'release' => 'stable',
+      })
+    }
   end
 
   context 'On a RedHat OS with defaults for all parameters' do

@@ -309,8 +309,8 @@ CentOS 7 to install DSE Cassandra 4.7.0:
 
 ```puppet
 class { 'cassandra::datastax_repo':
-  name    => 'DataStax Repo for DataStax Enterprise',
-  baseurl => 'https://username:password@rpm.datastax.com/enterprise',
+  descr   => 'DataStax Repo for DataStax Enterprise',
+  pkg_url => 'https://username:password@rpm.datastax.com/enterprise',
   before  => Class['cassandra'],
 }
 
@@ -1096,7 +1096,32 @@ from which packages for DataStax Community can be downloaded.
 
 #### Parameters
 
-This class has no parameters.
+##### `descr`
+On the Red Hat family, this is passed as the `descr` parameter to a
+`yumrepo` resource.  On the Debian family, it is passed as the `comment`
+parameter to an `apt::source` resource.
+Default value 'DataStax Repo for Apache Cassandra'
+
+##### `key_id`
+On the Debian family, this is passed as the `id` parameter to an `apt::key`
+resource.  On the Red Hat family, it is ignored.
+Default value '7E41C00F85BFC1706C4FFFB3350200F2B999A372'
+
+##### `key_url`
+On the Debian family, this is passed as the `source` parameter to an
+`apt::key` resource.  On the Red Hat family, it is ignored.
+Default value 'http://debian.datastax.com/debian/repo_key'
+
+##### `pkg_url`
+If left as the default, this will set the `baseurl` on a `yumrepo` resource
+on the Red Hat familiy.  On the Debian family, leaving this as the default
+will set the `location` parameter on an `apt::source`.
+Default value *undef*
+
+##### `release`
+On the Debian family, this is passed as the `release` parameter to an
+`apt::source` resource.  On the Red Hat family, it is ignored.
+Default value 'stable'
 
 ### Class: cassandra::firewall_ports
 
