@@ -1,5 +1,6 @@
 .bundle/
 coverage/
+secrets/
 Gemfile.lock
 .idea/
 *.iml
@@ -8,6 +9,7 @@ spec/fixtures/
 *.swn
 *.swo
 *.swp
+secrets.tar
 .vagrant/
 vendor/
 log/

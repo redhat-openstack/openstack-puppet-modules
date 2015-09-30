@@ -1,9 +1,14 @@
+---
 language: ruby
 bundler_args: --without development
+before_install:
+- openssl aes-256-cbc -K $encrypted_aa8913b81047_key -iv $encrypted_aa8913b81047_iv
+  -in secrets.tar.enc -out secrets.tar -d
 script:
 - bundle exec rake lint
 - bundle exec rake validate
 - bundle exec rake spec SPEC_OPTS='--format documentation'
+- sh tests/acceptance.sh
 notifications:
   email: false
   webhooks:
@@ -19,7 +24,5 @@ matrix:
     env: PUPPET_GEM_VERSION="~> 3.0"
   - rvm: 2.1.5
     env: PUPPET_GEM_VERSION="~> 3.0"
-  - rvm: 2.1.5
-    env: PUPPET_GEM_VERSION="~> 3.0" FUTURE_PARSER="yes"
   - rvm: 2.1.6
     env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
