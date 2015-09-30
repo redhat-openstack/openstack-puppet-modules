@@ -25,9 +25,11 @@ class cassandra (
   $column_index_size_in_kb                              = 64,
   $commitlog_directory
     = '/var/lib/cassandra/commitlog',
+  $commitlog_segment_size_in_mb                         = 32,
   $commitlog_directory_mode                             = '0750',
+  $commitlog_sync_period_in_ms                          = 10000,
   $commitlog_sync_batch_window_in_ms                    = undef,
-  $commitlog_sync                                       = undef,
+  $commitlog_sync                                       = 'periodic',
   $commitlog_total_space_in_mb                          = undef,
   $commit_failure_policy                                = stop,
   $compaction_throughput_mb_per_sec                     = 16,

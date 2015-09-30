@@ -233,14 +233,14 @@ saved_caches_directory: <%= @saved_caches_directory %>
 # commitlog_sync_batch_window_in_ms milliseconds for other writes, before
 # performing the sync.
 #
-<% if @commitlog_sync != nil %>commitlog_sync: <%= @commitlog_sync %><% else %># commitlog_sync: batch<% end %>
+# commitlog_sync: batch
 <% if @commitlog_sync_batch_window_in_ms != nil %>commitlog_sync_batch_window_in_ms: <%= @commitlog_sync_batch_window_in_ms %><% else %># commitlog_sync_batch_window_in_ms: 50<% end %>
 #
 # the other option is "periodic" where writes may be acked immediately
 # and the CommitLog is simply synced every commitlog_sync_period_in_ms
 # milliseconds. 
-commitlog_sync: periodic
-commitlog_sync_period_in_ms: 10000
+<% if @commitlog_sync != nil %>commitlog_sync: <%= @commitlog_sync %><% else %># commitlog_sync: periodic<% end %>
+<% if @commitlog_sync_period_in_ms != nil %>commitlog_sync_period_in_ms: <%= @commitlog_sync_period_in_ms %><% else %># commitlog_sync_period_in_ms: 10000<% end %>
 
 # The size of the individual commitlog file segments.  A commitlog
 # segment may be archived, deleted, or recycled once all the data
@@ -251,7 +251,7 @@ commitlog_sync_period_in_ms: 10000
 # archiving commitlog segments (see commitlog_archiving.properties),
 # then you probably want a finer granularity of archiving; 8 or 16 MB
 # is reasonable.
-commitlog_segment_size_in_mb: 32
+commitlog_segment_size_in_mb: <%= @commitlog_segment_size_in_mb %>
 
 # any class that implements the SeedProvider interface and has a
 # constructor that takes a Map<String, String> of parameters will do.
