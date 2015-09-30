@@ -470,13 +470,17 @@ Default value '/var/lib/cassandra/commitlog'
 The mode for the directory specified in `commitlog_directory`.
 Default value '0750'
 
+##### `commitlog_segment_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 32
+
 ##### `commitlog_sync`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
-If left at the default value of *undef* then the entry in the configuration
-file is absent or commented out.  If a value is set, then the parameter
-and variable are placed into the configuration file.
-Default value: *undef*
+
+See also `commitlog_sync_batch_window_in_ms` and `commitlog_sync_period_in_ms`.
+Default value: 'periodic'
 
 ##### `commitlog_sync_batch_window_in_ms`
 This is passed to the
@@ -484,7 +488,21 @@ This is passed to the
 If left at the default value of *undef* then the entry in the configuration
 file is absent or commented out.  If a value is set, then the parameter
 and variable are placed into the configuration file.
+
+If `commitlog_sync` is set to 'batch' then this value should be set.
+Otherwise it should be set to *undef*.
 Default value: *undef*
+
+##### `commitlog_sync_period_in_ms`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If set to a value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+
+If `commitlog_sync` is set to 'periodic' then this value should be set.
+Otherwise it should be set to *undef*.
+Default value: 10000
 
 ##### `commitlog_total_space_in_mb`
 This is passed to the
@@ -2365,6 +2383,10 @@ The setting value to be changed to (e.g. **8888**).
 
 Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04,
 Debian 7 Puppet (CE) 3.7.5 and DSC 2.
+
+From release 1.6.0 of this module, regular updates of the Cassandra 1.X
+template will cease and testing against this template will cease.  Testing
+against the template for versions of Cassandra >= 2.X will continue.
 
 ## Contributers
 
