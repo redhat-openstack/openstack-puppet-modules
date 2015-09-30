@@ -1114,7 +1114,9 @@ Default value *undef*
 ### Class: cassandra::datastax_repo
 
 An optional class that will allow a suitable repository to be configured
-from which packages for DataStax Community can be downloaded.
+from which packages for DataStax Community can be downloaded.  Changing
+the defaults will allow any Debian Apt or Red Hat Yum repository to be
+configured.
 
 #### Parameters
 
