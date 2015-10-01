@@ -464,10 +464,16 @@ node /opscenter/ {
 <h3>
 <a id="datastax-enterprise" class="anchor" href="#datastax-enterprise" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataStax Enterprise</h3>
 
-<p>After configuring the relevant repositories elsewhere in the manifest, the
-following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:</p>
+<p>After configuring the relevant repository, the following snippet works on
+CentOS 7 to install DSE Cassandra 4.7.0:</p>
 
-<div class="highlight highlight-source-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
+<div class="highlight highlight-source-puppet"><pre><span class="pl-k">class</span> { <span class="pl-en">'cassandra::datastax_repo'</span>:
+  <span class="pl-c1">descr</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>DataStax Repo for DataStax Enterprise<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">pkg_url</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>https://username:password@rpm.datastax.com/enterprise<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">before</span>  =&gt; Class[<span class="pl-s"><span class="pl-pds">'</span>cassandra<span class="pl-pds">'</span></span>],
+}
+
+<span class="pl-k">class</span> { <span class="pl-en">'cassandra'</span>:
   <span class="pl-c1">cluster_name</span>   =&gt; <span class="pl-s"><span class="pl-pds">'</span>MyCassandraCluster<span class="pl-pds">'</span></span>,
   <span class="pl-c1">config_path</span>    =&gt; <span class="pl-s"><span class="pl-pds">'</span>/etc/dse/cassandra<span class="pl-pds">'</span></span>,
   <span class="pl-c1">package_ensure</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>4.7.0-1<span class="pl-pds">'</span></span>,
@@ -696,15 +702,22 @@ Default value '/var/lib/cassandra/commitlog'</p>
 Default value '0750'</p>
 
 <h5>
-<a id="commitlog_sync" class="anchor" href="#commitlog_sync" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync</code>
+<a id="commitlog_segment_size_in_mb" class="anchor" href="#commitlog_segment_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_segment_size_in_mb</code>
 </h5>
 
 <p>This is passed to the
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
-If left at the default value of <em>undef</em> then the entry in the configuration
-file is absent or commented out.  If a value is set, then the parameter
-and variable are placed into the configuration file.
-Default value: <em>undef</em></p>
+Default value: 32</p>
+
+<h5>
+<a id="commitlog_sync" class="anchor" href="#commitlog_sync" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.</p>
+
+<p>See also <code>commitlog_sync_batch_window_in_ms</code> and <code>commitlog_sync_period_in_ms</code>.
+Default value: 'periodic'</p>
 
 <h5>
 <a id="commitlog_sync_batch_window_in_ms" class="anchor" href="#commitlog_sync_batch_window_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync_batch_window_in_ms</code>
@@ -714,8 +727,25 @@ Default value: <em>undef</em></p>
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 If left at the default value of <em>undef</em> then the entry in the configuration
 file is absent or commented out.  If a value is set, then the parameter
-and variable are placed into the configuration file.
+and variable are placed into the configuration file.</p>
+
+<p>If <code>commitlog_sync</code> is set to 'batch' then this value should be set.
+Otherwise it should be set to <em>undef</em>.
 Default value: <em>undef</em></p>
+
+<h5>
+<a id="commitlog_sync_period_in_ms" class="anchor" href="#commitlog_sync_period_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_sync_period_in_ms</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If set to a value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.</p>
+
+<p>If <code>commitlog_sync</code> is set to 'periodic' then this value should be set.
+Otherwise it should be set to <em>undef</em>.
+Default value: 10000</p>
 
 <h5>
 <a id="commitlog_total_space_in_mb" class="anchor" href="#commitlog_total_space_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>commitlog_total_space_in_mb</code>
@@ -1654,12 +1684,55 @@ Default value <em>undef</em></p>
 <a id="class-cassandradatastax_repo" class="anchor" href="#class-cassandradatastax_repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::datastax_repo</h3>
 
 <p>An optional class that will allow a suitable repository to be configured
-from which packages for DataStax Community can be downloaded.</p>
+from which packages for DataStax Community can be downloaded.  Changing
+the defaults will allow any Debian Apt or Red Hat Yum repository to be
+configured.</p>
 
 <h4>
 <a id="parameters-2" class="anchor" href="#parameters-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
-<p>This class has no parameters.</p>
+<h5>
+<a id="descr" class="anchor" href="#descr" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>descr</code>
+</h5>
+
+<p>On the Red Hat family, this is passed as the <code>descr</code> parameter to a
+<code>yumrepo</code> resource.  On the Debian family, it is passed as the <code>comment</code>
+parameter to an <code>apt::source</code> resource.
+Default value 'DataStax Repo for Apache Cassandra'</p>
+
+<h5>
+<a id="key_id" class="anchor" href="#key_id" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>key_id</code>
+</h5>
+
+<p>On the Debian family, this is passed as the <code>id</code> parameter to an <code>apt::key</code>
+resource.  On the Red Hat family, it is ignored.
+Default value '7E41C00F85BFC1706C4FFFB3350200F2B999A372'</p>
+
+<h5>
+<a id="key_url" class="anchor" href="#key_url" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>key_url</code>
+</h5>
+
+<p>On the Debian family, this is passed as the <code>source</code> parameter to an
+<code>apt::key</code> resource.  On the Red Hat family, it is ignored.
+Default value '<a href="http://debian.datastax.com/debian/repo_key">http://debian.datastax.com/debian/repo_key</a>'</p>
+
+<h5>
+<a id="pkg_url" class="anchor" href="#pkg_url" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>pkg_url</code>
+</h5>
+
+<p>If left as the default, this will set the <code>baseurl</code> to
+'<a href="http://rpm.datastax.com/community">http://rpm.datastax.com/community</a>' on a <code>yumrepo</code> resource
+on the Red Hat familiy.  On the Debian family, leaving this as the default
+will set the <code>location</code> parameter on an <code>apt::source</code> to
+'<a href="http://debian.datastax.com/community">http://debian.datastax.com/community</a>'.  Default value <em>undef</em></p>
+
+<h5>
+<a id="release" class="anchor" href="#release" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>release</code>
+</h5>
+
+<p>On the Debian family, this is passed as the <code>release</code> parameter to an
+<code>apt::source</code> resource.  On the Red Hat family, it is ignored.
+Default value 'stable'</p>
 
 <h3>
 <a id="class-cassandrafirewall_ports" class="anchor" href="#class-cassandrafirewall_ports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class: cassandra::firewall_ports</h3>
@@ -3459,6 +3532,10 @@ configuration file.  Typically this would by <strong>opscenterd</strong>.</p>
 
 <p>Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04,
 Debian 7 Puppet (CE) 3.7.5 and DSC 2.</p>
+
+<p>From release 1.6.0 of this module, regular updates of the Cassandra 1.X
+template will cease and testing against this template will cease.  Testing
+against the template for versions of Cassandra &gt;= 2.X will continue.</p>
 
 <h2>
 <a id="contributers" class="anchor" href="#contributers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributers</h2>
