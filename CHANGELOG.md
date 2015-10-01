@@ -1,5 +1,41 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-10-01 - Release 1.7.0 ([diff](https://github.com/locp/cassandra/compare/1.6.0...1.7.0))
+
+### Summary
+
+* Corrected a bug in how commitlog_sync has handled by Cassandra.
+* Some non-functional improvements
+* Additional features for the cassandra::datastax_repo class.
+
+### Features
+
+* Added the commitlog_segment_size_in_mb parameter to the cassandra class.
+* Added the following fields to the cassandra::datastax_repo class:
+
+  * descr
+  * key_id
+  * key_url
+  * pkg_url
+  * release
+
+  This should make the configuring of repositories more flexible.
+
+### Bugfixes
+
+* Fixed a bug in how the commitlog_sync and the parameters that are
+  associated with it are handled
+
+### Improvements
+
+The following non-functional improvements were implemented:
+
+* Added tags to the module metadata.
+* Migrated the acceptance tests from Vagrant to Docker.  The associated
+  improvements to performance means that more rigorous acceptance tests can
+  be applied in a shorter time.  For the first time as well, they are
+  visible on Travis.
+
 ##2015-09-23 - Release 1.6.0 ([diff](https://github.com/locp/cassandra/compare/1.5.0...1.6.0))
 
 ### Summary
@@ -13,7 +49,7 @@ non-functional improvements in the automated unit tests.
   cassandra::datastax_agent => java_home parameter).
 * The file mode for the directories can now be specified for the
   commitlog_directory, data_file_directories and the saved_caches_directory
-  in the casssandra class.
+  in the cassandra class.
 
 ### Bugfixes
 
@@ -176,7 +212,7 @@ override the default behaviour of failing on a non-supported operating system.
 
 ##2015-08-28 - Release 1.3.4 ([diff](https://github.com/locp/cassandra/compare/1.3.3...1.3.4))
 * Minor corrections to the README.
-* The addtion of the storage_cassandra_seed_hosts parameter to
+* The addition of the storage_cassandra_seed_hosts parameter to
   cassandra::opscenter::cluster_name which is part of a bigger part of
   work but is urgently require by a client.
 
@@ -194,7 +230,7 @@ This was mainly a non-functional change.  The biggest thing to say is that
 Debian 7 is now supported.
 
 ##2015-08-19 - Release 1.3.0 ([diff](https://github.com/locp/cassandra/compare/1.2.0...1.3.0))
-* Allow additional TCP ports to be specifed for the host based firewall.
+* Allow additional TCP ports to be specified for the host based firewall.
 * Fixed a problem where the client subnets were ignored by the firewall.
 * Added more automated testing.
 * Continued work on an ongoing improvement of the documentation.
