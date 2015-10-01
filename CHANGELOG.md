@@ -1,5 +1,24 @@
 # Change Log for Puppet Module locp-cassandra
 
+##1015-10-01 - Release 1.7.1 ([diff](https://github.com/locp/cassandra/compare/1.7.0...1.7.1))
+
+### Summary
+
+A minor bug fix that incorrctly gave a failed build status for the module.
+
+### Features
+
+* N/A
+
+### Bugfixes
+
+* Fixed a problem that was showing the status of the module build as an
+  error since the release of the fog-google gem version 0.1.1.
+
+### Improvements
+
+* N/A
+
 ##2015-10-01 - Release 1.7.0 ([diff](https://github.com/locp/cassandra/compare/1.6.0...1.7.0))
 
 ### Summary
