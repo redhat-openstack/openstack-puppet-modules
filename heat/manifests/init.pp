@@ -138,9 +138,19 @@
 #   (Optional) Use syslog for logging.
 #   Defaults to false.
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to true
+#
 # [*log_facility*]
 #   (Optional) Syslog facility to receive log lines.
 #   Defaults to LOG_USER.
+#
+# [*flavor*]
+#   (optional) Specifies the Authentication method.
+#   Set to 'standalone' to get Heat to work with a remote OpenStack
+#   Tested versions include 0.9 and 2.2
+#   Defaults to undef
 #
 # === Deprecated ParameterS
 #
@@ -192,7 +202,9 @@ class heat(
   $database_connection         = 'sqlite:////var/lib/heat/heat.sqlite',
   $database_idle_timeout       = 3600,
   $use_syslog                  = false,
+  $use_stderr                  = true,
   $log_facility                = 'LOG_USER',
+  $flavor                      = undef,
   #Deprecated parameters
   $mysql_module                = undef,
   $sql_connection              = undef,
@@ -351,6 +363,7 @@ class heat(
     'DEFAULT/rpc_backend'                  : value => $rpc_backend;
     'DEFAULT/debug'                        : value => $debug;
     'DEFAULT/verbose'                      : value => $verbose;
+    'DEFAULT/use_stderr'                   : value => $use_stderr;
     'ec2authtoken/auth_uri'                : value => $keystone_ec2_uri;
     'keystone_authtoken/auth_host'         : value => $keystone_host;
     'keystone_authtoken/auth_port'         : value => $keystone_port;
@@ -437,4 +450,9 @@ class heat(
     }
   }
 
+  if $flavor {
+    heat_config { 'paste_deploy/flavor': value => $flavor; }
+  } else {
+    heat_config { 'paste_deploy/flavor': ensure => absent; }
+  }
 }

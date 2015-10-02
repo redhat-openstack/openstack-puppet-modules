@@ -15,27 +15,19 @@ describe 'heat::keystone::domain' do
 
   shared_examples_for 'heat keystone domain' do
     it 'configure heat.conf' do
-      should contain_heat_config('DEFAULT/stack_domain_admin').with_value(params[:domain_admin])
-      should contain_heat_config('DEFAULT/stack_domain_admin_password').with_value(params[:domain_password])
-    end
-
-    it 'should configure heat domain id' do
-      should contain_heat_domain_id_setter('heat_domain_id').with(
-        :ensure           => 'present',
-        :domain_name      => params[:domain_name],
-        :auth_url         => params[:auth_url],
-        :auth_username    => params[:keystone_admin],
-        :auth_password    => params[:keystone_password],
-        :auth_tenant_name => params[:keystone_tenant]
-      )
+      is_expected.to contain_heat_config('DEFAULT/stack_domain_admin').with_value(params[:domain_admin])
+      is_expected.to contain_heat_config('DEFAULT/stack_domain_admin_password').with_value(params[:domain_password])
+      is_expected.to contain_heat_config('DEFAULT/stack_domain_admin_password').with_secret(true)
+      is_expected.to contain_heat_config('DEFAULT/stack_user_domain_name').with_value(params[:domain_name])
     end
 
     it 'should exec helper script' do
-      should contain_exec('heat_domain_create').with(
+      is_expected.to contain_exec('heat_domain_create').with(
         :command     => 'heat-keystone-setup-domain &>/dev/null',
         :path        => '/usr/bin',
         :require     => 'Package[heat-common]',
         :environment => [
+            "OS_TENANT_NAME=#{params[:keystone_tenant]}",
             "OS_USERNAME=#{params[:keystone_admin]}",
             "OS_PASSWORD=#{params[:keystone_password]}",
             "OS_AUTH_URL=#{params[:auth_url]}",
