@@ -1,0 +1,7 @@
+Code-Review+2: Javier Peña <jpena@redhat.com>
+Verified+1: Javier Peña <jpena@redhat.com>
+Submitted-by: Javier Peña <jpena@redhat.com>
+Submitted-at: Fri, 02 Oct 2015 15:48:45 +0200
+Reviewed-on: https://review.gerrithub.io/248894
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/juno
