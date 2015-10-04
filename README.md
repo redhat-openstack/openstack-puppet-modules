@@ -1016,6 +1016,13 @@ Default value 'running'
 The name of the service that runs the Cassandra software.
 Default value 'cassandra'
 
+##### `service_refresh`
+If set to true, changes to the Cassandra config file or the data directories
+will ensure that Cassandra service is refreshed after the changes.  Setting
+this flag will disable this behaviour, therefore allowing the changes to be
+made but allow the user to control when the service is restarted.
+Default value true
+
 ##### `snapshot_before_compaction`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
