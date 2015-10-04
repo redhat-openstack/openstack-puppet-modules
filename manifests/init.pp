@@ -38,6 +38,7 @@ class cassandra (
   $concurrent_counter_writes                            = 32,
   $concurrent_reads                                     = 32,
   $concurrent_writes                                    = 32,
+  $config_file_mode                                     = '0666',
   $config_path                                          = undef,
   $counter_cache_save_period                            = 7200,
   $counter_write_request_timeout_in_ms                  = 5000,
@@ -184,6 +185,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     content => template($cassandra_yaml_tmpl),
+    mode    => $config_file_mode,
     require => Package[$package_name],
     notify  => Service['cassandra'],
   }
