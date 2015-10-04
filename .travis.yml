@@ -3,12 +3,12 @@ language: ruby
 bundler_args: --without development
 before_install:
 - openssl aes-256-cbc -K $encrypted_aa8913b81047_key -iv $encrypted_aa8913b81047_iv
-  -in secrets.tar.enc -out secrets.tar -d
+  -in .travis/secrets.tar.enc -out secrets.tar -d
 script:
 - bundle exec rake lint
 - bundle exec rake validate
 - bundle exec rake spec SPEC_OPTS='--format documentation'
-- sh tests/acceptance.sh
+- sh .travis/acceptance.sh
 notifications:
   email: false
   webhooks:
