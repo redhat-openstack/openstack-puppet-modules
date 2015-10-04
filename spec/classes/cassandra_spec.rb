@@ -106,6 +106,7 @@ describe 'cassandra' do
         'service_enable' => true,
         'service_ensure' => 'running',
         'service_name' => 'cassandra',
+        'service_refresh' => true,
         'snapshot_before_compaction' => false,
         'snitch_properties_file' => 'cassandra-rackdc.properties',
         'ssl_storage_port' => 7001,
