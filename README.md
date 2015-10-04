@@ -538,6 +538,10 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '32'
 
+##### `config_file_mode`
+The permissions mode of the cassandra configuration file.
+Default value '0666'
+
 ##### `config_path`
 The path to the cassandra configuration file.  If this is undef, it will be
 changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
