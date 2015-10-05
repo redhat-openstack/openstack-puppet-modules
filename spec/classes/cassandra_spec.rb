@@ -212,9 +212,16 @@ describe 'cassandra' do
     end
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'stopped',
-        'enable' => 'false'
+        'ensure'    => 'stopped',
+        'name'      => 'cassandra',
+        'enable'    => 'false'
       })
+    }
+    it {
+      should contain_service('cassandra').that_subscribes_to('File[/etc/cassandra/cassandra.yaml]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.rack]') 
+      should contain_service('cassandra').that_subscribes_to('Package[dsc22]') 
     }
   end
 end
