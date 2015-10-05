@@ -87,7 +87,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 #### What the cassandra::opscenter::pycrypto class affects
 
 * On the Red Hat family it installs the pycrypto library and it's
-  pre-requisits (the python-devel and python-pip packages).
+  pre-requisites (the python-devel and python-pip packages).
 * Optionally installs the Extra Packages for Enterprise Linux (EPEL)
   repository.
 * As a workaround for
@@ -115,7 +115,21 @@ A basic example is as follows:
 
 ### Upgrading
 
-The following changes to the API have taken place.
+#### Changes in 1.7.0
+
+A somewhat embarrassing correction to the spelling of the
+cassandra::fail_on_non_suppoted_os to cassandra::fail_on_non_supported_os.
+
+#### Issues when Upgrading to 1.4.0
+
+Unfortunately both releases 1.3.7 and 1.4.0 have subsequently been found to
+call a refresh service even when no changes had been made to the underlying
+configuration.  In release 1.7.0 (somewhat belatedly) the service_refresh
+flag has been introduced to mitigate against similar problems.
+
+#### Issues When Upgrading to 1.3.7
+
+* Please see the notes for 1.4.0.
 
 #### Changes in 1.0.0
 
@@ -1019,8 +1033,8 @@ Default value 'cassandra'
 ##### `service_refresh`
 If set to true, changes to the Cassandra config file or the data directories
 will ensure that Cassandra service is refreshed after the changes.  Setting
-this flag will disable this behaviour, therefore allowing the changes to be
-made but allow the user to control when the service is restarted.
+this flag to false will disable this behaviour, therefore allowing the changes
+to be made but allow the user to control when the service is restarted.
 Default value true
 
 ##### `snapshot_before_compaction`
@@ -1168,7 +1182,7 @@ Default value 'http://debian.datastax.com/debian/repo_key'
 ##### `pkg_url`
 If left as the default, this will set the `baseurl` to
 'http://rpm.datastax.com/community' on a `yumrepo` resource
-on the Red Hat familiy.  On the Debian family, leaving this as the default
+on the Red Hat family.  On the Debian family, leaving this as the default
 will set the `location` parameter on an `apt::source` to
 'http://debian.datastax.com/community'.  Default value *undef*
 
