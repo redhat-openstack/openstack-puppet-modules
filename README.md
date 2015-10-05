@@ -115,7 +115,7 @@ A basic example is as follows:
 
 ### Upgrading
 
-#### Changes in 1.7.0
+#### Changes in 1.8.0
 
 A somewhat embarrassing correction to the spelling of the
 cassandra::fail_on_non_suppoted_os to cassandra::fail_on_non_supported_os.
@@ -124,7 +124,7 @@ cassandra::fail_on_non_suppoted_os to cassandra::fail_on_non_supported_os.
 
 Unfortunately both releases 1.3.7 and 1.4.0 have subsequently been found to
 call a refresh service even when no changes had been made to the underlying
-configuration.  In release 1.7.0 (somewhat belatedly) the service_refresh
+configuration.  In release 1.8.0 (somewhat belatedly) the service_refresh
 flag has been introduced to mitigate against similar problems.
 
 #### Issues When Upgrading to 1.3.7
