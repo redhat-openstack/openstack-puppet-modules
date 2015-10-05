@@ -276,7 +276,7 @@ The port for the RabbitMQ management interface.
 
 ####`management_ssl`
 
-Enable/Disable SSL for the maangement port.
+Enable/Disable SSL for the management port.
 Has an effect only if ssl => true.
 Default is true.
 Valid values are true or false.
@@ -539,6 +539,28 @@ query all currently enabled plugins `$ puppet resource rabbitmq_plugin`
 rabbitmq_plugin {'rabbitmq_stomp':
   ensure => present,
 }
+```
+
+### rabbitmq\_parameter
+
+```puppet
+  rabbitmq_parameter { 'documentumShovel@/':
+    component_name => '',
+    value          => {
+        'src-uri'    => 'amqp://',
+        'src-queue'  => 'my-queue',
+        'dest-uri'   => 'amqp://remote-server',
+        'dest-queue' => 'another-queue',
+    },
+  }
+
+  rabbitmq_parameter { 'documentumFed@/':
+    component_name => 'federation-upstream',
+    value          => {
+        'uri'    => 'amqp://myserver',
+        'expires' => '360000',
+    },
+  }
 ```
 
 ### rabbitmq\_erlang\_cookie

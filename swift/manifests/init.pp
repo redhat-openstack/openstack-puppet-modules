@@ -53,7 +53,6 @@ class swift(
 
   file { '/etc/swift':
     ensure => directory,
-    mode   => '2770',
   }
   user {'swift':
     ensure => present,
@@ -62,13 +61,15 @@ class swift(
     ensure => directory,
   }
   file { '/var/run/swift':
-    ensure => directory,
+    ensure                  => directory,
+    selinux_ignore_defaults => true,
   }
 
   file { '/etc/swift/swift.conf':
     ensure => file,
-    mode   => '0660',
   }
+
+  File['/etc/swift/swift.conf'] -> Swift_config<||>
 
   swift_config { 'swift-hash/swift_hash_path_suffix':
     value => $swift_hash_suffix,

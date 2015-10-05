@@ -198,6 +198,9 @@
     ExpiresByType <%= rule %>
     <%- end -%>
     <%- end -%>
+    <%- if directory['ext_filter_options'] -%>
+    ExtFilterOptions <%= directory['ext_filter_options'] %>
+    <%- end -%>
     <%- if directory['force_type'] -%>
     ForceType <%= directory['force_type'] %>
     <%- end -%>
@@ -238,6 +241,9 @@
       <%- Array(directory['setenv']).each do |setenv| -%>
     SetEnv <%= setenv %>
       <%- end -%>
+    <%- end -%>
+    <%- if directory['set_output_filter'] -%>
+    SetOutputFilter <%= directory['set_output_filter'] %>
     <%- end -%>
     <%- if @shibboleth_enabled -%>
       <%- if directory['shib_require_session'] and ! directory['shib_require_session'].empty? -%>

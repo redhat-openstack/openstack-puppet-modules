@@ -5,8 +5,8 @@
 #
 class n1k_vsm::deploy
 {
-  require n1k_vsm
-  include n1k_vsm
+  require ::n1k_vsm
+  include ::n1k_vsm
 
   #ensure tap interfaces and deploy the vsm
   $ctrltap  = 'vsm-ctrl0'
@@ -16,7 +16,7 @@ class n1k_vsm::deploy
   # Validate and get the array of digits for the vsm_mac_base (or use default)
   # Using _vmb as the name for the final string to increase readability
   $tmp_mac_base = regsubst($n1k_vsm::vsm_mac_base, '[^0-9a-fA-F]+', '')
-  if (inline_template('<%= @tmp_mac_base.length %>') < 7) {
+  if size($tmp_mac_base) < 7 {
     $vmb = split('005dc79', '')
   } else {
     $vmb = split($tmp_mac_base, '')

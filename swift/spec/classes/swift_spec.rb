@@ -36,19 +36,17 @@ describe 'swift' do
     end
     it {is_expected.to contain_user('swift')}
     it {is_expected.to contain_file('/etc/swift').with(
-      {:ensure => 'directory', :mode => '2770'
-      }.merge(file_defaults)
+      {:ensure => 'directory'}.merge(file_defaults)
     )}
     it {is_expected.to contain_file('/var/run/swift').with(
-      {:ensure => 'directory'}.merge(file_defaults)
+      {:ensure                  => 'directory',
+       :selinux_ignore_defaults => true}.merge(file_defaults)
     )}
     it {is_expected.to contain_file('/var/lib/swift').with(
       {:ensure => 'directory'}.merge(file_defaults)
     )}
     it {is_expected.to contain_file('/etc/swift/swift.conf').with(
-      { :ensure => 'file',
-        :mode   => '0660'
-      }.merge(file_defaults)
+      {:ensure => 'file'}.merge(file_defaults)
     )}
     it 'configures swift.conf' do
       is_expected.to contain_swift_config(
@@ -59,6 +57,7 @@ describe 'swift' do
         'swift-constraints/max_header_size').with_value('16384')
     end
     it { is_expected.to contain_package('swift').with_ensure('present') }
+    it { is_expected.to contain_file('/etc/swift/swift.conf').with_before(/Swift_config\[.+\]/) }
   end
 
   describe 'when overriding package_ensure parameter' do

@@ -4,8 +4,8 @@
 #
 class n1k_vsm::pkgprep_ovscfg
 {
-  require n1k_vsm
-  include n1k_vsm
+  require ::n1k_vsm
+  include ::n1k_vsm
 
   case $::osfamily {
     'RedHat': {

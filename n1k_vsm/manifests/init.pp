@@ -109,7 +109,7 @@ class n1k_vsm(
       $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
       $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${_phy_if_bridge}') %>")
       $gw_intf          = $n1k_vsm::phy_gateway
-      include n1k_vsm::pkgprep_ovscfg
+      include ::n1k_vsm::pkgprep_ovscfg
     }
 
     notify {"Arg: intf ${phy_if_bridge} vsm_role ${vsm_role} domainid ${vsm_domain_id}" : withpath => true}
@@ -117,7 +117,7 @@ class n1k_vsm(
     notify {"gw_dv ${gw_intf} ovs ${ovsbridge} vsmname ${n1k_vsm::vsmname}" : withpath => true}
     notify {"mgmtip ${n1k_vsm::mgmtip} vsm_mask ${n1k_vsm::mgmtnetmask} vsm_gw ${n1k_vsm::mgmtgateway}": withpath => false}
 
-    include n1k_vsm::vsmprep
-    include n1k_vsm::deploy
+    include ::n1k_vsm::vsmprep
+    include ::n1k_vsm::deploy
     Class['n1k_vsm::vsmprep'] -> Class['n1k_vsm::deploy']
 }

@@ -17,6 +17,8 @@ class collectd::params {
   $version                = installed
   $service_ensure         = running
   $service_enable         = true
+  $minimum_version        = undef
+  $manage_package         = true
 
   case $::osfamily {
     'Debian': {
