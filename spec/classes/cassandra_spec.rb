@@ -67,7 +67,7 @@ describe 'cassandra' do
         'dynamic_snitch_reset_interval_in_ms' => 600000,
         'dynamic_snitch_update_interval_in_ms' => 100,
         'endpoint_snitch' => 'SimpleSnitch',
-        'fail_on_non_suppoted_os' => true,
+        'fail_on_non_supported_os' => true,
         'hinted_handoff_enabled' => true,
         'hinted_handoff_throttle_in_kb' => 1024,
         'incremental_backups' => false,
@@ -132,7 +132,7 @@ describe 'cassandra' do
     let :params do
       {
         :config_path             => '/etc/cassandra',
-        :fail_on_non_suppoted_os => false
+        :fail_on_non_supported_os => false
       }
     end
 
