@@ -180,6 +180,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc_suffix]') 
       should contain_ini_setting('rackdc.properties.dc_suffix').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
@@ -188,6 +189,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.prefer_local]') 
       should contain_ini_setting('rackdc.properties.prefer_local').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
