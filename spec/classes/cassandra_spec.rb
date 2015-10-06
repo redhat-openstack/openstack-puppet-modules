@@ -55,6 +55,7 @@ describe 'cassandra' do
         'concurrent_counter_writes' => 32,
         'concurrent_reads' => 32,
         'concurrent_writes' => 32,
+        'config_file_mode' => '0666',
         'config_path' => nil,
         'counter_cache_save_period' => 7200,
         'counter_write_request_timeout_in_ms' => 5000,
@@ -131,13 +132,16 @@ describe 'cassandra' do
     end
     let :params do
       {
+        :config_file_mode        => '0755',
         :config_path             => '/etc/cassandra',
         :fail_on_non_suppoted_os => false
       }
     end
 
     it {
-      should contain_file('/etc/cassandra/cassandra.yaml')
+      should contain_file('/etc/cassandra/cassandra.yaml').with({
+        'mode' => '0755'
+      })
     }
     it { should have_resource_count(8) }
   end
