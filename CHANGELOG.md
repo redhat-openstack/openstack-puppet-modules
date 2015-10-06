@@ -1,5 +1,24 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-08-06 - Release 1.8.0 ([diff](https://github.com/locp/cassandra/compare/1.7.1...1.8.0))
+
+### Summary
+
+Some new features a minor bug fix and some non-functional improvements.
+
+### Features
+
+* Added the service_refresh and config_file_mode parameters to the Cassandra
+  class.
+
+### Bugfixes
+
+* The name of the fail_on_non_supported_os parameter has been corrected.
+
+### Improvements
+
+* Automated acceptance tests in preparation for a release now run faster.
+
 ##1015-10-01 - Release 1.7.1 ([diff](https://github.com/locp/cassandra/compare/1.7.0...1.7.1))
 
 ### Summary
