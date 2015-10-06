@@ -107,6 +107,7 @@ describe 'cassandra' do
         'service_enable' => true,
         'service_ensure' => 'running',
         'service_name' => 'cassandra',
+        'service_refresh' => true,
         'snapshot_before_compaction' => false,
         'snitch_properties_file' => 'cassandra-rackdc.properties',
         'ssl_storage_port' => 7001,
@@ -179,6 +180,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc_suffix]') 
       should contain_ini_setting('rackdc.properties.dc_suffix').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
@@ -187,6 +189,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.prefer_local]') 
       should contain_ini_setting('rackdc.properties.prefer_local').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
@@ -211,9 +214,16 @@ describe 'cassandra' do
     end
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'stopped',
-        'enable' => 'false'
+        'ensure'    => 'stopped',
+        'name'      => 'cassandra',
+        'enable'    => 'false'
       })
+    }
+    it {
+      should contain_service('cassandra').that_subscribes_to('File[/etc/cassandra/cassandra.yaml]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.rack]') 
+      should contain_service('cassandra').that_subscribes_to('Package[dsc22]') 
     }
   end
 end

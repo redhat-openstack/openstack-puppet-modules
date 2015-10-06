@@ -119,6 +119,7 @@ class cassandra (
   $service_enable                                       = true,
   $service_ensure                                       = 'running',
   $service_name                                         = 'cassandra',
+  $service_refresh                                      = true,
   $snapshot_before_compaction                           = false,
   $snitch_properties_file
     = 'cassandra-rackdc.properties',
@@ -187,7 +188,6 @@ class cassandra (
     content => template($cassandra_yaml_tmpl),
     mode    => $config_file_mode,
     require => Package[$package_name],
-    notify  => Service['cassandra'],
   }
 
   file { $commitlog_directory:
@@ -195,8 +195,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $commitlog_directory_mode,
-    require => Package[$package_name],
-    notify  => Service['cassandra'],
+    require => Package[$package_name]
   }
 
   file { $data_file_directories:
@@ -204,8 +203,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $data_file_directories_mode,
-    require => Package[$package_name],
-    notify  => Service['cassandra'],
+    require => Package[$package_name]
   }
 
   file { $saved_caches_directory:
@@ -213,17 +211,32 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $saved_caches_directory_mode,
-    require => Package[$package_name],
-    notify  => Service['cassandra'],
+    require => Package[$package_name]
   }
 
   if $package_ensure != 'absent'
   and $package_ensure != 'purged' {
-    service { 'cassandra':
-      ensure    => $service_ensure,
-      name      => $service_name,
-      enable    => $service_enable,
-      subscribe => Package[$package_name],
+    if $service_refresh == true {
+      service { 'cassandra':
+        ensure    => $service_ensure,
+        name      => $service_name,
+        enable    => $service_enable,
+        subscribe => [
+          File[$commitlog_directory],
+          File[$config_file],
+          File[$data_file_directories],
+          File[$saved_caches_directory],
+          Ini_setting['rackdc.properties.dc'],
+          Ini_setting['rackdc.properties.rack'],
+          Package[$package_name],
+        ]
+      }
+    } else {
+      service { 'cassandra':
+        ensure => $service_ensure,
+        name   => $service_name,
+        enable => $service_enable
+      }
     }
   }
 
@@ -235,7 +248,6 @@ class cassandra (
     setting => 'dc',
     value   => $dc,
     require => Package[$package_name],
-    notify  => Service['cassandra']
   }
 
   ini_setting { 'rackdc.properties.rack':
@@ -244,28 +256,47 @@ class cassandra (
     setting => 'rack',
     value   => $rack,
     require => Package[$package_name],
-    notify  => Service['cassandra']
   }
 
   if $dc_suffix != undef {
-    ini_setting { 'rackdc.properties.dc_suffix':
-      path    => $dc_rack_properties_file,
-      section => '',
-      setting => 'dc_suffix',
-      value   => $dc_suffix,
-      require => Package[$package_name],
-      notify  => Service['cassandra']
+    if $service_refresh == true {
+      ini_setting { 'rackdc.properties.dc_suffix':
+        path    => $dc_rack_properties_file,
+        section => '',
+        setting => 'dc_suffix',
+        value   => $dc_suffix,
+        require => Package[$package_name],
+        notify  => Service['cassandra']
+      }
+    } else {
+      ini_setting { 'rackdc.properties.dc_suffix':
+        path    => $dc_rack_properties_file,
+        section => '',
+        setting => 'dc_suffix',
+        value   => $dc_suffix,
+        require => Package[$package_name],
+      }
     }
   }
 
   if $prefer_local != undef {
-    ini_setting { 'rackdc.properties.prefer_local':
-      path    => $dc_rack_properties_file,
-      section => '',
-      setting => 'prefer_local',
-      value   => $prefer_local,
-      require => Package[$package_name],
-      notify  => Service['cassandra']
+    if $service_refresh == true {
+      ini_setting { 'rackdc.properties.prefer_local':
+        path    => $dc_rack_properties_file,
+        section => '',
+        setting => 'prefer_local',
+        value   => $prefer_local,
+        require => Package[$package_name],
+        notify  => Service['cassandra']
+      }
+    } else {
+      ini_setting { 'rackdc.properties.prefer_local':
+        path    => $dc_rack_properties_file,
+        section => '',
+        setting => 'prefer_local',
+        value   => $prefer_local,
+        require => Package[$package_name],
+      }
     }
   }
 }
