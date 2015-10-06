@@ -233,9 +233,9 @@ class cassandra (
       }
     } else {
       service { 'cassandra':
-        ensure    => $service_ensure,
-        name      => $service_name,
-        enable    => $service_enable
+        ensure => $service_ensure,
+        name   => $service_name,
+        enable => $service_enable
       }
     }
   }
