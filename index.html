@@ -16,7 +16,7 @@
     <header>
       <div class="container">
         <h1>Cassandra</h1>
-        <h2>A Puppet module to install and manage Cassandra, DataStax Agent &amp; OpsCenter</h2>
+        <h2>Installs Cassandra, DataStax Agent &amp; OpsCenter on RHEL/Ubuntu/Debian.</h2>
 
         <section id="downloads">
           <a href="https://github.com/locp/cassandra/zipball/master" class="btn">Download as .zip</a>
@@ -163,7 +163,7 @@ required.  This functionality is only valid in DataStax Enterprise.</li>
 
 <ul>
 <li>On the Red Hat family it installs the pycrypto library and it's
-pre-requisits (the python-devel and python-pip packages).</li>
+pre-requisites (the python-devel and python-pip packages).</li>
 <li>Optionally installs the Extra Packages for Enterprise Linux (EPEL)
 repository.</li>
 <li>As a workaround for
@@ -195,7 +195,26 @@ too distant future.</li>
 <h3>
 <a id="upgrading" class="anchor" href="#upgrading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading</h3>
 
-<p>The following changes to the API have taken place.</p>
+<h4>
+<a id="changes-in-180" class="anchor" href="#changes-in-180" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes in 1.8.0</h4>
+
+<p>A somewhat embarrassing correction to the spelling of the
+cassandra::fail_on_non_suppoted_os to cassandra::fail_on_non_supported_os.</p>
+
+<h4>
+<a id="issues-when-upgrading-to-140" class="anchor" href="#issues-when-upgrading-to-140" aria-hidden="true"><span class="octicon octicon-link"></span></a>Issues when Upgrading to 1.4.0</h4>
+
+<p>Unfortunately both releases 1.3.7 and 1.4.0 have subsequently been found to
+call a refresh service even when no changes had been made to the underlying
+configuration.  In release 1.8.0 (somewhat belatedly) the service_refresh
+flag has been introduced to mitigate against similar problems.</p>
+
+<h4>
+<a id="issues-when-upgrading-to-137" class="anchor" href="#issues-when-upgrading-to-137" aria-hidden="true"><span class="octicon octicon-link"></span></a>Issues When Upgrading to 1.3.7</h4>
+
+<ul>
+<li>Please see the notes for 1.4.0.</li>
+</ul>
 
 <h4>
 <a id="changes-in-100" class="anchor" href="#changes-in-100" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes in 1.0.0</h4>
@@ -791,6 +810,13 @@ Default value '32'</p>
 Default value '32'</p>
 
 <h5>
+<a id="config_file_mode" class="anchor" href="#config_file_mode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_file_mode</code>
+</h5>
+
+<p>The permissions mode of the cassandra configuration file.
+Default value '0666'</p>
+
+<h5>
 <a id="config_path" class="anchor" href="#config_path" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>config_path</code>
 </h5>
 
@@ -921,7 +947,7 @@ Default value: '100'</p>
 Default value 'SimpleSnitch'</p>
 
 <h5>
-<a id="fail_on_non_suppoted_os" class="anchor" href="#fail_on_non_suppoted_os" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>fail_on_non_suppoted_os</code>
+<a id="fail_on_non_supported_os" class="anchor" href="#fail_on_non_supported_os" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>fail_on_non_supported_os</code>
 </h5>
 
 <p>A flag that dictates if the module should fail if it is not RedHat or Debian.
@@ -1496,6 +1522,16 @@ Default value 'running'</p>
 Default value 'cassandra'</p>
 
 <h5>
+<a id="service_refresh" class="anchor" href="#service_refresh" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>service_refresh</code>
+</h5>
+
+<p>If set to true, changes to the Cassandra config file or the data directories
+will ensure that Cassandra service is refreshed after the changes.  Setting
+this flag to false will disable this behaviour, therefore allowing the changes
+to be made but allow the user to control when the service is restarted.
+Default value true</p>
+
+<h5>
 <a id="snapshot_before_compaction" class="anchor" href="#snapshot_before_compaction" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>snapshot_before_compaction</code>
 </h5>
 
@@ -1722,7 +1758,7 @@ Default value '<a href="http://debian.datastax.com/debian/repo_key">http://debia
 
 <p>If left as the default, this will set the <code>baseurl</code> to
 '<a href="http://rpm.datastax.com/community">http://rpm.datastax.com/community</a>' on a <code>yumrepo</code> resource
-on the Red Hat familiy.  On the Debian family, leaving this as the default
+on the Red Hat family.  On the Debian family, leaving this as the default
 will set the <code>location</code> parameter on an <code>apt::source</code> to
 '<a href="http://debian.datastax.com/community">http://debian.datastax.com/community</a>'.  Default value <em>undef</em></p>
 
