@@ -1,12 +1,10 @@
 OpenStack Puppet Modules
 ========================
 
-<<<<<<< HEAD
 6.0.0 - 2015.1 - Kilo
-=======
+
 [Puppet](http://puppetlabs.com/puppet/puppet-open-source) modules shared between
 [Packstack](https://github.com/stackforge/packstack) and [Foreman](http://theforeman.org/).
->>>>>>> 32b9fde... Add support for swift-object-expirer service
 
 How to add a new Puppet module
 ------------------------------
@@ -35,10 +33,6 @@ Afterwards add the new Puppet module, `puppet-module-collectd` in this example.
 Finally add some more details (e.g. why you want to add this Puppet module)
 to the commit message, push the branch and [initiate a pull request](https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request).
 
-<<<<<<< HEAD
-    git commit --amend
-    git push --set-upstream origin collectd
-=======
 ### Installing swift
 
     puppet module install openstack/swift
@@ -272,4 +266,3 @@ Contributors
 ------------
 
 * https://github.com/openstack/puppet-swift/graphs/contributors
->>>>>>> 6f2e748... Add support for swift-object-expirer service
