@@ -3,7 +3,7 @@ language: ruby
 cache:
   directories:
   - vendor/bundle
-  - spec/fixtures/modules
+#  - spec/fixtures/modules
 sudo: false
 branches:
   only:
@@ -24,11 +24,10 @@ matrix:
     env: PUPPET_GEM_VERSION="~> 3.0"
   - rvm: 2.0.0
     env: PUPPET_GEM_VERSION="~> 3.0"
-  - rvm: 2.0.0
-    env: PUPPET_GEM_VERSION="~> 3.0" FUTURE_PARSER="yes"
-  allow_failures:
-  - rvm: 2.0.0
-    env: PUPPET_GEM_VERSION="~> 3.0" FUTURE_PARSER="yes"
+  - rvm: 2.1.0
+    env: PUPPET_GEM_VERSION="~> 3.0"
+  - rvm: 2.1.0
+    env: PUPPET_GEM_VERSION="~> 4.0"
 notifications:
   email:
     - github@razorsedge.org

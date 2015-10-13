@@ -17,6 +17,10 @@ describe 'gnocchi::api' do
 
     context 'with default parameters' do
 
+      it 'contains the logging class' do
+        is_expected.to contain_class('gnocchi::logging')
+      end
+
       it 'installs gnocchi-api package and service' do
         is_expected.to contain_service('gnocchi-api').with(
           :name      => platform_params[:api_service_name],
@@ -32,8 +36,6 @@ describe 'gnocchi::api' do
       end
 
       it 'configures gnocchi-api with default parameters' do
-        is_expected.to contain_gnocchi_config('DEFAULT/verbose').with_value(false)
-        is_expected.to contain_gnocchi_config('DEFAULT/debug').with_value(false)
         is_expected.to contain_gnocchi_config('keystone_authtoken/identity_uri').with_value(params[:identity_uri])
         is_expected.to contain_gnocchi_config('keystone_authtoken/admin_tenant_name').with_value(params[:keystone_tenant])
         is_expected.to contain_gnocchi_config('keystone_authtoken/admin_user').with_value(params[:keystone_user])

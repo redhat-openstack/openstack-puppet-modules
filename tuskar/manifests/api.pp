@@ -34,11 +34,11 @@
 #
 # [*verbose*]
 #   (optional) Rather to log the tuskar api service at verbose level.
-#   Default: false
+#   Default: undef
 #
 # [*debug*]
 #   (optional) Rather to log the tuskar api service at debug level.
-#   Default: false
+#   Default: undef
 #
 # [*bind_host*]
 #   (optional) The address of the host to bind to.
@@ -51,12 +51,12 @@
 # [*log_file*]
 #   (optional) The path of file used for logging
 #   If set to boolean false, it will not log to any file.
-#   Default: /var/log/tuskar/tuskar-api.log
+#   Default: undef
 #
-#  [*log_dir*]
-#    (optional) directory to which tuskar logs are sent.
-#    If set to boolean false, it will not log to any directory.
-#    Defaults to '/var/log/tuskar'
+# [*log_dir*]
+#   (optional) directory to which tuskar logs are sent.
+#   If set to boolean false, it will not log to any directory.
+#   Defaults to undef
 #
 # [*keystone_tenant*]
 #   (optional) Tenant to authenticate to.
@@ -72,11 +72,15 @@
 #
 # [*use_syslog*]
 #   (optional) Use syslog for logging.
-#   Defaults to false.
+#   Defaults to undef.
+#
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to undef
 #
 # [*log_facility*]
 #   (optional) Syslog facility to receive log lines.
-#   Defaults to 'LOG_USER'.
+#   Defaults to  undef.
 #
 # [*purge_config*]
 #   (optional) Whether to set only the specified config options
@@ -89,29 +93,30 @@
 #
 class tuskar::api(
   $keystone_password,
-  $verbose                      = false,
-  $debug                        = false,
+  $verbose                      = undef,
+  $debug                        = undef,
+  $use_syslog                   = undef,
+  $log_facility                 = undef,
+  $log_dir                      = undef,
+  $use_stderr                   = undef,
+  $log_file                     = undef,
   $bind_host                    = '0.0.0.0',
   $bind_port                    = '8585',
-  $log_file                     = '/var/log/tuskar/tuskar-api.log',
-  $log_dir                      = '/var/log/tuskar',
   $keystone_tenant              = 'services',
   $keystone_user                = 'tuskar',
   $identity_uri                 = 'http://127.0.0.1:35357',
   $enabled                      = true,
-  $use_syslog                   = false,
-  $log_facility                 = 'LOG_USER',
   $purge_config                 = false,
   $manage_service               = true,
   $package_ensure               = 'present',
 ) inherits tuskar {
 
   require ::keystone::python
+  include ::tuskar::logging
   include ::tuskar::params
 
   Tuskar_config<||> ~> Exec['post-tuskar_config']
   Tuskar_config<||> ~> Service['tuskar-api']
-  Package['tuskar-api'] -> Tuskar_config<||>
 
   if $::tuskar::database_connection {
     if($::tuskar::database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
@@ -132,47 +137,12 @@ class tuskar::api(
 
   # basic service config
   tuskar_config {
-    'DEFAULT/verbose':                      value => $verbose;
-    'DEFAULT/debug':                        value => $debug;
     'DEFAULT/tuskar_api_bind_ip':           value => $bind_host;
     'DEFAULT/tuskar_api_port':              value => $bind_port;
     'keystone_authtoken/identity_uri':      value => $identity_uri;
     'keystone_authtoken/admin_user':        value => $keystone_user;
     'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
     'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
-  }
-
-  # Logging
-  if $log_file {
-    tuskar_config {
-      'DEFAULT/log_file': value  => $log_file;
-    }
-  } else {
-    tuskar_config {
-      'DEFAULT/log_file': ensure => absent;
-    }
-  }
-
-  if $log_dir {
-    tuskar_config {
-      'DEFAULT/log_dir': value  => $log_dir;
-    }
-  } else {
-    tuskar_config {
-      'DEFAULT/log_dir': ensure => absent;
-    }
-  }
-
-  # Syslog
-  if $use_syslog {
-    tuskar_config {
-      'DEFAULT/use_syslog'          : value => true;
-      'DEFAULT/syslog_log_facility' : value => $log_facility;
-    }
-  } else {
-    tuskar_config {
-      'DEFAULT/use_syslog': value => false;
-    }
   }
 
   resources { 'tuskar_config':

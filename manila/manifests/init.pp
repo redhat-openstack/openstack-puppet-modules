@@ -21,7 +21,7 @@
 #
 # [*rpc_backend*]
 #   (Optional) Use these options to configure the RabbitMQ message system.
-#   Defaults to 'heat.openstack.common.rpc.impl_kombu'
+#   Defaults to 'rabbit'
 #
 # [*package_ensure*]
 #    (Optional) Ensure state for package.
@@ -246,7 +246,7 @@
 class manila (
   $sql_connection              = 'sqlite:////var/lib/manila/manila.sqlite',
   $sql_idle_timeout            = '3600',
-  $rpc_backend                 = 'manila.openstack.common.rpc.impl_kombu',
+  $rpc_backend                 = 'rabbit',
   $control_exchange            = 'openstack',
   $notification_driver         = 'messaging',
   $rabbit_host                 = '127.0.0.1',
@@ -354,7 +354,7 @@ class manila (
     require => Package['manila'],
   }
 
-  if $rpc_backend == 'manila.openstack.common.rpc.impl_kombu' {
+  if $rpc_backend == 'manila.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
 
     if ! $rabbit_password {
       fail('Please specify a rabbit_password parameter.')
@@ -416,7 +416,7 @@ class manila (
 
   }
 
-  if $rpc_backend == 'manila.openstack.common.rpc.impl_qpid' {
+  if $rpc_backend == 'manila.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
 
     if ! $qpid_password {
       fail('Please specify a qpid_password parameter.')

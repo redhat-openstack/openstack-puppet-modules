@@ -34,21 +34,33 @@
 #
 # [*verbose*]
 #   (optional) Rather to log the gnocchi api service at verbose level.
-#   Default: false
+#   Defaults to undef
 #
 # [*debug*]
 #   (optional) Rather to log the gnocchi api service at debug level.
-#   Default: false
+#   Defaults to undef
 #
 # [*log_file*]
 #   (optional) The path of file used for logging
 #   If set to boolean false, it will not log to any file.
-#   Default: /var/log/gnocchi/gnocchi-api.log
+#   Defaults to undef
 #
-#  [*log_dir*]
+# [*use_syslog*]
+#   (Optional) Use syslog for logging.
+#   Defaults to undef
+#
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to undef
+#
+# [*log_facility*]
+#   (Optional) Syslog facility to receive log lines.
+#   Defaults to undef
+#
+# [*log_dir*]
 #   (optional) directory to which gnocchi logs are sent.
 #   If set to boolean false, it will not log to any directory.
-#   Defaults to '/var/log/gnocchi'
+#   Defaults to undef
 #
 # [*keystone_tenant*]
 #   (optional) Tenant to authenticate to.
@@ -81,10 +93,13 @@
 #
 class gnocchi::api(
   $keystone_password,
-  $verbose                      = false,
-  $debug                        = false,
-  $log_file                     = '/var/log/gnocchi/gnocchi-api.log',
-  $log_dir                      = '/var/log/gnocchi',
+  $verbose                      = undef,
+  $debug                        = undef,
+  $use_syslog                   = undef,
+  $use_stderr                   = undef,
+  $log_facility                 = undef,
+  $log_dir                      = undef,
+  $log_file                     = undef,
   $keystone_tenant              = 'services',
   $keystone_user                = 'gnocchi',
   $identity_uri                 = 'http://127.0.0.1:35357',
@@ -97,6 +112,7 @@ class gnocchi::api(
 ) inherits gnocchi {
 
   require ::keystone::python
+  include ::gnocchi::logging
   include ::gnocchi::params
 
   Gnocchi_config<||> ~> Exec['post-gnocchi_config']
@@ -121,45 +137,10 @@ class gnocchi::api(
 
   # basic service config
   gnocchi_config {
-    'DEFAULT/verbose':                      value => $verbose;
-    'DEFAULT/debug':                        value => $debug;
     'keystone_authtoken/identity_uri':      value => $identity_uri;
     'keystone_authtoken/admin_user':        value => $keystone_user;
     'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
     'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
-  }
-
-  # Logging
-  if $log_file {
-    gnocchi_config {
-      'DEFAULT/log_file': value  => $log_file;
-    }
-  } else {
-    gnocchi_config {
-      'DEFAULT/log_file': ensure => absent;
-    }
-  }
-
-  if $log_dir {
-    gnocchi_config {
-      'DEFAULT/log_dir': value  => $log_dir;
-    }
-  } else {
-    gnocchi_config {
-      'DEFAULT/log_dir': ensure => absent;
-    }
-  }
-
-  # Syslog
-  if $use_syslog {
-    gnocchi_config {
-      'DEFAULT/use_syslog'          : value => true;
-      'DEFAULT/syslog_log_facility' : value => $log_facility;
-    }
-  } else {
-    gnocchi_config {
-      'DEFAULT/use_syslog': value => false;
-    }
   }
 
   resources { 'gnocchi_config':

@@ -46,6 +46,7 @@ class apache (
   $confd_dir              = $::apache::params::confd_dir,
   $vhost_dir              = $::apache::params::vhost_dir,
   $vhost_enable_dir       = $::apache::params::vhost_enable_dir,
+  $vhost_include_pattern  = $::apache::params::vhost_include_pattern,
   $mod_dir                = $::apache::params::mod_dir,
   $mod_enable_dir         = $::apache::params::mod_enable_dir,
   $mpm_module             = $::apache::params::mpm_module,
@@ -380,4 +381,8 @@ class apache (
       manage_docroot  => $default_ssl_vhost,
     }
   }
+
+  # This anchor can be used as a reference point for things that need to happen *after*
+  # all modules have been put in place.
+  anchor { '::apache::modules_set_up': }
 }

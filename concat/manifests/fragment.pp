@@ -57,6 +57,16 @@ define concat::fragment(
   if $backup {
     warning('The $backup parameter to concat::fragment is deprecated and has no effect')
   }
+
+  # Checks the target concat resources for whether fragments should be backed up or not
+  # otherwise defaults to false.
+  $enable_backup = concat_getparam(Concat[$target], 'backup_fragments')
+  $target_backup = concat_getparam(Concat[$target], 'backup')
+  $_backup = $enable_backup ? {
+      true    => $target_backup,
+      default => false
+  }
+
   if $ensure == undef {
     $my_ensure = concat_getparam(Concat[$target], 'ensure')
   } else {
@@ -118,7 +128,7 @@ define concat::fragment(
     mode    => $fragmode,
     source  => $source,
     content => $content,
-    backup  => false,
+    backup  => $_backup,
     replace => true,
     alias   => "concat_fragment_${name}",
     notify  => Exec["concat_${target}"]

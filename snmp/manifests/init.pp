@@ -419,9 +419,9 @@ class snmp (
   if $::osfamily == 'FreeBSD' {
     file { $snmp::params::service_config_dir_path:
       ensure  => 'directory',
-      mode    => $snmp::params::service_dir_perms,
-      owner   => $snmp::params::service_dir_owner,
-      group   => $snmp::params::service_dir_group,
+      mode    => $snmp::params::service_config_dir_perms,
+      owner   => $snmp::params::service_config_dir_owner,
+      group   => $snmp::params::service_config_dir_group,
       require => Package['snmpd'],
     }
   }

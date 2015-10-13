@@ -17,6 +17,10 @@ describe 'tuskar::api' do
 
     context 'with default parameters' do
 
+      it 'contains the logging class' do
+        is_expected.to contain_class('tuskar::logging')
+      end
+
       it 'installs tuskar-api package and service' do
         is_expected.to contain_service('tuskar-api').with(
           :name      => platform_params[:api_service_name],

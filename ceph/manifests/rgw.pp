@@ -24,7 +24,7 @@
 #
 # === Parameters:
 #
-# [*pgk_cephrgw*] Package name for the ceph radosgw.
+# [*pkg_radosgw*] Package name for the ceph radosgw.
 #   Optional. Default is osfamily dependent (check ceph::params).
 #
 # [*rgw_data*] The path where the radosgw data should be stored.
@@ -46,10 +46,10 @@
 #   Optional. Default is '/tmp/radosgw.sock'.
 #
 # [*rgw_print_continue*] True to send 100 codes to the client.
-#   Optional. Default is true.
+#   Optional. Default is false.
 #
 # [*rgw_port*] Port the rados gateway listens.
-#   Optional. Default is 443.
+#   Optional. Default is undef.
 #
 # [*syslog*] Whether or not to log to syslog.
 #   Optional. Default is true.
@@ -62,8 +62,8 @@ define ceph::rgw (
   $log_file = '/var/log/ceph/radosgw.log',
   $rgw_dns_name = $::fqdn,
   $rgw_socket_path = $::ceph::params::rgw_socket_path,
-  $rgw_print_continue = true,
-  $rgw_port = $::ceph::params::rgw_port,
+  $rgw_print_continue = false,
+  $rgw_port = undef,
   $syslog = true,
 ) {
 

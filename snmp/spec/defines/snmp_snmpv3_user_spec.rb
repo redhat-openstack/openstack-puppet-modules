@@ -78,7 +78,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myDEFAULTuser').with(
-        :command => 'service snmpd stop ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myDEFAULTuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myDEFAULTuser-snmpd',
         :creates => '/var/lib/net-snmp/myDEFAULTuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -97,7 +97,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myALLuser').with(
-        :command => 'service snmpd stop ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myALLuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myALLuser-snmpd',
         :creates => '/var/lib/net-snmp/myALLuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -114,7 +114,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myTRAPuser').with(
-        :command => 'service snmptrapd stop ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/net-snmp/snmptrapd.conf && touch /var/lib/net-snmp/myTRAPuser-snmptrapd',
+        :command => 'service snmptrapd stop ; sleep 5 ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/net-snmp/snmptrapd.conf && touch /var/lib/net-snmp/myTRAPuser-snmptrapd',
         :creates => '/var/lib/net-snmp/myTRAPuser-snmptrapd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmptrapd]'
@@ -139,7 +139,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myDEFAULTuser').with(
-        :command => 'service snmpd stop ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/snmp/snmpd.conf && touch /var/lib/snmp/myDEFAULTuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/snmp/snmpd.conf && touch /var/lib/snmp/myDEFAULTuser-snmpd',
         :creates => '/var/lib/snmp/myDEFAULTuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -158,7 +158,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myALLuser').with(
-        :command => 'service snmpd stop ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/snmp/snmpd.conf && touch /var/lib/snmp/myALLuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/snmp/snmpd.conf && touch /var/lib/snmp/myALLuser-snmpd',
         :creates => '/var/lib/snmp/myALLuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -175,7 +175,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myTRAPuser').with(
-        :command => 'service snmpd stop ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/snmp/snmptrapd.conf && touch /var/lib/snmp/myTRAPuser-snmptrapd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/snmp/snmptrapd.conf && touch /var/lib/snmp/myTRAPuser-snmptrapd',
         :creates => '/var/lib/snmp/myTRAPuser-snmptrapd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -200,7 +200,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myDEFAULTuser').with(
-        :command => 'service snmpd stop ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myDEFAULTuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myDEFAULTuser SHA myauthpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myDEFAULTuser-snmpd',
         :creates => '/var/lib/net-snmp/myDEFAULTuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -219,7 +219,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myALLuser').with(
-        :command => 'service snmpd stop ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myALLuser-snmpd',
+        :command => 'service snmpd stop ; sleep 5 ; echo "createUser myALLuser MD5 myauthpass DES myprivpass" >>/var/lib/net-snmp/snmpd.conf && touch /var/lib/net-snmp/myALLuser-snmpd',
         :creates => '/var/lib/net-snmp/myALLuser-snmpd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmpd]'
@@ -236,7 +236,7 @@ describe 'snmp::snmpv3_user', :type => 'define' do
       end
 
       it { should contain_exec('create-snmpv3-user-myTRAPuser').with(
-        :command => 'service snmptrapd stop ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/net-snmp/snmptrapd.conf && touch /var/lib/net-snmp/myTRAPuser-snmptrapd',
+        :command => 'service snmptrapd stop ; sleep 5 ; echo "createUser myTRAPuser SHA myauthpass" >>/var/lib/net-snmp/snmptrapd.conf && touch /var/lib/net-snmp/myTRAPuser-snmptrapd',
         :creates => '/var/lib/net-snmp/myTRAPuser-snmptrapd',
         :require => [ 'Package[snmpd]', 'File[var-net-snmp]' ],
         :before  => 'Service[snmptrapd]'

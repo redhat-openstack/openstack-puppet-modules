@@ -18,8 +18,9 @@ describe 'concat::setup', :type => :class do
     it do
       should contain_file("#{concatdir}/bin/concatfragments.rb").with({
         :mode   => '0755',
+        :owner  => 'root',
+        :group  => 0,
         :source => 'puppet:///modules/concat/concatfragments.rb',
-        :backup => false,
       })
     end
 
@@ -28,7 +29,8 @@ describe 'concat::setup', :type => :class do
         should contain_file(file).with({
           :ensure => 'directory',
           :mode   => '0755',
-          :backup => false,
+          :owner  => 'root',
+          :group  => 0,
         })
       end
     end
@@ -64,9 +66,9 @@ describe 'concat::setup', :type => :class do
       should contain_file("#{concatdir}/bin/concatfragments.rb").with({
         :ensure => 'file',
         :owner  => 'root',
+        :group  => 0,
         :mode   => '0755',
         :source => 'puppet:///modules/concat/concatfragments.rb',
-        :backup => false,
       })
     end
   end # on osfamily Solaris
@@ -87,9 +89,9 @@ describe 'concat::setup', :type => :class do
       should contain_file("#{concatdir}/bin/concatfragments.rb").with({
         :ensure => 'file',
         :owner  => nil,
+        :group  => nil,
         :mode   => nil,
         :source => 'puppet:///modules/concat/concatfragments.rb',
-        :backup => false,
       })
     end
   end # on osfamily windows

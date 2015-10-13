@@ -19,7 +19,7 @@ require 'spec_helper_system'
 
 describe 'ceph::osds' do
 
-  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'dumpling', 'firefly', 'giant' ]
+  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'firefly', 'hammer' ]
   machines = ENV['MACHINES'] ? ENV['MACHINES'].split : [ 'first', 'second' ]
   # passing it directly as unqoted array is not supported everywhere
   fsid = 'a4807c9a-e76f-4666-a297-6d6cbc922e3a'
@@ -52,7 +52,7 @@ describe 'ceph::osds' do
 
     machines.each do |vm|
       puppet_apply(:node => vm, :code => pp) do |r|
-        r.exit_code.should_not == 1
+        expect(r.exit_code).not_to eq(1)
       end
 
       rcp(:sp => data, :dp => data_path, :d => node(:name => vm))
@@ -114,7 +114,7 @@ ensure: purged
 
         machines.each do |vm|
           puppet_apply('') do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell(:node => vm, :command => 'test -b /dev/sdb && sgdisk --zap-all --clear --mbrtogpt -- /dev/sdb')
@@ -148,15 +148,15 @@ ensure: present
           end
 
           puppet_apply('') do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'ceph osd tree' do |r|
-            r.stdout.should =~ /osd.0/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/osd.0/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
         end
       end
@@ -199,15 +199,15 @@ ensure: present
           end
 
           puppet_apply('') do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'ceph osd tree' do |r|
-            r.stdout.should =~ /osd.0/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/osd.0/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
         end
       end
@@ -222,7 +222,7 @@ end
 #   )
 #   cp -a Gemfile-rspec-system Gemfile
 #   BUNDLE_PATH=/tmp/vendor bundle install --no-deployment
-#   RELEASES=dumpling \
+#   RELEASES=hammer \
 #   MACHINES=first \
 #   RS_DESTROY=no \
 #   RS_SET=ubuntu-server-1204-x64 \

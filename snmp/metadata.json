@@ -1,13 +1,13 @@
 {
   "name": "razorsedge-snmp",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "author": "razorsedge",
-  "summary": "Simple Network Management Protocol (SNMP) is a widely used protocol for monitoring the health and welfare of network and computer equipment. Net-SNMP implements SNMP v1, SNMP v2c, and SNMP v3 using both IPv4 and IPv6.",
+  "summary": "Simple Network Management Protocol is for monitoring network and computer equipment. Net-SNMP implements v1, v2c, and v3 on both IPv4 and IPv6.",
   "license": "Apache-2.0",
   "project_page": "https://github.com/razorsedge/puppet-snmp",
   "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
   "source": "https://github.com/razorsedge/puppet-snmp.git",
-  "tags": [ "snmp", "net-snmp", "monitoring", "RHEL", "rhel", "OEL", "CentOS", "debian", "ubuntu", "SuSE", "OpenSUSE", "FreeBSD" ],
+  "tags": [ "snmp", "net-snmp", "monitoring" ],
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
@@ -41,7 +41,7 @@
     },
     {
       "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [ "12.04" ]
+      "operatingsystemrelease": [ "12.04", "14.04" ]
     }
   ],
   "requirements": [
@@ -51,7 +51,7 @@
     },
     {
       "name": "puppet",
-      "version_requirement": ">=2.7.20 <4.0.0"
+      "version_requirement": ">=2.7.20 <5.0.0"
     }
   ]
 }

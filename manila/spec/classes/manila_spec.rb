@@ -21,7 +21,7 @@ describe 'manila' do
         :value => '3600'
       )
       is_expected.to contain_manila_config('DEFAULT/rpc_backend').with(
-        :value => 'manila.openstack.common.rpc.impl_kombu'
+        :value => 'rabbit'
       )
       is_expected.to contain_manila_config('DEFAULT/notification_driver').with(
         :value => 'messaging'
@@ -134,12 +134,12 @@ describe 'manila' do
       {
         :sql_connection      => 'mysql://user:password@host/database',
         :qpid_password       => 'guest',
-        :rpc_backend         => 'manila.openstack.common.rpc.impl_qpid'
+        :rpc_backend         => 'qpid'
       }
     end
 
     it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
-    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('manila.openstack.common.rpc.impl_qpid') }
+    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('qpid') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_port').with_value('5672') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_username').with_value('guest') }
@@ -160,7 +160,7 @@ describe 'manila' do
       {
         :sql_connection       => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
-        :rpc_backend          => 'manila.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -173,7 +173,7 @@ describe 'manila' do
         :sql_connection       => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
         :qpid_sasl_mechanisms => 'PLAIN',
-        :rpc_backend          => 'manila.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -186,7 +186,7 @@ describe 'manila' do
         :sql_connection       => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
         :qpid_sasl_mechanisms => [ 'DIGEST-MD5', 'GSSAPI', 'PLAIN' ],
-        :rpc_backend          => 'manila.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -367,12 +367,12 @@ describe 'manila' do
     let :params do
       {
         :sql_connection         => 'mysql://user:password@host/database',
-        :rpc_backend            => 'manila.openstack.common.rpc.impl_zmq',
+        :rpc_backend            => 'zmq',
       }
     end
 
     it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
-    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('manila.openstack.common.rpc.impl_zmq') }
+    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('zmq') }
     it { is_expected.to contain_manila_config('oslo_messaging_amqp/server_request_prefix').with_value('exclusive') }
     it { is_expected.to contain_manila_config('oslo_messaging_amqp/broadcast_prefix').with_value('broadcast') }
     it { is_expected.to contain_manila_config('oslo_messaging_amqp/group_request_prefix').with_value('unicast') }

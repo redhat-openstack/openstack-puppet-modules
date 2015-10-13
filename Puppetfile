@@ -1,5 +1,5 @@
 mod 'apache',
-  :commit => '383bca75a7243bf802739fdf8d58dbf585936329',
+  :commit => '22ed02711ea7afee8a17c6b0ab7eb24d772d2b6e',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',
@@ -7,11 +7,11 @@ mod 'aviator',
   :git => 'https://github.com/aimonb/puppet_aviator.git'
 
 mod 'ceilometer',
-  :commit => '919020ed4c42ef90a7066c9f428dbf1509a7f332',
+  :commit => '60a2c46196d0fdb4675a7482648a85fc928ca0cf',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => 'b6ab15b47c81d7694fdcfd75d8f2e0a0481ca40c',
+  :commit => 'c60c6209ac799555b94bf62ce1c2cf00084e42d2',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
@@ -19,7 +19,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => '0724a23b582785a696d2db9f117ad12117bbb350',
+  :commit => '17026a35ecc28e28075bc13580b9740d641094ac',
   :git => 'https://github.com/openstack/puppet-cinder.git'
 
 mod 'common',
@@ -27,15 +27,15 @@ mod 'common',
   :git => 'https://github.com/purpleidea/puppet-common.git'
 
 mod 'concat',
-  :commit => '52d0f1d6809c9f1d8453f9e3ca10d792e67acc89',
+  :commit => 'c307bee3933d88e6028274b0fa122a9b0c87b1d4',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'corosync',
-  :commit => '8d725aea7a9d91d861929851a9da8da1e3519b21',
+  :commit => 'f0408cd231caa7009aa187112022a62ebb3b8925',
   :git => 'https://github.com/puppetlabs/puppetlabs-corosync.git'
 
 mod 'firewall',
-  :commit => 'f973175bc01e6ab357857efbd611bb34ef1a2e4b',
+  :commit => '6755b959004f176844cb143690cc83ba621c40de',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'galera',
@@ -43,7 +43,7 @@ mod 'galera',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
 mod 'glance',
-  :commit => '57009efc4a916b01a51ad4815f5ca74c3f094f47',
+  :commit => 'd6ad1f504eda3f1f0e0613ece9392dd8f78bf7b5',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gluster',
@@ -51,19 +51,19 @@ mod 'gluster',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
 mod 'gnocchi',
-  :commit => '34be2c3ec87cb7250146779d58462b21468c37dc',
+  :commit => '02692807d218210a27a4043e27b3aa0ac38e8b28',
   :git => 'https://github.com/openstack/puppet-gnocchi.git'
 
 mod 'haproxy',
-  :commit => 'ad4fa8dfe69268f6daa1aa532bd8684d6427c991',
+  :commit => 'cdcbc19ac3389aadc5d7ec1e9d0631de28e06bf7',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => 'bc4e8c0d654fccaa69e0b4bb5b7d1462a9085468',
+  :commit => '06953c3d4493e405343704b1beeb1e610cfa75e6',
   :git => 'https://github.com/openstack/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '34d3c0a79af9b1025466eae01ff9c6c042abed6c',
+  :commit => '06e150fa18ff6ebfa00a93553a1576de3ce361f8',
   :git => 'https://github.com/openstack/puppet-horizon.git'
 
 mod 'inifile',
@@ -75,7 +75,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa-1.git'
 
 mod 'ironic',
-  :commit => '0900e0e10c959273adb4ee83f185696b632d8c82',
+  :commit => '50ec0e11608930f5286ee0913d1cd6fde8bf8a55',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'keepalived',
@@ -83,11 +83,11 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => '240301fe01982b1c41839235d3dc19895f682108',
+  :commit => 'cc2f08164aea815c8e6f1a849edfee6aa75f7dcc',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'manila',
-  :commit => '05503844b9495a7142716593454c83f060daed54',
+  :commit => 'd8fee807df66314ee3e5c68ee669e8826e327eef',
   :git => 'https://github.com/openstack/puppet-manila.git'
 
 mod 'memcached',
@@ -95,7 +95,7 @@ mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached.git'
 
 mod 'module-collectd',
-  :commit => '5c317c56a86847693c96b120e1be333b53a7c715',
+  :commit => '9d07e5b15d3b6f67dd2899ef08dc7d2c20cff0a4',
   :git => 'https://github.com/pdxcat/puppet-module-collectd.git'
 
 mod 'module-data',
@@ -107,7 +107,7 @@ mod 'mongodb',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
 
 mod 'mysql',
-  :commit => '2a8693482f962b36024e9c70a459de8e9dc65eb6',
+  :commit => '5e6db0bb0fd8b28bb9c7d8f23e67e6ddb8abf616',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k_vsm',
@@ -119,11 +119,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '544982049eb8d45c651941876b92079e3e6bd170',
+  :commit => 'ee10d14987a96fb82cc0905827f7891e8e6ecbb8',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => 'b3aed594249fb5d22cc284291126a0c268e75dec',
+  :commit => '7e60d0b1c20e8fccc105dd7e9239240ec50000ba',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -131,7 +131,7 @@ mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb.git'
 
 mod 'ntp',
-  :commit => '1b57d27fb73eca526b559abbfe53dbdc6b15eb5c',
+  :commit => '9d548a20ba46feb049471140f640daa16d967828',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
 mod 'openstack_extras',
@@ -139,7 +139,7 @@ mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
-  :commit => '989d8e999a4f17126c37007bab3d71d023ab7d10',
+  :commit => '57475d93af5895cff49a298838c97b1451b6d1a0',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
@@ -155,7 +155,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => '9a420b32e8a9ef2e4a1b76e405ee22257fc83ffa',
+  :commit => 'b7e381715c599c527183257aa58df9d77bbe81ba',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',
@@ -171,11 +171,11 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '486368ccff7cbaac7ae3697fa562cccab2afa2ac',
+  :commit => '1efb8f227352fffe8607ae5caf1b858eda829f2d',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
 mod 'snmp',
-  :commit => '64f1a6976830bb4e96176a7296e8d14f65df0cac',
+  :commit => '90254293f6bf097eca7096562ac63f31a0bc75f4',
   :git => 'https://github.com/razorsedge/puppet-snmp.git'
 
 mod 'ssh',
@@ -187,11 +187,11 @@ mod 'staging',
   :git => 'https://github.com/nanliu/puppet-staging.git'
 
 mod 'stdlib',
-  :commit => 'e1a9bf506359d1e84d13b857ca6fa5e556ceeddd',
+  :commit => '4e62223801d118bb427a230b4571a911399ea859',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',
-  :commit => 'f1f9a24998d0fe2d62ef436bfc60d1ffa194f862',
+  :commit => '68eb6373f0805401384afa05d78da587d6d742c8',
   :git => 'https://github.com/openstack/puppet-swift.git'
 
 mod 'sysctl',
@@ -199,7 +199,7 @@ mod 'sysctl',
   :git => 'https://github.com/puppetlabs/puppetlabs-sysctl.git'
 
 mod 'tempest',
-  :commit => 'cdb255b14c3f1ab2c486d26bea2bc150f382164d',
+  :commit => '09b2b5c70fa3772b33f4bce0ea178a723a820aab',
   :git => 'https://github.com/openstack/puppet-tempest.git'
 
 mod 'timezone',
@@ -211,11 +211,11 @@ mod 'tripleo',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
-  :commit => 'c5b0e46a63125fa7b87b6461ac1dd0de49b8a881',
+  :commit => '045d929556389a631a34a68b011dc87b960fb9a6',
   :git => 'https://github.com/openstack/puppet-trove'
 
 mod 'tuskar',
-  :commit => 'b2875e2d673f4a595f3991eac44689b5f8e4c9c6',
+  :commit => '52120a9c64eb411c1ef51dccfc6f758f7142f6a5',
   :git => 'https://github.com/openstack/puppet-tuskar.git'
 
 mod 'vcsrepo',

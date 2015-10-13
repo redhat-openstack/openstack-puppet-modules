@@ -21,7 +21,7 @@ require 'spec_helper_system'
 
 describe 'ceph::mon' do
 
-  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'dumpling', 'firefly', 'giant' ]
+  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'firefly', 'hammer' ]
   machines = ENV['MACHINES'] ? ENV['MACHINES'].split : [ 'first', 'second' ]
   fsid = 'a4807c9a-e76f-4666-a297-6d6cbc922e3a'
   mon_host = '$::ipaddress'
@@ -40,7 +40,7 @@ describe 'ceph::mon' do
 
         machines.each do |mon|
           puppet_apply(:node => mon, :code => pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
         end
       end
@@ -58,7 +58,7 @@ describe 'ceph::mon' do
 
         machines.each do |mon|
           puppet_apply(:node => mon, :code => pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
         end
       end
@@ -78,15 +78,15 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'ceph -s' do |r|
-            r.stdout.should =~ /1 mons at/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/1 mons at/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
         end
 
@@ -98,9 +98,9 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should == 0
+            expect(r.exit_code).to eq(0)
           end
 
           osfamily = facter.facts['osfamily']
@@ -108,16 +108,16 @@ describe 'ceph::mon' do
 
           if osfamily == 'Debian' && operatingsystem == 'Ubuntu'
             shell 'status ceph-mon id=a' do |r|
-              r.stdout.should be_empty
-              r.stderr.should =~ /Unknown instance: ceph.a/
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to be_empty
+              expect(r.stderr).to match(/Unknown instance: ceph.a/)
+              expect(r.exit_code).not_to be_zero
             end
           end
           if osfamily == 'RedHat'
             shell 'service ceph status mon.a' do |r|
-              r.stdout.should =~ /mon.a not found/
-              r.stderr.should be_empty
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to match(/mon.a not found/)
+              expect(r.stderr).to be_empty
+              expect(r.exit_code).not_to be_zero
             end
           end
         end
@@ -137,13 +137,13 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'test -z "$(cat /etc/ceph/ceph.client.admin.keyring)"' do |r|
-            r.exit_code.should be_zero
+            expect(r.exit_code).to be_zero
           end
         end
 
@@ -155,9 +155,9 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should == 0
+            expect(r.exit_code).to eq(0)
           end
 
           osfamily = facter.facts['osfamily']
@@ -165,16 +165,16 @@ describe 'ceph::mon' do
 
           if osfamily == 'Debian' && operatingsystem == 'Ubuntu'
             shell 'status ceph-mon id=a' do |r|
-              r.stdout.should be_empty
-              r.stderr.should =~ /Unknown instance: ceph.a/
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to be_empty
+              expect(r.stderr).to match(/Unknown instance: ceph.a/)
+              expect(r.exit_code).not_to be_zero
             end
           end
           if osfamily == 'RedHat'
             shell 'service ceph status mon.a' do |r|
-              r.stdout.should =~ /mon.a not found/
-              r.stderr.should be_empty
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to match(/mon.a not found/)
+              expect(r.stderr).to be_empty
+              expect(r.exit_code).not_to be_zero
             end
           end
         end
@@ -198,13 +198,13 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'test -f /etc/ceph/ceph.client.admin.keyring' do |r|
-            r.exit_code.should be_zero
+            expect(r.exit_code).to be_zero
           end
         end
 
@@ -216,9 +216,9 @@ describe 'ceph::mon' do
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should == 0
+            expect(r.exit_code).to eq(0)
           end
 
           osfamily = facter.facts['osfamily']
@@ -226,16 +226,16 @@ describe 'ceph::mon' do
 
           if osfamily == 'Debian' && operatingsystem == 'Ubuntu'
             shell 'status ceph-mon id=a' do |r|
-              r.stdout.should be_empty
-              r.stderr.should =~ /Unknown instance: ceph.a/
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to be_empty
+              expect(r.stderr).to match(/Unknown instance: ceph.a/)
+              expect(r.exit_code).not_to be_zero
             end
           end
           if osfamily == 'RedHat'
             shell 'service ceph status mon.a' do |r|
-              r.stdout.should =~ /mon.a not found/
-              r.stderr.should be_empty
-              r.exit_code.should_not be_zero
+              expect(r.stdout).to match(/mon.a not found/)
+              expect(r.stderr).to be_empty
+              expect(r.exit_code).not_to be_zero
             end
           end
         end
@@ -243,7 +243,7 @@ describe 'ceph::mon' do
 
       describe 'on two hosts' do
         it 'should be two hosts' do
-          machines.size.should == 2
+          expect(machines.size).to eq(2)
         end
 
         it 'should install two monitors' do
@@ -262,16 +262,16 @@ describe 'ceph::mon' do
             EOS
 
             puppet_apply(:node => mon, :code => pp) do |r|
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
               r.refresh
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
             end
           end
 
           shell 'ceph -s' do |r|
-            r.stdout.should =~ /2 mons .* quorum 0,1/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/2 mons .* quorum 0,1/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
         end
 
@@ -284,9 +284,9 @@ describe 'ceph::mon' do
             EOS
 
             puppet_apply(:node => mon, :code => pp) do |r|
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
               r.refresh
-              r.exit_code.should == 0
+              expect(r.exit_code).to eq(0)
             end
 
             osfamily = facter.facts['osfamily']
@@ -294,16 +294,16 @@ describe 'ceph::mon' do
 
             if osfamily == 'Debian' && operatingsystem == 'Ubuntu'
               shell "status ceph-mon id=#{mon}" do |r|
-                r.stdout.should be_empty
-                r.stderr.should =~ /Unknown instance: ceph.#{mon}/
-                r.exit_code.should_not be_zero
+                expect(r.stdout).to be_empty
+                expect(r.stderr).to match(/Unknown instance: ceph.#{mon}/)
+                expect(r.exit_code).not_to be_zero
               end
             end
             if osfamily == 'RedHat'
               shell "service ceph status mon.#{mon}" do |r|
-                r.stdout.should =~ /mon.#{mon} not found/
-                r.stderr.should be_empty
-                r.exit_code.should_not be_zero
+                expect(r.stdout).to match(/mon.#{mon} not found/)
+                expect(r.stderr).to be_empty
+                expect(r.exit_code).not_to be_zero
               end
             end
           end
@@ -320,7 +320,7 @@ end
 #   )
 #   cp -a Gemfile-rspec-system Gemfile
 #   BUNDLE_PATH=/tmp/vendor bundle install --no-deployment
-#   RELEASES=dumpling \
+#   RELEASES=hammer \
 #   RS_DESTROY=no \
 #   RS_SET=two-ubuntu-server-1204-x64 \
 #   BUNDLE_PATH=/tmp/vendor \

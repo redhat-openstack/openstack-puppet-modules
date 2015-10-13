@@ -2,6 +2,7 @@
 #   Copyright (C) 2013 Cloudwatt <libre.licensing@cloudwatt.com>
 #   Copyright (C) 2014 Nine Internet Solutions AG
 #   Copyright (C) 2014 Catalyst IT Limited
+#   Copyright (C) 2015 Red Hat
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@
 # Author: Andrew Woodward <awoodward@mirantis.com>
 # Author: David Gurtner <aldavud@crimson.ch>
 # Author: Ricardo Rocha <ricardo@catalyst.net.nz>
+# Author: Emilien Macchi <emilien@redhat.com>
 #
 # == Class: ceph::repo
 #
@@ -32,7 +34,7 @@
 #  Optional. Defaults to 'present'.
 #
 # [*release*] The name of the Ceph release to install
-#   Optional. Default to 'giant'.
+#   Optional. Default to 'hammer'.
 #
 # [*extras*] Install Ceph Extra APT repo.
 #   Optional. Defaults to 'false'.
@@ -42,7 +44,7 @@
 #
 class ceph::repo (
   $ensure  = present,
-  $release = 'giant',
+  $release = 'hammer',
   $extras  = false,
   $fastcgi = false,
 ) {
@@ -52,8 +54,8 @@ class ceph::repo (
 
       apt::key { 'ceph':
         ensure     => $ensure,
-        key        => '17ED316D',
-        key_source => 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+        key        => '08B73419AC32B4E966C1A330E84AC2C0460F3994',
+        key_source => 'https://git.ceph.com/release.asc',
       }
 
       apt::source { 'ceph':
@@ -79,7 +81,7 @@ class ceph::repo (
 
         apt::key { 'ceph-gitbuilder':
           ensure     => $ensure,
-          key        => '6EAEAE2203C3951A',
+          key        => 'FCC5CB2ED8E6F6FB79D5B3316EAEAE2203C3951A',
           key_server => 'keyserver.ubuntu.com',
         }
 
@@ -98,17 +100,34 @@ class ceph::repo (
 
     'RedHat': {
       $enabled = $ensure ? { 'present' => '1', 'absent' => '0', default => absent, }
-      yumrepo { 'ext-epel-6.8':
+
+      if ((($::operatingsystem == 'RedHat' or $::operatingsystem == 'CentOS') and (versioncmp($::operatingsystemmajrelease, '7') < 0)) or ($::operatingsystem == 'Fedora' and (versioncmp($::operatingsystemmajrelease, '19') < 0))) {
+        $el = '6'
+      } else {
+        $el = '7'
+      }
+
+      if ($::operatingsystem == 'CentOS') {
+        file_line { 'exclude base':
+          ensure => $ensure,
+          path   => '/etc/yum.repos.d/CentOS-Base.repo',
+          after  => '^\[base\]$',
+          line   => 'exclude=python-ceph-compat python-rbd python-rados python-cephfs',
+        } -> Package<| tag == 'ceph' |>
+      }
+
+      yumrepo { "ext-epel-${el}":
         # puppet versions prior to 3.5 do not support ensure, use enabled instead
         enabled    => $enabled,
-        descr      => 'External EPEL 6.8',
-        name       => 'ext-epel-6.8',
+        descr      => "External EPEL ${el}",
+        name       => "ext-epel-${el}",
         baseurl    => absent,
-        gpgcheck   => '0',
-        gpgkey     => absent,
-        mirrorlist => 'http://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch',
+        gpgcheck   => '1',
+        gpgkey     => "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-${el}",
+        mirrorlist => "http://mirrors.fedoraproject.org/metalink?repo=epel-${el}&arch=\$basearch",
         priority   => '20', # prefer ceph repos over EPEL
         tag        => 'ceph',
+        exclude    => 'python-ceph-compat python-rbd python-rados python-cephfs',
       }
 
       yumrepo { 'ext-ceph':
@@ -116,9 +135,9 @@ class ceph::repo (
         enabled    => $enabled,
         descr      => "External Ceph ${release}",
         name       => "ext-ceph-${release}",
-        baseurl    => "http://ceph.com/rpm-${release}/el6/\$basearch",
+        baseurl    => "http://ceph.com/rpm-${release}/el${el}/\$basearch",
         gpgcheck   => '1',
-        gpgkey     => 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+        gpgkey     => 'https://git.ceph.com/release.asc',
         mirrorlist => absent,
         priority   => '10', # prefer ceph repos over EPEL
         tag        => 'ceph',
@@ -129,15 +148,15 @@ class ceph::repo (
         enabled    => $enabled,
         descr      => 'External Ceph noarch',
         name       => "ext-ceph-${release}-noarch",
-        baseurl    => "http://ceph.com/rpm-${release}/el6/noarch",
+        baseurl    => "http://ceph.com/rpm-${release}/el${el}/noarch",
         gpgcheck   => '1',
-        gpgkey     => 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+        gpgkey     => 'https://git.ceph.com/release.asc',
         mirrorlist => absent,
         priority   => '10', # prefer ceph repos over EPEL
         tag        => 'ceph',
       }
 
-      if $extras {
+      if $extras and $el == '6' {
 
         yumrepo { 'ext-ceph-extras':
           enabled    => $enabled,
@@ -145,7 +164,7 @@ class ceph::repo (
           name       => 'ext-ceph-extras',
           baseurl    => 'http://ceph.com/packages/ceph-extras/rpm/rhel6/$basearch',
           gpgcheck   => '1',
-          gpgkey     => 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+          gpgkey     => 'https://git.ceph.com/release.asc',
           mirrorlist => absent,
           priority   => '10', # prefer ceph repos over EPEL
           tag        => 'ceph',
@@ -159,7 +178,7 @@ class ceph::repo (
           enabled    => $enabled,
           descr      => 'FastCGI basearch packages for Ceph',
           name       => 'ext-ceph-fastcgi',
-          baseurl    => 'http://gitbuilder.ceph.com/mod_fastcgi-rpm-rhel6-x86_64-basic/ref/master',
+          baseurl    => "http://gitbuilder.ceph.com/mod_fastcgi-rpm-rhel${el}-x86_64-basic/ref/master",
           gpgcheck   => '1',
           gpgkey     => 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc',
           mirrorlist => absent,

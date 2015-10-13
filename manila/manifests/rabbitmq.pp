@@ -13,7 +13,9 @@
 #   Defaults to 'guest'
 #
 # [*port*]
-#   (optional) The port to use when connecting to Rabbit
+#   (optional) Deprecated. The port to use when connecting to Rabbit
+#   This parameter keeps backward compatibility when we used to manage
+#   RabbitMQ service.
 #   Defaults to '5672'
 #
 # [*virtual_host*]
@@ -21,26 +23,19 @@
 #   Defaults to '/'
 #
 # [*enabled*]
-#   (optional) Whether to enable the Rabbit service
-#   Defaults to false
-#
-# [*rabbitmq_class*]
-#   (optional) The rabbitmq puppet class to depend on,
-#   which is dependent on the puppet-rabbitmq version.
-#   Use the default for 1.x, use 'rabbitmq' for 3.x
-#   Defaults to 'rabbitmq::server'
+#   (optional) Deprecated. Whether to enable the Rabbit resources
+#   This parameter keeps backward compatibility when we used to manage
+#   RabbitMQ service.
+#   Defaults to true
 #
 class manila::rabbitmq(
   $userid         = 'guest',
   $password       = 'guest',
-  $port           = '5672',
   $virtual_host   = '/',
+  # DEPRECATED PARAMETER
   $enabled        = true,
-  $rabbitmq_class = 'rabbitmq::server',
+  $port           = '5672',
 ) {
-
-  # only configure manila after the queue is up
-  Class[$rabbitmq_class] -> Anchor<| title == 'manila-start' |>
 
   if ($enabled) {
     if $userid == 'guest' {
@@ -51,7 +46,6 @@ class manila::rabbitmq(
         admin    => true,
         password => $password,
         provider => 'rabbitmqctl',
-        require  => Class[$rabbitmq_class],
       }
       # I need to figure out the appropriate permissions
       rabbitmq_user_permissions { "${userid}@${virtual_host}":
@@ -61,21 +55,8 @@ class manila::rabbitmq(
         provider             => 'rabbitmqctl',
       }->Anchor<| title == 'manila-start' |>
     }
-    $service_ensure = 'running'
-  } else {
-    $service_ensure = 'stopped'
-  }
-
-  class { $rabbitmq_class:
-    service_ensure    => $service_ensure,
-    port              => $port,
-    delete_guest_user => $delete_guest_user,
-  }
-
-  if ($enabled) {
     rabbitmq_vhost { $virtual_host:
       provider => 'rabbitmqctl',
-      require  => Class[$rabbitmq_class],
     }
   }
 }

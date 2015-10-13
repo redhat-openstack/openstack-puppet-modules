@@ -20,7 +20,7 @@ require 'spec_helper_system'
 
 describe 'ceph::profile::client' do
 
-  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'dumpling', 'firefly', 'giant' ]
+  releases = ENV['RELEASES'] ? ENV['RELEASES'].split : [ 'firefly', 'hammer' ]
   machines = ENV['MACHINES'] ? ENV['MACHINES'].split : [ 'first', 'second' ]
   # passing it directly as unqoted array is not supported everywhere
   packages = "[ 'python-ceph', 'ceph-common', 'librados2', 'librbd1', 'libcephfs1' ]"
@@ -62,7 +62,7 @@ ceph::profile::params::mon_host: '10.11.12.2:6789'
 
         machines.each do |vm|
           puppet_apply(:node => vm, :code => pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
         end
       end
@@ -104,37 +104,37 @@ ceph::profile::params::client_keys:
           EOS
 
           puppet_apply(pp) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
             r.refresh
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
 
           shell 'ceph -s' do |r|
-            r.stdout.should =~ /1 mons .* quorum 0 first/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/1 mons .* quorum 0 first/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
 
           shell 'ceph -n client.volumes -s' do |r|
-            r.stdout.should =~ /1 mons .* quorum 0 first/
-            r.stderr.should be_empty
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/1 mons .* quorum 0 first/)
+            expect(r.stderr).to be_empty
+            expect(r.exit_code).to be_zero
           end
 
           shell 'ceph auth list' do |r|
-            r.stdout.should =~ /#{admin_key}/
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/#{admin_key}/)
+            expect(r.exit_code).to be_zero
           end
 
           shell 'ceph auth list' do |r|
-            r.stdout.should =~ /#{volumes_key}/
-            r.exit_code.should be_zero
+            expect(r.stdout).to match(/#{volumes_key}/)
+            expect(r.exit_code).to be_zero
           end
         end
 
         it 'should uninstall one monitor' do
           puppet_apply(purge) do |r|
-            r.exit_code.should_not == 1
+            expect(r.exit_code).not_to eq(1)
           end
         end
       end
@@ -201,31 +201,31 @@ ceph::profile::params::client_keys:
             end
 
             puppet_apply(:node => vm, :code => pp) do |r|
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
               r.refresh
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
             end
           end
 
           ['first', 'second'].each do |vm|
             if vm == "first"
               shell 'ceph -s' do |r|
-                r.stdout.should =~ /1 mons .* quorum 0 first/
-                r.stderr.should be_empty
-                r.exit_code.should be_zero
+                expect(r.stdout).to match(/1 mons .* quorum 0 first/)
+                expect(r.stderr).to be_empty
+                expect(r.exit_code).to be_zero
               end
 
               shell 'ceph auth list' do |r|
-                r.stdout.should =~ /#{admin_key}/
-                r.exit_code.should be_zero
+                expect(r.stdout).to match(/#{admin_key}/)
+                expect(r.exit_code).to be_zero
               end
             end
 
             if vm == "second"
               shell 'ceph -n client.volumes -s' do |r|
-                r.stdout.should =~ /1 mons .* quorum 0 first/
-                r.stderr.should be_empty
-                r.exit_code.should be_zero
+                expect(r.stdout).to match(/1 mons .* quorum 0 first/)
+                expect(r.stderr).to be_empty
+                expect(r.exit_code).to be_zero
               end
             end
           end
@@ -234,7 +234,7 @@ ceph::profile::params::client_keys:
         it 'should uninstall one monitor' do
           [ 'second', 'first' ].each do |vm|
             puppet_apply(:node => vm, :code => purge) do |r|
-              r.exit_code.should_not == 1
+              expect(r.exit_code).not_to eq(1)
             end
           end
         end
@@ -250,7 +250,7 @@ end
 #   )
 #   cp -a Gemfile-rspec-system Gemfile
 #   BUNDLE_PATH=/tmp/vendor bundle install --no-deployment
-#   RELEASES=dumpling \
+#   RELEASES=hammer \
 #   RS_SET=two-ubuntu-server-1204-x64 \
 #   RS_DESTROY=no \
 #   BUNDLE_PATH=/tmp/vendor \

@@ -34,11 +34,33 @@
 #   Defaults to http.
 #   Use auth_uri instead.
 #
+# [*privileged_user*]
+#   (optional) Enables OpenStack privileged account.
+#   Defaults to false.
+#
+# [*os_privileged_user_name*]
+#   (optional) OpenStack privileged account username. Used for requests to
+#   other services (such as Nova) that require an account with
+#   special rights.
+#   Defaults to undef.
+#
+# [*os_privileged_user_password*]
+#   (optional) Password associated with the OpenStack privileged account.
+#   Defaults to undef.
+#
+# [*os_privileged_user_tenant*]
+#   (optional) Tenant name associated with the OpenStack privileged account.
+#   Defaults to undef.
+#
+# [*os_privileged_user_auth_url*]
+#   (optional) Auth URL associated with the OpenStack privileged account.
+#   Defaults to undef.
+#
 # [*os_region_name*]
 #   (optional) Some operations require cinder to make API requests
 #   to Nova. This sets the keystone region to be used for these
 #   requests. For example, boot-from-volume.
-#   Defaults to '<SERVICE DEFAULT>'.
+#   Defaults to $::os_service_default
 #
 # [*nova_catalog_info*]
 #   (optional) Match this value when searching for nova in the service
@@ -106,7 +128,7 @@
 #   This should contain the name of the default volume type to use.
 #   If not configured, it produces an error when creating a volume
 #   without specifying a type.
-#   Defaults to '<SERVICE DEFAULT>'.
+#   Defaults to $::os_service_default.
 #
 # [*validate*]
 #   (optional) Whether to validate the service is working after any service refreshes
@@ -134,21 +156,26 @@
 #
 class cinder::api (
   $keystone_password,
-  $keystone_enabled           = true,
-  $keystone_tenant            = 'services',
-  $keystone_user              = 'cinder',
-  $auth_uri                   = false,
-  $identity_uri               = false,
-  $nova_catalog_info          = 'compute:Compute Service:publicURL',
-  $nova_catalog_admin_info    = 'compute:Compute Service:adminURL',
-  $os_region_name             = '<SERVICE DEFAULT>',
-  $service_workers            = $::processorcount,
-  $package_ensure             = 'present',
-  $bind_host                  = '0.0.0.0',
-  $enabled                    = true,
-  $manage_service             = true,
-  $ratelimits                 = undef,
-  $default_volume_type        = '<SERVICE DEFAULT>',
+  $keystone_enabled            = true,
+  $keystone_tenant             = 'services',
+  $keystone_user               = 'cinder',
+  $auth_uri                    = false,
+  $identity_uri                = false,
+  $nova_catalog_info           = 'compute:Compute Service:publicURL',
+  $nova_catalog_admin_info     = 'compute:Compute Service:adminURL',
+  $os_region_name              = $::os_service_default,
+  $privileged_user             = false,
+  $os_privileged_user_name     = undef,
+  $os_privileged_user_password = undef,
+  $os_privileged_user_tenant   = undef,
+  $os_privileged_user_auth_url = undef,
+  $service_workers             = $::processorcount,
+  $package_ensure              = 'present',
+  $bind_host                   = '0.0.0.0',
+  $enabled                     = true,
+  $manage_service              = true,
+  $ratelimits                  = undef,
+  $default_volume_type         = $::os_service_default,
   $ratelimits_factory =
     'cinder.api.v1.limits:RateLimitingMiddleware.factory',
   $validate                   = false,
@@ -214,6 +241,41 @@ class cinder::api (
   cinder_config {
     'DEFAULT/nova_catalog_info':       value => $nova_catalog_info;
     'DEFAULT/nova_catalog_admin_info': value => $nova_catalog_admin_info;
+  }
+
+  if $privileged_user {
+    if !$os_privileged_user_name {
+      fail('The os_privileged_user_name parameter is required when privileged_user is set to true')
+    }
+    if !$os_privileged_user_password {
+      fail('The os_privileged_user_password parameter is required when privileged_user is set to true')
+    }
+    if !$os_privileged_user_tenant {
+      fail('The os_privileged_user_tenant parameter is required when privileged_user is set to true')
+    }
+
+    cinder_config {
+      'DEFAULT/os_privileged_user_password': value => $os_privileged_user_password;
+      'DEFAULT/os_privileged_user_tenant':   value => $os_privileged_user_tenant;
+      'DEFAULT/os_privileged_user_name':     value => $os_privileged_user_name;
+    }
+
+    if $os_privileged_user_auth_url {
+      cinder_config {
+        'DEFAULT/os_privileged_user_auth_url': value => $os_privileged_user_auth_url;
+      }
+    } else {
+      cinder_config {
+        'DEFAULT/os_privileged_user_auth_url': ensure => absent;
+      }
+    }
+  } else {
+    cinder_config {
+      'DEFAULT/os_privileged_user_password': ensure => absent;
+      'DEFAULT/os_privileged_user_tenant':   ensure => absent;
+      'DEFAULT/os_privileged_user_name':     ensure => absent;
+      'DEFAULT/os_privileged_user_auth_url': ensure => absent;
+    }
   }
 
   if $keystone_auth_uri and $auth_uri {
