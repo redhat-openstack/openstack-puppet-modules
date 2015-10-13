@@ -125,6 +125,23 @@ describe 'cassandra' do
     }
   end
 
+  context 'On an unsupported OS pleading tolerance (with dyslexia)' do
+    let :facts do
+      {
+        :osfamily => 'Darwin'
+      }
+    end
+    let :params do
+      {
+        :config_file_mode        => '0755',
+        :config_path             => '/etc/cassandra',
+        :fail_on_non_suppoted_os => false
+      }
+    end
+
+    it { should compile }
+  end
+
   context 'On an unsupported OS pleading tolerance' do
     let :facts do
       {

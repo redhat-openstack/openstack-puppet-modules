@@ -54,6 +54,7 @@ class cassandra (
   $dynamic_snitch_update_interval_in_ms                 = 100,
   $endpoint_snitch                                      = 'SimpleSnitch',
   $fail_on_non_supported_os                             = true,
+  $fail_on_non_suppoted_os                              = undef,
   $file_cache_size_in_mb                                = undef,
   $hinted_handoff_enabled                               = true,
   $hinted_handoff_throttle_in_kb                        = 1024,
@@ -143,6 +144,14 @@ class cassandra (
     warning ("manage_dsc_repo has been deprecated. See ${dep_014_url}")
   }
 
+  if $fail_on_non_suppoted_os != undef {
+    $dep_015_url = 'https://github.com/locp/cassandra/wiki/DEP-015'
+    $supported_os_only = $fail_on_non_suppoted_os
+    warning ("fail_on_non_suppoted_os has been deprecated. See ${dep_015_url}")
+  } else {
+    $supported_os_only = $fail_on_non_supported_os
+  }
+
   case $::osfamily {
     'RedHat': {
       if $config_path == undef {
@@ -166,7 +175,7 @@ class cassandra (
       }
     }
     default: {
-      if $fail_on_non_supported_os {
+      if $supported_os_only {
         fail("OS family ${::osfamily} not supported")
       } else {
         $cfg_path = $config_path
