@@ -62,34 +62,68 @@ class n1k_vsm::pkgprep_ovscfg
       }
 
       notify { "Debug br ${n1k_vsm::ovsbridge} intf ${n1k_vsm::phy_if_bridge} ." : withpath => true }
-      notify { "Debug ${n1k_vsm::vsmname} ip ${n1k_vsm::phy_ip_addr} mask ${n1k_vsm::phy_ip_mask} gw_intf ${n1k_vsm::gw_intf}" : withpath => true }
 
       $_ovsbridge     = regsubst($n1k_vsm::ovsbridge, '[.:-]+', '_', 'G')
       $_ovsbridge_mac = inline_template("<%= scope.lookupvar('::macaddress_${_ovsbridge}') %>")
 
       # Check if we've already configured the vsm bridge, skip configuration if so
       if ($_ovsbridge_mac == '') {
-        # Modify Ovs bridge inteface configuation file
-        augeas { 'Augeas_modify_ifcfg-ovsbridge':
-          name    => $n1k_vsm::ovsbridge,
-          context => "/files/etc/sysconfig/network-scripts/ifcfg-${n1k_vsm::ovsbridge}",
-          changes => [
-            'set TYPE OVSBridge',
-            "set DEVICE ${n1k_vsm::ovsbridge}",
-            'set DEVICETYPE ovs',
-            "set OVSREQUIRES ${n1k_vsm::ovsbridge}",
-            'set NM_CONTROLLED no',
-            'set BOOTPROTO none',
-            'set ONBOOT yes',
-            'set DEFROUTE yes',
-            'set MTU 1500',
-            "set NAME ${n1k_vsm::ovsbridge}",
-            "set IPADDR ${n1k_vsm::phy_ip_addr}",
-            "set NETMASK ${n1k_vsm::phy_ip_mask}",
-            "set GATEWAY ${n1k_vsm::phy_gateway}",
-            'set USERCTL no',
-          ],
+
+        #Gather info from the port/bridge including IP if needed
+        $_phy_if_bridge     = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')
+        $_phy_ip_addr       = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
+        if $_phy_ip_addr != '' {
+          $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
+          $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${_phy_if_bridge}') %>")
+          $gw_intf          = $n1k_vsm::phy_gateway
+
+          notify {"ip ${phy_ip_addr} mask ${phy_ip_mask} gw ${n1k_vsm::phy_gateway} gw_dv ${gw_intf}" : withpath => true}
+
+          # Modify Ovs bridge inteface configuation file (including IP)
+          augeas { 'Augeas_modify_ifcfg-ovsbridge':
+            name    => $n1k_vsm::ovsbridge,
+            context => "/files/etc/sysconfig/network-scripts/ifcfg-${n1k_vsm::ovsbridge}",
+            changes => [
+              'set TYPE OVSBridge',
+              "set DEVICE ${n1k_vsm::ovsbridge}",
+              'set DEVICETYPE ovs',
+              "set OVSREQUIRES ${n1k_vsm::ovsbridge}",
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              "set NAME ${n1k_vsm::ovsbridge}",
+              "set IPADDR ${phy_ip_addr}",
+              "set NETMASK ${phy_ip_mask}",
+              "set GATEWAY ${n1k_vsm::phy_gateway}",
+              'set USERCTL no',
+            ],
+          }
+        } elsif ($n1k_vsm::existing_bridge) {
+          # Modify Ovs bridge inteface configuation file (without IP)
+          augeas { 'Augeas_modify_ifcfg-ovsbridge':
+            name    => $n1k_vsm::ovsbridge,
+            context => "/files/etc/sysconfig/network-scripts/ifcfg-${n1k_vsm::ovsbridge}",
+            changes => [
+              'set TYPE OVSBridge',
+              "set DEVICE ${n1k_vsm::ovsbridge}",
+              'set DEVICETYPE ovs',
+              "set OVSREQUIRES ${n1k_vsm::ovsbridge}",
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              "set NAME ${n1k_vsm::ovsbridge}",
+              'set USERCTL no',
+            ],
+          }
+        } else {
+          # Error out here due to invalid interface specification
+          fail('Interface to be bridged for VSM must have IP address')
         }
+
         exec { 'Flap_n1kv_bridge':
           command => "/sbin/ifdown ${n1k_vsm::ovsbridge} && /sbin/ifup ${n1k_vsm::ovsbridge}",
           require => Augeas['Augeas_modify_ifcfg-ovsbridge'],
@@ -98,6 +132,7 @@ class n1k_vsm::pkgprep_ovscfg
         if !($n1k_vsm::existing_bridge) {
           # If there isn't an existing bridge, the interface is a port, and we
           # need to add it to vsm-br
+
           # Modify Physical Interface config file
           augeas { 'Augeas_modify_ifcfg-phy_if_bridge':
             name    => $n1k_vsm::phy_if_bridge,
@@ -132,8 +167,14 @@ class n1k_vsm::pkgprep_ovscfg
             command => "/bin/ovs-vsctl --may-exist add-port ${n1k_vsm::ovsbridge} ${n1k_vsm::ovsbridge}-${n1k_vsm::phy_if_bridge} -- set Interface ${n1k_vsm::ovsbridge}-${n1k_vsm::phy_if_bridge} type=patch options:peer=${n1k_vsm::phy_if_bridge}-${n1k_vsm::ovsbridge}",
             require => Exec['Flap_n1kv_bridge'],
           }
+          if ($n1k_vsm::phy_bridge_vlan > 0) and ($n1k_vsm::phy_bridge_vlan < 4096) {
+            exec { 'Tag_patch_port':
+              command => "/bin/ovs-vsctl set port ${n1k_vsm::phy_if_bridge}-${n1k_vsm::ovsbridge} tag=${n1k_vsm::phy_bridge_vlan}",
+              require => Exec['Create_patch_port_on_existing_bridge'],
+            }
+          }
         }
-      }  # endif of if "${n1k_vsm::gw_intf}" != "${n1k_vsm::ovsbridge}" or ($n1k_vsm::existing_bridge == 'true')
+      } # endif of if ($_ovsbridge_mac == '')
     }
     'Ubuntu': {
     }
