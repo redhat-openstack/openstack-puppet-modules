@@ -1,5 +1,24 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-10-14 - Release 1.8.1 ([diff](https://github.com/locp/cassandra/compare/1.8.0...1.8.1))
+
+### Summary
+
+A minor bug fix.
+
+### Features
+
+* N/A
+
+### Bugfixes
+
+* Fixed an edge case issue concerning users that may have been using the
+  fail_on_non_supported_os before it was fixed in 1.8.0.
+
+### Improvements
+
+* N/A
+
 ##2015-08-06 - Release 1.8.0 ([diff](https://github.com/locp/cassandra/compare/1.7.1...1.8.0))
 
 ### Summary
