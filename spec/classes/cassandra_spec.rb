@@ -31,6 +31,10 @@ describe 'cassandra' do
     end
 
     it {
+      should contain_file('/etc/cassandra/default.conf/cassandra.yaml').with_content(/^key_cache_size_in_mb:$/)
+    }
+
+    it {
       should contain_class('cassandra').only_with(
         'authenticator' => 'AllowAllAuthenticator',
         'authorizer' => 'AllowAllAuthorizer',
@@ -74,6 +78,7 @@ describe 'cassandra' do
         'index_summary_resize_interval_in_minutes' => 60,
         'inter_dc_tcp_nodelay' => false,
         'internode_compression' => 'all',
+        'key_cache_size_in_mb'  => '',
         'listen_address' => 'localhost',
         'manage_dsc_repo' => false,
         'max_hints_delivery_threads' => 2,
