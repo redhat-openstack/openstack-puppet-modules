@@ -5,9 +5,9 @@
 #
 class n1k_vsm::vsmprep
 {
-  include 'stdlib'
-  require n1k_vsm
-  include n1k_vsm
+  include ::stdlib
+  require ::n1k_vsm
+  include ::n1k_vsm
 
   # prepare vsm folders
   ensure_resource('file', '/var/spool/cisco/', {
@@ -35,11 +35,8 @@ class n1k_vsm::vsmprep
     }
   } else {
     $vsmimage_uri   = 'unspec'
+    $vsm_path       = '/opt/cisco/vsm'
   }
-
-#  exec { 'Prev_VSM':
-#    command => "/bin/rm -f /var/spool/cisco/vsm/* || /bin/true",
-#  }
 
   if $vsmimage_uri == 'file' {
     #specify location on target-host where image file will be downloaded to.
@@ -63,8 +60,9 @@ class n1k_vsm::vsmprep
       }
     }
     package {'nexus-1000v-iso':
-        ensure => $n1k_vsm::n1kv_version,
-        name   => 'nexus-1000v-iso'
+        ensure   => 'present',
+        name     => 'nexus-1000v-iso',
+        provider => 'yum',
     }
   }
 
@@ -80,8 +78,15 @@ class n1k_vsm::vsmprep
 
   # Now generate ovf xml file and repackage the iso
   exec { 'Exec_VSM_Repackage_Script':
-    command => "/tmp/repackiso.py -i${vsm_path}/n1000v-dk9.${n1k_vsm::n1kv_version}.iso -d${n1k_vsm::vsm_domain_id} -n${n1k_vsm::vsmname} -m${n1k_vsm::mgmtip} -s${n1k_vsm::mgmtnetmask} -g${n1k_vsm::mgmtgateway} -p${n1k_vsm::vsm_admin_passwd} -r${n1k_vsm::vsm_role} -f/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso ",
-    unless  => "/usr/bin/virsh list --all | grep -c ${n1k_vsm::vsmname}",
+    command => "/tmp/repackiso.py -i${vsm_path}/n1000v-dk9.${n1k_vsm::n1kv_version}.iso -d${n1k_vsm::vsm_domain_id} -n${n1k_vsm::vsmname} -m${n1k_vsm::mgmtip} -s${n1k_vsm::mgmtnetmask} -g${n1k_vsm::mgmtgateway} -p${n1k_vsm::vsm_admin_passwd} -r${n1k_vsm::vsm_role} -f/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso",
+    creates => "/var/spool/cisco/vsm/${n1k_vsm::vsm_role}_repacked.iso",
   }
 
+  # If we're under pacemaker_control, create a secondary VSM iso as well
+  if ($n1k_vsm::pacemaker_control) {
+    exec { 'Exec_VSM_Repackage_Script_secondary':
+      command => "/tmp/repackiso.py -i${vsm_path}/n1000v-dk9.${n1k_vsm::n1kv_version}.iso -d${n1k_vsm::vsm_domain_id} -n${n1k_vsm::vsmname_s} -m${n1k_vsm::mgmtip} -s${n1k_vsm::mgmtnetmask} -g${n1k_vsm::mgmtgateway} -p${n1k_vsm::vsm_admin_passwd} -r${n1k_vsm::vsm_role_s} -f/var/spool/cisco/vsm/${n1k_vsm::vsm_role_s}_repacked.iso",
+      creates => "/var/spool/cisco/vsm/${n1k_vsm::vsm_role_s}_repacked.iso",
+    }
+  }
 }

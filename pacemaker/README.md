@@ -46,6 +46,14 @@ Installs Pacemaker and corosync and creates a cluster
 
 The pacemaker::corosync resource must be executed on each node
 
+If one wants to set non default settings for corosync the `cluster_setup_extras` variable can be used
+
+    class {"pacemaker::corosync":
+        cluster_name => "cluster_name",
+        cluster_members => "clu-host-1 clu-host-2 clu-host-3",
+        cluster_setup_extras => {'--totem' => '10000', '--ipv6' => ''},
+    }
+
 ### Disable stonith
     class {"pacemaker::stonith":
         disable => true,

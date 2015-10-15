@@ -29,7 +29,15 @@
 #
 # [*haproxy_global_maxconn*]
 #  The value to use as maxconn in the haproxy global config section.
-#  Defaults to 10000
+#  Defaults to 20480
+#
+# [*haproxy_default_maxconn*]
+#  The value to use as maxconn in the haproxy default config section.
+#  Defaults to 4096
+#
+# [*haproxy_log_address*]
+#  The IPv4, IPv6 or filesystem socket path of the syslog server.
+#  Defaults to '/dev/log'
 #
 # [*controller_host*]
 #  (Deprecated)Host or group of hosts to load-balance the services
@@ -102,6 +110,11 @@
 #  When set, enables SSL on the Cinder public API endpoint using the specified file.
 #  Defaults to undef
 #
+# [*manila_certificate*]
+#  Filename of an HAProxy-compatible certificate and key file
+#  When set, enables SSL on the Manila public API endpoint using the specified file.
+#  Defaults to undef
+#
 # [*glance_certificate*]
 #  Filename of an HAProxy-compatible certificate and key file
 #  When set, enables SSL on the Glance public API endpoint using the specified file.
@@ -151,6 +164,10 @@
 #
 # [*cinder*]
 #  (optional) Enable or not Cinder API binding
+#  Defaults to false
+#
+# [*manila*]
+#  (optional) Enable or not Manila API binding
 #  Defaults to false
 #
 # [*glance_api*]
@@ -231,7 +248,9 @@ class tripleo::loadbalancer (
   $storage_mgmt_virtual_ip   = false,
   $manage_vip                = true,
   $haproxy_service_manage    = true,
-  $haproxy_global_maxconn    = 10000,
+  $haproxy_global_maxconn    = 20480,
+  $haproxy_default_maxconn   = 4096,
+  $haproxy_log_address       = '/dev/log',
   $controller_host           = undef,
   $controller_hosts          = undef,
   $controller_hosts_names    = undef,
@@ -239,6 +258,7 @@ class tripleo::loadbalancer (
   $keystone_certificate      = undef,
   $neutron_certificate       = undef,
   $cinder_certificate        = undef,
+  $manila_certificate        = undef,
   $glance_certificate        = undef,
   $nova_certificate          = undef,
   $ceilometer_certificate    = undef,
@@ -250,6 +270,7 @@ class tripleo::loadbalancer (
   $keystone_public           = false,
   $neutron                   = false,
   $cinder                    = false,
+  $manila                    = false,
   $glance_api                = false,
   $glance_registry           = false,
   $nova_ec2                  = false,
@@ -380,6 +401,11 @@ class tripleo::loadbalancer (
   } else {
     $cinder_bind_certificate = $service_certificate
   }
+  if $manila_certificate {
+    $manila_bind_certificate = $manila_certificate
+  } else {
+    $manila_bind_certificate = $service_certificate
+  }
   if $glance_certificate {
     $glance_bind_certificate = $glance_certificate
   } else {
@@ -464,6 +490,19 @@ class tripleo::loadbalancer (
     }
   }
 
+  $manila_api_vip = hiera('manila_api_vip', $controller_virtual_ip)
+  if $manila_bind_certificate {
+    $manila_bind_opts = {
+      "${manila_api_vip}:8786" => [],
+      "${public_virtual_ip}:13786" => ['ssl', 'crt', $manila_bind_certificate],
+    }
+  } else {
+    $manila_bind_opts = {
+      "${manila_api_vip}:8786" => [],
+      "${public_virtual_ip}:8786" => [],
+    }
+  }
+
   $glance_api_vip = hiera('glance_api_vip', $controller_virtual_ip)
   if $glance_bind_certificate {
     $glance_bind_opts = {
@@ -539,7 +578,6 @@ class tripleo::loadbalancer (
       "${public_virtual_ip}:13004" => ['ssl', 'crt', $heat_bind_certificate],
     }
     $heat_options = {
-      'option' => [ 'httpchk GET /' ],
       'rsprep' => "^Location:\\ http://${public_virtual_ip}(.*) Location:\\ https://${public_virtual_ip}\\1",
     }
     $heat_cw_bind_opts = {
@@ -555,9 +593,7 @@ class tripleo::loadbalancer (
       "${heat_api_vip}:8004" => [],
       "${public_virtual_ip}:8004" => [],
     }
-    $heat_options = {
-      'option' => [ 'httpchk GET /' ],
-    }
+    $heat_options = {}
     $heat_cw_bind_opts = {
       "${heat_api_vip}:8003" => [],
       "${public_virtual_ip}:8003" => [],
@@ -599,7 +635,7 @@ class tripleo::loadbalancer (
   class { '::haproxy':
     service_manage   => $haproxy_service_manage,
     global_options   => {
-      'log'     => '/dev/log local0',
+      'log'     => "${haproxy_log_address} local0",
       'pidfile' => '/var/run/haproxy.pid',
       'user'    => 'haproxy',
       'group'   => 'haproxy',
@@ -610,9 +646,15 @@ class tripleo::loadbalancer (
       'mode'    => 'tcp',
       'log'     => 'global',
       'retries' => '3',
-      'option'  => [ 'tcpka', 'tcplog' ],
       'timeout' => [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
+      'maxconn' => $haproxy_default_maxconn,
     },
+  }
+
+  Haproxy::Listen {
+    options => {
+      'option' => [],
+    }
   }
 
   haproxy::listen { 'haproxy.stats':
@@ -628,9 +670,6 @@ class tripleo::loadbalancer (
   if $keystone_admin {
     haproxy::listen { 'keystone_admin':
       bind             => $keystone_admin_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'keystone_admin':
@@ -645,9 +684,6 @@ class tripleo::loadbalancer (
   if $keystone_public {
     haproxy::listen { 'keystone_public':
       bind             => $keystone_public_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'keystone_public':
@@ -662,9 +698,6 @@ class tripleo::loadbalancer (
   if $neutron {
     haproxy::listen { 'neutron':
       bind             => $neutron_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'neutron':
@@ -679,9 +712,6 @@ class tripleo::loadbalancer (
   if $cinder {
     haproxy::listen { 'cinder':
       bind             => $cinder_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'cinder':
@@ -693,12 +723,23 @@ class tripleo::loadbalancer (
     }
   }
 
+  if $manila {
+    haproxy::listen { 'manila':
+      bind             => $manila_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'manila':
+      listening_service => 'manila',
+      ports             => '8786',
+      ipaddresses       => hiera('manila_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
+
   if $glance_api {
     haproxy::listen { 'glance_api':
       bind             => $glance_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'glance_api':
@@ -714,9 +755,6 @@ class tripleo::loadbalancer (
     haproxy::listen { 'glance_registry':
       ipaddress        => hiera('glance_registry_vip', $controller_virtual_ip),
       ports            => 9191,
-      options          => {
-        'mode' => 'tcp',
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'glance_registry':
@@ -731,9 +769,6 @@ class tripleo::loadbalancer (
   if $nova_ec2 {
     haproxy::listen { 'nova_ec2':
       bind             => $nova_ec2_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'nova_ec2':
@@ -748,9 +783,6 @@ class tripleo::loadbalancer (
   if $nova_osapi {
     haproxy::listen { 'nova_osapi':
       bind             => $nova_osapi_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'nova_osapi':
@@ -766,9 +798,6 @@ class tripleo::loadbalancer (
     haproxy::listen { 'nova_metadata':
       ipaddress        => hiera('nova_metadata_vip', $controller_virtual_ip),
       ports            => 8775,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'nova_metadata':
@@ -784,7 +813,7 @@ class tripleo::loadbalancer (
     haproxy::listen { 'nova_novncproxy':
       bind             => $nova_novnc_bind_opts,
       options          => {
-        'option' => [ 'httpchk GET /' ],
+        'balance' => 'source',
       },
       collect_exported => false,
     }
@@ -807,16 +836,13 @@ class tripleo::loadbalancer (
       ports             => '8777',
       ipaddresses       => hiera('ceilometer_api_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
-      options           => [],
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
 
   if $swift_proxy_server {
     haproxy::listen { 'swift_proxy_server':
       bind             => $swift_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /info' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'swift_proxy_server':
@@ -847,9 +873,6 @@ class tripleo::loadbalancer (
   if $heat_cloudwatch {
     haproxy::listen { 'heat_cloudwatch':
       bind             => $heat_cw_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'heat_cloudwatch':
@@ -864,9 +887,6 @@ class tripleo::loadbalancer (
   if $heat_cfn {
     haproxy::listen { 'heat_cfn':
       bind             => $heat_cfn_bind_opts,
-      options          => {
-        'option' => [ 'httpchk GET /' ],
-      },
       collect_exported => false,
     }
     haproxy::balancermember { 'heat_cfn':
@@ -882,8 +902,9 @@ class tripleo::loadbalancer (
     haproxy::listen { 'horizon':
       bind             => $horizon_bind_opts,
       options          => {
-        'option' => [ 'httpchk GET /' ],
+        'cookie' => 'SERVERID insert indirect nocache',
       },
+      mode             => 'http',
       collect_exported => false,
     }
     haproxy::balancermember { 'horizon':
@@ -897,7 +918,7 @@ class tripleo::loadbalancer (
 
   if $mysql_clustercheck {
     $mysql_listen_options = {
-        'option'      => [ 'httpchk' ],
+        'option'      => [ 'tcpka', 'httpchk' ],
         'timeout'     => [ 'client 0', 'server 0' ],
         'stick-table' => 'type ip size 1000',
         'stick'       => 'on dst',
@@ -920,7 +941,7 @@ class tripleo::loadbalancer (
       ports             => '6385',
       ipaddresses       => hiera('ironic_api_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
-      options           => [],
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
 
@@ -945,6 +966,7 @@ class tripleo::loadbalancer (
       ipaddress        => [hiera('rabbitmq_vip', $controller_virtual_ip)],
       ports            => 5672,
       options          => {
+        'option'  => [ 'tcpka' ],
         'timeout' => [ 'client 0', 'server 0' ],
       },
       collect_exported => false,
@@ -964,7 +986,6 @@ class tripleo::loadbalancer (
       ports            => 6379,
       options          => {
         'timeout'   => [ 'client 0', 'server 0' ],
-        'mode'      => 'tcp',
         'balance'   => 'first',
         'option'    => ['tcp-check',],
         'tcp-check' => ['send info\ replication\r\n','expect string role:master'],

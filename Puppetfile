@@ -11,7 +11,7 @@ mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => 'b6ab15b47c81d7694fdcfd75d8f2e0a0481ca40c',
+  :commit => '71fccdf944a2b0721a972a8a86f97703cabd586e',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
@@ -19,7 +19,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => 'b2163382956032f6df37d8a02f18a4abf89b7008',
+  :commit => '330dda3c4106ffef318d330f4de303b631196581',
   :git => 'https://github.com/openstack/puppet-cinder.git'
 
 mod 'common',
@@ -51,7 +51,7 @@ mod 'gluster',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
 mod 'gnocchi',
-  :commit => '388ace2495661ff909b45c00471a121b5f2d18e3',
+  :commit => '02692807d218210a27a4043e27b3aa0ac38e8b28',
   :git => 'https://github.com/openstack/puppet-gnocchi.git'
 
 mod 'haproxy',
@@ -83,7 +83,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => '1fb920c38df80a75779ea34b5181534ff9207738',
+  :commit => '6dbef6298478b5a8799c9dadd8d0b4b7edbcdd74',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'manila',
@@ -111,7 +111,7 @@ mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k_vsm',
-  :commit => '7b57af350fdb25830e0136658324f9c51e49657f',
+  :commit => '8266fb6dd504bc6ab310644728b076a6de996cbd',
   :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
 
 mod 'nagios',
@@ -123,7 +123,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '52e7f810a50f15e2c32cd1270374899ef7df675f',
+  :commit => 'ea1eddfaa04a3c44d9b6863bb4a87c89b91f3305',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -143,7 +143,7 @@ mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
-  :commit => '1fa8e5591ab606a7be3bae32df088f6cec26d3c0',
+  :commit => '733c1088ccfa24739929af7a8612ff0ade46bc6f',
   :git => 'https://github.com/redhat-openstack/puppet-pacemaker.git'
 
 mod 'puppet',
@@ -207,7 +207,7 @@ mod 'timezone',
   :git => 'https://github.com/saz/puppet-timezone.git'
 
 mod 'tripleo',
-  :commit => '717eb39ca7295e128ab99694ea3a7ae658b9528f',
+  :commit => 'a003b3d97ebe8bd470717c419434851d60669bf7',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',

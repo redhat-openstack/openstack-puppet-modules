@@ -11,13 +11,15 @@ shared_examples 'generic Gnocchi service' do |service|
       is_expected.to contain_package(service[:name]).with({
         :name   => service[:package_name],
         :ensure => 'present',
-        :notify => "Service[#{service[:name]}]"
+        :notify => "Service[#{service[:name]}]",
+        :tag    => ['openstack', 'gnocchi-package'],
       })
       is_expected.to contain_service(service[:name]).with({
         :name      => service[:service_name],
         :ensure    => 'stopped',
         :hasstatus => true,
-        :enable    => false
+        :enable    => false,
+        :tag       => 'gnocchi-service',
       })
     end
   end
@@ -32,13 +34,15 @@ shared_examples 'generic Gnocchi service' do |service|
       is_expected.to contain_package(service[:name]).with({
         :name   => service[:package_name],
         :ensure => '2014.1-1',
-        :notify => "Service[#{service[:name]}]"
+        :notify => "Service[#{service[:name]}]",
+        :tag    => ['openstack', 'gnocchi-package'],
       })
       is_expected.to contain_service(service[:name]).with({
         :name      => service[:service_name],
         :ensure    => 'running',
         :hasstatus => true,
-        :enable    => true
+        :enable    => true,
+        :tag       => 'gnocchi-service',
       })
     end
   end
