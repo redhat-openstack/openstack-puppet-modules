@@ -1,0 +1,7 @@
+Code-Review+2: Javier Peña <jpena@redhat.com>
+Verified+1: Javier Peña <jpena@redhat.com>
+Submitted-by: Javier Peña <jpena@redhat.com>
+Submitted-at: Thu, 15 Oct 2015 17:20:00 +0200
+Reviewed-on: https://review.gerrithub.io/249882
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/kilo
