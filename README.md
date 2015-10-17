@@ -87,7 +87,7 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 #### What the cassandra::opscenter::pycrypto class affects
 
 * On the Red Hat family it installs the pycrypto library and it's
-  pre-requisits (the python-devel and python-pip packages).
+  pre-requisites (the python-devel and python-pip packages).
 * Optionally installs the Extra Packages for Enterprise Linux (EPEL)
   repository.
 * As a workaround for
@@ -115,7 +115,21 @@ A basic example is as follows:
 
 ### Upgrading
 
-The following changes to the API have taken place.
+#### Changes in 1.8.0
+
+A somewhat embarrassing correction to the spelling of the
+cassandra::fail_on_non_suppoted_os to cassandra::fail_on_non_supported_os.
+
+#### Issues when Upgrading to 1.4.0
+
+Unfortunately both releases 1.3.7 and 1.4.0 have subsequently been found to
+call a refresh service even when no changes had been made to the underlying
+configuration.  In release 1.8.0 (somewhat belatedly) the service_refresh
+flag has been introduced to mitigate against similar problems.
+
+#### Issues When Upgrading to 1.3.7
+
+* Please see the notes for 1.4.0.
 
 #### Changes in 1.0.0
 
@@ -305,10 +319,16 @@ We have also added the `cassandra::opscenter` class for the opscenter node.
 
 ### DataStax Enterprise
 
-After configuring the relevant repositories elsewhere in the manifest, the
-following snippet works on CentOS 7 to install DSE Cassandra 4.7.0:
+After configuring the relevant repository, the following snippet works on
+CentOS 7 to install DSE Cassandra 4.7.0:
 
 ```puppet
+class { 'cassandra::datastax_repo':
+  descr   => 'DataStax Repo for DataStax Enterprise',
+  pkg_url => 'https://username:password@rpm.datastax.com/enterprise',
+  before  => Class['cassandra'],
+}
+
 class { 'cassandra':
   cluster_name   => 'MyCassandraCluster',
   config_path    => '/etc/dse/cassandra',
@@ -532,6 +552,10 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value '32'
 
+##### `config_file_mode`
+The permissions mode of the cassandra configuration file.
+Default value '0666'
+
 ##### `config_path`
 The path to the cassandra configuration file.  If this is undef, it will be
 changed to **/etc/cassandra/default.conf** on the Red Hat family of operating
@@ -617,7 +641,7 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value 'SimpleSnitch'
 
-##### `fail_on_non_suppoted_os`
+##### `fail_on_non_supported_os`
 A flag that dictates if the module should fail if it is not RedHat or Debian.
 If you set this option to false then you must also at least set the
 `config_path` parameter as well.
@@ -1011,6 +1035,13 @@ Default value 'running'
 The name of the service that runs the Cassandra software.
 Default value 'cassandra'
 
+##### `service_refresh`
+If set to true, changes to the Cassandra config file or the data directories
+will ensure that Cassandra service is refreshed after the changes.  Setting
+this flag to false will disable this behaviour, therefore allowing the changes
+to be made but allow the user to control when the service is restarted.
+Default value true
+
 ##### `snapshot_before_compaction`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -1131,11 +1162,39 @@ Default value *undef*
 ### Class: cassandra::datastax_repo
 
 An optional class that will allow a suitable repository to be configured
-from which packages for DataStax Community can be downloaded.
+from which packages for DataStax Community can be downloaded.  Changing
+the defaults will allow any Debian Apt or Red Hat Yum repository to be
+configured.
 
 #### Parameters
 
-This class has no parameters.
+##### `descr`
+On the Red Hat family, this is passed as the `descr` parameter to a
+`yumrepo` resource.  On the Debian family, it is passed as the `comment`
+parameter to an `apt::source` resource.
+Default value 'DataStax Repo for Apache Cassandra'
+
+##### `key_id`
+On the Debian family, this is passed as the `id` parameter to an `apt::key`
+resource.  On the Red Hat family, it is ignored.
+Default value '7E41C00F85BFC1706C4FFFB3350200F2B999A372'
+
+##### `key_url`
+On the Debian family, this is passed as the `source` parameter to an
+`apt::key` resource.  On the Red Hat family, it is ignored.
+Default value 'http://debian.datastax.com/debian/repo_key'
+
+##### `pkg_url`
+If left as the default, this will set the `baseurl` to
+'http://rpm.datastax.com/community' on a `yumrepo` resource
+on the Red Hat family.  On the Debian family, leaving this as the default
+will set the `location` parameter on an `apt::source` to
+'http://debian.datastax.com/community'.  Default value *undef*
+
+##### `release`
+On the Debian family, this is passed as the `release` parameter to an
+`apt::source` resource.  On the Red Hat family, it is ignored.
+Default value 'stable'
 
 ### Class: cassandra::firewall_ports
 

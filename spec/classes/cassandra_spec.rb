@@ -59,6 +59,7 @@ describe 'cassandra' do
         'concurrent_counter_writes' => 32,
         'concurrent_reads' => 32,
         'concurrent_writes' => 32,
+        'config_file_mode' => '0666',
         'config_path' => nil,
         'counter_cache_save_period' => 7200,
         'counter_write_request_timeout_in_ms' => 5000,
@@ -71,7 +72,7 @@ describe 'cassandra' do
         'dynamic_snitch_reset_interval_in_ms' => 600000,
         'dynamic_snitch_update_interval_in_ms' => 100,
         'endpoint_snitch' => 'SimpleSnitch',
-        'fail_on_non_suppoted_os' => true,
+        'fail_on_non_supported_os' => true,
         'hinted_handoff_enabled' => true,
         'hinted_handoff_throttle_in_kb' => 1024,
         'incremental_backups' => false,
@@ -111,6 +112,7 @@ describe 'cassandra' do
         'service_enable' => true,
         'service_ensure' => 'running',
         'service_name' => 'cassandra',
+        'service_refresh' => true,
         'snapshot_before_compaction' => false,
         'snitch_properties_file' => 'cassandra-rackdc.properties',
         'ssl_storage_port' => 7001,
@@ -128,6 +130,23 @@ describe 'cassandra' do
     }
   end
 
+  context 'On an unsupported OS pleading tolerance (with dyslexia)' do
+    let :facts do
+      {
+        :osfamily => 'Darwin'
+      }
+    end
+    let :params do
+      {
+        :config_file_mode        => '0755',
+        :config_path             => '/etc/cassandra',
+        :fail_on_non_suppoted_os => false
+      }
+    end
+
+    it { should compile }
+  end
+
   context 'On an unsupported OS pleading tolerance' do
     let :facts do
       {
@@ -136,13 +155,16 @@ describe 'cassandra' do
     end
     let :params do
       {
+        :config_file_mode        => '0755',
         :config_path             => '/etc/cassandra',
-        :fail_on_non_suppoted_os => false
+        :fail_on_non_supported_os => false
       }
     end
 
     it {
-      should contain_file('/etc/cassandra/cassandra.yaml')
+      should contain_file('/etc/cassandra/cassandra.yaml').with({
+        'mode' => '0755'
+      })
     }
     it { should have_resource_count(8) }
   end
@@ -180,6 +202,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc_suffix]') 
       should contain_ini_setting('rackdc.properties.dc_suffix').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
@@ -188,6 +211,7 @@ describe 'cassandra' do
       })
     }
     it {
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.prefer_local]') 
       should contain_ini_setting('rackdc.properties.prefer_local').with({
         'path'    => '/etc/cassandra/default.conf/cassandra-topology.properties',
         'section' => '',
@@ -212,9 +236,16 @@ describe 'cassandra' do
     end
     it {
       should contain_service('cassandra').with({
-        'ensure' => 'stopped',
-        'enable' => 'false'
+        'ensure'    => 'stopped',
+        'name'      => 'cassandra',
+        'enable'    => 'false'
       })
+    }
+    it {
+      should contain_service('cassandra').that_subscribes_to('File[/etc/cassandra/cassandra.yaml]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc]') 
+      should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.rack]') 
+      should contain_service('cassandra').that_subscribes_to('Package[dsc22]') 
     }
   end
 end
