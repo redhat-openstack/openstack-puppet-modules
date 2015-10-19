@@ -4,6 +4,7 @@ class aodh::params {
 
   case $::osfamily {
     'RedHat': {
+      $common_package_name    = 'openstack-aodh-common'
       $psycopg_package_name   = 'python-psycopg2'
       $sqlite_package_name    = undef
       $api_package_name       = 'openstack-aodh-api'
@@ -18,6 +19,7 @@ class aodh::params {
       $listener_service_name  = 'openstack-aodh-listener'
     }
     'Debian': {
+      $common_package_name    = 'aodh-common'
       $psycopg_package_name   = 'python-psycopg2'
       $sqlite_package_name    = 'python-pysqlite2'
       $api_package_name       = 'aodh-api'

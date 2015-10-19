@@ -95,7 +95,13 @@ describe 'basic aodh' do
         public_url => "https://${::fqdn}:5000/",
         admin_url  => "https://${::fqdn}:35357/",
       }
-
+      class { '::aodh':
+        rabbit_userid   => 'aodh',
+        rabbit_password => 'an_even_bigger_secret',
+        verbose         => true,
+        debug           => true,
+        rabbit_host     => '127.0.0.1',
+      }
       class { '::aodh::db::mysql':
         password => 'a_big_secret',
       }
