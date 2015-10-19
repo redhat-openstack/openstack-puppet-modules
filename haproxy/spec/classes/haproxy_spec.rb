@@ -109,6 +109,23 @@ describe 'haproxy', :type => :class do
             end
           end
         end
+        context "on #{osfamily} family operatingsystems with setting haproxy.cfg location" do
+          let(:facts) do
+            { :osfamily => osfamily }.merge default_facts
+          end
+          let(:params) do
+            {
+              'config_file' => '/tmp/haproxy.cfg',
+            }
+          end
+          it 'should set up /tmp/haproxy.cfg as a concat resource' do
+            subject.should contain_concat('/tmp/haproxy.cfg').with(
+              'owner' => '0',
+              'group' => '0',
+              'mode'  => '0644'
+            )
+          end
+        end
         context "on #{osfamily} family operatingsystems without managing the service" do
           let(:facts) do
             { :osfamily => osfamily }.merge default_facts

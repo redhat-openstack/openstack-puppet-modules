@@ -133,6 +133,7 @@
 [`logroot`]: #logroot
 [Log security]: http://httpd.apache.org/docs/current/logs.html#security
 
+[`manage_docroot`]: #manage_docroot
 [`manage_user`]: #manage_user
 [`manage_group`]: #manage_group
 [`MaxConnectionsPerChild`]: https://httpd.apache.org/docs/current/mod/mpm_common.html#maxconnectionsperchild
@@ -887,6 +888,20 @@ _Apache 2.2 only_. Sets the [MIME `content-type`][] sent if the server cannot ot
 Configures a default virtual host when the class is declared. Valid options: Boolean. Default: 'true'.
 
 To configure [customized virtual hosts][Configuring virtual hosts], set this parameter's value to 'false'.
+
+##### `dev_packages`
+
+Configures a specific dev package to use. Valid options: String.  Default: 'OS default httpd dev package'.
+
+Example for using httpd 2.4 from the IUS yum repo:
+
+~~~ puppet
+include ::apache::dev
+class { 'apache':
+  apache_name  => 'httpd24u',
+  dev_packages => 'httpd24u-devel',
+}
+~~~
 
 ##### `docroot`
 
@@ -1885,6 +1900,8 @@ Sets the list of resources to look for when a client requests an index of the di
 ##### `docroot`
 
 **Required**. Sets the [`DocumentRoot`][] location, from which Apache serves files.
+
+If `docroot` and [`manage_docroot`][] are both set to `false`, no [`DocumentRoot`][] will be set and the accompanying `<Directory /path/to/directory>` block will not be created.
 
 ##### `docroot_group`
 
@@ -3046,7 +3063,7 @@ Specifies the SSL certification. Defaults are based on your OS: '/etc/pki/tls/ce
 
 ##### `ssl_protocol`
 
-Specifies [SSLProtocol](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol). Expects an array of accepted protocols. Defaults to 'all', '-SSLv2', '-SSLv3'.
+Specifies [SSLProtocol](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol). Expects an array or space separated string of accepted protocols. Defaults to 'all', '-SSLv2', '-SSLv3'.
 
 ##### `ssl_cipher`
 

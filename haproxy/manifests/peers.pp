@@ -1,6 +1,6 @@
 # == Defined Type: haproxy::peers
 #
-#  This type will set up a peers entry in /etc/haproxy/haproxy.cfg
+#  This type will set up a peers entry in haproxy.cfg
 #   on the load balancer. This setting is required to share the
 #   current state of HAproxy with other HAproxy in High available
 #   configurations.
@@ -19,7 +19,7 @@ define haproxy::peers (
   # Template uses: $name, $ipaddress, $ports, $options
   concat::fragment { "${name}_peers_block":
     order   => "30-peers-00-${name}",
-    target  => '/etc/haproxy/haproxy.cfg',
+    target  => $::haproxy::config_file,
     content => template('haproxy/haproxy_peers_block.erb'),
   }
 

@@ -1,12 +1,19 @@
 require 'spec_helper'
 
 describe 'haproxy::peer' do
+  let :pre_condition do
+  'class{"haproxy":
+      config_file => "/tmp/haproxy.cfg"
+   }
+  '
+  end
   let(:title) { 'dero' }
   let(:facts) do
     {
       :ipaddress      => '1.1.1.1',
       :hostname       => 'dero',
       :concat_basedir => '/foo',
+      :osfamily       => 'RedHat',
     }
   end
 
@@ -20,7 +27,7 @@ describe 'haproxy::peer' do
 
     it { should contain_concat__fragment('peers-tyler-dero').with(
       'order'   => '30-peers-01-tyler-dero',
-      'target'  => '/etc/haproxy/haproxy.cfg',
+      'target'  => '/tmp/haproxy.cfg',
       'content' => "  peer dero 1.1.1.1:1024\n"
     ) }
   end

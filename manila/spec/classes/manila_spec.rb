@@ -13,6 +13,7 @@ describe 'manila' do
       req_params
     end
 
+    it { is_expected.to contain_class('manila::logging') }
     it { is_expected.to contain_class('manila::params') }
     it { is_expected.to contain_class('mysql::bindings::python') }
 
@@ -244,42 +245,6 @@ describe 'manila' do
       is_expected.to contain_manila_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
       is_expected.to contain_manila_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
     end
-  end
-
-  describe 'with syslog disabled' do
-    let :params do
-      req_params
-    end
-
-    it { is_expected.to contain_manila_config('DEFAULT/use_syslog').with_value(false) }
-  end
-
-  describe 'with syslog enabled' do
-    let :params do
-      req_params.merge({
-        :use_syslog   => 'true',
-      })
-    end
-
-    it { is_expected.to contain_manila_config('DEFAULT/use_syslog').with_value(true) }
-    it { is_expected.to contain_manila_config('DEFAULT/syslog_log_facility').with_value('LOG_USER') }
-  end
-
-  describe 'with syslog enabled and custom settings' do
-    let :params do
-      req_params.merge({
-        :use_syslog   => 'true',
-        :log_facility => 'LOG_LOCAL0'
-     })
-    end
-
-    it { is_expected.to contain_manila_config('DEFAULT/use_syslog').with_value(true) }
-    it { is_expected.to contain_manila_config('DEFAULT/syslog_log_facility').with_value('LOG_LOCAL0') }
-  end
-
-  describe 'with log_dir disabled' do
-    let(:params) { req_params.merge!({:log_dir => false}) }
-    it { is_expected.to contain_manila_config('DEFAULT/log_dir').with_ensure('absent') }
   end
 
   describe 'with amqp_durable_queues disabled' do

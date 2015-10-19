@@ -12,25 +12,29 @@ describe 'keystone server running with Apache/WSGI as Identity Provider' do
       case $::osfamily {
         'Debian': {
           include ::apt
-          apt::ppa { 'ppa:ubuntu-cloud-archive/liberty-staging':
-            # it's false by default in 2.x series but true in 1.8.x
-            package_manage => false,
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => 'liberty',
+            repo            => 'proposed',
+            package_require => true,
           }
-          Exec['apt_update'] -> Package<||>
         }
         'RedHat': {
           class { '::openstack_extras::repo::redhat::redhat':
             manage_rdo => false,
             repo_hash => {
-              # we need kilo repo to be installed for dependencies
-              'rdo-kilo' => {
-                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
-                'descr'   => 'RDO kilo',
+              'openstack-common-testing' => {
+                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-common-testing/x86_64/os/',
+                'descr'    => 'openstack-common-testing',
                 'gpgcheck' => 'no',
               },
-              'rdo-liberty' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
-                'descr'    => 'RDO trunk',
+              'openstack-liberty-testing' => {
+                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-liberty-testing/x86_64/os/',
+                'descr'    => 'openstack-liberty-testing',
+                'gpgcheck' => 'no',
+              },
+              'openstack-liberty-trunk' => {
+                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
+                'descr'    => 'openstack-liberty-trunk',
                 'gpgcheck' => 'no',
               },
             },
@@ -95,38 +99,35 @@ describe 'keystone server running with Apache/WSGI as Identity Provider' do
         enabled     => true,
         description => 'Domain for admin v3 users',
       }
-      keystone_tenant { 'servicesv3':
+      keystone_tenant { 'servicesv3::service_domain':
         ensure      => present,
         enabled     => true,
         description => 'Tenant for the openstack services',
-        domain      => 'service_domain',
       }
-      keystone_tenant { 'openstackv3':
+      keystone_tenant { 'openstackv3::admin_domain':
         ensure      => present,
         enabled     => true,
         description => 'admin tenant',
-        domain      => 'admin_domain',
       }
-      keystone_user { 'adminv3':
+      keystone_user { 'adminv3::admin_domain':
         ensure      => present,
         enabled     => true,
-        tenant      => 'openstackv3', # note: don't have to use 'openstackv3::admin_domain' here since the tenant name 'openstackv3' is unique among all domains
+        tenant      => 'openstackv3::admin_domain',
         email       => 'test@example.tld',
         password    => 'a_big_secret',
-        domain      => 'admin_domain',
       }
-      keystone_user_role { 'adminv3@openstackv3':
+      keystone_user_role { 'adminv3::admin_domain@openstackv3::admin_domain':
         ensure => present,
         roles  => ['admin'],
       }
       # service user exists only in the service_domain - must
       # use v3 api
-      ::keystone::resource::service_identity { 'beaker-civ3':
+      ::keystone::resource::service_identity { 'beaker-civ3::service_domain':
         service_type        => 'beakerv3',
         service_description => 'beakerv3 service',
         service_name        => 'beakerv3',
         password            => 'secret',
-        tenant              => 'servicesv3',
+        tenant              => 'servicesv3::service_domain',
         public_url          => 'http://127.0.0.1:1234/v3',
         admin_url           => 'http://127.0.0.1:1234/v3',
         internal_url        => 'http://127.0.0.1:1234/v3',

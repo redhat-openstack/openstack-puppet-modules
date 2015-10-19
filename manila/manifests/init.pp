@@ -145,6 +145,10 @@
 #   (Optional) ENable one or more SASL mechanisms.
 #   Defaults to false.
 #
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to undef
+#
 # [*use_syslog*]
 #   Use syslog for logging.
 #   (Optional) Defaults to false.
@@ -281,11 +285,12 @@ class manila (
   $cert_file                   = false,
   $key_file                    = false,
   $api_paste_config            = '/etc/manila/api-paste.ini',
-  $use_syslog                  = false,
-  $log_facility                = 'LOG_USER',
-  $log_dir                     = '/var/log/manila',
-  $verbose                     = false,
-  $debug                       = false,
+  $use_stderr                  = undef,
+  $use_syslog                  = undef,
+  $log_facility                = undef,
+  $log_dir                     = undef,
+  $verbose                     = undef,
+  $debug                       = undef,
   $storage_availability_zone   = 'nova',
   $rootwrap_config             = '/etc/manila/rootwrap.conf',
   $state_path                  = '/var/lib/manila',
@@ -303,6 +308,7 @@ class manila (
   $amqp_ssl_key_password       = undef,
 ) {
 
+  include ::manila::logging
   include ::manila::params
 
   if $use_ssl {
@@ -494,8 +500,6 @@ class manila (
   manila_config {
     'DEFAULT/sql_connection':            value => $sql_connection, secret => true;
     'DEFAULT/sql_idle_timeout':          value => $sql_idle_timeout;
-    'DEFAULT/verbose':                   value => $verbose;
-    'DEFAULT/debug':                     value => $debug;
     'DEFAULT/api_paste_config':          value => $api_paste_config;
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
@@ -514,16 +518,6 @@ class manila (
 
   } else {
     fail("Invalid db connection ${sql_connection}")
-  }
-
-  if $log_dir {
-    manila_config {
-      'DEFAULT/log_dir': value => $log_dir;
-    }
-  } else {
-    manila_config {
-      'DEFAULT/log_dir': ensure => absent;
-    }
   }
 
   # SSL Options
@@ -546,17 +540,6 @@ class manila (
       'DEFAULT/ssl_cert_file' : ensure => absent;
       'DEFAULT/ssl_key_file' :  ensure => absent;
       'DEFAULT/ssl_ca_file' :   ensure => absent;
-    }
-  }
-
-  if $use_syslog {
-    manila_config {
-      'DEFAULT/use_syslog':           value => true;
-      'DEFAULT/syslog_log_facility':  value => $log_facility;
-    }
-  } else {
-    manila_config {
-      'DEFAULT/use_syslog':           value => false;
     }
   }
 

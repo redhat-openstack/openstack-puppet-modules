@@ -1287,7 +1287,7 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
   describe 'additional_includes' do
     it 'applies cleanly' do
       pp = <<-EOS
-        if $::osfamily == 'RedHat' and $::selinux {
+        if $::osfamily == 'RedHat' and "$::selinux" == "true" {
           $semanage_package = $::operatingsystemmajrelease ? {
             '5'     => 'policycoreutils',
             default => 'policycoreutils-python',
@@ -1337,6 +1337,35 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
 
     describe file("#{$vhost_dir}/test.server.conf") do
       it { is_expected.to be_file }
+    end
+  end
+
+  describe 'SSLProtocol directive' do
+    it 'applies cleanly' do
+      pp = <<-EOS
+        class { 'apache': }
+        apache::vhost { 'test.server':
+          docroot      => '/tmp',
+          ssl          => true,
+          ssl_protocol => ['All', '-SSLv2'],
+        }
+        apache::vhost { 'test2.server':
+          docroot      => '/tmp',
+          ssl          => true,
+          ssl_protocol => 'All -SSLv2',
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file("#{$vhost_dir}/25-test.server.conf") do
+      it { is_expected.to be_file }
+      it { is_expected.to contain 'SSLProtocol  *All -SSLv2' }
+    end
+
+    describe file("#{$vhost_dir}/25-test2.server.conf") do
+      it { is_expected.to be_file }
+      it { is_expected.to contain 'SSLProtocol  *All -SSLv2' }
     end
   end
 end
