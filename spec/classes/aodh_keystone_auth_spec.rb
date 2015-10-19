@@ -30,46 +30,43 @@ describe 'aodh::keystone::auth' do
     it { is_expected.to contain_keystone_service('aodh').with(
       :ensure      => 'present',
       :type        => 'alarming',
-      :description => 'AODH Alarming Service'
+      :description => 'OpenStack Alarming Service'
     ) }
 
     it { is_expected.to contain_keystone_endpoint('RegionOne/aodh').with(
       :ensure       => 'present',
-      :public_url   => "http://127.0.0.1:8042/",
-      :admin_url    => "http://127.0.0.1:8042/",
-      :internal_url => "http://127.0.0.1:8042/"
+      :public_url   => 'http://127.0.0.1:8042',
+      :admin_url    => 'http://127.0.0.1:8042',
+      :internal_url => 'http://127.0.0.1:8042',
     ) }
   end
 
-  describe 'when overriding public_protocol, public_port and public address' do
+  describe 'when overriding URL parameters' do
     let :params do
-      { :password         => 'aodh_password',
-        :public_protocol  => 'https',
-        :public_port      => '80',
-        :public_address   => '10.10.10.10',
-        :port             => '81',
-        :internal_address => '10.10.10.11',
-        :admin_address    => '10.10.10.12' }
+      { :password     => 'aodh_password',
+        :public_url   => 'https://10.10.10.10:80',
+        :internal_url => 'http://10.10.10.11:81',
+        :admin_url    => 'http://10.10.10.12:81' }
     end
 
     it { is_expected.to contain_keystone_endpoint('RegionOne/aodh').with(
       :ensure       => 'present',
-      :public_url   => "https://10.10.10.10:80/",
-      :internal_url => "http://10.10.10.11:81/",
-      :admin_url    => "http://10.10.10.12:81/"
+      :public_url   => 'https://10.10.10.10:80',
+      :internal_url => 'http://10.10.10.11:81',
+      :admin_url    => 'http://10.10.10.12:81'
     ) }
   end
 
   describe 'when overriding auth name' do
     let :params do
       { :password => 'foo',
-        :auth_name => 'aodhy' }
+        :auth_name => 'aodhany' }
     end
 
-    it { is_expected.to contain_keystone_user('aodhy') }
-    it { is_expected.to contain_keystone_user_role('aodhy@services') }
-    it { is_expected.to contain_keystone_service('aodhy') }
-    it { is_expected.to contain_keystone_endpoint('RegionOne/aodhy') }
+    it { is_expected.to contain_keystone_user('aodhany') }
+    it { is_expected.to contain_keystone_user_role('aodhany@services') }
+    it { is_expected.to contain_keystone_service('aodhany') }
+    it { is_expected.to contain_keystone_endpoint('RegionOne/aodhany') }
   end
 
   describe 'when overriding service name' do
@@ -99,7 +96,7 @@ describe 'aodh::keystone::auth' do
     it { is_expected.to contain_keystone_service('aodh').with(
       :ensure      => 'present',
       :type        => 'alarming',
-      :description => 'AODH Alarming Service'
+      :description => 'OpenStack Alarming Service'
     ) }
 
   end
@@ -119,7 +116,7 @@ describe 'aodh::keystone::auth' do
     it { is_expected.to contain_keystone_service('aodh').with(
       :ensure      => 'present',
       :type        => 'alarming',
-      :description => 'AODH Alarming Service'
+      :description => 'OpenStack Alarming Service'
     ) }
 
   end
