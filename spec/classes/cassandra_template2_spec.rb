@@ -127,6 +127,7 @@ describe 'cassandra' do
         :commitlog_sync_period_in_ms => 'commitlog_sync_period_in_ms',
         :commitlog_segment_size_in_mb => 'commitlog_segment_size_in_mb',
         :key_cache_size_in_mb => 'key_cache_size_in_mb',
+        :key_cache_save_period => 'key_cache_save_period',
       }
     end
 
@@ -237,6 +238,7 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_sync_period_in_ms: commitlog_sync_period_in_ms/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_segment_size_in_mb: commitlog_segment_size_in_mb/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/key_cache_size_in_mb: key_cache_size_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/key_cache_save_period: key_cache_save_period/) }
     it { should contain_file('commitlog_directory') }
     it { should contain_file('datadir1') }
     it { should contain_file('datadir2') }

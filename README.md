@@ -717,6 +717,11 @@ file is absent or commented out.  If a value is set, then the parameter
 and variable are placed into the configuration file.
 Default value: *undef*
 
+##### `key_cache_save_period`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 14400
+
 ##### `key_cache_size_in_mb`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.

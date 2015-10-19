@@ -79,6 +79,7 @@ describe 'cassandra' do
         'index_summary_resize_interval_in_minutes' => 60,
         'inter_dc_tcp_nodelay' => false,
         'internode_compression' => 'all',
+        'key_cache_save_period' => 14400,
         'key_cache_size_in_mb'  => '',
         'listen_address' => 'localhost',
         'manage_dsc_repo' => false,

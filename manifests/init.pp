@@ -67,6 +67,7 @@ class cassandra (
   $internode_compression                                = 'all',
   $internode_recv_buff_size_in_bytes                    = undef,
   $internode_send_buff_size_in_bytes                    = undef,
+  $key_cache_save_period                                = 14400,
   $key_cache_size_in_mb                                 = '',
   $listen_address                                       = 'localhost',
   $manage_dsc_repo                                      = false,
