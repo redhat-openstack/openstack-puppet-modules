@@ -124,6 +124,7 @@ describe 'basic aodh' do
         auth_password => 'a_big_secret',
       }
       class { '::aodh::client': }
+      class { '::aodh::notifier': }
       case $::osfamily {
         'Debian': {
           warning('aodh-evaluator cannot be run on ubuntu system, package is broken. See LP#1508463')
