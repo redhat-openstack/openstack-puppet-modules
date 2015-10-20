@@ -2,6 +2,8 @@
 #
 class aodh::params {
 
+  $client_package_name = 'python-ceilometerclient'
+
   case $::osfamily {
     'RedHat': {
       $common_package_name     = 'openstack-aodh-common'
