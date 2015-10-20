@@ -125,6 +125,7 @@ describe 'basic aodh' do
       }
       class { '::aodh::client': }
       class { '::aodh::notifier': }
+      class { '::aodh::listener': }
       case $::osfamily {
         'Debian': {
           warning('aodh-evaluator cannot be run on ubuntu system, package is broken. See LP#1508463')

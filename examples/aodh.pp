@@ -14,4 +14,5 @@ class { '::aodh::auth':
 }
 class { '::aodh::evaluator': }
 class { '::aodh::notifier': }
+class { '::aodh::listener': }
 class { '::aodh::client': }
