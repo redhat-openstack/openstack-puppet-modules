@@ -1,8 +1,33 @@
 # Class aodh::logging
 #
-#  aodh extended logging configuration
+#  aodh logging configuration
 #
 # == parameters
+#
+#  [*verbose*]
+#    (Optional) Should the daemons log verbose messages
+#    Defaults to 'false'
+#
+#  [*debug*]
+#    (Optional) Should the daemons log debug messages
+#    Defaults to 'false'
+#
+#  [*use_syslog*]
+#    (Optional) Use syslog for logging.
+#    Defaults to 'false'
+#
+#  [*use_stderr*]
+#    (optional) Use stderr for logging
+#    Defaults to 'true'
+#
+#  [*log_facility*]
+#    (Optional) Syslog facility to receive log lines.
+#    Defaults to 'LOG_USER'
+#
+#  [*log_dir*]
+#    (optional) Directory where logs should be stored.
+#    If set to boolean false, it will not log to any directory.
+#    Defaults to '/var/log/aodh'
 #
 #  [*logging_context_format_string*]
 #    (optional) Format string to use for log messages with context.
@@ -35,13 +60,10 @@
 #    (optional) Hash of logger (keys) and level (values) pairs.
 #    Defaults to undef.
 #    Example:
-#      { 'amqp'  => 'WARN', 'amqplib' => 'WARN', 'boto' => 'WARN',
-#           'qpid' => 'WARN', 'sqlalchemy' => 'WARN', 'suds' => 'INFO',
-#           'oslo.messaging' => 'INFO', 'iso8601' => 'WARN',
-#           'requests.packages.urllib3.connectionpool' => 'WARN',
-#           'urllib3.connectionpool' => 'WARN',
-#           'websocket' => 'WARN', 'aodhmiddleware' => 'WARN',
-#           'routes.middleware' => 'WARN', stevedore => 'WARN' }
+#      { 'amqp' => 'WARN', 'amqplib' => 'WARN', 'boto' => 'WARN',
+#        'qpid' => 'WARN', 'sqlalchemy' => 'WARN', 'suds' => 'INFO',
+#        'iso8601' => 'WARN',
+#        'requests.packages.urllib3.connectionpool' => 'WARN' }
 #
 #  [*publish_errors*]
 #    (optional) Publish error events (boolean value).
@@ -69,6 +91,12 @@
 #    Example: 'Y-%m-%d %H:%M:%S'
 
 class aodh::logging(
+  $use_syslog                    = false,
+  $use_stderr                    = true,
+  $log_facility                  = 'LOG_USER',
+  $log_dir                       = '/var/log/aodh',
+  $verbose                       = false,
+  $debug                         = false,
   $logging_context_format_string = undef,
   $logging_default_format_string = undef,
   $logging_debug_format_suffix   = undef,
@@ -81,6 +109,24 @@ class aodh::logging(
   $instance_uuid_format          = undef,
   $log_date_format               = undef,
 ) {
+
+  # NOTE(spredzy): In order to keep backward compatibility we rely on the pick function
+  # to use aodh::<myparam> first then aodh::logging::<myparam>.
+  $use_syslog_real = pick($::aodh::use_syslog,$use_syslog)
+  $use_stderr_real = pick($::aodh::use_stderr,$use_stderr)
+  $log_facility_real = pick($::aodh::log_facility,$log_facility)
+  $log_dir_real = pick($::aodh::log_dir,$log_dir)
+  $verbose_real  = pick($::aodh::verbose,$verbose)
+  $debug_real = pick($::aodh::debug,$debug)
+
+  aodh_config {
+    'DEFAULT/debug'              : value => $debug_real;
+    'DEFAULT/verbose'            : value => $verbose_real;
+    'DEFAULT/use_stderr'         : value => $use_stderr_real;
+    'DEFAULT/use_syslog'         : value => $use_syslog_real;
+    'DEFAULT/log_dir'            : value => $log_dir_real;
+    'DEFAULT/syslog_log_facility': value => $log_facility_real;
+  }
 
   if $logging_context_format_string {
     aodh_config {
