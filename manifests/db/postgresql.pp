@@ -50,6 +50,6 @@ class aodh::db::postgresql(
     privileges    => $privileges,
   }
 
-  ::Openstacklib::Db::Postgresql['aodh'] ~> Exec<| title == 'aodh-manage db_sync' |>
+  ::Openstacklib::Db::Postgresql['aodh'] ~> Exec<| title == 'aodh-db-sync' |>
 
 }
