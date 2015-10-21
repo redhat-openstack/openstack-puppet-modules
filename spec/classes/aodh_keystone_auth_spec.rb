@@ -19,7 +19,6 @@ describe 'aodh::keystone::auth' do
     it { is_expected.to contain_keystone_user('aodh').with(
       :ensure   => 'present',
       :password => 'aodh_password',
-      :tenant   => 'foobar'
     ) }
 
     it { is_expected.to contain_keystone_user_role('aodh@foobar').with(
