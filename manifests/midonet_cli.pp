@@ -37,11 +37,8 @@ class midonet::midonet_cli(
   $tenant_name='admin',
 ) {
 
-  require midonet::repository
-
   package {'python-midonetclient':
     ensure  => present,
-    require => Exec['update-midonet-repos']
   }
 
   midonet_client_conf {

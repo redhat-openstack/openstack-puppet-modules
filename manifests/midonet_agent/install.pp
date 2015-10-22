@@ -26,13 +26,10 @@ class midonet::midonet_agent::install (
   $install_java = true
 ) {
 
-  require midonet::repository
-
   if ($install_java == true) {
     if ! defined(Class['java']) {
       class { 'java':
         distribution => 'jre',
-        require      => Exec['update-midonet-repos']
       }
     }
   }

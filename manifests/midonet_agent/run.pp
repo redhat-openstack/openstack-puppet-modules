@@ -26,8 +26,6 @@ class midonet::midonet_agent::run (
   $zk_servers,
   $cs_seeds) {
 
-    require midonet::midonet_agent::install
-
     file {'/etc/midolman/midolman.conf':
         ensure  => present,
         content => template('midonet/midonet-agent/midolman.conf.erb'),

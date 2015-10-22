@@ -4,8 +4,6 @@
 
 class midonet::midonet_api::augeas {
 
-    require midonet::repository
-
     case $::osfamily {
         'Debian': {
             package {'libaugeas-ruby':
