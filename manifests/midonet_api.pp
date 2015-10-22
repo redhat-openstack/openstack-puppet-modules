@@ -106,8 +106,6 @@ class midonet::midonet_api(
   $bind_address='0.0.0.0',
   $catalina_base) {
 
-    include midonet::midonet_api::augeas
-
     class {'midonet::midonet_api::install': }
 
     class {'midonet::midonet_api::run':

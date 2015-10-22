@@ -76,11 +76,8 @@ class midonet::neutron_plugin (
     $sync_db           = false
     ) {
 
-    require midonet::repository
-
     package {'python-neutron-plugin-midonet':
         ensure  => present,
-        require => Exec['update-midonet-repos']
     } ->
 
     class {'neutron::plugins::midonet':

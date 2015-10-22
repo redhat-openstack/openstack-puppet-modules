@@ -27,7 +27,6 @@ class midonet::midonet_api::install (
   $manage_app_server = true
 ) {
 
-    require midonet::repository
     require midonet::midonet_api::augeas
 
     if ($manage_app_server == true) {
@@ -35,17 +34,14 @@ class midonet::midonet_api::install (
         if ! defined(Class['java']) {
           class { 'java':
             distribution => 'jre',
-            require      => Exec['update-midonet-repos']
           } ->
 
           class { 'tomcat':
             install_from_source => false,
-            require             => Exec['update-midonet-repos']
           }
         } else {
           class { 'tomcat':
             install_from_source => false,
-            require             => Exec['update-midonet-repos']
           }
         }
       }

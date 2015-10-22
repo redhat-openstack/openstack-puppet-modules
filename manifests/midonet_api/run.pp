@@ -37,8 +37,6 @@ class midonet::midonet_api::run (
   $bind_address
 ) {
 
-    require midonet::midonet_api::install
-
     tomcat::instance{'midonet-api':
       package_name => $tomcat_package,
     } ->
