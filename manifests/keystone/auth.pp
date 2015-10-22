@@ -38,15 +38,15 @@
 #   Defaults to the value of auth_name.
 #
 # [*public_url*]
-#   (optional) The endpoint's public url. (Defaults to 'http://127.0.0.1:9311')
+#   (optional) The endpoint's public url. (Defaults to 'http://127.0.0.1:8042')
 #   This url should *not* contain any trailing '/'.
 #
 # [*admin_url*]
-#   (optional) The endpoint's admin url. (Defaults to 'http://127.0.0.1:9311')
+#   (optional) The endpoint's admin url. (Defaults to 'http://127.0.0.1:8042')
 #   This url should *not* contain any trailing '/'.
 #
 # [*internal_url*]
-#   (optional) The endpoint's internal url. (Defaults to 'http://127.0.0.1:9311')
+#   (optional) The endpoint's internal url. (Defaults to 'http://127.0.0.1:8042')
 #   This url should *not* contain any trailing '/'.
 #
 class aodh::keystone::auth (
