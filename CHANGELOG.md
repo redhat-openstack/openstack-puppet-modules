@@ -19,7 +19,7 @@ A minor bug fix.
 
 * N/A
 
-##2015-08-06 - Release 1.8.0 ([diff](https://github.com/locp/cassandra/compare/1.7.1...1.8.0))
+##2015-10-06 - Release 1.8.0 ([diff](https://github.com/locp/cassandra/compare/1.7.1...1.8.0))
 
 ### Summary
 
