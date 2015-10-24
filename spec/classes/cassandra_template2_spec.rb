@@ -128,6 +128,22 @@ describe 'cassandra' do
         :commitlog_segment_size_in_mb => 'commitlog_segment_size_in_mb',
         :key_cache_size_in_mb => 'key_cache_size_in_mb',
         :key_cache_save_period => 'key_cache_save_period',
+        :client_encryption_algorithm => 'client_encryption_algorithm',
+        :client_encryption_cipher_suites => 'client_encryption_cipher_suites',
+        :client_encryption_protocol => 'client_encryption_protocol',
+        :client_encryption_require_client_auth => 'client_encryption_require_client_auth',
+        :client_encryption_store_type => 'client_encryption_store_type',
+        :client_encryption_truststore_password => 'client_encryption_truststore_password',
+        :client_encryption_truststore => 'client_encryption_truststore',
+        :counter_cache_size_in_mb => 'counter_cache_size_in_mb',
+        :index_summary_capacity_in_mb => 'index_summary_capacity_in_mb',
+        :key_cache_keys_to_save => 'key_cache_keys_to_save',
+        :seed_provider_class_name => 'seed_provider_class_name',
+        :server_encryption_algorithm => 'server_encryption_algorithm',
+        :server_encryption_cipher_suites => 'server_encryption_cipher_suites',
+        :server_encryption_protocol => 'server_encryption_protocol',
+        :server_encryption_require_client_auth => 'server_encryption_require_client_auth',
+        :server_encryption_store_type => 'server_encryption_store_type',
       }
     end
 
@@ -239,6 +255,24 @@ describe 'cassandra' do
     it { should contain_file('/etc/cassandra.yaml').with_content(/commitlog_segment_size_in_mb: commitlog_segment_size_in_mb/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/key_cache_size_in_mb: key_cache_size_in_mb/) }
     it { should contain_file('/etc/cassandra.yaml').with_content(/key_cache_save_period: key_cache_save_period/) }
+
+    it { should contain_file('/etc/cassandra.yaml').with_content(/algorithm: client_encryption_algorithm/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/cipher_suites: client_encryption_cipher_suites/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/protocol: client_encryption_protocol/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/require_client_auth: client_encryption_require_client_auth/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/store_type: client_encryption_store_type/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/truststore: client_encryption_truststore/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/truststore_password: client_encryption_truststore_password/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/counter_cache_size_in_mb: counter_cache_size_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/index_summary_capacity_in_mb: index_summary_capacity_in_mb/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/key_cache_keys_to_save: key_cache_keys_to_save/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/- class_name: seed_provider_class_name/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/algorithm: server_encryption_algorithm/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/cipher_suites: server_encryption_cipher_suites/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/protocol: server_encryption_protocol/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/require_client_auth: server_encryption_require_client_auth/) }
+    it { should contain_file('/etc/cassandra.yaml').with_content(/store_type: server_encryption_store_type/) }
+
     it { should contain_file('commitlog_directory') }
     it { should contain_file('datadir1') }
     it { should contain_file('datadir2') }
