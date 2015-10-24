@@ -9,7 +9,7 @@ group :system_tests do
   gem 'docker-api',             :require => false
   gem 'beaker-rspec',           :require => false
   gem 'fog',                    :require => false
-  gem 'fog-google',             :require => false
+  gem 'fog-google',             '<= 0.0.9'
   gem 'pry',                    :require => false
   gem 'puppet-blacksmith',      :require => false
   gem 'puppetlabs_spec_helper', :require => false
