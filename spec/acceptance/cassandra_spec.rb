@@ -29,7 +29,8 @@ describe 'cassandra class' do
       apply_manifest(cassandra_install_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(cassandra_install_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(cassandra_install_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -48,7 +49,8 @@ describe 'cassandra class' do
       apply_manifest(optutils_install_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(optutils_install_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(optutils_install_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -67,7 +69,8 @@ describe 'cassandra class' do
       apply_manifest(datastax_agent_install_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(datastax_agent_install_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(datastax_agent_install_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -85,7 +88,8 @@ describe 'cassandra class' do
       apply_manifest(opscenter_install_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(opscenter_install_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(opscenter_install_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -106,7 +110,6 @@ describe 'cassandra class' do
     if $::operatingsystem != CentOS and $::operatingsystemmajrelease != 6 {
       include '::cassandra::firewall_ports'
     }
-
   EOS
 
   describe 'Firewall configuration.' do
@@ -114,7 +117,8 @@ describe 'cassandra class' do
       apply_manifest(firewall_config_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(firewall_config_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(firewall_config_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -131,5 +135,28 @@ describe 'cassandra class' do
   describe service('opscenterd') do
     it { is_expected.to be_running }
     it { is_expected.to be_enabled }
+  end
+
+  check_against_previous_version_pp = <<-EOS
+    include cassandra
+  EOS
+  
+  describe 'Ensure config file does get updated unneccessary.' do
+    it 'Initial install manifest again' do
+      apply_manifest(check_against_previous_version_pp,
+        :catch_failures => true)
+    end
+    it 'Remove the current module without error.' do
+      shell("puppet module uninstall locp-cassandra",
+        :acceptable_exit_codes => 0)
+    end
+    it 'Install the latest module from the forge.' do
+      shell("puppet module install locp-cassandra",
+        :acceptable_exit_codes => 0)
+    end
+    it 'check initial install works with no changes.' do
+      expect(apply_manifest(check_against_previous_version_pp,
+        :catch_failures => true).exit_code).to be_zero
+    end
   end
 end
