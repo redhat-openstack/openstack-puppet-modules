@@ -448,6 +448,20 @@ allows the user to supply their own customized template.  A Cassandra 1.X
 compatible template called cassandra1.yaml.erb has been provided by @Spredzy.
 Default value 'cassandra/cassandra.yaml.erb'
 
+##### `client_encryption_algorithm`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> algorithm`.
+Default value: *undef*
+
+##### `client_encryption_cipher_suites`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> cipher_suites`.
+Default value: *undef*
+
 ##### `client_encryption_enabled`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -465,6 +479,41 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 The field being set is `client_encryption_options -> keystore_password`.
 Default value 'cassandra'
+
+##### `client_encryption_protocol`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> protocol`.
+Default value: *undef*
+
+##### `client_encryption_require_client_auth`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> require_client_auth`.
+Default value: *undef*
+
+##### `client_encryption_store_type`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> store_type`.
+Default value: *undef*
+
+##### `client_encryption_truststore`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> truststore`.
+Default value: *undef*
+
+##### `client_encryption_truststore_password`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `client_encryption_options -> truststore_password`.
+Default value: *undef*
 
 ##### `cluster_name`
 This is passed to the
@@ -584,6 +633,11 @@ file is absent or commented out.  If a value is set, then the parameter
 and variable are placed into the configuration file.
 Default value: *undef*
 
+##### `counter_cache_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: ''
+
 ##### `counter_write_request_timeout_in_ms`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -665,6 +719,11 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 Default value: '1024'
 
+##### `index_summary_capacity_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: ''
+
 ##### `index_summary_resize_interval_in_minutes`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -710,6 +769,24 @@ and variable are placed into the configuration file.
 Default value: *undef*
 
 ##### `internode_send_buff_size_in_bytes`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: *undef*
+
+##### `key_cache_save_period`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: 14400
+
+##### `key_cache_size_in_mb`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+Default value: ''
+
+##### `key_cache_keys_to_save`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 If left at the default value of *undef* then the entry in the configuration
@@ -987,6 +1064,26 @@ This is passed to the
 The field being set is `seed_provider -> parameters -> seeds`.
 Default value '127.0.0.1'
 
+##### `seed_provider_class_name`
+This is passed to the
+[cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
+The field being set is `seed_provider -> class_name`.
+Default value 'org.apache.cassandra.locator.SimpleSeedProvider'
+
+##### `server_encryption_algorithm`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `server_encryption_options -> algorithm`.
+Default value: *undef*
+
+##### `server_encryption_cipher_suites`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `server_encryption_options -> cipher_suites`.
+Default value: *undef*
+
 ##### `server_encryption_internode`
 This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
@@ -1004,6 +1101,27 @@ This is passed to the
 [cassandra.yaml](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html) file.
 The field being set is `server_encryption_options -> keystore_password`.
 Default value 'cassandra'
+
+##### `server_encryption_protocol`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `server_encryption_options -> protocol`.
+Default value: *undef*
+
+##### `server_encryption_require_client_auth`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `server_encryption_options -> require_client_auth`.
+Default value: *undef*
+
+##### `server_encryption_store_type`
+If left at the default value of *undef* then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is `server_encryption_options -> store_type`.
+Default value: *undef*
 
 ##### `server_encryption_truststore`
 This is passed to the

@@ -16,11 +16,8 @@ group :system_tests do
   gem 'rspec-puppet',           :require => false
   gem 'rspec-puppet-utils',     :require => false
   gem 'serverspec',             :require => false
-end
-
-group :development do
-  gem 'metadata-json-lint',   :require => false
-  gem 'puppet-lint',          :require => false
-  gem 'travis',               :require => false
-  gem 'travis-lint',          :require => false
+  gem 'metadata-json-lint',     :require => false
+  gem 'puppet-lint',            :require => false
+  gem 'travis',                 :require => false
+  gem 'travis-lint',            :require => false
 end
