@@ -142,7 +142,7 @@ describe 'cassandra class' do
     include cassandra
   EOS
   
-  describe 'Ensure config file does get updated unneccessary.' do
+  describe 'Ensure config file does get updated unnecessarily.' do
     it 'Initial install manifest again' do
       apply_manifest(check_against_previous_version_pp,
         :catch_failures => true)
