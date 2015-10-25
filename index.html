@@ -655,6 +655,26 @@ compatible template called cassandra1.yaml.erb has been provided by <a href="htt
 Default value 'cassandra/cassandra.yaml.erb'</p>
 
 <h5>
+<a id="client_encryption_algorithm" class="anchor" href="#client_encryption_algorithm" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_algorithm</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; algorithm</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="client_encryption_cipher_suites" class="anchor" href="#client_encryption_cipher_suites" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_cipher_suites</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; cipher_suites</code>.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="client_encryption_enabled" class="anchor" href="#client_encryption_enabled" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_enabled</code>
 </h5>
 
@@ -680,6 +700,56 @@ Default value 'conf/.keystore'</p>
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 The field being set is <code>client_encryption_options -&gt; keystore_password</code>.
 Default value 'cassandra'</p>
+
+<h5>
+<a id="client_encryption_protocol" class="anchor" href="#client_encryption_protocol" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_protocol</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; protocol</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="client_encryption_require_client_auth" class="anchor" href="#client_encryption_require_client_auth" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_require_client_auth</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; require_client_auth</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="client_encryption_store_type" class="anchor" href="#client_encryption_store_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_store_type</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; store_type</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="client_encryption_truststore" class="anchor" href="#client_encryption_truststore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_truststore</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; truststore</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="client_encryption_truststore_password" class="anchor" href="#client_encryption_truststore_password" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>client_encryption_truststore_password</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>client_encryption_options -&gt; truststore_password</code>.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="cluster_name" class="anchor" href="#cluster_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>cluster_name</code>
@@ -857,6 +927,14 @@ and variable are placed into the configuration file.
 Default value: <em>undef</em></p>
 
 <h5>
+<a id="counter_cache_size_in_mb" class="anchor" href="#counter_cache_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_cache_size_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: ''</p>
+
+<h5>
 <a id="counter_write_request_timeout_in_ms" class="anchor" href="#counter_write_request_timeout_in_ms" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>counter_write_request_timeout_in_ms</code>
 </h5>
 
@@ -983,6 +1061,14 @@ Default value 'true'</p>
 Default value: '1024'</p>
 
 <h5>
+<a id="index_summary_capacity_in_mb" class="anchor" href="#index_summary_capacity_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>index_summary_capacity_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: ''</p>
+
+<h5>
 <a id="index_summary_resize_interval_in_minutes" class="anchor" href="#index_summary_resize_interval_in_minutes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>index_summary_resize_interval_in_minutes</code>
 </h5>
 
@@ -1049,6 +1135,33 @@ Default value: <em>undef</em></p>
 
 <h5>
 <a id="internode_send_buff_size_in_bytes" class="anchor" href="#internode_send_buff_size_in_bytes" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>internode_send_buff_size_in_bytes</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="key_cache_save_period" class="anchor" href="#key_cache_save_period" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>key_cache_save_period</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: 14400</p>
+
+<h5>
+<a id="key_cache_size_in_mb" class="anchor" href="#key_cache_size_in_mb" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>key_cache_size_in_mb</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+Default value: ''</p>
+
+<h5>
+<a id="key_cache_keys_to_save" class="anchor" href="#key_cache_keys_to_save" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>key_cache_keys_to_save</code>
 </h5>
 
 <p>This is passed to the
@@ -1455,6 +1568,35 @@ The field being set is <code>seed_provider -&gt; parameters -&gt; seeds</code>.
 Default value '127.0.0.1'</p>
 
 <h5>
+<a id="seed_provider_class_name" class="anchor" href="#seed_provider_class_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>seed_provider_class_name</code>
+</h5>
+
+<p>This is passed to the
+<a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
+The field being set is <code>seed_provider -&gt; class_name</code>.
+Default value 'org.apache.cassandra.locator.SimpleSeedProvider'</p>
+
+<h5>
+<a id="server_encryption_algorithm" class="anchor" href="#server_encryption_algorithm" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_algorithm</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>server_encryption_options -&gt; algorithm</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="server_encryption_cipher_suites" class="anchor" href="#server_encryption_cipher_suites" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_cipher_suites</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>server_encryption_options -&gt; cipher_suites</code>.
+Default value: <em>undef</em></p>
+
+<h5>
 <a id="server_encryption_internode" class="anchor" href="#server_encryption_internode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_internode</code>
 </h5>
 
@@ -1480,6 +1622,36 @@ Default value 'conf/.keystore'</p>
 <a href="http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html">cassandra.yaml</a> file.
 The field being set is <code>server_encryption_options -&gt; keystore_password</code>.
 Default value 'cassandra'</p>
+
+<h5>
+<a id="server_encryption_protocol" class="anchor" href="#server_encryption_protocol" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_protocol</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>server_encryption_options -&gt; protocol</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="server_encryption_require_client_auth" class="anchor" href="#server_encryption_require_client_auth" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_require_client_auth</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>server_encryption_options -&gt; require_client_auth</code>.
+Default value: <em>undef</em></p>
+
+<h5>
+<a id="server_encryption_store_type" class="anchor" href="#server_encryption_store_type" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_store_type</code>
+</h5>
+
+<p>If left at the default value of <em>undef</em> then the entry in the configuration
+file is absent or commented out.  If a value is set, then the parameter
+and variable are placed into the configuration file.
+The field being set is <code>server_encryption_options -&gt; store_type</code>.
+Default value: <em>undef</em></p>
 
 <h5>
 <a id="server_encryption_truststore" class="anchor" href="#server_encryption_truststore" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>server_encryption_truststore</code>
