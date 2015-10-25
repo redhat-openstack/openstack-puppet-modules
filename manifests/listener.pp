@@ -25,7 +25,8 @@ class aodh::listener (
 
   Package[$::aodh::params::listener_package_name] -> Service['aodh-listener']
   ensure_resource( 'package', [$::aodh::params::listener_package_name],
-    { ensure => $package_ensure }
+    { ensure => $package_ensure,
+      tag    => ['openstack', 'aodh-package'] }
   )
 
   if $manage_service {

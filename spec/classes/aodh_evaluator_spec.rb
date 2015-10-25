@@ -29,7 +29,8 @@ describe 'aodh::evaluator' do
 
       it 'installs aodh-evaluator package' do
         is_expected.to contain_package(platform_params[:evaluator_package_name]).with(
-          :ensure => 'present'
+          :ensure => 'present',
+          :tag    => ['openstack', 'aodh-package']
         )
       end
 

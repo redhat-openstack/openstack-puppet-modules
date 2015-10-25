@@ -15,7 +15,8 @@ describe 'aodh::listener' do
 
       it 'installs aodh-listener package' do
         is_expected.to contain_package(platform_params[:listener_package_name]).with(
-          :ensure => 'present'
+          :ensure => 'present',
+          :tag    => ['openstack', 'aodh-package']
         )
       end
 

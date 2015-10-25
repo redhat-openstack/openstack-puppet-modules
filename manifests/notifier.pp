@@ -25,7 +25,8 @@ class aodh::notifier (
 
   Package[$::aodh::params::notifier_package_name] -> Service['aodh-notifier']
   ensure_resource( 'package', [$::aodh::params::notifier_package_name],
-    { ensure => $package_ensure }
+    { ensure => $package_ensure,
+      tag    => ['openstack', 'aodh-package'] }
   )
 
   if $manage_service {
