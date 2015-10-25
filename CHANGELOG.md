@@ -1,5 +1,48 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-10-26 - Release 1.9.0 ([diff](https://github.com/locp/cassandra/compare/1.8.1...1.9.0))
+
+### Summary
+
+Added more features for the configuration of Cassandra, some improvements to
+the testing carried out before a release and a minor correction to the
+change log documentation.
+
+### Features
+
+* The following parameters have been added to the ::cassandra class to be
+  configured into the configuration file:
+
+  * client_encryption_algorithm
+  * client_encryption_cipher_suites
+  * client_encryption_protocol
+  * client_encryption_require_client_auth
+  * client_encryption_store_type
+  * client_encryption_truststore
+  * client_encryption_truststore_password
+  * counter_cache_size_in_mb
+  * index_summary_capacity_in_mb
+  * key_cache_save_period
+  * key_cache_keys_to_save
+  * seed_provider_class_name
+  * server_encryption_algorithm
+  * server_encryption_cipher_suites
+  * server_encryption_protocol
+  * server_encryption_require_client_auth
+  * server_encryption_store_type
+
+  Please see the README file for more details.
+
+### Bugfixes
+
+* Corrected an incorrect date (typo) in this document.
+
+### Improvements
+
+* There is now an automated test to mitigate the risk of unnecessarily
+  refreshes of the Cassandra service due to non-functional changes to the
+  configuration file.
+
 ##2015-10-14 - Release 1.8.1 ([diff](https://github.com/locp/cassandra/compare/1.8.0...1.8.1))
 
 ### Summary
