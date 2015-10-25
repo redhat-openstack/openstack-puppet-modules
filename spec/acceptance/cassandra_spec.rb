@@ -11,7 +11,8 @@ describe 'cassandra class' do
       apply_manifest(pre_req_install_pp, :catch_failures => true)
     end
     it 'check code is idempotent' do
-      expect(apply_manifest(pre_req_install_pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(pre_req_install_pp,
+        :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -145,6 +146,10 @@ describe 'cassandra class' do
     it 'Initial install manifest again' do
       apply_manifest(check_against_previous_version_pp,
         :catch_failures => true)
+    end
+    it 'Copy the current module to the side without error.' do
+      shell("cp -R /etc/puppet/modules/cassandra /var/tmp",
+        :acceptable_exit_codes => 0)
     end
     it 'Remove the current module without error.' do
       shell("puppet module uninstall locp-cassandra",
