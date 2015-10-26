@@ -1,3 +1,7 @@
+mod 'aodh',
+  :commit => '54f857d36bfa8567e9f6f5f4f8d778377229c702',
+  :git => 'https://github.com/openstack/puppet-aodh.git'
+
 mod 'apache',
   :commit => '9c1047da1d7672d5e7305844eb27282adf60bbe0',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
