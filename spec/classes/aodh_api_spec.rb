@@ -14,7 +14,7 @@ describe 'aodh::api' do
       :keystone_tenant   => 'services',
       :keystone_user     => 'aodh',
       :package_ensure    => 'latest',
-      :port              => '8777',
+      :port              => '8042',
       :host              => '0.0.0.0',
     }
   end

@@ -36,7 +36,7 @@
 #
 # [*port*]
 #   (optional) The aodh api port.
-#   Defaults to 8777
+#   Defaults to 8042
 #
 # [*package_ensure*]
 #   (optional) ensure state for package.
@@ -61,7 +61,7 @@ class aodh::api (
   $keystone_auth_uri     = false,
   $keystone_identity_uri = false,
   $host                  = '0.0.0.0',
-  $port                  = '8777',
+  $port                  = '8042',
   $service_name          = $::aodh::params::api_service_name,
 ) inherits aodh::params {
 
