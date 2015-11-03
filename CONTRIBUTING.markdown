@@ -104,6 +104,7 @@ installing them easy.
 [~/puppet-opendaylight]$ sudo yum install -y rubygems ruby-devel gcc-c++ zlib-devel patch
 [~/puppet-opendaylight]$ gem install bundler
 [~/puppet-opendaylight]$ bundle install
+[~/puppet-opendaylight]$ bundle update
 ```
 
 ### Syntax and Style Tests
