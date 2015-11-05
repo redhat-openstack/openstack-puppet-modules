@@ -86,6 +86,10 @@ mod 'ironic',
   :commit => '93018353468db291aa79b30656df85cfe4dee554',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
+mod 'kafka',
+  :commit => 'b27236dbc10715c0c473746f1d3b1e569644dff5',
+  :git => 'https://github.com/puppet-community/puppet-kafka.git'
+
 mod 'keepalived',
   :commit => '24d523691b3581d4d0f662ffd10f1458014a9829',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'

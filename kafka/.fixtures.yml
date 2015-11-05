@@ -1,0 +1,6 @@
+fixtures:
+  repositories:
+    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+    java:   "https://github.com/puppetlabs/puppetlabs-java.git"
+  symlinks:
+    kafka: "#{source_dir}"

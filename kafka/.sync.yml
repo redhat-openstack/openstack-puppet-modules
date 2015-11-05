@@ -1,0 +1,7 @@
+---
+spec/spec_helper_acceptance.rb:
+  dependencies:
+    - puppetlabs-stdlib
+    - puppetlabs-java
+spec/acceptance/nodesets/windows-2008R2-serverstandard-x64.yml:
+  unmanaged: true
