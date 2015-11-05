@@ -1,0 +1,13 @@
+HOSTS:
+  centos-7-x64:
+    roles:
+      - master
+    platform: el-7-x86_64
+    image: centos:7
+    hypervisor: docker
+    docker_cmd: '["/sbin/init"]'
+    docker_image_commands:
+      - 'yum -y install gcc tar'
+CONFIG:
+  type: foss
+  log_level: info

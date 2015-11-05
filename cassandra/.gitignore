@@ -1,0 +1,14 @@
+.bundle/
+coverage/
+Gemfile.lock
+.idea/
+*.iml
+pkg/
+spec/fixtures/
+*.swn
+*.swo
+*.swp
+.travis/secrets.tar
+.vagrant/
+vendor/
+log/
