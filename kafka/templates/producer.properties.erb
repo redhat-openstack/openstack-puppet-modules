@@ -1,0 +1,9 @@
+# Note: This file is managed by Puppet.
+#
+# See: http://kafka.apache.org/documentation.html#producerconfigs for more details
+<%- @producer_config.sort.each do |k,v|
+    if v.to_s.strip.length != 0 -%>
+<%= k %>=<%= v %>
+<%- end 
+end
+-%>
