@@ -10,6 +10,10 @@ mod 'aviator',
   :commit => '9a3b74b0dbb655a3afcbc8bdee442f2143420b72',
   :git => 'https://github.com/aimonb/puppet_aviator.git'
 
+mod 'cassandra',
+  :commit => 'b7526c4a8570696396d5f0151fdb9b3d1cbda598',
+  :git => 'https://github.com/locp/cassandra.git'
+
 mod 'ceilometer',
   :commit => '60a2c46196d0fdb4675a7482648a85fc928ca0cf',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
