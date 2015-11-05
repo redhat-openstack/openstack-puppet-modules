@@ -1,0 +1,19 @@
+###
+### This file is managed by Puppet.
+###
+
+clientPort=<%= scope.lookupvar('zookeeper::client_port') %>
+
+dataDir=<%= scope.lookupvar('zookeeper::data_dir') %>
+
+<% if @data_log_dir -%>
+dataLogDir=<%= scope.lookupvar('zookeeper::data_log_dir') %>
+<% end -%>
+
+<% scope.lookupvar('zookeeper::quorum').each do |zkserver_record| -%>
+<%= zkserver_record %>
+<% end -%>
+
+<% if @config_map -%><% @config_map.sort.each do |key,value| -%>
+<%= key %>=<%= value %>
+<% end -%><% end -%>

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# File:         bootstrap
+# Description:  This script configures the code in this repository for first use after a fresh checkout.
+
+MYSELF=`basename $0`
+MY_DIR=`echo $(cd $(dirname $0); pwd)`
+. $MY_DIR/sh/common.sh
+
+puts "+---------------+"
+puts "| BOOTSTRAPPING |"
+puts "+---------------+"
+
+###
+### Ruby
+###
+puts "Preparing Ruby environment..."
+curl -L https://raw.githubusercontent.com/miguno/ruby-bootstrap/master/ruby-bootstrap.sh | bash -s
