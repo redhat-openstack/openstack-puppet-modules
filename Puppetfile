@@ -246,3 +246,7 @@ mod 'xinetd',
   :commit => '749651ed7d4e8924bb701153f184a13af0a669a3',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
 
+mod 'zookeeper',
+  :commit => 'bb1b864d4cad552ba5a38207504fd7878eed9fa7',
+  :git => 'https://github.com/miguno/puppet-zookeeper.git'
+
