@@ -1,0 +1,15 @@
+test:test
+dhcp:dhcp
+visual:visual
+sensor:sensor
+# compliance testsuite users
+mapclient:mapclient
+helper:mapclient
+# This is a read-only MAPC
+reader:reader
+api-server:api-server
+schema-transformer:schema-transformer
+svc-monitor:svc-monitor
+<% @basicauthusers_property.each do |user| -%>
+<%= user %>
+<% end -%>
