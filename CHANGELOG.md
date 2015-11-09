@@ -1,5 +1,24 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-11-09 - Release 1.9.1 ([diff](https://github.com/locp/cassandra/compare/1.9.0...1.9.1))
+
+### Summary
+
+A bug fix release.
+
+### Features
+
+* N/A
+
+### Bugfixes
+
+* The default value for the permissions mode of the Cassandra configuration
+  file were far too open.  Changed from 0666 to 0644.
+
+### Improvements
+
+* N/A
+
 ##2015-10-25 - Release 1.9.0 ([diff](https://github.com/locp/cassandra/compare/1.8.1...1.9.0))
 
 ### Summary

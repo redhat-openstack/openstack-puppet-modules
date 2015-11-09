@@ -603,7 +603,7 @@ Default value '32'
 
 ##### `config_file_mode`
 The permissions mode of the cassandra configuration file.
-Default value '0666'
+Default value '0644'
 
 ##### `config_path`
 The path to the cassandra configuration file.  If this is undef, it will be
