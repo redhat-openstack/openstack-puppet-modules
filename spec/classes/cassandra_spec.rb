@@ -59,7 +59,7 @@ describe 'cassandra' do
         'concurrent_counter_writes' => 32,
         'concurrent_reads' => 32,
         'concurrent_writes' => 32,
-        'config_file_mode' => '0666',
+        'config_file_mode' => '0644',
         'config_path' => nil,
         'counter_cache_save_period' => 7200,
         'counter_cache_size_in_mb' => '',
