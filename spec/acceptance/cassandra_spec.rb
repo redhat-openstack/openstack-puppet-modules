@@ -159,9 +159,9 @@ describe 'cassandra class' do
       shell("puppet module install locp-cassandra",
         :acceptable_exit_codes => 0)
     end
-    it 'check initial install works with no changes.' do
+    it 'Check install works with changes with previous module version.' do
       expect(apply_manifest(check_against_previous_version_pp,
-        :catch_failures => true).exit_code).to be_zero
+        :catch_failures => true).exit_code).to_not be_zero
     end
   end
 end
