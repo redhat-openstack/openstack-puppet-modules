@@ -49,6 +49,11 @@
 #  (optional) If set, provides randomization for the MAC addresses for the VSM VM(s).
 #  Should be a (random) hexadecimal number of at least 7 digits (more is fine).
 #
+# [*phy_bridge_vlan*]
+#  (optional) In the case that the management interface is a bridge with a tagged
+#  uplink port, the VLAN tag for that uplink port can be provided which will
+#  be applied on the patch port connecting vsm-br and the management bridge.
+#
 class n1k_vsm(
     $n1kv_source       = '',
     $n1kv_version      = 'latest',
@@ -62,7 +67,8 @@ class n1k_vsm(
     $vsm_mgmt_gateway,
     $pacemaker_control = false,
     $existing_bridge   = false,
-    $vsm_mac_base      = ''
+    $vsm_mac_base      = '',
+    $phy_bridge_vlan   = 0,
 ) {
 
     if($::osfamily != 'Redhat') {
@@ -103,18 +109,14 @@ class n1k_vsm(
     $ovsbridge        = 'vsm-br'
 
     #VSM installation will be done only once. Will not respond to puppet sync
-    $_phy_if_bridge     = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')
-    $_phy_ip_addr       = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
-    if $_phy_ip_addr != '' {
-      $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
-      $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${_phy_if_bridge}') %>")
-      $gw_intf          = $n1k_vsm::phy_gateway
-      include ::n1k_vsm::pkgprep_ovscfg
+    $_check_phy_if_bridge = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')
+    $_phy_mac_addr        = inline_template("<%= scope.lookupvar('::macaddress_${_check_phy_if_bridge}') %>")
+    if $_phy_mac_addr != '' {
+        include ::n1k_vsm::pkgprep_ovscfg
     }
 
     notify {"Arg: intf ${phy_if_bridge} vsm_role ${vsm_role} domainid ${vsm_domain_id}" : withpath => true}
-    notify {"ip ${phy_ip_addr} mask ${phy_ip_mask} gw ${n1k_vsm::phy_gateway}" : withpath => true}
-    notify {"gw_dv ${gw_intf} ovs ${ovsbridge} vsmname ${n1k_vsm::vsmname}" : withpath => true}
+    notify {"ovs ${ovsbridge} vsmname ${n1k_vsm::vsmname}" : withpath => true}
     notify {"mgmtip ${n1k_vsm::mgmtip} vsm_mask ${n1k_vsm::mgmtnetmask} vsm_gw ${n1k_vsm::mgmtgateway}": withpath => false}
 
     include ::n1k_vsm::vsmprep
