@@ -40,6 +40,7 @@ describe 'n1k_vsm::pkgprep_ovscfg' do
       let :facts do
         {
           :ipaddress_eth0 => '1.1.1.1',
+          :netmask_eth0 => '255.255.255.0',
           :osfamily => 'RedHat'
         }
       end
@@ -52,6 +53,20 @@ describe 'n1k_vsm::pkgprep_ovscfg' do
         is_expected.to contain_augeas('Augeas_modify_ifcfg-ovsbridge').with(
           'name'    => 'vsm-br',
           'context' => '/files/etc/sysconfig/network-scripts/ifcfg-vsm-br',
+          'changes' => ['set TYPE OVSBridge',
+              'set DEVICE vsm-br',
+              'set DEVICETYPE ovs',
+              'set OVSREQUIRES vsm-br',
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              'set NAME vsm-br',
+              'set IPADDR 1.1.1.1',
+              'set NETMASK 255.255.255.0',
+              'set GATEWAY 1.1.1.3',
+              'set USERCTL no']
         )
       end
 
@@ -103,6 +118,17 @@ describe 'n1k_vsm::pkgprep_ovscfg' do
         is_expected.to contain_augeas('Augeas_modify_ifcfg-ovsbridge').with(
           'name'    => 'vsm-br',
           'context' => '/files/etc/sysconfig/network-scripts/ifcfg-vsm-br',
+          'changes' => ['set TYPE OVSBridge',
+              'set DEVICE vsm-br',
+              'set DEVICETYPE ovs',
+              'set OVSREQUIRES vsm-br',
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              'set NAME vsm-br',
+              'set USERCTL no']
         )
       end
 
@@ -152,6 +178,17 @@ describe 'n1k_vsm::pkgprep_ovscfg' do
         is_expected.to contain_augeas('Augeas_modify_ifcfg-ovsbridge').with(
           'name'    => 'vsm-br',
           'context' => '/files/etc/sysconfig/network-scripts/ifcfg-vsm-br',
+          'changes' => ['set TYPE OVSBridge',
+              'set DEVICE vsm-br',
+              'set DEVICETYPE ovs',
+              'set OVSREQUIRES vsm-br',
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              'set NAME vsm-br',
+              'set USERCTL no']
         )
       end
 
@@ -203,6 +240,17 @@ describe 'n1k_vsm::pkgprep_ovscfg' do
         is_expected.to contain_augeas('Augeas_modify_ifcfg-ovsbridge').with(
           'name'    => 'vsm-br',
           'context' => '/files/etc/sysconfig/network-scripts/ifcfg-vsm-br',
+          'changes' => ['set TYPE OVSBridge',
+              'set DEVICE vsm-br',
+              'set DEVICETYPE ovs',
+              'set OVSREQUIRES vsm-br',
+              'set NM_CONTROLLED no',
+              'set BOOTPROTO none',
+              'set ONBOOT yes',
+              'set DEFROUTE yes',
+              'set MTU 1500',
+              'set NAME vsm-br',
+              'set USERCTL no']
         )
       end
 
