@@ -18,6 +18,8 @@ describe 'cassandra class' do
 
   cassandra_install_pp = <<-EOS
     class { 'cassandra':
+      package_name                => 'cassandra',
+      package_ensure              => '2.2.3',
       cassandra_9822              => true,
       commitlog_directory_mode    => '0770',
       data_file_directories_mode  => '0770',
@@ -37,12 +39,17 @@ describe 'cassandra class' do
 
   optutils_install_pp = <<-EOS
     class { 'cassandra':
+      package_name                => 'cassandra',
+      package_ensure              => '2.2.3',
       cassandra_9822              => true,
       commitlog_directory_mode    => '0770',
       data_file_directories_mode  => '0770',
       saved_caches_directory_mode => '0770'
     }
-    include '::cassandra::optutils'
+
+    class { 'cassandra::optutils':
+      ensure => '2.2.3',
+    }
   EOS
 
   describe 'Cassandra optional utilities installation.' do
