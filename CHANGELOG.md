@@ -1,5 +1,25 @@
 # Change Log for Puppet Module locp-cassandra
 
+##2015-11-21 - Release 1.9.2 ([diff](https://github.com/locp/cassandra/compare/1.9.1...1.9.2))
+
+### Summary
+
+A bug fix release that deals with some problems with Cassandra 3.
+
+### Features
+
+* N/A
+
+### Bugfixes
+
+* Attempt to mitigate against problems with Debian attempting to install Cassandra 3 when
+  installing the dsc22 package.
+* Also reverted the project home to the GitHub project page.
+
+### Improvements
+
+* N/A
+
 ##2015-11-09 - Release 1.9.1 ([diff](https://github.com/locp/cassandra/compare/1.9.0...1.9.1))
 
 ### Summary
