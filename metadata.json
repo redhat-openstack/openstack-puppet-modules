@@ -5,7 +5,7 @@
   "summary": "Installs Cassandra, DataStax Agent & OpsCenter on RHEL/Ubuntu/Debian.",
   "license": "Apache-2.0",
   "source": "https://github.com/locp/cassandra",
-  "project_page": "http://locp.github.io/cassandra",
+  "project_page": "https://github.com/locp/cassandra",
   "issues_url": "https://github.com/locp/cassandra/issues",
   "tags": [
     "cassandra",
