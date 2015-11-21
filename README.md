@@ -2628,3 +2628,9 @@ to set the batch_size_warn_threshold_in_kb parameter (see
 * [@markasammut](https://github.com/markasammut) also contributed a pull
 request to restart the service if the datastax-agent package is upgraded
 (see [#110](https://github.com/locp/cassandra/pull/110)).
+
+* Issues with the newly released Cassandra 3 were reported by
+[@mantunovic](https://github.com/mantunovic) in
+[#136](https://github.com/locp/cassandra/issues/136) with some excellent
+help and advice from [@al4](https://github.com/al4).  Thanks to both
+Mladen and Alex for your feedback and constructive collaboration.
