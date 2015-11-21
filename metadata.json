@@ -1,6 +1,6 @@
 {
   "name": "locp-cassandra",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "author": "locp",
   "summary": "Installs Cassandra, DataStax Agent & OpsCenter on RHEL/Ubuntu/Debian.",
   "license": "Apache-2.0",
