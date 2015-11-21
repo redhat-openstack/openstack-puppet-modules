@@ -90,7 +90,7 @@ describe 'cassandra' do
         'native_transport_port' => 9042,
         'num_tokens' => 256,
         'package_ensure' => 'present',
-        'package_name' => 'dsc22',
+        #'package_name' => nil,
         'partitioner' => 'org.apache.cassandra.dht.Murmur3Partitioner',
         'permissions_validity_in_ms' => 2000,
         #'prefer_local' => nil,
@@ -144,7 +144,8 @@ describe 'cassandra' do
       {
         :config_file_mode        => '0755',
         :config_path             => '/etc/cassandra',
-        :fail_on_non_suppoted_os => false
+        :fail_on_non_suppoted_os => false,
+        :package_name            => 'cassandra'
       }
     end
 
@@ -161,7 +162,8 @@ describe 'cassandra' do
       {
         :config_file_mode        => '0755',
         :config_path             => '/etc/cassandra',
-        :fail_on_non_supported_os => false
+        :fail_on_non_supported_os => false,
+        :package_name            => 'cassandra'
       }
     end
 
@@ -249,7 +251,7 @@ describe 'cassandra' do
       should contain_service('cassandra').that_subscribes_to('File[/etc/cassandra/cassandra.yaml]') 
       should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.dc]') 
       should contain_service('cassandra').that_subscribes_to('Ini_setting[rackdc.properties.rack]') 
-      should contain_service('cassandra').that_subscribes_to('Package[dsc22]') 
+      should contain_service('cassandra').that_subscribes_to('Package[cassandra]') 
     }
   end
 end

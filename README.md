@@ -41,7 +41,8 @@ A Puppet module to install and manage Cassandra, DataStax Agent & OpsCenter
 
 #### What the Cassandra class affects
 
-* Installs the Cassandra package (default **dsc22**).
+* Installs the Cassandra package (default **cassandra22** on Red Hat and
+  **cassandra** on Debian).
 * Configures settings in *${config_path}/cassandra.yaml*.
 * Optionally ensures that the Cassandra service is enabled and running.
 * On Ubuntu systems, optionally replace ```/etc/init.d/cassandra``` with a
@@ -114,6 +115,27 @@ A basic example is as follows:
 ```
 
 ### Upgrading
+
+#### Changes in 1.9.2
+
+Now that Cassandra 3 is available from the DataStax repositories, there is
+a problem (especially on Debian) with the operating system package manager
+attempting to install Cassandra 3.  This can be mitigated against using
+something similar to the code in this modules acceptance test.  Please note
+that the default Cassandra package name has now been changed from 'dsc'.  See
+the documentation for cassandra::package_name below for details.
+
+```puppet
+ if $::osfamily == 'RedHat' {
+   $version = '2.2.3-1'
+ } else {
+   $version = '2.2.3'
+ }
+
+ class { 'cassandra':
+   package_ensure => $version,
+ }
+```
 
 #### Changes in 1.8.0
 
@@ -905,8 +927,11 @@ The status of the package specified in **package_name**.  Can be
 Default value 'present'
 
 ##### `package_name`
-The name of the Cassandra package.  Must be available from a repository.
-Default value 'dsc22'
+The name of the Cassandra package which must be available from a repository.
+If this is *undef*, it will be changed to **cassandra22** on the Red Hat family
+of operating systems or **cassandra** on Debian.  Otherwise the user can
+specify the package name.
+Default value *undef*
 
 ##### `partitioner`
 This is passed to the
@@ -1405,7 +1430,7 @@ Default value 'present'
 
 ##### `jna_package_name`
 If the default value of *undef* is left as it is, then a package called
-jna or libjna-java will be installed on a Red Hat family or Ubuntu system
+jna or libjna-java will be installed on a Red Hat family or Debian system
 respectively.  Alternatively, one can specify a package that is available in
 a package repository to the node.
 Default value *undef*
@@ -1413,7 +1438,7 @@ Default value *undef*
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
 java-1.8.0-openjdk-headless or openjdk-7-jre-headless will be installed
-on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+on a Red Hat family or Debian system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
 Default value *undef*
@@ -2376,7 +2401,7 @@ Default value 'present'
 ##### `package_name`
 If the default value of *undef* is left as it is, then a package called
 cassandra22-tools or cassandra-tools will be installed
-on a Red Hat family or Ubuntu system respectively.  Alternatively, one
+on a Red Hat family or Debian system respectively.  Alternatively, one
 can specify a package that is available in a package repository to the
 node.
 Default value *undef*
@@ -2559,7 +2584,8 @@ The setting value to be changed to (e.g. **8888**).
 ## Limitations
 
 Tested on the Red Hat family versions 6 and 7, Ubuntu 12.04 and 14.04,
-Debian 7 Puppet (CE) 3.7.5 and DSC 2.
+Debian 7 Puppet (CE) 3.7.5 and DSC 2.  Currently this module does not support
+Cassandra 3 but this is planned for the near future.
 
 From release 1.6.0 of this module, regular updates of the Cassandra 1.X
 template will cease and testing against this template will cease.  Testing
@@ -2602,3 +2628,9 @@ to set the batch_size_warn_threshold_in_kb parameter (see
 * [@markasammut](https://github.com/markasammut) also contributed a pull
 request to restart the service if the datastax-agent package is upgraded
 (see [#110](https://github.com/locp/cassandra/pull/110)).
+
+* Issues with the newly released Cassandra 3 were reported by
+[@mantunovic](https://github.com/mantunovic) in
+[#136](https://github.com/locp/cassandra/issues/136) with some excellent
+help and advice from [@al4](https://github.com/al4).  Thanks to both
+Mladen and Alex for your feedback and constructive collaboration.

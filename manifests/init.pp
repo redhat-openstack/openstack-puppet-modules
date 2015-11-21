@@ -95,7 +95,7 @@ class cassandra (
   $native_transport_port                                = 9042,
   $num_tokens                                           = 256,
   $package_ensure                                       = 'present',
-  $package_name                                         = 'dsc22',
+  $package_name                                         = undef,
   $partitioner
     = 'org.apache.cassandra.dht.Murmur3Partitioner',
   $permissions_update_interval_in_ms                    = undef,
@@ -178,12 +178,24 @@ class cassandra (
       } else {
         $cfg_path = $config_path
       }
+
+      if $package_name == undef {
+        $cassandra_pkg = 'cassandra22'
+      } else {
+        $cassandra_pkg = $package_name
+      }
     }
     'Debian': {
       if $config_path == undef {
         $cfg_path = '/etc/cassandra'
       } else {
         $cfg_path = $config_path
+      }
+
+      if $package_name == undef {
+        $cassandra_pkg = 'cassandra'
+      } else {
+        $cassandra_pkg = $package_name
       }
 
       # A workaround for CASSANDRA-9822
@@ -197,13 +209,14 @@ class cassandra (
       if $supported_os_only {
         fail("OS family ${::osfamily} not supported")
       } else {
+        $cassandra_pkg = $package_name
         $cfg_path = $config_path
         warning("OS family ${::osfamily} not supported")
       }
     }
   }
 
-  package { $package_name:
+  package { $cassandra_pkg:
     ensure => $package_ensure,
   }
 
@@ -215,7 +228,7 @@ class cassandra (
     group   => 'cassandra',
     content => template($cassandra_yaml_tmpl),
     mode    => $config_file_mode,
-    require => Package[$package_name],
+    require => Package[$cassandra_pkg],
   }
 
   file { $commitlog_directory:
@@ -223,7 +236,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $commitlog_directory_mode,
-    require => Package[$package_name]
+    require => Package[$cassandra_pkg]
   }
 
   file { $data_file_directories:
@@ -231,7 +244,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $data_file_directories_mode,
-    require => Package[$package_name]
+    require => Package[$cassandra_pkg]
   }
 
   file { $saved_caches_directory:
@@ -239,7 +252,7 @@ class cassandra (
     owner   => 'cassandra',
     group   => 'cassandra',
     mode    => $saved_caches_directory_mode,
-    require => Package[$package_name]
+    require => Package[$cassandra_pkg]
   }
 
   if $package_ensure != 'absent'
@@ -256,7 +269,7 @@ class cassandra (
           File[$saved_caches_directory],
           Ini_setting['rackdc.properties.dc'],
           Ini_setting['rackdc.properties.rack'],
-          Package[$package_name],
+          Package[$cassandra_pkg],
         ]
       }
     } else {
@@ -275,7 +288,7 @@ class cassandra (
     section => '',
     setting => 'dc',
     value   => $dc,
-    require => Package[$package_name],
+    require => Package[$cassandra_pkg],
   }
 
   ini_setting { 'rackdc.properties.rack':
@@ -283,7 +296,7 @@ class cassandra (
     section => '',
     setting => 'rack',
     value   => $rack,
-    require => Package[$package_name],
+    require => Package[$cassandra_pkg],
   }
 
   if $dc_suffix != undef {
@@ -293,7 +306,7 @@ class cassandra (
         section => '',
         setting => 'dc_suffix',
         value   => $dc_suffix,
-        require => Package[$package_name],
+        require => Package[$cassandra_pkg],
         notify  => Service['cassandra']
       }
     } else {
@@ -302,7 +315,7 @@ class cassandra (
         section => '',
         setting => 'dc_suffix',
         value   => $dc_suffix,
-        require => Package[$package_name],
+        require => Package[$cassandra_pkg],
       }
     }
   }
@@ -314,7 +327,7 @@ class cassandra (
         section => '',
         setting => 'prefer_local',
         value   => $prefer_local,
-        require => Package[$package_name],
+        require => Package[$cassandra_pkg],
         notify  => Service['cassandra']
       }
     } else {
@@ -323,7 +336,7 @@ class cassandra (
         section => '',
         setting => 'prefer_local',
         value   => $prefer_local,
-        require => Package[$package_name],
+        require => Package[$cassandra_pkg],
       }
     }
   }
