@@ -28,7 +28,7 @@ describe 'cassandra' do
       })
     }
     it { should contain_file('/etc/cassandra/cassandra.yaml') }
-    it { should contain_package('dsc22') }
+    it { should contain_package('cassandra') }
     it { is_expected.to contain_service('cassandra') }
     it { is_expected.not_to contain_class('apt') }
     it { is_expected.not_to contain_class('apt::update') }

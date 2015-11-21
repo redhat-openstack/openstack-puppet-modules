@@ -28,7 +28,7 @@ describe 'cassandra' do
         'enable' => 'true'
       })
     }
-    it { should contain_package('dsc22') }
+    it { should contain_package('cassandra22') }
     it { is_expected.not_to contain_yumrepo('datastax') }
     it {
       should contain_ini_setting('rackdc.properties.dc').with({
