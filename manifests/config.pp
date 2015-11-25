@@ -25,4 +25,15 @@ class opendaylight::config {
     # Use a template to populate the content
     content => template('opendaylight/jetty.xml.erb'),
   }
+
+  # Enable or disable ODL OVSDB ML2 L3 forwarding
+  file { 'custom.properties':
+    ensure  => file,
+    path    => '/opt/opendaylight/etc/custom.properties',
+    # Set user:group owners
+    owner   => 'odl',
+    group   => 'odl',
+    # Use a template to populate the content
+    content => template('opendaylight/custom.properties.erb'),
+  }
 }
