@@ -153,23 +153,35 @@
 #
 # [*database_connection*]
 #   (optional) Connection url for the ironic database.
-#   Defaults to: sqlite:////var/lib/ironic/ironic.sqlite
+#   Defaults to: undef
 #
 # [*database_max_retries*]
 #   (optional) Database reconnection retry times.
-#   Defaults to: 10
+#   Defaults to: undef
 #
 # [*database_idle_timeout*]
 #   (optional) Timeout before idle db connections are reaped.
-#   Defaults to: 3600
+#   Defaults to: undef
 #
 # [*database_reconnect_interval*]
 #   (optional) Database reconnection interval in seconds.
-#   Defaults to: 10
+#   Defaults to: undef
 #
 # [*database_retry_interval*]
 #   (optional) Database reconnection interval in seconds.
-#   Defaults to: 10
+#   Defaults to: undef
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to: undef
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to: undef
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to: undef
 #
 # [*glance_api_servers*]
 #   (optional) A list of the glance api servers available to ironic.
@@ -228,11 +240,16 @@ class ironic (
   $qpid_reconnect_interval_min = 0,
   $qpid_reconnect_interval_max = 0,
   $qpid_reconnect_interval     = 0,
-  $database_connection         = 'sqlite:////var/lib/ironic/ovs.sqlite',
-  $database_max_retries        = '10',
-  $database_idle_timeout       = '3600',
-  $database_reconnect_interval = '10',
-  $database_retry_interval     = '10',
+  $use_syslog                  = false,
+  $log_facility                = 'LOG_USER',
+  $database_connection         = undef,
+  $database_max_retries        = undef,
+  $database_idle_timeout       = undef,
+  $database_reconnect_interval = undef,
+  $database_retry_interval     = undef,
+  $database_min_pool_size      = undef,
+  $database_max_pool_size      = undef,
+  $database_max_overflow       = undef,
   $glance_api_servers          = undef,
   $glance_num_retries          = '0',
   $glance_api_insecure         = false,
@@ -242,6 +259,7 @@ class ironic (
 ) {
 
   include ::ironic::logging
+  include ::ironic::db
   include ::ironic::params
 
   if $rabbit_user {
@@ -269,33 +287,7 @@ class ironic (
     notify => Exec['ironic-dbsync'],
   }
 
-  validate_re($database_connection, '(sqlite|mysql|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
   validate_array($enabled_drivers)
-
-  case $database_connection {
-    /mysql:\/\/\S+:\S+@\S+\/\S+/: {
-      $database_backend_package = false
-      require 'mysql::bindings'
-      require 'mysql::bindings::python'
-    }
-    /postgresql:\/\/\S+:\S+@\S+\/\S+/: {
-      $database_backend_package = 'python-psycopg2'
-    }
-    /sqlite:\/\//: {
-      $database_backend_package = 'python-pysqlite2'
-    }
-    default: {
-      fail("Invalid database connection: ${database_connection}")
-    }
-  }
-
-  if $database_backend_package and !defined(Package[$database_backend_package]) {
-    package { 'ironic-database-backend':
-      ensure => present,
-      name   => $database_backend_package,
-      tag    => 'openstack',
-    }
-  }
 
   if is_array($glance_api_servers) {
     ironic_config {
@@ -311,10 +303,6 @@ class ironic (
     'DEFAULT/auth_strategy':           value => $auth_strategy;
     'DEFAULT/rpc_backend':             value => $rpc_backend;
     'DEFAULT/enabled_drivers':         value => join($enabled_drivers, ',');
-    'database/connection':             value => $database_connection, secret => true;
-    'database/idle_timeout':           value => $database_idle_timeout;
-    'database/retry_interval':         value => $database_retry_interval;
-    'database/max_retries':            value => $database_max_retries;
     'glance/glance_num_retries':       value => $glance_num_retries;
     'glance/glance_api_insecure':      value => $glance_api_insecure;
   }
@@ -335,7 +323,7 @@ class ironic (
       'oslo_messaging_rabbit/rabbit_virtual_host': value => $rabbit_virtual_host;
       'oslo_messaging_rabbit/rabbit_use_ssl':      value => $rabbit_use_ssl;
       'DEFAULT/control_exchange':    value => $control_exchange;
-      'DEFAULT/amqp_durable_queues': value => $amqp_durable_queues;
+      'oslo_messaging_rabbit/amqp_durable_queues': value => $amqp_durable_queues;
     }
 
     if $rabbit_hosts {
@@ -382,19 +370,19 @@ class ironic (
 
   if $rpc_backend == 'ironic.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
     ironic_config {
-      'DEFAULT/qpid_hostname':               value => $qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $qpid_port;
-      'DEFAULT/qpid_username':               value => $qpid_username;
-      'DEFAULT/qpid_password':               value => $qpid_password, secret => true;
-      'DEFAULT/qpid_heartbeat':              value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-      'DEFAULT/qpid_reconnect':              value => $qpid_reconnect;
-      'DEFAULT/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
-      'DEFAULT/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
-      'DEFAULT/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'DEFAULT/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'DEFAULT/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
+      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
+      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
+      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/qpid_reconnect':              value => $qpid_reconnect;
+      'oslo_messaging_qpid/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
+      'oslo_messaging_qpid/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
+      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
+      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
+      'oslo_messaging_qpid/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
     }
   }
 
