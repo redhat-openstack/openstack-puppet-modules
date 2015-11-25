@@ -6,8 +6,6 @@ describe 'basic keystone server with resources' do
 
     it 'should work with no errors' do
       pp= <<-EOS
-      Exec { logoutput => 'on_failure' }
-
       # make sure apache is stopped before keystone eventlet
       # in case of wsgi was run before
       class { '::apache':
@@ -15,45 +13,9 @@ describe 'basic keystone server with resources' do
       }
       Service['httpd'] -> Service['keystone']
 
-      # Common resources
-      case $::osfamily {
-        'Debian': {
-          include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'liberty',
-            repo            => 'proposed',
-            package_require => true,
-          }
-        }
-        'RedHat': {
-          class { '::openstack_extras::repo::redhat::redhat':
-            manage_rdo => false,
-            repo_hash => {
-              'openstack-common-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-common-testing/x86_64/os/',
-                'descr'    => 'openstack-common-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-liberty-testing/x86_64/os/',
-                'descr'    => 'openstack-liberty-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-trunk' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
-                'descr'    => 'openstack-liberty-trunk',
-                'gpgcheck' => 'no',
-              },
-            },
-          }
-          package { 'openstack-selinux': ensure => 'latest' }
-        }
-        default: {
-          fail("Unsupported osfamily (${::osfamily})")
-        }
-      }
-
-      class { '::mysql::server': }
+      include ::openstack_integration
+      include ::openstack_integration::repos
+      include ::openstack_integration::mysql
 
       # Keystone resources
       class { '::keystone::client': }
@@ -64,10 +26,9 @@ describe 'basic keystone server with resources' do
       class { '::keystone':
         verbose             => true,
         debug               => true,
-        database_connection => 'mysql://keystone:keystone@127.0.0.1/keystone',
+        database_connection => 'mysql+pymysql://keystone:keystone@127.0.0.1/keystone',
         admin_token         => 'admin_token',
         enabled             => true,
-        default_domain      => 'default_domain',
       }
       # "v2" admin and service
       class { '::keystone::roles::admin':
@@ -99,26 +60,28 @@ describe 'basic keystone server with resources' do
         enabled     => true,
         description => 'Domain for admin v3 users',
       }
-      keystone_tenant { 'servicesv3::service_domain':
+      keystone_tenant { 'servicesv3':
         ensure      => present,
         enabled     => true,
         description => 'Tenant for the openstack services',
+        domain      => 'service_domain',
       }
       keystone_tenant { 'openstackv3::admin_domain':
         ensure      => present,
         enabled     => true,
-        description => 'admin tenant',
+        description => 'admin tenant'
       }
       keystone_user { 'adminv3::admin_domain':
         ensure      => present,
         enabled     => true,
-        tenant      => 'openstackv3::admin_domain',
         email       => 'test@example.tld',
         password    => 'a_big_secret',
       }
-      keystone_user_role { 'adminv3::admin_domain@openstackv3::admin_domain':
-        ensure => present,
-        roles  => ['admin'],
+      keystone_user_role { 'adminv3@openstackv3':
+        project_domain => 'admin_domain',
+        user_domain    => 'admin_domain',
+        ensure         => present,
+        roles          => ['admin'],
       }
       # service user exists only in the service_domain - must
       # use v3 api
@@ -228,11 +191,11 @@ describe 'basic keystone server with resources' do
     end
     describe 'with v2 admin with v3 credentials' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username admin --os-password a_big_secret --os-project-name openstack --os-user-domain-name default_domain --os-project-domain-name default_domain'
+                       '--os-username admin --os-password a_big_secret --os-project-name openstack --os-user-domain-name Default --os-project-domain-name Default'
     end
     describe "with v2 service with v3 credentials" do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username beaker-ci --os-password secret --os-project-name services --os-user-domain-name default_domain --os-project-domain-name default_domain'
+                       '--os-username beaker-ci --os-password secret --os-project-name services --os-user-domain-name Default --os-project-domain-name Default'
     end
     describe 'with v3 admin with v3 credentials' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
@@ -242,6 +205,78 @@ describe 'basic keystone server with resources' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
                        '--os-username beaker-civ3 --os-password secret --os-project-name servicesv3 --os-user-domain-name service_domain --os-project-domain-name service_domain'
     end
+  end
+  describe 'composite namevar quick test' do
+    context 'similar resources different naming' do
+      let(:pp) do
+        <<-EOM
+        keystone_tenant { 'openstackv3':
+          ensure      => present,
+          enabled     => true,
+          description => 'admin tenant',
+          domain      => 'admin_domain'
+        }
+        keystone_user { 'adminv3::useless_when_the_domain_is_set':
+          ensure      => present,
+          enabled     => true,
+          email       => 'test@example.tld',
+          password    => 'a_big_secret',
+          domain      => 'admin_domain'
+        }
+        keystone_user_role { 'adminv3::admin_domain@openstackv3::admin_domain':
+          ensure         => present,
+          roles          => ['admin'],
+        }
+        EOM
+      end
+      it 'should not do any modification' do
+        apply_manifest(pp, :catch_changes => true)
+      end
+    end
+  end
 
+  describe 'composite namevar for keystone_service and keystone_endpoint' do
+    let(:pp) do
+      <<-EOM
+      keystone_service { 'service_1::type_1': ensure => present }
+      keystone_service { 'service_1': type => 'type_2', ensure => present }
+      keystone_endpoint { 'RegionOne/service_1::type_2':
+        ensure => present,
+        public_url => 'http://public_service1_type2',
+        internal_url => 'http://internal_service1_type2',
+        admin_url => 'http://admin_service1_type2'
+      }
+      keystone_endpoint { 'service_1':
+        ensure => present,
+        region => 'RegionOne',
+        type => 'type_1',
+        public_url   => 'http://public_url/',
+        internal_url => 'http://public_url/',
+        admin_url    => 'http://public_url/'
+      }
+      EOM
+    end
+    it 'should be possible to create two services different only by their type' do
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+    describe 'puppet service are created' do
+      it 'for service' do
+        shell('puppet resource keystone_service') do |result|
+          expect(result.stdout)
+            .to include_regexp([/keystone_service { 'service_1::type_1':/,
+                                /keystone_service { 'service_1::type_2':/])
+        end
+      end
+    end
+    describe 'puppet endpoints are created' do
+      it 'for service' do
+        shell('puppet resource keystone_endpoint') do |result|
+          expect(result.stdout)
+            .to include_regexp([/keystone_endpoint { 'RegionOne\/service_1::type_1':/,
+                                /keystone_endpoint { 'RegionOne\/service_1::type_2':/])
+        end
+      end
+    end
   end
 end

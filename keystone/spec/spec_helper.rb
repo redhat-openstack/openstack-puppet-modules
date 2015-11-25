@@ -18,8 +18,10 @@ def setup_provider_tests
       @tenant_hash    = nil
       @admin_token    = nil
       @keystone_file  = nil
-      Puppet::Provider::Keystone.default_domain_id = nil
+      Puppet::Provider::Keystone.class_variable_set('@@default_domain_id', nil)
       @domain_hash = nil
     end
   end
 end
+
+Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }

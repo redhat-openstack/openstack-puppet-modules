@@ -72,7 +72,7 @@ class n1k_vsm::pkgprep_ovscfg
         #Gather info from the port/bridge including IP if needed
         $_phy_if_bridge     = regsubst($n1k_vsm::phy_if_bridge, '[.:-]+', '_', 'G')
         $_phy_ip_addr       = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
-        if $_phy_ip_addr != '' {
+        if $_phy_ip_addr != '' and !($n1k_vsm::existing_bridge) {
           $phy_ip_addr      = inline_template("<%= scope.lookupvar('::ipaddress_${_phy_if_bridge}') %>")
           $phy_ip_mask      = inline_template("<%= scope.lookupvar('::netmask_${_phy_if_bridge}') %>")
           $gw_intf          = $n1k_vsm::phy_gateway

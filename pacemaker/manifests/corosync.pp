@@ -20,9 +20,12 @@
 #   Number of tries for settle.
 # [*settle_try_sleep*]
 #   Time to sleep after each seetle try.
+# [*remote_authkey*]
+#   Value of /etc/pacemaker/authkey.  Useful for pacemaker_remote.
 # [*cluster_setup_extras*]
 #   Hash additional configuration when pcs cluster setup is run
 #   Example : {'--token' => '10000', '--ipv6' => '', '--join' => '100' }
+
 
 class pacemaker::corosync(
   $cluster_members,
@@ -33,6 +36,7 @@ class pacemaker::corosync(
   $settle_timeout       = '3600',
   $settle_tries         = '360',
   $settle_try_sleep     = '10',
+  $remote_authkey       = undef,
   $cluster_setup_extras = {},
 ) inherits pacemaker {
   include ::pacemaker::params
@@ -103,6 +107,29 @@ class pacemaker::corosync(
     }
     Exec["Start Cluster $cluster_name"] ->
       Exec["wait-for-settle"]
+  }
+
+  if $remote_authkey {
+    file { 'etc-pacemaker':
+      ensure => directory,
+      path    => '/etc/pacemaker',
+      owner   => 'hacluster',
+      group   => 'haclient',
+      mode    => '0750',
+    } ->
+    file { 'etc-pacemaker-authkey':
+      path    => '/etc/pacemaker/authkey',
+      owner   => 'hacluster',
+      group   => 'haclient',
+      mode    => '0640',
+      content => $remote_authkey,
+    }
+    if $setup_cluster {
+      File['etc-pacemaker-authkey'] -> Exec["Create Cluster $cluster_name"]
+    }
+    if $pcsd_mode {
+      File['etc-pacemaker-authkey'] -> Service['pcsd']
+    }
   }
 
   exec {"wait-for-settle":

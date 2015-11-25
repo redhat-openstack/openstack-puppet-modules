@@ -38,7 +38,7 @@ RSpec.configure do |c|
         zuul_clone_cmd += "git://git.openstack.org #{repo}"
         on host, zuul_clone_cmd
       else
-        on host, "git clone https://git.openstack.org/#{repo} #{repo}"
+        on host, "git clone https://git.openstack.org/#{repo} -b stable/liberty #{repo}"
       end
 
       on host, "ZUUL_REF=#{zuul_ref} ZUUL_BRANCH=#{zuul_branch} ZUUL_URL=#{zuul_url} bash #{repo}/install_modules.sh"
@@ -54,3 +54,5 @@ RSpec.configure do |c|
     end
   end
 end
+
+Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }

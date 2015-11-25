@@ -50,6 +50,8 @@ class heat::db::mysql(
   $mysql_module  = undef
 ) {
 
+  include ::heat::deps
+
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
   }
@@ -66,5 +68,7 @@ class heat::db::mysql(
     allowed_hosts => $allowed_hosts,
   }
 
-  ::Openstacklib::Db::Mysql['heat'] ~> Exec<| title == 'heat-dbsync' |>
+  Anchor['heat::db::begin']
+  ~> Class['heat::db::mysql']
+  ~> Anchor['heat::db::end']
 }

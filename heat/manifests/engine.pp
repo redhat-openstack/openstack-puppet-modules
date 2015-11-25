@@ -93,6 +93,8 @@ class heat::engine (
   $trusts_delegated_roles              = ['heat_stack_owner'],
 ) {
 
+  include ::heat::deps
+
   # Validate Heat Engine AES key
   # must be either 16, 24, or 32 bytes long
   # https://bugs.launchpad.net/heat/+bug/1415887
@@ -105,9 +107,6 @@ class heat::engine (
   include ::heat
   include ::heat::params
 
-  Heat_config<||> ~> Service['heat-engine']
-
-  Package['heat-engine'] -> Service['heat-engine']
   package { 'heat-engine':
     ensure => $package_ensure,
     name   => $::heat::params::engine_package_name,
@@ -128,9 +127,6 @@ class heat::engine (
     enable     => $enabled,
     hasstatus  => true,
     hasrestart => true,
-    require    => [ File['/etc/heat/heat.conf'],
-                    Package['heat-common'],
-                    Package['heat-engine']],
     tag        => 'heat-service',
   }
 

@@ -6,44 +6,8 @@ describe 'horizon class' do
 
     it 'should work with no errors' do
       pp= <<-EOS
-      Exec { logoutput => 'on_failure' }
-
-      case $::osfamily {
-        'Debian': {
-          include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'liberty',
-            repo            => 'proposed',
-            package_require => true,
-          }
-        }
-        'RedHat': {
-          class { '::openstack_extras::repo::redhat::redhat':
-            manage_rdo => false,
-            repo_hash => {
-              'openstack-common-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-common-testing/x86_64/os/',
-                'descr'    => 'openstack-common-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-liberty-testing/x86_64/os/',
-                'descr'    => 'openstack-liberty-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-trunk' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
-                'descr'    => 'openstack-liberty-trunk',
-                'gpgcheck' => 'no',
-              },
-            },
-          }
-          package { 'openstack-selinux': ensure => 'latest' }
-        }
-        default: {
-          fail("Unsupported osfamily (${::osfamily})")
-        }
-      }
+      include ::openstack_integration
+      include ::openstack_integration::repos
 
       class { '::horizon':
         secret_key       => 'big_secret',

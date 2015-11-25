@@ -9,14 +9,15 @@ Puppet::Type.type(:keystone_user).provide(
 
   @credentials = Puppet::Provider::Openstack::CredentialsV3.new
 
+  include PuppetX::Keystone::CompositeNamevar::Helpers
+
   def initialize(value={})
     super(value)
     @property_flush = {}
   end
 
   def create
-    # see if resource[:domain], or user specified as user::domain
-    user_name, user_domain = self.class.name_and_domain(resource[:name], resource[:domain])
+    user_name, user_domain = resource[:name], resource[:domain]
     properties = [user_name]
     if resource[:enabled] == :true
       properties << '--enable'
@@ -36,13 +37,6 @@ Puppet::Type.type(:keystone_user).provide(
     @property_hash = self.class.request('user', 'create', properties)
     @property_hash[:name] = resource[:name]
     @property_hash[:domain] = user_domain
-
-    if resource[:tenant]
-      # DEPRECATED - To be removed in next release (Liberty)
-      # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-      set_project(resource[:tenant])
-      @property_hash[:tenant] = resource[:tenant]
-    end
     @property_hash[:ensure] = :present
   end
 
@@ -61,12 +55,14 @@ Puppet::Type.type(:keystone_user).provide(
       options << '--email'    << resource[:email]    if @property_flush[:email]
       # project handled in tenant= separately
       unless options.empty?
-        options << @property_hash[:id]
+        options << id
         self.class.request('user', 'set', options)
       end
       @property_flush.clear
     end
   end
+
+  mk_resource_methods
 
   def exists?
     @property_hash[:ensure] == :present
@@ -81,16 +77,8 @@ Puppet::Type.type(:keystone_user).provide(
     @property_flush[:enabled] = value
   end
 
-  def email
-    @property_hash[:email]
-  end
-
   def email=(value)
     @property_flush[:email] = value
-  end
-
-  def id
-    @property_hash[:id]
   end
 
   def password
@@ -111,7 +99,7 @@ Puppet::Type.type(:keystone_user).provide(
       # NOTE: The only reason we use username is so that the openstack provider
       # will know we are doing v3password auth - otherwise, it is not used.  The
       # user_id uniquely identifies the user including domain.
-      credentials.username, unused = self.class.name_and_domain(resource[:name], domain)
+      credentials.username = resource[:name]
       # Need to specify a project id to get a project scoped token.  List
       # all of the projects for the user, and use the id from the first one.
       projects = self.class.request('project', 'list', ['--user', id, '--long'])
@@ -144,76 +132,6 @@ Puppet::Type.type(:keystone_user).provide(
     @property_flush[:replace_password] = value
   end
 
-  def find_project_for_user(projname, project_id = nil)
-    # DEPRECATED - To be removed in next release (Liberty)
-    # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-    user_name, user_domain = self.class.name_and_domain(resource[:name], resource[:domain])
-    project_name, project_domain = self.class.name_and_domain(projname, nil, user_domain)
-    self.class.request('project', 'list', ['--user', id, '--long']).each do |project|
-      if (project_id == project[:id]) ||
-         ((projname == project_name) && (project_domain == self.class.domain_name_from_id(project[:domain_id])))
-        return projname
-      end
-    end
-    return nil
-  end
-
-  def set_project(name)
-    # DEPRECATED - To be removed in next release (Liberty)
-    # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-    project_name, domain_name = self.class.name_and_domain(name)
-    project = self.class.fetch_project(project_name, domain_name)
-    project_id = project ? project[:id] : nil
-    unless project_id
-      raise(Puppet::Error, "No project found for name #{name} and domain #{domain}")
-    end
-    if project_id  == :absent
-      raise(Puppet::Error, "Project #{newproject} missing when creating user #{resource[:name]}")
-    end
-    # Currently the only way to assign a user to a tenant not using user-create
-    # is to use role-add - this means we also need a role - there is usual
-    # a default role called _member_ which can be used for this purpose.  What
-    # usually happens in a puppet module is that immediately after calling
-    # keystone_user, the module will then assign a role to that user.  It is
-    # ok for a user to have the _member_ role and another role.
-    default_role = "_member_"
-    begin
-      self.class.request('role', 'show', default_role)
-    rescue
-      self.class.request('role', 'create', default_role)
-    end
-    # finally, assign the user to the project with the role
-    self.class.request('role', 'add', [default_role, '--project', project_id, '--user', id])
-    name
-  end
-
-  # DEPRECATED - To be removed in next release (Liberty)
-  # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-  def tenant=(value)
-    @property_hash[:tenant] = set_project(resource[:tenant])
-  end
-
-  # DEPRECATED - To be removed in next release (Liberty)
-  # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-  def tenant
-    return resource[:tenant] if sym_to_bool(resource[:ignore_default_tenant])
-    # use the one returned from instances
-    tenant_name = @property_hash[:project]
-    if tenant_name.nil? or tenant_name.empty?
-      # if none (i.e. ldap backend) use the given one
-      tenant_name = resource[:tenant]
-    else
-      return tenant_name
-    end
-    if tenant_name.nil? or tenant_name.empty?
-      return nil # nothing found, nothing given
-    end
-     project_name, domain_name = self.class.name_and_domain(tenant_name)
-     project = self.class.fetch_project(project_name, domain_name)
-     project_id = project ? project[:id] : nil
-     find_project_for_user(tenant_name, project_id)
-  end
-
   def domain
     @property_hash[:domain]
   end
@@ -223,12 +141,14 @@ Puppet::Type.type(:keystone_user).provide(
   end
 
   def self.instances
+    if default_domain_changed
+      warning(default_domain_deprecation_message)
+    end
     users = request('user', 'list', ['--long'])
     users.collect do |user|
       domain_name = domain_name_from_id(user[:domain])
-      user_name = set_domain_for_name(user[:name], domain_name)
       new(
-        :name        => user_name,
+        :name        => resource_to_name(domain_name, user[:name]),
         :ensure      => :present,
         :enabled     => user[:enabled].downcase.chomp == 'true' ? true : false,
         :password    => user[:password],
@@ -242,19 +162,10 @@ Puppet::Type.type(:keystone_user).provide(
   end
 
   def self.prefetch(resources)
-    users = instances
-    resources.each do |resname, resource|
-      # resname may be specified as just "name" or "name::domain"
-      name, resdomain = name_and_domain(resname, resource[:domain])
-      provider = users.find do |user|
-        # have a match if the full instance name matches the full resource name, OR
-        # the base resource name matches the base instance name, and the
-        # resource domain matches the instance domain
-        username, user_domain = name_and_domain(user.name, user.domain)
-        (user.name == resname) ||
-          ((username == name) && (user_domain == resdomain))
-      end
-      resource.provider = provider if provider
+    prefetch_composite(resources) do |sorted_namevars|
+      domain = sorted_namevars[0]
+      name   = sorted_namevars[1]
+      resource_to_name(domain, name)
     end
   end
 

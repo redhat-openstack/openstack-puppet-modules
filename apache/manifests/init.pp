@@ -55,6 +55,7 @@ class apache (
   $conf_template          = $::apache::params::conf_template,
   $servername             = $::apache::params::servername,
   $pidfile                = $::apache::params::pidfile,
+  $rewrite_lock           = undef,
   $manage_user            = true,
   $manage_group           = true,
   $user                   = $::apache::params::user,
@@ -76,6 +77,7 @@ class apache (
   $package_ensure         = 'installed',
   $use_optional_includes  = $::apache::params::use_optional_includes,
   $use_systemd            = $::apache::params::use_systemd,
+  $mime_types_additional  = $::apache::params::mime_types_additional,
 ) inherits ::apache::params {
   validate_bool($default_vhost)
   validate_bool($default_ssl_vhost)
@@ -296,6 +298,10 @@ class apache (
       default   => false
     }
 
+    if $rewrite_lock {
+      validate_absolute_path($rewrite_lock)
+    }
+
     # Template uses:
     # - $pidfile
     # - $user
@@ -317,11 +323,12 @@ class apache (
     # - $server_tokens
     # - $server_signature
     # - $trace_enable
+    # - $rewrite_lock
     file { "${::apache::conf_dir}/${::apache::params::conf_file}":
       ensure  => file,
       content => template($conf_template),
       notify  => Class['Apache::Service'],
-      require => Package['httpd'],
+      require => [Package['httpd'], File[$ports_file]],
     }
 
     # preserve back-wards compatibility to the times when default_mods was

@@ -4,12 +4,32 @@
 #
 # [*sql_connection*]
 #    Url used to connect to database.
-#    (Optional) Defaults to
-#    'sqlite:////var/lib/manila/manila.sqlite'
+#    (Optional) Defaults to undef.
 #
 # [*sql_idle_timeout*]
 #   Timeout when db connections should be reaped.
-#   (Optional) Defaults to 3600.
+#   (Optional) Defaults to undef.
+#
+# [*database_retry_interval*]
+#   (optional) Interval between retries of opening a database connection.
+#   (Defaults to undef)
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_retries*]
+#   Maximum db connection retries during startup.
+#   Setting -1 implies an infinite retry count.
+#   (Optional) Defaults to undef.
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to undef.
 #
 # [*state_path*]
 #   (optional) Directory for storing state.
@@ -248,8 +268,13 @@
 
 
 class manila (
-  $sql_connection              = 'sqlite:////var/lib/manila/manila.sqlite',
-  $sql_idle_timeout            = '3600',
+  $sql_connection              = undef,
+  $sql_idle_timeout            = undef,
+  $database_max_retries        = undef,
+  $database_retry_interval     = undef,
+  $database_min_pool_size      = undef,
+  $database_max_pool_size      = undef,
+  $database_max_overflow       = undef,
   $rpc_backend                 = 'rabbit',
   $control_exchange            = 'openstack',
   $notification_driver         = 'messaging',
@@ -308,6 +333,7 @@ class manila (
   $amqp_ssl_key_password       = undef,
 ) {
 
+  include ::manila::db
   include ::manila::logging
   include ::manila::params
 
@@ -498,8 +524,6 @@ class manila (
 
 
   manila_config {
-    'DEFAULT/sql_connection':            value => $sql_connection, secret => true;
-    'DEFAULT/sql_idle_timeout':          value => $sql_idle_timeout;
     'DEFAULT/api_paste_config':          value => $api_paste_config;
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
@@ -507,17 +531,6 @@ class manila (
     'DEFAULT/notification_driver':       value => $notification_driver;
     'DEFAULT/state_path':                value => $state_path;
     'oslo_concurrency/lock_path':        value => $lock_path;
-  }
-
-  if($sql_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
-    require 'mysql::bindings'
-    require 'mysql::bindings::python'
-  } elsif($sql_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
-
-  } elsif($sql_connection =~ /sqlite:\/\//) {
-
-  } else {
-    fail("Invalid db connection ${sql_connection}")
   }
 
   # SSL Options

@@ -7,7 +7,9 @@ describe 'heat::db::postgresql' do
   end
 
   let :pre_condition do
-    'include postgresql::server'
+    'include ::postgresql::server
+     include ::heat
+    '
   end
 
   context 'on a RedHat osfamily' do
@@ -34,12 +36,12 @@ describe 'heat::db::postgresql' do
 
   context 'on a Debian osfamily' do
     let :facts do
-      {
+      @default_facts.merge({
         :operatingsystemrelease => '7.8',
         :operatingsystem        => 'Debian',
         :osfamily               => 'Debian',
         :concat_basedir => '/var/lib/puppet/concat'
-      }
+      })
     end
 
     context 'with only required parameters' do

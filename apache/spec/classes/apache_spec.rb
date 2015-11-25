@@ -156,23 +156,23 @@ describe 'apache', :type => :class do
             :apache_version => '2.2',
           }
         end
-    
+
        context "when default_type => 'none'" do
           let :params do
             { :default_type => 'none' }
           end
-    
+
           it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^DefaultType none$} }
         end
         context "when default_type => 'text/plain'" do
           let :params do
             { :default_type => 'text/plain' }
           end
-    
+
           it { is_expected.to contain_file("/etc/apache2/apache2.conf").with_content %r{^DefaultType text/plain$} }
         end
       end
-   
+
       context "with Apache version >= 2.4" do
         let :params do
           {
@@ -235,6 +235,18 @@ describe 'apache', :type => :class do
       end
     end
 
+    context "8" do
+      let :facts do
+        super().merge({
+          :lsbdistcodename        => 'jessie',
+          :operatingsystemrelease => '8'
+        })
+      end
+      it { is_expected.to contain_file("/var/www/html").with(
+        'ensure'  => 'directory'
+         )
+        }
+      end
     context "on Ubuntu" do
       let :facts do
         super().merge({
@@ -242,6 +254,18 @@ describe 'apache', :type => :class do
         })
       end
 
+      context "14.04" do
+        let :facts do
+          super().merge({
+            :lsbdistrelease         => '14.04',
+            :operatingsystemrelease => '14.04'
+          })
+        end
+        it { is_expected.to contain_file("/var/www/html").with(
+          'ensure'  => 'directory'
+          )
+        }
+      end
       context "13.10" do
         let :facts do
           super().merge({
@@ -388,6 +412,37 @@ describe 'apache', :type => :class do
         it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^IncludeOptional "/etc/httpd/conf\.d/\*\.conf"$} }
       end
 
+      context "with Apache version < 2.4" do
+        let :params do
+          {
+            :apache_version => '2.2',
+            :rewrite_lock => '/var/lock/subsys/rewrite-lock'
+          }
+        end
+
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").with_content %r{^RewriteLock /var/lock/subsys/rewrite-lock$} }
+      end
+
+      context "with Apache version < 2.4" do
+        let :params do
+          {
+            :apache_version => '2.2'
+          }
+        end
+
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").without_content %r{^RewriteLock [.]*$} }
+      end
+
+      context "with Apache version >= 2.4" do
+        let :params do
+          {
+            :apache_version => '2.4',
+            :rewrite_lock => '/var/lock/subsys/rewrite-lock'
+          }
+        end
+        it { is_expected.to contain_file("/etc/httpd/conf/httpd.conf").without_content %r{^RewriteLock [.]*$} }
+      end
+
       context "when specifying slash encoding behaviour" do
         let :params do
           { :allow_encoded_slashes => 'nodecode' }
@@ -449,7 +504,7 @@ describe 'apache', :type => :class do
       it { is_expected.to contain_file("/opt/rh/root/etc/httpd/conf/httpd.conf").with(
         'ensure'  => 'file',
         'notify'  => 'Class[Apache::Service]',
-        'require' => 'Package[httpd]'
+        'require' => ['Package[httpd]', 'File[/etc/httpd/conf/ports.conf]'],
       ) }
     end
 

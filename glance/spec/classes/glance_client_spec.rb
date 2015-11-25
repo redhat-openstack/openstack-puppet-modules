@@ -14,14 +14,19 @@ describe 'glance::client' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily       => 'Debian',
+      })
     end
     include_examples 'glance client'
   end
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7',
+      })
     end
     include_examples 'glance client'
   end

@@ -3,13 +3,8 @@
 #
 class heat::db::sync {
 
+  include ::heat::deps
   include ::heat::params
-
-  Package <| tag == 'heat-package' |> ~> Exec['heat-dbsync']
-  Exec['heat-dbsync'] ~> Service <| tag == 'heat-service' |>
-
-  Heat_config<||> -> Exec['heat-dbsync']
-  Heat_config<| title == 'database/connection' |> ~> Exec['heat-dbsync']
 
   exec { 'heat-dbsync':
     command     => $::heat::params::dbsync_command,
@@ -17,6 +12,11 @@ class heat::db::sync {
     user        => 'heat',
     refreshonly => true,
     logoutput   => on_failure,
+    subscribe   => [
+      Anchor['heat::install::end'],
+      Anchor['heat::config::end'],
+      Anchor['heat::dbsync::begin']
+    ],
+    notify      => Anchor['heat::dbsync::end'],
   }
-
 }

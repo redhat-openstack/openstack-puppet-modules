@@ -25,6 +25,7 @@ class puppet::params::repo::yum {
 		#6.4 => '6.4',
 		'6.5' => '6',
 		'7.0.1406' => '7',
+		'7.1' => '7',
 		default => "${operatingsystemrelease}",
 	}
 

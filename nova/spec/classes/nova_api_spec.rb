@@ -56,7 +56,10 @@ describe 'nova::api' do
           'keystone_authtoken/admin_password').with_value('passw0rd').with_secret(true)
       end
 
+      it { is_expected.to contain_nova_config('DEFAULT/instance_name_template').with_ensure('absent')}
+
       it 'configures various stuff' do
+        is_expected.to contain_nova_config('DEFAULT/api_paste_config').with('value' => 'api-paste.ini')
         is_expected.to contain_nova_config('DEFAULT/ec2_listen').with('value' => '0.0.0.0')
         is_expected.to contain_nova_config('DEFAULT/ec2_listen_port').with('value' => '8773')
         is_expected.to contain_nova_config('DEFAULT/osapi_compute_listen').with('value' => '0.0.0.0')
@@ -68,7 +71,7 @@ describe 'nova::api' do
         is_expected.to contain_nova_config('DEFAULT/ec2_workers').with('value' => '5')
         is_expected.to contain_nova_config('DEFAULT/metadata_workers').with('value' => '5')
         is_expected.to contain_nova_config('DEFAULT/default_floating_pool').with('value' => 'nova')
-        is_expected.to contain_nova_config('cinder/catalog_info').with('value' => 'volumev2:cinderv2:publicURL')
+        is_expected.to contain_nova_config('DEFAULT/fping_path').with('value' => '/usr/sbin/fping')
       end
 
       it 'do not configure v3 api' do
@@ -108,7 +111,6 @@ describe 'nova::api' do
           :metadata_workers                     => 2,
           :default_floating_pool                => 'public',
           :osapi_v3                             => true,
-          :cinder_catalog_info                  => 'volumev2:cinderv2:internalURL',
           :keystone_ec2_url                     => 'https://example.com:5000/v2.0/ec2tokens',
           :pci_alias                            => "[{\"vendor_id\":\"8086\",\"product_id\":\"0126\",\"name\":\"graphic_card\"},{\"vendor_id\":\"9096\",\"product_id\":\"1520\",\"name\":\"network_card\"}]"
         })
@@ -167,7 +169,6 @@ describe 'nova::api' do
         is_expected.to contain_nova_config('neutron/service_metadata_proxy').with('value' => true)
         is_expected.to contain_nova_config('neutron/metadata_proxy_shared_secret').with('value' => 'secrete')
         is_expected.to contain_nova_config('DEFAULT/keystone_ec2_url').with('value' => 'https://example.com:5000/v2.0/ec2tokens')
-        is_expected.to contain_nova_config('cinder/catalog_info').with('value' => 'volumev2:cinderv2:internalURL')
       end
 
       it 'configure nova api v3' do
@@ -271,6 +272,17 @@ describe 'nova::api' do
       it { is_expected.to contain_nova_config('database/connection').with_value('mysql://user:pass@db/db').with_secret(true) }
       it { is_expected.to contain_nova_config('database/slave_connection').with_value('mysql://user:pass@slave/db').with_secret(true) }
       it { is_expected.to contain_nova_config('database/idle_timeout').with_value('30') }
+    end
+
+    context 'with custom instance_name_template' do
+      before do
+        params.merge!({
+          :instance_name_template => 'instance-%08x',
+        })
+      end
+      it 'configures instance_name_template' do
+        is_expected.to contain_nova_config('DEFAULT/instance_name_template').with_value('instance-%08x');
+      end
     end
 
     context 'with custom keystone identity_uri' do

@@ -1,3 +1,83 @@
+##2015-11-24 - 7.0.0
+###Summary
+
+This is a backwards-incompatible major release for OpenStack Liberty.
+
+####Backwards-incompatible changes
+- move openstackclient install to keystone::client
+- add composite namevar for tenant, user, user_role (see examples/*.pp and
+  documentation)
+- remove deprecated mysql_module
+- deletes tenant parameter from keystone_user (it was deprecated)
+
+####Features
+- add support for RabbitMQ connection heartbeat
+- add tag to package and service resources
+- validate service_identity resources
+- add an ability to manage use_stderr parameter
+- clarify the origin of provider warning messages
+- reflect provider change in puppet-openstacklib
+- adding wsgi log formatting
+- if running eventlet, send deprecation warning
+- authentication URLs and endpoint clarity re-factor
+- add additional memcache configuration options
+- add custom fragment to vhost
+- keystone_endpoint provider for Keystone v3 api
+- db: use postgresql lib class for psycopg package
+- replace indirection calls which should help speed up performance
+  when you have many users, tenants, and role assignments
+- put all the logging related parameters to the logging class
+- K2K federation support
+- domain checking to deprecate no domain name usage:
+  (all Keystone domain scoped resources should have a domain specified
+  e.g. keystone_user { 'name': domain => 'some_domain' } )
+- allow customization of db sync command line
+- introduce keystone::db class
+- endpoints can be APIs version-less
+- keystone_endpoint match service by name/type.
+
+####Bugfixes
+- fix module install reference
+- rely on autorequire for config resource ordering
+- use Ubuntu provided wsgi.py for keystone.wsgi
+- fix default domain
+- fix *_workers config settings
+- wsgi: make sure keystone service is stopped before starting httpd
+
+####Maintenance
+- acceptance: bump to Liberty release
+- initial msync run for all Puppet OpenStack modules
+- acceptance/eventlet: make sure apache is stopped
+- try to use zuul-cloner to prepare fixtures
+
+##2015-10-15 - 6.1.0
+###Summary
+
+This is a features and bugfixes release in the Kilo series.
+
+####Features
+- Allow to change archive destination
+- admin_user_domain and admin_project_domain can now be equal
+
+
+####Bugfixes
+- Allow to use the wrong resource name for Keystone_user and Keystone_tenant
+- Allow to use the wrong value for default_domain_id
+- Fixes get_section for future use
+- Domain name from id lookups return empty
+- Fixes get_section for future use
+- WSGI: use real service name in restart_keystone Exec
+- v3: make sure default domain is created before any other resource
+- Use an Anchor when service is managed
+
+####Maintenance
+- Authentication URLs and endpoint clarity re-factor
+- Purely cosmetic change on keystone provider
+- Fix rspec 3.x syntax
+- acceptance: run keystone in a WSGI server
+- acceptance: checkout stable/kilo puppet modules
+
+
 ##2015-07-08 - 6.0.0
 ###Summary
 

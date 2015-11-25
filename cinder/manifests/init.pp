@@ -18,7 +18,7 @@
 #
 # [*rpc_backend*]
 #   (Optional) Use these options to configure the RabbitMQ message system.
-#   Defaults to 'cinder.openstack.common.rpc.impl_kombu'
+#   Defaults to 'rabbit'
 #
 # [*control_exchange*]
 #   (Optional)
@@ -87,6 +87,11 @@
 #   available on some distributions.
 #   Defaults to $::os_service_default
 #
+# [*kombu_reconnect_delay*]
+#   (optional) How long to wait before reconnecting in response to an AMQP
+#   consumer cancel notification.
+#   Defaults to $::os_service_default
+#
 # [*amqp_durable_queues*]
 #   Use durable queues in amqp.
 #   (Optional) Defaults to false.
@@ -98,6 +103,10 @@
 # [*qpid_port*]
 #   (Optional) Port for qpid server.
 #   Defaults to '5672'.
+#
+# [*qpid_hosts*]
+#   (Optional) Qpid HA cluster host:port pairs. (list value)
+#   Defaults to false
 #
 # [*qpid_username*]
 #   (Optional) Username to use when connecting to qpid.
@@ -178,8 +187,9 @@
 #
 # [*log_dir*]
 #   (optional) Directory where logs should be stored.
-#   If set to boolean false, it will not log to any directory.
-#   Defaults to undef.
+#   If set to boolean false or the $::os_service_default, it will not log to
+#   any directory.
+#   Defaults to '/var/log/cinder'.
 #
 # [*use_ssl*]
 #   (optional) Enable SSL on the API server
@@ -234,7 +244,7 @@ class cinder (
   $database_max_retries               = undef,
   $database_retry_interval            = undef,
   $database_max_overflow              = undef,
-  $rpc_backend                        = 'cinder.openstack.common.rpc.impl_kombu',
+  $rpc_backend                        = 'rabbit',
   $control_exchange                   = 'openstack',
   $rabbit_host                        = '127.0.0.1',
   $rabbit_port                        = 5672,
@@ -249,9 +259,11 @@ class cinder (
   $kombu_ssl_certfile                 = $::os_service_default,
   $kombu_ssl_keyfile                  = $::os_service_default,
   $kombu_ssl_version                  = $::os_service_default,
+  $kombu_reconnect_delay              = $::os_service_default,
   $amqp_durable_queues                = false,
   $qpid_hostname                      = 'localhost',
   $qpid_port                          = '5672',
+  $qpid_hosts                         = false,
   $qpid_username                      = 'guest',
   $qpid_password                      = false,
   $qpid_sasl_mechanisms               = false,
@@ -273,7 +285,7 @@ class cinder (
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
-  $log_dir                            = undef,
+  $log_dir                            = '/var/log/cinder',
   $verbose                            = undef,
   $debug                              = undef,
   $storage_availability_zone          = 'nova',
@@ -307,7 +319,7 @@ class cinder (
     require => Anchor['cinder-start'],
   }
 
-  if $rpc_backend == 'cinder.openstack.common.rpc.impl_kombu' {
+  if $rpc_backend == 'cinder.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
 
     if ! $rabbit_password {
       fail('Please specify a rabbit_password parameter.')
@@ -322,10 +334,11 @@ class cinder (
       'oslo_messaging_rabbit/kombu_ssl_ca_certs':           value => $kombu_ssl_ca_certs;
       'oslo_messaging_rabbit/kombu_ssl_certfile':           value => $kombu_ssl_certfile;
       'oslo_messaging_rabbit/kombu_ssl_keyfile':            value => $kombu_ssl_keyfile;
+      'oslo_messaging_rabbit/kombu_reconnect_delay':        value => $kombu_reconnect_delay;
       'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
       'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
       'DEFAULT/control_exchange':                           value => $control_exchange;
-      'DEFAULT/amqp_durable_queues':                        value => $amqp_durable_queues;
+      'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
     }
 
     if $rabbit_hosts {
@@ -342,27 +355,33 @@ class cinder (
 
   }
 
-  if $rpc_backend == 'cinder.openstack.common.rpc.impl_qpid' {
+  if $rpc_backend == 'cinder.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
 
     if ! $qpid_password {
       fail('Please specify a qpid_password parameter.')
     }
 
     cinder_config {
-      'DEFAULT/qpid_hostname':               value => $qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $qpid_port;
-      'DEFAULT/qpid_username':               value => $qpid_username;
-      'DEFAULT/qpid_password':               value => $qpid_password, secret => true;
-      'DEFAULT/qpid_reconnect':              value => $qpid_reconnect;
-      'DEFAULT/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
-      'DEFAULT/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
-      'DEFAULT/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'DEFAULT/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'DEFAULT/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
-      'DEFAULT/qpid_heartbeat':              value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-      'DEFAULT/amqp_durable_queues':         value => $amqp_durable_queues;
+      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_reconnect':              value => $qpid_reconnect;
+      'oslo_messaging_qpid/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
+      'oslo_messaging_qpid/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
+      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
+      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
+      'oslo_messaging_qpid/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
+      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/amqp_durable_queues':         value => $amqp_durable_queues;
+    }
+
+    if $qpid_hosts {
+      cinder_config { 'oslo_messaging_qpid/qpid_hosts':    value => join(any2array($qpid_hosts), ',') }
+    } else {
+      cinder_config { 'oslo_messaging_qpid/qpid_hosts':    value => "${qpid_hostname}:${qpid_port}" }
+      cinder_config { 'oslo_messaging_qpid/qpid_hostname': value => $qpid_hostname }
+      cinder_config { 'oslo_messaging_qpid/qpid_port':     value => $qpid_port }
     }
 
     if is_array($qpid_sasl_mechanisms) {

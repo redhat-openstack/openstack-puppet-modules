@@ -26,6 +26,7 @@ class nova::params {
       $vncproxy_package_name         = 'openstack-nova-novncproxy'
       $serialproxy_package_name      = 'openstack-nova-serialproxy'
       $spicehtml5proxy_package_name  = 'openstack-nova-console'
+      $sqlite_package_name           = undef
       # service names
       $api_service_name             = 'openstack-nova-api'
       $cells_service_name           = 'openstack-nova-cells'
@@ -80,6 +81,7 @@ class nova::params {
       $scheduler_package_name       = 'nova-scheduler'
       $tgt_package_name             = 'tgt'
       $serialproxy_package_name     = 'nova-serialproxy'
+      $sqlite_package_name          = 'python-pysqlite2'
       # service names
       $api_service_name             = 'nova-api'
       $cells_service_name           = 'nova-cells'
@@ -87,24 +89,24 @@ class nova::params {
       $compute_service_name         = 'nova-compute'
       $conductor_service_name       = 'nova-conductor'
       $consoleauth_service_name     = 'nova-consoleauth'
-      $libvirt_service_name         = 'libvirt-bin'
       $network_service_name         = 'nova-network'
       $objectstore_service_name     = 'nova-objectstore'
       $scheduler_service_name       = 'nova-scheduler'
       $vncproxy_service_name        = 'nova-novncproxy'
       $serialproxy_service_name     = 'nova-serialproxy'
       $tgt_service_name             = 'tgt'
+      $nova_log_group               = 'adm'
       # debian specific nova config
       $root_helper                  = 'sudo nova-rootwrap'
       $lock_path                    = '/var/lock/nova'
-      case $::operatingsystem {
-        'Debian': {
+      case $::os_package_type {
+        'debian': {
           $spicehtml5proxy_package_name = 'nova-consoleproxy'
           $spicehtml5proxy_service_name = 'nova-spicehtml5proxy'
           $vncproxy_package_name    = 'nova-consoleproxy'
           # Use default provider on Debian
           $special_service_provider = undef
-          $nova_log_group               = 'nova'
+          $libvirt_service_name         = 'libvirtd'
         }
         default: {
           $spicehtml5proxy_package_name = 'nova-spiceproxy'
@@ -112,7 +114,7 @@ class nova::params {
           $vncproxy_package_name    = 'nova-novncproxy'
           # some of the services need to be started form the special upstart provider
           $special_service_provider = 'upstart'
-          $nova_log_group               = 'adm'
+          $libvirt_service_name         = 'libvirt-bin'
         }
       }
     }

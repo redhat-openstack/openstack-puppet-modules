@@ -131,6 +131,9 @@ define apache::vhost(
   $krb_auth_realms             = [],
   $krb_5keytab                 = undef,
   $krb_local_user_mapping      = undef,
+  $krb_verify_kdc              = 'on',
+  $krb_servicename             = 'HTTP',
+  $krb_save_credentials        = 'off',
   $limit_request_field_size    = undef,
 ) {
   # The base class must be included first because it is used by parameter defaults
@@ -344,12 +347,13 @@ define apache::vhost(
   }
 
   if $ip {
+    $_ip = enclose_ipv6($ip)
     if $port {
-      $listen_addr_port = "${ip}:${port}"
-      $nvh_addr_port = "${ip}:${port}"
+      $listen_addr_port = suffix(any2array($_ip),":${port}")
+      $nvh_addr_port = suffix(any2array($_ip),":${port}")
     } else {
       $listen_addr_port = undef
-      $nvh_addr_port = $ip
+      $nvh_addr_port = $_ip
       if ! $servername and ! $ip_based {
         fail("Apache::Vhost[${name}]: must pass 'ip' and/or 'port' parameters for name-based vhosts")
       }
@@ -370,13 +374,13 @@ define apache::vhost(
     if $ip and defined(Apache::Listen["${port}"]) {
       fail("Apache::Vhost[${name}]: Mixing IP and non-IP Listen directives is not possible; check the add_listen parameter of the apache::vhost define to disable this")
     }
-    if ! defined(Apache::Listen["${listen_addr_port}"]) and $listen_addr_port and $ensure == 'present' {
-      ::apache::listen { "${listen_addr_port}": }
+    if $listen_addr_port and $ensure == 'present' {
+      ensure_resource('apache::listen', $listen_addr_port)
     }
   }
   if ! $ip_based {
-    if ! defined(Apache::Namevirtualhost[$nvh_addr_port]) and $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
-      ::apache::namevirtualhost { $nvh_addr_port: }
+    if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
+      ensure_resource('apache::namevirtualhost', $nvh_addr_port)
     }
   }
 
@@ -798,7 +802,7 @@ define apache::vhost(
   # - $krb_method_k5passwd
   # - $krb_authoritative
   # - $krb_auth_realms
-  # - $krb_5keytab 
+  # - $krb_5keytab
   # - $krb_local_user_mapping
   if $auth_kerb {
     concat::fragment { "${name}-auth_kerb":

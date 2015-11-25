@@ -1,7 +1,7 @@
 keystone
 =======
 
-6.0.0 - 2015.1 - Kilo
+7.0.0 - 2015.2 - Liberty
 
 #### Table of Contents
 
@@ -97,14 +97,42 @@ keystone_service { 'nova':
   description => 'Openstack Compute Service',
 }
 
+```
+
+Services can also be written with the type as a suffix:
+
+```puppet
+keystone_service { 'nova::type':
+  ensure      => present,
+  description => 'Openstack Compute Service',
+}
+
+
 # Setup nova keystone endpoint
 keystone_endpoint { 'example-1-west/nova':
+   ensure       => present,
+   type         => 'compute',
+   public_url   => "http://127.0.0.1:8774/v2/%(tenant_id)s",
+   admin_url    => "http://127.0.0.1:8774/v2/%(tenant_id)s",
+   internal_url => "http://127.0.0.1:8774/v2/%(tenant_id)s",
+}
+```
+
+Endpoints can also be written with the type as a suffix:
+
+```puppet
+keystone_endpoint { 'example-1-west/nova::compute':
    ensure       => present,
    public_url   => "http://127.0.0.1:8774/v2/%(tenant_id)s",
    admin_url    => "http://127.0.0.1:8774/v2/%(tenant_id)s",
    internal_url => "http://127.0.0.1:8774/v2/%(tenant_id)s",
 }
 ```
+
+Defining a endpoint without the type is supported in Liberty release
+for backward compatibility, but will be dropped in Mitaka, as this can
+lead to corruption of the endpoint database if omitted.  See (this
+bug)[https://bugs.launchpad.net/puppet-keystone/+bug/1506996]
 
 **Setting up a database for keystone**
 
@@ -130,6 +158,95 @@ class { 'postgresql::server': }
 
 class { 'keystone::db::postgresql': password => 'super_secret_db_password', }
 ```
+
+**About Keystone V3 syntax in keystone_user/keystone_tenant/keystone_user_role**
+
+A complete description of the syntax available for those resources are
+in `examples/user_project_user_role_composite_namevar.pp`
+
+**About Keystone V3 and default domain**
+
+***For users***
+
+With Keystone V3, domains made their appearance.  For backward
+compatibility a default domain is defined in the `keystone.conf` file.
+All the V2 resources are then assigned to this default domain.  The
+default domain id is by default `default` associated with the name
+`Default`.
+
+What it means is that this user:
+
+```puppet
+keystone_user { 'my_non_full_qualified_user':
+  ensure => present
+}
+```
+
+will be assigned to the `Default` domain.
+
+The same is true for `keystone_tenant` and `keystone_user_role`:
+
+```puppet
+keystone_tenant { 'project_one':
+  ensure => present
+}
+
+keystone_user_role { 'user_one@project_one':
+  ensure => present,
+  roles  => ['admin']
+}
+```
+
+will be assigned to the `Default` domain.
+
+Now, you can change the default domain if you want.  But then the
+puppet resource you defined will *have* to be fully qualified.
+
+So, for instance, if you change the default domain to be
+`my_new_default`, then you'll have to do:
+
+```puppet
+keystone_user { 'full_qualified_user::my_new_default':
+  ensure => present
+}
+keystone_tenant { 'project_one::my_new_default':
+  ensure => present
+}
+
+keystone_user_role { 'user_one::my_new_default@project_one::my_new_default':
+  ensure => present,
+  roles  => ['admin']
+}
+```
+
+as the module will *always* assign a resource without domain to
+the `Default` domain.
+
+A depreciation warning will be visible in the log when you have
+changed the default domain id and used an non fully qualified name for
+you resource.
+
+In Mitaka, a depreciation warning will be displayed all the time if
+you used non fully qualified resource.
+
+After Mitaka all the resources will have to be fully qualified.
+
+***For developers***
+
+Other module can try to find user/tenant resource using Puppet's
+indirection.  The rule for the name of the resources are this:
+
+ 1. fully qualified if domain is not 'Default';
+ 2. short form if domain is 'Default'
+
+This is for backward compatibility.
+
+Note that, as stated above, the 'Default' domain is hardcoded.  It is
+not related to the real default domain which can be set to something
+else.  But then again, you will have to set the fully qualified name.
+
+You can check `spec/acceptance/default_domain_spec.rb` to have a
+example of the behavior described here.
 
 Implementation
 --------------

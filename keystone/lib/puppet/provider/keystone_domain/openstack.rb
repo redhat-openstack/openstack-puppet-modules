@@ -41,10 +41,12 @@ Puppet::Type.type(:keystone_domain).provide(
     # enabled domain
     self.class.request('domain', 'set', [resource[:name], '--disable'])
     self.class.request('domain', 'delete', resource[:name])
-    @property_hash[:ensure] == :absent
+    @property_hash[:ensure] = :absent
     ensure_default_domain(false, true)
     @property_hash.clear
   end
+
+  mk_resource_methods
 
   def enabled=(value)
     @property_flush[:enabled] = value
@@ -58,14 +60,6 @@ Puppet::Type.type(:keystone_domain).provide(
     @property_flush[:description] = value
   end
 
-  def description
-    @property_hash[:description]
-  end
-
-  def id
-    @property_hash[:id]
-  end
-
   def is_default
     bool_to_sym(@property_hash[:is_default])
   end
@@ -75,33 +69,21 @@ Puppet::Type.type(:keystone_domain).provide(
   end
 
   def ensure_default_domain(create, destroy=false, value=nil)
-    if !self.class.keystone_file
-      return
-    end
-    changed = false
     curid = self.class.default_domain_id
-    newid = id
     default = (is_default == :true)
+    entry = keystone_conf_default_domain_id_entry(id)
     if (default && create) || (!default && (value == :true))
       # new default domain, or making existing domain the default domain
-      if curid != newid
-        self.class.keystone_file['identity']['default_domain_id'] = newid
-        changed = true
+      if curid != id
+        entry.create
       end
     elsif (default && destroy) || (default && (value == :false))
       # removing default domain, or making this domain not the default
-      if curid == newid
-        # can't delete from inifile, so just reset to default 'default'
-        self.class.keystone_file['identity']['default_domain_id'] = 'default'
-        changed = true
-        newid = 'default'
+      if curid == id
+        entry.destroy
       end
     end
-    if changed
-      self.class.keystone_file.store
-      self.class.default_domain_id = newid
-      debug("The default_domain_id was changed from #{curid} to #{newid}")
-    end
+    self.class.default_domain_id = id
   end
 
   def self.instances
@@ -120,7 +102,7 @@ Puppet::Type.type(:keystone_domain).provide(
   def self.prefetch(resources)
     domains = instances
     resources.keys.each do |name|
-      if provider = domains.find{ |domain| domain.name == name }
+      if provider = domains.find { |domain| domain.name == name }
         resources[name].provider = provider
       end
     end
@@ -140,5 +122,19 @@ Puppet::Type.type(:keystone_domain).provide(
       end
       @property_flush.clear
     end
+  end
+
+  private
+
+  def keystone_conf_default_domain_id_entry(newid)
+    conf = Puppet::Type::Keystone_config
+      .new(:title => 'identity/default_domain_id', :value => newid)
+    entry = Puppet::Type.type(:keystone_config).provider(:ini_setting)
+      .new(conf)
+    entry
+  end
+
+  def self.default_domain_id=(value)
+    class_variable_set(:@@default_domain_id, value)
   end
 end

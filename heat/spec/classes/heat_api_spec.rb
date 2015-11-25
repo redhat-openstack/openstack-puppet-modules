@@ -76,10 +76,9 @@ describe 'heat::api' do
             :enable     => params[:enabled],
             :hasstatus  => true,
             :hasrestart => true,
-            :require    => ['Package[heat-common]', 'Package[heat-api]'],
             :tag        => 'heat-service',
           )
-          is_expected.to contain_service('heat-api').that_subscribes_to('Exec[heat-dbsync]')
+          is_expected.to contain_service('heat-api').that_subscribes_to(nil)
         end
       end
     end
@@ -99,10 +98,9 @@ describe 'heat::api' do
           :enable     => false,
           :hasstatus  => true,
           :hasrestart => true,
-          :require    => ['Package[heat-common]', 'Package[heat-api]'],
           :tag        => 'heat-service',
         )
-        is_expected.to contain_service('heat-api').that_subscribes_to('Exec[heat-dbsync]')
+        is_expected.to contain_service('heat-api').that_subscribes_to(nil)
       end
     end
 
@@ -119,7 +117,9 @@ describe 'heat::api' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily => 'Debian',
+      })
     end
 
     let :platform_params do
@@ -131,7 +131,9 @@ describe 'heat::api' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily => 'RedHat',
+      })
     end
 
     let :platform_params do

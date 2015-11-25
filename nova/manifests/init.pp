@@ -10,16 +10,36 @@
 #   Defaults to 'present'
 #
 # [*database_connection*]
-#   (optional) Connection url to connect to nova database.
-#   Defaults to false
+#   (optional) Connection url for the heat database.
+#   Defaults to undef.
 #
 # [*slave_connection*]
 #   (optional) Connection url to connect to nova slave database (read-only).
-#   Defaults to false
+#   Defaults to undef.
+#
+# [*database_max_retries*]
+#   (optional) Maximum database connection retries during startup.
+#   Defaults to undef.
 #
 # [*database_idle_timeout*]
-#   (optional) Timeout before idle db connections are reaped.
-#   Defaults to 3600
+#   (optional) Timeout before idle database connections are reaped.
+#   Defaults to undef.
+#
+# [*database_retry_interval*]
+#   (optional) Interval between retries of opening a database connection.
+#   Defaults to undef.
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to: undef.
 #
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
@@ -237,9 +257,6 @@
 #   'key-data' }, where 'key-type' is one of (ssh-rsa, ssh-dsa, ssh-ecdsa) and
 #   'key-data' is the contents of the private key file.
 #
-# [*mysql_module*]
-#   (optional) Deprecated. Does nothing.
-#
 # [*notification_driver*]
 #   (optional) Driver or drivers to handle sending notifications.
 #   Value can be a string or a list.
@@ -269,11 +286,59 @@
 #   exceptions in the nova API service.
 #   Defaults to undef
 #
+# [*cinder_catalog_info*]
+#   (optional) Info to match when looking for cinder in the service
+#   catalog. Format is: separated values of the form:
+#   <service_type>:<service_name>:<endpoint_type>
+#   Defaults to 'volumev2:cinderv2:publicURL'
+#
+# [*upgrade_level_cells*]
+#  (optional) Sets a version cap for messages sent to local cells services
+#  Defaults to undef
+#
+# [*upgrade_level_cert*]
+#  (optional) Sets a version cap for messages sent to cert services
+#  Defaults to undef
+#
+# [*upgrade_level_compute*]
+#  (optional) Sets a version cap for messages sent to compute services
+#  Defaults to undef
+#
+# [*upgrade_level_conductor*]
+#  (optional) Sets a version cap for messages sent to conductor services
+#  Defaults to undef
+#
+# [*upgrade_level_console*]
+#  (optional) Sets a version cap for messages sent to console services
+#  Defaults to undef
+#
+# [*upgrade_level_consoleauth*]
+#  (optional) Sets a version cap for messages sent to consoleauth services
+#  Defaults to undef
+#
+# [*upgrade_level_intercell*]
+#  (optional) Sets a version cap for messages sent between cells services
+#  Defaults to undef
+#
+# [*upgrade_level_network*]
+#  (optional) Sets a version cap for messages sent to network services
+#  Defaults to undef
+#
+# [*upgrade_level_scheduler*]
+#  (optional) Sets a version cap for messages sent to scheduler services
+#  Defaults to undef
+#
+
 class nova(
   $ensure_package                     = 'present',
-  $database_connection                = false,
-  $slave_connection                   = false,
-  $database_idle_timeout              = 3600,
+  $database_connection                = undef,
+  $slave_connection                   = undef,
+  $database_idle_timeout              = undef,
+  $database_min_pool_size             = undef,
+  $database_max_pool_size             = undef,
+  $database_max_retries               = undef,
+  $database_retry_interval            = undef,
+  $database_max_overflow              = undef,
   $rpc_backend                        = 'rabbit',
   $image_service                      = 'nova.image.glance.GlanceImageService',
   # these glance params should be optional
@@ -330,17 +395,21 @@ class nova(
   $notify_api_faults                  = false,
   $notify_on_state_change             = undef,
   $os_region_name                     = undef,
-  # DEPRECATED PARAMETERS
-  $mysql_module                       = undef,
+  $cinder_catalog_info                = 'volumev2:cinderv2:publicURL',
+  $upgrade_level_cells                = undef,
+  $upgrade_level_cert                 = undef,
+  $upgrade_level_compute              = undef,
+  $upgrade_level_conductor            = undef,
+  $upgrade_level_console              = undef,
+  $upgrade_level_consoleauth          = undef,
+  $upgrade_level_intercell            = undef,
+  $upgrade_level_network              = undef,
+  $upgrade_level_scheduler            = undef,
 ) inherits nova::params {
 
   # maintain backward compatibility
   include ::nova::db
   include ::nova::logging
-
-  if $mysql_module {
-    warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
-  }
 
   validate_array($enabled_ssl_apis)
   if empty($enabled_ssl_apis) and $use_ssl {
@@ -420,12 +489,6 @@ class nova(
 
   Nova_config<| |> ~> Exec['post-nova_config']
 
-  # TODO - see if these packages can be removed
-  # they should be handled as package deps by the OS
-  package { 'python-greenlet':
-    ensure  => present,
-  }
-
   if $install_utilities {
     class { '::nova::utilities': }
   }
@@ -435,9 +498,8 @@ class nova(
   anchor { 'nova-start': }
 
   package { 'python-nova':
-    ensure  => $ensure_package,
-    require => Package['python-greenlet'],
-    tag     => ['openstack'],
+    ensure => $ensure_package,
+    tag    => ['openstack'],
   }
 
   package { 'nova-common':
@@ -448,9 +510,6 @@ class nova(
   }
 
   file { '/etc/nova/nova.conf':
-    mode    => '0640',
-    owner   => 'nova',
-    group   => 'nova',
     require => Package['nova-common'],
   }
 
@@ -489,7 +548,7 @@ class nova(
       'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
       'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
       'oslo_messaging_rabbit/kombu_reconnect_delay':        value => $kombu_reconnect_delay;
-      'DEFAULT/amqp_durable_queues':                        value => $amqp_durable_queues;
+      'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
     }
 
     if $rabbit_use_ssl {
@@ -550,27 +609,27 @@ class nova(
   # but since Icehouse, "qpid" is enough.
   if $rpc_backend == 'nova.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
     nova_config {
-      'DEFAULT/qpid_hostname':               value => $qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $qpid_port;
-      'DEFAULT/qpid_username':               value => $qpid_username;
-      'DEFAULT/qpid_password':               value => $qpid_password, secret => true;
-      'DEFAULT/qpid_heartbeat':              value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
+      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
+      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
     }
     if is_array($qpid_sasl_mechanisms) {
       nova_config {
-        'DEFAULT/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
       }
     }
     elsif $qpid_sasl_mechanisms {
       nova_config {
-        'DEFAULT/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
       }
     }
     else {
       nova_config {
-        'DEFAULT/qpid_sasl_mechanisms': ensure => absent;
+        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
       }
     }
   }
@@ -609,6 +668,7 @@ class nova(
   }
 
   nova_config {
+    'cinder/catalog_info':         value => $cinder_catalog_info;
     'DEFAULT/rpc_backend':         value => $rpc_backend;
     'DEFAULT/notification_topics': value => $notification_topics;
     'DEFAULT/notify_api_faults':   value => $notify_api_faults;
@@ -630,14 +690,114 @@ class nova(
 
   if $os_region_name {
     nova_config {
-      'cinder/os_region_name':       value => $os_region_name;
+      'cinder/os_region_name':    value => $os_region_name;
     }
   }
   else {
     nova_config {
-      'cinder/os_region_name':        ensure => absent;
+      'cinder/os_region_name':    ensure => absent;
     }
   }
+
+  if $upgrade_level_cells {
+    nova_config {
+      'upgrade_levels/cells':   value => $upgrade_level_cells;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/cells':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_cert {
+    nova_config {
+      'upgrade_levels/cert':   value => $upgrade_level_cert;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/cert':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_compute {
+    nova_config {
+      'upgrade_levels/compute':   value => $upgrade_level_compute;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/compute':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_conductor {
+    nova_config {
+      'upgrade_levels/conductor':   value => $upgrade_level_conductor;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/conductor':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_console {
+    nova_config {
+      'upgrade_levels/console':   value => $upgrade_level_console;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/console':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_consoleauth {
+    nova_config {
+      'upgrade_levels/consoleauth':   value => $upgrade_level_consoleauth;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/consoleauth':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_intercell {
+    nova_config {
+      'upgrade_levels/intercell':   value => $upgrade_level_intercell;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/intercell':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_network {
+    nova_config {
+      'upgrade_levels/network':   value => $upgrade_level_network;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/network':   ensure => absent;
+    }
+  }
+
+  if $upgrade_level_scheduler {
+    nova_config {
+      'upgrade_levels/scheduler':   value => $upgrade_level_scheduler;
+    }
+  }
+  else {
+    nova_config {
+      'upgrade_levels/scheduler':   ensure => absent;
+    }
+  }
+
   # Deprecated in Juno, removed in Kilo
   nova_config {
     'DEFAULT/os_region_name':       ensure => absent;

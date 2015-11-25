@@ -7,7 +7,11 @@ Puppet::Type.type(:pcmk_constraint).provide(:default) do
         when :location
             cmd = 'constraint location add ' + @resource[:name] + ' '  + @resource[:resource] + ' ' + @resource[:location] + ' ' + @resource[:score]
         when :colocation
-            cmd = 'constraint colocation add ' + @resource[:resource] + ' with ' + @resource[:location] + ' ' + @resource[:score]
+            if @resource[:master_slave]
+                cmd = 'constraint colocation add ' + @resource[:resource] + ' with master ' + @resource[:location] + ' ' + @resource[:score]
+            else 
+                cmd = 'constraint colocation add ' + @resource[:resource] + ' with ' + @resource[:location] + ' ' + @resource[:score]
+            end
         else
             fail(String(@resource[:constraint_type]) + ' is an invalid location type')
         end
@@ -37,7 +41,11 @@ Puppet::Type.type(:pcmk_constraint).provide(:default) do
             when :location
                 return true if line.include? @resource[:name]
             when :colocation
-                return true if line.include? @resource[:resource] + ' with ' + @resource[:location]
+                if @resource[:master_slave]
+                  return true if line.include? @resource[:resource] + ' with ' + @resource[:location] and line.include? "with-rsc-role:Master" 
+                else
+                  return true if line.include? @resource[:resource] + ' with ' + @resource[:location] 
+                end
             end
         end
         # return false if constraint not found

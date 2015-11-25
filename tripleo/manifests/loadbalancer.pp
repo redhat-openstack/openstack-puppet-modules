@@ -562,7 +562,7 @@ class tripleo::loadbalancer (
   if $swift_bind_certificate {
     $swift_bind_opts = {
       "${swift_proxy_vip}:8080" => [],
-      "${public_virtual_ip}:13080" => ['ssl', 'crt', $swift_bind_certificate],
+      "${public_virtual_ip}:13808" => ['ssl', 'crt', $swift_bind_certificate],
     }
   } else {
     $swift_bind_opts = {
@@ -586,7 +586,7 @@ class tripleo::loadbalancer (
     }
     $heat_cfn_bind_opts = {
       "${heat_api_vip}:8000" => [],
-      "${public_virtual_ip}:13000" => ['ssl', 'crt', $heat_bind_certificate],
+      "${public_virtual_ip}:13800" => ['ssl', 'crt', $heat_bind_certificate],
     }
   } else {
     $heat_bind_opts = {

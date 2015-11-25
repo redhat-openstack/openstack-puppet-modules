@@ -3,6 +3,8 @@ File.expand_path('../..', File.dirname(__FILE__)).tap { |dir| $LOAD_PATH.unshift
 File.expand_path('../../../../openstacklib/lib', File.dirname(__FILE__)).tap { |dir| $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include?(dir) }
 
 require 'puppet/provider/keystone/util'
+require 'puppet_x/keystone/composite_namevar'
+require 'puppet_x/keystone/type'
 
 Puppet::Type.newtype(:keystone_user) do
 
@@ -12,19 +14,6 @@ Puppet::Type.newtype(:keystone_user) do
 
   newparam(:name, :namevar => true) do
     newvalues(/\S+/)
-  end
-
-  newparam(:ignore_default_tenant) do
-    # DEPRECATED - To be removed in next release (Liberty)
-    # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-    validate do |v|
-      Puppet.warning('([keystone_user]: The ignore_default_tenant parameter is deprecated and will be removed in the future.')
-    end
-    newvalues(/(t|T)rue/, /(f|F)alse/, true, false)
-    defaultto(false)
-    munge do |value|
-      value.to_s.downcase.to_sym
-    end
   end
 
   newproperty(:enabled) do
@@ -39,9 +28,9 @@ Puppet::Type.newtype(:keystone_user) do
     newvalues(/\S+/)
     def change_to_s(currentvalue, newvalue)
       if currentvalue == :absent
-        return "created password"
+        return 'created password'
       else
-        return "changed password"
+        return 'changed password'
       end
     end
 
@@ -52,15 +41,6 @@ Puppet::Type.newtype(:keystone_user) do
     def should_to_s( newvalue )
       return '[new password redacted]'
     end
-  end
-
-  newproperty(:tenant) do
-    # DEPRECATED - To be removed in next release (Liberty)
-    # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-    validate do |v|
-      Puppet.warning('([keystone_user]: The tenant parameter is deprecated and will be removed in the future. Please use keystone_user_role to assign a user to a project.')
-    end
-    newvalues(/\S+/)
   end
 
   newproperty(:email) do
@@ -81,27 +61,29 @@ Puppet::Type.newtype(:keystone_user) do
     end
   end
 
-  newproperty(:domain) do
-    newvalues(nil, /\S+/)
-    def insync?(is)
-      raise(Puppet::Error, "[keystone_user]: The domain cannot be changed from #{self.should} to #{is}") unless self.should == is
-      true
-    end
-  end
-
-  autorequire(:keystone_tenant) do
-    # DEPRECATED - To be removed in next release (Liberty)
-    # https://bugs.launchpad.net/puppet-keystone/+bug/1472437
-    self[:tenant]
+  newparam(:domain) do
+    isnamevar
+    include PuppetX::Keystone::Type::DefaultDomain
   end
 
   autorequire(:keystone_domain) do
-    # use the domain parameter if given, or the one from name if any
-    self[:domain] or Util.split_domain(self[:name])[1]
+    default_domain = catalog.resources.find do |r|
+      r.class.to_s == 'Puppet::Type::Keystone_domain' &&
+        r[:is_default] == :true &&
+        r[:ensure] == :present
+    end
+    rv = [self[:domain]]
+    # Only used to display the deprecation warning.
+    rv << default_domain.name unless default_domain.nil?
+    rv
   end
 
   # we should not do anything until the keystone service is started
   autorequire(:anchor) do
-    ['keystone_started','default_domain_created']
+    ['keystone_started', 'default_domain_created']
+  end
+
+  def self.title_patterns
+    PuppetX::Keystone::CompositeNamevar.basic_split_title_patterns(:name, :domain)
   end
 end

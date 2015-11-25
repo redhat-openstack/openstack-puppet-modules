@@ -1,157 +1,151 @@
-#
-# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
-#
-# Author: Emilien Macchi <emilien.macchi@enovance.com>
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-#
-# == Class gnocchi::api
-#
-# Configure API service in gnocchi
+# Installs & configure the gnocchi api service
 #
 # == Parameters
 #
-# [*manage_service*]
-#   (optional) Whether to start/stop the service
+# [*enabled*]
+#   (optional) Should the service be enabled.
 #   Defaults to true
 #
-# [*ensure_package*]
-#   (optional) Whether the gnocchi api package will be installed
-#   Defaults to 'present'
-#
-# [*keystone_password*]
-#   (required) Password used to authentication.
-#
-# [*verbose*]
-#   (optional) Rather to log the gnocchi api service at verbose level.
-#   Defaults to undef
-#
-# [*debug*]
-#   (optional) Rather to log the gnocchi api service at debug level.
-#   Defaults to undef
-#
-# [*log_file*]
-#   (optional) The path of file used for logging
-#   If set to boolean false, it will not log to any file.
-#   Defaults to undef
-#
-# [*use_syslog*]
-#   (Optional) Use syslog for logging.
-#   Defaults to undef
-#
-# [*use_stderr*]
-#   (optional) Use stderr for logging
-#   Defaults to undef
-#
-# [*log_facility*]
-#   (Optional) Syslog facility to receive log lines.
-#   Defaults to undef
-#
-# [*log_dir*]
-#   (optional) directory to which gnocchi logs are sent.
-#   If set to boolean false, it will not log to any directory.
-#   Defaults to undef
-#
-# [*keystone_tenant*]
-#   (optional) Tenant to authenticate to.
-#   Defaults to services.
-#
-# [*keystone_user*]
-#   (optional) User to authenticate as with keystone.
-#   Defaults to 'gnocchi'.
-
-# [*enabled*]
-#   (optional) Whether to enable services.
+# [*manage_service*]
+#   (optional) Whether the service should be managed by Puppet.
 #   Defaults to true.
 #
-# [*use_syslog*]
-#   (optional) Use syslog for logging.
-#   Defaults to false.
+# [*keystone_user*]
+#   (optional) The name of the auth user
+#   Defaults to gnocchi
 #
-# [*log_facility*]
-#   (optional) Syslog facility to receive log lines.
-#   Defaults to 'LOG_USER'.
+# [*keystone_tenant*]
+#   (optional) Tenant to authenticate with.
+#   Defaults to 'services'.
 #
-# [*purge_config*]
-#   (optional) Whether to set only the specified config options
-#   in the api config.
-#   Defaults to false.
+# [*keystone_password*]
+#   Password to authenticate with.
+#   Mandatory.
 #
-# [*identity_uri*]
+# [*keystone_auth_uri*]
+#   (optional) Public Identity API endpoint.
+#   Defaults to 'false'.
+#
+# [*keystone_identity_uri*]
 #   (optional) Complete admin Identity API endpoint.
-#   Defaults to 'http://127.0.0.1:35357'.
+#   Defaults to: false
 #
-class gnocchi::api(
-  $keystone_password,
-  $verbose                      = undef,
-  $debug                        = undef,
-  $use_syslog                   = undef,
-  $use_stderr                   = undef,
-  $log_facility                 = undef,
-  $log_dir                      = undef,
-  $log_file                     = undef,
-  $keystone_tenant              = 'services',
-  $keystone_user                = 'gnocchi',
-  $identity_uri                 = 'http://127.0.0.1:35357',
-  $enabled                      = true,
-  $use_syslog                   = false,
-  $log_facility                 = 'LOG_USER',
-  $purge_config                 = false,
-  $manage_service               = true,
-  $ensure_package               = 'present',
-) inherits gnocchi {
+# [*host*]
+#   (optional) The gnocchi api bind address.
+#   Defaults to 0.0.0.0
+#
+# [*port*]
+#   (optional) The gnocchi api port.
+#   Defaults to 8041
+#
+# [*workers*]
+#   (optional) Number of workers for Gnocchi API server.
+#   Defaults to $::processorcount
+#
+# [*max_limit*]
+#   (optional) The maximum number of items returned in a
+#   single response from a collection resource.
+#   Defaults to 1000
+#
+# [*package_ensure*]
+#   (optional) ensure state for package.
+#   Defaults to 'present'
+#
+# [*service_name*]
+#   (optional) Name of the service that will be providing the
+#   server functionality of gnocchi-api.
+#   If the value is 'httpd', this means gnocchi-api will be a web
+#   service, and you must use another class to configure that
+#   web service. For example, use class { 'gnocchi::wsgi::apache'...}
+#   to make gnocchi-api be a web app using apache mod_wsgi.
+#   Defaults to '$::gnocchi::params::api_service_name'
+#
+class gnocchi::api (
+  $manage_service        = true,
+  $enabled               = true,
+  $package_ensure        = 'present',
+  $keystone_user         = 'gnocchi',
+  $keystone_tenant       = 'services',
+  $keystone_password     = false,
+  $keystone_auth_uri     = false,
+  $keystone_identity_uri = false,
+  $host                  = '0.0.0.0',
+  $port                  = '8041',
+  $workers               = $::processorcount,
+  $max_limit             = 1000,
+  $service_name          = $::gnocchi::params::api_service_name,
+) inherits gnocchi::params {
 
-  require ::keystone::python
-  include ::gnocchi::logging
   include ::gnocchi::params
+  include ::gnocchi::policy
 
-  Gnocchi_config<||> ~> Exec['post-gnocchi_config']
-  Gnocchi_config<||> ~> Service['gnocchi-api']
+  validate_string($keystone_password)
 
-  if $::gnocchi::database_connection {
-    if($::gnocchi::database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
-      require 'mysql::bindings'
-      require 'mysql::bindings::python'
-    } elsif($::gnocchi::database_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
+  Gnocchi_config<||> ~> Service[$service_name]
+  Class['gnocchi::policy'] ~> Service[$service_name]
 
-    } elsif($::gnocchi::database_connection =~ /sqlite:\/\//) {
+  Package['gnocchi-api'] -> Service[$service_name]
+  Package['gnocchi-api'] -> Service['gnocchi-api']
+  Package['gnocchi-api'] -> Class['gnocchi::policy']
+  package { 'gnocchi-api':
+    ensure => $package_ensure,
+    name   => $::gnocchi::params::api_package_name,
+    tag    => ['openstack', 'gnocchi-package'],
+  }
 
+  if $manage_service {
+    if $enabled {
+      $service_ensure = 'running'
     } else {
-      fail("Invalid db connection ${::gnocchi::database_connection}")
-    }
-    gnocchi_config {
-      'database/connection':   value => $::gnocchi::database_connection, secret => true;
-      'database/idle_timeout': value => $::gnocchi::database_idle_timeoutl;
+      $service_ensure = 'stopped'
     }
   }
 
-  # basic service config
+  if $service_name == $::gnocchi::params::api_service_name {
+    service { 'gnocchi-api':
+      ensure     => $service_ensure,
+      name       => $::gnocchi::params::api_service_name,
+      enable     => $enabled,
+      hasstatus  => true,
+      hasrestart => true,
+      require    => Class['gnocchi::db'],
+      tag        => ['gnocchi-service', 'gnocchi-db-sync-service'],
+    }
+  } elsif $service_name == 'httpd' {
+    include ::apache::params
+    service { 'gnocchi-api':
+      ensure => 'stopped',
+      name   => $::gnocchi::params::api_service_name,
+      enable => false,
+      tag    => ['gnocchi-service', 'gnocchi-db-sync-service'],
+    }
+    Class['gnocchi::db'] -> Service[$service_name]
+
+    # we need to make sure gnocchi-api/eventlet is stopped before trying to start apache
+    Service['gnocchi-api'] -> Service[$service_name]
+  } else {
+    fail('Invalid service_name. Either gnocchi/openstack-gnocchi-api for running as a standalone service, or httpd for being run by a httpd server')
+  }
+
   gnocchi_config {
-    'keystone_authtoken/identity_uri':      value => $identity_uri;
-    'keystone_authtoken/admin_user':        value => $keystone_user;
-    'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
-    'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
+    'keystone_authtoken/auth_uri'          : value => $keystone_auth_uri;
+    'keystone_authtoken/admin_tenant_name' : value => $keystone_tenant;
+    'keystone_authtoken/admin_user'        : value => $keystone_user;
+    'keystone_authtoken/admin_password'    : value => $keystone_password, secret => true;
+    'api/host'                             : value => $host;
+    'api/port'                             : value => $port;
+    'api/workers'                          : value => $workers;
+    'api/max_limit'                        : value => $max_limit;
   }
 
-  resources { 'gnocchi_config':
-    purge => $purge_config,
+  if $keystone_identity_uri {
+    gnocchi_config {
+      'keystone_authtoken/identity_uri': value => $keystone_identity_uri;
+    }
+  } else {
+    gnocchi_config {
+      'keystone_authtoken/identity_uri': ensure => absent;
+    }
   }
 
-  gnocchi::generic_service { 'api':
-    enabled        => $enabled,
-    manage_service => $manage_service,
-    ensure_package => $ensure_package,
-    package_name   => $::gnocchi::params::api_package_name,
-    service_name   => $::gnocchi::params::api_service_name,
-  }
 }

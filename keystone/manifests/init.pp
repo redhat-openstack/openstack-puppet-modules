@@ -17,10 +17,6 @@
 #   (optional) Port that keystone binds to.
 #   Defaults to '5000'
 #
-# [*compute_port*]
-#   (optional) DEPRECATED The port for compute servie.
-#   Defaults to '8774'
-#
 # [*admin_port*]
 #   (optional) Port that can be used for admin tasks.
 #   Defaults to '35357'
@@ -79,6 +75,14 @@
 #   (optional) Driver for token revocation.
 #   Defaults to 'keystone.contrib.revoke.backends.sql.Revoke'
 #
+# [*revoke_by_id*]
+#   (optional) Revoke token by token identifier.
+#   Setting revoke_by_id to true enables various forms of enumerating tokens.
+#   These enumerations are processed to determine the list of tokens to revoke.
+#   Only disable if you are switching to using the Revoke extension with a backend
+#   other than KVS, which stores events in memory.
+#   Defaults to true.
+#
 # [*cache_dir*]
 #   (optional) Directory created when token_provider is pki.
 #   Defaults to /var/cache/keystone.
@@ -119,11 +123,32 @@
 #
 # [*database_connection*]
 #   (optional) Url used to connect to database.
-#   Defaults to sqlite:////var/lib/keystone/keystone.db
+#   Defaults to undef.
 #
 # [*database_idle_timeout*]
 #   (optional) Timeout when db connections should be reaped.
-#   Defaults to 200.
+#   Defaults to undef.
+#
+# [*database_max_retries*]
+#   (optional) Maximum number of database connection retries during startup.
+#   Setting -1 implies an infinite retry count.
+#   (Defaults to undef)
+#
+# [*database_retry_interval*]
+#   (optional) Interval between retries of opening a database connection.
+#   (Defaults to undef)
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to: undef
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to: undef
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to: undef
 #
 # [*enable_pki_setup*]
 #   (optional) Enable call to pki_setup to generate the cert for signing pki tokens and
@@ -297,9 +322,6 @@
 #   (string value)
 #   Defaults to '/C=US/ST=Unset/L=Unset/O=Unset/CN=localhost'
 #
-# [*mysql_module*]
-#   (optional) Deprecated. Does nothing.
-#
 # [*validate_service*]
 #   (optional) Whether to validate keystone connections after
 #   the service is started.
@@ -391,7 +413,9 @@
 #   to have a domain assigned for certain operations.  For example,
 #   doing a user create operation must have a domain associated with it.
 #   This is the domain which will be used if a domain is needed and not
-#   explicitly set in the request.
+#   explicitly set in the request.  Using this means that you will have
+#   to add it to every user/tenant/user_role you create, as without a domain
+#   qualification those resources goes into "Default" domain.  See README.
 #   Defaults to undef (will use built-in Keystone default)
 #
 # [*memcache_dead_retry*]
@@ -464,6 +488,7 @@ class keystone(
   $token_driver                       = 'keystone.token.persistence.backends.sql.Token',
   $token_expiration                   = 3600,
   $revoke_driver                      = 'keystone.contrib.revoke.backends.sql.Revoke',
+  $revoke_by_id                       = true,
   $public_endpoint                    = false,
   $admin_endpoint                     = false,
   $enable_ssl                         = false,
@@ -480,8 +505,13 @@ class keystone(
   $debug_cache_backend                = false,
   $token_caching                      = true,
   $enabled                            = true,
-  $database_connection                = 'sqlite:////var/lib/keystone/keystone.db',
-  $database_idle_timeout              = '200',
+  $database_connection                = undef,
+  $database_idle_timeout              = undef,
+  $database_max_retries               = undef,
+  $database_retry_interval            = undef,
+  $database_min_pool_size             = undef,
+  $database_max_pool_size             = undef,
+  $database_max_overflow              = undef,
   $enable_pki_setup                   = true,
   $signing_certfile                   = '/etc/keystone/ssl/certs/signing_cert.pem',
   $signing_keyfile                    = '/etc/keystone/ssl/private/signing_key.pem',
@@ -526,18 +556,12 @@ class keystone(
   # DEPRECATED PARAMETERS
   $admin_workers                      = max($::processorcount, 2),
   $public_workers                     = max($::processorcount, 2),
-  $mysql_module                       = undef,
-  $compute_port                       = undef,
 ) inherits keystone::params {
 
   include ::keystone::logging
 
   if ! $catalog_driver {
     validate_re($catalog_type, 'template|sql')
-  }
-
-  if $mysql_module {
-    warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
   }
 
   if ($admin_endpoint and 'v2.0' in $admin_endpoint) {
@@ -565,6 +589,7 @@ class keystone(
   Keystone_config<||> ~> Exec<| title == 'keystone-manage pki_setup'|>
   Keystone_config<||> ~> Exec<| title == 'keystone-manage fernet_setup'|>
 
+  include ::keystone::db
   include ::keystone::params
 
   package { 'keystone':
@@ -617,17 +642,6 @@ class keystone(
     'DEFAULT/admin_bind_host':  value => $admin_bind_host;
     'DEFAULT/public_port':      value => $public_port;
     'DEFAULT/admin_port':       value => $admin_port;
-  }
-
-  if $compute_port {
-    warning('The compute_port parameter is deprecated and will be removed in L')
-    keystone_config {
-      'DEFAULT/compute_port': value => $compute_port;
-    }
-  } else {
-    keystone_config {
-      'DEFAULT/compute_port': ensure => absent;
-    }
   }
 
   # Endpoint configuration
@@ -689,17 +703,6 @@ class keystone(
     }
   }
 
-  if($database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
-    require 'mysql::bindings'
-    require 'mysql::bindings::python'
-  } elsif($database_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
-
-  } elsif($database_connection =~ /sqlite:\/\//) {
-
-  } else {
-    fail("Invalid db connection ${database_connection}")
-  }
-
   # memcache connection config
   if $memcache_servers {
     validate_array($memcache_servers)
@@ -747,12 +750,6 @@ class keystone(
       'cache/memcache_pool_unused_timeout': ensure => absent;
 
     }
-  }
-
-  # db connection config
-  keystone_config {
-    'database/connection':   value => $database_connection, secret => true;
-    'database/idle_timeout': value => $database_idle_timeout;
   }
 
   # configure based on the catalog backend
@@ -957,6 +954,8 @@ class keystone(
       subscribe   => [Package['keystone'], Keystone_config['fernet_tokens/key_repository']],
     }
   }
+
+  keystone_config {'token/revoke_by_id':   value => $revoke_by_id}
 
   if $fernet_key_repository {
     keystone_config {

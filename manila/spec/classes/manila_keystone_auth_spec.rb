@@ -14,7 +14,6 @@ describe 'manila::keystone::auth' do
         :ensure   => 'present',
         :password => 'pw',
         :email    => 'manila@localhost',
-        :tenant   => 'services'
       )
       is_expected.to contain_keystone_user_role('manila@services').with(
         :ensure  => 'present',
