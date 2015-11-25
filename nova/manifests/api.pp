@@ -11,6 +11,10 @@
 #   (optional) Whether the nova api service will be run
 #   Defaults to true
 #
+# [*api_paste_config*]
+#   (optional) File name for the paste.deploy config for nova-api
+#   Defaults to 'api-paste.ini'
+#
 # [*manage_service*]
 #   (optional) Whether to start/stop the service
 #   Defaults to true
@@ -84,12 +88,6 @@
 #   (optional) The name of the class that nova will use to access volumes. Cinder is the only option.
 #   Defaults to 'nova.volume.cinder.API'
 #
-# [*cinder_catalog_info*]
-#   (optional) Info to match when looking for cinder in the service
-#   catalog. Format is: separated values of the form:
-#   <service_type>:<service_name>:<endpoint_type>
-#   Defaults to 'volumev2:cinderv2:publicURL'
-#
 # [*use_forwarded_for*]
 #   (optional) Treat X-Forwarded-For as the canonical remote address. Only
 #   enable this if you have a sanitizing proxy.
@@ -114,6 +112,10 @@
 # [*conductor_workers*]
 #   (optional) DEPRECATED. Use workers parameter of nova::conductor
 #   Class instead.
+#   Defaults to undef
+#
+# [*instance_name_template*]
+#   (optional) Template string to be used to generate instance names
 #   Defaults to undef
 #
 # [*sync_db*]
@@ -152,6 +154,10 @@
 #   (optional) Whether to validate the service is working after any service refreshes
 #   Defaults to false
 #
+# [*fping_path*]
+#   (optional) Full path to fping.
+#   Defaults to '/usr/sbin/fping'
+#
 # [*validation_options*]
 #   (optional) Service validation options
 #   Should be a hash of options defined in openstacklib::service_validation
@@ -172,6 +178,7 @@ class nova::api(
   $admin_password,
   $enabled                   = true,
   $manage_service            = true,
+  $api_paste_config          = 'api-paste.ini',
   $ensure_package            = 'present',
   $auth_uri                  = false,
   $identity_uri              = false,
@@ -186,7 +193,6 @@ class nova::api(
   $enabled_apis              = 'ec2,osapi_compute,metadata',
   $keystone_ec2_url          = false,
   $volume_api_class          = 'nova.volume.cinder.API',
-  $cinder_catalog_info       = 'volumev2:cinderv2:publicURL',
   $use_forwarded_for         = false,
   $osapi_compute_workers     = $::processorcount,
   $ec2_workers               = $::processorcount,
@@ -201,6 +207,8 @@ class nova::api(
     'nova.api.openstack.compute.limits:RateLimitingMiddleware.factory',
   $validate                  = false,
   $validation_options        = {},
+  $instance_name_template    = undef,
+  $fping_path                = '/usr/sbin/fping',
   # DEPRECATED PARAMETER
   $auth_protocol             = 'http',
   $auth_port                 = 35357,
@@ -227,6 +235,16 @@ class nova::api(
     warning('The conductor_workers parameter is deprecated and has no effect. Use workers parameter of nova::conductor class instead.')
   }
 
+  if $instance_name_template {
+    nova_config {
+      'DEFAULT/instance_name_template': value => $instance_name_template;
+    }
+  } else {
+    nova_config{
+      'DEFAULT/instance_name_template': ensure => absent;
+    }
+  }
+
   nova::generic_service { 'api':
     enabled        => $enabled,
     manage_service => $manage_service,
@@ -238,6 +256,7 @@ class nova::api(
 
   nova_config {
     'DEFAULT/enabled_apis':              value => $enabled_apis;
+    'DEFAULT/api_paste_config':          value => $api_paste_config;
     'DEFAULT/volume_api_class':          value => $volume_api_class;
     'DEFAULT/ec2_listen':                value => $api_bind_address;
     'DEFAULT/ec2_listen_port':           value => $ec2_listen_port;
@@ -251,8 +270,8 @@ class nova::api(
     'DEFAULT/metadata_workers':          value => $metadata_workers;
     'DEFAULT/use_forwarded_for':         value => $use_forwarded_for;
     'DEFAULT/default_floating_pool':     value => $default_floating_pool;
+    'DEFAULT/fping_path':                value => $fping_path;
     'osapi_v3/enabled':                  value => $osapi_v3;
-    'cinder/catalog_info':               value => $cinder_catalog_info;
   }
 
   if ($neutron_metadata_proxy_shared_secret){
