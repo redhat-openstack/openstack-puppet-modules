@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '9c1047da1d7672d5e7305844eb27282adf60bbe0',
+  :commit => '13b79e2446ca1ee08301c03bc2ee2579114da84a',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',

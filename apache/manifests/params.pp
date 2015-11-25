@@ -29,6 +29,19 @@ class apache::params inherits ::apache::version {
   $log_level = 'warn'
   $use_optional_includes = false
 
+  # Default mime types settings
+  $mime_types_additional = {
+    'AddHandler' => {
+      'type-map' => 'var'
+      },
+    'AddType'    => {
+      'text/html' => '.shtml'
+      },
+    'AddOutputFilter' => {
+      'INCLUDES'      => '.shtml'
+      },
+  }
+
   # should we use systemd module?
   $use_systemd = true
 
@@ -223,7 +236,11 @@ class apache::params inherits ::apache::version {
     $fastcgi_lib_path       = '/var/lib/apache2/fastcgi'
     $mime_support_package = 'mime-support'
     $mime_types_config    = '/etc/mime.types'
-    $docroot              = '/var/www'
+    if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '13.10') >= 0) or ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '8') >= 0) {
+      $docroot              = '/var/www/html'
+    } else {
+      $docroot              = '/var/www'
+    }
     $cas_cookie_path      = '/var/cache/apache2/mod_auth_cas/'
     $mellon_lock_file     = undef
     $mellon_cache_size    = undef

@@ -190,6 +190,103 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
     end
   end
 
+  context 'new vhost with multiple IP addresses on port 80' do
+    it 'should configure one apache vhost with 2 ip addresses' do
+      pp = <<-EOS
+        class { 'apache':
+          default_vhost => false,
+        }
+        apache::vhost { 'example.com':
+          port     => '80',
+          ip       => ['127.0.0.1','127.0.0.2'],
+          ip_based => true,
+          docroot  => '/var/www/html',
+        }
+        host { 'ipv4.example.com': ip => '127.0.0.1', }
+        host { 'ipv6.example.com': ip => '127.0.0.2', }
+        file { '/var/www/html/index.html':
+          ensure  => file,
+          content => "Hello from vhost\\n",
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe service($service_name) do
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
+    end
+
+    describe file("#{$vhost_dir}/25-example.com.conf") do
+      it { is_expected.to contain '<VirtualHost 127.0.0.1:80 127.0.0.2:80>' }
+      it { is_expected.to contain "ServerName example.com" }
+    end
+
+    describe file($ports_file) do
+      it { is_expected.to be_file }
+      it { is_expected.to contain 'Listen 127.0.0.1:80' }
+      it { is_expected.to contain 'Listen 127.0.0.2:80' }
+      it { is_expected.not_to contain 'NameVirtualHost 127.0.0.1:80' }
+      it { is_expected.not_to contain 'NameVirtualHost 127.0.0.2:80' }
+    end
+
+    it 'should answer to ipv4.example.com' do
+      shell("/usr/bin/curl ipv4.example.com:80", {:acceptable_exit_codes => 0}) do |r|
+        expect(r.stdout).to eq("Hello from vhost\n")
+      end
+    end
+
+    it 'should answer to ipv6.example.com' do
+      shell("/usr/bin/curl ipv6.example.com:80", {:acceptable_exit_codes => 0}) do |r|
+        expect(r.stdout).to eq("Hello from vhost\n")
+      end
+    end
+  end
+
+  context 'new vhost with IPv6 address on port 80' do
+    it 'should configure one apache vhost with an ipv6 address' do
+      pp = <<-EOS
+        class { 'apache':
+          default_vhost  => false,
+        }
+        apache::vhost { 'example.com':
+          port           => '80',
+          ip             => '::1',
+          ip_based       => true,
+          docroot        => '/var/www/html',
+        }
+        host { 'ipv6.example.com': ip => '::1', }
+        file { '/var/www/html/index.html':
+          ensure  => file,
+          content => "Hello from vhost\\n",
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe service($service_name) do
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
+    end
+
+    describe file("#{$vhost_dir}/25-example.com.conf") do
+      it { is_expected.to contain '<VirtualHost [::1]:80>' }
+      it { is_expected.to contain "ServerName example.com" }
+    end
+
+    describe file($ports_file) do
+      it { is_expected.to be_file }
+      it { is_expected.to contain 'Listen [::1]:80' }
+      it { is_expected.not_to contain 'NameVirtualHost [::1]:80' }
+    end
+
+    it 'should answer to ipv6.example.com' do
+      shell("/usr/bin/curl ipv6.example.com:80", {:acceptable_exit_codes => 0}) do |r|
+        expect(r.stdout).to eq("Hello from vhost\n")
+      end
+    end
+  end
+
   context 'apache_directories' do
     describe 'readme example, adapted' do
       it 'should configure a vhost with Files' do
@@ -1004,40 +1101,6 @@ describe 'apache::vhost define', :unless => UNSUPPORTED_PLATFORMS.include?(fact(
       it { is_expected.to contain 'Redirect permanent /images http://test.server/' }
     end
   end
-
-  # Passenger isn't even in EPEL on el-5
-  if default['platform'] !~ /^el-5/
-    if fact('osfamily') == 'RedHat' and fact('operatingsystemmajrelease') == '7'
-      pending('Since we don\'t have passenger on RHEL7 rack_base_uris tests will fail')
-    else
-      describe 'rack_base_uris' do
-        if fact('osfamily') == 'RedHat'
-          it 'adds epel' do
-            pp = "class { 'epel': }"
-            apply_manifest(pp, :catch_failures => true)
-          end
-        end
-
-        it 'applies cleanly' do
-          pp = <<-EOS
-            class { 'apache': }
-            host { 'test.server': ip => '127.0.0.1' }
-            apache::vhost { 'test.server':
-              docroot          => '/tmp',
-              rack_base_uris  => ['/test'],
-            }
-          EOS
-          apply_manifest(pp, :catch_failures => true)
-        end
-
-        describe file("#{$vhost_dir}/25-test.server.conf") do
-          it { is_expected.to be_file }
-          it { is_expected.to contain 'RackBaseURI /test' }
-        end
-      end
-    end
-  end
-
 
   describe 'request_headers' do
     it 'applies cleanly' do

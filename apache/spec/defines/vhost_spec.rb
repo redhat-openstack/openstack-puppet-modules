@@ -456,9 +456,83 @@ describe 'apache::vhost', :type => :define do
         :content => /^\s+Krb5Keytab\s\/tmp\/keytab5$/)}
       it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
         :content => /^\s+KrbLocalUserMapping\soff$/)}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
+        :content => /^\s+KrbServiceName\sHTTP$/)}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
+        :content => /^\s+KrbSaveCredentials\soff$/)}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
+        :content => /^\s+KrbVerifyKDC\son$/)}
       it { is_expected.to contain_concat__fragment('rspec.example.com-limits').with(
         :content => /^\s+LimitRequestFieldSize\s54321$/)}
     end
+    context 'vhost with multiple ip addresses' do
+      let :params do
+        {
+          'port'                        => '80',
+          'ip'                          => ['127.0.0.1','::1'],
+          'ip_based'                    => true,
+          'servername'                  => 'example.com',
+          'docroot'                     => '/var/www/html',
+          'add_listen'                  => true,
+          'ensure'                      => 'present'
+        }
+      end
+      let :facts do
+        {
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :concat_basedir         => '/dne',
+          :operatingsystem        => 'RedHat',
+          :id                     => 'root',
+          :kernel                 => 'Linux',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :kernelversion          => '3.6.2',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-apache-header').with(
+        :content => /[.\/m]*<VirtualHost 127.0.0.1:80 \[::1\]:80>[.\/m]*$/ ) }
+      it { is_expected.to contain_concat__fragment('Listen 127.0.0.1:80') }
+      it { is_expected.to contain_concat__fragment('Listen [::1]:80') }
+      it { is_expected.to_not contain_concat__fragment('NameVirtualHost 127.0.0.1:80') }
+      it { is_expected.to_not contain_concat__fragment('NameVirtualHost [::1]:80') }
+    end
+
+    context 'vhost with ipv6 address' do
+      let :params do
+        {
+          'port'                        => '80',
+          'ip'                          => '::1',
+          'ip_based'                    => true,
+          'servername'                  => 'example.com',
+          'docroot'                     => '/var/www/html',
+          'add_listen'                  => true,
+          'ensure'                      => 'present'
+        }
+      end
+      let :facts do
+        {
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :concat_basedir         => '/dne',
+          :operatingsystem        => 'RedHat',
+          :id                     => 'root',
+          :kernel                 => 'Linux',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :kernelversion          => '3.6.2',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-apache-header').with(
+        :content => /[.\/m]*<VirtualHost \[::1\]:80>[.\/m]*$/ ) }
+      it { is_expected.to contain_concat__fragment('Listen [::1]:80') }
+      it { is_expected.to_not contain_concat__fragment('NameVirtualHost [::1]:80') }
+    end
+
     context 'set only aliases' do
       let :params do
         {
@@ -903,6 +977,73 @@ describe 'apache::vhost', :type => :define do
       end
       let :facts do default_facts end
       it { expect { is_expected.to compile }.to raise_error }
+    end
+    context 'default of require all granted' do
+      let :params do
+        {
+          'docroot'         => '/var/www/foo',
+          'directories'     => [
+            {
+              'path'     => '/var/www/foo/files',
+              'provider' => 'files',
+            },
+          ],
+
+        }
+      end
+      let :facts do
+        {
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :concat_basedir         => '/dne',
+          :operatingsystem        => 'RedHat',
+          :id                     => 'root',
+          :kernel                 => 'Linux',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :kernelversion          => '3.19.2',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_file('25-rspec.example.com.conf') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Require all granted$/ ) }
+    end
+    context 'require unmanaged' do
+      let :params do
+        {
+          'docroot'         => '/var/www/foo',
+          'directories'     => [
+            {
+              'path'     => '/var/www/foo',
+              'require'  => 'unmanaged',
+            },
+          ],
+
+        }
+      end
+      let :facts do
+        {
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :concat_basedir         => '/dne',
+          :operatingsystem        => 'RedHat',
+          :id                     => 'root',
+          :kernel                 => 'Linux',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :kernelversion          => '3.19.2',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_file('25-rspec.example.com.conf') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories') }
+      it { is_expected.to_not contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+Require all granted$/ )
+      }
     end
   end
 end
