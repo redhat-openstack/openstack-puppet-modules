@@ -188,7 +188,7 @@ Requires a single boolean as input. *Type*: rvalue.
 
 #### `capitalize`
 
-Capitalizes the first letter of a string or array of strings. Requires either a single string or an array as an input. *Type*: rvalue.
+Capitalizes the first character of a string or array of strings, and lower-cases the remaining characters of each string. Requires either a single string or an array as an input. *Type*: rvalue.
 
 #### `ceiling`
 
@@ -624,6 +624,10 @@ From a list of values, returns the first value that is not undefined or an empty
 
 *Type*: rvalue.
 
+#### `pick_default`
+
+Will return the first value in a list of values. Contrary to the 'pick()' function, the 'pick_default()' does not fail if all arguments are empty. This allows it to use an empty value as default. *Type*: rvalue.
+
 #### `prefix`
 
 Applies a prefix to all elements in an array, or to the keys in a hash.
@@ -711,7 +715,7 @@ Returns a new string where runs of the same character that occur in this set are
 
 #### `str2bool`
 
-Converts a string to a boolean regardless of case. This attempts to convert strings that contain values such as '1', 't', 'y', 'Y', 'YES','yes', and 'TRUE' to 'true' and strings that contain values such as '0', 'f','F', 'N','n', 'NO','FALSE', and 'no' to 'false'. *Type*: rvalue.  
+Converts certain strings to a boolean. This attempts to convert strings that contain the values '1', 't', 'y', and 'yes' to 'true'.  Strings that contain values '0', 'f', 'n', and 'no', or are an an empty string or undefined are converted to 'false'. Any other value will cause an error. *Type*: rvalue.
 
 #### `str2saltedsha512`
 
