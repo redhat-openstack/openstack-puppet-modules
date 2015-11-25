@@ -7,7 +7,11 @@ Puppet::Type.type(:keystone_endpoint).provide(
 
   desc "Provider to manage keystone endpoints."
 
-  @credentials = Puppet::Provider::Openstack::CredentialsV2_0.new
+  include PuppetX::Keystone::CompositeNamevar::Helpers
+
+  @endpoints   = nil
+  @services    = nil
+  @credentials = Puppet::Provider::Openstack::CredentialsV3.new
 
   def initialize(value={})
     super(value)
@@ -15,30 +19,49 @@ Puppet::Type.type(:keystone_endpoint).provide(
   end
 
   def create
-    properties = []
-    # The region property is just ignored. We should fix this in kilo.
-    region, name = resource[:name].split('/')
-    properties << name
-    properties << '--region'
-    properties << region
-    if resource[:public_url]
-      properties << '--publicurl'
-      properties << resource[:public_url]
+    # Reset the cache.
+    self.class.services = nil
+    name   = resource[:name]
+    region = resource[:region]
+    type   = resource[:type]
+    type   = self.class.type_from_service(name) unless set?(:type)
+    @property_hash[:type] = type
+    services = self.class.services.find_all { |s| s[:name] == name }
+    service = services.find { |s| s[:type] == type }
+
+    if service.nil? && services.count == 1
+      # For backward comptatibility, match the service by name only.
+      name = services[0][:id]
+    else
+      # Math the service by id.
+      name = service[:id] if service
     end
-    if resource[:internal_url]
-      properties << '--internalurl'
-      properties << resource[:internal_url]
+    ids = []
+
+    created = false
+    [:admin_url, :internal_url, :public_url].each do |scope|
+      if resource[scope]
+        created = true
+        ids << endpoint_create(name, region,  scope.to_s.sub(/_url$/, ''),
+                               resource[scope])[:id]
+      end
     end
-    if resource[:admin_url]
-      properties << '--adminurl'
-      properties << resource[:admin_url]
+    if created
+      @property_hash[:id] = ids.join(',')
+      @property_hash[:ensure] = :present
+    else
+      warning('Specifying a keystone_endpoint without an ' \
+              'admin_url/public_url/internal_url ' \
+              "won't create the endpoint at all, despite what Puppet is saying.")
+      @property_hash[:ensure] = :absent
     end
-     self.class.request('endpoint', 'create', properties)
-     @property_hash[:ensure] = :present
   end
 
   def destroy
-    self.class.request('endpoint', 'delete', @property_hash[:id])
+    ids = @property_hash[:id].split(',')
+    ids.each do |id|
+      self.class.request('endpoint', 'delete', id)
+    end
     @property_hash.clear
   end
 
@@ -46,67 +69,154 @@ Puppet::Type.type(:keystone_endpoint).provide(
     @property_hash[:ensure] == :present
   end
 
-  def region
-    @property_hash[:region]
-  end
+  mk_resource_methods
 
   def public_url=(value)
     @property_flush[:public_url] = value
-  end
-
-  def public_url
-    @property_hash[:public_url]
   end
 
   def internal_url=(value)
     @property_flush[:internal_url] = value
   end
 
-  def internal_url
-    @property_hash[:internal_url]
-  end
-
   def admin_url=(value)
     @property_flush[:admin_url] = value
   end
 
-  def admin_url
-    @property_hash[:admin_url]
-  end
-
-  def id
-    @property_hash[:id]
+  def region=(_)
+    fail(Puppet::Error, "Updating the endpoint's region is not currently supported.")
   end
 
   def self.instances
-    list = request('endpoint', 'list', '--long')
+    names = []
+    list = []
+    endpoints.each do |current|
+      name = transform_name(current[:region], current[:service_name], current[:service_type])
+      unless names.include?(name)
+        names << name
+        endpoint = { :name => name, current[:interface].to_sym => current }
+        endpoints.each do |ep_osc|
+          if (ep_osc[:id] != current[:id]) &&
+            (ep_osc[:service_name] == current[:service_name]) &&
+            (ep_osc[:service_type] == current[:service_type])
+            endpoint.merge!(ep_osc[:interface].to_sym => ep_osc)
+          end
+        end
+        list << endpoint
+      end
+    end
     list.collect do |endpoint|
       new(
-        :name         => "#{endpoint[:region]}/#{endpoint[:service_name]}",
+        :name         => endpoint[:name],
         :ensure       => :present,
-        :id           => endpoint[:id],
-        :region       => endpoint[:region],
-        :public_url   => endpoint[:publicurl],
-        :internal_url => endpoint[:internalurl],
-        :admin_url    => endpoint[:adminurl]
+        :id           => "#{endpoint[:admin][:id]},#{endpoint[:internal][:id]},#{endpoint[:public][:id]}",
+        :region       => endpoint[:admin][:region],
+        :admin_url    => endpoint[:admin][:url],
+        :internal_url => endpoint[:internal][:url],
+        :public_url   => endpoint[:public][:url]
       )
     end
   end
 
   def self.prefetch(resources)
-    endpoints = instances
-    resources.keys.each do |name|
-       if provider = endpoints.find{ |endpoint| endpoint.name == name }
-        resources[name].provider = provider
-      end
+    prefetch_composite(resources) do |sorted_namevars|
+      name   = sorted_namevars[0]
+      region = sorted_namevars[1]
+      type   = sorted_namevars[2]
+      transform_name(region, name, type)
     end
   end
 
   def flush
-    if ! @property_flush.empty?
-      destroy
-      create
-      @property_flush.clear
+    if @property_flush && @property_hash[:id]
+      ids = @property_hash[:id].split(',')
+      if @property_flush[:admin_url]
+        self.class.request('endpoint', 'set', [ids[0], "--url=#{resource[:admin_url]}"])
+      end
+      if @property_flush[:internal_url]
+        self.class.request('endpoint', 'set', [ids[1], "--url=#{resource[:internal_url]}"])
+      end
+      if @property_flush[:public_url]
+        self.class.request('endpoint', 'set', [ids[2], "--url=#{resource[:public_url]}"])
+      end
+    end
+    @property_hash = resource.to_hash
+  end
+
+  private
+
+  def endpoint_create(name, region, interface, url)
+    properties = [name, interface, url, '--region', region]
+    self.class.request('endpoint', 'create', properties)
+  end
+
+  private
+
+  def self.endpoints
+    return @endpoints unless @endpoints.nil?
+    @endpoints = request('endpoint', 'list')
+  end
+
+  def self.endpoints=(value)
+    @endpoints = value
+  end
+
+  def self.services
+    return @services unless @services.nil?
+    @services = request('service', 'list')
+  end
+
+  def self.services=(value)
+    @services = value
+  end
+
+  def self.endpoint_from_region_name(region, name)
+    endpoints.find_all { |e| e[:region] == region && e[:service_name] == name }
+      .map { |e| e[:service_type] }.uniq
+  end
+
+  def self.type_from_service(name)
+    types = services.find_all { |s| s[:name] == name }.map { |e| e[:type] }.uniq
+    if types.count == 1
+      types[0]
+    else
+      # We don't fail here as it can happen during a ensure => absent.
+      PuppetX::Keystone::CompositeNamevar::Unset
+    end
+  end
+
+  def self.service_type(services, region, name)
+    nbr_of_services = services.count
+    err_msg         = ["endpoint matching #{region}/#{name}:"]
+    type            = nil
+
+    case
+    when nbr_of_services == 1
+      type = services[0]
+    when nbr_of_services > 1
+      err_msg += [endpoint_from_region_name(region, name).join(' ')]
+    when nbr_of_services < 1
+      # Then we try to get the type by service name.
+      type = type_from_service(name)
+    end
+
+    if !type.nil?
+      type
+    else
+      fail(Puppet::Error, 'Cannot get the correct endpoint type: ' \
+           "#{err_msg.join(' ')}")
+    end
+  end
+
+  def self.transform_name(region, name, type)
+    if type == PuppetX::Keystone::CompositeNamevar::Unset
+      type = service_type(endpoint_from_region_name(region, name), region, name)
+    end
+    if type == PuppetX::Keystone::CompositeNamevar::Unset
+      Puppet.debug("Could not find the type for endpoint #{region}/#{name}")
+      "#{region}/#{name}"
+    else
+      "#{region}/#{name}::#{type}"
     end
   end
 end
