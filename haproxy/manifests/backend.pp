@@ -15,9 +15,9 @@
 #
 # === Parameters
 #
-# [*name*]
-#   The namevar of the defined resource type is the backend service's name.
+# [*section_name*]
 #    This name goes right after the 'backend' statement in haproxy.cfg
+#    Default: $name (the namevar of the resource).
 #
 # [*options*]
 #   A hash of options that are inserted into the backend configuration block.
@@ -57,22 +57,32 @@ define haproxy::backend (
       'ssl-hello-chk'
     ],
     'balance' => 'roundrobin'
-  }
+  },
+  $instance         = 'haproxy',
+  $section_name     = $name,
 ) {
-
-  if defined(Haproxy::Listen[$name]) {
-    fail("An haproxy::listen resource was discovered with the same name (${name}) which is not supported")
+  if defined(Haproxy::Listen[$section_name]) {
+    fail("An haproxy::listen resource was discovered with the same name (${section_name}) which is not supported")
   }
 
-  # Template uses: $name, $ipaddress, $ports, $options
-  concat::fragment { "${name}_backend_block":
-    order   => "20-${name}-00",
-    target  => $::haproxy::config_file,
+  include haproxy::params
+  if $instance == 'haproxy' {
+    $instance_name = 'haproxy'
+    $config_file = $haproxy::params::config_file
+  } else {
+    $instance_name = "haproxy-${instance}"
+    $config_file = inline_template($haproxy::params::config_file_tmpl)
+  }
+
+  # Template uses: $section_name, $ipaddress, $ports, $options
+  concat::fragment { "${instance_name}-${section_name}_backend_block":
+    order   => "20-${section_name}-00",
+    target  => $config_file,
     content => template('haproxy/haproxy_backend_block.erb'),
   }
 
   if $collect_exported {
-    haproxy::balancermember::collect_exported { $name: }
+    haproxy::balancermember::collect_exported { $section_name: }
   }
   # else: the resources have been created and they introduced their
   # concat fragments. We don't have to do anything about them.

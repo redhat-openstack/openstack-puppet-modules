@@ -14,12 +14,23 @@
 
 define haproxy::peers (
   $collect_exported = true,
+  $instance = 'haproxy',
 ) {
 
+  # We derive these settings so that the caller only has to specify $instance.
+  include haproxy::params
+  if $instance == 'haproxy' {
+    $instance_name = 'haproxy'
+    $config_file = $::haproxy::config_file
+  } else {
+    $instance_name = "haproxy-${instance}"
+    $config_file = inline_template($haproxy::params::config_file_tmpl)
+  }
+
   # Template uses: $name, $ipaddress, $ports, $options
-  concat::fragment { "${name}_peers_block":
+  concat::fragment { "${instance_name}-${name}_peers_block":
     order   => "30-peers-00-${name}",
-    target  => $::haproxy::config_file,
+    target  => $config_file,
     content => template('haproxy/haproxy_peers_block.erb'),
   }
 
