@@ -78,7 +78,9 @@ describe 'glance::backend::vsphere' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily       => 'Debian',
+      })
     end
 
     it_configures 'glance with vsphere backend'
@@ -86,7 +88,10 @@ describe 'glance::backend::vsphere' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7',
+      })
     end
 
     it_configures 'glance with vsphere backend'
