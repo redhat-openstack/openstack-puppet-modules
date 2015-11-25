@@ -51,7 +51,7 @@ mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'galera',
-  :commit => '26016bc260b6d1101201dd1ca791deb1a5fcf2cf',
+  :commit => 'a2ecf273aef9ef9193bba35c235fb7b8b821a0c3',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
 mod 'glance',
