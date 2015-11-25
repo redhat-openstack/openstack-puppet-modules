@@ -15,12 +15,8 @@ describe 'manila' do
 
     it { is_expected.to contain_class('manila::logging') }
     it { is_expected.to contain_class('manila::params') }
-    it { is_expected.to contain_class('mysql::bindings::python') }
 
     it 'should contain default config' do
-      is_expected.to contain_manila_config('DEFAULT/sql_idle_timeout').with(
-        :value => '3600'
-      )
       is_expected.to contain_manila_config('DEFAULT/rpc_backend').with(
         :value => 'rabbit'
       )
@@ -51,10 +47,6 @@ describe 'manila' do
       )
       is_expected.to contain_manila_config('oslo_messaging_rabbit/rabbit_userid').with(
         :value => 'guest'
-      )
-      is_expected.to contain_manila_config('DEFAULT/sql_connection').with(
-        :value  => 'mysql://user:password@host/database',
-        :secret => true
       )
       is_expected.to contain_manila_config('DEFAULT/verbose').with(
         :value => false
@@ -139,8 +131,6 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
-    it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('qpid') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_port').with_value('5672') }
     it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_username').with_value('guest') }
@@ -273,10 +263,6 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with(
-      :value  => 'sqlite:////var/lib/manila/manila.sqlite',
-      :secret => true
-    ) }
     it { is_expected.to_not contain_class('mysql::python') }
     it { is_expected.to_not contain_class('mysql::bindings') }
     it { is_expected.to_not contain_class('mysql::bindings::python') }
@@ -336,7 +322,6 @@ describe 'manila' do
       }
     end
 
-    it { is_expected.to contain_manila_config('DEFAULT/sql_connection').with_value('mysql://user:password@host/database') }
     it { is_expected.to contain_manila_config('DEFAULT/rpc_backend').with_value('zmq') }
     it { is_expected.to contain_manila_config('oslo_messaging_amqp/server_request_prefix').with_value('exclusive') }
     it { is_expected.to contain_manila_config('oslo_messaging_amqp/broadcast_prefix').with_value('broadcast') }

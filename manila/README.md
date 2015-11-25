@@ -1,7 +1,7 @@
 manila
 =======
 
-6.0.0 - 2015.1.0 - Kilo
+6.1.0 - 2015.1.0 - Kilo
 
 #### Table of Contents
 
@@ -15,7 +15,7 @@ manila
 Overview
 --------
 
-The manila module is part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software.  The module its self is used to flexibly configure and manage the file system service for OpenStack.
+The manila module is part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software.  The module itself is used to flexibly configure and manage the file system service for OpenStack.
 
 Module Description
 ------------------
@@ -29,7 +29,7 @@ Setup
 
 **What the manila module affects**
 
-* manila, the file system service for OpenStack.
+* [Manila](https://wiki.openstack.org/wiki/Manila), the file system service for OpenStack.
 
 ### Installing manila
 
