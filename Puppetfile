@@ -195,7 +195,7 @@ mod 'snmp',
   :git => 'https://github.com/razorsedge/puppet-snmp.git'
 
 mod 'ssh',
-  :commit => '3216cd87ae97ee74f06edd0e4868cedbc90e86d9',
+  :commit => 'd0c77c06b7d9e03c9c30f564605e07535ee8f5c9',
   :git => 'https://github.com/saz/puppet-ssh.git'
 
 mod 'staging',
