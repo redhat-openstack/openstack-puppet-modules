@@ -29,11 +29,6 @@
 #    If set to boolean false, it will not log to any directory.
 #    Defaults to '/var/log/gnocchi'
 #
-#  [*log_file*]
-#    (optional) The path of file used for logging
-#    If set to boolean false, it will not log to any file.
-#    Default to '/var/log/gnocchi-api.log'
-#
 #  [*logging_context_format_string*]
 #    (optional) Format string to use for log messages with context.
 #    Defaults to undef.
@@ -100,7 +95,6 @@ class gnocchi::logging(
   $use_stderr                    = true,
   $log_facility                  = 'LOG_USER',
   $log_dir                       = '/var/log/gnocchi',
-  $log_file                      = '/var/log/gnocchi/gnocchi-api.log',
   $verbose                       = false,
   $debug                         = false,
   $logging_context_format_string = undef,
@@ -118,13 +112,12 @@ class gnocchi::logging(
 
   # NOTE(spredzy): In order to keep backward compatibility we rely on the pick function
   # to use gnocchi::<myparam> first then gnocchi::logging::<myparam>.
-  $use_syslog_real = pick($::gnocchi::api::use_syslog,$use_syslog)
-  $use_stderr_real = pick($::gnocchi::api::use_stderr,$use_stderr)
-  $log_facility_real = pick($::gnocchi::api::log_facility,$log_facility)
-  $log_dir_real = pick($::gnocchi::api::log_dir,$log_dir)
-  $log_file_real = pick($::gnocchi::api::log_file,$log_file)
-  $verbose_real  = pick($::gnocchi::api::verbose,$verbose)
-  $debug_real = pick($::gnocchi::api::debug,$debug)
+  $use_syslog_real = pick($::gnocchi::use_syslog,$use_syslog)
+  $use_stderr_real = pick($::gnocchi::use_stderr,$use_stderr)
+  $log_facility_real = pick($::gnocchi::log_facility,$log_facility)
+  $log_dir_real = pick($::gnocchi::log_dir,$log_dir)
+  $verbose_real  = pick($::gnocchi::verbose,$verbose)
+  $debug_real = pick($::gnocchi::debug,$debug)
 
   gnocchi_config {
     'DEFAULT/debug'              : value => $debug_real;
@@ -132,7 +125,6 @@ class gnocchi::logging(
     'DEFAULT/use_stderr'         : value => $use_stderr_real;
     'DEFAULT/use_syslog'         : value => $use_syslog_real;
     'DEFAULT/log_dir'            : value => $log_dir_real;
-    'DEFAULT/log_file'           : value => $log_file_real;
     'DEFAULT/syslog_log_facility': value => $log_facility_real;
   }
 

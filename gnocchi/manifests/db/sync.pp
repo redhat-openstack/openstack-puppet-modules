@@ -1,27 +1,23 @@
 #
-# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
-#
-# Author: Emilien Macchi <emilien.macchi@enovance.com>
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-#
 # Class to execute "gnocchi-dbsync"
 #
-class gnocchi::db::sync {
-  exec { 'gnocchi-dbsync':
+# [*user*]
+#   (optional) User to run dbsync command.
+#   Defaults to 'gnocchi'
+#
+class gnocchi::db::sync (
+  $user = 'gnocchi',
+){
+  exec { 'gnocchi-db-sync':
+    command     => 'gnocchi-dbsync --config-file /etc/gnocchi/gnocchi.conf',
     path        => '/usr/bin',
-    user        => 'gnocchi',
     refreshonly => true,
-    subscribe   => [Package['gnocchi-api'], Gnocchi_config['database/connection']],
+    user        => $user,
+    logoutput   => on_failure,
   }
+
+  Package<| tag == 'gnocchi-package' |> ~> Exec['gnocchi-db-sync']
+  Exec['gnocchi-db-sync'] ~> Service<| tag == 'gnocchi-db-sync-service' |>
+  Gnocchi_config<||> ~> Exec['gnocchi-db-sync']
+  Gnocchi_config<| title == 'indexer/url' |> ~> Exec['gnocchi-db-sync']
 }

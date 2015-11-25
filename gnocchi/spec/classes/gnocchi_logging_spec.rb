@@ -15,7 +15,7 @@ describe 'gnocchi::logging' do
       :logging_exception_prefix => '%(asctime)s.%(msecs)03d %(process)d TRACE %(name)s %(instance)s',
       :log_config_append => '/etc/gnocchi/logging.conf',
       :publish_errors => true,
-      :default_log_levels => { 
+      :default_log_levels => {
         'amqp' => 'WARN', 'amqplib' => 'WARN', 'boto' => 'WARN',
         'qpid' => 'WARN', 'sqlalchemy' => 'WARN', 'suds' => 'INFO',
         'iso8601' => 'WARN',
@@ -28,7 +28,6 @@ describe 'gnocchi::logging' do
      :use_stderr => false,
      :log_facility => 'LOG_FOO',
      :log_dir => '/var/log',
-     :log_file => '/var/log/foo.log',
      :verbose => true,
      :debug => true,
     }
@@ -61,7 +60,6 @@ describe 'gnocchi::logging' do
       is_expected.to contain_gnocchi_config('DEFAULT/use_syslog').with(:value => 'false')
       is_expected.to contain_gnocchi_config('DEFAULT/use_stderr').with(:value => 'true')
       is_expected.to contain_gnocchi_config('DEFAULT/log_dir').with(:value => '/var/log/gnocchi')
-      is_expected.to contain_gnocchi_config('DEFAULT/log_file').with(:value => '/var/log/gnocchi/gnocchi-api.log')
       is_expected.to contain_gnocchi_config('DEFAULT/verbose').with(:value => 'false')
       is_expected.to contain_gnocchi_config('DEFAULT/debug').with(:value => 'false')
     end
@@ -73,7 +71,6 @@ describe 'gnocchi::logging' do
       is_expected.to contain_gnocchi_config('DEFAULT/use_stderr').with(:value => 'false')
       is_expected.to contain_gnocchi_config('DEFAULT/syslog_log_facility').with(:value => 'LOG_FOO')
       is_expected.to contain_gnocchi_config('DEFAULT/log_dir').with(:value => '/var/log')
-      is_expected.to contain_gnocchi_config('DEFAULT/log_file').with(:value => '/var/log/foo.log')
       is_expected.to contain_gnocchi_config('DEFAULT/verbose').with(:value => 'true')
       is_expected.to contain_gnocchi_config('DEFAULT/debug').with(:value => 'true')
     end

@@ -1,43 +1,68 @@
+# == Class: gnocchi
 #
-# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
+# Full description of class gnocchi here.
 #
-# Author: Emilien Macchi <emilien.macchi@enovance.com>
+# === Parameters
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
+# [*ensure_package*]
+#   (optional) The state of gnocchi packages
+#   Defaults to 'present'
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# [*log_dir*]
+#   (optional) Directory where logs should be stored.
+#   If set to boolean false, it will not log to any directory.
+#   Defaults to undef
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-
-# gnocchi::init
+# [*state_path*]
+#   (optional) Directory for storing state.
+#   Defaults to '/var/lib/gnocchi'
 #
-# Gnocchi base config
+# [*lock_path*]
+#   (optional) Directory for lock files.
+#   On RHEL will be '/var/lib/gnocchi/tmp' and on Debian '/var/lock/gnocchi'
+#   Defaults to $::gnocchi::params::lock_path
 #
-# == Parameters
+# [*verbose*]
+#   (optional) Set log output to verbose output.
+#   Defaults to undef
+#
+# [*debug*]
+#   (optional) Set log output to debug output.
+#   Defaults to undef
+#
+# [*use_syslog*]
+#   (optional) Use syslog for logging
+#   Defaults to undef
+#
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to undef
+#
+# [*log_facility*]
+#   (optional) Syslog facility to receive log lines.
+#   Defaults to undef
 #
 # [*database_connection*]
-#   (optional) Connection url to connect to gnocchi database.
-#   Defaults to 'sqlite:////var/lib/gnocchi/gnocchi.sqlite'
+#   (optional) Connection url for the gnocchi database.
+#   Defaults to undef.
 #
-# [*database_idle_timeout*]
-#   (optional) Timeout before idle db connections are reaped.
-#   Defaults to 3600
-#
-class gnocchi(
-  $database_connection          = 'sqlite:////var/lib/gnocchi/gnocchi.sqlite',
-  $database_idle_timeout        = 3600,
-) {
-  include ::gnocchi::params
+class gnocchi (
+  $ensure_package                     = 'present',
+  $verbose                            = undef,
+  $debug                              = undef,
+  $use_syslog                         = undef,
+  $use_stderr                         = undef,
+  $log_facility                       = undef,
+  $database_connection                = undef,
+) inherits gnocchi::params {
 
-  exec { 'post-gnocchi_config':
-    command     => '/bin/echo "Gnocchi config has changed"',
-    refreshonly => true,
+  include ::gnocchi::db
+  include ::gnocchi::logging
+
+  package { 'gnocchi':
+    ensure => $ensure_package,
+    name   => $::gnocchi::params::common_package_name,
+    tag    => ['openstack', 'gnocchi-package'],
   }
 
 }

@@ -1,11 +1,11 @@
 # == Class: gnocchi::config
 #
-# This class is used to manage arbitrary Gnocchi configurations.
+# This class is used to manage arbitrary gnocchi configurations.
 #
 # === Parameters
 #
 # [*gnocchi_config*]
-#   (optional) Allow configuration of arbitrary Gnocchi configurations.
+#   (optional) Allow configuration of arbitrary gnocchi configurations.
 #   The value is an hash of gnocchi_config resources. Example:
 #   { 'DEFAULT/foo' => { value => 'fooValue'},
 #     'DEFAULT/bar' => { value => 'barValue'}
@@ -21,7 +21,7 @@
 #   or Puppet catalog compilation will fail with duplicate resources.
 #
 class gnocchi::config (
-  $gnocchi_config        = {},
+  $gnocchi_config = {},
 ) {
 
   validate_hash($gnocchi_config)
