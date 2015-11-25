@@ -243,6 +243,12 @@
 #    All entities will be created in the default domain.
 #    Default to undefined
 #
+#  [*image_backend*]
+#    (optional) Overrides the default image backend settings.  This allows the list of supported
+#    image types etc. to be explicitly defined.
+#    Example: image_backend => { 'image_formats' => { '' => 'Select type', 'qcow2' => 'QCOW2' } }
+#    Default to empty hash
+#
 # === Examples
 #
 #  class { 'horizon':
@@ -301,6 +307,7 @@ class horizon(
   $api_versions                        = {},
   $keystone_multidomain_support        = false,
   $keystone_default_domain             = undef,
+  $image_backend                       = {},
   # DEPRECATED PARAMETERS
   $can_set_mount_point                 = undef,
   $vhost_extra_params                  = undef,
@@ -373,14 +380,21 @@ class horizon(
     ensure  => $package_ensure,
   }
 
-  exec { 'refresh_horizon_django_cache':
-    command     => "${::horizon::params::manage_py} collectstatic --noinput --clear && ${::horizon::params::manage_py} compress --force",
-    refreshonly => true,
-    require     => [Package['python-lesscpy'], Package['horizon']],
-  }
+  # debian/ubuntu do not use collect static as the packaging already handles
+  # this as part of the packages. This was put in as a work around for Debian
+  # who has since fixed their packaging.
+  # See I813b5f6067bb6ecce279cab7278d9227c4d31d28 for the original history
+  # behind this section.
+  if $::os_package_type == 'redhat' {
+    exec { 'refresh_horizon_django_cache':
+      command     => "${::horizon::params::manage_py} collectstatic --noinput --clear && ${::horizon::params::manage_py} compress --force",
+      refreshonly => true,
+      require     => [Package['python-lesscpy'], Package['horizon']],
+    }
 
-  if $compress_offline {
-    Concat[$::horizon::params::config_file] ~> Exec['refresh_horizon_django_cache']
+    if $compress_offline {
+      Concat[$::horizon::params::config_file] ~> Exec['refresh_horizon_django_cache']
+    }
   }
 
   if $configure_apache {
