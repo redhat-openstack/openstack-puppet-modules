@@ -9,7 +9,7 @@ class pacemaker::params {
         $pcsd_mode = false
         $services_manager = 'lsb'
       } else {
-        $package_list = ["pacemaker","pcs","fence-agents-all"]
+        $package_list = ["pacemaker","pcs","fence-agents-all","pacemaker-libs"]
         $pcsd_mode = true
         $services_manager = 'systemd'
       }
