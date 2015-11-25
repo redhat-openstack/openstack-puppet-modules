@@ -33,13 +33,13 @@ describe 'cinder::backup::nfs' do
   let :default_params do
     {
       :backup_driver                => 'cinder.backup.drivers.nfs',
-      :backup_file_size             => 1999994880,
-      :backup_sha_block_size_bytes  => 32768,
-      :backup_enable_progress_timer => true,
-      :backup_mount_point_base      => '$state_path/backup_mount',
+      :backup_file_size             => '<SERVICE DEFAULT>',
+      :backup_sha_block_size_bytes  => '<SERVICE DEFAULT>',
+      :backup_enable_progress_timer => '<SERVICE DEFAULT>',
+      :backup_mount_point_base      => '<SERVICE DEFAULT>',
       :backup_mount_options         => '<SERVICE DEFAULT>',
       :backup_container             => '<SERVICE DEFAULT>',
-      :backup_compression_algorithm => 'zlib',
+      :backup_compression_algorithm => '<SERVICE DEFAULT>',
     }
   end
 
@@ -69,7 +69,7 @@ describe 'cinder::backup::nfs' do
 
   context 'on Debian platforms' do
     let :facts do
-      @default_facts.merge!({:osfamily => 'Debian'})
+      @default_facts.merge({:osfamily => 'Debian'})
     end
 
     it_configures 'cinder backup with nfs'
@@ -77,7 +77,7 @@ describe 'cinder::backup::nfs' do
 
   context 'on RedHat platforms' do
     let :facts do
-      @default_facts.merge!({:osfamily => 'RedHat'})
+      @default_facts.merge({:osfamily => 'RedHat'})
     end
 
     it_configures 'cinder backup with nfs'

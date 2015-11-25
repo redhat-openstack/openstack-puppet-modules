@@ -9,7 +9,11 @@ describe 'cinder' do
   end
 
   let :facts do
-    @default_facts.merge!({:osfamily => 'Debian'})
+    @default_facts.merge({
+      :osfamily => 'Debian',
+      :operatingsystem => 'Debian',
+      :operatingsystemrelease => 'jessie',
+    })
   end
 
   describe 'with only required params' do
@@ -22,7 +26,7 @@ describe 'cinder' do
     it { is_expected.to contain_class('mysql::bindings::python') }
 
     it 'should contain default config' do
-      is_expected.to contain_cinder_config('DEFAULT/rpc_backend').with(:value => 'cinder.openstack.common.rpc.impl_kombu')
+      is_expected.to contain_cinder_config('DEFAULT/rpc_backend').with(:value => 'rabbit')
       is_expected.to contain_cinder_config('DEFAULT/control_exchange').with(:value => 'openstack')
       is_expected.to contain_cinder_config('oslo_messaging_rabbit/rabbit_password').with(:value => 'guest', :secret => true)
       is_expected.to contain_cinder_config('oslo_messaging_rabbit/rabbit_host').with(:value => '127.0.0.1')
@@ -33,6 +37,7 @@ describe 'cinder' do
       is_expected.to contain_cinder_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
       is_expected.to contain_cinder_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
       is_expected.to contain_cinder_config('oslo_messaging_rabbit/rabbit_userid').with(:value => 'guest')
+      is_expected.to contain_cinder_config('oslo_messaging_rabbit/kombu_reconnect_delay').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_cinder_config('DEFAULT/storage_availability_zone').with(:value => 'nova')
       is_expected.to contain_cinder_config('DEFAULT/default_availability_zone').with(:value => 'nova')
       is_expected.to contain_cinder_config('DEFAULT/api_paste_config').with(:value => '/etc/cinder/api-paste.ini')
@@ -83,24 +88,55 @@ describe 'cinder' do
       {
         :database_connection => 'mysql://user:password@host/database',
         :qpid_password       => 'guest',
-        :rpc_backend         => 'cinder.openstack.common.rpc.impl_qpid'
+        :rpc_backend         => 'qpid'
       }
     end
 
-    it { is_expected.to contain_cinder_config('DEFAULT/rpc_backend').with_value('cinder.openstack.common.rpc.impl_qpid') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_hostname').with_value('localhost') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_port').with_value('5672') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_username').with_value('guest') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_password').with_value('guest').with_secret(true) }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect').with_value(true) }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect_timeout').with_value('0') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect_limit').with_value('0') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect_interval_min').with_value('0') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect_interval_max').with_value('0') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_reconnect_interval').with_value('0') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_heartbeat').with_value('60') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_protocol').with_value('tcp') }
-    it { is_expected.to contain_cinder_config('DEFAULT/qpid_tcp_nodelay').with_value(true) }
+    it { is_expected.to contain_cinder_config('DEFAULT/rpc_backend').with_value('qpid') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_port').with_value('5672') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_hosts').with_value('localhost:5672') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_username').with_value('guest') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_password').with_value('guest').with_secret(true) }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect').with_value(true) }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect_timeout').with_value('0') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect_limit').with_value('0') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect_interval_min').with_value('0') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect_interval_max').with_value('0') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_reconnect_interval').with_value('0') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_heartbeat').with_value('60') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_protocol').with_value('tcp') }
+    it { is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_tcp_nodelay').with_value(true) }
+  end
+
+  describe 'with modified qpid_hosts' do
+    let :params do
+      {
+        :database_connection => 'mysql://user:password@host/database',
+        :qpid_password       => 'guest',
+        :rpc_backend         => 'qpid',
+        :qpid_hosts          => ['qpid1:5672', 'qpid2:5672']
+      }
+    end
+
+    it 'should contain many' do
+      is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_hosts').with(:value => 'qpid1:5672,qpid2:5672')
+    end
+  end
+
+  describe 'with a single qpid_hosts entry' do
+    let :params do
+      {
+        :database_connection => 'mysql://user:password@host/database',
+        :qpid_password       => 'guest',
+        :rpc_backend         => 'qpid',
+        :qpid_hosts          => ['qpid1:5672']
+      }
+    end
+
+    it 'should contain one' do
+      is_expected.to contain_cinder_config('oslo_messaging_qpid/qpid_hosts').with(:value => 'qpid1:5672')
+    end
   end
 
   describe 'with qpid rpc and no qpid_sasl_mechanisms' do
@@ -108,7 +144,7 @@ describe 'cinder' do
       {
         :database_connection  => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
-        :rpc_backend          => 'cinder.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -121,7 +157,7 @@ describe 'cinder' do
         :database_connection  => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
         :qpid_sasl_mechanisms => 'PLAIN',
-        :rpc_backend          => 'cinder.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -134,7 +170,7 @@ describe 'cinder' do
         :database_connection  => 'mysql://user:password@host/database',
         :qpid_password        => 'guest',
         :qpid_sasl_mechanisms => [ 'DIGEST-MD5', 'GSSAPI', 'PLAIN' ],
-        :rpc_backend          => 'cinder.openstack.common.rpc.impl_qpid'
+        :rpc_backend          => 'qpid'
       }
     end
 
@@ -207,7 +243,7 @@ describe 'cinder' do
       req_params
     end
 
-    it { is_expected.to contain_cinder_config('DEFAULT/amqp_durable_queues').with_value(false) }
+    it { is_expected.to contain_cinder_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(false) }
   end
 
   describe 'with amqp_durable_queues enabled' do
@@ -217,7 +253,7 @@ describe 'cinder' do
       })
     end
 
-    it { is_expected.to contain_cinder_config('DEFAULT/amqp_durable_queues').with_value(true) }
+    it { is_expected.to contain_cinder_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(true) }
   end
 
   describe 'with postgresql' do
