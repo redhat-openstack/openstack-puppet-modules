@@ -32,7 +32,7 @@
 # [*core_plugin*]
 #   (optional) Neutron plugin provider
 #   Defaults to openvswitch
-#   Could be bigswitch, brocade, cisco, embrane, hyperv, linuxbridge, midonet, ml2, mlnx, nec, nicira, plumgrid, ryu, opencontrail (full path)
+#   Could be bigswitch, brocade, cisco, embrane, hyperv, linuxbridge, midonet, ml2, mlnx, nec, nicira, plumgrid, ryu, nuage, opencontrail (full path)
 #
 #   Example for opencontrail:
 #
@@ -321,8 +321,6 @@ class neutron (
 
   include ::neutron::params
 
-  Package['neutron'] -> Nova_Admin_Tenant_Id_Setter<||>
-
   if $use_ssl {
     if !$cert_file {
       fail('The cert_file parameter is required when use_ssl is set to true')
@@ -502,19 +500,19 @@ class neutron (
 
   if $rpc_backend == 'qpid' or $rpc_backend == 'neutron.openstack.common.rpc.impl_qpid' {
     neutron_config {
-      'DEFAULT/qpid_hostname':               value => $qpid_hostname;
-      'DEFAULT/qpid_port':                   value => $qpid_port;
-      'DEFAULT/qpid_username':               value => $qpid_username;
-      'DEFAULT/qpid_password':               value => $qpid_password, secret => true;
-      'DEFAULT/qpid_heartbeat':              value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol':               value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-      'DEFAULT/qpid_reconnect':              value => $qpid_reconnect;
-      'DEFAULT/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
-      'DEFAULT/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
-      'DEFAULT/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'DEFAULT/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'DEFAULT/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
+      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
+      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
+      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/qpid_reconnect':              value => $qpid_reconnect;
+      'oslo_messaging_qpid/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
+      'oslo_messaging_qpid/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
+      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
+      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
+      'oslo_messaging_qpid/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
     }
   }
 
