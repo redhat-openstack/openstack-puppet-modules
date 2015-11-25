@@ -32,6 +32,8 @@ class heat::db::postgresql(
   $privileges = 'ALL',
 ) {
 
+  include ::heat::deps
+
   ::openstacklib::db::postgresql { 'heat':
     password_hash => postgresql_password($user, $password),
     dbname        => $dbname,
@@ -40,6 +42,7 @@ class heat::db::postgresql(
     privileges    => $privileges,
   }
 
-  ::Openstacklib::Db::Postgresql['heat'] ~> Exec<| title == 'heat-dbsync' |>
-
+  Anchor['heat::db::begin']
+  ~> Class['heat::db::postgresql']
+  ~> Anchor['heat::db::end']
 }

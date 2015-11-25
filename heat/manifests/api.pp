@@ -25,7 +25,7 @@
 #   Defaults to '8004'.
 #
 # [*workers*]
-#   (Optional) The port on which the server will listen.
+#   (Optional) The number of workers to spawn.
 #   Defaults to '0'.
 #
 # [*use_ssl*]
@@ -59,14 +59,9 @@ class heat::api (
 ) {
 
   include ::heat
+  include ::heat::deps
   include ::heat::params
   include ::heat::policy
-
-  Heat_config<||> ~> Service['heat-api']
-  Class['heat::policy'] -> Service['heat-api']
-
-  Package['heat-api'] -> Class['heat::policy']
-  Package['heat-api'] -> Service['heat-api']
 
   if $use_ssl {
     if !$cert_file {
@@ -97,9 +92,6 @@ class heat::api (
     enable     => $enabled,
     hasstatus  => true,
     hasrestart => true,
-    require    => [Package['heat-common'],
-                  Package['heat-api']],
-    subscribe  => $::heat::subscribe_sync_db,
     tag        => 'heat-service',
   }
 

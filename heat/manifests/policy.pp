@@ -23,6 +23,8 @@ class heat::policy (
   $policy_path = '/etc/heat/policy.json',
 ) {
 
+  include ::heat::deps
+
   validate_hash($policies)
 
   Openstacklib::Policy::Base {
@@ -31,4 +33,7 @@ class heat::policy (
 
   create_resources('openstacklib::policy::base', $policies)
 
+  Anchor<| title == 'heat::config::start' |>
+  -> Class['heat::policy']
+  ~> Anchor<| title == 'heat::config::end' |>
 }

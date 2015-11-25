@@ -56,9 +56,6 @@ describe 'heat::engine' do
         :enable     => expected_params[:enabled],
         :hasstatus  => 'true',
         :hasrestart => 'true',
-        :require    => [ 'File[/etc/heat/heat.conf]',
-                         'Package[heat-common]',
-                         'Package[heat-engine]'],
         :tag        => 'heat-service',
       ) }
 
@@ -87,9 +84,6 @@ describe 'heat::engine' do
         :enable     => false,
         :hasstatus  => 'true',
         :hasrestart => 'true',
-        :require    => [ 'File[/etc/heat/heat.conf]',
-                         'Package[heat-common]',
-                         'Package[heat-engine]'],
         :tag        => 'heat-service',
       ) }
     end
@@ -104,7 +98,9 @@ describe 'heat::engine' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily => 'Debian',
+      })
     end
 
     let :os_params do
@@ -118,7 +114,9 @@ describe 'heat::engine' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily => 'RedHat',
+      })
     end
 
     let :os_params do

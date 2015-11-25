@@ -54,6 +54,10 @@
 #   (Optional) Virtual_host to use.
 #   Defaults to '/'
 #
+# [*rabbit_ha_queues*]
+#   (optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef
+#
 # [*rabbit_heartbeat_timeout_threshold*]
 #   (optional) Number of seconds after which the RabbitMQ broker is considered
 #   down if the heartbeat keepalive fails.  Any value >0 enables heartbeats.
@@ -144,13 +148,33 @@
 # [*qpid_reconnect_interval_max*]
 #
 # [*database_connection*]
-#   (Optional) Url used to connect to database.
-#   Defaults to 'sqlite:////var/lib/heat/heat.sqlite'.
+#   (optional) Connection url for the heat database.
+#   Defaults to undef.
+#
+# [*database_max_retries*]
+#   (optional) Maximum database connection retries during startup.
+#   Defaults to undef.
 #
 # [*database_idle_timeout*]
-#   (Optional) Timeout before idle db connections are reaped.
-#   Defaults to 3600.
+#   (optional) Timeout before idle database connections are reaped.
+#   Defaults to undef.
 #
+# [*database_retry_interval*]
+#   (optional) Interval between retries of opening a database connection.
+#   Defaults to undef.
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to: undef.
+
 # [*use_syslog*]
 #   (Optional) Use syslog for logging.
 #   Defaults to undef.
@@ -232,6 +256,7 @@ class heat(
   $rabbit_userid                      = 'guest',
   $rabbit_password                    = '',
   $rabbit_virtual_host                = '/',
+  $rabbit_ha_queues                   = undef,
   $rabbit_heartbeat_timeout_threshold = 0,
   $rabbit_heartbeat_rate              = 2,
   $rabbit_use_ssl                     = false,
@@ -253,16 +278,21 @@ class heat(
   $qpid_reconnect_interval_min        = 0,
   $qpid_reconnect_interval_max        = 0,
   $qpid_reconnect_interval            = 0,
-  $database_connection                = 'sqlite:////var/lib/heat/heat.sqlite',
-  $database_idle_timeout              = 3600,
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
+  $database_connection                = undef,
+  $database_max_retries               = undef,
+  $database_idle_timeout              = undef,
+  $database_retry_interval            = undef,
+  $database_min_pool_size             = undef,
+  $database_max_pool_size             = undef,
+  $database_max_overflow              = undef,
   $flavor                             = undef,
   $region_name                        = undef,
   $enable_stack_adopt                 = undef,
   $enable_stack_abandon               = undef,
-  $sync_db                            = true,
+  $sync_db                            = undef,
   # Deprecated parameters
   $mysql_module                       = undef,
   $sql_connection                     = undef,
@@ -273,6 +303,8 @@ class heat(
 ) {
 
   include ::heat::logging
+  include ::heat::db
+  include ::heat::deps
   include ::heat::params
 
   if $kombu_ssl_ca_certs and !$rabbit_use_ssl {
@@ -289,36 +321,6 @@ class heat(
   }
   if $mysql_module {
     warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
-  }
-
-  File {
-    require => Package['heat-common'],
-  }
-
-  group { 'heat':
-    name    => 'heat',
-    require => Package['heat-common'],
-  }
-
-  user { 'heat':
-    name    => 'heat',
-    gid     => 'heat',
-    groups  => ['heat'],
-    system  => true,
-    require => Package['heat-common'],
-  }
-
-  file { '/etc/heat/':
-    ensure => directory,
-    owner  => 'heat',
-    group  => 'heat',
-    mode   => '0750',
-  }
-
-  file { '/etc/heat/heat.conf':
-    owner => 'heat',
-    group => 'heat',
-    mode  => '0640',
   }
 
   package { 'heat-common':
@@ -343,10 +345,14 @@ class heat(
       }
     }
 
-    if size($rabbit_hosts) > 1 {
-      heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+    if $rabbit_ha_queues == undef {
+      if size($rabbit_hosts) > 1 {
+        heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+      } else {
+        heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
     } else {
-      heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
     }
 
     heat_config {
@@ -356,7 +362,7 @@ class heat(
       'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
       'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
       'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
-      'DEFAULT/amqp_durable_queues':                        value => $amqp_durable_queues;
+      'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
     }
 
     if $rabbit_use_ssl {
@@ -399,20 +405,20 @@ class heat(
   if $rpc_backend == 'qpid' {
 
     heat_config {
-      'DEFAULT/qpid_hostname'               : value => $qpid_hostname;
-      'DEFAULT/qpid_port'                   : value => $qpid_port;
-      'DEFAULT/qpid_username'               : value => $qpid_username;
-      'DEFAULT/qpid_password'               : value => $qpid_password, secret => true;
-      'DEFAULT/qpid_heartbeat'              : value => $qpid_heartbeat;
-      'DEFAULT/qpid_protocol'               : value => $qpid_protocol;
-      'DEFAULT/qpid_tcp_nodelay'            : value => $qpid_tcp_nodelay;
-      'DEFAULT/qpid_reconnect'              : value => $qpid_reconnect;
-      'DEFAULT/qpid_reconnect_timeout'      : value => $qpid_reconnect_timeout;
-      'DEFAULT/qpid_reconnect_limit'        : value => $qpid_reconnect_limit;
-      'DEFAULT/qpid_reconnect_interval_min' : value => $qpid_reconnect_interval_min;
-      'DEFAULT/qpid_reconnect_interval_max' : value => $qpid_reconnect_interval_max;
-      'DEFAULT/qpid_reconnect_interval'     : value => $qpid_reconnect_interval;
-      'DEFAULT/amqp_durable_queues'         : value => $amqp_durable_queues;
+      'oslo_messaging_qpid/qpid_hostname'               : value => $qpid_hostname;
+      'oslo_messaging_qpid/qpid_port'                   : value => $qpid_port;
+      'oslo_messaging_qpid/qpid_username'               : value => $qpid_username;
+      'oslo_messaging_qpid/qpid_password'               : value => $qpid_password, secret => true;
+      'oslo_messaging_qpid/qpid_heartbeat'              : value => $qpid_heartbeat;
+      'oslo_messaging_qpid/qpid_protocol'               : value => $qpid_protocol;
+      'oslo_messaging_qpid/qpid_tcp_nodelay'            : value => $qpid_tcp_nodelay;
+      'oslo_messaging_qpid/qpid_reconnect'              : value => $qpid_reconnect;
+      'oslo_messaging_qpid/qpid_reconnect_timeout'      : value => $qpid_reconnect_timeout;
+      'oslo_messaging_qpid/qpid_reconnect_limit'        : value => $qpid_reconnect_limit;
+      'oslo_messaging_qpid/qpid_reconnect_interval_min' : value => $qpid_reconnect_interval_min;
+      'oslo_messaging_qpid/qpid_reconnect_interval_max' : value => $qpid_reconnect_interval_max;
+      'oslo_messaging_qpid/qpid_reconnect_interval'     : value => $qpid_reconnect_interval;
+      'oslo_messaging_qpid/amqp_durable_queues'         : value => $amqp_durable_queues;
     }
 
   }
@@ -482,55 +488,6 @@ class heat(
     'keystone_authtoken/admin_tenant_name' : value => $keystone_tenant;
     'keystone_authtoken/admin_user'        : value => $keystone_user;
     'keystone_authtoken/admin_password'    : value => $keystone_password, secret => true;
-  }
-
-  if $sql_connection {
-    warning('The sql_connection parameter is deprecated, use database_connection instead.')
-    $database_connection_real = $sql_connection
-  } else {
-    $database_connection_real = $database_connection
-  }
-
-  if $database_connection_real {
-    validate_re($database_connection_real,
-      '(sqlite|mysql|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
-
-    case $database_connection_real {
-      /^mysql:\/\//: {
-        $backend_package = false
-        require mysql::bindings
-        require mysql::bindings::python
-      }
-      /^postgresql:\/\//: {
-        $backend_package = 'python-psycopg2'
-      }
-      /^sqlite:\/\//: {
-        $backend_package = 'python-pysqlite2'
-      }
-      default: {
-        fail('Unsupported backend configured')
-      }
-    }
-
-    if $backend_package and !defined(Package[$backend_package]) {
-      package {'heat-backend-package':
-        ensure => present,
-        name   => $backend_package,
-        tag    => 'openstack',
-      }
-    }
-
-    heat_config {
-      'database/connection':
-        value  => $database_connection_real,
-        secret => true;
-      'database/idle_timeout':
-        value => $database_idle_timeout;
-    }
-
-    if $sync_db {
-      include ::heat::db::sync
-    }
   }
 
   if $flavor {
