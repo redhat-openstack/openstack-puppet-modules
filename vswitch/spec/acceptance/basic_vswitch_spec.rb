@@ -6,28 +6,8 @@ describe 'basic vswitch' do
 
     it 'should work with no errors' do
       pp= <<-EOS
-      Exec { logoutput => 'on_failure' }
-
-      case $::osfamily {
-        'RedHat': {
-          class { '::openstack_extras::repo::redhat::redhat':
-            manage_rdo => false,
-            repo_hash => {
-              # we need kilo repo to be installed for dependencies
-              'rdo-kilo' => {
-                'baseurl' => 'https://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/',
-                'descr'   => 'RDO kilo',
-                'gpgcheck' => 'no',
-              },
-              'rdo-liberty' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7/current/',
-                'descr'    => 'RDO trunk',
-                'gpgcheck' => 'no',
-              },
-            },
-          }
-        }
-      }
+      include ::openstack_integration
+      include ::openstack_integration::repos
 
       include ::vswitch::ovs
 
