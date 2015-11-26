@@ -1,0 +1,3 @@
+--- # Repository-based attributes
+midonet::repository::midonet_openstack_repo: 'http://repo.midonet.org/openstack-icehouse'
+midonet::repository::openstack_release: 'icehouse'

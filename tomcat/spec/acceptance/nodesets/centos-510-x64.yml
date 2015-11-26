@@ -1,0 +1,10 @@
+HOSTS:
+  centos-59-x64:
+    roles:
+      - master
+    platform: el-5-x86_64
+    box : puppetlabs/centos-5.10-64-nocm
+    box_url : http://vagrantcloud.com/puppetlabs/centos-5.10-64-nocm
+    hypervisor : vagrant
+CONFIG:
+  type: foss

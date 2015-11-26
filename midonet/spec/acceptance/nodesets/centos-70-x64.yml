@@ -1,0 +1,8 @@
+HOSTS: 
+  centos-70-x64: 
+    platform: centos-70-x64
+    image:  midonet/centos:centos7
+    hypervisor: docker 
+    docker_cmd: '["/sbin/init"]'
+CONFIG: 
+  type: foss
