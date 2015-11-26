@@ -1,0 +1,16 @@
+# Zookeeper-based attributes
+midonet::zookeeper::servers:
+  - id: 1
+    host: 'localhost'
+midonet::zookeeper::server_id: '1'
+
+# Cassandra-based attributes
+midonet::cassandra::seeds:
+  - 'localhost'
+midonet::cassandra::seed_address: 'localhost'
+
+# Choose whether to manage Tomcat and Java installation (true) or use an
+# existing installation instead (false).
+midonet::midonet_agent::install::install_java: true
+midonet::midonet_api::install::manage_app_server: true
+midonet::midonet_api::install::install_java: true

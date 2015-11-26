@@ -46,6 +46,10 @@ mod 'corosync',
   :commit => 'f0408cd231caa7009aa187112022a62ebb3b8925',
   :git => 'https://github.com/puppetlabs/puppetlabs-corosync.git'
 
+mod 'datacat',
+  :commit => '5a6114cd41823160bdb01dad6eb0e2af85a8fa69',
+  :git => 'http://github.com/richardc/puppet-datacat'
+
 mod 'firewall',
   :commit => '2d870c46e95850ff6ee8bda19f48381512be1af7',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
@@ -90,6 +94,10 @@ mod 'ironic',
   :commit => '93018353468db291aa79b30656df85cfe4dee554',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
+mod 'java',
+  :commit => 'faede8c802c89ebe1f5e1a6c0f1b7b11d9cef996',
+  :git => 'http://github.com/puppetlabs/puppetlabs-java'
+
 mod 'kafka',
   :commit => 'b27236dbc10715c0c473746f1d3b1e569644dff5',
   :git => 'https://github.com/puppet-community/puppet-kafka.git'
@@ -109,6 +117,10 @@ mod 'manila',
 mod 'memcached',
   :commit => '8e6fdfda7400c40176baa5063e05ff716cc5fd73',
   :git => 'https://github.com/saz/puppet-memcached.git'
+
+mod 'midonet',
+  :commit => 'e24515c135a03096fc69651dfadac5b545c74538',
+  :git => 'https://github.com/midonet/puppet-midonet.git'
 
 mod 'module-collectd',
   :commit => '9d07e5b15d3b6f67dd2899ef08dc7d2c20cff0a4',
@@ -221,6 +233,10 @@ mod 'tempest',
 mod 'timezone',
   :commit => '734918982a512f51a3f1855396d2d7da3f37f53c',
   :git => 'https://github.com/saz/puppet-timezone.git'
+
+mod 'tomcat',
+  :commit => '019772988b39cb259bf281ab9655e8a83c7bc2d8',
+  :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
   :commit => 'a003b3d97ebe8bd470717c419434851d60669bf7',

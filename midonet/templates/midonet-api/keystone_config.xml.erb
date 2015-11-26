@@ -1,0 +1,24 @@
+  <!-- Keystone configuration -->
+  <context-param>
+    <param-name>keystone-service_protocol</param-name>
+    <param-value>http</param-value>
+  </context-param>
+  <context-param>
+    <param-name>keystone-service_host</param-name>
+    <param-value><%= @keystone_host %></param-value>
+  </context-param>
+  <context-param>
+    <param-name>keystone-service_port</param-name>
+    <param-value><%= @keystone_port %></param-value>
+  </context-param>
+  <context-param>
+    <param-name>keystone-admin_token</param-name>
+    <param-value><%= @keystone_admin_token %></param-value>
+  </context-param>
+  <!-- This tenant name is used to get the scoped token from Keystone, and
+       should be the tenant name of the user that owns the token sent in the
+       request -->
+  <context-param>
+    <param-name>keystone-tenant_name</param-name>
+    <param-value><%= @keystone_tenant_name %></param-value>
+  </context-param>

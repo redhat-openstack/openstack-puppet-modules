@@ -1,0 +1,5 @@
+[gerrit]
+host=review.gerrithub.io
+port=29418
+project=midonet/puppet-midonet.git
+defaultbranch=stable/v2015.06
