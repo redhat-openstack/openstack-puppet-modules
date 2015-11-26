@@ -45,6 +45,22 @@ describe 'aodh::db' do
 
     end
 
+    context 'with mongodb backend' do
+      let :params do
+        { :database_connection => 'mongodb://localhost:1234/aodh', }
+      end
+
+      it 'installs python-mongodb package' do
+        is_expected.to contain_package('aodh-backend-package').with(
+          :ensure => 'present',
+          :name   => 'python-pymongo',
+          :tag    => 'openstack'
+        )
+        is_expected.to contain_aodh_config('database/connection').with_value('mongodb://localhost:1234/aodh')
+        is_expected.to contain_aodh_config('database/connection').with_value( params[:database_connection] ).with_secret(true)
+      end
+
+    end
 
     context 'with incorrect database_connection string' do
       let :params do

@@ -54,7 +54,7 @@ class aodh::db (
   $database_max_overflow_real = pick($::aodh::database_max_overflow, $database_max_overflow)
 
   validate_re($database_connection_real,
-    '(sqlite|mysql|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
+    '(sqlite|mysql|postgresql|mongodb):\/\/(\S+:\S+@\S+\/\S+)?')
 
   if $database_connection_real {
     case $database_connection_real {
@@ -66,6 +66,9 @@ class aodh::db (
       /^postgresql:\/\//: {
         $backend_package = false
         require 'postgresql::lib::python'
+      }
+      /^mongodb:\/\//: {
+        $backend_package = $::aodh::params::pymongo_package_name
       }
       /^sqlite:\/\//: {
         $backend_package = $::aodh::params::sqlite_package_name

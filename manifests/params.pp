@@ -19,6 +19,7 @@ class aodh::params {
       $expirer_package_serice  = 'openstack-aodh-expirer'
       $listener_package_name   = 'openstack-aodh-listener'
       $listener_service_name   = 'openstack-aodh-listener'
+      $pymongo_package_name    = 'python-pymongo'
       $aodh_wsgi_script_path   = '/var/www/cgi-bin/aodh'
       $aodh_wsgi_script_source = '/usr/lib/python2.7/site-packages/aodh/api/app.wsgi'
     }
@@ -36,6 +37,7 @@ class aodh::params {
       $expirer_package_serice  = 'aodh-expirer'
       $listener_package_name   = 'aodh-listener'
       $listener_service_name   = 'aodh-listener'
+      $pymongo_package_name    = 'python-pymongo'
       $aodh_wsgi_script_path   = '/usr/lib/cgi-bin/aodh'
       $aodh_wsgi_script_source = '/usr/share/aodh-common/app.wsgi'
     }
