@@ -1,0 +1,8 @@
+Code-Review-1: rdo-ci-hudson <whayutin+hudson@redhat.com>
+Code-Review+2: Martin Magr <mmagr@redhat.com>
+Verified+1: Martin Magr <mmagr@redhat.com>
+Submitted-by: Martin Magr <mmagr@redhat.com>
+Submitted-at: Thu, 26 Nov 2015 16:08:56 +0100
+Reviewed-on: https://review.gerrithub.io/253227
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/master
