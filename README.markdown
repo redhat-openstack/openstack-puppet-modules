@@ -34,7 +34,7 @@ module's [params](#parameters). If you need a new knob, [please raise an
 Issue][8].
 
 Both supported [install methods](#install-method) default to the latest
-stable OpenDaylight release, which is currently [Lithium 3.0.0][18].
+stable OpenDaylight release, which is currently [Lithium 3.2.0][18].
 
 ## Setup
 
@@ -212,7 +212,7 @@ Valid options: A valid port number as a string or integer.
 Specifies the ODL tarball to use when installing via the tarball install
 method.
 
-Default: `'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.0-Lithium/distribution-karaf-0.3.0-Lithium.tar.gz'`
+Default: `'https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz'`
 
 Valid options: A valid URL to an ODL tarball as a string.
 

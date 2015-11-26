@@ -12,7 +12,7 @@ class opendaylight::params {
   $extra_features = []
   $odl_rest_port = '8080'
   $install_method = 'rpm'
-  $tarball_url = 'https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.0-Lithium/distribution-karaf-0.3.0-Lithium.tar.gz'
+  $tarball_url = 'https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz'
   $unitfile_url = 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz'
   $enable_l3 = 'no'
 }
