@@ -55,7 +55,7 @@ class zookeeper::repo(
                 }
               }
               default: {
-                fail("CDH version '${cdhver}' is not supported.")
+                fail("CDH version'${cdhver}' is not a supported cloudera repo.")
               }
             }
             # parameter ensure is not supported before Puppet 3.5
