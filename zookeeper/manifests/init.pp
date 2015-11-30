@@ -1,87 +1,113 @@
-# == Class zookeeper
+# Class: zookeeper
 #
-# === Parameters
+# This module manages zookeeper
 #
-# TODO: Document each class parameter.
+# Parameters:
+#   id
+#   user
+#   group
+#   log_dir
 #
-# [*config_map*]
-#   Use this parameter for all other ZooKeeper related config options except those that are already exposed as class
-#   parameters (e.g. `$data_dir`, `$data_log_dir`, `$client_port`, `$myid`, `$quorum`).
+# Sample Usage:
 #
-class zookeeper (
-  $client_port            = $zookeeper::params::client_port,
-  $command                = $zookeeper::params::command,
-  $config                 = $zookeeper::params::config,
-  $config_map             = $zookeeper::params::config_map,
-  $config_template        = $zookeeper::params::config_template,
-  $data_dir               = $zookeeper::params::data_dir,
-  $data_log_dir           = $zookeeper::params::data_log_dir,
-  $group                  = $zookeeper::params::group,
-  $myid                   = $zookeeper::params::myid,
-  $package_name           = $zookeeper::params::package_name,
-  $package_ensure         = $zookeeper::params::package_ensure,
-  $quorum                 = $zookeeper::params::quorum,
-  $service_autorestart    = hiera('zookeeper::service_autorestart', $zookeeper::params::service_autorestart),
-  $service_enable         = hiera('zookeeper::service_enable', $zookeeper::params::service_enable),
-  $service_ensure         = $zookeeper::params::service_ensure,
-  $service_manage         = hiera('zookeeper::service_manage', $zookeeper::params::service_manage),
-  $service_name           = $zookeeper::params::service_name,
-  $service_retries        = $zookeeper::params::service_retries,
-  $service_startsecs      = $zookeeper::params::service_startsecs,
-  $service_stderr_logfile_keep    = $zookeeper::params::service_stderr_logfile_keep,
-  $service_stderr_logfile_maxsize = $zookeeper::params::service_stderr_logfile_maxsize,
-  $service_stdout_logfile_keep    = $zookeeper::params::service_stdout_logfile_keep,
-  $service_stdout_logfile_maxsize = $zookeeper::params::service_stdout_logfile_maxsize,
-  $service_stopasgroup    = hiera('zookeeper::service_stopasgroup', $zookeeper::params::service_stopasgroup),
-  $service_stopsignal     = $zookeeper::params::service_stopsignal,
-  $user                   = $zookeeper::params::user,
-  $zookeeper_start_binary = $zookeeper::params::zookeeper_start_binary,
-) inherits zookeeper::params {
+#   class { 'zookeeper': }
+#
+class zookeeper(
+  $id                      = '1',
+  $datastore               = '/var/lib/zookeeper',
+  # datalogstore used to put transaction logs in separate location than snapshots
+  $datalogstore            = undef,
+  $initialize_datastore    = false,
+  # fact from which we get public ip address
+  $client_ip               = $::ipaddress,
+  $client_port             = 2181,
+  $election_port           = 2888,
+  $leader_port             = 3888,
+  $log_dir                 = '/var/log/zookeeper',
+  $cfg_dir                 = '/etc/zookeeper/conf',
+  $user                    = 'zookeeper',
+  $group                   = 'zookeeper',
+  $java_bin                = '/usr/bin/java',
+  $java_opts               = '',
+  $pid_dir                 = '/var/run/zookeeper',
+  $pid_file                = '$PIDDIR/zookeeper.pid',
+  $zoo_main                = 'org.apache.zookeeper.server.quorum.QuorumPeerMain',
+  $log4j_prop               = 'INFO,ROLLINGFILE',
+  $cleanup_sh              = '/usr/share/zookeeper/bin/zkCleanup.sh',
+  $servers                 = [],
+  $observers               = [],
+  $ensure                  = present,
+  $snap_count              = 10000,
+  # since zookeeper 3.4, for earlier version cron task might be used
+  $snap_retain_count       = 3,
+  # interval in hours, purging enabled when >= 1
+  $purge_interval          = 0,
+  # log4j properties
+  $rollingfile_threshold   = 'ERROR',
+  $tracefile_threshold     = 'TRACE',
+  $max_allowed_connections = 10,
+  $peer_type               = 'UNSET',
+  $start_with              = 'init.d',
+  $ensure_cron             = true,
+  $service_package         = 'zookeeperd',
+  $service_name            = 'zookeeper',
+  $packages                = ['zookeeper'],
+  $repo                    = undef,
+  $install_java            = false,
+  $java_package            = undef
+) {
 
-  if !is_integer($client_port) { fail('The $client_port parameter must be an integer number') }
-  validate_string($command)
-  validate_absolute_path($config)
-  validate_hash($config_map)
-  validate_string($config_template)
-  validate_absolute_path($data_dir)
-  validate_absolute_path($data_log_dir)
-  validate_string($group)
-  if !is_integer($myid) { fail('The $myid parameter must be an integer number') }
-  validate_string($package_name)
-  validate_string($package_ensure)
-  validate_array($quorum)
-  validate_bool($service_autorestart)
-  validate_bool($service_enable)
-  validate_string($service_ensure)
-  validate_bool($service_manage)
-  validate_string($service_name)
-  if !is_integer($service_retries) { fail('The $service_retries parameter must be an integer number') }
-  if !is_integer($service_startsecs) { fail('The $service_startsecs parameter must be an integer number') }
-  if !is_integer($service_stderr_logfile_keep) {
-    fail('The $service_stderr_logfile_keep parameter must be an integer number')
+  validate_array($packages)
+  validate_bool($ensure_cron)
+
+  anchor { 'zookeeper::start': }->
+  class { 'zookeeper::install':
+    ensure            => $ensure,
+    snap_retain_count => $snap_retain_count,
+    datastore         => $datastore,
+    user              => $user,
+    cleanup_sh        => $cleanup_sh,
+    start_with        => $start_with,
+    ensure_cron       => $ensure_cron,
+    service_package   => $service_package,
+    packages          => $packages,
+    repo_source       => $repo,
+    install_java      => $install_java,
+    java_package      => $java_package
+  }->
+  class { 'zookeeper::config':
+    id                      => $id,
+    datastore               => $datastore,
+    datalogstore            => $datalogstore,
+    initialize_datastore    => $initialize_datastore,
+    client_ip               => $client_ip,
+    client_port             => $client_port,
+    election_port           => $election_port,
+    leader_port             => $leader_port,
+    log_dir                 => $log_dir,
+    cfg_dir                 => $cfg_dir,
+    user                    => $user,
+    group                   => $group,
+    java_bin                => $java_bin,
+    java_opts               => $java_opts,
+    pid_dir                 => $pid_dir,
+    zoo_main                => $zoo_main,
+    log4j_prop              => $log4j_prop,
+    servers                 => $servers,
+    observers               => $observers,
+    snap_count              => $snap_count,
+    snap_retain_count       => $snap_retain_count,
+    purge_interval          => $purge_interval,
+    rollingfile_threshold   => $rollingfile_threshold,
+    tracefile_threshold     => $tracefile_threshold,
+    max_allowed_connections => $max_allowed_connections,
+    peer_type               => $peer_type,
+  }->
+  class { 'zookeeper::service':
+    cfg_dir      => $cfg_dir,
+    service_name => $service_name,
   }
-  validate_string($service_stderr_logfile_maxsize)
-  if !is_integer($service_stdout_logfile_keep) {
-    fail('The $service_stdout_logfile_keep parameter must be an integer number')
-  }
-  validate_string($service_stdout_logfile_maxsize)
-  validate_bool($service_stopasgroup)
-  validate_string($service_stopsignal)
-  validate_string($user)
-  validate_absolute_path($zookeeper_start_binary)
-
-  $is_standalone = empty($quorum)
-
-  include '::zookeeper::install'
-  include '::zookeeper::config'
-  include '::zookeeper::service'
-
-  # Anchor this as per #8040 - this ensures that classes won't float off and
-  # mess everything up. You can read about this at:
-  # http://docs.puppetlabs.com/puppet/2.7/reference/lang_containment.html#known-issues
-  anchor { 'zookeeper::begin': }
+  ->
   anchor { 'zookeeper::end': }
 
-  Anchor['zookeeper::begin'] -> Class['::zookeeper::install'] -> Class['::zookeeper::config']
-    ~> Class['::zookeeper::service'] -> Anchor['zookeeper::end']
 }

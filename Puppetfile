@@ -251,6 +251,6 @@ mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
 
 mod 'zookeeper',
-  :commit => 'bb1b864d4cad552ba5a38207504fd7878eed9fa7',
-  :git => 'https://github.com/miguno/puppet-zookeeper.git'
+  :commit => 'b1912045ac65f13e53d60f73515ad08fff4f4f25',
+  :git => 'https://github.com/deric/puppet-zookeeper.git'
 

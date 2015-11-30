@@ -1,2 +1,5 @@
 --format documentation
 --color
+--pattern "spec/*/*_spec.rb"
+#--backtrace
+#--fail-fast

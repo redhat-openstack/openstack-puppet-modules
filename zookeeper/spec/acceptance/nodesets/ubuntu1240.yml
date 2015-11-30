@@ -1,0 +1,11 @@
+HOSTS:
+  ubuntu-server-12042-x64-master:
+    roles:
+      - master
+    platform: ubuntu-12.04-amd64
+    box: fgrehm/precise64-lxc
+    box_url: https://vagrantcloud.com/fgrehm/boxes/precise64-lxc
+    hypervisor: vagrant
+CONFIG:
+  log_level: verbose
+  type: git
