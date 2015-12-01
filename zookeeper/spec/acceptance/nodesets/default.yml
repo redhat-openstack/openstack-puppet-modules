@@ -1,11 +1,12 @@
 HOSTS:
-  centos-64-x64:
+  debian-76-x64:
     roles:
       - master
-    platform: el-6-x86_64
-    box : centos-65-x64-virtualbox-puppet
-    box_url : http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-puppet.box
-    hypervisor : vagrant
+    platform: debian-7-amd64
+    box: fgrehm/wheezy64-lxc
+    box_url: https://vagrantcloud.com/fgrehm/boxes/wheezy64-lxc
+    hypervisor: vagrant
+    ip: '10.0.3.20'
 CONFIG:
   log_level: verbose
-  type: foss
+  type: git

@@ -1,83 +1,72 @@
-# == Class zookeeper::install
+# Class: zookeeper::install
 #
-class zookeeper::install inherits zookeeper {
+# This module manages Zookeeper installation
+#
+# Parameters: None
+#
+# Actions: None
+#
+#
+# Should not be included directly
+#
+class zookeeper::install(
+  $ensure            = present,
+  $snap_retain_count = 3,
+  $cleanup_sh        = '/usr/lib/zookeeper/bin/zkCleanup.sh',
+  $datastore         = '/var/lib/zookeeper',
+  $user              = 'zookeeper',
+  $start_with        = 'init.d',
+  $ensure_cron       = true,
+  $service_package   = 'zookeeperd',
+  $packages          = ['zookeeper'],
+  $repo_source       = undef,
+  $install_java      = false,
+  $java_package      = undef
+) {
+  anchor { 'zookeeper::install::begin': }
+  anchor { 'zookeeper::install::end': }
 
-  package { 'zookeeper-server':
-    ensure => $package_ensure,
-    name   => $package_name,
-  }
-
-  # We provide a custom zookeeper-server startup script.  This script fixes a problem where supervisord is not able to
-  # restart the ZooKeeper processes (parent and child).  See https://github.com/miguno/puppet-zookeeper/issues/1.
-  file { $zookeeper_start_binary:
-    ensure  => file,
-    source  => "puppet:///modules/${module_name}/zookeeper-server",
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    require => Package['zookeeper-server'],
-  }
-
-  # This exec ensures we create intermediate directories for $data_dir as required
-  exec { 'create-zookeeper-data-directory':
-    command => "mkdir -p ${data_dir}",
-    path    => ['/bin', '/sbin', '/usr/bin/', '/usr/sbin/'],
-    unless  => "test -d ${data_dir}",
-    require => Package['zookeeper-server'],
-  }
-  ->
-  file { $data_dir:
-    ensure       => directory,
-    owner        => $user,
-    group        => $group,
-    mode         => '0755',
-    recurse      => true,
-    recurselimit => 0,
-    # Require is needed because the zookeeper-server package manages the user
-    require      => Package['zookeeper-server'],
-  }
-  ->
-  file { "${data_dir}/version-2":
-    ensure       => directory,
-    owner        => $user,
-    group        => $group,
-    mode         => '0755',
-    recurse      => true,
-    recurselimit => 0,
-    # Require is needed because the zookeeper-server package manages the user
-    require      => Package['zookeeper-server'],
-  }
-
-  if $data_log_dir != $data_dir {
-    # This exec ensures we create intermediate directories for $data_dir as required
-    exec { 'create-zookeeper-data-log-directory':
-      command => "mkdir -p ${data_log_dir}",
-      path    => ['/bin', '/sbin', '/usr/bin/', '/usr/sbin/'],
-      unless  => "test -d ${data_log_dir}",
-      require => Package['zookeeper-server'],
+  case $::osfamily {
+    'Debian': {
+      class { 'zookeeper::os::debian':
+        ensure            => $ensure,
+        snap_retain_count => $snap_retain_count,
+        cleanup_sh        => $cleanup_sh,
+        datastore         => $datastore,
+        user              => $user,
+        start_with        => $start_with,
+        ensure_cron       => $ensure_cron,
+        service_package   => $service_package,
+        packages          => $packages,
+        before            => Anchor['zookeeper::install::end'],
+        require           => Anchor['zookeeper::install::begin'],
+        install_java      => $install_java,
+        java_package      => $java_package
+      }
     }
-    ->
-    file { $data_log_dir:
-      ensure       => directory,
-      owner        => $user,
-      group        => $group,
-      mode         => '0755',
-      recurse      => true,
-      recurselimit => 0,
-      # Require is needed because the zookeeper-server package manages the user
-      require      => Package['zookeeper-server'],
+    'RedHat': {
+
+      class { 'zookeeper::repo':
+        source => $repo_source,
+      }
+
+      class { 'zookeeper::os::redhat':
+        ensure            => $ensure,
+        snap_retain_count => $snap_retain_count,
+        cleanup_sh        => $cleanup_sh,
+        datastore         => $datastore,
+        user              => $user,
+        ensure_cron       => $ensure_cron,
+        packages          => $packages,
+        require           => Anchor['zookeeper::install::begin'],
+        before            => Anchor['zookeeper::install::end'],
+        install_java      => $install_java,
+        java_package      => $java_package
+      }
     }
-    ->
-    file { "${data_log_dir}/version-2":
-      ensure       => directory,
-      owner        => $user,
-      group        => $group,
-      mode         => '0755',
-      recurse      => true,
-      recurselimit => 0,
-      # Require is needed because the zookeeper-server package manages the user
-      require      => Package['zookeeper-server'],
+    default: {
+      fail("Module '${module_name}' is not supported on OS: '${::operatingsystem}', family: '${::osfamily}'")
     }
   }
-
 }
+

@@ -1,5 +1,8 @@
-.*.sw?
-pkg
-spec/fixtures
-.rspec_system
-.vagrant
+*.log
+*~
+.DS_Store
+*.tmp
+.librarian
+pkg/*
+Gemfile.lock
+spec/fixtures/modules/*

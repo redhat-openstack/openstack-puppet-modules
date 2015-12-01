@@ -1,27 +1,24 @@
 source 'https://rubygems.org'
 
-group :test do
-  # Pin rspec to < 3.0.0 because of a known compatibility issue of rspec 3.x with rspec-puppet
-  # See https://github.com/rodjek/rspec-puppet/issues/198
-  rspecversion = ENV.key?('RSPEC_VERSION') ? "= #{ENV['RSPEC_VERSION']}" : ['>= 2.9 ', '< 3.0.0']
-  gem 'rspec', rspecversion
+puppetversion = ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : ['>= 2.7.0','< 4.0']
+gem 'puppet', puppetversion
+gem 'puppet-lint'
+gem 'puppetlabs_spec_helper'
+gem 'rake'
+# librarian 2 does not support ruby 1.8.7
+gem 'librarian-puppet', '< 2.0'
+gem 'highline', '< 1.7' # 1.7 is not compatible with ruby 1.8.7
+gem 'rspec-system-puppet',     :require => false
+gem 'serverspec',              :require => false
+gem 'rspec-system-serverspec', :require => false
+# coverage reports will be in release 2.0
+gem 'rspec-puppet', '> 2.0'
+gem 'rspec', '~> 2.13'
 
-  # Rake 10.2.0+ requires Ruby >= 1.9
-  gem 'rake', '< 10.2.0' if RUBY_VERSION < '1.9.0'
-  gem 'puppet', ENV['PUPPET_VERSION'] || '~> 3.0.1'
-  gem 'puppet-lint'
-  gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
-  gem 'puppet-syntax'
-  gem 'puppetlabs_spec_helper'
-end
-
+# blacksmith > 3.0 does not support ruby 1.8.7
 group :development do
-  gem 'travis'
-  gem 'travis-lint'
+  gem 'puppet-blacksmith',  '~> 3.0'
+  gem 'metadata-json-lint',      :require => false
   gem 'beaker'
-  gem 'beaker-rspec'
-  gem 'vagrant-wrapper'
-  gem 'puppet-blacksmith'
-  gem 'guard-rake'
-  gem 'serverspec'
+  gem 'beaker-rspec', :require => false
 end
