@@ -1,0 +1,12 @@
+HOSTS:
+  centos-7:
+    roles:
+      - master
+    platform: el-7-x86_64
+    box: boxcutter/centos71
+    box_url: https://atlas.hashicorp.com/boxcutter/boxes/centos71
+    hypervisor: vagrant
+
+CONFIG:
+  log_level: verbose
+  type: foss

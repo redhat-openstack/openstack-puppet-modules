@@ -1,0 +1,12 @@
+HOSTS:
+  ubuntu-1404:
+    roles:
+      - master
+    platform: ubuntu-1404-amd64
+    box: boxcutter/ubuntu1404
+    box_url: https://atlas.hashicorp.com/boxcutter/boxes/ubuntu1404
+    hypervisor: vagrant
+
+CONFIG:
+  log_level: verbose
+  type: foss

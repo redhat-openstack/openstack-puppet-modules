@@ -162,6 +162,10 @@ mod 'ntp',
   :commit => 'ba4bb2648e129efade8ed7afd5489696c59156c8',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
+mod 'opendaylight',
+  :commit => '3aa0ccf',
+  :git => 'https://github.com/dfarrell07/puppet-opendaylight.git'
+
 mod 'openstack_extras',
   :commit => 'cdeede97b90b5bbb0a54125ec68c36cf7e249370',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'

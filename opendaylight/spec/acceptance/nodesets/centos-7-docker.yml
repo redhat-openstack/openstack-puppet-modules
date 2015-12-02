@@ -1,0 +1,12 @@
+HOSTS:
+  centos-7-docker:
+    roles:
+      - master
+    platform: el-7-x86_64
+    image: centos:7
+    docker_cmd: '["/sbin/init"]'
+    hypervisor: docker
+
+CONFIG:
+  log_level: verbose
+  type: foss
