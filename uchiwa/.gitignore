@@ -1,0 +1,6 @@
+.*.sw?
+pkg
+!spec/fixtures/uchiwa
+spec/fixtures
+.rspec_system
+.vagrant

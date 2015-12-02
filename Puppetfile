@@ -250,6 +250,10 @@ mod 'tuskar',
   :commit => '52120a9c64eb411c1ef51dccfc6f758f7142f6a5',
   :git => 'https://github.com/openstack/puppet-tuskar.git'
 
+mod 'uchiwa',
+  :commit => 'e3dc4fc3d5291d08a23f16843c673932adf450d5',
+  :git => 'https://github.com/Yelp/puppet-uchiwa.git'
+
 mod 'vcsrepo',
   :commit => '99e8b2e28ce9541202b8b2438a92ee8ac2b03d6a',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
