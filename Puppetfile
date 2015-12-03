@@ -50,6 +50,10 @@ mod 'datacat',
   :commit => '5a6114cd41823160bdb01dad6eb0e2af85a8fa69',
   :git => 'http://github.com/richardc/puppet-datacat'
 
+mod 'elasticsearch',
+  :commit => 'b930ab8',
+  :git => 'https://github.com/elastic/puppet-elasticsearch.git'
+
 mod 'firewall',
   :commit => '1b6cc9192150d9521cc70301d0452daf189a63f7',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
