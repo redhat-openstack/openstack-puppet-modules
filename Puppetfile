@@ -206,6 +206,10 @@ mod 'sahara',
   :commit => '6862557a4db48b01176e30be6877fda5503f085b',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
+mod 'sensu'
+  :commit => 'bc5e501e9b6c7ac38181c8749fb6a04b24efdb94',
+  :git => 'https://github.com/sensu/sensu-puppet.git'
+
 mod 'snmp',
   :commit => '90254293f6bf097eca7096562ac63f31a0bc75f4',
   :git => 'https://github.com/razorsedge/puppet-snmp.git'

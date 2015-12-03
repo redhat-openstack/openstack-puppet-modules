@@ -1,0 +1,12 @@
+pkg/*
+sensu.komodoproject
+spec/fixtures
+Gemfile.lock
+.vagrant/*
+.yardoc
+doc/**
+.bundle
+*.swp
+coverage/
+junit/
+log/
