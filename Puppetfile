@@ -114,6 +114,10 @@ mod 'keystone',
   :commit => 'bee02643562f38af2c5b2ebb4ba65c0e86388952',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
+mod 'kibana3',
+  :commit => '6ca9631',
+  :git => 'https://github.com/thejandroman/puppet-kibana3.git'
+
 mod 'manila',
   :commit => 'b77f1736bc0221acb433b5ffb6aa8f291d83ff13',
   :git => 'https://github.com/openstack/puppet-manila.git'
