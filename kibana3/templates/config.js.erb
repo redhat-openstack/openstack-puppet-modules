@@ -1,0 +1,23 @@
+/** Managed by Puppet
+Do not modify by hand
+**/
+
+define(['settings'],
+function (Settings) {
+  "use strict";
+
+  return new Settings({
+
+    elasticsearch: "<%= scope['::kibana3::config_es_protocol'] %>://<%= scope['::kibana3::config_es_server'] %>:<%= scope['::kibana3::config_es_port'] %>",
+
+    default_route: '<%= scope['::kibana3::config_default_route'] %>',
+
+    kibana_index: "<%= scope['::kibana3::config_kibana_index'] %>",
+
+    panel_names: [
+    <%- scope['::kibana3::config_panel_names'].each do |cpn| -%>
+      '<%= cpn %>',
+    <%- end -%>
+    ]
+  });
+});
