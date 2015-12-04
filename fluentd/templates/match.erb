@@ -1,0 +1,33 @@
+<match <%= @pattern %>>
+    type <%= @type %>
+    <%- if @type == 'copy' -%>
+        <%- @config.each do |outcopy| -%>
+        <store>
+            <%- outcopy.sort_by{|key,val|key}.each do |key, val| -%>
+                <%- if key == 'servers' -%>
+                    <%- val.each do |server| -%>
+                        <server>
+                        <%- server.sort_by{|k,v|k}.each do |k,v| -%>
+                            <%= k %> <%= v %>
+                        <%- end -%>
+                    </server>
+                     <%- end -%>
+                <%- else -%>
+                <%= key %> <%= val %>
+                <%- end -%>
+            <%- end -%>
+        </store>
+        <%- end -%>
+    <%- else -%>
+        <%- @config.sort_by{|key,val|key}.each do |key, val| -%>
+        <%= key %> <%= val %>
+        <%- end -%>
+     <%- end -%>
+    <%- @servers.each do |server| -%>
+    <server>
+    <%- server.sort_by{|key,val|key}.each do |key, val| -%>
+    <%= key %> <%= val %>
+    <%- end -%>
+    </server>
+    <%- end -%>
+</match>
