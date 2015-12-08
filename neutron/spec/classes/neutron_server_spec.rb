@@ -34,7 +34,7 @@ describe 'neutron::server' do
       :max_l3_agents_per_router         => 3,
       :min_l3_agents_per_router         => 2,
       :l3_ha_net_cidr                   => '169.254.192.0/18',
-      :allow_automatic_l3agent_failover => false
+      :allow_automatic_l3agent_failover => false,
     }
   end
 
@@ -96,6 +96,7 @@ describe 'neutron::server' do
       is_expected.to contain_neutron_config('DEFAULT/rpc_workers').with_value(facts[:processorcount])
       is_expected.to contain_neutron_config('DEFAULT/agent_down_time').with_value(p[:agent_down_time])
       is_expected.to contain_neutron_config('DEFAULT/router_scheduler_driver').with_value(p[:router_scheduler_driver])
+      is_expected.to contain_neutron_config('qos/notification_drivers').with_value([''])
     end
 
     context 'with manage_service as false' do
@@ -182,6 +183,15 @@ describe 'neutron::server' do
         is_expected.to contain_neutron_config('DEFAULT/allow_automatic_l3agent_failover').with_value(p[:allow_automatic_l3agent_failover])
       end
     end
+
+    context 'with qos_notification_drivers parameter' do
+      before :each do
+        params.merge!(:qos_notification_drivers => 'message_queue')
+      end
+      it 'should configure qos_notification_drivers' do
+        is_expected.to contain_neutron_config('qos/notification_drivers').with_value('message_queue')
+      end
+    end
   end
 
   shared_examples_for 'a neutron server with auth_admin_prefix set' do
@@ -234,7 +244,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone auth_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7'
+      })
     end
     before do
       params.merge!({
@@ -253,7 +266,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone identity_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7'
+      })
     end
     before do
       params.merge!({
@@ -272,7 +288,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone identity_uri and auth_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      default_facts.merge({
+        :osfamily => 'RedHat',
+        :operatingsystemrelease => '7'
+      })
     end
     before do
       params.merge!({
@@ -292,7 +311,10 @@ describe 'neutron::server' do
 
   describe "with custom auth region" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7'
+      })
     end
     before do
       params.merge!({
@@ -326,8 +348,10 @@ describe 'neutron::server' do
   context 'on RedHat platforms' do
     let :facts do
       default_facts.merge(
-        { :osfamily => 'RedHat',
-          :processorcount => '2' })
+        { :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :processorcount         => '2'
+      })
     end
 
     let :platform_params do

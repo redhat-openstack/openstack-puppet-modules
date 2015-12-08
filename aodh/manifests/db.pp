@@ -43,6 +43,8 @@ class aodh::db (
   $database_max_overflow   = 20,
 ) {
 
+  include ::aodh::params
+
   $database_connection_real = pick($::aodh::database_connection, $database_connection)
   $database_idle_timeout_real = pick($::aodh::database_idle_timeout, $database_idle_timeout)
   $database_min_pool_size_real = pick($::aodh::database_min_pool_size, $database_min_pool_size)
@@ -62,7 +64,8 @@ class aodh::db (
         require 'mysql::bindings::python'
       }
       /^postgresql:\/\//: {
-        $backend_package = $::aodh::params::psycopg_package_name
+        $backend_package = false
+        require 'postgresql::lib::python'
       }
       /^sqlite:\/\//: {
         $backend_package = $::aodh::params::sqlite_package_name

@@ -65,5 +65,5 @@ class aodh::db::mysql(
     allowed_hosts => $allowed_hosts,
   }
 
-  ::Openstacklib::Db::Mysql['aodh'] ~> Exec<| title == 'aodh-manage db_sync' |>
+  ::Openstacklib::Db::Mysql['aodh'] ~> Exec<| title == 'aodh-db-sync' |>
 }

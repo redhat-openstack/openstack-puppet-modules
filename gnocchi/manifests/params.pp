@@ -10,6 +10,8 @@ class gnocchi::params {
       $api_service_name           = 'openstack-gnocchi-api'
       $indexer_package_name       = 'openstack-gnocchi-indexer-sqlalchemy'
       $carbonara_package_name     = 'openstack-gnocchi-carbonara'
+      $statsd_package_name        = 'openstack-gnocchi-statsd'
+      $statsd_service_name        = 'openstack-gnocchi-statsd'
       $gnocchi_wsgi_script_path   = '/var/www/cgi-bin/gnocchi'
       $gnocchi_wsgi_script_source = '/usr/lib/python2.7/site-packages/gnocchi/rest/app.wsgi'
     }
@@ -20,6 +22,8 @@ class gnocchi::params {
       $api_service_name           = 'gnocchi-api'
       $indexer_package_name       = 'gnocchi-indexer-sqlalchemy'
       $carbonara_package_name     = 'gnocchi-carbonara'
+      $statsd_package_name        = 'gnocchi-statsd'
+      $statsd_service_name        = 'gnocchi-statsd'
       $gnocchi_wsgi_script_path   = '/usr/lib/cgi-bin/gnocchi'
       $gnocchi_wsgi_script_source = '/usr/share/gnocchi-common/app.wsgi'
     }

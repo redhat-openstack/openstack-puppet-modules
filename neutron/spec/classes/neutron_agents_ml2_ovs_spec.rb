@@ -48,6 +48,7 @@ describe 'neutron::agents::ml2::ovs' do
       is_expected.to contain_neutron_agent_ovs('agent/arp_responder').with_value(p[:arp_responder])
       is_expected.to contain_neutron_agent_ovs('agent/prevent_arp_spoofing').with_value(p[:prevent_arp_spoofing])
       is_expected.to contain_neutron_agent_ovs('agent/drop_flows_on_start').with_value(p[:drop_flows_on_start])
+      is_expected.to contain_neutron_agent_ovs('agent/extensions').with_value([''])
       is_expected.to contain_neutron_agent_ovs('ovs/integration_bridge').with_value(p[:integration_bridge])
       is_expected.to contain_neutron_agent_ovs('securitygroup/firewall_driver').\
         with_value(p[:firewall_driver])
@@ -176,6 +177,16 @@ describe 'neutron::agents::ml2::ovs' do
       end
     end
 
+    context 'when supplying extensions for ML2 plugin' do
+      before :each do
+        params.merge!(:extensions => ['qos'])
+      end
+
+      it 'configures extensions' do
+        is_expected.to contain_neutron_agent_ovs('agent/extensions').with_value(params[:extensions].join(','))
+      end
+    end
+
     context 'when enabling tunneling' do
       context 'without local ip address' do
         before :each do
@@ -250,7 +261,10 @@ describe 'neutron::agents::ml2::ovs' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '7'
+      })
     end
 
     let :platform_params do
