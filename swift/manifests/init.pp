@@ -56,7 +56,8 @@ class swift(
     mode   => '2770',
   }
   user {'swift':
-    ensure => present,
+    ensure  => present,
+    require => Package['swift'],
   }
   file { '/var/lib/swift':
     ensure => directory,
