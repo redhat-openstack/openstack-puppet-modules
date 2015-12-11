@@ -5,6 +5,8 @@ class zookeeper::service(
   $service_name   = 'zookeeper',
   $service_ensure = 'running',
   $manage_systemd = true,
+  $user           = 'zookeeper',
+  $group          = 'zookeeper'
 ){
   require zookeeper::install
 
