@@ -814,7 +814,6 @@ class tripleo::loadbalancer (
       bind             => $nova_novnc_bind_opts,
       options          => {
         'balance' => 'source',
-        'timeout' => [ 'tunnel 1h' ],
       },
       collect_exported => false,
     }
