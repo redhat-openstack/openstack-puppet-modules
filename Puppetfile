@@ -215,7 +215,7 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '6862557a4db48b01176e30be6877fda5503f085b',
+  :commit => '811a5e9e95ade9a3d8c741e8cbfdc4e57eaca503',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
 mod 'sensu',
