@@ -24,7 +24,6 @@ describe 'neutron::server::notifications' do
         {
             :notify_nova_on_port_status_changes => true,
             :notify_nova_on_port_data_changes   => true,
-            :send_events_interval               => '2',
             :nova_url                           => 'http://127.0.0.1:8774/v2',
             :auth_plugin                        => 'password',
             :username                           => 'nova',
@@ -36,11 +35,10 @@ describe 'neutron::server::notifications' do
             :nova_admin_auth_url                => 'http://127.0.0.1:35357/v2.0',
             :nova_admin_username                => 'nova',
             :nova_admin_tenant_name             => 'services',
-            :nova_region_name                   => nil,
         }
     end
 
-    let :default_facts do
+    let :test_facts do
       { :operatingsystem           => 'default',
         :operatingsystemrelease    => 'default'
       }
@@ -48,8 +46,7 @@ describe 'neutron::server::notifications' do
 
     let :params do
         {
-            :password  => 'secrete',
-            :tenant_id => 'UUID'
+            :password  => 'secrete'
         }
     end
 
@@ -61,14 +58,15 @@ describe 'neutron::server::notifications' do
         it 'configure neutron.conf' do
             is_expected.to contain_neutron_config('DEFAULT/notify_nova_on_port_status_changes').with_value(true)
             is_expected.to contain_neutron_config('DEFAULT/notify_nova_on_port_data_changes').with_value(true)
-            is_expected.to contain_neutron_config('DEFAULT/send_events_interval').with_value('2')
+            is_expected.to contain_neutron_config('DEFAULT/send_events_interval').with_value('<SERVICE DEFAULT>')
             is_expected.to contain_neutron_config('DEFAULT/nova_url').with_value('http://127.0.0.1:8774/v2')
             is_expected.to contain_neutron_config('nova/auth_url').with_value('http://127.0.0.1:35357')
             is_expected.to contain_neutron_config('nova/username').with_value('nova')
             is_expected.to contain_neutron_config('nova/password').with_value('secrete')
             is_expected.to contain_neutron_config('nova/password').with_secret( true )
-            is_expected.to contain_neutron_config('nova/tenant_id').with_value('UUID')
-            is_expected.to contain_neutron_config('nova/region_name').with_ensure('absent')
+            is_expected.to contain_neutron_config('nova/tenant_name').with_value('services')
+            is_expected.to contain_neutron_config('nova/region_name').with_value('<SERVICE DEFAULT>')
+            is_expected.not_to contain_neutron_config('DEFAULT/nova_region_name')
             is_expected.not_to contain_neutron_config('DEFAULT/nova_admin_auth_url')
             is_expected.not_to contain_neutron_config('DEFAULT/nova_admin_username')
             is_expected.not_to contain_neutron_config('DEFAULT/nova_admin_password')
@@ -144,7 +142,6 @@ describe 'neutron::server::notifications' do
             before :each do
                 params.merge!({
                   :nova_admin_tenant_name => false,
-                  :nova_admin_tenant_id   => false,
                   :nova_admin_password    => 'secrete',
                 })
             end
@@ -156,7 +153,6 @@ describe 'neutron::server::notifications' do
             before :each do
                 params.merge!({
                   :tenant_name => false,
-                  :tenant_id   => false,
                   :password    => 'secrete',
                 })
             end
@@ -168,7 +164,6 @@ describe 'neutron::server::notifications' do
             before :each do
                 params.merge!({
                   :nova_admin_tenant_name => 'services',
-                  :nova_admin_tenant_id   => false,
                   :nova_admin_password    => 'secrete',
                   :password               => false
                 })
@@ -181,7 +176,9 @@ describe 'neutron::server::notifications' do
 
     context 'on Debian platforms' do
         let :facts do
-            default_facts.merge({ :osfamily => 'Debian' })
+            @default_facts.merge(test_facts.merge({
+               :osfamily => 'Debian'
+            }))
         end
 
         let :platform_params do
@@ -193,7 +190,10 @@ describe 'neutron::server::notifications' do
 
     context 'on RedHat platforms' do
         let :facts do
-            default_facts.merge({ :osfamily => 'RedHat' })
+            @default_facts.merge(test_facts.merge({
+               :osfamily               => 'RedHat',
+               :operatingsystemrelease => '7'
+            }))
         end
 
         let :platform_params do

@@ -1,14 +1,23 @@
 #
-# Class to execute "aodh-manage db_sync
+# Class to execute "aodh-dbsync"
 #
-class aodh::db::sync {
-  exec { 'aodh-manage db_sync':
+# [*user*]
+#   (optional) User to run dbsync command.
+#   Defaults to 'aodh'
+#
+class aodh::db::sync (
+  $user = 'aodh',
+){
+  exec { 'aodh-db-sync':
+    command     => 'aodh-dbsync --config-file /etc/aodh/aodh.conf',
     path        => '/usr/bin',
-    user        => 'aodh',
     refreshonly => true,
-    subscribe   => [Package['aodh'], Aodh_config['database/connection']],
-    require     => User['aodh'],
+    user        => $user,
+    logoutput   => on_failure,
   }
 
-  Exec['aodh-manage db_sync'] ~> Service<| title == 'aodh' |>
+  Package<| tag == 'aodh-package' |> ~> Exec['aodh-db-sync']
+  Exec['aodh-db-sync'] ~> Service<| tag == 'aodh-db-sync-service' |>
+  Aodh_config<||> ~> Exec['aodh-db-sync']
+  Aodh_config<| title == 'database/connection' |> ~> Exec['aodh-db-sync']
 }

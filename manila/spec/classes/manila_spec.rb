@@ -1,11 +1,11 @@
 require 'spec_helper'
 describe 'manila' do
   let :req_params do
-    {:rabbit_password => 'guest', :sql_connection => 'mysql://user:password@host/database'}
+    {:rabbit_password => 'guest', :sql_connection => 'mysql+pymysql://user:password@host/database'}
   end
 
   let :facts do
-    {:osfamily => 'Debian'}
+    @default_facts.merge({:osfamily => 'Debian'})
   end
 
   describe 'with only required params' do
@@ -49,10 +49,10 @@ describe 'manila' do
         :value => 'guest'
       )
       is_expected.to contain_manila_config('DEFAULT/verbose').with(
-        :value => false
+        :value => '<SERVICE DEFAULT>'
       )
       is_expected.to contain_manila_config('DEFAULT/debug').with(
-        :value => false
+        :value => '<SERVICE DEFAULT>'
       )
       is_expected.to contain_manila_config('DEFAULT/storage_availability_zone').with(
         :value => 'nova'
@@ -119,69 +119,6 @@ describe 'manila' do
         :value => true
       )
     end
-  end
-
-  describe 'with qpid rpc supplied' do
-
-    let :params do
-      {
-        :sql_connection      => 'mysql://user:password@host/database',
-        :qpid_password       => 'guest',
-        :rpc_backend         => 'qpid'
-      }
-    end
-
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_port').with_value('5672') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_username').with_value('guest') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_password').with_value('guest').with_secret(true) }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect').with_value(true) }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_timeout').with_value('0') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_limit').with_value('0') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval_min').with_value('0') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval_max').with_value('0') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_reconnect_interval').with_value('0') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_heartbeat').with_value('60') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_protocol').with_value('tcp') }
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_tcp_nodelay').with_value(true) }
-  end
-
-  describe 'with qpid rpc and no qpid_sasl_mechanisms' do
-    let :params do
-      {
-        :sql_connection       => 'mysql://user:password@host/database',
-        :qpid_password        => 'guest',
-        :rpc_backend          => 'qpid'
-      }
-    end
-
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_ensure('absent') }
-  end
-
-  describe 'with qpid rpc and qpid_sasl_mechanisms string' do
-    let :params do
-      {
-        :sql_connection       => 'mysql://user:password@host/database',
-        :qpid_password        => 'guest',
-        :qpid_sasl_mechanisms => 'PLAIN',
-        :rpc_backend          => 'qpid'
-      }
-    end
-
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('PLAIN') }
-  end
-
-  describe 'with qpid rpc and qpid_sasl_mechanisms array' do
-    let :params do
-      {
-        :sql_connection       => 'mysql://user:password@host/database',
-        :qpid_password        => 'guest',
-        :qpid_sasl_mechanisms => [ 'DIGEST-MD5', 'GSSAPI', 'PLAIN' ],
-        :rpc_backend          => 'qpid'
-      }
-    end
-
-    it { is_expected.to contain_manila_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('DIGEST-MD5 GSSAPI PLAIN') }
   end
 
   describe 'with SSL enabled' do
@@ -317,7 +254,7 @@ describe 'manila' do
 
     let :params do
       {
-        :sql_connection         => 'mysql://user:password@host/database',
+        :sql_connection         => 'mysql+pymysql://user:password@host/database',
         :rpc_backend            => 'zmq',
       }
     end

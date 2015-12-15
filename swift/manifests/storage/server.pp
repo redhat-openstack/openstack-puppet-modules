@@ -40,7 +40,6 @@
 #   *NOTE*: Recommended parameter: 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
 #   This mask translates to 0755 for directories and 0644 for files.
 #
-
 # [*pipeline*]
 #   (optional) Pipeline of applications.
 #   Defaults to ["${type}-server"].
@@ -93,7 +92,7 @@
 # [*log_name*]
 #   (optional) Label used when logging.
 #   Defaults to "${type}-server".
-
+#
 # [*log_udp_host*]
 #   (optional) If not set, the UDP receiver for syslog is disabled.
 #   Defaults to undef.
@@ -107,9 +106,10 @@
 #   good for seeing errors if true
 #   Defaults to true.
 #
-# [*config_file_path*]
-#   (optional) The configuration file name.
-#   Defaults to "${type}-server/${name}.conf".
+#  [*config_file_path*]
+#    (optional) The configuration file name.
+#    Starting at the path "/etc/swift/"
+#    Defaults to "${type}-server.conf"
 #
 define swift::storage::server(
   $type,
@@ -136,7 +136,7 @@ define swift::storage::server(
   $log_udp_port           = undef,
   $log_requests           = true,
   # this parameters needs to be specified after type and name
-  $config_file_path       = "${type}-server/${name}.conf"
+  $config_file_path       = "${type}-server.conf",
 ) {
 
   if ($incoming_chmod == '0644') {
@@ -169,6 +169,7 @@ define swift::storage::server(
   }
 
   include "::swift::storage::${type}"
+
   include ::concat::setup
 
   validate_re($name, '^\d+$')
@@ -193,7 +194,7 @@ define swift::storage::server(
   concat { "/etc/swift/${config_file_path}":
     owner   => $owner,
     group   => $group,
-    notify  => Service["swift-${type}", "swift-${type}-replicator"],
+    notify  => Service["swift-${type}-server", "swift-${type}-replicator"],
     require => Package['swift'],
   }
 

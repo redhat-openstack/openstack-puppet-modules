@@ -119,6 +119,12 @@ describe 'ironic::inspector' do
         'content' => /default/,
       )
     end
+    it 'should contain directory /tftpboot with selinux type tftpdir_t' do
+      is_expected.to contain_file('/tftpboot').with(
+        'ensure'  => 'directory',
+        'seltype' => 'tftpdir_t'
+      )
+    end
 
     context 'when overriding parameters' do
       before :each do
@@ -164,7 +170,7 @@ describe 'ironic::inspector' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     let :platform_params do
@@ -177,7 +183,7 @@ describe 'ironic::inspector' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     let :platform_params do

@@ -9,10 +9,10 @@ describe 'ceilometer::db' do
       it { is_expected.to contain_class('ceilometer::params') }
       it { is_expected.to contain_class('ceilometer::db::sync') }
       it { is_expected.to contain_ceilometer_config('database/connection').with_value('mysql://ceilometer:ceilometer@localhost/ceilometer').with_secret(true) }
-      it { is_expected.to contain_ceilometer_config('database/idle_timeout').with_value('3600') }
-      it { is_expected.to contain_ceilometer_config('database/min_pool_size').with_value('1') }
-      it { is_expected.to contain_ceilometer_config('database/max_retries').with_value('10') }
-      it { is_expected.to contain_ceilometer_config('database/retry_interval').with_value('10') }
+      it { is_expected.to contain_ceilometer_config('database/idle_timeout').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_ceilometer_config('database/min_pool_size').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_ceilometer_config('database/max_retries').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_ceilometer_config('database/retry_interval').with_value('<SERVICE DEFAULT>') }
       it { is_expected.not_to contain_ceilometer_config('database/mongodb_replica_set') }
 
     end
@@ -36,6 +36,16 @@ describe 'ceilometer::db' do
       it { is_expected.to contain_ceilometer_config('database/retry_interval').with_value('11') }
       it { is_expected.to contain_ceilometer_config('database/mongodb_replica_set').with_ensure( 'absent' ) }
 
+    end
+
+    context 'with pymysql connection' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://ceilometer:ceilometer@localhost/ceilometer' }
+      end
+
+      it { is_expected.to contain_class('ceilometer::params') }
+      it { is_expected.to contain_class('ceilometer::db::sync') }
+      it { is_expected.to contain_ceilometer_config('database/connection').with_value('mysql+pymysql://ceilometer:ceilometer@localhost/ceilometer').with_secret(true) }
     end
 
     context 'with mongodb backend and replica set' do
@@ -75,17 +85,39 @@ describe 'ceilometer::db' do
       end
     end
 
+    context 'with incorrect pymysql database_connection string' do
+      let :params do
+        { :database_connection     => 'foo+pymysql://ceilometer:ceilometer@localhost/ceilometer', }
+      end
+
+      it_raises 'a Puppet::Error', /validate_re/
+    end
+
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian',
+      @default_facts.merge({ :osfamily => 'Debian',
         :operatingsystem => 'Debian',
         :operatingsystemrelease => 'jessie',
-      }
+      })
     end
 
     it_configures 'ceilometer::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql:///ceilometer:ceilometer@localhost/ceilometer', }
+      end
+
+      it 'install the proper backend package' do
+        is_expected.to contain_package('ceilometer-backend-package').with(
+          :ensure => 'present',
+          :name   => 'python-pymysql',
+          :tag    => 'openstack'
+        )
+      end
+    end
 
     context 'with sqlite backend' do
       let :params do
@@ -105,12 +137,20 @@ describe 'ceilometer::db' do
 
   context 'on Redhat platforms' do
     let :facts do
-      { :osfamily => 'RedHat',
+      @default_facts.merge({ :osfamily => 'RedHat',
         :operatingsystemrelease => '7.1',
-      }
+      })
     end
 
     it_configures 'ceilometer::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql:///ceilometer:ceilometer@localhost/ceilometer', }
+      end
+
+      it { is_expected.not_to contain_package('ceilometer-backend-package') }
+    end
   end
 
 end

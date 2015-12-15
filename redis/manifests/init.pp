@@ -23,7 +23,7 @@
 # [*auto_aof_rewrite_min_size*]
 #   Adjust minimum size for auto-aof-rewrite.
 #
-#   Default: 64min
+#   Default: 64mb
 #
 # [*auto_aof_rewrite_percentage*]
 #   Adjust percentatge for auto-aof-rewrite.
@@ -331,6 +331,12 @@
 #
 #   Default: 1024
 #
+# [*stop_writes_on_bgsave_error*]
+#   If false then Redis will continue to work as usual even if there
+#   are problems with disk, permissions, and so forth.
+#
+#   Default: true
+#
 # [*syslog_enabled*]
 #   Enable/disable logging to the system logger.
 #
@@ -341,6 +347,22 @@
 #   Must be USER or between LOCAL0-LOCAL7.
 #
 #   Default: undef
+#
+# [*tcp_keepalive*]
+#   TCP keepalive.
+#
+#   If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
+#   of communication. This is useful for two reasons:
+#
+#   1) Detect dead peers.
+#   2) Take the connection alive from the point of view of network
+#      equipment in the middle.
+#
+#   On Linux, the specified value (in seconds) is the period used to send ACKs.
+#   Note that to close the connection the double of the time is needed.
+#   On other kernels the period depends on the kernel configuration.
+#
+#   A reasonable value for this option is 60 seconds.
 #
 # [*timeout*]
 #   Close the connection after a client is idle for N seconds (0 to disable).
@@ -367,6 +389,23 @@
 #   Set max values for sorted sets.
 #
 #   Default: 64
+#
+# [*cluster_enabled*]
+#   Enables redis 3.0 cluster functionality
+#
+#   Default: false
+#
+# [*cluster_config_file*]
+#   Config file for saving cluster nodes configuration. This file is never touched by humans.
+#   Only set if cluster_enabled is true
+#
+#   Default: nodes.conf
+#
+# [*cluster_node_timeout*]
+#   Node timeout
+#   Only set if cluster_enabled is true
+#
+#   Default: 5000
 #
 # == Actions:
 #   - Install and configure Redis
@@ -439,13 +478,18 @@ class redis (
   $slaveof                     = $::redis::params::slaveof,
   $slowlog_log_slower_than     = $::redis::params::slowlog_log_slower_than,
   $slowlog_max_len             = $::redis::params::slowlog_max_len,
+  $stop_writes_on_bgsave_error = $::redis::params::stop_writes_on_bgsave_error,
   $syslog_enabled              = $::redis::params::syslog_enabled,
   $syslog_facility             = $::redis::params::syslog_facility,
+  $tcp_keepalive               = $::redis::params::tcp_keepalive,
   $timeout                     = $::redis::params::timeout,
   $ulimit                      = $::redis::params::ulimit,
   $workdir                     = $::redis::params::workdir,
   $zset_max_ziplist_entries    = $::redis::params::zset_max_ziplist_entries,
   $zset_max_ziplist_value      = $::redis::params::zset_max_ziplist_value,
+  $cluster_enabled             = $::redis::params::cluster_enabled,
+  $cluster_config_file         = $::redis::params::cluster_config_file,
+  $cluster_node_timeout        = $::redis::params::cluster_node_timeout,
 ) inherits redis::params {
   anchor { 'redis::begin': }
   anchor { 'redis::end': }

@@ -6,59 +6,11 @@ describe 'basic aodh' do
 
     it 'should work with no errors' do
       pp= <<-EOS
-      Exec { logoutput => 'on_failure' }
-
-      # Common resources
-      case $::osfamily {
-        'Debian': {
-          include ::apt
-          class { '::openstack_extras::repo::debian::ubuntu':
-            release         => 'liberty',
-            repo            => 'proposed',
-            package_require => true,
-          }
-          $package_provider = 'apt'
-        }
-        'RedHat': {
-          class { '::openstack_extras::repo::redhat::redhat':
-            manage_rdo => false,
-            repo_hash => {
-              'openstack-common-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-common-testing/x86_64/os/',
-                'descr'    => 'openstack-common-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-testing' => {
-                'baseurl'  => 'http://cbs.centos.org/repos/cloud7-openstack-liberty-testing/x86_64/os/',
-                'descr'    => 'openstack-liberty-testing',
-                'gpgcheck' => 'no',
-              },
-              'openstack-liberty-trunk' => {
-                'baseurl'  => 'http://trunk.rdoproject.org/centos7-liberty/current-passed-ci/',
-                'descr'    => 'openstack-liberty-trunk',
-                'gpgcheck' => 'no',
-              },
-            },
-          }
-          package { 'openstack-selinux': ensure => 'latest' }
-          $package_provider = 'yum'
-        }
-        default: {
-          fail("Unsupported osfamily (${::osfamily})")
-        }
-      }
-
-      class { '::mysql::server': }
-
-      class { '::rabbitmq':
-        delete_guest_user => true,
-        package_provider  => $package_provider,
-      }
-
-      rabbitmq_vhost { '/':
-        provider => 'rabbitmqctl',
-        require  => Class['rabbitmq'],
-      }
+      include ::openstack_integration
+      include ::openstack_integration::repos
+      include ::openstack_integration::rabbitmq
+      include ::openstack_integration::mysql
+      include ::openstack_integration::keystone
 
       rabbitmq_user { 'aodh':
         admin    => true,
@@ -75,26 +27,6 @@ describe 'basic aodh' do
         require              => Class['rabbitmq'],
       }
 
-
-      # Keystone resources, needed by Ceilometer to run
-      class { '::keystone::db::mysql':
-        password => 'keystone',
-      }
-      class { '::keystone':
-        verbose             => true,
-        debug               => true,
-        database_connection => 'mysql://keystone:keystone@127.0.0.1/keystone',
-        admin_token         => 'admin_token',
-        enabled             => true,
-      }
-      class { '::keystone::roles::admin':
-        email    => 'test@example.tld',
-        password => 'a_big_secret',
-      }
-      class { '::keystone::endpoint':
-        public_url => "https://${::fqdn}:5000/",
-        admin_url  => "https://${::fqdn}:35357/",
-      }
       class { '::aodh':
         rabbit_userid       => 'aodh',
         rabbit_password     => 'an_even_bigger_secret',
@@ -118,6 +50,22 @@ describe 'basic aodh' do
       include ::apache
       class { '::aodh::wsgi::apache':
         ssl => false,
+      }
+      class { '::aodh::auth':
+        auth_url      => 'http://127.0.0.1:5000/v2.0',
+        auth_password => 'a_big_secret',
+      }
+      class { '::aodh::client': }
+      class { '::aodh::notifier': }
+      class { '::aodh::listener': }
+      case $::osfamily {
+        'Debian': {
+          warning('aodh-evaluator cannot be run on ubuntu system, package is broken. See LP#1508463')
+        }
+        'RedHat': {
+          class { '::aodh::evaluator': }
+          class { '::aodh::db::sync': }
+        }
       }
       EOS
 

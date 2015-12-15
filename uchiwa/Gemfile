@@ -13,6 +13,10 @@ group :development, :test do
   gem 'pry',                     :require => false
   gem 'simplecov',               :require => false
   gem 'vagrant-wrapper',         :require => false
+  gem "travis"
+  gem "travis-lint"
+  gem "puppet-blacksmith"
+  gem "guard-rake"
 end
 
 if facterversion = ENV['FACTER_GEM_VERSION']

@@ -53,11 +53,11 @@ describe 'uchiwa' do
           context 'default' do
             it { should contain_apt__source('sensu').with(
               :ensure   => 'present',
-              :location => 'http://repos.sensuapp.org/apt',
+              :location => 'http://repositories.sensuapp.org/apt',
               :release  => 'sensu',
               :repos    => 'main',
               :include  => { 'src' => false, 'deb' => true },
-              :key      => { 'id' => '8911D8FF37778F24B4E726A218609E3D7580C77F', 'source' => 'http://repos.sensuapp.org/apt/pubkey.gpg' },
+              :key      => { 'id' => 'EE15CFF6AB6E4E290FDAB681A20F259AEB9C94BB', 'source' => 'http://repositories.sensuapp.org/apt/pubkey.gpg' },
               :before   => 'Package[uchiwa]'
             ) }
           end
@@ -93,7 +93,7 @@ describe 'uchiwa' do
 
             it { should_not contain_apt__key('sensu').with(
               :key         => '7580C77F',
-              :key_source  => 'http://repos.sensuapp.org/apt/pubkey.gpg'
+              :key_source  => 'http://repositories.sensuapp.org/apt/pubkey.gpg'
             ) }
 
             it { should contain_package('uchiwa').with(
@@ -149,6 +149,22 @@ describe 'uchiwa' do
       should contain_file('/etc/sensu/uchiwa.json') \
         .with_content(/"name": "foo"/) \
         .with_content(/"host": "bar"/)
+    }
+  end
+
+  context 'with multiple users' do
+    let(:params) {{ :users => [ { 'username' => 'user1', 'password' => 'pass1', 'readonly' => true } ] }}
+    it {
+      should contain_file('/etc/sensu/uchiwa.json') \
+        .with_content(/"username": "user1",\n        "password": "pass1",\n        "role": {\n          "readonly": true\n        }\n      }/)
+    }
+  end
+
+  context 'with static JWT RSA keys' do
+    let(:params) {{ :auth => { 'publickey' => '/etc/sensu/uchiwa.rsa.pub', 'privatekey' => '/etc/sensu/uchiwa.rsa' } }}
+    it {
+      should contain_file('/etc/sensu/uchiwa.json') \
+      .with_content(/"auth": {\n      "publickey": "\/etc\/sensu\/uchiwa.rsa.pub",\n      "privatekey": "\/etc\/sensu\/uchiwa.rsa"\n    }/)
     }
   end
 

@@ -27,7 +27,7 @@ describe 'manila::ganesha' do
 
     context 'on Red Hat platforms' do
       let :facts do
-        {:osfamily => 'RedHat'}
+        @default_facts.merge({:osfamily => 'RedHat'})
       end
       it_configures 'manila NFS Ganesha options for share drivers'
     end

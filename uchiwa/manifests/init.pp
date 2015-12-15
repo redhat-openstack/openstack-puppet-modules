@@ -44,7 +44,7 @@
 #
 #  [*repo_key_source*]
 #    String
-#    Default: http://repos.sensuapp.org/apt/pubkey.gpg
+#    Default: http://repositories.sensuapp.org/apt/pubkey.gpg
 #    GPG key for the repo we're installing
 #
 #  [*manage_services*]
@@ -95,6 +95,36 @@
 #             }]
 #     An array of API endpoints to connect uchiwa to one or multiple sensu servers.
 #
+#  [*users*]
+#    Array of hashes
+#    An array of user credentials to access the uchiwa dashboard. If set, it takes
+#    precendence over 'user' and 'pass'.
+#    Example: 
+#    ```   
+#    [{
+#       'username' => 'user1',
+#       'password' => 'pass1',
+#       'readonly' => false
+#     },
+#     {
+#       'username' => 'user2',
+#       'password' => 'pass2',
+#       'readonly' => true
+#     }]
+#     ```
+#
+#  [*auth*]
+#    Hash
+#    A hash containing the static public and private key paths for generating and
+#    validating JSON Web Token (JWT) signatures.
+#    Example:
+#    ```
+#    {
+#      'publickey'  => '/path/to/uchiwa.rsa.pub',
+#      'privatekey' => '/path/to/uchiwa.rsa'
+#    }
+#    ```
+#
 class uchiwa (
   $package_name         = $uchiwa::params::package_name,
   $service_name         = $uchiwa::params::service_name,
@@ -112,6 +142,8 @@ class uchiwa (
   $pass                 = $uchiwa::params::pass,
   $refresh              = $uchiwa::params::refresh,
   $sensu_api_endpoints  = $uchiwa::params::sensu_api_endpoints,
+  $users                = $uchiwa::params::users,
+  $auth                 = $uchiwa::params::auth
 ) inherits uchiwa::params {
 
   # validate parameters here
@@ -131,6 +163,8 @@ class uchiwa (
   validate_string($pass)
   validate_integer($refresh)
   validate_array($sensu_api_endpoints)
+  validate_array($users)
+  validate_hash($auth)
 
   anchor { 'uchiwa::begin': } ->
   class { 'uchiwa::install': } ->

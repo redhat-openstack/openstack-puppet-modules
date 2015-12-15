@@ -89,42 +89,11 @@
 #   (optional) Define queues as "durable" to rabbitmq.
 #   Defaults to false
 #
-# [*qpid_hostname*]
-#   (optional) Location of qpid server
-#   Defaults to 'localhost'
-#
-# [*qpid_port*]
-#   (optional) Port for qpid server
-#   Defaults to '5672'
-#
-# [*qpid_username*]
-#   (optional) Username to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_password*]
-#   (optional) Password to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_heartbeat*]
-#   (optional) Seconds between connection keepalive heartbeats
-#   Defaults to 60
-#
-# [*qpid_protocol*]
-#   (optional) Transport to use, either 'tcp' or 'ssl''
-#   Defaults to 'tcp'
-#
-# [*qpid_sasl_mechanisms*]
-#   (optional) Enable one or more SASL mechanisms
-#   Defaults to false
-#
-# [*qpid_tcp_nodelay*]
-#   (optional) Disable Nagle algorithm
-#   Defaults to true
-#
 # [*log_dir*]
 #   (optional) Directory where logs should be stored.
-#   If set to boolean false, it will not log to any directory.
-#   Defaults to undef
+#   If set to boolean false or the $::os_service_default, it will not log to
+#   any directory.
+#   Defaults to undef.
 #
 # [*state_path*]
 #   (optional) Directory for storing state.
@@ -196,6 +165,40 @@
 #   (optional) If set, use this value for max_overflow with sqlalchemy.
 #   Defaults to: undef.
 #
+# DEPRECATED PARAMETERS
+#
+# [*qpid_hostname*]
+#   (optional) Location of qpid server
+#   Defaults to undef
+#
+# [*qpid_port*]
+#   (optional) Port for qpid server
+#   Defaults to undef
+#
+# [*qpid_username*]
+#   (optional) Username to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_password*]
+#   (optional) Password to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_heartbeat*]
+#   (optional) Seconds between connection keepalive heartbeats
+#   Defaults to undef
+#
+# [*qpid_protocol*]
+#   (optional) Transport to use, either 'tcp' or 'ssl''
+#   Defaults to undef
+#
+# [*qpid_sasl_mechanisms*]
+#   (optional) Enable one or more SASL mechanisms
+#   Defaults to undef
+#
+# [*qpid_tcp_nodelay*]
+#   (optional) Disable Nagle algorithm
+#   Defaults to undef
+#
 class aodh (
   $ensure_package                     = 'present',
   $rpc_backend                        = 'rabbit',
@@ -215,19 +218,12 @@ class aodh (
   $kombu_ssl_version                  = 'TLSv1',
   $kombu_reconnect_delay              = '1.0',
   $amqp_durable_queues                = false,
-  $qpid_hostname                      = 'localhost',
-  $qpid_port                          = '5672',
-  $qpid_username                      = 'guest',
-  $qpid_password                      = 'guest',
-  $qpid_sasl_mechanisms               = false,
-  $qpid_heartbeat                     = 60,
-  $qpid_protocol                      = 'tcp',
-  $qpid_tcp_nodelay                   = true,
   $verbose                            = undef,
   $debug                              = undef,
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
+  $log_dir                            = undef,
   $notification_driver                = undef,
   $notification_topics                = 'notifications',
   $database_connection                = undef,
@@ -238,6 +234,15 @@ class aodh (
   $database_max_retries               = undef,
   $database_retry_interval            = undef,
   $database_max_overflow              = undef,
+  # DEPRECATED PARAMETERS
+  $qpid_hostname                      = undef,
+  $qpid_port                          = undef,
+  $qpid_username                      = undef,
+  $qpid_password                      = undef,
+  $qpid_sasl_mechanisms               = undef,
+  $qpid_heartbeat                     = undef,
+  $qpid_protocol                      = undef,
+  $qpid_tcp_nodelay                   = undef,
 ) inherits aodh::params {
 
   include ::aodh::db
@@ -330,30 +335,7 @@ class aodh (
   }
 
   if $rpc_backend == 'qpid' {
-    aodh_config {
-      'oslo_messaging_qpid/qpid_hostname':    value => $qpid_hostname;
-      'oslo_messaging_qpid/qpid_port':        value => $qpid_port;
-      'oslo_messaging_qpid/qpid_username':    value => $qpid_username;
-      'oslo_messaging_qpid/qpid_password':    value => $qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat':   value => $qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol':    value => $qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay': value => $qpid_tcp_nodelay;
-    }
-    if is_array($qpid_sasl_mechanisms) {
-      aodh_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
-      }
-    }
-    elsif $qpid_sasl_mechanisms {
-      aodh_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
-      }
-    }
-    else {
-      aodh_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
-      }
-    }
+    warning('Qpid driver was removed from Oslo.messaging in Mitaka release')
   }
 
   if $notification_driver {

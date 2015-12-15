@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'manila::params' do
 
   let :facts do
-    {:osfamily => 'Debian'}
+    @default_facts.merge({:osfamily => 'Debian'})
   end
   it 'should compile' do
     subject

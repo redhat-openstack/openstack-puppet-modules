@@ -18,8 +18,6 @@ describe 'glance::registry' do
       :workers                => facts[:processorcount],
       :log_file               => '/var/log/glance/registry.log',
       :log_dir                => '/var/log/glance',
-      :database_connection    => 'sqlite:///var/lib/glance/glance.sqlite',
-      :database_idle_timeout  => '3600',
       :enabled                => true,
       :manage_service         => true,
       :auth_type              => 'keystone',
@@ -32,6 +30,9 @@ describe 'glance::registry' do
       :keystone_password      => 'ChangeMe',
       :purge_config           => false,
       :sync_db                => true,
+      :os_region_name         => 'RegionOne',
+      :signing_dir            => '<SERVICE DEFAULT>',
+      :token_cache_time       => '<SERVICE DEFAULT>',
     }
   end
 
@@ -41,8 +42,6 @@ describe 'glance::registry' do
       :bind_host              => '127.0.0.1',
       :bind_port              => '9111',
       :workers                => '5',
-      :database_connection    => 'sqlite:///var/lib/glance.sqlite',
-      :database_idle_timeout  => '360',
       :enabled                => false,
       :auth_type              => 'keystone',
       :auth_host              => '127.0.0.1',
@@ -53,6 +52,9 @@ describe 'glance::registry' do
       :keystone_user          => 'admin',
       :keystone_password      => 'ChangeMe',
       :sync_db                => false,
+      :os_region_name         => 'RegionOne2',
+      :signing_dir            => '/path/to/dir',
+      :token_cache_time       => '300',
     }
   ].each do |param_set|
 
@@ -66,6 +68,7 @@ describe 'glance::registry' do
       end
 
       it { is_expected.to contain_class 'glance::registry' }
+      it { is_expected.to contain_class 'glance::registry::db' }
       it { is_expected.to contain_class 'glance::registry::logging' }
 
       it { is_expected.to contain_service('glance-registry').with(
@@ -93,12 +96,6 @@ describe 'glance::registry' do
           is_expected.to contain_glance_registry_config("DEFAULT/#{config}").with_value(param_hash[config.intern])
         end
         [
-         'database_connection',
-         'database_idle_timeout',
-        ].each do |config|
-          is_expected.to contain_glance_registry_config("database/#{config.gsub(/database_/,'')}").with_value(param_hash[config.intern])
-        end
-        [
          'auth_host',
          'auth_port',
          'auth_protocol'
@@ -112,6 +109,15 @@ describe 'glance::registry' do
           is_expected.to contain_glance_registry_config("keystone_authtoken/admin_user").with_value(param_hash[:keystone_user])
           is_expected.to contain_glance_registry_config("keystone_authtoken/admin_password").with_value(param_hash[:keystone_password])
           is_expected.to contain_glance_registry_config("keystone_authtoken/admin_password").with_value(param_hash[:keystone_password]).with_secret(true)
+          is_expected.to contain_glance_registry_config("keystone_authtoken/token_cache_time").with_value(param_hash[:token_cache_time])
+          is_expected.to contain_glance_registry_config("keystone_authtoken/signing_dir").with_value(param_hash[:signing_dir])
+        end
+      end
+      it 'is_expected.to lay down default glance_store registry config' do
+        [
+          'os_region_name',
+        ].each do |config|
+          is_expected.to contain_glance_registry_config("glance_store/#{config}").with_value(param_hash[config.intern])
         end
       end
     end

@@ -2,18 +2,10 @@ require 'spec_helper'
 
 describe 'sahara::service::engine' do
 
-  shared_examples_for 'sahara-engine' do
-    context 'require main class' do
-      it { is_expected.to contain_class('sahara') }
-    end
-  end
-
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
-
-    it_configures 'sahara-engine'
 
     it_behaves_like 'generic sahara service', {
        :name         => 'sahara-engine',
@@ -23,10 +15,8 @@ describe 'sahara::service::engine' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
-
-    it_configures 'sahara-engine'
 
     it_behaves_like 'generic sahara service', {
        :name         => 'sahara-engine',

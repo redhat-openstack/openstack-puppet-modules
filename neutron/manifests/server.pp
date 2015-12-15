@@ -55,7 +55,7 @@
 # [*auth_region*]
 #   (optional) The authentication region. Note this value is case-sensitive and
 #   must match the endpoint region defined in Keystone.
-#   Defaults to undef
+#   Defaults to $::os_service_default
 #
 # [*auth_tenant*]
 #   (optional) The tenant of the auth user
@@ -151,7 +151,7 @@
 #   report_interval, to be sure the agent is down for good.
 #   agent_down_time is a config for neutron-server, set by class neutron::server
 #   report_interval is a config for neutron agents, set by class neutron
-#   Defaults to: 75
+#   Defaults to: $::os_service_default
 #
 # [*state_path*]
 #   (optional) Deprecated.  Use state_path parameter on base neutron class instead.
@@ -169,12 +169,12 @@
 #   (optional) Setting the "router_distributed" flag to "True" will default to the creation
 #   of distributed tenant routers.
 #   Also can be the type of the router on the create request (admin-only attribute).
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*allow_automatic_l3agent_failover*]
 #   (optional) Allow automatic rescheduling of routers from dead L3 agents with
 #   admin_state_up set to True to alive agents.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*l3_ha*]
 #   (optional) Enable high availability for virtual routers.
@@ -190,11 +190,15 @@
 #
 # [*l3_ha_net_cidr*]
 #   (optional) CIDR of the administrative network if HA mode is enabled.
-#   Defaults to '169.254.192.0/18'
+#   Defaults to $::os_service_default
 #
 # [*report_interval*]
 #   (optional) Deprecated, does nothing.
 #   Defaults to 'undef'.
+#
+# [*qos_notification_drivers*]
+#   (optional) Drivers list to use to send the update notification
+#   Defaults to $::os_service_default.
 #
 class neutron::server (
   $package_ensure                   = 'present',
@@ -202,7 +206,7 @@ class neutron::server (
   $manage_service                   = true,
   $service_name                     = $::neutron::params::server_service,
   $auth_password                    = false,
-  $auth_region                      = undef,
+  $auth_region                      = $::os_service_default,
   $auth_type                        = 'keystone',
   $auth_tenant                      = 'services',
   $auth_user                        = 'neutron',
@@ -218,14 +222,15 @@ class neutron::server (
   $sync_db                          = false,
   $api_workers                      = $::processorcount,
   $rpc_workers                      = $::processorcount,
-  $agent_down_time                  = '75',
+  $agent_down_time                  = $::os_service_default,
   $router_scheduler_driver          = 'neutron.scheduler.l3_agent_scheduler.ChanceScheduler',
-  $router_distributed               = false,
-  $allow_automatic_l3agent_failover = false,
+  $router_distributed               = $::os_service_default,
+  $allow_automatic_l3agent_failover = $::os_service_default,
   $l3_ha                            = false,
   $max_l3_agents_per_router         = 3,
   $min_l3_agents_per_router         = 2,
-  $l3_ha_net_cidr                   = '169.254.192.0/18',
+  $l3_ha_net_cidr                   = $::os_service_default,
+  $qos_notification_drivers         = $::os_service_default,
   # DEPRECATED PARAMETERS
   $auth_host                        = 'localhost',
   $auth_port                        = '35357',
@@ -300,6 +305,8 @@ class neutron::server (
       value  => $lock_path,
     }
   }
+
+  neutron_config { 'qos/notification_drivers': value => join(any2array($qos_notification_drivers), ',') }
 
   if ($::neutron::params::server_package) {
     Package['neutron-server'] -> Neutron_api_config<||>
@@ -435,10 +442,8 @@ class neutron::server (
         'filter:authtoken/auth_uri': value => $auth_uri_real;
       }
 
-      if $auth_region {
-        neutron_config {
-          'keystone_authtoken/auth_region': value => $auth_region;
-        }
+      neutron_config {
+        'keystone_authtoken/auth_region': value => $auth_region;
       }
 
       if $identity_uri {

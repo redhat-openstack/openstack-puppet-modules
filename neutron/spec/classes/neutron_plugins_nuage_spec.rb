@@ -9,7 +9,7 @@ describe 'neutron::plugins::nuage' do
      class { 'neutron::server': auth_password => 'password' }"
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -29,6 +29,15 @@ describe 'neutron::plugins::nuage' do
   shared_examples_for 'neutron plugin nuage' do
 
     it { is_expected.to contain_class('neutron::params') }
+
+    it 'should have a nuage plugin ini file' do
+      is_expected.to contain_file('/etc/neutron/plugins/nuage/plugin.ini').with(
+        :ensure => 'file',
+        :owner  => 'root',
+        :group  => 'neutron',
+        :mode   => '0640'
+      )
+    end
 
     it 'should configure neutron.conf' do
       is_expected.to contain_neutron_config('DEFAULT/core_plugin').with_value('neutron.plugins.nuage.plugin.NuagePlugin')
@@ -54,7 +63,9 @@ describe 'neutron::plugins::nuage' do
   begin
     context 'on Debian platforms' do
       let :facts do
-        default_facts.merge({ :osfamily => 'Debian'})
+        @default_facts.merge(test_facts.merge({
+           :osfamily => 'Debian'
+        }))
       end
 
       it_configures 'neutron plugin nuage'
@@ -62,7 +73,10 @@ describe 'neutron::plugins::nuage' do
 
     context 'on RedHat platforms' do
       let :facts do
-        default_facts.merge({ :osfamily => 'RedHat'})
+        @default_facts.merge(test_facts.merge({
+           :osfamily               => 'RedHat',
+           :operatingsystemrelease => '7'
+        }))
       end
 
       it_configures 'neutron plugin nuage'
@@ -71,7 +85,9 @@ describe 'neutron::plugins::nuage' do
   begin
     context 'on Debian platforms' do
       let :facts do
-        default_facts.merge({ :osfamily => 'Debian'})
+        @default_facts.merge(test_facts.merge({
+           :osfamily => 'Debian'
+        }))
       end
 
       it 'configures /etc/default/neutron-server' do
@@ -88,7 +104,10 @@ describe 'neutron::plugins::nuage' do
 
     context 'on RedHat platforms' do
       let :facts do
-        default_facts.merge({ :osfamily => 'RedHat'})
+        @default_facts.merge(test_facts.merge({
+           :osfamily               => 'RedHat',
+           :operatingsystemrelease => '7'
+        }))
       end
 
       it 'should create plugin symbolic link' do

@@ -7,12 +7,12 @@ describe 'keystone::db' do
     context 'with default parameters' do
 
       it { is_expected.to contain_keystone_config('database/connection').with_value('sqlite:////var/lib/keystone/keystone.sqlite').with_secret(true) }
-      it { is_expected.to contain_keystone_config('database/idle_timeout').with_value('3600') }
-      it { is_expected.to contain_keystone_config('database/min_pool_size').with_value('1') }
-      it { is_expected.to contain_keystone_config('database/max_pool_size').with_value('10') }
-      it { is_expected.to contain_keystone_config('database/max_overflow').with_value('20') }
-      it { is_expected.to contain_keystone_config('database/max_retries').with_value('10') }
-      it { is_expected.to contain_keystone_config('database/retry_interval').with_value('10') }
+      it { is_expected.to contain_keystone_config('database/idle_timeout').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_keystone_config('database/min_pool_size').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_keystone_config('database/max_pool_size').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_keystone_config('database/max_overflow').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_keystone_config('database/max_retries').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_keystone_config('database/retry_interval').with_value('<SERVICE DEFAULT>') }
 
     end
 
@@ -34,8 +34,6 @@ describe 'keystone::db' do
       it { is_expected.to contain_keystone_config('database/max_pool_size').with_value('21') }
       it { is_expected.to contain_keystone_config('database/max_overflow').with_value('21') }
       it { is_expected.to contain_keystone_config('database/retry_interval').with_value('11') }
-      it { is_expected.to contain_package('keystone-backend-package').with({ :ensure => 'present', :name => platform_params[:pymysql_package_name] }) }
-
     end
 
     context 'with MySQL-python library as backend package' do
@@ -77,31 +75,44 @@ describe 'keystone::db' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian',
+      @default_facts.merge({ :osfamily => 'Debian',
         :operatingsystem => 'Debian',
         :operatingsystemrelease => 'jessie',
-      }
-    end
-
-    let :platform_params do
-      { :pymysql_package_name => 'python-pymysql' }
+      })
     end
 
     it_configures 'keystone::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://keystone:keystone@localhost/keystone', }
+      end
+
+      it 'install the proper backend package' do
+        is_expected.to contain_package('keystone-backend-package').with(
+          :ensure => 'present',
+          :name   => 'python-pymysql',
+          :tag    => 'openstack'
+        )
+      end
+    end
   end
 
   context 'on Redhat platforms' do
     let :facts do
-      { :osfamily => 'RedHat',
+      @default_facts.merge({ :osfamily => 'RedHat',
         :operatingsystemrelease => '7.1',
-      }
-    end
-
-    let :platform_params do
-      { :pymysql_package_name => 'python2-PyMySQL' }
+      })
     end
 
     it_configures 'keystone::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://keystone:keystone@localhost/keystone', }
+      end
+      it { is_expected.not_to contain_package('keystone-backend-package') }
+    end
   end
 
 end

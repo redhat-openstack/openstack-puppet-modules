@@ -111,6 +111,8 @@
 #   Defaults to false
 #  [*nova_available*]
 #   Defaults to true
+#  [*murano_available*]
+#   Defaults to false
 #  [*sahara_available*]
 #   Defaults to false
 #  [*swift_available*]
@@ -212,6 +214,7 @@ class tempest(
   $horizon_available         = true,
   $neutron_available         = false,
   $nova_available            = true,
+  $murano_available          = false,
   $sahara_available          = false,
   $swift_available           = false,
   $trove_available           = false,
@@ -322,6 +325,7 @@ class tempest(
     'service_available/horizon':         value => $horizon_available;
     'service_available/neutron':         value => $neutron_available;
     'service_available/nova':            value => $nova_available;
+    'service_available/murano':          value => $murano_available;
     'service_available/sahara':          value => $sahara_available;
     'service_available/swift':           value => $swift_available;
     'service_available/trove':           value => $trove_available;
@@ -348,6 +352,7 @@ class tempest(
       }
       Glance_image<||> -> Tempest_glance_id_setter['image_ref']
       Tempest_config<||> -> Tempest_glance_id_setter['image_ref']
+      Keystone_user_role<||> -> Tempest_glance_id_setter['image_ref']
     } elsif ($image_name and $image_ref) or (! $image_name and ! $image_ref) {
       fail('A value for either image_name or image_ref must be provided.')
     }
@@ -359,6 +364,7 @@ class tempest(
       }
       Glance_image<||> -> Tempest_glance_id_setter['image_ref_alt']
       Tempest_config<||> -> Tempest_glance_id_setter['image_ref_alt']
+      Keystone_user_role<||> -> Tempest_glance_id_setter['image_ref_alt']
     } elsif ($image_name_alt and $image_ref_alt) or (! $image_name_alt and ! $image_ref_alt) {
         fail('A value for either image_name_alt or image_ref_alt must \
 be provided.')
@@ -374,6 +380,7 @@ be provided.')
       }
       Neutron_network<||> -> Tempest_neutron_net_id_setter['public_network_id']
       Tempest_config<||> -> Tempest_neutron_net_id_setter['public_network_id']
+      Keystone_user_role<||> -> Tempest_neutron_net_id_setter['public_network_id']
     } elsif ($public_network_name and $public_network_id) or (! $public_network_name and ! $public_network_id) {
       fail('A value for either public_network_id or public_network_name \
   must be provided.')

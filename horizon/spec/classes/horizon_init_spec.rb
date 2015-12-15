@@ -25,14 +25,13 @@ describe 'horizon' do
 
     context 'with default parameters' do
       it {
-          is_expected.to contain_package('python-lesscpy').with_ensure('present')
           is_expected.to contain_package('horizon').with(
             :ensure => 'present',
             :tag    => ['openstack', 'horizon-package'],
           )
       }
       it {
-        if facts[:os_package_type] == 'redhat'
+        if facts[:os_package_type] == 'rpm'
           is_expected.to contain_exec('refresh_horizon_django_cache').with({
           :command     => '/usr/share/openstack-dashboard/manage.py collectstatic --noinput --clear && /usr/share/openstack-dashboard/manage.py compress --force',
           :refreshonly => true,
@@ -42,7 +41,7 @@ describe 'horizon' do
         end
       }
       it {
-        if facts[:os_package_type] == 'redhat'
+        if facts[:os_package_type] == 'rpm'
           is_expected.to contain_concat(platforms_params[:config_file]).that_notifies('Exec[refresh_horizon_django_cache]')
         else
           is_expected.to_not contain_concat(platforms_params[:config_file]).that_notifies('Exec[refresh_horizon_django_cache]')
@@ -118,7 +117,8 @@ describe 'horizon' do
           :custom_theme_path            => 'static/themes/green',
           :api_versions                 => {'identity' => 3},
           :keystone_multidomain_support => true,
-          :keystone_default_domain      => 'domain.tld'
+          :keystone_default_domain      => 'domain.tld',
+          :overview_days_range          => 1
         })
       end
 
@@ -158,6 +158,7 @@ describe 'horizon' do
           "            'handlers': ['syslog'],",
           'COMPRESS_OFFLINE = False',
           "FILE_UPLOAD_TEMP_DIR = '/var/spool/horizon'",
+          "OVERVIEW_DAYS_RANGE = 1"
         ])
       end
 
@@ -180,7 +181,7 @@ describe 'horizon' do
       end
 
       it {
-        if facts[:os_package_type] == 'redhat'
+        if facts[:os_package_type] == 'rpm'
           is_expected.to contain_exec('refresh_horizon_django_cache')
         else
           is_expected.to_not contain_exec('refresh_horizon_django_cache')

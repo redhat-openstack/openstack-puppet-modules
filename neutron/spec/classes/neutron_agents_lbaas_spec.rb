@@ -13,7 +13,6 @@ describe 'neutron::agents::lbaas' do
   let :default_params do
     { :package_ensure   => 'present',
       :enabled          => true,
-      :debug            => false,
       :interface_driver => 'neutron.agent.linux.interface.OVSInterfaceDriver',
       :device_driver    => 'neutron_lbaas.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
       :use_namespaces   => nil,
@@ -21,7 +20,7 @@ describe 'neutron::agents::lbaas' do
     }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -39,7 +38,7 @@ describe 'neutron::agents::lbaas' do
     it_configures 'haproxy lbaas_driver without package'
 
     it 'configures lbaas_agent.ini' do
-      is_expected.to contain_neutron_lbaas_agent_config('DEFAULT/debug').with_value(p[:debug]);
+      is_expected.to contain_neutron_lbaas_agent_config('DEFAULT/debug').with_value('<SERVICE DEFAULT>');
       is_expected.to contain_neutron_lbaas_agent_config('DEFAULT/interface_driver').with_value(p[:interface_driver]);
       is_expected.to contain_neutron_lbaas_agent_config('DEFAULT/device_driver').with_value(p[:device_driver]);
       is_expected.to contain_neutron_lbaas_agent_config('haproxy/user_group').with_value(platform_params[:nobody_user_group]);
@@ -114,11 +113,11 @@ describe 'neutron::agents::lbaas' do
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge(
+      @default_facts.merge(test_facts.merge(
         { :osfamily => 'Debian',
           :concat_basedir => '/dne'
         }
-      )
+      ))
     end
 
     let :platform_params do
@@ -133,11 +132,12 @@ describe 'neutron::agents::lbaas' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge(
-        { :osfamily => 'RedHat',
-          :concat_basedir => '/dne'
-        }
-      )
+      @default_facts.merge(test_facts.merge(
+         { :osfamily               => 'RedHat',
+           :operatingsystemrelease => '7',
+           :concat_basedir         => '/dne'
+         }
+      ))
     end
 
     let :platform_params do

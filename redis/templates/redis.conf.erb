@@ -39,6 +39,22 @@ bind <%= @bind %>
 # Close the connection after a client is idle for N seconds (0 to disable)
 timeout <%= @timeout %>
 
+# TCP keepalive.
+#
+# If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
+# of communication. This is useful for two reasons:
+#
+# 1) Detect dead peers.
+# 2) Take the connection alive from the point of view of network
+#    equipment in the middle.
+#
+# On Linux, the specified value (in seconds) is the period used to send ACKs.
+# Note that to close the connection the double of the time is needed.
+# On other kernels the period depends on the kernel configuration.
+#
+# A reasonable value for this option is 60 seconds.
+tcp-keepalive <%= @tcp_keepalive %>
+
 # Set server verbosity to 'debug'
 # it can be one of:
 # debug (a lot of information, useful for development/testing)
@@ -108,7 +124,7 @@ save 60 10000
 # and persistence, you may want to disable this feature so that Redis will
 # continue to work as usually even if there are problems with disk,
 # permissions, and so forth.
-stop-writes-on-bgsave-error yes
+<% if @stop_writes_on_bgsave_error -%>stop-writes-on-bgsave-error yes<% else -%>stop-writes-on-bgsave-error no<% end -%>
 
 # Compress string objects using LZF when dump .rdb databases?
 # For default that's set to 'yes' as it's almost always a win.
@@ -551,6 +567,14 @@ client-output-buffer-limit pubsub 32mb 8mb 60
 # 100 only in environments where very low latency is required.
 hz <%= @hz %>
 
+# Redis Cluster Settings
+<% if @cluster_enabled -%>
+cluster-enabled yes
+cluster-config-file <%= @cluster_config_file %>
+cluster-node-timeout <%= @cluster_node_timeout %>
+<% end -%>
+
+
 ################################## INCLUDES ###################################
 
 # Include one or more other config files here.  This is useful if you
@@ -563,4 +587,3 @@ hz <%= @hz %>
 <% if @extra_config_file -%>
 include <%= @extra_config_file %>
 <% end -%>
-

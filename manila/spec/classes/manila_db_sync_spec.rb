@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'manila::db::sync' do
 
   let :facts do
-    {:osfamily => 'Debian'}
+    @default_facts.merge({:osfamily => 'Debian'})
   end
   it { is_expected.to contain_exec('manila-manage db_sync').with(
     :command     => 'manila-manage db sync',

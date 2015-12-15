@@ -30,7 +30,7 @@ describe 'manila::backend::glusternfs' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     it_configures 'glusternfs volume driver'
@@ -38,7 +38,7 @@ describe 'manila::backend::glusternfs' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     it_configures 'glusternfs volume driver'

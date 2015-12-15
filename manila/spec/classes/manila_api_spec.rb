@@ -6,7 +6,7 @@ describe 'manila::api' do
     {:keystone_password => 'foo'}
   end
   let :facts do
-    {:osfamily => 'Debian'}
+    @default_facts.merge({:osfamily => 'Debian'})
   end
 
   describe 'with only required params' do

@@ -11,7 +11,7 @@ describe 'nova::api' do
   end
 
   let :facts do
-    { :processorcount => 5 }
+    @default_facts.merge({ :processorcount => 5 })
   end
 
   shared_examples 'nova-api' do
@@ -31,7 +31,8 @@ describe 'nova::api' do
           :ensure => 'present',
           :tag    => ['openstack', 'nova-package'],
         )
-        is_expected.to contain_package('nova-api').that_notifies('Service[nova-api]')
+        is_expected.to contain_package('nova-api').that_requires('Anchor[nova::install::begin]')
+        is_expected.to contain_package('nova-api').that_notifies('Anchor[nova::install::end]')
         is_expected.to_not contain_exec('validate_nova_api')
       end
 
@@ -256,7 +257,7 @@ describe 'nova::api' do
 
       it { is_expected.to_not contain_nova_config('database/connection') }
       it { is_expected.to_not contain_nova_config('database/slave_connection') }
-      it { is_expected.to_not contain_nova_config('database/idle_timeout').with_value('3600') }
+      it { is_expected.to_not contain_nova_config('database/idle_timeout').with_value('<SERVICE DEFAULT>') }
     end
 
     context 'with overridden database parameters' do
