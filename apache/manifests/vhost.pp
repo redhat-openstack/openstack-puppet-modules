@@ -25,6 +25,8 @@ define apache::vhost(
   $ssl_honorcipherorder        = undef,
   $ssl_verify_client           = undef,
   $ssl_verify_depth            = undef,
+  $ssl_proxy_check_peer_cn     = undef,
+  $ssl_proxy_check_peer_name   = undef,
   $ssl_proxy_machine_cert      = undef,
   $ssl_options                 = undef,
   $ssl_openssl_conf_cmd        = undef,
@@ -134,7 +136,6 @@ define apache::vhost(
   $krb_verify_kdc              = 'on',
   $krb_servicename             = 'HTTP',
   $krb_save_credentials        = 'off',
-  $limit_request_field_size    = undef,
 ) {
   # The base class must be included first because it is used by parameter defaults
   if ! defined(Class['apache']) {
@@ -227,15 +228,19 @@ define apache::vhost(
 
   validate_bool($auth_kerb)
 
-  if $limit_request_field_size {
-    validate_integer($limit_request_field_size)
-  }
-
   # Validate the docroot as a string if:
   # - $manage_docroot is true
   if $manage_docroot {
     validate_string($docroot)
   }
+
+  if $ssl_proxy_check_peer_cn {
+    validate_re($ssl_proxy_check_peer_cn,'(^on$|^off$)',"${ssl_proxy_check_peer_cn} is not permitted for ssl_proxy_check_peer_cn. Allowed values are 'on' or 'off'.")
+  }
+  if $ssl_proxy_check_peer_name {
+    validate_re($ssl_proxy_check_peer_name,'(^on$|^off$)',"${ssl_proxy_check_peer_name} is not permitted for ssl_proxy_check_peer_name. Allowed values are 'on' or 'off'.")
+  }
+
   # Input validation ends
 
   if $ssl and $ensure == 'present' {
@@ -497,6 +502,8 @@ define apache::vhost(
     require => Package['httpd'],
     notify  => Class['apache::service'],
   }
+  # NOTE(pabelanger): This code is duplicated in ::apache::vhost::custom and
+  # needs to be converted into something generic.
   if $::apache::vhost_enable_dir {
     $vhost_enable_dir = $::apache::vhost_enable_dir
     $vhost_symlink_ensure = $ensure ? {
@@ -778,13 +785,11 @@ define apache::vhost(
   # - $ssl_crl_path
   # - $ssl_crl
   # - $ssl_crl_check
-  # - $ssl_proxyengine
   # - $ssl_protocol
   # - $ssl_cipher
   # - $ssl_honorcipherorder
   # - $ssl_verify_client
   # - $ssl_verify_depth
-  # - $ssl_proxy_machine_cert
   # - $ssl_options
   # - $ssl_openssl_conf_cmd
   # - $apache_version
@@ -793,6 +798,19 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 210,
       content => template('apache/vhost/_ssl.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $ssl_proxyengine
+  # - $ssl_proxy_check_peer_cn
+  # - $ssl_proxy_check_peer_name
+  # - $ssl_proxy_machine_cert
+  if $ssl_proxyengine {
+    concat::fragment { "${name}-sslproxy":
+      target  => "${priority_real}${filename}.conf",
+      order   => 210,
+      content => template('apache/vhost/_sslproxy.erb'),
     }
   }
 
@@ -961,15 +979,6 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 330,
       content => template('apache/vhost/_filters.erb'),
-    }
-  }
-  # Template uses:
-  # - $limit_request_field_size
-  if $limit_request_field_size {
-    concat::fragment { "${name}-limits":
-      target  => "${priority_real}${filename}.conf",
-      order   => 330,
-      content => template('apache/vhost/_limits.erb'),
     }
   }
 

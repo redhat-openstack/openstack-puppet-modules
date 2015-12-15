@@ -51,6 +51,7 @@
 [`apache::mod::ext_filter`]: #class-apachemodext_filter
 [`apache::mod::geoip`]: #class-apachemodgeoip
 [`apache::mod::itk`]: #class-apachemoditk
+[`apache::mod::ldap`]: #class-apachemodldap
 [`apache::mod::passenger`]: #class-apachemodpassenger
 [`apache::mod::peruser`]: #class-apachemodperuser
 [`apache::mod::prefork`]: #class-apachemodprefork
@@ -64,6 +65,7 @@
 [`apache::params`]: #class-apacheparams
 [`apache::version`]: #class-apacheversion
 [`apache::vhost`]: #define-apachevhost
+[`apache::vhost::custom`]: #define-apachevhostcustom
 [`apache::vhost::WSGIImportScript`]: #wsgiimportscript
 [Apache HTTP Server]: http://httpd.apache.org
 [Apache modules]: http://httpd.apache.org/docs/current/mod/
@@ -123,6 +125,7 @@
 [`KeepAliveTimeout`]: http://httpd.apache.org/docs/current/mod/core.html#keepalivetimeout
 [`keepalive` parameter]: #keepalive
 [`keepalive_timeout`]: #keepalive_timeout
+[`limitreqfieldsize`]: https://httpd.apache.org/docs/current/mod/core.html#limitrequestfieldsize
 
 [`lib`]: #lib
 [`lib_path`]: #lib_path
@@ -154,6 +157,7 @@
 [`mod_fcgid`]: https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html
 [`mod_geoip`]: http://dev.maxmind.com/geoip/legacy/mod_geoip2/
 [`mod_info`]: https://httpd.apache.org/docs/current/mod/mod_info.html
+[`mod_ldap`]: https://httpd.apache.org/docs/2.2/mod/mod_ldap.html
 [`mod_mpm_event`]: https://httpd.apache.org/docs/current/mod/event.html
 [`mod_negotiation`]: http://httpd.apache.org/docs/current/mod/mod_negotiation.html
 [`mod_pagespeed`]: https://developers.google.com/speed/pagespeed/module/?hl=en
@@ -740,6 +744,7 @@ apache::balancer { 'puppet01':
     - [Define: apache::mod](#define-apachemod)
     - [Define: apache::namevirtualhost](#define-apachenamevirtualhost)
     - [Define: apache::vhost](#define-apachevhost)
+    - [Define: apache::vhost::custom](#define-apachevhostcustom)
 - [**Private Defines**](#private-defines)
     - [Define: apache::default_mods::load](#define-default_mods-load)
     - [Define: apache::peruser::multiplexer](#define-apacheperusermultiplexer)
@@ -1308,7 +1313,7 @@ Installs and manages [`mod_alias`][].
 
 #### Class: `apache::mod::disk_cache`
 
-Installs and configures [`mod_disk_cache`][] on Apache 2.2, or [`mod_cache_disk`][] on Apache 2.4. The default cache root depends on the Apache version and operating system: 
+Installs and configures [`mod_disk_cache`][] on Apache 2.2, or [`mod_cache_disk`][] on Apache 2.4. The default cache root depends on the Apache version and operating system:
 
 - **Debian**: `/var/cache/apache2/mod_cache_disk`
 - **FreeBSD**: `/var/cache/mod_cache_disk`
@@ -1476,6 +1481,23 @@ Installs and manages [`mod_info`][], which provides a comprehensive overview of 
 - `apache_version`: Default: `$::apache::apache_version`,
 - `restrict_access`: Determines whether to enable access restrictions. If 'false', the `allow_from` whitelist is ignored and any IP address can access `/server-info`. Valid options: Boolean. Default: 'true'.
 
+##### Class: `apache::mod::ldap`
+
+Installs and configures [`mod_ldap`][]. Allows you to modify the
+[`LDAPTrustedGlobalCert`](https://httpd.apache.org/docs/2.2/mod/mod_ldap.html#ldaptrustedglobalcert) Directive:
+
+~~~puppet
+class { 'apache::mod::ldap':
+  ldap_trusted_global_cert_file => '/etc/pki/tls/certs/ldap-trust.crt'
+  ldap_trusted_global_cert_type => 'CA_DER',
+}
+~~~
+
+**Parameters within `apache::mod::ldap`:**
+
+- `ldap_trusted_global_cert_file`: Path and file name of the trusted CA certificates to use when establishing SSL or TLS connections to an LDAP server.
+- `ldap_trusted_global_cert_type`: The global trust certificate format. Defaults to 'CA_BASE64'.
+
 ##### Class: `apache::mod::negotiation`
 
 Installs and configures [`mod_negotiation`][].
@@ -1491,7 +1513,7 @@ Installs and manages [`mod_pagespeed`], a Google module that rewrites web pages 
 
 While this Apache module requires the `mod-pagespeed-stable` package, Puppet **doesn't** manage the software repositories required to automatically install the package. If you declare this class when the package is either not installed or not available to your package manager, your Puppet run will fail.
 
-**Parameters within `apache::mod::info`**:
+**Parameters within `apache::mod::pagespeed`**:
 
 - `inherit_vhost_config`: Default: 'on'.
 - `filter_xhtml`: Default: false.
@@ -1525,7 +1547,7 @@ While this Apache module requires the `mod-pagespeed-stable` package, Puppet **d
 - `allow_pagespeed_console`: Default: [].
 - `allow_pagespeed_message`: Default: [].
 - `message_buffer_size`: Default: 100000.
-- `additional_configuration`: Default: { }.
+- `additional_configuration`: Default: { }. A hash of directive/value pairs or an array of lines to insert at the end of the pagespeed configuration.
 
 The class's parameters correspond to the module's directives. See the [module's documentation][`mod_pagespeed`] for details.
 
@@ -2083,10 +2105,6 @@ Specifies the service name that will be used by Apache for authentication. Corre
 ##### `krb_save_credentials`
 
 This option enables credential saving functionality. Default is 'off'
-
-##### `limit_request_field_size`
-
-[Limits](http://httpd.apache.org/docs/2.4/mod/core.html#limitrequestfieldsize) the size of the HTTP request header allowed from the client. Default is 'undef'.
 
 ##### `logroot`
 
@@ -3167,6 +3185,15 @@ Sets the [SSLProxyMachineCertificateFile](http://httpd.apache.org/docs/current/m
     }
 ~~~
 
+##### `ssl_proxy_check_peer_cn`
+ 
+Sets the [SSLProxyMachinePeerCN](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxycheckpeercn) directive, which specified whether the remote server certificate's CN field is compared against the hostname of the request URL .  Defaults to 'undef'.
+
+
+##### `ssl_proxy_check_peer_name`
+ 
+Sets the [SSLProxyMachinePeerName](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxycheckpeername) directive, which specified whether the remote server certificate's CN field is compared against the hostname of the request URL .  Defaults to 'undef'.
+
 ##### `ssl_options`
 
 Sets the [SSLOptions](http://httpd.apache.org/docs/current/mod/mod_ssl.html#ssloptions) directive, which configures various SSL engine run-time options. This is the global setting for the given vhost and can be a string or an array. Defaults to 'undef'.
@@ -3200,6 +3227,8 @@ Specifies whether or not to use [SSLProxyEngine](http://httpd.apache.org/docs/cu
 ####Define: FastCGI Server
 
 This type is intended for use with mod_fastcgi. It allows you to define one or more external FastCGI servers to handle specific file types.
+
+** Note ** If using Ubuntu 10.04+, you'll need to manually enable the multiverse repository.
 
 Ex:
 
@@ -3247,6 +3276,26 @@ A unique alias. This is used internally to link the action with the FastCGI serv
 ##### `file_type`
 
 The MIME-type of the file to be processed by the FastCGI server.
+
+#### Define: `apache::vhost::custom`
+
+The `apache::vhost::custom` is a thin wrapper to the `apache::custom_config``
+define. We are simply overriding some of the default settings specifc to the
+vhost directory in Apache.
+
+**Parameters within `apache::vhost::custom`**:
+
+##### `content`
+
+Sets the configuration file's content.
+
+##### `ensure`
+
+Specifies if the vhost file is present or absent. Defaults to 'present'.
+
+##### `priority`
+
+Sets the relative load-order for Apache HTTPD VirtualHost configuration files. Defaults to '25'.
 
 ### Private Defines
 

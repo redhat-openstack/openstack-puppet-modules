@@ -105,10 +105,7 @@ describe 'tripleo::firewall' do
 
   context 'on RedHat platforms' do
     let :facts do
-      {
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '7.1',
-      }
+      { :osfamily => 'RedHat' }
     end
 
     it_configures 'tripleo node'

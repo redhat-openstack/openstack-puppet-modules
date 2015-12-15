@@ -16,3 +16,10 @@ PuppetLint.configuration.send("disable_quoted_booleans")
 PuppetLint.configuration.send('disable_class_inherits_from_params_class')
 PuppetLint.configuration.ignore_paths = exclude_paths
 PuppetSyntax.exclude_paths = exclude_paths
+
+# These gems aren't always present, for instance
+# on Travis with --without development
+begin
+  require 'puppet_blacksmith/rake_tasks'
+rescue LoadError
+end

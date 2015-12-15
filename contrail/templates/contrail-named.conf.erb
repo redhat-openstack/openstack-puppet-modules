@@ -35,5 +35,5 @@ view "_default_view_" {
     match-clients {any;};
     match-destinations {any;};
     match-recursive-only no;
-    forwarders {<%= @forwarder -%>; };
+    forwarders { <%= @forwarders_option -%> };
 };

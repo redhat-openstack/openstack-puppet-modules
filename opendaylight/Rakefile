@@ -57,6 +57,9 @@ task :centos_tarball do
   sh "RS_SET=centos-7 INSTALL_METHOD=tarball bundle exec rake beaker"
 end
 
+# NB: The centos:7.0.1406 and centos:7.1.1503 tags have fakesytemd, not
+# the actually-functional systemd-container installed on centos:7
+# https://github.com/CentOS/sig-cloud-instance-build/commit/3bf1e7bbf14deaa8c047c1dfbead6d0e8d0665f2
 desc "Run Beaker tests against CentOS 7 Docker node."
 task :centos_7_docker do
   sh "RS_SET=centos-7-docker INSTALL_METHOD=rpm bundle exec rake beaker"
@@ -82,19 +85,17 @@ task :ubuntu_1404 do
   sh "RS_SET=ubuntu-1404 INSTALL_METHOD=tarball bundle exec rake beaker"
 end
 
-desc "Run Beaker tests against Ubuntu 15.04 node."
-task :ubuntu_1504 do
-  sh "RS_SET=ubuntu-1504 INSTALL_METHOD=tarball bundle exec rake beaker"
+desc "Run Beaker tests against Ubuntu 14.04 Docker node."
+task :ubuntu_1404_docker do
+  sh "RS_SET=ubuntu-1404-docker INSTALL_METHOD=tarball bundle exec rake beaker"
 end
+
+# Note: Puppet currently doesn't support Ubuntu versions newer than 14.04
+# https://docs.puppetlabs.com/guides/install_puppet/install_debian_ubuntu.html
 
 desc "All tests, including Beaker tests against all nodes."
 task :acceptance => [
   :test,
-  :centos,
-  :centos_tarball,
-  :fedora_20,
-  :fedora_21,
-  :fedora_22,
-  :ubuntu_1404,
-  :ubuntu_1504,
+  :centos_7_docker,
+  :ubuntu_1404_docker,
 ]

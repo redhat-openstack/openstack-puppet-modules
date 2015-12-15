@@ -1,6 +1,6 @@
 # Puppet-contrail
 
-[![Build Status](https://travis-ci.org/enovance/puppet-contrail.png?branch=master)](https://travis-ci.org/enovance/puppet-contrail)
+[![Build Status](https://travis-ci.org/redhat-cip/puppet-contrail.png?branch=master)](https://travis-ci.org/redhat-cip/puppet-contrail)
 [![Puppet Forge](http://img.shields.io/puppetforge/v/eNovance/contrail.svg)](https://forge.puppetlabs.com/eNovance/contrail)
 [![License](http://img.shields.io/:license-apache2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 

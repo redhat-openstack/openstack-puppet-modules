@@ -63,6 +63,7 @@ class apache (
   $keepalive              = $::apache::params::keepalive,
   $keepalive_timeout      = $::apache::params::keepalive_timeout,
   $max_keepalive_requests = $::apache::params::max_keepalive_requests,
+  $limitreqfieldsize      = '8190',
   $logroot                = $::apache::params::logroot,
   $logroot_mode           = $::apache::params::logroot_mode,
   $log_level              = $::apache::params::log_level,
@@ -92,7 +93,7 @@ class apache (
     default => '(event|itk|prefork|worker)'
   }
 
-  if $mpm_module {
+  if $mpm_module and $mpm_module != 'false' { # lint:ignore:quoted_booleans
     validate_re($mpm_module, $valid_mpms_re)
   }
 
@@ -346,7 +347,7 @@ class apache (
     class { '::apache::default_confd_files':
       all => $default_confd_files
     }
-    if $mpm_module {
+    if $mpm_module and $mpm_module != 'false' { # lint:ignore:quoted_booleans
       class { "::apache::mod::${mpm_module}": }
     }
 

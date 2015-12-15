@@ -101,7 +101,8 @@ The testing tools have a number of dependencies. We use [Bundler][10] to make
 installing them easy.
 
 ```
-[~/puppet-opendaylight]$ sudo yum install -y rubygems ruby-devel gcc-c++ zlib-devel patch
+[~/puppet-opendaylight]$ sudo yum install -y rubygems ruby-devel gcc-c++ zlib-devel \
+                                             patch redhat-rpm-config make
 [~/puppet-opendaylight]$ gem install bundler
 [~/puppet-opendaylight]$ bundle install
 [~/puppet-opendaylight]$ bundle update

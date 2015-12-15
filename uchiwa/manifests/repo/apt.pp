@@ -19,7 +19,7 @@ class uchiwa::repo::apt {
       if $uchiwa::repo_source {
         $url = $uchiwa::repo_source
       } else {
-        $url = 'http://repos.sensuapp.org/apt'
+        $url = 'http://repositories.sensuapp.org/apt'
       }
 
       apt::source { 'sensu':

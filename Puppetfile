@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '13b79e2446ca1ee08301c03bc2ee2579114da84a',
+  :commit => 'cdd81dbf3463c73e6abfaf937f929821baff73dd',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',
@@ -15,11 +15,11 @@ mod 'cassandra',
   :git => 'https://github.com/locp/cassandra.git'
 
 mod 'ceilometer',
-  :commit => 'd303048dd29f8e645a992aa8ec23799bcc8eedfb',
+  :commit => 'b9434a8d9d35300fb8247b862823bf6acbde15aa',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => 'c60c6209ac799555b94bf62ce1c2cf00084e42d2',
+  :commit => 'e4b05caf4825af51f679f0618229dce4c3388a5f',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
@@ -39,7 +39,7 @@ mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'contrail',
-  :commit => '63803ba710ade71ce93c6e5c94054f193d66d56e',
+  :commit => '83471677d5b7b7a1e26c7ccb20f5ab355f41efae',
   :git => 'https://github.com/redhat-cip/puppet-contrail.git'
 
 mod 'corosync',
@@ -51,7 +51,7 @@ mod 'datacat',
   :git => 'http://github.com/richardc/puppet-datacat'
 
 mod 'elasticsearch',
-  :commit => 'b930ab8',
+  :commit => '171a4a4dc89ad4543f486ed90040b5fbea8d81f0',
   :git => 'https://github.com/elastic/puppet-elasticsearch.git'
 
 mod 'firewall',
@@ -119,7 +119,7 @@ mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
-  :commit => '6ca9631',
+  :commit => '6ca9631fbe82766134f98e2e8780bb91e7cd3f0e',
   :git => 'https://github.com/thejandroman/puppet-kibana3.git'
 
 mod 'manila',
@@ -131,7 +131,7 @@ mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached.git'
 
 mod 'midonet',
-  :commit => 'e24515c135a03096fc69651dfadac5b545c74538',
+  :commit => 'a4bb534be34a806811df51874a5bba132ca24724',
   :git => 'https://github.com/midonet/puppet-midonet.git'
 
 mod 'module-collectd',
@@ -175,7 +175,7 @@ mod 'ntp',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
 mod 'opendaylight',
-  :commit => '3aa0ccf',
+  :commit => '33353e8d869f4956d706fedd6f4f9c8b4b59a4e0',
   :git => 'https://github.com/dfarrell07/puppet-opendaylight.git'
 
 mod 'openstack_extras',
@@ -183,7 +183,7 @@ mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
-  :commit => '47a0c6392fad4c1fb11811b17968576033a24baa',
+  :commit => '142f9d1be907c45115ea4d92277278a682fb53f7',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
@@ -199,11 +199,11 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => '151391f03b1d9dcaf895123aa98b0a0d67e30540',
+  :commit => '3d74c2d77bd482f59ea919e54d24589487221702',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',
-  :commit => '47b6fe8a64dce5447105ab59aa1fa2984d6ef1d0',
+  :commit => '62c0c71e59182ebc252a9405db68b7a1538a745e',
   :git => 'https://github.com/arioch/puppet-redis.git'
 
 mod 'remote',
@@ -215,11 +215,11 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '6862557a4db48b01176e30be6877fda5503f085b',
+  :commit => '811a5e9e95ade9a3d8c741e8cbfdc4e57eaca503',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
 mod 'sensu',
-  :commit => 'bc5e501e9b6c7ac38181c8749fb6a04b24efdb94',
+  :commit => '553994fb8724f84ec820a0a36b347a148d4495e3',
   :git => 'https://github.com/sensu/sensu-puppet.git'
 
 mod 'snmp',
@@ -259,7 +259,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => '74b589497c9efe400403f2d446aa6335abdb89d5',
+  :commit => 'aaef6b770e4af987400bb8c674304e5b47b30982',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
@@ -271,7 +271,7 @@ mod 'tuskar',
   :git => 'https://github.com/openstack/puppet-tuskar.git'
 
 mod 'uchiwa',
-  :commit => 'e3dc4fc3d5291d08a23f16843c673932adf450d5',
+  :commit => 'b3f9ed80d33f6f4f6ca69b60fc3c5aa74fb3ac85',
   :git => 'https://github.com/Yelp/puppet-uchiwa.git'
 
 mod 'vcsrepo',
