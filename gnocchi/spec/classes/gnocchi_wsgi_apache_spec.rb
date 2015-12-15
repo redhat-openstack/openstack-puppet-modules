@@ -3,11 +3,11 @@ require 'spec_helper'
 describe 'gnocchi::wsgi::apache' do
 
   let :global_facts do
-    {
+    @default_facts.merge({
       :processorcount => 42,
       :concat_basedir => '/var/lib/puppet/concat',
-      :fqdn           => 'some.host.tld'
-    }
+      :fqdn           => 'some.host.tld',
+    })
   end
 
   shared_examples_for 'apache serving gnocchi with mod_wsgi' do

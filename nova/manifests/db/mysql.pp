@@ -31,10 +31,6 @@
 #   (optional) Additional hosts that are allowed to access this DB
 #   Defaults to undef
 #
-# [*cluster_id*]
-#   (optional) Deprecated. Does nothing
-#   Defaults to 'localzone'
-#
 class nova::db::mysql(
   $password,
   $dbname        = 'nova',
@@ -44,6 +40,8 @@ class nova::db::mysql(
   $collate       = 'utf8_general_ci',
   $allowed_hosts = undef,
 ) {
+
+  include ::nova::deps
 
   ::openstacklib::db::mysql { 'nova':
     user          => $user,
@@ -55,5 +53,7 @@ class nova::db::mysql(
     allowed_hosts => $allowed_hosts,
   }
 
-  ::Openstacklib::Db::Mysql['nova'] ~> Exec<| title == 'nova-db-sync' |>
+  Anchor['nova::db::begin']
+  ~> Class['nova::db::mysql']
+  ~> Anchor['nova::db::end']
 }

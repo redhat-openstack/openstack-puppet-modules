@@ -1,57 +1,35 @@
 # == Class: manila::qpid
 #
-# Class for installing qpid server for manila
+# Deprecated class for installing qpid server for manila
 #
 # === Parameters
 #
 # [*enabled*]
 #   (Optional) Whether to enable the service
-#   Defaults to true.
+#   Defaults to undef.
 #
 # [*user*]
 #   (Optional) The user to create in qpid
-#   Defaults to 'guest'.
+#   Defaults to undef.
 #
 # [*password*]
 #   (Optional) The password to create for the user
-#   Defaults to 'guest'.
+#   Defaults to undef.
 #
 # [*file*]
 #   (Optional) Sasl file for the user
-#   Defaults to '/var/lib/qpidd/qpidd.sasldb'.
+#   Defaults to undef.
 #
 # [*realm*]
 #   (Optional) Realm for the user
-#   Defaults to 'OPENSTACK'.
-#
+#   Defaults to undef.
 #
 class manila::qpid (
-  $enabled  = true,
-  $user     = 'guest',
-  $password = 'guest',
-  $file     = '/var/lib/qpidd/qpidd.sasldb',
-  $realm    = 'OPENSTACK'
+  $enabled  = undef,
+  $user     = undef,
+  $password = undef,
+  $file     = undef,
+  $realm    = undef
 ) {
-
-  # only configure manila after the queue is up
-  Class['qpid::server'] -> Package<| title == 'manila' |>
-
-  if ($enabled) {
-    $service_ensure = 'running'
-
-    qpid_user { $user:
-      password => $password,
-      file     => $file,
-      realm    => $realm,
-      provider => 'saslpasswd2',
-      require  => Class['qpid::server'],
-    }
-
-  } else {
-    $service_ensure = 'stopped'
-  }
-
-  class { '::qpid::server':
-    service_ensure => $service_ensure,
-  }
+  warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
 }

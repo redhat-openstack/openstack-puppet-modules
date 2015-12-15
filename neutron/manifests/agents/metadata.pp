@@ -37,19 +37,19 @@
 #   turn off verification of the certificate for ssl (Defaults to false)
 #
 # [*auth_ca_cert*]
-#   CA cert to check against with for ssl keystone. (Defaults to undef)
+#   CA cert to check against with for ssl keystone. (Defaults to $::os_service_default)
 #
 # [*auth_region*]
-#   The authentication region. (Defaults to undef)
+#   The authentication region. (Defaults to $::os_service_default)
 #
 # [*metadata_ip*]
-#   The IP address of the metadata service. Defaults to '127.0.0.1'.
+#   The IP address of the metadata service. Defaults to $::os_service_default.
 #
 # [*metadata_port*]
-#   The TCP port of the metadata service. Defaults to 8775.
+#   The TCP port of the metadata service. Defaults to $::os_service_default.
 #
 # [*metadata_protocol*]
-#   The protocol to use for requests to Nova metadata server. Defaults to 'http'.
+#   The protocol to use for requests to Nova metadata server. Defaults to $::os_service_default.
 #
 # [*metadata_workers*]
 #   (optional) Number of separate worker processes to spawn.
@@ -61,14 +61,13 @@
 #
 # [*metadata_backlog*]
 #   (optional) Number of backlog requests to configure the metadata server socket with.
-#   Defaults to 4096
+#   Defaults to $::os_service_default
 #
 # [*metadata_memory_cache_ttl*]
 #   (optional) Specifies time in seconds a metadata cache entry is valid in
 #   memory caching backend.
 #   Set to 0 will cause cache entries to never expire.
-#   Set to undef or false to disable cache.
-#   Defaults to 5
+#   Set to $::os_service_default or false to disable cache.
 #
 
 class neutron::agents::metadata (
@@ -82,14 +81,14 @@ class neutron::agents::metadata (
   $auth_user                 = 'neutron',
   $auth_url                  = 'http://localhost:35357/v2.0',
   $auth_insecure             = false,
-  $auth_ca_cert              = undef,
-  $auth_region               = undef,
-  $metadata_ip               = '127.0.0.1',
-  $metadata_port             = '8775',
-  $metadata_protocol         = 'http',
+  $auth_ca_cert              = $::os_service_default,
+  $auth_region               = $::os_service_default,
+  $metadata_ip               = $::os_service_default,
+  $metadata_port             = $::os_service_default,
+  $metadata_protocol         = $::os_service_default,
   $metadata_workers          = $::processorcount,
-  $metadata_backlog          = '4096',
-  $metadata_memory_cache_ttl = 5,
+  $metadata_backlog          = $::os_service_default,
+  $metadata_memory_cache_ttl = $::os_service_default,
   ) {
 
   include ::neutron::params
@@ -99,8 +98,10 @@ class neutron::agents::metadata (
 
   neutron_metadata_agent_config {
     'DEFAULT/debug':                          value => $debug;
+    'DEFAULT/auth_ca_cert':                   value => $auth_ca_cert;
     'DEFAULT/auth_url':                       value => $auth_url;
     'DEFAULT/auth_insecure':                  value => $auth_insecure;
+    'DEFAULT/auth_region':                    value => $auth_region;
     'DEFAULT/admin_tenant_name':              value => $auth_tenant;
     'DEFAULT/admin_user':                     value => $auth_user;
     'DEFAULT/admin_password':                 value => $auth_password, secret => true;
@@ -112,33 +113,13 @@ class neutron::agents::metadata (
     'DEFAULT/metadata_backlog':               value => $metadata_backlog;
   }
 
-  if $auth_region {
-    neutron_metadata_agent_config {
-      'DEFAULT/auth_region': value => $auth_region;
-    }
-  } else {
-    neutron_metadata_agent_config {
-      'DEFAULT/auth_region': ensure => absent;
-    }
-  }
-
-  if $metadata_memory_cache_ttl {
+  if ! is_service_default ($metadata_memory_cache_ttl) and ($metadata_memory_cache_ttl) {
     neutron_metadata_agent_config {
       'DEFAULT/cache_url': value => "memory://?default_ttl=${metadata_memory_cache_ttl}";
     }
   } else {
     neutron_metadata_agent_config {
       'DEFAULT/cache_url': ensure => absent;
-    }
-  }
-
-  if $auth_ca_cert {
-    neutron_metadata_agent_config {
-      'DEFAULT/auth_ca_cert': value => $auth_ca_cert;
-    }
-  } else {
-    neutron_metadata_agent_config {
-      'DEFAULT/auth_ca_cert': ensure => absent;
     }
   }
 

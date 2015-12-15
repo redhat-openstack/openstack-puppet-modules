@@ -130,6 +130,11 @@
 #  When set, enables SSL on the Ceilometer public API endpoint using the specified file.
 #  Defaults to undef
 #
+# [*aodh_certificate*]
+#  Filename of an HAProxy-compatible certificate and key file
+#  When set, enables SSL on the Aodh public API endpoint using the specified file.
+#  Defaults to undef
+#
 # [*swift_certificate*]
 #  Filename of an HAProxy-compatible certificate and key file
 #  When set, enables SSL on the Swift public API endpoint using the specified file.
@@ -198,6 +203,10 @@
 #  (optional) Enable or not Ceilometer API binding
 #  Defaults to false
 #
+# [*aodh*]
+#  (optional) Enable or not Aodh API binding
+#  Defaults to false
+#
 # [*swift_proxy_server*]
 #  (optional) Enable or not Swift API binding
 #  Defaults to false
@@ -238,6 +247,10 @@
 #  (optional) Enable or not Redis binding
 #  Defaults to false
 #
+# [*midonet_api*]
+#  (optional) Enable or not MidoNet API binding
+#  Defaults to false
+#
 class tripleo::loadbalancer (
   $controller_virtual_ip,
   $control_virtual_interface,
@@ -262,6 +275,7 @@ class tripleo::loadbalancer (
   $glance_certificate        = undef,
   $nova_certificate          = undef,
   $ceilometer_certificate    = undef,
+  $aodh_certificate          = undef,
   $swift_certificate         = undef,
   $heat_certificate          = undef,
   $horizon_certificate       = undef,
@@ -278,6 +292,7 @@ class tripleo::loadbalancer (
   $nova_metadata             = false,
   $nova_novncproxy           = false,
   $ceilometer                = false,
+  $aodh                      = false,
   $swift_proxy_server        = false,
   $heat_api                  = false,
   $heat_cloudwatch           = false,
@@ -288,6 +303,7 @@ class tripleo::loadbalancer (
   $mysql_clustercheck        = false,
   $rabbitmq                  = false,
   $redis                     = false,
+  $midonet_api               = false,
 ) {
 
   if !$controller_host and !$controller_hosts {
@@ -420,6 +436,11 @@ class tripleo::loadbalancer (
     $ceilometer_bind_certificate = $ceilometer_certificate
   } else {
     $ceilometer_bind_certificate = $service_certificate
+  }
+  if $aodh_certificate {
+    $aodh_bind_certificate = $aodh_certificate
+  } else {
+    $aodh_bind_certificate = $service_certificate
   }
   if $swift_certificate {
     $swift_bind_certificate = $swift_certificate
@@ -555,6 +576,19 @@ class tripleo::loadbalancer (
     $ceilometer_bind_opts = {
       "${ceilometer_api_vip}:8777" => [],
       "${public_virtual_ip}:8777" => [],
+    }
+  }
+
+  $aodh_api_vip = hiera('aodh_api_vip', $controller_virtual_ip)
+  if $aodh_bind_certificate {
+    $aodh_bind_opts = {
+      "${aodh_api_vip}:8042" => [],
+      "${public_virtual_ip}:13042" => ['ssl', 'crt', $aodh_bind_certificate],
+    }
+  } else {
+    $aodh_bind_opts = {
+      "${aodh_api_vip}:8042" => [],
+      "${public_virtual_ip}:8042" => [],
     }
   }
 
@@ -814,6 +848,7 @@ class tripleo::loadbalancer (
       bind             => $nova_novnc_bind_opts,
       options          => {
         'balance' => 'source',
+        'timeout' => [ 'tunnel 1h' ],
       },
       collect_exported => false,
     }
@@ -835,6 +870,20 @@ class tripleo::loadbalancer (
       listening_service => 'ceilometer',
       ports             => '8777',
       ipaddresses       => hiera('ceilometer_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
+
+  if $aodh {
+    haproxy::listen { 'aodh':
+      bind             => $aodh_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'aodh':
+      listening_service => 'aodh',
+      ports             => '8042',
+      ipaddresses       => hiera('aodh_api_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
       options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
     }
@@ -1001,4 +1050,23 @@ class tripleo::loadbalancer (
     }
   }
 
+  $midonet_api_vip = hiera('midonet_api_vip', $controller_virtual_ip)
+  $midonet_bind_opts = {
+    "${midonet_api_vip}:8081" => [],
+    "${public_virtual_ip}:8081" => [],
+  }
+
+  if $midonet_api {
+    haproxy::listen { 'midonet_api':
+      bind             => $midonet_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'midonet_api':
+      listening_service => 'midonet_api',
+      ports             => '8081',
+      ipaddresses       => hiera('midonet_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
 }

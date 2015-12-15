@@ -22,8 +22,8 @@ Puppet module for install MidoNet components.
 
 MidoNet is an Apache licensed production grade network virtualization software
 for Infrastructure-as-a-Service (IaaS) clouds. This module provides the puppet
-manifests to install all the components to deploy easily MidoNet in a production
-environment.
+manifests to install all the components to deploy easily MidoNet in a
+production environment.
 
 To know all the components and how they relate each other, check out [midonet
 reference architecture
@@ -52,11 +52,11 @@ be useful.
 ## Usage
 
 To use this module in a more advanced way, please check out the
-[reference](#reference) section of this document. It is worth to highlight that all
-the input variables have already a default input value, in a yaml document.
+[reference](#reference) section of this document. It is worth to highlight that
+all the input variables have already a default input value, in a yaml document.
 (We use R.I.Piennar [module data](https://www.devco.net/archives/2013/12/08/better-puppet-modules-using-hiera-data.php))
-To leverage this feature, please add the following in your `/etc/hiera.yaml` (or
-the Hiera configuration file that you are using):
+To leverage this feature, please add the following in your `/etc/puppet/hiera.yaml`
+(or the Hiera configuration file that you are using):
 
     ---
     :backends:

@@ -154,7 +154,10 @@ describe 'apache::vhost', :type => :define do
           'ssl_verify_depth'            => '3',
           'ssl_options'                 => '+ExportCertData',
           'ssl_openssl_conf_cmd'        => 'DHParameters "foo.pem"',
+          'ssl_proxy_check_peer_cn'     => 'on',
+          'ssl_proxy_check_peer_name'   => 'on',
           'ssl_proxyengine'             => true,
+
           'priority'                    => '30',
           'default_vhost'               => true,
           'servername'                  => 'example.com',
@@ -323,8 +326,7 @@ describe 'apache::vhost', :type => :define do
           'krb_authoritative'           => 'off',
           'krb_auth_realms'             => ['EXAMPLE.ORG','EXAMPLE.NET'],
           'krb_5keytab'                 => '/tmp/keytab5',
-          'krb_local_user_mapping'      => 'off',
-          'limit_request_field_size'    => '54321',
+          'krb_local_user_mapping'      => 'off'
         }
       end
       let :facts do
@@ -432,6 +434,13 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-ssl') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-ssl').with(
         :content => /^\s+SSLOpenSSLConfCmd\s+DHParameters "foo.pem"$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy').with(
+        :content => /^\s+SSLProxyEngine On$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy').with(
+        :content => /^\s+SSLProxyCheckPeerCN\s+on$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy').with(
+        :content => /^\s+SSLProxyCheckPeerName\s+on$/ ) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-suphp') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-php_admin') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-header') }
@@ -462,8 +471,6 @@ describe 'apache::vhost', :type => :define do
         :content => /^\s+KrbSaveCredentials\soff$/)}
       it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
         :content => /^\s+KrbVerifyKDC\son$/)}
-      it { is_expected.to contain_concat__fragment('rspec.example.com-limits').with(
-        :content => /^\s+LimitRequestFieldSize\s54321$/)}
     end
     context 'vhost with multiple ip addresses' do
       let :params do
@@ -674,6 +681,7 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-serveralias') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-setenv') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-ssl') }
+      it { is_expected.to_not contain_concat__fragment('rspec.example.com-sslproxy') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-suphp') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-php_admin') }
       it { is_expected.to_not contain_concat__fragment('rspec.example.com-header') }
@@ -695,6 +703,18 @@ describe 'apache::vhost', :type => :define do
       end
       it { is_expected.to compile }
       it { is_expected.not_to contain_concat__fragment('rspec.example.com-docroot') }
+    end
+    context 'ssl_proxyengine without ssl' do
+      let :params do
+        {
+          'docroot'         => '/rspec/docroot',
+          'ssl'             => false,
+          'ssl_proxyengine' => true,
+        }
+      end
+      it { is_expected.to compile }
+      it { is_expected.not_to contain_concat__fragment('rspec.example.com-ssl') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy') }
     end
   end
   describe 'access logs' do

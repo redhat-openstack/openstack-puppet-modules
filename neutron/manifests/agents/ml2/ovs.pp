@@ -71,17 +71,17 @@
 # [*polling_interval*]
 #   (optional) The number of seconds the agent will wait between
 #   polling for local device changes.
-#   Defaults to '2"
+#   Defaults to $::os_service_default
 #
 # [*l2_population*]
 #   (optional) Extension to use alongside ml2 plugin's l2population
 #   mechanism driver.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*arp_responder*]
 #   (optional) Enable or not the ARP responder.
 #   Recommanded when using l2 population mechanism driver.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*firewall_driver*]
 #   (optional) Firewall driver for realizing neutron security group function.
@@ -90,7 +90,7 @@
 # [*enable_distributed_routing*]
 #   (optional) Set to True on L2 agents to enable support
 #   for distributed virtual routing.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*drop_flows_on_start*]
 #   (optional) Set to True to drop all flows during agent start for a clean
@@ -107,12 +107,17 @@
 #
 # [*prevent_arp_spoofing*]
 #   (optional) Enable or not ARP Spoofing Protection
-#   Defaults to true
+#   Defaults to $::os_service_default
+#
+# [*extensions*]
+#   (optional) Extensions list to use
+#   Defaults to $::os_service_default
 #
 class neutron::agents::ml2::ovs (
   $package_ensure             = 'present',
   $enabled                    = true,
   $manage_service             = true,
+  $extensions                 = $::os_service_default,
   $bridge_uplinks             = [],
   $bridge_mappings            = [],
   $integration_bridge         = 'br-int',
@@ -121,14 +126,14 @@ class neutron::agents::ml2::ovs (
   $local_ip                   = false,
   $tunnel_bridge              = 'br-tun',
   $vxlan_udp_port             = 4789,
-  $polling_interval           = 2,
-  $l2_population              = false,
-  $arp_responder              = false,
+  $polling_interval           = $::os_service_default,
+  $l2_population              = $::os_service_default,
+  $arp_responder              = $::os_service_default,
   $firewall_driver            = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
-  $enable_distributed_routing = false,
+  $enable_distributed_routing = $::os_service_default,
   $drop_flows_on_start        = false,
   $manage_vswitch             = true,
-  $prevent_arp_spoofing       = true,
+  $prevent_arp_spoofing       = $::os_service_default,
 ) {
 
   include ::neutron::params
@@ -140,8 +145,10 @@ class neutron::agents::ml2::ovs (
     fail('Local ip for ovs agent must be set when tunneling is enabled')
   }
 
-  if $enable_tunneling and $enable_distributed_routing and ! $l2_population {
-    fail('L2 population must be enabled when DVR and tunneling are enabled')
+  if ($enable_tunneling) and (!is_service_default($enable_distributed_routing)) and (!is_service_default($l2_population)) {
+    if $enable_distributed_routing and ! $l2_population {
+      fail('L2 population must be enabled when DVR and tunneling are enabled')
+    }
   }
 
   Neutron_agent_ovs<||> ~> Service['neutron-ovs-agent-service']
@@ -182,6 +189,7 @@ class neutron::agents::ml2::ovs (
     'agent/enable_distributed_routing': value => $enable_distributed_routing;
     'agent/drop_flows_on_start':        value => $drop_flows_on_start;
     'agent/prevent_arp_spoofing':       value => $prevent_arp_spoofing;
+    'agent/extensions':                 value => join(any2array($extensions), ',');
     'ovs/integration_bridge':           value => $integration_bridge;
   }
 

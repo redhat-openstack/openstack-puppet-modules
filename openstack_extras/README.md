@@ -1,7 +1,7 @@
 openstack_extras
 ============
 
-6.0.0 - 2015.1.0 - Kilo
+7.0.0 - 2015.2.0 - Liberty
 
 #### Table of Contents
 
@@ -39,7 +39,7 @@ Setup
 
 ### Installing openstack_extras
 
-    example% puppet module install puppetlabs/openstack_extras
+    example% puppet module install openstack/openstack_extras
 
 ### Beginning with openstack_extras
 

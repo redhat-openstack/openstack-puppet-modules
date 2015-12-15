@@ -4,9 +4,9 @@
   "author": "Yanis Guenane, Sebastien Badia, and eNovance Contributors",
   "summary": "Puppet module for Juniper OpenContrail",
   "license": "Apache-2.0",
-  "source": "git://github.com/enovance/puppet-{{cookiecutter.project_name}}.git",
-  "project_page": "https://github.com/enovance/puppet-contrail",
-  "issues_url": "https://github.com/enovance/puppet-contrail/issues",
+  "source": "git://github.com/redhat-cip/puppet-contrail.git",
+  "project_page": "https://github.com/redhat-cip/puppet-contrail",
+  "issues_url": "https://github.com/redhat-cip/puppet-contrail/issues",
   "description": "Installs and configures OpenContrail.",
   "operatingsystem_support": [
     {

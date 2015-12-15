@@ -158,7 +158,7 @@ def generic_validations()
     describe package('java-1.8.0-openjdk') do
       it { should be_installed }
     end
-  elsif ENV['RS_SET'] == 'ubuntu-1404'
+  elsif ['ubuntu-1404', 'ubuntu-1404-docker'].include? ENV['RS_SET']
     # Ubuntu-specific validations
 
     # Verify ODL Upstart config file

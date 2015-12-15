@@ -20,6 +20,25 @@
     "port": <%= @port %>,
     "user": "<%= @user %>",
     "pass": "<%= @pass %>",
-    "refresh": <%= @refresh %>
+    "refresh": <%= @refresh %><%= ',' if @users.size > 0 or @auth.size == 2 %>
+    <%- if @users.size > 0 -%>
+    "users": [
+    <%- @users.each_with_index do |user, i| -%>
+      {
+        "username": "<%= user['username'] %>",
+        "password": "<%= user['password'] %>",
+        "role": {
+          "readonly": <%= user['readonly'] %>
+        }
+      }<%= ',' if i < (@users.size - 1) %>
+    <%- end -%>
+    ]<%= ',' if @auth.size == 2 %>
+  <%- end -%>
+  <%- if @auth.size == 2 -%>
+    "auth": {
+      "publickey": "<%= @auth['publickey']  %>",
+      "privatekey": "<%= @auth['privatekey']  %>"
+    }
+  <%- end -%>
   }
 }

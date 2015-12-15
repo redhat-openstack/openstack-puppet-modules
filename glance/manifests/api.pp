@@ -58,9 +58,23 @@
 #   (optional) The protocol of the Glance registry service.
 #   Default: http
 #
+# [*scrub_time*]
+#   (optional) The amount of time in seconds to delay before performing a delete.
+#   Defaults to $::os_service_default.
+#
+# [*delayed_delete*]
+#   (optional) Turn on/off delayed delete.
+#   Defaults to $::os_service_default.
+#
 # [*auth_type*]
 #   (optional) Type is authorization being used.
 #   Defaults to 'keystone'
+#
+# [*auth_region*]
+#   (optional) The region for the authentication service.
+#   If "use_user_token" is not in effect and using keystone auth,
+#   then region name can be specified.
+#   Defaults to 'RegionOne'.
 #
 # [*auth_host*]
 #   (optional) DEPRECATED Host running auth service.
@@ -115,11 +129,41 @@
 #
 # [*database_connection*]
 #   (optional) Connection url to connect to nova database.
-#   Defaults to 'sqlite:///var/lib/glance/glance.sqlite'
+#   Defaults to undef
 #
 # [*database_idle_timeout*]
 #   (optional) Timeout before idle db connections are reaped.
-#   Defaults to 3600
+#   Defaults to undef
+#
+# [*database_max_retries*]
+#   (Optional) Maximum number of database connection retries during startup.
+#   Set to -1 to specify an infinite retry count.
+#   Defaults to undef.
+#
+# [*database_retry_interval*]
+#   (optional) Interval between retries of opening a database connection.
+#   Defaults to undef.
+#
+# [*database_min_pool_size*]
+#   (optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_pool_size*]
+#   (optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to undef.
+#
+# [*database_max_overflow*]
+#   (optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to undef.
+#
+# [*image_cache_max_size*]
+#   (optional) The upper limit (the maximum size of accumulated cache in bytes) beyond which pruner,
+#   if running, starts cleaning the images cache.
+#   Defaults to $::os_service_default.
+#
+# [*image_cache_stall_time*]
+#   (optional) The amount of time to let an image remain in the cache without being accessed.
+#   Defaults to $::os_service_default.
 #
 # [*use_syslog*]
 #   (optional) Use syslog for logging.
@@ -168,6 +212,16 @@
 #   (optional) Sets the keystone region to use.
 #   Defaults to 'RegionOne'.
 #
+# [*signing_dir*]
+#   (optional) Directory used to cache files related to PKI tokens.
+#   Defaults to $::os_service_default.
+#
+# [*token_cache_time*]
+#   (optional) In order to prevent excessive effort spent validating tokens,
+#   the middleware caches previously-seen tokens for a configurable duration (in seconds).
+#   Set to -1 to disable caching completely.
+#   Defaults to $::os_service_default.
+#
 # [*validate*]
 #   (optional) Whether to validate the service is working after any service refreshes
 #   Defaults to false
@@ -202,7 +256,10 @@ class glance::api(
   $registry_host            = '0.0.0.0',
   $registry_port            = '9191',
   $registry_client_protocol = 'http',
+  $scrub_time               = $::os_service_default,
+  $delayed_delete           = $::os_service_default,
   $auth_type                = 'keystone',
+  $auth_region              = 'RegionOne',
   $auth_uri                 = false,
   $identity_uri             = false,
   $pipeline                 = 'keystone',
@@ -219,10 +276,19 @@ class glance::api(
   $key_file                 = false,
   $ca_file                  = false,
   $known_stores             = false,
-  $database_connection      = 'sqlite:///var/lib/glance/glance.sqlite',
-  $database_idle_timeout    = 3600,
+  $database_connection      = undef,
+  $database_idle_timeout    = undef,
+  $database_min_pool_size   = undef,
+  $database_max_pool_size   = undef,
+  $database_max_retries     = undef,
+  $database_retry_interval  = undef,
+  $database_max_overflow    = undef,
+  $image_cache_max_size     = $::os_service_default,
+  $image_cache_stall_time   = $::os_service_default,
   $image_cache_dir          = '/var/lib/glance/image-cache',
   $os_region_name           = 'RegionOne',
+  $signing_dir              = $::os_service_default,
+  $token_cache_time         = $::os_service_default,
   $validate                 = false,
   $validation_options       = {},
   # DEPRECATED PARAMETERS
@@ -234,6 +300,7 @@ class glance::api(
 ) inherits glance {
 
   include ::glance::policy
+  include ::glance::api::db
   include ::glance::api::logging
   require keystone::python
 
@@ -265,22 +332,7 @@ class glance::api(
     require => Class['glance']
   }
 
-  if $database_connection {
-    if($database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
-      require 'mysql::bindings'
-      require 'mysql::bindings::python'
-    } elsif($database_connection =~ /postgresql:\/\/\S+:\S+@\S+\/\S+/) {
-
-    } elsif($database_connection =~ /sqlite:\/\//) {
-
-    } else {
-      fail("Invalid db connection ${database_connection}")
-    }
-    glance_api_config {
-      'database/connection':   value => $database_connection, secret => true;
-      'database/idle_timeout': value => $database_idle_timeout;
-    }
-  }
+  warning('Default value for auth_region parameter is different from OpenStack project defaults')
 
   # basic service config
   glance_api_config {
@@ -289,7 +341,10 @@ class glance::api(
     'DEFAULT/backlog':               value => $backlog;
     'DEFAULT/workers':               value => $workers;
     'DEFAULT/show_image_direct_url': value => $show_image_direct_url;
+    'DEFAULT/scrub_time':            value => $scrub_time;
+    'DEFAULT/delayed_delete':        value => $delayed_delete;
     'DEFAULT/image_cache_dir':       value => $image_cache_dir;
+    'DEFAULT/auth_region':           value => $auth_region;
     'glance_store/os_region_name':   value => $os_region_name;
   }
 
@@ -305,9 +360,11 @@ class glance::api(
   }
 
   glance_cache_config {
-    'DEFAULT/verbose':             value => pick($verbose, false);
-    'DEFAULT/debug':               value => pick($debug, false);
-    'glance_store/os_region_name': value => $os_region_name;
+    'DEFAULT/verbose':                value => pick($verbose, false);
+    'DEFAULT/debug':                  value => pick($debug, false);
+    'DEFAULT/image_cache_stall_time': value => $image_cache_stall_time;
+    'DEFAULT/image_cache_max_size':   value => $image_cache_max_size;
+    'glance_store/os_region_name':    value => $os_region_name;
   }
 
   # configure api service to connect registry service
@@ -393,8 +450,10 @@ class glance::api(
   if $auth_type == 'keystone' {
     glance_api_config {
       'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
-      'keystone_authtoken/admin_user'       : value => $keystone_user;
-      'keystone_authtoken/admin_password'   : value => $keystone_password, secret => true;
+      'keystone_authtoken/admin_user':        value => $keystone_user;
+      'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
+      'keystone_authtoken/token_cache_time':  value => $token_cache_time;
+      'keystone_authtoken/signing_dir':       value => $signing_dir;
     }
     glance_cache_config {
       'DEFAULT/auth_url'         : value => $auth_url;

@@ -20,23 +20,23 @@ describe 'gnocchi::logging' do
         'qpid' => 'WARN', 'sqlalchemy' => 'WARN', 'suds' => 'INFO',
         'iso8601' => 'WARN',
         'requests.packages.urllib3.connectionpool' => 'WARN' },
-     :fatal_deprecations => true,
-     :instance_format => '[instance: %(uuid)s] ',
-     :instance_uuid_format => '[instance: %(uuid)s] ',
-     :log_date_format => '%Y-%m-%d %H:%M:%S',
-     :use_syslog => true,
-     :use_stderr => false,
-     :log_facility => 'LOG_FOO',
-     :log_dir => '/var/log',
-     :verbose => true,
-     :debug => true,
+      :fatal_deprecations => true,
+      :instance_format => '[instance: %(uuid)s] ',
+      :instance_uuid_format => '[instance: %(uuid)s] ',
+      :log_date_format => '%Y-%m-%d %H:%M:%S',
+      :use_syslog => true,
+      :use_stderr => false,
+      :log_facility => 'LOG_FOO',
+      :log_dir => '/tmp/gnocchi',
+      :verbose => true,
+      :debug => true,
     }
   end
 
   shared_examples_for 'gnocchi-logging' do
 
     context 'with basic logging options and default settings' do
-      it_configures  'basic default logging settings'
+      it_configures 'basic default logging settings'
     end
 
     context 'with basic logging options and non-default settings' do
@@ -56,12 +56,13 @@ describe 'gnocchi::logging' do
   end
 
   shared_examples 'basic default logging settings' do
-    it 'configures gnocchi logging settins with default values' do
-      is_expected.to contain_gnocchi_config('DEFAULT/use_syslog').with(:value => 'false')
-      is_expected.to contain_gnocchi_config('DEFAULT/use_stderr').with(:value => 'true')
+    it 'configures gnocchi logging settings with default values' do
+      is_expected.to contain_gnocchi_config('DEFAULT/use_syslog').with(:value => '<SERVICE DEFAULT>')
+      is_expected.to contain_gnocchi_config('DEFAULT/use_stderr').with(:value => '<SERVICE DEFAULT>')
+      is_expected.to contain_gnocchi_config('DEFAULT/syslog_log_facility').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_gnocchi_config('DEFAULT/log_dir').with(:value => '/var/log/gnocchi')
-      is_expected.to contain_gnocchi_config('DEFAULT/verbose').with(:value => 'false')
-      is_expected.to contain_gnocchi_config('DEFAULT/debug').with(:value => 'false')
+      is_expected.to contain_gnocchi_config('DEFAULT/verbose').with(:value => '<SERVICE DEFAULT>')
+      is_expected.to contain_gnocchi_config('DEFAULT/debug').with(:value => '<SERVICE DEFAULT>')
     end
   end
 
@@ -70,7 +71,7 @@ describe 'gnocchi::logging' do
       is_expected.to contain_gnocchi_config('DEFAULT/use_syslog').with(:value => 'true')
       is_expected.to contain_gnocchi_config('DEFAULT/use_stderr').with(:value => 'false')
       is_expected.to contain_gnocchi_config('DEFAULT/syslog_log_facility').with(:value => 'LOG_FOO')
-      is_expected.to contain_gnocchi_config('DEFAULT/log_dir').with(:value => '/var/log')
+      is_expected.to contain_gnocchi_config('DEFAULT/log_dir').with(:value => '/tmp/gnocchi')
       is_expected.to contain_gnocchi_config('DEFAULT/verbose').with(:value => 'true')
       is_expected.to contain_gnocchi_config('DEFAULT/debug').with(:value => 'true')
     end
@@ -112,7 +113,6 @@ describe 'gnocchi::logging' do
     end
   end
 
-
   shared_examples_for 'logging params unset' do
    [ :logging_context_format_string, :logging_default_format_string,
      :logging_debug_format_suffix, :logging_exception_prefix,
@@ -120,13 +120,13 @@ describe 'gnocchi::logging' do
      :default_log_levels, :fatal_deprecations,
      :instance_format, :instance_uuid_format,
      :log_date_format, ].each { |param|
-        it { is_expected.to contain_gnocchi_config("DEFAULT/#{param}").with_ensure('absent') }
+        it { is_expected.to contain_gnocchi_config("DEFAULT/#{param}").with(:value => '<SERVICE DEFAULT>') }
       }
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     it_configures 'gnocchi-logging'
@@ -134,7 +134,7 @@ describe 'gnocchi::logging' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     it_configures 'gnocchi-logging'

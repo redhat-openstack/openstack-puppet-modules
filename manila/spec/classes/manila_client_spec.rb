@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'manila::client' do
   it { is_expected.to contain_package('python-manilaclient').with_ensure('present') }
   let :facts do
-    {:osfamily => 'Debian'}
+    @default_facts.merge({:osfamily => 'Debian'})
   end
   context 'with params' do
     let :params do

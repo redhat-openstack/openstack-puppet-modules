@@ -16,15 +16,11 @@ describe 'neutron::agents::metadata' do
       :auth_tenant       => 'services',
       :auth_user         => 'neutron',
       :auth_password     => 'password',
-      :metadata_ip       => '127.0.0.1',
-      :metadata_port     => '8775',
-      :metadata_protocol => 'http',
-      :metadata_backlog  => '4096',
-      :shared_secret     => 'metadata-secret'
+      :shared_secret     => 'metadata-secret',
     }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default',
       :processorcount            => '2'
@@ -59,19 +55,19 @@ describe 'neutron::agents::metadata' do
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/debug').with(:value => params[:debug])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/auth_url').with(:value => params[:auth_url])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/auth_insecure').with(:value => params[:auth_insecure])
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/auth_ca_cert').with_ensure('absent')
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/auth_ca_cert').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/auth_region').with(:value => params[:auth_region])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/admin_tenant_name').with(:value => params[:auth_tenant])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/admin_user').with(:value => params[:auth_user])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/admin_password').with(:value => params[:auth_password])
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/admin_password').with_secret( true )
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_ip').with(:value => params[:metadata_ip])
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_port').with(:value => params[:metadata_port])
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_protocol').with(:value => params[:metadata_protocol])
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_ip').with(:value => '<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_port').with(:value => '<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/nova_metadata_protocol').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/metadata_workers').with(:value => facts[:processorcount])
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/metadata_backlog').with(:value => params[:metadata_backlog])
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/metadata_backlog').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_neutron_metadata_agent_config('DEFAULT/metadata_proxy_shared_secret').with(:value => params[:shared_secret])
-      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/cache_url').with(:value => 'memory://?default_ttl=5')
+      is_expected.to contain_neutron_metadata_agent_config('DEFAULT/cache_url').with(:ensure => 'absent')
     end
   end
 
@@ -92,9 +88,9 @@ describe 'neutron::agents::metadata' do
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge(
+      @default_facts.merge(test_facts.merge(
         { :osfamily => 'Debian' }
-      )
+      ))
     end
 
     let :platform_params do
@@ -119,9 +115,10 @@ describe 'neutron::agents::metadata' do
 
   context 'on Red Hat platforms' do
     let :facts do
-      default_facts.merge(
-        { :osfamily => 'RedHat' }
-      )
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
 
     let :platform_params do

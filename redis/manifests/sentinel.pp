@@ -36,6 +36,11 @@
 #
 #   Default: redis/redis-sentinel.conf.erb
 #
+# [*daemonize*]
+#   Have Redis sentinel run as a daemon.
+#
+#   Default: true
+#
 # [*down_after*]
 #   Number of milliseconds the master (or any attached slave or sentinel)
 #   should be unreachable (as in, not acceptable reply to PING, continuously,
@@ -149,6 +154,7 @@ class redis::sentinel (
   $config_file_orig    = $::redis::params::sentinel_config_file_orig,
   $config_file_mode    = $::redis::params::sentinel_config_file_mode,
   $conf_template       = $::redis::params::sentinel_conf_template,
+  $daemonize           = $::redis::params::sentinel_daemonize,
   $down_after          = $::redis::params::sentinel_down_after,
   $failover_timeout    = $::redis::params::sentinel_failover_timeout,
   $init_script         = $::redis::params::sentinel_init_script,
@@ -169,9 +175,8 @@ class redis::sentinel (
   $working_dir         = $::redis::params::sentinel_working_dir,
   $notification_script = $::redis::params::sentinel_notification_script,
 ) inherits redis::params {
-  $daemonize = $::redis::daemonize
 
-  unless defined(Package['$package_name']) {
+  unless defined(Package[$package_name]) {
     ensure_resource('package', $package_name, {
       'ensure' => $package_ensure
     })
@@ -196,6 +201,7 @@ class redis::sentinel (
   }
 
   if $init_script {
+
     file {
       $init_script:
         ensure  => present,
@@ -205,10 +211,13 @@ class redis::sentinel (
         content => template($init_template),
         require => Package[$package_name];
     }
+
     exec {
       '/usr/sbin/update-rc.d redis-sentinel defaults':
-        require => File[$init_script];
+        subscribe   => File[$init_script],
+        refreshonly => true;
     }
+
   }
 
   service { $service_name:

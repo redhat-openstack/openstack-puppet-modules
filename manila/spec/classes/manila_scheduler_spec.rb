@@ -5,7 +5,7 @@ describe 'manila::scheduler' do
   describe 'on debian platforms' do
 
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     describe 'with default parameters' do
@@ -56,7 +56,7 @@ describe 'manila::scheduler' do
   describe 'on rhel platforms' do
 
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     describe 'with default parameters' do

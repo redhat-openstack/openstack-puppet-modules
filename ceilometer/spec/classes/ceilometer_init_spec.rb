@@ -27,16 +27,6 @@ describe 'ceilometer' do
     }
   end
 
-  let :qpid_params do
-    {
-      :rpc_backend   => 'qpid',
-      :qpid_hostname => 'localhost',
-      :qpid_port     => 5672,
-      :qpid_username => 'guest',
-      :qpid_password  => 'guest',
-    }
-  end
-
   shared_examples_for 'ceilometer' do
 
     it 'configures time to live for events, meters and alarm histories' do
@@ -76,12 +66,6 @@ describe 'ceilometer' do
         before { params.merge!( rabbit_params ).merge!(:rpc_backend => 'ceilometer.openstack.common.rpc.impl_kombu') }
         it { is_expected.to contain_ceilometer_config('DEFAULT/rpc_backend').with_value('ceilometer.openstack.common.rpc.impl_kombu') }
       end
-    end
-
-    context 'with qpid' do
-      before {params.merge!( qpid_params ) }
-      it_configures 'a ceilometer base installation'
-      it_configures 'qpid support'
     end
 
   end
@@ -260,39 +244,6 @@ describe 'ceilometer' do
     end
   end
 
-  shared_examples_for 'qpid support' do
-    context("with default parameters") do
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect').with_value(true) }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect_timeout').with_value('0') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect_limit').with_value('0') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect_interval_min').with_value('0') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect_interval_max').with_value('0') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_reconnect_interval').with_value('0') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_heartbeat').with_value('60') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_protocol').with_value('tcp') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_tcp_nodelay').with_value(true) }
-    end
-
-    context("with mandatory parameters set") do
-      it { is_expected.to contain_ceilometer_config('DEFAULT/rpc_backend').with_value('qpid') }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_hostname').with_value( params[:qpid_hostname] ) }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_port').with_value( params[:qpid_port] ) }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_username').with_value( params[:qpid_username]) }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_password').with_value(params[:qpid_password]) }
-      it { is_expected.to contain_ceilometer_config('oslo_messaging_qpid/qpid_password').with_value( params[:qpid_password] ).with_secret(true) }
-    end
-
-    context("with legacy rpc_backend value") do
-      before { params.merge!( qpid_params ).merge!(:rpc_backend => 'ceilometer.openstack.common.rpc.impl_qpid') }
-      it { is_expected.to contain_ceilometer_config('DEFAULT/rpc_backend').with_value('ceilometer.openstack.common.rpc.impl_qpid') }
-    end
-
-    context("failing if the rpc_backend is not present") do
-      before { params.delete( :rpc_backend) }
-      it { expect { is_expected.to raise_error(Puppet::Error) } }
-    end
-  end
-
   shared_examples_for 'memcached support' do
     context "with memcached enabled" do
       before { params.merge!(
@@ -305,7 +256,7 @@ describe 'ceilometer' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     let :platform_params do
@@ -317,7 +268,7 @@ describe 'ceilometer' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     let :platform_params do

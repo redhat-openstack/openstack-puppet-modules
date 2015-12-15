@@ -76,7 +76,6 @@ class gnocchi::api (
   $service_name          = $::gnocchi::params::api_service_name,
 ) inherits gnocchi::params {
 
-  include ::gnocchi::params
   include ::gnocchi::policy
 
   validate_string($keystone_password)
@@ -120,6 +119,7 @@ class gnocchi::api (
       tag    => ['gnocchi-service', 'gnocchi-db-sync-service'],
     }
     Class['gnocchi::db'] -> Service[$service_name]
+    Service <<| title == 'httpd' |>> { tag +> 'gnocchi-db-sync-service' }
 
     # we need to make sure gnocchi-api/eventlet is stopped before trying to start apache
     Service['gnocchi-api'] -> Service[$service_name]

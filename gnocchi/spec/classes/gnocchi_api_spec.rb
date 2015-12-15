@@ -126,12 +126,14 @@ describe 'gnocchi::api' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily               => 'Debian',
+      @default_facts.merge({
+        :osfamily               => 'Debian',
         :operatingsystem        => 'Debian',
         :operatingsystemrelease => '8.0',
         :concat_basedir         => '/var/lib/puppet/concat',
         :fqdn                   => 'some.host.tld',
-        :processorcount         => 2 }
+        :processorcount         => 2,
+      })
     end
 
     let :platform_params do
@@ -144,12 +146,14 @@ describe 'gnocchi::api' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily               => 'RedHat',
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
         :operatingsystem        => 'RedHat',
         :operatingsystemrelease => '7.1',
         :fqdn                   => 'some.host.tld',
         :concat_basedir         => '/var/lib/puppet/concat',
-        :processorcount         => 2 }
+        :processorcount         => 2,
+      })
     end
 
     let :platform_params do
@@ -162,7 +166,7 @@ describe 'gnocchi::api' do
 
   describe 'with custom auth_uri' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
     before do
       params.merge!({
@@ -176,10 +180,10 @@ describe 'gnocchi::api' do
 
   describe "with custom keystone identity_uri" do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
     before do
-      params.merge!({ 
+      params.merge!({
         :keystone_identity_uri => 'https://foo.bar:1234/',
       })
     end
@@ -190,10 +194,10 @@ describe 'gnocchi::api' do
 
   describe "with custom keystone identity_uri and auth_uri" do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
     before do
-      params.merge!({ 
+      params.merge!({
         :keystone_identity_uri => 'https://foo.bar:35357/',
         :keystone_auth_uri => 'https://foo.bar:5000/v2.0/',
       })

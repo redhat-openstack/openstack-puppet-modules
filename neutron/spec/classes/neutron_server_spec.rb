@@ -27,18 +27,14 @@ describe 'neutron::server' do
       :database_max_pool_size           => 10,
       :database_max_overflow            => 20,
       :sync_db                          => false,
-      :agent_down_time                  => 75,
       :router_scheduler_driver          => 'neutron.scheduler.l3_agent_scheduler.ChanceScheduler',
-      :router_distributed               => false,
       :l3_ha                            => false,
       :max_l3_agents_per_router         => 3,
       :min_l3_agents_per_router         => 2,
-      :l3_ha_net_cidr                   => '169.254.192.0/18',
-      :allow_automatic_l3agent_failover => false
     }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -94,8 +90,9 @@ describe 'neutron::server' do
       is_expected.to contain_service('neutron-server').with_name('neutron-server')
       is_expected.to contain_neutron_config('DEFAULT/api_workers').with_value(facts[:processorcount])
       is_expected.to contain_neutron_config('DEFAULT/rpc_workers').with_value(facts[:processorcount])
-      is_expected.to contain_neutron_config('DEFAULT/agent_down_time').with_value(p[:agent_down_time])
+      is_expected.to contain_neutron_config('DEFAULT/agent_down_time').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/router_scheduler_driver').with_value(p[:router_scheduler_driver])
+      is_expected.to contain_neutron_config('qos/notification_drivers').with_value('<SERVICE DEFAULT>')
     end
 
     context 'with manage_service as false' do
@@ -124,7 +121,7 @@ describe 'neutron::server' do
         is_expected.to contain_neutron_config('DEFAULT/l3_ha').with_value(true)
         is_expected.to contain_neutron_config('DEFAULT/max_l3_agents_per_router').with_value(3)
         is_expected.to contain_neutron_config('DEFAULT/min_l3_agents_per_router').with_value(2)
-        is_expected.to contain_neutron_config('DEFAULT/l3_ha_net_cidr').with_value('169.254.192.0/18')
+        is_expected.to contain_neutron_config('DEFAULT/l3_ha_net_cidr').with_value('<SERVICE DEFAULT>')
       end
     end
 
@@ -179,7 +176,16 @@ describe 'neutron::server' do
 
     context 'with allow_automatic_l3agent_failover in neutron.conf' do
       it 'should configure allow_automatic_l3agent_failover' do
-        is_expected.to contain_neutron_config('DEFAULT/allow_automatic_l3agent_failover').with_value(p[:allow_automatic_l3agent_failover])
+        is_expected.to contain_neutron_config('DEFAULT/allow_automatic_l3agent_failover').with_value('<SERVICE DEFAULT>')
+      end
+    end
+
+    context 'with qos_notification_drivers parameter' do
+      before :each do
+        params.merge!(:qos_notification_drivers => 'message_queue')
+      end
+      it 'should configure qos_notification_drivers' do
+        is_expected.to contain_neutron_config('qos/notification_drivers').with_value('message_queue')
       end
     end
   end
@@ -234,7 +240,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone auth_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
     before do
       params.merge!({
@@ -253,7 +262,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone identity_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
     before do
       params.merge!({
@@ -272,7 +284,10 @@ describe 'neutron::server' do
 
   describe "with custom keystone identity_uri and auth_uri" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
     before do
       params.merge!({
@@ -292,7 +307,10 @@ describe 'neutron::server' do
 
   describe "with custom auth region" do
     let :facts do
-      default_facts.merge({ :osfamily => 'RedHat' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
     before do
       params.merge!({
@@ -306,9 +324,10 @@ describe 'neutron::server' do
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge(
-        { :osfamily => 'Debian',
-          :processorcount => '2' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'Debian',
+         :processorcount => '2'
+      }))
     end
 
     let :platform_params do
@@ -325,9 +344,11 @@ describe 'neutron::server' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge(
-        { :osfamily => 'RedHat',
-          :processorcount => '2' })
+      @default_facts.merge(test_facts.merge({
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :processorcount         => '2'
+      }))
     end
 
     let :platform_params do
