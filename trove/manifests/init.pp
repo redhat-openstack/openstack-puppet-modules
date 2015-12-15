@@ -81,38 +81,6 @@
 #   (optional) Define queues as "durable" to rabbitmq.
 #   Defaults to false
 #
-# [*qpid_hostname*]
-#   (optional) Location of qpid server
-#   Defaults to 'localhost'
-#
-# [*qpid_port*]
-#   (optional) Port for qpid server
-#   Defaults to '5672'
-#
-# [*qpid_username*]
-#   (optional) Username to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_password*]
-#   (optional) Password to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_heartbeat*]
-#   (optional) Seconds between connection keepalive heartbeats
-#   Defaults to 60
-#
-# [*qpid_protocol*]
-#   (optional) Transport to use, either 'tcp' or 'ssl''
-#   Defaults to 'tcp'
-#
-# [*qpid_sasl_mechanisms*]
-#   (optional) Enable one or more SASL mechanisms
-#   Defaults to false
-#
-# [*qpid_tcp_nodelay*]
-#   (optional) Disable Nagle algorithm
-#   Defaults to true
-#
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
 #     rabbit (for rabbitmq)
@@ -218,6 +186,40 @@
 #   (optional) The state of the package.
 #   Defaults to 'present'
 #
+# DEPRECATED PARAMETERS
+#
+# [*qpid_hostname*]
+#   (optional) Location of qpid server
+#   Defaults to undef
+#
+# [*qpid_port*]
+#   (optional) Port for qpid server
+#   Defaults to undef
+#
+# [*qpid_username*]
+#   (optional) Username to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_password*]
+#   (optional) Password to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_heartbeat*]
+#   (optional) Seconds between connection keepalive heartbeats
+#   Defaults to undef
+#
+# [*qpid_protocol*]
+#   (optional) Transport to use, either 'tcp' or 'ssl''
+#   Defaults to undef
+#
+# [*qpid_sasl_mechanisms*]
+#   (optional) Enable one or more SASL mechanisms
+#   Defaults to undef
+#
+# [*qpid_tcp_nodelay*]
+#   (optional) Disable Nagle algorithm
+#   Defaults to undef
+#
 class trove(
   $nova_proxy_admin_pass,
   $rabbit_host                  = 'localhost',
@@ -233,14 +235,6 @@ class trove(
   $kombu_ssl_keyfile            = undef,
   $kombu_ssl_version            = 'TLSv1',
   $amqp_durable_queues          = false,
-  $qpid_hostname                = 'localhost',
-  $qpid_port                    = '5672',
-  $qpid_username                = 'guest',
-  $qpid_password                = 'guest',
-  $qpid_sasl_mechanisms         = false,
-  $qpid_heartbeat               = 60,
-  $qpid_protocol                = 'tcp',
-  $qpid_tcp_nodelay             = true,
   $database_connection          = undef,
   $database_idle_timeout        = undef,
   $database_max_retries         = undef,
@@ -266,6 +260,14 @@ class trove(
   $package_ensure               = 'present',
   # DEPRECATED PARAMETERS
   $mysql_module                 = undef,
+  $qpid_hostname                = undef,
+  $qpid_port                    = undef,
+  $qpid_username                = undef,
+  $qpid_password                = undef,
+  $qpid_sasl_mechanisms         = undef,
+  $qpid_heartbeat               = undef,
+  $qpid_protocol                = undef,
+  $qpid_tcp_nodelay             = undef,
 ) {
   include ::trove::params
 
@@ -308,32 +310,9 @@ class trove(
     trove_config { 'DEFAULT/neutron_url': ensure => absent }
   }
 
-  if $::osfamily == 'RedHat' {
-    # TO-DO(mmagr): Conditional should be removed as soon as following bug
-    # is really fixed. On Ubuntu trove-common is not installable without already
-    # running database and correctly filled trove.conf:
-    # https://bugs.launchpad.net/ubuntu/+source/openstack-trove/+bug/1365561
-    package { 'trove':
-      ensure => $package_ensure,
-      name   => $::trove::params::common_package_name,
-      tag    => ['openstack', 'trove-package'],
-    }
-    $group_require = Package['trove']
-  } else {
-    $group_require = undef
+  package { 'trove':
+    ensure => $package_ensure,
+    name   => $::trove::params::common_package_name,
+    tag    => ['openstack', 'trove-package'],
   }
-
-  group { 'trove':
-    ensure  => 'present',
-    name    => 'trove',
-    system  => true,
-    require => $group_require
-  }
-
-  file { '/etc/trove/':
-    ensure  => directory,
-    group   => 'trove',
-    require => Group['trove']
-  }
-
 }
