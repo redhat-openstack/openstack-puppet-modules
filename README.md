@@ -137,11 +137,12 @@ class { 'zookeeper':
 
 ### Managing repository
 
-For RedHat family curretly we support also managing an yum repo. It can be enabled with `repo` parameter:
+For RedHat family currently we support also managing a `cloudera` yum repo versions 4, and 5. It can be enabled with `repo` parameter:
 
 ```puppet
 class { 'zookeeper':
-  repo => 'cloudera'
+  repo   => 'cloudera',
+  cdhver => '5',
 }
 ```
 
@@ -197,4 +198,3 @@ If you are versioning your puppet conf with git just add it as submodule, from y
   * Debian 6 Squeeze, 7 Wheezy
   * Ubuntu 12.04.03 LTS, 14.04
   * CentOS 6
-

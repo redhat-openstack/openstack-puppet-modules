@@ -20,6 +20,7 @@ class zookeeper::install(
   $service_package   = 'zookeeperd',
   $packages          = ['zookeeper'],
   $repo_source       = undef,
+  $cdhver            = cdhver,
   $install_java      = false,
   $java_package      = undef
 ) {
@@ -48,6 +49,7 @@ class zookeeper::install(
 
       class { 'zookeeper::repo':
         source => $repo_source,
+        cdhver => $cdhver,
       }
 
       class { 'zookeeper::os::redhat':
@@ -69,4 +71,3 @@ class zookeeper::install(
     }
   }
 }
-

@@ -53,6 +53,7 @@ class zookeeper(
   $service_name            = 'zookeeper',
   $packages                = ['zookeeper'],
   $repo                    = undef,
+  $cdhver                  = undef,
   $install_java            = false,
   $java_package            = undef,
   $min_session_timeout     = undef,
@@ -77,6 +78,7 @@ class zookeeper(
     service_package   => $service_package,
     packages          => $packages,
     repo_source       => $repo,
+    cdhver            => $cdhver,
     install_java      => $install_java,
     java_package      => $java_package
   }->
