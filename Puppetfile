@@ -58,10 +58,6 @@ mod 'firewall',
   :commit => '1b6cc9192150d9521cc70301d0452daf189a63f7',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
-mod 'fluentd',
-  :commit => '828fc99cd6c631e8b34f47b8fdcfa3d30dd8daa2',
-  :git => 'https://github.com/mmz-srf/puppet-fluentd.git'
-
 mod 'galera',
   :commit => 'a2ecf273aef9ef9193bba35c235fb7b8b821a0c3',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
