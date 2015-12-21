@@ -47,6 +47,12 @@ class pacemaker::corosync(
       dport  => ['5404', '5405'],
       action => 'accept',
     }
+    firewall { '001 corosync mcast ipv6':
+      proto    => 'udp',
+      dport    => ['5404', '5405'],
+      action   => 'accept',
+      provider => 'ip6tables',
+    }
   }
 
   if $pcsd_mode {
@@ -55,6 +61,12 @@ class pacemaker::corosync(
         proto  => 'tcp',
         dport  => ['2224'],
         action => 'accept',
+      }
+      firewall { '001 pcsd ipv6':
+        proto    => 'tcp',
+        dport    => ['2224'],
+        action   => 'accept',
+        provider => 'ip6tables',
       }
     }
     Service['pcsd'] ->

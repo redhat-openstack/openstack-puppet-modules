@@ -44,7 +44,10 @@ define pacemaker::resource::ip(
       default => " nic=${nic}"
   }
 
-  pcmk_resource { "ip-${ip_address}":
+  # pcs dislikes colons from IPv6 addresses. Replacing them with dots.
+  $resource_name = regsubst($ip_address, '(:)', '.', 'G')
+
+  pcmk_resource { "ip-${resource_name}":
     ensure             => $ensure,
     resource_type      => 'IPaddr2',
     resource_params    => "ip=${ip_address}${cidr_option}${nic_option}",
