@@ -99,7 +99,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa-1.git'
 
 mod 'ironic',
-  :commit => '2c8397256728024860fa9f9a2018b4b5f0d21f15',
+  :commit => '12e15ba21a296ac9778754ff3db6187a9c503045',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
