@@ -21,11 +21,15 @@
 #
 # [*dell_sc_api_port*]
 #   (optional) The Enterprise Manager API port.
-#   Defaults to 3033
+#   Defaults to $::os_service_default
 #
 # [*dell_sc_server_folder*]
 #   (optional) Name of the server folder to use on the Storage Center.
 #   Defaults to 'srv'
+#
+# [*dell_sc_verify_cert*]
+#   (optional) Enable HTTPS SC certificate verification
+#   Defaults to $:os_service_default
 #
 # [*dell_sc_volume_folder*]
 #   (optional) Name of the volume folder to use on the Storage Center.
@@ -33,7 +37,7 @@
 #
 # [*iscsi_port*]
 #   (optional) The Storage Center iSCSI IP port.
-#   Defaults to 3260
+#   Defaults to $::os_service_default
 #
 # [*extra_options*]
 #   (optional) Hash of extra options to pass to the backend stanza.
@@ -47,10 +51,11 @@ class cinder::volume::dellsc_iscsi (
   $san_password,
   $iscsi_ip_address,
   $dell_sc_ssn,
-  $dell_sc_api_port      = 3033,
+  $dell_sc_api_port      = $::os_service_default,
   $dell_sc_server_folder = 'srv',
+  $dell_sc_verify_cert   = $::os_service_default,
   $dell_sc_volume_folder = 'vol',
-  $iscsi_port            = 3260,
+  $iscsi_port            = $::os_service_default,
   $extra_options         = {},
 ) {
   cinder::backend::dellsc_iscsi { 'DEFAULT':
@@ -61,6 +66,7 @@ class cinder::volume::dellsc_iscsi (
     dell_sc_ssn           => $dell_sc_ssn,
     dell_sc_api_port      => $dell_sc_api_port,
     dell_sc_server_folder => $dell_sc_server_folder,
+    dell_sc_verify_cert   => $dell_sc_verify_cert,
     dell_sc_volume_folder => $dell_sc_volume_folder,
     iscsi_port            => $iscsi_port,
     extra_options         => $extra_options,

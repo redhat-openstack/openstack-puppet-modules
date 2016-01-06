@@ -36,7 +36,7 @@
 #  [*mount_check*]
 #    (optional) Whether or not check if the devices are mounted
 #    to prevent accidentally writing to the root device
-#    Defaults to false. Soon to be changed to 'true' to match Swift defaults.
+#    Defaults to true.
 #
 #  [*account_pipeline*]
 #    (optional) Specify the account pipeline
@@ -64,13 +64,11 @@
 #   Defaults to true.
 #
 # [*incoming_chmod*] Incoming chmod to set in the rsync server.
-#   Optional. Defaults to 0644 for maintaining backwards compatibility.
-#   *NOTE*: Recommended parameter: 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
+#   Optional. Defaults to 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
 #   This mask translates to 0755 for directories and 0644 for files.
 #
 # [*outgoing_chmod*] Outgoing chmod to set in the rsync server.
-#   Optional. Defaults to 0644 for maintaining backwards compatibility.
-#   *NOTE*: Recommended parameter: 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
+#   Optional. Defaults to 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
 #   This mask translates to 0755 for directories and 0644 for files.
 #
 class swift::storage::all(
@@ -82,24 +80,16 @@ class swift::storage::all(
   $object_pipeline    = undef,
   $container_pipeline = undef,
   $allow_versions     = false,
-  $mount_check        = undef,
+  $mount_check        = true,
   $account_pipeline   = undef,
   $log_facility       = 'LOG_LOCAL2',
   $log_level          = 'INFO',
   $log_udp_host       = undef,
   $log_udp_port       = undef,
   $log_requests       = true,
-  $incoming_chmod     = '0644',
-  $outgoing_chmod     = '0644',
+  $incoming_chmod     = 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+  $outgoing_chmod     = 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
 ) {
-
-  if (!$mount_check) {
-    warning('The default for the mount_check parameter will change from false to true in the next release to match upstream. To disable this warning, set mount_check=false.')
-    $mount_check_real = false
-  }
-  else {
-    $mount_check_real = $mount_check
-  }
 
   class { '::swift::storage':
     storage_local_net_ip => $storage_local_net_ip,
@@ -108,7 +98,7 @@ class swift::storage::all(
   Swift::Storage::Server {
     devices              => $devices,
     storage_local_net_ip => $storage_local_net_ip,
-    mount_check          => $mount_check_real,
+    mount_check          => $mount_check,
     log_level            => $log_level,
     log_udp_host         => $log_udp_host,
     log_udp_port         => $log_udp_port,

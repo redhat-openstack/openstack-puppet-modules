@@ -26,13 +26,12 @@ describe 'aodh::keystone::auth' do
       :roles   => ['admin']
     )}
 
-    it { is_expected.to contain_keystone_service('aodh').with(
+    it { is_expected.to contain_keystone_service('aodh::alarming').with(
       :ensure      => 'present',
-      :type        => 'alarming',
       :description => 'OpenStack Alarming Service'
     ) }
 
-    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh').with(
+    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh::alarming').with(
       :ensure       => 'present',
       :public_url   => 'http://127.0.0.1:8042',
       :admin_url    => 'http://127.0.0.1:8042',
@@ -48,7 +47,7 @@ describe 'aodh::keystone::auth' do
         :admin_url    => 'http://10.10.10.12:81' }
     end
 
-    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh').with(
+    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh::alarming').with(
       :ensure       => 'present',
       :public_url   => 'https://10.10.10.10:80',
       :internal_url => 'http://10.10.10.11:81',
@@ -64,8 +63,8 @@ describe 'aodh::keystone::auth' do
 
     it { is_expected.to contain_keystone_user('aodhany') }
     it { is_expected.to contain_keystone_user_role('aodhany@services') }
-    it { is_expected.to contain_keystone_service('aodhany') }
-    it { is_expected.to contain_keystone_endpoint('RegionOne/aodhany') }
+    it { is_expected.to contain_keystone_service('aodhany::alarming') }
+    it { is_expected.to contain_keystone_endpoint('RegionOne/aodhany::alarming') }
   end
 
   describe 'when overriding service name' do
@@ -77,8 +76,8 @@ describe 'aodh::keystone::auth' do
 
     it { is_expected.to contain_keystone_user('aodh') }
     it { is_expected.to contain_keystone_user_role('aodh@services') }
-    it { is_expected.to contain_keystone_service('aodh_service') }
-    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh_service') }
+    it { is_expected.to contain_keystone_service('aodh_service::alarming') }
+    it { is_expected.to contain_keystone_endpoint('RegionOne/aodh_service::alarming') }
   end
 
   describe 'when disabling user configuration' do
@@ -92,9 +91,8 @@ describe 'aodh::keystone::auth' do
 
     it { is_expected.not_to contain_keystone_user('aodh') }
     it { is_expected.to contain_keystone_user_role('aodh@services') }
-    it { is_expected.to contain_keystone_service('aodh').with(
+    it { is_expected.to contain_keystone_service('aodh::alarming').with(
       :ensure      => 'present',
-      :type        => 'alarming',
       :description => 'OpenStack Alarming Service'
     ) }
 
@@ -112,9 +110,8 @@ describe 'aodh::keystone::auth' do
 
     it { is_expected.not_to contain_keystone_user('aodh') }
     it { is_expected.not_to contain_keystone_user_role('aodh@services') }
-    it { is_expected.to contain_keystone_service('aodh').with(
+    it { is_expected.to contain_keystone_service('aodh::alarming').with(
       :ensure      => 'present',
-      :type        => 'alarming',
       :description => 'OpenStack Alarming Service'
     ) }
 

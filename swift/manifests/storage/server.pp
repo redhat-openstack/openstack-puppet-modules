@@ -31,13 +31,11 @@
 #   Defaults to 25.
 #
 # [*incoming_chmod*] Incoming chmod to set in the rsync server.
-#   Optional. Defaults to 0644 for maintaining backwards compatibility.
-#   *NOTE*: Recommended parameter: 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
+#   Optional. Defaults to 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
 #   This mask translates to 0755 for directories and 0644 for files.
 #
 # [*outgoing_chmod*] Outgoing chmod to set in the rsync server.
-#   Optional. Defaults to 0644 for maintaining backwards compatibility.
-#   *NOTE*: Recommended parameter: 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
+#   Optional. Defaults to 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r'
 #   This mask translates to 0755 for directories and 0644 for files.
 #
 # [*pipeline*]
@@ -47,7 +45,7 @@
 # [*mount_check*]
 #   (optional) Whether or not check if the devices are mounted to prevent accidentally
 #   writing to the root device.
-#   Defaults to false. Soon to be changed to 'true' to match Swift defaults.
+#   Defaults to true.
 #
 # [*user*]
 #   (optional) User to run as
@@ -117,11 +115,11 @@ define swift::storage::server(
   $devices                = '/srv/node',
   $owner                  = 'swift',
   $group                  = 'swift',
-  $incoming_chmod         = '0644',
-  $outgoing_chmod         = '0644',
+  $incoming_chmod         = 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+  $outgoing_chmod         = 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
   $max_connections        = 25,
   $pipeline               = ["${type}-server"],
-  $mount_check            = undef,
+  $mount_check            = true,
   $user                   = 'swift',
   $workers                = '1',
   $allow_versions         = false,
@@ -147,14 +145,6 @@ define swift::storage::server(
     warning('The default outgoing_chmod set to 0644 may yield in error prone directories and will be changed in a later release.')
   }
 
-  if (!$mount_check) {
-    warning('The default for the mount_check parameter will change from false to true in the next release to match upstream. To disable this warning, set mount_check=false.')
-    $mount_check_real = false
-  }
-  else {
-    $mount_check_real = $mount_check
-  }
-
   # Warn if ${type-server} isn't included in the pipeline
   if is_array($pipeline) {
     if !member($pipeline, "${type}-server") {
@@ -169,8 +159,6 @@ define swift::storage::server(
   }
 
   include "::swift::storage::${type}"
-
-  include ::concat::setup
 
   validate_re($name, '^\d+$')
   validate_re($type, '^object|container|account$')
