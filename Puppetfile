@@ -66,6 +66,10 @@ mod 'galera',
   :commit => 'a2ecf273aef9ef9193bba35c235fb7b8b821a0c3',
   :git => 'https://github.com/redhat-openstack/puppet-galera.git'
 
+mod 'git',
+  :commit => '8e7f586',
+  :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
+
 mod 'glance',
   :commit => 'c3b685ba0dfd4a0ac78642844d9c16e5f472a78f',
   :git => 'https://github.com/openstack/puppet-glance.git'
