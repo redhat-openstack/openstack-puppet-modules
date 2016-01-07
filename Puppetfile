@@ -59,7 +59,7 @@ mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'fluentd',
-  :commit => 'b462da7d1c6290afba38fd7e64226990ecf795c7',
+  :commit => 'ddc5f0e4c6c53d15f0cbd34f74bfaa91a0fb299f',
   :git => 'https://github.com/soylent/konstantin-fluentd.git'
 
 mod 'galera',
