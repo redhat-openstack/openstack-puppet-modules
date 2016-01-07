@@ -5,6 +5,8 @@
 <%- end -%>
 <% if @proxy_preserve_host -%>
   ProxyPreserveHost On
+<% else -%>
+  ProxyPreserveHost Off
 <%- end -%>
 <% if @proxy_error_override -%>
   ProxyErrorOverride On
@@ -20,7 +22,12 @@
   <Location <%= proxy['path']%>>
   <%- if not proxy['reverse_cookies'].nil? -%>
     <%- Array(proxy['reverse_cookies']).each do |reverse_cookies| -%>
-    ProxyPassReverseCookiePath <%= reverse_cookies['path'] %> <%= reverse_cookies['url'] %>
+      <%- if reverse_cookies['path'] -%>
+        ProxyPassReverseCookiePath <%= reverse_cookies['path'] %> <%= reverse_cookies['url'] %>
+      <%- end -%>
+      <%- if reverse_cookies['domain'] -%>
+        ProxyPassReverseCookieDomain <%= reverse_cookies['domain'] %> <%= reverse_cookies['url'] %>
+      <%- end -%>
     <%- end -%>
   <%- end -%>
   <%- if proxy['reverse_urls'].nil? -%>

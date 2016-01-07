@@ -14,13 +14,4 @@ define haproxy::install (
     }
   }
 
-  # Create default configuration directory, gentoo portage does not create it
-  if $::osfamily == 'Gentoo' {
-    file { '/etc/haproxy':
-      ensure  => directory,
-      owner   => 'root',
-      group   => 'root',
-      require => Package[$haproxy::package_name]
-    }
-  }
 }

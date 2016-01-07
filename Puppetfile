@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '13797dadb81b99bd16375ef2d15edd9976edf326',
+  :commit => 'a78617b1919f44ab32fb88219783d836a77db148',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'aviator',
@@ -55,11 +55,11 @@ mod 'elasticsearch',
   :git => 'https://github.com/elastic/puppet-elasticsearch.git'
 
 mod 'firewall',
-  :commit => '1b6cc9192150d9521cc70301d0452daf189a63f7',
+  :commit => '9df7e883be758f8f340c720ef7d7022f10c4d842',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'fluentd',
-  :commit => 'b462da7d1c6290afba38fd7e64226990ecf795c7',
+  :commit => 'ddc5f0e4c6c53d15f0cbd34f74bfaa91a0fb299f',
   :git => 'https://github.com/soylent/konstantin-fluentd.git'
 
 mod 'galera',
@@ -83,7 +83,7 @@ mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi.git'
 
 mod 'haproxy',
-  :commit => 'a1cd826990bb7e5d015418b679755aa6606ec13b',
+  :commit => '8b7f2765f18222821d6ec2967e088522e4d64197',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
@@ -147,11 +147,11 @@ mod 'module-data',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
 
 mod 'mongodb',
-  :commit => 'a5d6e5d36fb1007534bca85fd277a678e6c5a2ee',
+  :commit => '3bcfc75229c4faffe5ccfe9caf1278a54ef0f7cc',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
 
 mod 'mysql',
-  :commit => '7daa2979ef41545e9c9a3fbf7c670f2a7927afba',
+  :commit => '5e7b999615bf99cc307b570c3eb27610d08df3c7',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k_vsm',
@@ -203,7 +203,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => '3d74c2d77bd482f59ea919e54d24589487221702',
+  :commit => '67b9acc9a37faf2e15eae686e6b17642f82bdc40',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',

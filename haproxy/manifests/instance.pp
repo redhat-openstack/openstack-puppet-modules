@@ -143,6 +143,7 @@ define haproxy::instance (
   $defaults_options = undef,
   $restart_command  = undef,
   $custom_fragment  = undef,
+  $config_dir       = undef,
   $config_file      = undef,
   $merge_options    = $haproxy::params::merge_options,
   $service_options  = $haproxy::params::service_options,
@@ -160,8 +161,9 @@ define haproxy::instance (
   # Therefore, we "include haproxy::params" for any parameters we need.
   include haproxy::params
 
-  $_global_options = pick($global_options, $haproxy::params::global_options, [])
-  $_defaults_options = pick($defaults_options, $haproxy::params::defaults_options, [])
+  $_global_options = pick($global_options, $haproxy::params::global_options)
+  $_defaults_options = pick($defaults_options, $haproxy::params::defaults_options)
+  validate_hash($_global_options,$_defaults_options)
 
   # Determine instance_name based on:
   #   single-instance hosts: haproxy
@@ -177,15 +179,21 @@ define haproxy::instance (
   #   single-instance hosts: use defaults
   #   multi-instance hosts:  use templates
   if $config_file != undef {
-    $_config_dir = undef
     $_config_file = $config_file
   } else {
     if $instance_name == 'haproxy' {
-      $_config_dir = $haproxy::params::config_dir
       $_config_file = $haproxy::params::config_file
     } else {
-      $_config_dir = inline_template($haproxy::params::config_dir_tmpl)
       $_config_file = inline_template($haproxy::params::config_file_tmpl)
+    }
+  }
+  if $config_dir != undef {
+    $_config_dir = $config_dir
+  } else {
+    if $instance_name == 'haproxy' {
+      $_config_dir = $haproxy::params::config_dir
+    } else {
+      $_config_dir = inline_template($haproxy::params::config_dir_tmpl)
     }
   }
 

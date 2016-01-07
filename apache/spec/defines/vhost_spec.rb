@@ -154,6 +154,7 @@ describe 'apache::vhost', :type => :define do
           'ssl_verify_depth'            => '3',
           'ssl_options'                 => '+ExportCertData',
           'ssl_openssl_conf_cmd'        => 'DHParameters "foo.pem"',
+          'ssl_proxy_verify'            => 'require',
           'ssl_proxy_check_peer_cn'     => 'on',
           'ssl_proxy_check_peer_name'   => 'on',
           'ssl_proxyengine'             => true,
@@ -187,6 +188,10 @@ describe 'apache::vhost', :type => :define do
               'provider' => 'files',
               'require'  => 'all granted',
             },
+            {
+              'path'     => '*',
+              'provider' => 'proxy',
+            },
             { 'path'              => '/var/www/files/indexed_directory',
               'directoryindex'    => 'disabled',
               'options'           => ['Indexes','FollowSymLinks','MultiViews'],
@@ -219,10 +224,16 @@ describe 'apache::vhost', :type => :define do
               'path'            => '/a',
               'url'             => 'http://backend-a/',
               'keywords'        => ['noquery', 'interpolate'],
-              'reverse_cookies' => [{
-                'path'          => '/a',
-                'url'           => 'http://backend-a/',
-              }],
+              'reverse_cookies' => [
+								{
+                  'path'          => '/a',
+                  'url'           => 'http://backend-a/',
+                },
+                {
+                  'domain' => 'foo',
+                  'url'    => 'http://foo',
+                }
+              ],
               'params'          => {
                       'retry'   => '0',
                       'timeout' => '5'
@@ -391,6 +402,8 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-fallbackresource') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-directories') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+        :content => /^\s+<Proxy "\*">$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
         :content => /^\s+Require valid-user$/ ) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
         :content => /^\s+Require all denied$/ ) }
@@ -425,6 +438,8 @@ describe 'apache::vhost', :type => :define do
               /noquery interpolate/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
               /ProxyPassReverseCookiePath\s+\/a\s+http:\/\//) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-proxy').with_content(
+              /ProxyPassReverseCookieDomain\s+foo\s+http:\/\/foo/) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-rack') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-redirect') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-rewrite') }
@@ -776,6 +791,18 @@ describe 'apache::vhost', :type => :define do
     end
   end # access logs
   describe 'validation' do
+    let :default_facts do
+      {
+        :osfamily               => 'RedHat',
+        :operatingsystemrelease => '6',
+        :concat_basedir         => '/dne',
+        :operatingsystem        => 'RedHat',
+        :id                     => 'root',
+        :kernel                 => 'Linux',
+        :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :is_pe                  => false,
+      }
+    end
     context 'bad ensure' do
       let :params do
         {
@@ -875,6 +902,16 @@ describe 'apache::vhost', :type => :define do
       end
       let :facts do default_facts end
       it { expect { is_expected.to compile }.to raise_error }
+    end
+    context 'empty rewrites' do
+      let :params do
+        {
+          'docroot'  => '/rspec/docroot',
+          'rewrites' => [],
+        }
+      end
+      let :facts do default_facts end
+      it { is_expected.to compile }
     end
     context 'bad suexec_user_group' do
       let :params do

@@ -12,7 +12,7 @@ class fluentd::install inherits fluentd {
   } ->
 
   file { $fluentd::config_file:
-    ensure  => present,
-    content => file('fluentd/td-agent.conf'),
+    ensure => present,
+    source => 'puppet:///modules/fluentd/td-agent.conf',
   }
 }

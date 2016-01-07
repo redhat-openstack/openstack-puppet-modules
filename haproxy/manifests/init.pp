@@ -54,17 +54,22 @@
 #   or add options without having to recreate the entire hash. Defaults to
 #   false, but will default to true in future releases.
 #
-#[*restart_command*]
+# [*restart_command*]
 #   Command to use when restarting the on config changes.
 #    Passed directly as the <code>'restart'</code> parameter to the service resource.
 #    Defaults to undef i.e. whatever the service default is.
 #
-#[*custom_fragment*]
-#  Allows arbitrary HAProxy configuration to be passed through to support
-#  additional configuration not available via parameters, or to short-circute
-#  the defined resources such as haproxy::listen when an operater would rather
-#  just write plain configuration. Accepts a string (ie, output from the
-#  template() function). Defaults to undef
+# [*custom_fragment*]
+#   Allows arbitrary HAProxy configuration to be passed through to support
+#   additional configuration not available via parameters, or to short-circute
+#   the defined resources such as haproxy::listen when an operater would rather
+#   just write plain configuration. Accepts a string (ie, output from the
+#   template() function). Defaults to undef
+#
+# [*config_dir*]
+#   Path to the directory in which the main configuration file `haproxy.cfg`
+#   resides. Will also be used for storing any managed map files (see
+#   `haproxy::mapfile`). Default depends on platform.
 #
 # === Examples
 #
@@ -107,6 +112,7 @@ class haproxy (
   $merge_options    = $haproxy::params::merge_options,
   $restart_command  = undef,
   $custom_fragment  = undef,
+  $config_dir       = $haproxy::params::config_dir,
   $config_file      = $haproxy::params::config_file,
 
   # Deprecated
@@ -123,6 +129,8 @@ class haproxy (
   validate_bool($service_manage)
   validate_bool($merge_options)
   validate_string($service_options)
+  validate_hash($global_options, $defaults_options)
+  validate_absolute_path($config_dir)
 
   # NOTE: These deprecating parameters are implemented in this class,
   # not in haproxy::instance.  haproxy::instance is new and therefore
@@ -161,6 +169,7 @@ class haproxy (
     defaults_options => $defaults_options,
     restart_command  => $restart_command,
     custom_fragment  => $custom_fragment,
+    config_dir       => $config_dir,
     config_file      => $config_file,
     merge_options    => $merge_options,
     service_options  => $service_options,

@@ -1325,18 +1325,57 @@ describe 'apache::vhost define' do
     end
   end
 
-  # So what does this work on?
-  if default['platform'] !~ /^(debian-(6|7)|el-(5|6|7))/
+  # Limit testing to Debian, since Centos does not have fastcgi package.
+  case fact('osfamily')
+  when 'Debian'
     describe 'fastcgi' do
       it 'applies cleanly' do
         pp = <<-EOS
-          if ($::operatingsystem == 'Ubuntu' and versioncpm($::operatingsystemrelease, '10.04' >= 0)) {
+          unless $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '12.04') >= 0 {
+            $_os = $::operatingsystem
+
+            if $_os == 'Ubuntu' {
+              $_location = "http://archive.ubuntu.com/"
+              $_security_location = "http://archive.ubuntu.com/"
+              $_release = $::lsbdistcodename
+              $_release_security = "${_release}-security"
+              $_repos = "main universe multiverse"
+            } else {
+              $_location = "http://httpredir.debian.org/debian/"
+              $_security_location = "http://security.debian.org/"
+              $_release = $::lsbdistcodename
+              $_release_security = "${_release}/updates"
+              $_repos = "main contrib non-free"
+            }
+
             include ::apt
-            apt::ppa { 'multiverse':
-              before => Class['Apache::Mod::Fastcgi'],
+            apt::source { "${_os}_${_release}":
+              location    => $_location,
+              release     => $_release,
+              repos       => $_repos,
+              include_src => false,
+            }
+
+            apt::source { "${_os}_${_release}-updates":
+              location    => $_location,
+              release     => "${_release}-updates",
+              repos       => $_repos,
+              include_src => false,
+            }
+
+            apt::source { "${_os}_${_release}-security":
+              location    => $_security_location,
+              release     => $_release_security,
+              repos       => $_repos,
+              include_src => false,
             }
           }
+        EOS
 
+        #apt-get update may not run clean here. Should be OK.
+        apply_manifest(pp, :catch_failures => false)
+
+        pp2 = <<-EOS
           class { 'apache': }
           class { 'apache::mod::fastcgi': }
           host { 'test.server': ip => '127.0.0.1' }
@@ -1347,7 +1386,7 @@ describe 'apache::vhost define' do
             fastcgi_dir    => '/tmp/fast',
           }
         EOS
-        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp2, :catch_failures => true, :acceptable_exit_codes => [0, 2])
       end
 
       describe file("#{$vhost_dir}/25-test.server.conf") do

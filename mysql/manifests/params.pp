@@ -96,9 +96,17 @@ class mysql::params {
     'Suse': {
       case $::operatingsystem {
         'OpenSuSE': {
-          $client_package_name = 'mysql-community-server-client'
-          $server_package_name = 'mysql-community-server'
-          $basedir             = '/usr'
+          if versioncmp( $::operatingsystemmajrelease, '13' ) >= 0 {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            # First service start fails if this is set. Runs fine without
+            # it being set, in any case. Leaving it as-is for the mysql.
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-community-server-client'
+            $server_package_name = 'mysql-community-server'
+            $basedir             = '/usr'
+          }
         }
         'SLES','SLED': {
           if versioncmp($::operatingsystemrelease, '12') >= 0 {
@@ -351,7 +359,11 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      $server_service_provider = upstart
+      if versioncmp($::operatingsystemmajrelease, '14.10') > 0 {
+        $server_service_provider = 'systemd'
+      } else {
+        $server_service_provider = 'upstart'
+      }
     }
     default: {
       $server_service_provider = undef
@@ -368,6 +380,21 @@ class mysql::params {
       'log-error'        => $mysql::params::log_error,
       'socket'           => $mysql::params::socket,
     },
+    'mysqld-5.0'       => {
+      'myisam-recover' => 'BACKUP',
+    },
+    'mysqld-5.1'       => {
+      'myisam-recover' => 'BACKUP',
+    },
+    'mysqld-5.5'       => {
+      'myisam-recover' => 'BACKUP',
+    },
+    'mysqld-5.6'              => {
+      'myisam-recover-options' => 'BACKUP',
+    },
+    'mysqld-5.7'              => {
+      'myisam-recover-options' => 'BACKUP',
+    },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,
       'bind-address'          => '127.0.0.1',
@@ -378,7 +405,6 @@ class mysql::params {
       'max_allowed_packet'    => '16M',
       'max_binlog_size'       => '100M',
       'max_connections'       => '151',
-      'myisam_recover'        => 'BACKUP',
       'pid-file'              => $mysql::params::pidfile,
       'port'                  => '3306',
       'query_cache_limit'     => '1M',
