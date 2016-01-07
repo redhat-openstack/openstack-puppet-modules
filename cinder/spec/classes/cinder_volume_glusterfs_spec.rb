@@ -17,20 +17,13 @@ describe 'cinder::volume::glusterfs' do
       is_expected.to contain_cinder_config('DEFAULT/glusterfs_shares_config').with_value('/etc/cinder/other_shares.conf')
       is_expected.to contain_cinder_config('DEFAULT/glusterfs_sparsed_volumes').with_value(true)
       is_expected.to contain_cinder_config('DEFAULT/glusterfs_mount_point_base').with_value('/cinder_mount_point')
+      is_expected.to contain_cinder_config('DEFAULT/glusterfs_backup_mount_point').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_cinder_config('DEFAULT/glusterfs_backup_share').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_file('/etc/cinder/other_shares.conf').with(
         :content => "10.10.10.10:/volumes\n10.10.10.11:/volumes\n",
         :require => 'Package[cinder]',
         :notify  => 'Service[cinder-volume]'
       )
-    end
-
-    context "with an parameter which has been removed" do
-      before do
-        params.merge!({
-          :glusterfs_disk_util => 'foo',
-        })
-      end
-      it_raises 'a Puppet::Error', /glusterfs_disk_util is removed in Icehouse./
     end
 
     context 'glusterfs volume driver with additional configuration' do
@@ -49,7 +42,7 @@ describe 'cinder::volume::glusterfs' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     it_configures 'glusterfs volume driver'
@@ -57,7 +50,7 @@ describe 'cinder::volume::glusterfs' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     it_configures 'glusterfs volume driver'

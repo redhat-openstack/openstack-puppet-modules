@@ -42,7 +42,25 @@
 #   (optional) Maximum number of nested clones that can be taken of a
 #   volume before enforcing a flatten prior to next clone.
 #   A value of zero disables cloning
-#   Defaults to '5'
+#   Defaults to $::os_service_default
+#
+# [*rados_connect_timeout*]
+#   (optional) Timeout value (in seconds) used when connecting to ceph cluster.
+#   If value < 0, no timeout is set and default librados value is used.
+#   Defaults to $::os_service_default
+#
+# [*rados_connection_interval*]
+#   (optional) Interval value (in seconds) between connection retries to ceph
+#   cluster.
+#   Defaults to $::os_service_default
+#
+# [*rados_connection_retries*]
+#   (optional) Number of retries if connection to ceph cluster failed.
+#   Defaults to $::os_service_default
+#
+# [*rbd_store_chunk_size*]
+#   (optional) Volumes will be chunked into objects of this size (in megabytes).
+#   Defaults to $::os_service_default
 #
 # [*extra_options*]
 #   (optional) Hash of extra options to pass to the backend stanza
@@ -56,10 +74,14 @@ define cinder::backend::rbd (
   $backend_host                     = undef,
   $volume_backend_name              = $name,
   $rbd_ceph_conf                    = '/etc/ceph/ceph.conf',
-  $rbd_flatten_volume_from_snapshot = false,
+  $rbd_flatten_volume_from_snapshot = $::os_service_default,
   $rbd_secret_uuid                  = $::os_service_default,
   $volume_tmp_dir                   = $::os_service_default,
-  $rbd_max_clone_depth              = '5',
+  $rbd_max_clone_depth              = $::os_service_default,
+  $rados_connect_timeout            = $::os_service_default,
+  $rados_connection_interval        = $::os_service_default,
+  $rados_connection_retries         = $::os_service_default,
+  $rbd_store_chunk_size             = $::os_service_default,
   $extra_options                    = {},
 ) {
 
@@ -74,6 +96,10 @@ define cinder::backend::rbd (
     "${name}/rbd_max_clone_depth":              value => $rbd_max_clone_depth;
     "${name}/rbd_flatten_volume_from_snapshot": value => $rbd_flatten_volume_from_snapshot;
     "${name}/rbd_secret_uuid":                  value => $rbd_secret_uuid;
+    "${name}/rados_connect_timeout":            value => $rados_connect_timeout;
+    "${name}/rados_connection_interval":        value => $rados_connection_interval;
+    "${name}/rados_connection_retries":         value => $rados_connection_retries;
+    "${name}/rbd_store_chunk_size":             value => $rbd_store_chunk_size;
     "${name}/volume_tmp_dir":                   value => $volume_tmp_dir;
   }
 
@@ -106,11 +132,10 @@ define cinder::backend::rbd (
   # Creates an empty file if it doesn't yet exist
   ensure_resource('file', $::cinder::params::ceph_init_override, {'ensure' => 'present'})
 
-  ensure_resource('file_line', 'set initscript env', {
+  file_line { "set initscript env ${name}":
     line   => $override_line,
     path   => $::cinder::params::ceph_init_override,
-    match  => $override_match,
-    notify => Service['cinder-volume']
-  })
+    notify => Service['cinder-volume'],
+  }
 
 }

@@ -19,8 +19,8 @@ describe 'swift::storage::server' do
       :devices         => '/srv/node',
       :owner           => 'swift',
       :group           => 'swift',
-      :incoming_chmod  => '0644',
-      :outgoing_chmod  => '0644',
+      :incoming_chmod  => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+      :outgoing_chmod  => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
       :max_connections => '25',
       :log_requests    => true
     }
@@ -161,8 +161,8 @@ describe 'swift::storage::server' do
           :lock_file       => "/var/lock/#{t}.lock",
           :uid             => 'swift',
           :gid             => 'swift',
-          :incoming_chmod  => '0644',
-          :outgoing_chmod  => '0644',
+          :incoming_chmod  => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+          :outgoing_chmod  => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
           :max_connections => 25,
           :read_only       => false
         )}
@@ -171,7 +171,7 @@ describe 'swift::storage::server' do
         it { is_expected.to contain_file(fragment_file).with_content(/^devices\s*=\s*\/srv\/node\s*$/) }
         it { is_expected.to contain_file(fragment_file).with_content(/^bind_ip\s*=\s*10\.0\.0\.1\s*$/) }
         it { is_expected.to contain_file(fragment_file).with_content(/^bind_port\s*=\s*#{title}\s*$/) }
-        it { is_expected.to contain_file(fragment_file).with_content(/^mount_check\s*=\s*false\s*$/) }
+        it { is_expected.to contain_file(fragment_file).with_content(/^mount_check\s*=\s*true\s*$/) }
         it { is_expected.to contain_file(fragment_file).with_content(/^user\s*=\s*swift\s*$/) }
         it { is_expected.to contain_file(fragment_file).with_content(/^set log_name\s*=\s*#{t}-server\s*$/) }
         it { is_expected.to contain_file(fragment_file).with_content(/^set log_facility\s*=\s*LOG_LOCAL2\s*$/) }

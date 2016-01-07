@@ -35,6 +35,10 @@
 #  The value to use as maxconn in the haproxy default config section.
 #  Defaults to 4096
 #
+# [*haproxy_default_timeout*]
+#  The value to use as timeout in the haproxy default config section.
+#  Defaults to [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ]
+#
 # [*haproxy_log_address*]
 #  The IPv4, IPv6 or filesystem socket path of the syslog server.
 #  Defaults to '/dev/log'
@@ -133,6 +137,15 @@
 # [*aodh_certificate*]
 #  Filename of an HAProxy-compatible certificate and key file
 #  When set, enables SSL on the Aodh public API endpoint using the specified file.
+#
+# [*sahara_certificate*]
+#  Filename of an HAProxy-compatible certificate and key file
+#  When set, enables SSL on the Sahara public API endpoint using the specified file.
+#  Defaults to undef
+#
+# [*trove_certificate*]
+#  Filename of an HAProxy-compatible certificate and key file
+#  When set, enables SSL on the Trove public API endpoint using the specified file.
 #  Defaults to undef
 #
 # [*swift_certificate*]
@@ -174,6 +187,14 @@
 # [*manila*]
 #  (optional) Enable or not Manila API binding
 #  Defaults to false
+#
+# [*sahara*]
+#  (optional) Enable or not Sahara API binding
+#  defaults to false
+#
+# [*trove*]
+#  (optional) Enable or not Trove API binding
+#  defaults to false
 #
 # [*glance_api*]
 #  (optional) Enable or not Glance API binding
@@ -263,6 +284,7 @@ class tripleo::loadbalancer (
   $haproxy_service_manage    = true,
   $haproxy_global_maxconn    = 20480,
   $haproxy_default_maxconn   = 4096,
+  $haproxy_default_timeout   = [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
   $haproxy_log_address       = '/dev/log',
   $controller_host           = undef,
   $controller_hosts          = undef,
@@ -271,6 +293,8 @@ class tripleo::loadbalancer (
   $keystone_certificate      = undef,
   $neutron_certificate       = undef,
   $cinder_certificate        = undef,
+  $sahara_certificate        = undef,
+  $trove_certificate         = undef,
   $manila_certificate        = undef,
   $glance_certificate        = undef,
   $nova_certificate          = undef,
@@ -284,6 +308,8 @@ class tripleo::loadbalancer (
   $keystone_public           = false,
   $neutron                   = false,
   $cinder                    = false,
+  $sahara                    = false,
+  $trove                     = false,
   $manila                    = false,
   $glance_api                = false,
   $glance_registry           = false,
@@ -417,6 +443,16 @@ class tripleo::loadbalancer (
   } else {
     $cinder_bind_certificate = $service_certificate
   }
+  if $sahara_certificate {
+    $sahara_bind_certificate = $sahara_certificate
+  } else {
+    $sahara_bind_certificate = $service_certificate
+  }
+  if $trove_certificate {
+    $trove_bind_certificate = $trove_certificate
+  } else {
+    $trove_bind_certificate = $trove_certificate
+  }
   if $manila_certificate {
     $manila_bind_certificate = $manila_certificate
   } else {
@@ -537,6 +573,32 @@ class tripleo::loadbalancer (
     }
   }
 
+  $sahara_api_vip = hiera('sahara_api_vip', $controller_virtual_ip)
+  if $sahara_bind_certificate {
+    $sahara_bind_opts = {
+      "${sahara_api_vip}:8386" => [],
+      "${public_virtual_ip}:13786" => ['ssl', 'crt', $sahara_bind_certificate],
+    }
+  } else {
+    $sahara_bind_opts = {
+      "${sahara_api_vip}:8386" => [],
+      "${public_virtual_ip}:8386" => [],
+    }
+  }
+
+  $trove_api_vip = hiera('$trove_api_vip', $controller_virtual_ip)
+  if $trove_bind_certificate {
+    $trove_bind_opts = {
+      "${trove_api_vip}:8779" => [],
+      "${public_virtual_ip}:13779" => ['ssl', 'crt', $trove_bind_certificate],
+    }
+  } else {
+    $trove_bind_opts = {
+      "${trove_api_vip}:8779" => [],
+      "${public_virtual_ip}:8779" => [],
+    }
+  }
+
   $nova_api_vip = hiera('nova_api_vip', $controller_virtual_ip)
   if $nova_bind_certificate {
     $nova_osapi_bind_opts = {
@@ -613,6 +675,7 @@ class tripleo::loadbalancer (
     }
     $heat_options = {
       'rsprep' => "^Location:\\ http://${public_virtual_ip}(.*) Location:\\ https://${public_virtual_ip}\\1",
+      'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
     }
     $heat_cw_bind_opts = {
       "${heat_api_vip}:8003" => [],
@@ -680,7 +743,7 @@ class tripleo::loadbalancer (
       'mode'    => 'tcp',
       'log'     => 'global',
       'retries' => '3',
-      'timeout' => [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
+      'timeout' => $haproxy_default_timeout,
       'maxconn' => $haproxy_default_maxconn,
     },
   }
@@ -719,6 +782,10 @@ class tripleo::loadbalancer (
     haproxy::listen { 'keystone_public':
       bind             => $keystone_public_bind_opts,
       collect_exported => false,
+      mode             => 'http', # Needed for http-request option
+      options          => {
+          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+      },
     }
     haproxy::balancermember { 'keystone_public':
       listening_service => 'keystone_public',
@@ -771,6 +838,34 @@ class tripleo::loadbalancer (
     }
   }
 
+  if $sahara {
+    haproxy::listen { 'sahara':
+      bind             => $sahara_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'sahara':
+      listening_service => 'sahara',
+      ports             => '8386',
+      ipaddresses       => hiera('sahara_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
+
+  if $trove {
+    haproxy::listen { 'trove':
+      bind             => $trove_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'trove':
+      listening_service => 'trove',
+      ports             => '8779',
+      ipaddresses       => hiera('trove_api_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+    }
+  }
+
   if $glance_api {
     haproxy::listen { 'glance_api':
       bind             => $glance_bind_opts,
@@ -818,6 +913,10 @@ class tripleo::loadbalancer (
     haproxy::listen { 'nova_osapi':
       bind             => $nova_osapi_bind_opts,
       collect_exported => false,
+      mode             => 'http',
+      options          => {
+          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+      },
     }
     haproxy::balancermember { 'nova_osapi':
       listening_service => 'nova_osapi',

@@ -76,6 +76,22 @@ Puppet::Type.newtype(:neutron_router) do
     [self[:gateway_network_name]] if self[:gateway_network_name]
   end
 
+  newproperty(:distributed) do
+    desc 'Is router distributed or not, default depends on DVR state.'
+    newvalues(/(t|T)rue/, /(f|F)alse/)
+    munge do |v|
+      v.to_s.capitalize
+    end
+  end
+
+  newproperty(:ha) do
+    desc 'Is router of HA type or not, default depends on L3 HA state.'
+    newvalues(/(t|T)rue/, /(f|F)alse/)
+    munge do |v|
+      v.to_s.capitalize
+    end
+  end
+
   validate do
     if self[:ensure] != :present
       return
