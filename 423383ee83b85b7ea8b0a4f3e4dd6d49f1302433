@@ -1,0 +1,7 @@
+Code-Review+2: Gaël Chamoulaud <gchamoul@redhat.com>
+Verified+1: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-by: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-at: Thu, 07 Jan 2016 10:59:08 +0100
+Reviewed-on: https://review.gerrithub.io/258764
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-liberty
