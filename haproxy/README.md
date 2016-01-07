@@ -15,6 +15,7 @@
     * [Set up a frontend service](#set-up-a-frontend-service)
     * [Set up a backend service](#set-up-a-backend-service)
     * [Configure multiple haproxy instances on one machine](#configure-multiple-haproxy-instances-on-one-machine)
+    * [Manage a map file](#manage-a-map-file)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 6. [Limitations - OS compatibility, etc.](#limitations)
 7. [Development - Guide for contributing to the module](#development)
@@ -138,7 +139,6 @@ haproxy::listen { 'puppet00':
   options   => {
     'option'  => [
       'tcplog',
-      'ssl-hello-chk',
     ],
     'balance' => 'roundrobin',
   },
@@ -155,7 +155,6 @@ haproxy::listen { 'puppet00':
   options => {
     'option'  => [
       'tcplog',
-      'ssl-hello-chk',
     ],
     'balance' => 'roundrobin',
   },
@@ -280,7 +279,6 @@ haproxy::backend { 'puppet00':
   options => {
     'option'  => [
       'tcplog',
-      'ssl-hello-chk',
     ],
     'balance' => 'roundrobin',
   },
@@ -294,7 +292,6 @@ haproxy::backend { 'puppet00':
   options => [
     { 'option'  => [
         'tcplog',
-        'ssl-hello-chk',
       ]
     },
     { 'balance' => 'roundrobin' },
@@ -380,6 +377,44 @@ The second uses a custom package.
      ipaddress        => $::ipaddress,
      ports            => '9900',
    }
+
+### Manage a map file
+
+~~~puppet
+haproxy::mapfile { 'domains-to-backends':
+  ensure   => 'present',
+  mappings => [
+    { 'app01.example.com' => 'bk_app01' },
+    { 'app02.example.com' => 'bk_app02' },
+    { 'app03.example.com' => 'bk_app03' },
+    { 'app04.example.com' => 'bk_app04' },
+    'app05.example.com bk_app05',
+    'app06.example.com bk_app06',
+  ],
+}
+~~~
+
+This creates a file `/etc/haproxy/domains-to-backends.map` containing the mappings specified in the `mappings` array.
+
+The map file can then be used in a frontend to map `Host:` values to backends, implementing name-based virtual hosting:
+
+```
+frontend ft_allapps
+  [...]
+  use_backend %[req.hdr(host),lower,map(/etc/haproxy/domains-to-backends.map,bk_default)]
+```
+
+Or expressed using `haproxy::frontend`:
+
+~~~puppet
+haproxy::frontend { 'ft_allapps':
+  ipaddress => '0.0.0.0',
+  ports     => '80',
+  mode      => 'http',
+  options   => {
+    'use_backend' => '%[req.hdr(host),lower,map(/etc/haproxy/domains-to-backends.map,bk_default)]'
+  }
+}
 ~~~
 
 ##Reference
@@ -410,6 +445,7 @@ The second uses a custom package.
 * [`haproxy::peer`](#define-haproxypeer): Creates server entries within a peers entry in haproxy.cfg.
 * [`haproxy::instance`](#define-instance): Creates multiple instances of haproxy on the same machine.
 * [`haproxy::instance_service`](#define-instanceservice): Example of one way to prepare environment for haproxy::instance.
+* [`haproxy::mapfile`](#define-haproxymapfile): Manages an HAProxy [map file](https://cbonte.github.io/haproxy-dconv/configuration-1.5.html#7.3.1-map).
 
 ####Private defines
 
@@ -506,6 +542,8 @@ Main class, includes all other classes.
 * `service_manage`: Specifies whether the state of the HAProxy service should be managed by Puppet. Valid options: 'true' and 'false'. Default: 'true'.
 
 * `service_options`: Contents for the `/etc/defaults/haproxy` file on Debian. Defaults to "ENABLED=1\n" on Debian, and is ignored on other systems.
+
+* `config_dir`: Path to the directory in which the main configuration file `haproxy.cfg` resides. Will also be used for storing any managed map files (see [`haproxy::mapfile`](#define-haproxymapfile). Default depends on platform.
 
 #### Define: `haproxy::balancermember`
 
@@ -668,7 +706,7 @@ Sets up a peer entry inside the peers configuration block in haproxy.cfg.
 
 * `peers_name`: *Required.* Specifies the peer in which to add the load balancer. Valid options: a string containing the name of an HAProxy peer.
 
-* `ports`: *Required.* Specifies the port on which the load balancer sends connections to peers. Valid options: a string containing a port number.
+* `port`: *Required.* Specifies the port on which the load balancer sends connections to peers. Valid options: a string containing a port number.
 
 * `server_names`: *Required unless the `collect_exported` parameter of your `haproxy::peers` resource is set to `true`.* Sets the name of the peer server as listed in the peers configuration block. Valid options: a string or an array. If you pass an array, it must contain the same number of elements as the array you pass to `ipaddresses`. Puppet pairs up the elements from both arrays and creates a peer for each pair of values. Default: the value of the `$::hostname` fact.
 
@@ -754,7 +792,40 @@ Path to the template init.d script that will start/restart/reload this instance.
 * `haproxy_unit_template`:
 Path to the template systemd service unit definition that will start/restart/reload this instance.
 
-##Limitations
+#### Define: `haproxy::mapfile`
+
+Manages an HAProxy [map file](https://cbonte.github.io/haproxy-dconv/configuration-1.5.html#7.3.1-map). A map allows to map data in input to other data on output. This is especially useful for efficiently mapping domain names to backends, thus effectively implementing name-based virtual hosting. A map file contains one key + value per line. These key-value pairs are specified in the `mappings` array.
+
+This article on the HAProxy blog gives a nice overview of the use case: http://blog.haproxy.com/2015/01/26/web-application-name-to-backend-mapping-in-haproxy/
+
+##### Parameters
+
+* `namevar`: The namevar of the defined resource type is the filename of the map file (without any extension), relative to the `haproxy::config_dir` directory. A '.map' extension is added automatically.
+
+* `mappings`: An array of mappings for this map file. Array elements may be Hashes with a single key-value pair each (preferably) or simple Strings. Default: `[]`. Example:
+
+  ```puppet
+  mappings => [
+    { 'app01.example.com' => 'bk_app01' },
+    { 'app02.example.com' => 'bk_app02' },
+    { 'app03.example.com' => 'bk_app03' },
+    { 'app04.example.com' => 'bk_app04' },
+    'app05.example.com bk_app05',
+    'app06.example.com bk_app06',
+  ]
+  ```
+
+* `ensure`: The state of the underlying file resource, either 'present' or 'absent'. Default: 'present'
+
+* `owner`: The owner of the underlying file resource. Defaut: 'root'
+
+* `group`: The group of the underlying file resource. Defaut: 'root'
+
+* `mode`:  The mode of the underlying file resource. Defaut: '0644'
+
+* `instances`: Array of names of managed HAproxy instances to notify (restart/reload) when the map file is updated. This is so that the same map file can be used with multiple HAproxy instances (if multiple instances are used). Default: `[ 'haproxy' ]`
+
+## Limitations
 
 This module is tested and officially supported on the following platforms:
 

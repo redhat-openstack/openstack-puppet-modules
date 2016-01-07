@@ -54,7 +54,6 @@ define haproxy::backend (
   $options          = {
     'option'  => [
       'tcplog',
-      'ssl-hello-chk'
     ],
     'balance' => 'roundrobin'
   },

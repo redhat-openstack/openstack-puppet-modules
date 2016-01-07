@@ -43,7 +43,7 @@ describe 'mysql::server' do
         end
         context 'with datadir overridden' do
           let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
-          it { is_expected.to contain_exec('mysql_install_db') }
+          it { is_expected.to contain_mysql_datadir('/tmp') }
         end
       end
 
@@ -67,6 +67,18 @@ describe 'mysql::server' do
             is_expected.to contain_service('mysqld').with({
               :ensure => :stopped
             })
+          end
+          context 'with package_manage set to true' do
+            let(:params) {{ :package_manage => true }}
+            it { is_expected.to contain_package('mysql-server') }
+          end
+          context 'with package_manage set to false' do
+            let(:params) {{ :package_manage => false }}
+            it { is_expected.not_to contain_package('mysql-server') }
+          end
+          context 'with datadir overridden' do
+            let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
+            it { is_expected.to contain_mysql_datadir('/tmp') }
           end
         end
         context 'with log-error overridden' do

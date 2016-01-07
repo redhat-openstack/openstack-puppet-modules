@@ -2260,13 +2260,13 @@ apache::vhost { 'site.name.fdqn':
     { 'path' => '/f', 'url' => 'http://backend-f/',
       'setenv' => ['proxy-nokeepalive 1','force-proxy-request-1.0 1']},
     { 'path' => '/g', 'url' => 'http://backend-g/',
-      'reverse_cookies' => [{'path' => '/g', 'url' => 'http://backend-g/',}], },
+      'reverse_cookies' => [{'path' => '/g', 'url' => 'http://backend-g/',}, {'domain' => 'http://backend-g', 'url' => 'http:://backend-g',},], },
   ],
 }
 ~~~
 
 `reverse_urls` is optional and can be an array or a string. It is useful when used with `mod_proxy_balancer`.
-`reverse_cookies` is optional and is used to set ProxyPassReverseCookiePath.
+`reverse_cookies` is optional and is used to set ProxyPassReverseCookiePath and/or ProxyPassReverseCookieDomain.
 `params` is an optional parameter. It allows to provide the ProxyPass key=value parameters (Connection settings).
 `setenv` is optional and is an array to set environment variables for the proxy directive, for details see http://httpd.apache.org/docs/current/mod/mod_proxy.html#envsettings
 
@@ -2561,7 +2561,7 @@ The `directories` parameter within the `apache::vhost` class passes an array of 
 
 The `path` key sets the path for the directory, files, and location blocks. Its value must be a path for the 'directory', 'files', and 'location' providers, or a regex for the 'directorymatch', 'filesmatch', or 'locationmatch' providers. Each hash passed to `directories` **must** contain `path` as one of the keys.
 
-The `provider` key is optional. If missing, this key defaults to 'directory'. Valid values for `provider` are 'directory', 'files', 'location', 'directorymatch', 'filesmatch', or 'locationmatch'. If you set `provider` to 'directorymatch', it uses the keyword 'DirectoryMatch' in the Apache config file.
+The `provider` key is optional. If missing, this key defaults to 'directory'. Valid values for `provider` are 'directory', 'files', 'proxy', 'location', 'directorymatch', 'filesmatch', 'proxymatch' or 'locationmatch'. If you set `provider` to 'directorymatch', it uses the keyword 'DirectoryMatch' in the Apache config file.
 
 General `directories` usage looks something like
 
@@ -3173,6 +3173,10 @@ Sets the [SSLVerifyDepth](http://httpd.apache.org/docs/current/mod/mod_ssl.html#
       ssl_verify_depth => 1,
     }
 ~~~
+
+##### `ssl_proxy_verify`
+
+Sets the [SSLProxyVerify](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxyverify) directive, which configures certificate verification of the remote server when a proxy is configured to forward requests to a remote SSL server.  Defaults to 'undef'.
 
 ##### `ssl_proxy_machine_cert`
 

@@ -1,3 +1,8 @@
+## Supported Release 1.3.1
+###Summary
+
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
 ## 2015-07-15 - Supported Release 1.3.0
 ### Summary
 This release adds puppet 4 support, and adds the ability to specify the order
