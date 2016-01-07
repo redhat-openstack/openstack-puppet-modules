@@ -18,7 +18,7 @@ describe 'manila::db' do
 
     context 'with specific parameters' do
       let :params do
-        { :database_connection     => 'mysql://manila:manila@localhost/manila',
+        { :database_connection     => 'mysql+pymysql://manila:manila@localhost/manila',
           :database_idle_timeout   => '3601',
           :database_min_pool_size  => '2',
           :database_max_pool_size  => '21',
@@ -27,7 +27,7 @@ describe 'manila::db' do
           :database_retry_interval => '11', }
       end
 
-      it { is_expected.to contain_manila_config('database/connection').with_value('mysql://manila:manila@localhost/manila').with_secret(true) }
+      it { is_expected.to contain_manila_config('database/connection').with_value('mysql+pymysql://manila:manila@localhost/manila').with_secret(true) }
       it { is_expected.to contain_manila_config('database/idle_timeout').with_value('3601') }
       it { is_expected.to contain_manila_config('database/min_pool_size').with_value('2') }
       it { is_expected.to contain_manila_config('database/max_retries').with_value('11') }
@@ -35,6 +35,14 @@ describe 'manila::db' do
       it { is_expected.to contain_manila_config('database/max_overflow').with_value('21') }
       it { is_expected.to contain_manila_config('database/retry_interval').with_value('11') }
 
+    end
+
+    context 'with MySQL-python library as backend package' do
+      let :params do
+        { :database_connection => 'mysql://manila:manila@localhost/manila' }
+      end
+
+      it { is_expected.to contain_manila_config('database/connection').with_value('mysql://manila:manila@localhost/manila').with_secret(true) }
     end
 
     context 'with postgresql backend' do
@@ -56,6 +64,14 @@ describe 'manila::db' do
       it_raises 'a Puppet::Error', /validate_re/
     end
 
+    context 'with incorrect database_connection string' do
+      let :params do
+        { :database_connection     => 'foo+pymysql://manila:manila@localhost/manila', }
+      end
+
+      it_raises 'a Puppet::Error', /validate_re/
+    end
+
   end
 
   context 'on Debian platforms' do
@@ -67,6 +83,14 @@ describe 'manila::db' do
     end
 
     it_configures 'manila::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://manila:manila@localhost/manila' }
+      end
+
+      it { is_expected.to contain_package('manila-backend-package').with({ :ensure => 'present', :name => 'python-pymysql' }) }
+    end
   end
 
   context 'on Redhat platforms' do
@@ -77,6 +101,14 @@ describe 'manila::db' do
     end
 
     it_configures 'manila::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://manila:manila@localhost/manila' }
+      end
+
+      it { is_expected.not_to contain_package('manila-backend-package') }
+    end
   end
 
 end

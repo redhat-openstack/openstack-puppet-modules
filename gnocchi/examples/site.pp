@@ -25,3 +25,5 @@ class { '::gnocchi::statsd':
   archive_policy_name => 'high',
   flush_delay         => '100',
 }
+
+include ::gnocchi::client

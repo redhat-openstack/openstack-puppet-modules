@@ -2,6 +2,18 @@
 #
 # == Parameters
 #
+# [*resource_id*]
+#   (required) Resource UUID to use to identify statsd in Gnocchi.
+#
+# [*user_id*]
+#   (required) User UUID to use to identify statsd in Gnocchi.
+#
+# [*project_id*]
+#   (required) Project UUID to use to identify statsd in Gnocchi.
+#
+# [*flush_delay*]
+#   (required) Delay between flushes.
+#
 # [*enabled*]
 #   (optional) Should the service be enabled.
 #   Defaults to true
@@ -14,24 +26,8 @@
 #   (optional) Whether the service should be managed by Puppet.
 #   Defaults to true.
 #
-# [*resource_id*]
-#   (optional) Resource UUID to use to identify statsd in Gnocchi.
-#   Defaults to undef.
-#
-# [*user_id*]
-#   (optional) User UUID to use to identify statsd in Gnocchi.
-#   Defaults to undef.
-#
-# [*project_id*]
-#   (optional) Project UUID to use to identify statsd in Gnocchi.
-#   Defaults to undef.
-#
 # [*archive_policy_name*]
 #   (optional) Archive policy name to use when creating metrics.
-#   Defaults to undef.
-#
-# [*flush_delay*]
-#   (optional) Delay between flushes.
 #   Defaults to undef.
 #
 class gnocchi::statsd (

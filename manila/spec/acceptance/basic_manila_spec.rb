@@ -29,7 +29,7 @@ describe 'basic manila' do
 
       # Manila resources
       class { '::manila':
-        sql_connection      => 'mysql://manila:a_big_secret@127.0.0.1/manila?charset=utf8',
+        sql_connection      => 'mysql+pymysql://manila:a_big_secret@127.0.0.1/manila?charset=utf8',
         rabbit_userid       => 'manila',
         rabbit_password     => 'an_even_bigger_secret',
         rabbit_host         => '127.0.0.1',

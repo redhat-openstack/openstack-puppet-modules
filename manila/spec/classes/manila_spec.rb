@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'manila' do
   let :req_params do
-    {:rabbit_password => 'guest', :sql_connection => 'mysql://user:password@host/database'}
+    {:rabbit_password => 'guest', :sql_connection => 'mysql+pymysql://user:password@host/database'}
   end
 
   let :facts do
@@ -317,7 +317,7 @@ describe 'manila' do
 
     let :params do
       {
-        :sql_connection         => 'mysql://user:password@host/database',
+        :sql_connection         => 'mysql+pymysql://user:password@host/database',
         :rpc_backend            => 'zmq',
       }
     end
