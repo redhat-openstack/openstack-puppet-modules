@@ -23,11 +23,11 @@ class nova::vncproxy::common (
   $vncproxy_path     = undef,
 ) {
 
-  $vncproxy_host_real     = pick(
+  $vncproxy_host_real     = ipv6_add_bracket_maybe(pick(
     $vncproxy_host,
     $::nova::compute::vncproxy_host,
     $::nova::vncproxy::host,
-    false)
+    false))
   $vncproxy_protocol_real = pick(
     $vncproxy_protocol,
     $::nova::compute::vncproxy_protocol,
@@ -43,7 +43,6 @@ class nova::vncproxy::common (
     $::nova::compute::vncproxy_path,
     $::nova::vncproxy::vncproxy_path,
     '/vnc_auto.html')
-
   if ($vncproxy_host_real) {
     $vncproxy_base_url = "${vncproxy_protocol_real}://${vncproxy_host_real}:${vncproxy_port_real}${vncproxy_path_real}"
     # config for vnc proxy
