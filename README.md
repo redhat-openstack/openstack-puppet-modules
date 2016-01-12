@@ -33,3 +33,4 @@ to the commit message, push the branch and [initiate a pull request](https://hel
 
     git commit --amend
     git push --set-upstream origin collectd
+
