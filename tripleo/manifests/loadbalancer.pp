@@ -1060,21 +1060,23 @@ class tripleo::loadbalancer (
       ports             => '80',
       ipaddresses       => hiera('horizon_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
-      options           => ['check', 'inter 2000', 'rise 2', 'fall 5'],
+      options           => ["cookie ${::hostname}", 'check', 'inter 2000', 'rise 2', 'fall 5'],
     }
   }
 
   if $mysql_clustercheck {
     $mysql_listen_options = {
-        'option'      => [ 'tcpka', 'httpchk' ],
-        'timeout'     => [ 'client 0', 'server 0' ],
-        'stick-table' => 'type ip size 1000',
-        'stick'       => 'on dst',
+      'option'         => [ 'tcpka', 'httpchk' ],
+      'timeout client' => '90m',
+      'timeout server' => '90m',
+      'stick-table'    => 'type ip size 1000',
+      'stick'          => 'on dst',
     }
     $mysql_member_options = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup', 'port 9200', 'on-marked-down shutdown-sessions']
   } else {
     $mysql_listen_options = {
-        'timeout'     => [ 'client 0', 'server 0' ],
+      'timeout client' => '90m',
+      'timeout server' => '90m',
     }
     $mysql_member_options = ['check', 'inter 2000', 'rise 2', 'fall 5', 'backup']
   }

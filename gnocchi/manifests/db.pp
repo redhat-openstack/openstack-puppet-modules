@@ -22,14 +22,18 @@ class gnocchi::db (
   $database_connection_real = pick($::gnocchi::database_connection, $database_connection)
 
   validate_re($database_connection_real,
-    '(sqlite|mysql|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
+    '^(sqlite|mysql(\+pymysql)?|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
 
   if $database_connection_real {
     case $database_connection_real {
-      /^mysql:\/\//: {
-        $backend_package = false
+      /^mysql(\+pymysql)?:\/\//: {
         require 'mysql::bindings'
         require 'mysql::bindings::python'
+        if $database_connection_real =~ /^mysql\+pymysql/ {
+          $backend_package = $::gnocchi::params::pymysql_package_name
+        } else {
+          $backend_package = false
+        }
       }
       /^postgresql:\/\//: {
         $backend_package = false

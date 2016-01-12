@@ -188,10 +188,6 @@
 #   (optional) Syslog facility to receive log lines.
 #   Defaults to undef
 #
-# [*install_utilities*]
-#   (optional) Install nova utilities (Extra packages used by nova tools)
-#   Defaults to true,
-#
 # [*use_ssl*]
 #   (optional) Enable SSL on the API server
 #   Defaults to false, not set
@@ -296,6 +292,10 @@
 #  (optional) Sets a version cap for messages sent to scheduler services
 #  Defaults to undef
 #
+# [*use_ipv6*]
+#   (optional) Use IPv6 or not.
+#   Defaults to $::os_service_default
+#
 # DEPRECATED PARAMETERS
 #
 # [*qpid_hostname*]
@@ -328,6 +328,10 @@
 #
 # [*qpid_tcp_nodelay*]
 #   (optional) Disable Nagle algorithm
+#   Defaults to undef
+#
+# [*install_utilities*]
+#   (optional) Install nova utilities (Extra packages used by nova tools)
 #   Defaults to undef
 #
 class nova(
@@ -382,7 +386,6 @@ class nova(
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
-  $install_utilities                  = true,
   $notification_driver                = undef,
   $notification_topics                = 'notifications',
   $notify_api_faults                  = false,
@@ -398,6 +401,7 @@ class nova(
   $upgrade_level_intercell            = undef,
   $upgrade_level_network              = undef,
   $upgrade_level_scheduler            = undef,
+  $use_ipv6                           = $::os_service_default,
   # DEPRECATED PARAMETERS
   $qpid_hostname                      = undef,
   $qpid_port                          = undef,
@@ -407,6 +411,7 @@ class nova(
   $qpid_heartbeat                     = undef,
   $qpid_protocol                      = undef,
   $qpid_tcp_nodelay                   = undef,
+  $install_utilities                  = undef,
 ) inherits nova::params {
 
   include ::nova::deps
@@ -650,6 +655,7 @@ class nova(
     'DEFAULT/service_down_time':   value => $service_down_time;
     'DEFAULT/rootwrap_config':     value => $rootwrap_config;
     'DEFAULT/report_interval':     value => $report_interval;
+    'DEFAULT/use_ipv6':            value => $use_ipv6;
   }
 
   if $notify_on_state_change and $notify_on_state_change in ['vm_state', 'vm_and_task_state'] {

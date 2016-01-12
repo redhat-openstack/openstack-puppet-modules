@@ -15,6 +15,7 @@ class gnocchi::params {
       $client_package_name        = 'python-gnocchiclient'
       $gnocchi_wsgi_script_path   = '/var/www/cgi-bin/gnocchi'
       $gnocchi_wsgi_script_source = '/usr/lib/python2.7/site-packages/gnocchi/rest/app.wsgi'
+      $pymysql_package_name       = undef
     }
     'Debian': {
       $sqlite_package_name        = 'python-pysqlite2'
@@ -28,6 +29,7 @@ class gnocchi::params {
       $client_package_name        = 'python-gnocchiclient'
       $gnocchi_wsgi_script_path   = '/usr/lib/cgi-bin/gnocchi'
       $gnocchi_wsgi_script_source = '/usr/share/gnocchi-common/app.wsgi'
+      $pymysql_package_name       = 'python-pymysql'
     }
     default: {
       fail("Unsupported osfamily: ${::osfamily} operatingsystem")

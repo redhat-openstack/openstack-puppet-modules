@@ -18,10 +18,10 @@ describe 'gnocchi::db' do
 
     context 'with specific parameters' do
       let :params do
-        { :database_connection => 'mysql://gnocchi:gnocchi@localhost/gnocchi' }
+        { :database_connection => 'mysql+pymysql://gnocchi:gnocchi@localhost/gnocchi' }
       end
 
-      it { is_expected.to contain_gnocchi_config('indexer/url').with_value('mysql://gnocchi:gnocchi@localhost/gnocchi').with_secret(true) }
+      it { is_expected.to contain_gnocchi_config('indexer/url').with_value('mysql+pymysql://gnocchi:gnocchi@localhost/gnocchi').with_secret(true) }
 
     end
 
@@ -33,7 +33,14 @@ describe 'gnocchi::db' do
       it 'install the proper backend package' do
         is_expected.to contain_package('python-psycopg2').with(:ensure => 'present')
       end
+    end
 
+    context 'with MySQL-python library as backend package' do
+      let :params do
+        { :database_connection     => 'mysql://gnocchi:gnocchi@localhost/gnocchi', }
+      end
+
+      it { is_expected.to contain_package('python-mysqldb').with(:ensure => 'present') }
     end
 
     context 'with incorrect database_connection string' do
@@ -44,6 +51,13 @@ describe 'gnocchi::db' do
       it_raises 'a Puppet::Error', /validate_re/
     end
 
+    context 'with incorrect pymysql database_connection string' do
+      let :params do
+        { :database_connection     => 'foo+pymysql://gnocchi:gnocchi@localhost/gnocchi', }
+      end
+
+      it_raises 'a Puppet::Error', /validate_re/
+    end
   end
 
   context 'on Debian platforms' do
@@ -60,6 +74,20 @@ describe 'gnocchi::db' do
     end
 
     it_configures 'gnocchi::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://gnocchi:gnocchi@localhost/gnocchi', }
+      end
+
+      it 'install the proper backend package' do
+        is_expected.to contain_package('gnocchi-backend-package').with(
+          :ensure => 'present',
+          :name   => 'python-pymysql',
+          :tag    => 'openstack'
+        )
+      end
+    end
   end
 
   context 'on Redhat platforms' do
@@ -75,6 +103,14 @@ describe 'gnocchi::db' do
     end
 
     it_configures 'gnocchi::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection     => 'mysql+pymysql://gnocchi:gnocchi@localhost/gnocchi', }
+      end
+
+      it { is_expected.not_to contain_package('gnocchi-backend-package') }
+    end
   end
 
 end

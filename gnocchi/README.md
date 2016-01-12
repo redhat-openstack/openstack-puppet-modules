@@ -26,8 +26,12 @@ Setup
 
 **What the gnocchi module affects:**
 
-* gnocchi, the HTTP API to store metrics and index resources for OpenStack
+* [Gnocchi](http://docs.openstack.org/developer/gnocchi/), the HTTP API to store metrics and index resources for OpenStack
   (OpenStack Datapoint Service).
+
+### Installing gnocchi
+
+    puppet module install openstack/gnocchi
 
 Implementation
 --------------

@@ -59,13 +59,14 @@ describe 'nova' do
         is_expected.to contain_nova_config('DEFAULT/notification_driver').with_ensure('absent')
         is_expected.to contain_nova_config('DEFAULT/rootwrap_config').with_value('/etc/nova/rootwrap.conf')
         is_expected.to contain_nova_config('DEFAULT/report_interval').with_value('10')
+        is_expected.to contain_nova_config('DEFAULT/use_ipv6').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_nova_config('DEFAULT/os_region_name').with_ensure('absent')
         is_expected.to contain_nova_config('cinder/os_region_name').with_ensure('absent')
         is_expected.to contain_nova_config('cinder/catalog_info').with('value' => 'volumev2:cinderv2:publicURL')
       end
 
-      it 'installs utilities' do
-        is_expected.to contain_class('nova::utilities')
+      it 'does not install utilities' do
+        is_expected.to_not contain_class('nova::utilities')
       end
 
     end
@@ -90,12 +91,13 @@ describe 'nova' do
           :auth_strategy                      => 'foo',
           :ensure_package                     => '2012.1.1-15.el6',
           :memcached_servers                  => ['memcached01:11211', 'memcached02:11211'],
-          :install_utilities                  => false,
+          :install_utilities                  => true,
           :notification_driver                => 'ceilometer.compute.nova_notifier',
           :notification_topics                => 'openstack',
           :notify_api_faults                  => true,
           :report_interval                    => '60',
           :os_region_name                     => 'MyRegion',
+          :use_ipv6                           => true,
           :upgrade_level_cells                => '1.0.0',
           :upgrade_level_cert                 => '1.0.0',
           :upgrade_level_compute              => '1.0.0',
@@ -157,6 +159,7 @@ describe 'nova' do
         is_expected.to contain_nova_config('DEFAULT/notification_topics').with_value('openstack')
         is_expected.to contain_nova_config('DEFAULT/notify_api_faults').with_value(true)
         is_expected.to contain_nova_config('DEFAULT/report_interval').with_value('60')
+        is_expected.to contain_nova_config('DEFAULT/use_ipv6').with_value('true')
         is_expected.to contain_nova_config('cinder/os_region_name').with_value('MyRegion')
         is_expected.to contain_nova_config('DEFAULT/os_region_name').with_ensure('absent')
       end
@@ -169,8 +172,8 @@ describe 'nova' do
         ) }
       end
 
-      it 'does not install utilities' do
-        is_expected.to_not contain_class('nova::utilities')
+      it 'installs utilities' do
+        is_expected.to contain_class('nova::utilities')
       end
 
     end

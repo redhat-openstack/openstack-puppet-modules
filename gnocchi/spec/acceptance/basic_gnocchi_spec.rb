@@ -25,7 +25,7 @@ describe 'basic gnocchi' do
           class { '::gnocchi':
             verbose             => true,
             debug               => true,
-            database_connection => 'mysql://gnocchi:a_big_secret@127.0.0.1/gnocchi?charset=utf8',
+            database_connection => 'mysql+pymysql://gnocchi:a_big_secret@127.0.0.1/gnocchi?charset=utf8',
           }
           class { '::gnocchi::api':
             enabled               => true,
