@@ -22,5 +22,10 @@ Puppet::Type.newtype(:pcmk_constraint) do
     newparam(:score) do
         desc "Score"
     end
+    newparam(:master_slave) do
+        desc "Enable master/slave support with multistage"
+        newvalues(:true)
+        newvalues(:false)
+    end
 
 end

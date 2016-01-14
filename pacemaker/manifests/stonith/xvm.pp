@@ -36,15 +36,32 @@ class pacemaker::stonith::xvm(
         proto    => 'igmp',
         action   => 'accept',
       }
+      firewall { "003 fence_xvm ipv6":
+        proto    => 'igmp',
+        action   => 'accept',
+        provider => 'ip6tables',
+      }
       firewall { "004 fence_xvm":
         proto    => 'udp',
-        dport     => '1229',
+        dport    => '1229',
         action   => 'accept',
+      }
+      firewall { "004 fence_xvm ipv6":
+        proto    => 'udp',
+        dport    => '1229',
+        action   => 'accept',
+        provider => 'ip6tables',
       }
       firewall { "005 fence_xvm":
         proto    => 'tcp',
+        dport    => '1229',
+        action   => 'accept',
+      }
+      firewall { "005 fence_xvm ipv6":
+        proto    => 'tcp',
         dport     => '1229',
         action   => 'accept',
+        provider => 'ip6tables',
       }
     }
 
