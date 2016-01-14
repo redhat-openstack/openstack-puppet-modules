@@ -1,0 +1,9 @@
+Code-Review+2: Martin Magr <mmagr@redhat.com>
+Code-Review+2: Emilien Macchi <emilien@redhat.com>
+Code-Review+2: Jason Guiditta <jguiditt@redhat.com>
+Verified+1: Jason Guiditta <jguiditt@redhat.com>
+Submitted-by: Jason Guiditta <jguiditt@redhat.com>
+Submitted-at: Thu, 14 Jan 2016 15:41:50 +0100
+Reviewed-on: https://review.gerrithub.io/259797
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/kilo
