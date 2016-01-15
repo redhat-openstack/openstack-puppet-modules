@@ -130,6 +130,10 @@
 #   Enable dbsync
 #   Defaults to true
 #
+# [*ramdisk_collectors*]
+#   Comma-separated list of IPA inspection collectors
+#   Defaults to 'default'
+#
 class ironic::inspector (
   $package_ensure                  = 'present',
   $enabled                         = true,
@@ -159,6 +163,7 @@ class ironic::inspector (
   $dnsmasq_ip_range                = '192.168.0.100,192.168.0.120',
   $dnsmasq_local_ip                = '192.168.0.1',
   $sync_db                         = true,
+  $ramdisk_collectors              = 'default',
 ) {
 
   include ::ironic::params
@@ -169,15 +174,16 @@ class ironic::inspector (
     ensure  => 'present',
     require => Package['ironic-inspector'],
   }
+  file { '/tftpboot':
+    ensure  => 'directory',
+    seltype => 'tftpdir_t',
+  }
 
   if $pxe_transfer_protocol == 'tftp' {
     file { '/etc/ironic-inspector/dnsmasq.conf':
       ensure  => 'present',
       content => template('ironic/inspector_dnsmasq_tftp.erb'),
       require => Package['ironic-inspector'],
-    }
-    file { '/tftpboot':
-      ensure => 'directory',
     }
     file { '/tftpboot/pxelinux.cfg':
       ensure => 'directory',

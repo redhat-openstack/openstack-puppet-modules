@@ -71,7 +71,7 @@ mod 'git',
   :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
 
 mod 'glance',
-  :commit => '4c7c407fbd15977d81ca4df6309ad1a839ad59e1',
+  :commit => '66abdfea280a68edae92c291e194df542b5f64da',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gluster',
@@ -103,7 +103,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa-1.git'
 
 mod 'ironic',
-  :commit => '342cc10fb080a787d971f39df0901750996807d3',
+  :commit => 'd97c722fa3c147b9ab45f4837dc5ced4ea642d6b',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -163,11 +163,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '3908534c2d05a5040f6adf436f8f96a22be528bb',
+  :commit => 'ade5a77e9be344234ade6267e3beca4cd2556b43',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '972c4d6e76a539c59b2df78b25ca03859f2144bb',
+  :commit => '2ec3e65e34a35e1099e07b79546e5b4de43c014a',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -267,7 +267,7 @@ mod 'tripleo',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
-  :commit => 'e2e6b767f82989ce6e38b77c2f33b6fe7efe1b6d',
+  :commit => '78eaf20cb21e6ff29569701847b6d8d448e9dfe5',
   :git => 'https://github.com/openstack/puppet-trove'
 
 mod 'tuskar',
@@ -287,7 +287,7 @@ mod 'vlan',
   :git => 'https://github.com/derekhiggins/puppet-vlan.git'
 
 mod 'vswitch',
-  :commit => 'c374840910c823f7669cf2e1229c7df7192ae880',
+  :commit => '0abd9227ed509e5aa63aa52eba991e6bee13f67e',
   :git => 'https://github.com/openstack/puppet-vswitch.git'
 
 mod 'xinetd',
