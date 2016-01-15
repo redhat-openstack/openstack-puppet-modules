@@ -52,7 +52,7 @@ class apache::params inherits ::apache::version {
   } else {
     $verify_command = '/usr/sbin/apachectl -t'
   }
-  if $::osfamily == 'RedHat' or $::operatingsystem == 'amazon' {
+  if $::osfamily == 'RedHat' or $::operatingsystem =~ /^[Aa]mazon$/ {
     $user                 = 'apache'
     $group                = 'apache'
     $root_group           = 'root'
@@ -224,13 +224,20 @@ class apache::params inherits ::apache::version {
       'python'      => 'libapache2-mod-python',
       'rpaf'        => 'libapache2-mod-rpaf',
       'security'    => 'libapache2-modsecurity',
+      'shib2'       => 'libapache2-mod-shib2',
       'suphp'       => 'libapache2-mod-suphp',
       'wsgi'        => 'libapache2-mod-wsgi',
       'xsendfile'   => 'libapache2-mod-xsendfile',
       'shib2'       => 'libapache2-mod-shib2',
     }
+    if $::osfamily == 'Debian' and versioncmp($::operatingsystemrelease, '8') < 0 {
+      $shib2_lib = 'mod_shib_22.so'
+    } else {
+      $shib2_lib = 'mod_shib2.so'
+    }
     $mod_libs             = {
-      'php5' => 'libphp5.so',
+      'php5'  => 'libphp5.so',
+      'shib2' => $shib2_lib
     }
     $conf_template          = 'apache/httpd.conf.erb'
     $keepalive              = 'Off'

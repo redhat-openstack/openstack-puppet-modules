@@ -4,10 +4,20 @@ case fact('osfamily')
 when 'Debian'
   service_name = 'apache2'
   majrelease = fact('operatingsystemmajrelease')
-  if [ '6', '7', '10.04', '12.04'].include?(majrelease)
+  if ['6', '7', '10.04', '12.04'].include?(majrelease)
     variant = :itk_only
   else
     variant = :prefork
+  end
+when 'RedHat'
+  unless fact('operatingsystemmajrelease') == '5'
+    service_name = 'httpd'
+    majrelease = fact('operatingsystemmajrelease')
+    if ['6'].include?(majrelease)
+      variant = :itk_only
+    else
+      variant = :prefork
+    end
   end
 when 'FreeBSD'
   service_name = 'apache24'
@@ -43,6 +53,10 @@ describe 'apache::mod::itk class', :if => service_name do
 
   describe service(service_name) do
     it { is_expected.to be_running }
-    it { is_expected.to be_enabled }
+    if (fact('operatingsystem') == 'Debian' && fact('operatingsystemmajrelease') == '8')
+      pending 'Should be enabled - Bug 760616 on Debian 8'
+    else
+      it { should be_enabled }
+    end
   end
 end

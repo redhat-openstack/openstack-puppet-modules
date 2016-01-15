@@ -161,6 +161,7 @@
 [`mod_mpm_event`]: https://httpd.apache.org/docs/current/mod/event.html
 [`mod_negotiation`]: http://httpd.apache.org/docs/current/mod/mod_negotiation.html
 [`mod_pagespeed`]: https://developers.google.com/speed/pagespeed/module/?hl=en
+[`mod_passenger`]: https://www.phusionpassenger.com/library/config/apache/reference/
 [`mod_php`]: http://php.net/manual/en/book.apache.php
 [`mod_proxy`]: https://httpd.apache.org/docs/current/mod/mod_proxy.html
 [`mod_proxy_balancer`]: http://httpd.apache.org/docs/current/mod/mod_proxy_balancer.html
@@ -1002,6 +1003,7 @@ LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combine
 LogFormat "%h %l %u %t \"%r\" %>s %b" common
 LogFormat "%{Referer}i -> %U" referer
 LogFormat "%{User-agent}i" agent
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"" forwarded
 ~~~
 
 If your `log_formats` parameter contains one of those, it will be overwritten with **your** definition.
@@ -1266,7 +1268,7 @@ The following Apache modules have supported classes, many of which allow for par
 * `negotiation`
 * `nss`*
 * `pagespeed` (see [`apache::mod::pagespeed`][])
-* `passenger`*
+* `passenger`* (see [`apache::mod::passenger`][])
 * `perl`
 * `peruser`
 * `php` (requires [`mpm_module`][] set to `prefork`)
@@ -1480,6 +1482,18 @@ Installs and manages [`mod_info`][], which provides a comprehensive overview of 
 - `allow_from`: Whitelist of IPv4 or IPv6 addresses or ranges that can access `/server-info`. Valid options: One or more octets of an IPv4 address, an IPv6 address or range, or an array of either. Default: ['127.0.0.1','::1']
 - `apache_version`: Default: `$::apache::apache_version`,
 - `restrict_access`: Determines whether to enable access restrictions. If 'false', the `allow_from` whitelist is ignored and any IP address can access `/server-info`. Valid options: Boolean. Default: 'true'.
+
+##### Class: `apache::mod::passenger`
+
+Installs and manages [`mod_passenger`][].
+
+**Parameters within `apache::mod::passenger`**:
+- `passenger_high_performance` Sets the [`PassengerHighPerformance`](https://www.phusionpassenger.com/library/config/apache/reference/#passengerhighperformance). Valid options: on, off. Default: undef.
+- `passenger_pool_idle_time` Sets the [`PassengerPoolIdleTime`](https://www.phusionpassenger.com/library/config/apache/reference/#passengerpoolidletime). Default: undef
+- `passenger_max_pool_size` Sets the [`PassengerMaxPoolSize`](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxpoolsize). Default: undef.
+- `passenger_max_request_queue_size` Sets the [`PassengerMaxRequestQueueSize`](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequestqueuesize). Default: undef.
+- `passenger_max_requests` Sets the [`PassengerMaxRequests`](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequests). Default: undef.
+- ...
 
 ##### Class: `apache::mod::ldap`
 
@@ -2242,7 +2256,7 @@ Specifies the destination address of a [ProxyPass](http://httpd.apache.org/docs/
 
 ##### `proxy_pass`
 
-Specifies an array of `path => URI` for a [ProxyPass](http://httpd.apache.org/docs/current/mod/mod_proxy.html#proxypass) configuration. Defaults to 'undef'. Optionally parameters can be added as an array.
+Specifies an array of `path => URI` for a [ProxyPass](http://httpd.apache.org/docs/current/mod/mod_proxy.html#proxypass) configuration. Defaults to 'undef'. Optionally parameters and location options can be added as an array.
 
 ~~~ puppet
 apache::vhost { 'site.name.fdqn':
@@ -2251,6 +2265,8 @@ apache::vhost { 'site.name.fdqn':
     { 'path' => '/a', 'url' => 'http://backend-a/' },
     { 'path' => '/b', 'url' => 'http://backend-b/' },
     { 'path' => '/c', 'url' => 'http://backend-a/c', 'params' => {'max'=>20, 'ttl'=>120, 'retry'=>300}},
+    { 'path' => '/c', 'url' => 'http://backend-a/c',
+      'options' => {'Require'=>'valid-user', 'AuthType'=>'Kerberos', 'AuthName'=>'Kerberos Login'}},
     { 'path' => '/l', 'url' => 'http://backend-xy',
       'reverse_urls' => ['http://backend-x', 'http://backend-y'] },
     { 'path' => '/d', 'url' => 'http://backend-a/d',
@@ -3190,12 +3206,12 @@ Sets the [SSLProxyMachineCertificateFile](http://httpd.apache.org/docs/current/m
 ~~~
 
 ##### `ssl_proxy_check_peer_cn`
- 
+
 Sets the [SSLProxyMachinePeerCN](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxycheckpeercn) directive, which specified whether the remote server certificate's CN field is compared against the hostname of the request URL .  Defaults to 'undef'.
 
 
 ##### `ssl_proxy_check_peer_name`
- 
+
 Sets the [SSLProxyMachinePeerName](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxycheckpeername) directive, which specified whether the remote server certificate's CN field is compared against the hostname of the request URL .  Defaults to 'undef'.
 
 ##### `ssl_options`

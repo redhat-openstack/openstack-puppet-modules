@@ -32,19 +32,23 @@ define pacemaker::constraint::base (
     $_constraint_params = ""
   }
 
+  $first_resource_cleaned  = regsubst($first_resource, '(:)', '.', 'G')
+  $second_resource_cleaned = regsubst($second_resource, '(:)', '.', 'G')
+
   if($ensure == absent) {
     if($constraint_type == 'location') {
+      $name_cleaned = regsubst($name, '(:)', '.', 'G')
       exec { "Removing location constraint ${name}":
-        command => "/usr/sbin/pcs constraint location remove ${name}",
-        onlyif  => "/usr/sbin/pcs constraint location show --full | grep ${name}",
+        command => "/usr/sbin/pcs constraint location remove ${name_cleaned}",
+        onlyif  => "/usr/sbin/pcs constraint location show --full | grep ${name_cleaned}",
         require => Exec["wait-for-settle"],
         tries     => $tries,
         try_sleep => $try_sleep,
       }
     } else {
       exec { "Removing ${constraint_type} constraint ${name}":
-        command => "/usr/sbin/pcs constraint ${constraint_type} remove ${first_resource} ${second_resource}",
-        onlyif  => "/usr/sbin/pcs constraint ${constraint_type} show | grep ${first_resource} | grep ${second_resource}",
+        command => "/usr/sbin/pcs constraint ${constraint_type} remove ${first_resource_cleaned} ${second_resource_cleaned}",
+        onlyif  => "/usr/sbin/pcs constraint ${constraint_type} show | grep ${first_resource_cleaned} | grep ${second_resource_cleaned}",
         require => Exec["wait-for-settle"],
         tries     => $tries,
         try_sleep => $try_sleep,
@@ -55,8 +59,8 @@ define pacemaker::constraint::base (
       'colocation': {
         fail("Deprecated use pacemaker::constraint::colocation")
         exec { "Creating colocation constraint ${name}":
-          command => "/usr/sbin/pcs constraint colocation add ${first_resource} ${second_resource} ${score}",
-          unless  => "/usr/sbin/pcs constraint colocation show | grep ${first_resource} | grep ${second_resource} > /dev/null 2>&1",
+          command => "/usr/sbin/pcs constraint colocation add ${first_resource_cleaned} ${second_resource_cleaned} ${score}",
+          unless  => "/usr/sbin/pcs constraint colocation show | grep ${first_resource_cleaned} | grep ${second_resource_cleaned} > /dev/null 2>&1",
           require => [Exec["wait-for-settle"],Package["pcs"]],
           tries     => $tries,
           try_sleep => $try_sleep,
@@ -64,8 +68,8 @@ define pacemaker::constraint::base (
       }
       'order': {
         exec { "Creating order constraint ${name}":
-          command => "/usr/sbin/pcs constraint order ${first_action} ${first_resource} then ${second_action} ${second_resource} ${_constraint_params}",
-          unless  => "/usr/sbin/pcs constraint order show | grep ${first_resource} | grep ${second_resource} > /dev/null 2>&1",
+          command => "/usr/sbin/pcs constraint order ${first_action} ${first_resource_cleaned} then ${second_action} ${second_resource_cleaned} ${_constraint_params}",
+          unless  => "/usr/sbin/pcs constraint order show | grep ${first_resource_cleaned} | grep ${second_resource_cleaned} > /dev/null 2>&1",
           require => [Exec["wait-for-settle"],Package["pcs"]],
           tries     => $tries,
           try_sleep => $try_sleep,
@@ -74,8 +78,8 @@ define pacemaker::constraint::base (
       'location': {
         fail("Deprecated use pacemaker::constraint::location")
         exec { "Creating location constraint ${name}":
-          command => "/usr/sbin/pcs constraint location add ${name} ${first_resource} ${location} ${score}",
-          unless  => "/usr/sbin/pcs constraint location show | grep ${first_resource} > /dev/null 2>&1",
+          command => "/usr/sbin/pcs constraint location add ${name} ${first_resource_cleaned} ${location} ${score}",
+          unless  => "/usr/sbin/pcs constraint location show | grep ${first_resource_cleaned} > /dev/null 2>&1",
           require => [Exec["wait-for-settle"],Package["pcs"]],
           tries     => $tries,
           try_sleep => $try_sleep,

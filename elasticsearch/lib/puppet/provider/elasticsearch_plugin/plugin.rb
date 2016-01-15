@@ -73,12 +73,24 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
   def create
     es_version
     commands = []
-    commands << @resource[:proxy_args] if @resource[:proxy_args]
+    commands << @resource[:proxy_args].split(' ') if @resource[:proxy_args]
     commands << 'install'
     commands << install1x if is1x?
     commands << install2x if is2x?
+    debug("Commands: #{commands.inspect}")
     
-    plugin(commands)
+    retry_count = 3
+    retry_times = 0
+    begin
+      plugin(commands)
+    rescue Puppet::ExecutionFailure => e
+      retry_times += 1
+      debug("Failed to install plugin. Retrying... #{retry_times} of #{retry_count}")
+      sleep 2
+      retry if retry_times < retry_count
+      raise "Failed to install plugin. Received error: #{e.inspect}"
+    end
+
     writepluginfile
   end
 
@@ -89,9 +101,7 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
   def es_version
     return @es_version if @es_version
     begin
-      version = es('-v') # ES 1.x
-    rescue
-      version = es('--version') # ES 2.x
+      version = es('-version')
     rescue
       raise "Unknown ES version. Got #{version.inspect}"
     ensure
