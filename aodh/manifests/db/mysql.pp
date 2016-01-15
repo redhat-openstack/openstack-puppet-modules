@@ -1,7 +1,7 @@
 # The aodh::db::mysql class implements mysql backend for aodh
 #
 # This class can be used to create tables, users and grant
-# privelege for a mysql aodh database.
+# privileges for a mysql aodh database.
 #
 # == parameters
 #

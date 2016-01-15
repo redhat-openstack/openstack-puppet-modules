@@ -87,16 +87,7 @@ describe 'aodh::db' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      { :osfamily => 'Debian',
-        :operatingsystem => 'Debian',
-        :operatingsystemrelease => 'jessie',
-      }
-    end
-
-    it_configures 'aodh::db'
-
+  shared_examples_for 'aodh::db on Debian' do
     context 'with sqlite backend' do
       let :params do
         { :database_connection     => 'sqlite:///var/lib/aodh/aodh.sqlite', }
@@ -109,7 +100,6 @@ describe 'aodh::db' do
           :tag    => 'openstack'
         )
       end
-
     end
 
     context 'using pymysql driver' do
@@ -127,21 +117,31 @@ describe 'aodh::db' do
     end
   end
 
-  context 'on Redhat platforms' do
-    let :facts do
-      { :osfamily => 'RedHat',
-        :operatingsystemrelease => '7.1',
-      }
-    end
-
-    it_configures 'aodh::db'
-
+  shared_examples_for 'aodh::db on RedHat' do
     context 'using pymysql driver' do
       let :params do
         { :database_connection     => 'mysql+pymysql://aodh:aodh@localhost/aodh', }
       end
 
       it { is_expected.not_to contain_package('aodh-backend-package') }
+    end
+  end
+
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      case facts[:osfamily]
+      when 'Debian'
+        it_configures 'aodh::db on Debian'
+      when 'RedHat'
+        it_configures 'aodh::db on RedHat'
+      end
+      it_configures 'aodh::db'
     end
   end
 end

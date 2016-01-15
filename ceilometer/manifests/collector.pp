@@ -1,40 +1,43 @@
+# == Class: ceilometer::params
+#
 # Installs the ceilometer collector service
 #
-# == Params
-#  [*enabled*]
-#    (optional) Should the service be enabled.
-#    Defaults to true.
+# === Parameters:
 #
-#  [*manage_service*]
-#    (optional)  Whether the service should be managed by Puppet.
-#    Defaults to true.
+# [*enabled*]
+#   (Optional) Should the service be enabled.
+#   Defaults to true.
 #
-#  [*package_ensure*]
-#    (optional) ensure state for package.
-#    Defaults to 'present'
+# [*manage_service*]
+#   (Optional)  Whether the service should be managed by Puppet.
+#   Defaults to true.
 #
-#  [*udp_address*]
-#    (optional) the ceilometer collector udp bind address.
-#    Set it empty to disable the collector listener.
-#    Defaults to '0.0.0.0'
+# [*package_ensure*]
+#   (Optional) ensure state for package.
+#   Defaults to 'present'.
 #
-#  [*udp_port*]
-#    (optional) the ceilometer collector udp bind port.
-#    Defaults to '4952'
+# [*udp_address*]
+#   (Optional) the ceilometer collector udp bind address.
+#   Set it empty to disable the collector listener.
+#   Defaults to '0.0.0.0'.
 #
-#  [*meter_dispatcher*]
-#    (optional) dispatcher driver(s) to process meter data.
-#    Can be an array or a string.
-#    Defaults to 'database'
+# [*udp_port*]
+#   (Optional) the ceilometer collector udp bind port.
+#   Defaults to '4952'.
 #
-#  [*event_dispatcher*]
-#    (optional) dispatcher driver(s) to process event data.
-#    Can be an array or a string.
-#    Defaults to 'database'
+# [*meter_dispatcher*]
+#   (Optional) dispatcher driver(s) to process meter data.
+#   Can be an array or a string.
+#   Defaults to 'database'.
 #
-#  [*collector_workers*]
-#    (optional) Number of workers for collector service (integer value).
-#    Defaults to $::os_service_default
+# [*event_dispatcher*]
+#   (Optional) dispatcher driver(s) to process event data.
+#   Can be an array or a string.
+#   Defaults to 'database'.
+#
+# [*collector_workers*]
+#   (Optional) Number of workers for collector service (integer value).
+#   Defaults to $::os_service_default.
 #
 class ceilometer::collector (
   $manage_service    = true,
@@ -42,9 +45,9 @@ class ceilometer::collector (
   $package_ensure    = 'present',
   $udp_address       = '0.0.0.0',
   $udp_port          = '4952',
+  $collector_workers = $::os_service_default,
   $meter_dispatcher  = 'database',
   $event_dispatcher  = 'database',
-  $collector_workers = $::os_service_default,
 ) {
 
   include ::ceilometer::params
@@ -60,9 +63,9 @@ class ceilometer::collector (
   ceilometer_config {
     'collector/udp_address':     value => $udp_address;
     'collector/udp_port':        value => $udp_port;
+    'collector/workers':         value => $collector_workers;
     'DEFAULT/meter_dispatcher':  value => join(any2array($meter_dispatcher), ',');
     'DEFAULT/event_dispatcher':  value => join(any2array($event_dispatcher), ',');
-    'DEFAULT/collector_workers': value => $collector_workers;
   }
 
   Package[$::ceilometer::params::collector_package_name] -> Service['ceilometer-collector']

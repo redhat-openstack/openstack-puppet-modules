@@ -71,29 +71,26 @@ describe 'aodh::notifier' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({ :osfamily => 'Debian' })
-    end
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
 
-    let :platform_params do
-      { :notifier_package_name => 'aodh-notifier',
-        :notifier_service_name => 'aodh-notifier' }
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :notifier_package_name => 'aodh-notifier',
+            :notifier_service_name => 'aodh-notifier' }
+        when 'RedHat'
+          { :notifier_package_name => 'openstack-aodh-notifier',
+            :notifier_service_name => 'openstack-aodh-notifier' }
+        end
+      end
+      it_configures 'aodh-notifier'
     end
-
-    it_configures 'aodh-notifier'
   end
 
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({ :osfamily => 'RedHat' })
-    end
-
-    let :platform_params do
-      { :notifier_package_name => 'openstack-aodh-notifier',
-        :notifier_service_name => 'openstack-aodh-notifier' }
-    end
-
-    it_configures 'aodh-notifier'
-  end
 end
