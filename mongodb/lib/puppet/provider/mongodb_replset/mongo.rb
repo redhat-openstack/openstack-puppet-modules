@@ -113,6 +113,22 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider:
     file
   end
 
+  def self.ipv6_is_enabled
+    file = get_mongod_conf_file
+    config = YAML.load_file(file)
+    if config.kind_of?(Hash)
+      ipv6 = config['net.ipv6']
+    else # It has to be a key-value store
+      config = {}
+      File.readlines(file).collect do |line|
+        k,v = line.split('=')
+        config[k.rstrip] = v.lstrip.chomp if k and v
+      end
+      ipv6 = config['ipv6']
+    end
+    ipv6
+  end
+
   def self.get_replset_properties
 
     conn_string = get_conn_string
@@ -229,11 +245,13 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider:
   end
 
   def self.mongo_command(command, host=nil, retries=4)
+    has_ipv6 = ipv6_is_enabled
     # Allow waiting for mongod to become ready
     # Wait for 2 seconds initially and double the delay at each retry
     wait = 2
     begin
       args = Array.new
+      args << '--ipv6' if has_ipv6
       args << '--quiet'
       args << ['--host',host] if host
       args << ['--eval',"printjson(#{command})"]
