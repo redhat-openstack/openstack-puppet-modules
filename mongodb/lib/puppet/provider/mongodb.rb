@@ -80,7 +80,11 @@ class Puppet::Provider::Mongodb < Puppet::Provider
         cmd = mongorc_file + cmd
     end
 
-    out = mongo([db, '--quiet', '--host', get_conn_string, '--eval', cmd])
+    if ipv6_is_enabled
+      out = mongo([db, '--quiet', '--ipv6', '--host', get_conn_string, '--eval', cmd])
+    else
+      out = mongo([db, '--quiet', '--host', get_conn_string, '--eval', cmd])
+    end
 
     out.gsub!(/ObjectId\(([^)]*)\)/, '\1')
     out
