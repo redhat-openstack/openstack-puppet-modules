@@ -119,7 +119,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => 'def536208d70b70171a8f6b5797077b0638abde9',
+  :commit => 'eed17a8460994382c14c2573e311c528fe3bd761',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -263,7 +263,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => '8ebfc67734b6525f9a03aad9617d367d68780dac',
+  :commit => 'e40d5282833ddfa2c700044440b7c96101736453',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
@@ -287,7 +287,7 @@ mod 'vlan',
   :git => 'https://github.com/derekhiggins/puppet-vlan.git'
 
 mod 'vswitch',
-  :commit => '0abd9227ed509e5aa63aa52eba991e6bee13f67e',
+  :commit => '906abc6dd77218e8734a9e7c6101beb951d4d627',
   :git => 'https://github.com/openstack/puppet-vswitch.git'
 
 mod 'xinetd',
