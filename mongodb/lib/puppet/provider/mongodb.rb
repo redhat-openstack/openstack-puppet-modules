@@ -28,6 +28,30 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     file
   end
 
+  def self.ipv6_is_enabled
+    file = get_mongod_conf_file
+    config = YAML.load_file(file)
+    if config.kind_of?(Hash)
+      ipv6 = config['net.ipv6']
+    else # It has to be a key-value store
+      config = {}
+      File.readlines(file).collect do |line|
+        k,v = line.split('=')
+        config[k.rstrip] = v.lstrip.chomp if k and v
+      end
+      ipv6 = config['ipv6']
+    end
+    ipv6
+  end
+
+  def self.mongo_cmd(db, host, cmd)
+    if ipv6_is_enabled
+      out = mongo([db, '--quiet', '--ipv6', '--host', host, '--eval', cmd])
+    else
+      out = mongo([db, '--quiet', '--host', host, '--eval', cmd])
+    end
+  end
+
   def self.get_conn_string
     file = get_mongod_conf_file
     # The mongo conf is probably a key-value store, even though 2.6 is
@@ -55,8 +79,11 @@ class Puppet::Provider::Mongodb < Puppet::Provider
 
     if bindip
       first_ip_in_list = bindip.split(',').first
-      if first_ip_in_list.eql? '0.0.0.0'
+      case first_ip_in_list
+      when '0.0.0.0'
         ip_real = '127.0.0.1'
+      when /\[?::0\]?/
+        ip_real = '::1'
       else
         ip_real = first_ip_in_list
       end
@@ -80,7 +107,8 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     if mongorc_file
         cmd_ismaster = mongorc_file + cmd_ismaster
     end
-    out = mongo(['admin', '--quiet', '--host', get_conn_string, '--eval', cmd_ismaster])
+    db = 'admin'
+    out = mongo_cmd(db, get_conn_string, cmd_ismaster)
     out.gsub!(/ObjectId\(([^)]*)\)/, '\1')
     out.gsub!(/ISODate\((.+?)\)/, '\1 ')
     out.gsub!(/^Error\:.+/, '')
@@ -122,9 +150,9 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     retry_count.times do |n|
       begin
         if host
-          out = mongo([db, '--quiet', '--host', host, '--eval', cmd])
+          out = mongo_cmd(db, host, cmd)
         else
-          out = mongo([db, '--quiet', '--host', get_conn_string, '--eval', cmd])
+          out = mongo_cmd(db, get_conn_string, cmd)
         end
       rescue => e
         Puppet.debug "Request failed: '#{e.message}' Retry: '#{n}'"
