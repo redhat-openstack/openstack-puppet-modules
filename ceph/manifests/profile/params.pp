@@ -38,6 +38,9 @@
 #   individually through ceph::mon.
 #   Optional. String like e.g. 'a, b, c'.
 #
+# [*ms_bind_ipv6*] Enables Ceph daemons to bind to IPv6 addresses.
+#   Optional. Boolean. Default provided by Ceph.
+#
 # [*osd_pool_default_pg_num*] The default number of PGs per pool.
 #   Optional. Integer. Default provided by Ceph.
 #
@@ -95,6 +98,7 @@ class ceph::profile::params (
   $authentication_type = undef,
   $mon_initial_members = undef,
   $mon_host = undef,
+  $ms_bind_ipv6 = undef,
   $osd_pool_default_pg_num = undef,
   $osd_pool_default_pgp_num = undef,
   $osd_pool_default_size = undef,
