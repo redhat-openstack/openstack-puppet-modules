@@ -31,6 +31,11 @@ class neutron::params {
     # Add templated Cisco Nexus ML2 config to confdir
     $cisco_ml2_mech_cisco_nexus_config_file = '/etc/neutron/conf.d/neutron-server/ml2_mech_cisco_nexus.conf'
 
+    $bigswitch_lldp_package                 = 'python-networking-bigswitch-lldp'
+    $bigswitch_agent_package                = 'python-networking-bigswitch-agent'
+    $bigswitch_lldp_service                 = 'neutron-bsn-lldp'
+    $bigswitch_agent_service                = 'neutron-bsn-agent'
+
     $opencontrail_plugin_package = 'neutron-plugin-contrail'
     $opencontrail_config_file    = '/etc/neutron/plugins/opencontrail/ContrailPlugin.ini'
 
