@@ -19,7 +19,7 @@ mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => 'd387b0725f8eb01f2e9b572f7e3c22d5e00c67d9',
+  :commit => '45c81859a5ff37c6cbbce0d260801e9f25354515',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',

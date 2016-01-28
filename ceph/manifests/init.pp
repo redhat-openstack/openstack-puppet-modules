@@ -71,6 +71,9 @@
 #   individually through ceph::mon.
 #   Optional. String like e.g. 'a, b, c'.
 #
+# [*ms_bind_ipv6*] Enables Ceph daemons to bind to IPv6 addresses.
+#   Optional. Boolean. Default provided by Ceph.
+#
 # [*require_signatures*] If Ceph requires signatures on all
 #   message traffic (client<->cluster and between cluster daemons).
 #   Optional. Boolean. Default provided by Ceph.
@@ -92,6 +95,9 @@
 # [*public_network*] The address of the public network.
 #   Optional. {public-network-ip/netmask}
 #
+# [*public_addr*] The address of the node (on public network.)
+#   Optional. {public-network-ip}
+#
 class ceph (
   $fsid,
   $ensure                     = present,
@@ -107,12 +113,14 @@ class ceph (
   $mon_osd_nearfull_ratio     = undef,
   $mon_initial_members        = undef,
   $mon_host                   = undef,
+  $ms_bind_ipv6               = undef,
   $require_signatures         = undef,
   $cluster_require_signatures = undef,
   $service_require_signatures = undef,
   $sign_messages              = undef,
   $cluster_network            = undef,
   $public_network             = undef,
+  $public_addr                = undef,
 ) {
   include ::ceph::params
 
@@ -137,12 +145,14 @@ class ceph (
       'global/mon_osd_nearfull_ratio':      value => $mon_osd_nearfull_ratio;
       'global/mon_initial_members':         value => $mon_initial_members;
       'global/mon_host':                    value => $mon_host;
+      'global/ms_bind_ipv6':                value => $ms_bind_ipv6;
       'global/require_signatures':          value => $require_signatures;
       'global/cluster_require_signatures':  value => $cluster_require_signatures;
       'global/service_require_signatures':  value => $service_require_signatures;
       'global/sign_messages':               value => $sign_messages;
       'global/cluster_network':             value => $cluster_network;
       'global/public_network':              value => $public_network;
+      'global/public_addr':                 value => $public_addr;
       'osd/osd_journal_size':               value => $osd_journal_size;
     }
 

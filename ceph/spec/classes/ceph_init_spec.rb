@@ -41,12 +41,14 @@ describe 'ceph' do
       it { is_expected.to_not contain_ceph_config('global/mon_osd_nearfull_ratio').with_value('85') }
       it { is_expected.to_not contain_ceph_config('global/mon_initial_members').with_value('mon.01') }
       it { is_expected.to_not contain_ceph_config('global/mon_host').with_value('mon01.ceph, mon02.ceph') }
+      it { is_expected.to_not contain_ceph_config('global/ms_bind_ipv6').with_value('false') }
       it { is_expected.to_not contain_ceph_config('global/require_signatures').with_value('false') }
       it { is_expected.to_not contain_ceph_config('global/cluster_require_signatures').with_value('false') }
       it { is_expected.to_not contain_ceph_config('global/service_require_signatures').with_value('false') }
       it { is_expected.to_not contain_ceph_config('global/sign_messages').with_value('true') }
       it { is_expected.to_not contain_ceph_config('global/cluster_network').with_value('10.0.0.0/24') }
       it { is_expected.to_not contain_ceph_config('global/public_network').with_value('192.168.0.0/24') }
+      it { is_expected.to_not contain_ceph_config('global/public_addr').with_value('192.168.0.2') }
       it { is_expected.to_not contain_ceph_config('osd/osd_journal_size').with_value('4096') }
       it { is_expected.to contain_ceph_config('global/auth_cluster_required').with_value('cephx') }
       it { is_expected.to contain_ceph_config('global/auth_service_required').with_value('cephx') }
@@ -74,12 +76,14 @@ describe 'ceph' do
           :mon_osd_nearfull_ratio     => '90',
           :mon_initial_members        => 'mon.01',
           :mon_host                   => 'mon01.ceph, mon02.ceph',
+          :ms_bind_ipv6               => 'true',
           :require_signatures         => 'true',
           :cluster_require_signatures => 'true',
           :service_require_signatures => 'true',
           :sign_messages              => 'false',
           :cluster_network            => '10.0.0.0/24',
           :public_network             => '192.168.0.0/24',
+          :public_addr                => '192.168.0.2',
         }
       end
 
@@ -98,12 +102,14 @@ describe 'ceph' do
       it { is_expected.to contain_ceph_config('global/mon_osd_nearfull_ratio').with_value('90') }
       it { is_expected.to contain_ceph_config('global/mon_initial_members').with_value('mon.01') }
       it { is_expected.to contain_ceph_config('global/mon_host').with_value('mon01.ceph, mon02.ceph') }
+      it { is_expected.to contain_ceph_config('global/ms_bind_ipv6').with_value('true') }
       it { is_expected.to contain_ceph_config('global/require_signatures').with_value('true') }
       it { is_expected.to contain_ceph_config('global/cluster_require_signatures').with_value('true') }
       it { is_expected.to contain_ceph_config('global/service_require_signatures').with_value('true') }
       it { is_expected.to contain_ceph_config('global/sign_messages').with_value('false') }
       it { is_expected.to contain_ceph_config('global/cluster_network').with_value('10.0.0.0/24') }
       it { is_expected.to contain_ceph_config('global/public_network').with_value('192.168.0.0/24') }
+      it { is_expected.to contain_ceph_config('global/public_addr').with_value('192.168.0.2') }
       it { is_expected.to contain_ceph_config('osd/osd_journal_size').with_value('1024') }
       it { is_expected.to_not contain_ceph_config('global/auth_cluster_required').with_value('cephx') }
       it { is_expected.to_not contain_ceph_config('global/auth_service_required').with_value('cephx') }
