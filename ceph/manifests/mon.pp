@@ -51,6 +51,9 @@
 # [*keyring*] Path of the [mon.] keyring file
 #   Optional. $key and $keyring are mutually exclusive.
 #
+# [*exec_timeout*] The default exec resource timeout, in seconds
+#   Optional. Defaults to $::ceph::params::exec_timeout
+#
 define ceph::mon (
   $ensure = present,
   $public_addr = undef,
@@ -58,6 +61,7 @@ define ceph::mon (
   $authentication_type = 'cephx',
   $key = undef,
   $keyring  = undef,
+  $exec_timeout = $::ceph::params::exec_timeout,
   ) {
 
     # a puppet name translates into a ceph id, the meaning is different
@@ -133,6 +137,9 @@ define ceph::mon (
         command => "/bin/true # comment to satisfy puppet syntax requirements
 set -ex
 touch /etc/ceph/${cluster_name}.client.admin.keyring",
+        unless  => "/bin/true # comment to satisfy puppet syntax requirements
+set -ex
+test -e /etc/ceph/${cluster_name}.client.admin.keyring",
       }
       ->
       exec { $ceph_mkfs:
@@ -152,13 +159,18 @@ if [ ! -d \$mon_data ] ; then
   fi
 fi
 ",
+        unless    => "/bin/true # comment to satisfy puppet syntax requirements
+set -ex
+mon_data=\$(ceph-mon ${cluster_option} --id ${id} --show-config-value mon_data)
+test -d  \$mon_data
+",
         logoutput => true,
+        timeout   => $exec_timeout,
       }
       ->
       service { $mon_service:
         ensure => running,
       }
-
 
       if $authentication_type == 'cephx' {
         if $key {
@@ -166,6 +178,10 @@ fi
 
           exec { "rm-keyring-${id}":
             command => "/bin/rm ${keyring_path}",
+            unless  => "/bin/true # comment to satisfy puppet syntax requirements
+set -ex
+test ! -e ${keyring_path}
+",
           }
         }
       }
@@ -188,6 +204,7 @@ mon_data=\$(ceph-mon ${cluster_option} --id ${id} --show-config-value mon_data)
 test ! -d \$mon_data
 ",
         logoutput => true,
+        timeout   => $exec_timeout,
       } -> Package<| tag == 'ceph' |>
     }
   }
