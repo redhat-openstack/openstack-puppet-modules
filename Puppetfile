@@ -103,7 +103,7 @@ mod 'ipa',
   :git => 'https://github.com/xbezdick/puppet-ipa-1.git'
 
 mod 'ironic',
-  :commit => 'd97c722fa3c147b9ab45f4837dc5ced4ea642d6b',
+  :commit => '92ba5d6f7be0f1a24664888f4a8767ab3ab9e703',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -219,7 +219,7 @@ mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync.git'
 
 mod 'sahara',
-  :commit => '64774e9cf344f897163b49afcb725ccc62689610',
+  :commit => '64a98ee7f6d89c4705762b26ac59796a430b451c',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
 mod 'sensu',
