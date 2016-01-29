@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_899fce4f",
+        "filename": "BUILDING.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1005155
+      },
+      "writtenOn": "2016-01-29T21:01:17Z",
+      "side": 1,
+      "message": "I wonder, instead of rebasing here, should we just be cherry-picking over the commits from upstream-liberty/master?  Just want to make sure the way we are doing it now is definitely what we want here.",
+      "revId": "d28d11d417003f0b851565dcc1c9aba6b520151f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
