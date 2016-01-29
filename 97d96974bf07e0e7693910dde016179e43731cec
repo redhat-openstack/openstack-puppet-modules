@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_2b0eda34",
+        "filename": "BUILDING.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003044
+      },
+      "writtenOn": "2016-01-29T08:36:48Z",
+      "side": 1,
+      "message": "Trailing whitespace.",
+      "revId": "97d96974bf07e0e7693910dde016179e43731cec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_4b14ee43",
+        "filename": "BUILDING.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003044
+      },
+      "writtenOn": "2016-01-29T08:36:48Z",
+      "side": 1,
+      "message": "here too.",
+      "revId": "97d96974bf07e0e7693910dde016179e43731cec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_6b0ff22e",
+        "filename": "BUILDING.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003044
+      },
+      "writtenOn": "2016-01-29T08:36:48Z",
+      "side": 1,
+      "message": "here too.",
+      "revId": "97d96974bf07e0e7693910dde016179e43731cec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_0b0bd625",
+        "filename": "CONTRIBUTING.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1003044
+      },
+      "writtenOn": "2016-01-29T08:36:48Z",
+      "side": 1,
+      "message": "Trailing whitespace here.",
+      "revId": "97d96974bf07e0e7693910dde016179e43731cec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
