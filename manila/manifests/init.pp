@@ -76,6 +76,10 @@
 #   (Optional) Virtual_host to use.
 #   Defaults to '/'
 #
+# [*rabbit_ha_queues*]
+#   (optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef
+#
 # [*rabbit_use_ssl*]
 #   (Optional) Connect over SSL for RabbitMQ.
 #   Defaults to false
@@ -278,10 +282,11 @@ class manila (
   $notification_driver         = 'messaging',
   $rabbit_host                 = '127.0.0.1',
   $rabbit_port                 = 5672,
-  $rabbit_hosts                = false,
+  $rabbit_hosts                = undef,
   $rabbit_virtual_host         = '/',
   $rabbit_userid               = 'guest',
   $rabbit_password             = false,
+  $rabbit_ha_queues            = undef,
   $rabbit_use_ssl              = false,
   $kombu_ssl_ca_certs          = undef,
   $kombu_ssl_certfile          = undef,
@@ -402,12 +407,20 @@ class manila (
 
     if $rabbit_hosts {
       manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => join($rabbit_hosts, ',') }
-      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
     } else {
       manila_config { 'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host }
       manila_config { 'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port }
       manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
-      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+    }
+
+    if $rabbit_ha_queues == undef {
+      if size($rabbit_hosts) > 1 {
+        manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+      } else {
+        manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
     }
 
     if $rabbit_use_ssl {

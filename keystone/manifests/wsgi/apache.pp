@@ -29,6 +29,10 @@
 #     The host/ip address Apache will listen on.
 #     Optional. Defaults to undef (listen on all ip addresses).
 #
+#   [*admin_bind_host*]
+#     The host/ip address Apache will listen on for admin API connections.
+#     Optional. Defaults to undef or bind_host if only that setting is used.
+#
 #   [*public_path*]
 #     The prefix for the public endpoint.
 #     Optional. Defaults to '/'
@@ -107,6 +111,10 @@
 #     directives to be placed at the end of the vhost configuration.
 #     Defaults to undef.
 #
+#   [*wsgi_chunked_request*]
+#     (optional) apache::vhost wsgi_chunked_request parameter.
+#     Defaults to undef
+#
 # == Dependencies
 #
 #   requires Class['apache'] & Class['keystone']
@@ -135,6 +143,7 @@ class keystone::wsgi::apache (
   $public_port             = 5000,
   $admin_port              = 35357,
   $bind_host               = undef,
+  $admin_bind_host         = undef,
   $public_path             = '/',
   $admin_path              = '/',
   $ssl                     = true,
@@ -152,6 +161,7 @@ class keystone::wsgi::apache (
   $wsgi_script_source      = undef,
   $wsgi_application_group  = '%{GLOBAL}',
   $wsgi_pass_authorization = 'On',
+  $wsgi_chunked_request    = undef,
 
   $access_log_format     = false,
   $vhost_custom_fragment = undef,
@@ -246,6 +256,13 @@ class keystone::wsgi::apache (
     $wsgi_script_aliases_main_real = $wsgi_script_aliases_main
   }
 
+  if $admin_bind_host {
+    $real_admin_bind_host = $admin_bind_host
+  } else {
+    # backwards compat before we had admin_bind_host
+    $real_admin_bind_host = $bind_host
+  }
+
   ::apache::vhost { 'keystone_wsgi_main':
     ensure                      => 'present',
     servername                  => $servername,
@@ -270,6 +287,7 @@ class keystone::wsgi::apache (
     wsgi_application_group      => $wsgi_application_group,
     wsgi_pass_authorization     => $wsgi_pass_authorization,
     custom_fragment             => $vhost_custom_fragment,
+    wsgi_chunked_request        => $wsgi_chunked_request,
     require                     => File['keystone_wsgi_main'],
     access_log_format           => $access_log_format,
   }
@@ -278,7 +296,7 @@ class keystone::wsgi::apache (
     ::apache::vhost { 'keystone_wsgi_admin':
       ensure                      => 'present',
       servername                  => $servername,
-      ip                          => $bind_host,
+      ip                          => $real_admin_bind_host,
       port                        => $admin_port,
       docroot                     => $::keystone::params::keystone_wsgi_script_path,
       docroot_owner               => 'keystone',
@@ -299,6 +317,7 @@ class keystone::wsgi::apache (
       wsgi_application_group      => $wsgi_application_group,
       wsgi_pass_authorization     => $wsgi_pass_authorization,
       custom_fragment             => $vhost_custom_fragment,
+      wsgi_chunked_request        => $wsgi_chunked_request,
       require                     => File['keystone_wsgi_admin'],
       access_log_format           => $access_log_format,
     }

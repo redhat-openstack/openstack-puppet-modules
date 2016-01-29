@@ -197,6 +197,13 @@
 #   by the user executing the agent
 #   Defaults to: $::cinder::params::lock_path
 #
+# [*image_conversion_dir*]
+#   (optional) Location to store temporary image files if the volume
+#   driver does not write them directly to the volume and the volume conversion
+#   needs to be performed. This parameter replaces the
+#   'cinder::backend::rdb::volume_tmp_dir' parameter.
+#   Defaults to $::os_service_default
+#
 # === Deprecated Parameters
 #
 # [*qpid_hostname*]
@@ -291,6 +298,7 @@ class cinder (
   $enable_v1_api                      = true,
   $enable_v2_api                      = true,
   $lock_path                          = $::cinder::params::lock_path,
+  $image_conversion_dir               = $::os_service_default,
   # DEPRECATED PARAMETERS
   $qpid_hostname                      = undef,
   $qpid_port                          = undef,
@@ -372,7 +380,7 @@ class cinder (
   }
 
   if $rpc_backend == 'cinder.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
-    warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
+    warning('Qpid driver is removed from Oslo.messaging in the Mitaka release and puppet-cinder no longer attempts to configure it. All qpid related parameters will be removed from puppet-cinder in the N-release.')
   }
 
   if ! $default_availability_zone {
@@ -386,6 +394,7 @@ class cinder (
     'DEFAULT/rpc_backend':               value => $rpc_backend;
     'DEFAULT/storage_availability_zone': value => $storage_availability_zone;
     'DEFAULT/default_availability_zone': value => $default_availability_zone_real;
+    'DEFAULT/image_conversion_dir':      value => $image_conversion_dir;
   }
 
   # SSL Options

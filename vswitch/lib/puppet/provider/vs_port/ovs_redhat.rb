@@ -8,10 +8,10 @@ Puppet::Type.type(:vs_port).provide(
 
   desc 'Openvswitch port manipulation for RedHat OSes family'
 
-  self::BASE = '/etc/sysconfig/network-scripts/ifcfg-'
+  BASE ||= '/etc/sysconfig/network-scripts/ifcfg-'
 
   # When not seedling from interface file
-  self::DEFAULT = {
+  DEFAULT ||= {
     'ONBOOT'        => 'yes',
     'BOOTPROTO'     => 'dhcp',
     'PEERDNS'       => 'no',
@@ -26,6 +26,15 @@ Puppet::Type.type(:vs_port).provide(
   commands :ifdown => 'ifdown'
   commands :ifup   => 'ifup'
   commands :vsctl  => 'ovs-vsctl'
+
+  def initialize(value={})
+    super(value)
+    # Set interface property although it's not really
+    # supported on this provider. This ensures that all
+    # methodes inherited from the ovs provider work as
+    # expected.
+    @resource[:interface] = @resource[:port]
+  end
 
   def create
     unless vsctl('list-ports',

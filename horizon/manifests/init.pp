@@ -231,7 +231,7 @@
 #  [*api_versions*]
 #    (optional) A hash of parameters to set specific api versions.
 #    Example: api_versions => {'identity' => 3}
-#    Default to empty hash
+#    Default to 'identity' => 3
 #
 #  [*keystone_multidomain_support*]
 #    (optional) Enables multi-domain in horizon. When this is enabled, it will require user to enter
@@ -257,7 +257,7 @@
 #    Defaults to undef.
 #
 #  [*session_timeout*]
-#    (optional) The session timeout for horizon in seconds. After this manys seconds of inavtivity
+#    (optional) The session timeout for horizon in seconds. After this many seconds of inactivity
 #    the user is logged out.
 #    Defaults to 1800.
 #
@@ -316,7 +316,7 @@ class horizon(
   $tuskar_ui_deployment_mode           = 'scale',
   $custom_theme_path                   = undef,
   $redirect_type                       = 'permanent',
-  $api_versions                        = {},
+  $api_versions                        = {'identity' => '3'},
   $keystone_multidomain_support        = false,
   $keystone_default_domain             = undef,
   $image_backend                       = {},

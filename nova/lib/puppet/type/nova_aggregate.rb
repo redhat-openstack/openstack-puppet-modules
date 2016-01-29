@@ -80,6 +80,9 @@ Puppet::Type.newtype(:nova_aggregate) do
     desc 'The metadata of the aggregate'
     #convert DSL/string form to internal form which is a single hash
     munge do |value|
+      if value.is_a?(Hash)
+        return value
+      end
       internal = Hash.new
       value.split(",").map{|el| el.strip()}.each do |pair|
         key, value = pair.split("=", 2)
@@ -89,6 +92,9 @@ Puppet::Type.newtype(:nova_aggregate) do
     end
 
     validate do |value|
+      if value.is_a?(Hash)
+        return true
+      end
       value.split(",").each do |kv|
         raise ArgumentError, "Key/value pairs must be separated by an =" unless value.include?("=")
       end
@@ -99,7 +105,7 @@ Puppet::Type.newtype(:nova_aggregate) do
     desc 'Single host or comma seperated list of hosts'
     #convert DSL/string form to internal form
     munge do |value|
-      return value.split(",").map{|el| el.strip()}
+      return value.split(",").map{|el| el.strip()}.sort
     end
   end
 

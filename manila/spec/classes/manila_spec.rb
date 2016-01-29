@@ -116,6 +116,18 @@ describe 'manila' do
         :value => 'rabbit1:5672'
       )
       is_expected.to contain_manila_config('oslo_messaging_rabbit/rabbit_ha_queues').with(
+        :value => false
+      )
+    end
+  end
+
+  describe 'a single rabbit_host with enable ha queues' do
+    let :params do
+      req_params.merge({'rabbit_ha_queues' => true})
+    end
+
+    it 'should contain rabbit_ha_queues' do
+      is_expected.to contain_manila_config('oslo_messaging_rabbit/rabbit_ha_queues').with(
         :value => true
       )
     end

@@ -89,6 +89,10 @@
 #    (Optional) virtualhost to use.
 #    Defaults to '/'.
 #
+# [*rabbit_ha_queues*]
+#   (Optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef.
+#
 # [*rabbit_heartbeat_timeout_threshold*]
 #   (Optional) Number of seconds after which the RabbitMQ broker is considered
 #   down if the heartbeat keepalive fails.  Any value >0 enables heartbeats.
@@ -107,6 +111,10 @@
 #  [*rabbit_use_ssl*]
 #    (Optional) Connect over SSL for RabbitMQ
 #    Defaults to false.
+#
+#  [*amqp_durable_queues*]
+#    (optional) Define queues as "durable" to rabbitmq.
+#    Defaults to $::os_service_default
 #
 #  [*kombu_ssl_ca_certs*]
 #    (Optional) SSL certification authority file (valid only if SSL enabled).
@@ -167,8 +175,10 @@ class ceilometer(
   $rabbit_userid                      = 'guest',
   $rabbit_password                    = '',
   $rabbit_virtual_host                = '/',
+  $rabbit_ha_queues                   = undef,
   $rabbit_heartbeat_timeout_threshold = 0,
   $rabbit_heartbeat_rate              = 2,
+  $amqp_durable_queues                = $::os_service_default,
   $rabbit_use_ssl                     = false,
   $kombu_ssl_ca_certs                 = undef,
   $kombu_ssl_certfile                 = undef,
@@ -244,11 +254,15 @@ class ceilometer(
       }
     }
 
+    if $rabbit_ha_queues == undef {
       if size($rabbit_hosts) > 1 {
         ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
       } else {
         ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
       }
+    } else {
+      ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
+    }
 
       ceilometer_config {
         'oslo_messaging_rabbit/rabbit_userid':                value => $rabbit_userid;
@@ -257,6 +271,7 @@ class ceilometer(
         'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
         'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
         'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
+        'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
       }
 
       if $rabbit_use_ssl {

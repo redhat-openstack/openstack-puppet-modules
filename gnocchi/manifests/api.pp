@@ -81,6 +81,7 @@ class gnocchi::api (
   validate_string($keystone_password)
 
   Gnocchi_config<||> ~> Service[$service_name]
+  Gnocchi_api_paste_ini<||> ~> Service[$service_name]
   Class['gnocchi::policy'] ~> Service[$service_name]
 
   Package['gnocchi-api'] -> Service[$service_name]
@@ -141,6 +142,9 @@ class gnocchi::api (
   if $keystone_identity_uri {
     gnocchi_config {
       'keystone_authtoken/identity_uri': value => $keystone_identity_uri;
+    }
+    gnocchi_api_paste_ini {
+      'pipeline:main/pipeline':  value => 'keystone_authtoken gnocchi',
     }
   } else {
     gnocchi_config {

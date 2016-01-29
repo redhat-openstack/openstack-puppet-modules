@@ -62,6 +62,10 @@
 #   (optional) DHCP lease
 #   Defaults to $::os_service_default
 #
+# [*dns_domain*]
+#   (optional) Domain to use for building the hostnames
+#   Defaults to $::os_service_default
+#
 # [*dhcp_agents_per_network*]
 #   (optional) Number of DHCP agents scheduled to host a network.
 #   This enables redundant DHCP agents for configured networks.
@@ -144,6 +148,10 @@
 #   A single IP address, such as a VIP, can be used for load-balancing
 #   multiple RabbitMQ Brokers.
 #   Defaults to false
+#
+# [*rabbit_ha_queues*]
+#   (Optional) Use HA queues in RabbitMQ.
+#   Defaults to undef
 #
 # [*rabbit_heartbeat_timeout_threshold*]
 #   (optional) Number of seconds after which the RabbitMQ broker is considered
@@ -269,6 +277,7 @@ class neutron (
   $base_mac                           = $::os_service_default,
   $mac_generation_retries             = $::os_service_default,
   $dhcp_lease_duration                = $::os_service_default,
+  $dns_domain                         = $::os_service_default,
   $dhcp_agents_per_network            = $::os_service_default,
   $network_device_mtu                 = $::os_service_default,
   $dhcp_agent_notification            = $::os_service_default,
@@ -288,6 +297,7 @@ class neutron (
   $rabbit_host                        = 'localhost',
   $rabbit_hosts                       = false,
   $rabbit_port                        = 5672,
+  $rabbit_ha_queues                   = undef,
   $rabbit_user                        = 'guest',
   $rabbit_virtual_host                = $::os_service_default,
   $rabbit_heartbeat_timeout_threshold = 0,
@@ -384,6 +394,7 @@ class neutron (
     'DEFAULT/base_mac':                value => $base_mac;
     'DEFAULT/mac_generation_retries':  value => $mac_generation_retries;
     'DEFAULT/dhcp_lease_duration':     value => $dhcp_lease_duration;
+    'DEFAULT/dns_domain':              value => $dns_domain;
     'DEFAULT/dhcp_agents_per_network': value => $dhcp_agents_per_network;
     'DEFAULT/dhcp_agent_notification': value => $dhcp_agent_notification;
     'DEFAULT/advertise_mtu':           value => $advertise_mtu;
@@ -446,12 +457,20 @@ class neutron (
     }
     if $rabbit_hosts {
       neutron_config { 'oslo_messaging_rabbit/rabbit_hosts':     value  => join($rabbit_hosts, ',') }
-      neutron_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
     } else  {
       neutron_config { 'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host }
       neutron_config { 'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port }
       neutron_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
-      neutron_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+    }
+
+    if $rabbit_ha_queues == undef {
+      if $rabbit_hosts {
+        neutron_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+      } else {
+        neutron_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      neutron_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
     }
 
     neutron_config {

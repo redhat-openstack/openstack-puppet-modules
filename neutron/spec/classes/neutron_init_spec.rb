@@ -45,6 +45,12 @@ describe 'neutron' do
         it_configures 'rabbit HA with multiple hosts'
       end
 
+      context 'with rabbit_ha_queues set to false and with rabbit_hosts' do
+        before { params.merge!( :rabbit_ha_queues => 'false',
+                                :rabbit_hosts => ['rabbit:5673'] ) }
+        it_configures 'rabbit_ha_queues set to false'
+      end
+
       it 'configures logging' do
         is_expected.to contain_neutron_config('DEFAULT/log_file').with_ensure('absent')
         is_expected.to contain_neutron_config('DEFAULT/log_dir').with_value(params[:log_dir])
@@ -80,6 +86,7 @@ describe 'neutron' do
     it_configures 'with service_plugins'
     it_configures 'without memcache_servers'
     it_configures 'with memcache_servers'
+    it_configures 'with dns_domain defined'
   end
 
   shared_examples_for 'a neutron base installation' do
@@ -113,6 +120,7 @@ describe 'neutron' do
       is_expected.to contain_neutron_config('DEFAULT/base_mac').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/mac_generation_retries').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/dhcp_lease_duration').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_config('DEFAULT/dns_domain').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/dhcp_agents_per_network').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/network_device_mtu').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_config('DEFAULT/dhcp_agent_notification').with_value('<SERVICE DEFAULT>')
@@ -159,6 +167,12 @@ describe 'neutron' do
   shared_examples_for 'rabbit with durable queues' do
     it 'in neutron.conf' do
       is_expected.to contain_neutron_config('oslo_messaging_rabbit/amqp_durable_queues').with_value(true)
+    end
+  end
+
+  shared_examples_for 'rabbit_ha_queues set to false' do
+    it 'in neutron.conf' do
+      is_expected.to contain_neutron_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value(false)
     end
   end
 
@@ -448,6 +462,18 @@ describe 'neutron' do
 
     it do
       is_expected.to contain_neutron_config('DEFAULT/advertise_mtu').with_value(params[:advertise_mtu])
+    end
+  end
+
+  shared_examples_for 'with dns_domain defined' do
+    before do
+      params.merge!(
+        :dns_domain => 'testlocal'
+      )
+    end
+
+    it do
+      is_expected.to contain_neutron_config('DEFAULT/dns_domain').with_value(params[:dns_domain])
     end
   end
 

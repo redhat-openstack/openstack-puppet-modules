@@ -42,6 +42,7 @@ describe 'aodh' do
           :rabbit_heartbeat_timeout_threshold => '60',
           :rabbit_heartbeat_rate              => '10',
           :ensure_package                     => '2012.1.1-15.el6',
+          :gnocchi_url                        => 'http://127.0.0.1:8041',
           :notification_driver                => 'ceilometer.compute.aodh_notifier',
           :notification_topics                => 'openstack' }
       end
@@ -60,6 +61,7 @@ describe 'aodh' do
       it 'configures various things' do
         is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_value('ceilometer.compute.aodh_notifier')
         is_expected.to contain_aodh_config('DEFAULT/notification_topics').with_value('openstack')
+        is_expected.to contain_aodh_config('DEFAULT/gnocchi_url').with_value('http://127.0.0.1:8041')
       end
 
       context 'with multiple notification_driver' do

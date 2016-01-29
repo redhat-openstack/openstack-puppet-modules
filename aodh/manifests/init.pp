@@ -165,6 +165,10 @@
 #   (optional) If set, use this value for max_overflow with sqlalchemy.
 #   Defaults to: undef.
 #
+# [*gnocchi_url*]
+#   (optional) URL to Gnocchi.
+#   Defaults to: $::os_service_default.
+#
 # DEPRECATED PARAMETERS
 #
 # [*qpid_hostname*]
@@ -234,6 +238,7 @@ class aodh (
   $database_max_retries               = undef,
   $database_retry_interval            = undef,
   $database_max_overflow              = undef,
+  $gnocchi_url                        = $::os_service_default,
   # DEPRECATED PARAMETERS
   $qpid_hostname                      = undef,
   $qpid_port                          = undef,
@@ -348,6 +353,7 @@ class aodh (
   aodh_config {
     'DEFAULT/rpc_backend':         value => $rpc_backend;
     'DEFAULT/notification_topics': value => $notification_topics;
+    'DEFAULT/gnocchi_url':         value => $gnocchi_url;
   }
 
 }
