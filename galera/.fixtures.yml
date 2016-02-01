@@ -1,7 +1,0 @@
-fixtures:
-  repositories:
-    "stdlib": "git://github.com/puppetlabs/puppetlabs-stdlib"
-    "xinetd": "git://github.com/puppetlabs/puppetlabs-xinetd"
-    "mysql": "git://github.com/puppetlabs/puppetlabs-mysql"
-  symlinks:
-    "galera": "#{source_dir}"
