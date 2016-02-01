@@ -58,10 +58,6 @@ mod 'fluentd',
   :commit => 'ddc5f0e4c6c53d15f0cbd34f74bfaa91a0fb299f',
   :git => 'https://github.com/soylent/konstantin-fluentd.git'
 
-mod 'galera',
-  :commit => 'a2ecf273aef9ef9193bba35c235fb7b8b821a0c3',
-  :git => 'https://github.com/redhat-openstack/puppet-galera.git'
-
 mod 'git',
   :commit => '8e7f586',
   :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
