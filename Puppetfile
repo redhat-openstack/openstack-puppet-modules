@@ -6,10 +6,6 @@ mod 'apache',
   :commit => 'cdd81dbf3463c73e6abfaf937f929821baff73dd',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
-mod 'aviator',
-  :commit => '9a3b74b0dbb655a3afcbc8bdee442f2143420b72',
-  :git => 'https://github.com/aimonb/puppet_aviator.git'
-
 mod 'cassandra',
   :commit => 'b7526c4a8570696396d5f0151fdb9b3d1cbda598',
   :git => 'https://github.com/locp/cassandra.git'
