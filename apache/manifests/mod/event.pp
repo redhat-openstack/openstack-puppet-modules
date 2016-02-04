@@ -27,7 +27,7 @@ class apache::mod::event (
   File {
     owner => 'root',
     group => $::apache::params::root_group,
-    mode  => '0644',
+    mode  => $::apache::file_mode,
   }
 
   # Template uses:
@@ -40,6 +40,7 @@ class apache::mod::event (
   # - $serverlimit
   file { "${::apache::mod_dir}/event.conf":
     ensure  => file,
+    mode    => $::apache::file_mode,
     content => template('apache/mod/event.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],
