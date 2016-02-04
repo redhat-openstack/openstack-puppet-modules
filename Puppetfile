@@ -118,6 +118,10 @@ mod 'kibana3',
   :commit => '6ca9631fbe82766134f98e2e8780bb91e7cd3f0e',
   :git => 'https://github.com/thejandroman/puppet-kibana3.git'
 
+mod 'kmod',
+  :commit => 'ea03df0eff7b7e5faccb9c4e386d451301468f04',
+  :git => 'https://github.com/camptocamp/puppet-kmod.git'
+
 mod 'manila',
   :commit => '9d74004a388f65d8e54c8ab4dfb5832a3b024925',
   :git => 'https://github.com/openstack/puppet-manila.git'
