@@ -86,6 +86,10 @@ mod 'keystone',
   :commit => '6dbef6298478b5a8799c9dadd8d0b4b7edbcdd74',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
+mod 'kmod',
+  :commit => 'ea03df0eff7b7e5faccb9c4e386d451301468f04',
+  :git => 'https://github.com/camptocamp/puppet-kmod.git'
+
 mod 'manila',
   :commit => 'b94391158dc7c392986db9b0eb63562dde411ea1',
   :git => 'https://github.com/openstack/puppet-manila.git'
