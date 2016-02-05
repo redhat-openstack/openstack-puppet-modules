@@ -1,9 +1,9 @@
-Puppet::Type.newtype(:neutron_plugin_ml2) do
+Puppet::Type.newtype(:glance_swift_config) do
 
   ensurable
 
   newparam(:name, :namevar => true) do
-    desc 'Section/setting name to manage from ml2_conf.ini'
+    desc 'Section/setting name to manage from glance-api.conf'
     newvalues(/\S+\/\S+/)
   end
 
@@ -14,6 +14,7 @@ Puppet::Type.newtype(:neutron_plugin_ml2) do
       value.capitalize! if value =~ /^(true|false)$/i
       value
     end
+    newvalues(/^[\S ]*$/)
 
     def is_to_s( currentvalue )
       if resource.secret?
@@ -34,7 +35,9 @@ Puppet::Type.newtype(:neutron_plugin_ml2) do
 
   newparam(:secret, :boolean => true) do
     desc 'Whether to hide the value from Puppet logs. Defaults to `false`.'
+
     newvalues(:true, :false)
+
     defaultto false
   end
 
@@ -44,7 +47,11 @@ Puppet::Type.newtype(:neutron_plugin_ml2) do
   end
 
   autorequire(:package) do
-    ['neutron', 'neutron-plugin-ml2']
+    if Facter.value(:osfamily) == 'Debian'
+      'glance-api'
+    elsif Facter.value(:osfamily) == 'RedHat'
+      'openstack-glance'
+    end
   end
 
 end
