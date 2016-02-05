@@ -56,6 +56,8 @@ def install_odl(options = {})
   default_features = options.fetch(:default_features,
     ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management'])
   odl_rest_port = options.fetch(:odl_rest_port, 8080)
+  log_levels = options.fetch(:log_levels, {})
+  enable_l3 = options.fetch(:enable_l3, 'no')
 
   # Build script for consumption by Puppet apply
   it 'should work idempotently with no errors' do
@@ -65,6 +67,8 @@ def install_odl(options = {})
       default_features => #{default_features},
       extra_features => #{extra_features},
       odl_rest_port=> #{odl_rest_port},
+      enable_l3=> #{enable_l3},
+      log_levels=> #{log_levels},
     }
     EOS
 
@@ -126,24 +130,35 @@ def generic_validations()
     it { should be_running }
   end
 
-  # Validations specific to the host OS
-  if ['fedora-20'].include? ENV['RS_SET']
-    # Validations for (legecy) Fedora 20 checks
-    # NB: Fedora 20 support will be removed soon, it's EOL
+  # Should contain Karaf features config file
+  describe file('/opt/opendaylight/etc/org.apache.karaf.features.cfg') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+  end
 
-    # Verify ODL systemd .service file
-    describe file('/usr/lib/systemd/system/opendaylight.service') do
-      it { should be_file }
-      it { should be_owned_by 'root' }
-      it { should be_grouped_into 'root' }
-      it { should be_mode '644' }
-    end
+  # Should contain ODL NB port config file
+  describe file('/opt/opendaylight/etc/jetty.xml') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+  end
 
-    # Java 7 should be installed
-    describe package('java-1.7.0-openjdk') do
-      it { should be_installed }
-    end
-  elsif ['centos-7', 'centos-7-docker', 'fedora-21'].include? ENV['RS_SET']
+  # Should contain log level config file
+  describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+  end
+
+  # Should contain ODL OVSDB L3 enable/disable config file
+  describe file('/opt/opendaylight/etc/custom.properties') do
+    it { should be_file }
+    it { should be_owned_by 'odl' }
+    it { should be_grouped_into 'odl' }
+  end
+
+  if ['centos-7', 'centos-7-docker', 'fedora-22'].include? ENV['RS_SET']
     # Validations for modern Red Hat family OSs
 
     # Verify ODL systemd .service file
@@ -213,10 +228,82 @@ def port_config_validations(options = {})
   end
 end
 
+# Shared function for validations related to custom logging verbosity
+def log_level_validations(options = {})
+  # NB: This param default should match the one used by the opendaylight
+  #   class, which is defined in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  log_levels = options.fetch(:log_levels, {})
+
+  if log_levels.empty?
+    # Should contain log level config file
+    describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+    end
+    # Should not contain custom log level config
+    describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      its(:content) { should_not match /# Log level config added by puppet-opendaylight/ }
+    end
+  else
+    # Should contain log level config file
+    describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+    end
+    # Should not contain custom log level config
+    describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      its(:content) { should match /# Log level config added by puppet-opendaylight/ }
+    end
+    # Verify each custom log level config entry
+    log_levels.each_pair do |logger, level|
+      describe file('/opt/opendaylight/etc/org.ops4j.pax.logging.cfg') do
+        it { should be_file }
+        it { should be_owned_by 'odl' }
+        it { should be_grouped_into 'odl' }
+        its(:content) { should match /^log4j.logger.#{logger} = #{level}/ }
+      end
+    end
+  end
+end
+
+# Shared function for validations related to ODL OVSDB L3 config
+def enable_l3_validations(options = {})
+  # NB: This param default should match the one used by the opendaylight
+  #   class, which is defined in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  enable_l3 = options.fetch(:enable_l3, 'no')
+
+  if [true, 'yes'].include? enable_l3
+    # Confirm ODL OVSDB L3 is enabled
+    describe file('/opt/opendaylight/etc/custom.properties') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      its(:content) { should match /^ovsdb.l3.fwd.enabled=yes/ }
+    end
+  elsif [false, 'no'].include? enable_l3
+    # Confirm ODL OVSDB L3 is disabled
+    describe file('/opt/opendaylight/etc/custom.properties') do
+      it { should be_file }
+      it { should be_owned_by 'odl' }
+      it { should be_grouped_into 'odl' }
+      its(:content) { should match /^ovsdb.l3.fwd.enabled=no/ }
+    end
+  end
+end
 
 # Shared function that handles validations specific to RPM-type installs
 def rpm_validations()
-  describe yumrepo('opendaylight-3-candidate') do
+  describe yumrepo('opendaylight-4-testing') do
     it { should exist }
     it { should be_enabled }
   end
@@ -233,8 +320,8 @@ def tarball_validations()
   end
 
   # Repo checks break (not fail) when yum doesn't make sense (Ubuntu)
-  if ['centos-7', 'fedora-20', 'fedora-21'].include? ENV['RS_SET']
-    describe yumrepo('opendaylight-3-candidate') do
+  if ['centos-7', 'fedora-22'].include? ENV['RS_SET']
+    describe yumrepo('opendaylight-4-testing') do
       it { should_not exist }
       it { should_not be_enabled }
     end

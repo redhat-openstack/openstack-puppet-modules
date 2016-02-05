@@ -83,7 +83,13 @@ ovsdb.listenPort=6640
 
 # ovsdb can be configured with ml2 to perform l3 forwarding. The config below enables that functionality, which is
 # disabled by default.
-ovsdb.l3.fwd.enabled=<%= scope.lookupvar('opendaylight::enable_l3') %>
+<% if [true, 'yes'].include? scope.lookupvar('opendaylight::enable_l3') -%>
+ovsdb.l3.fwd.enabled=yes
+<% elsif [false, 'no'].include? scope.lookupvar('opendaylight::enable_l3') -%>
+ovsdb.l3.fwd.enabled=no
+<% else -%>
+  <%- fail("Unexpected enable_l3 value: #{scope.lookupvar('opendaylight::enable_l3')}") -%>
+<% end -%>
 
 # ovsdb can be configured with ml2 to perform l3 forwarding. When used in that scenario, the mac address of the default
 # gateway --on the external subnet-- is expected to be resolved from its inet address. The config below overrides that

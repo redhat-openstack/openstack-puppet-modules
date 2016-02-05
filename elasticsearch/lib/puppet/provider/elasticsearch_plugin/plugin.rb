@@ -4,8 +4,15 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
   desc "A provider for the resource type `elasticsearch_plugin`,
         which handles plugin installation"
 
-  commands :plugin => '/usr/share/elasticsearch/bin/plugin'
-  commands :es => '/usr/share/elasticsearch/bin/elasticsearch'
+  os = Facter['osfamily'].value
+  if os == 'OpenBSD'
+    commands :plugin => '/usr/local/elasticsearch/bin/plugin'
+    commands :es => '/usr/local/elasticsearch/bin/elasticsearch'
+    commands :javapathhelper => '/usr/local/bin/javaPathHelper'
+  else
+    commands :plugin => '/usr/share/elasticsearch/bin/plugin'
+    commands :es => '/usr/share/elasticsearch/bin/elasticsearch'
+  end
 
   def exists?
     es_version
@@ -70,11 +77,18 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
     commands
   end
 
+  def install_options
+    return @resource[:install_options].join(' ') if @resource[:install_options].is_a?(Array)
+    return @resource[:install_options]
+  end
+
   def create
     es_version
     commands = []
     commands << @resource[:proxy_args].split(' ') if @resource[:proxy_args]
+    commands << install_options if @resource[:install_options]
     commands << 'install'
+    commands << '--batch' if is22x?
     commands << install1x if is1x?
     commands << install2x if is2x?
     debug("Commands: #{commands.inspect}")
@@ -100,11 +114,23 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
 
   def es_version
     return @es_version if @es_version
+    es_save = ENV['ES_INCLUDE']
+    java_save = ENV['JAVA_HOME']
+
+    os = Facter['osfamily'].value
+    if os == 'OpenBSD'
+      ENV['JAVA_HOME'] = javapathhelper('-h', 'elasticsearch').chomp
+      ENV['ES_INCLUDE'] = '/etc/elasticsearch/elasticsearch.in.sh'
+    end
     begin
       version = es('-version')
     rescue
+      ENV['ES_INCLUDE'] = es_save if es_save
+      ENV['JAVA_HOME'] = java_save if java_save
       raise "Unknown ES version. Got #{version.inspect}"
     ensure
+      ENV['ES_INCLUDE'] = es_save if es_save
+      ENV['JAVA_HOME'] = java_save if java_save
       @es_version = version.scan(/\d+\.\d+\.\d+(?:\-\S+)?/).first
       debug "Found ES version #{@es_version}"
     end
@@ -117,6 +143,11 @@ Puppet::Type.type(:elasticsearch_plugin).provide(:plugin) do
   def is2x?
     (Puppet::Util::Package.versioncmp(@es_version, '2.0.0') >= 0) && (Puppet::Util::Package.versioncmp(@es_version, '3.0.0') < 0)
   end
+
+  def is22x?
+    (Puppet::Util::Package.versioncmp(@es_version, '2.2.0') >= 0) && (Puppet::Util::Package.versioncmp(@es_version, '3.0.0') < 0)
+  end
+
 
   def plugin_version(plugin_name)
     vendor, plugin, version = plugin_name.split('/')

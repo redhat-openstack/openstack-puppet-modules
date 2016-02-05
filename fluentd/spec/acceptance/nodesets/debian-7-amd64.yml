@@ -1,0 +1,11 @@
+HOSTS:
+  debian-7-amd64:
+    platform: debian-7-amd64
+    image: debian:7
+    hypervisor: docker
+    docker_preserve_image: true
+    docker_image_commands:
+      - 'apt-get install -y wget'
+CONFIG:
+  log_level: verbose
+  type: foss

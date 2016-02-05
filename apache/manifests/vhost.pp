@@ -43,6 +43,8 @@ define apache::vhost(
   $logroot                     = $::apache::logroot,
   $logroot_ensure              = 'directory',
   $logroot_mode                = undef,
+  $logroot_owner               = undef,
+  $logroot_group               = undef,
   $log_level                   = undef,
   $access_log                  = true,
   $access_log_file             = false,
@@ -307,6 +309,8 @@ define apache::vhost(
   if ! defined(File[$logroot]) {
     file { $logroot:
       ensure  => $logroot_ensure,
+      owner   => $logroot_owner,
+      group   => $logroot_group,
       mode    => $logroot_mode,
       require => Package['httpd'],
       before  => Concat["${priority_real}${filename}.conf"],
@@ -504,7 +508,7 @@ define apache::vhost(
     path    => "${::apache::vhost_dir}/${priority_real}${filename}.conf",
     owner   => 'root',
     group   => $::apache::params::root_group,
-    mode    => '0644',
+    mode    => $::apache::file_mode,
     order   => 'numeric',
     require => Package['httpd'],
     notify  => Class['apache::service'],
@@ -523,7 +527,7 @@ define apache::vhost(
       target  => "${::apache::vhost_dir}/${priority_real}${filename}.conf",
       owner   => 'root',
       group   => $::apache::params::root_group,
-      mode    => '0644',
+      mode    => $::apache::file_mode,
       require => Concat["${priority_real}${filename}.conf"],
       notify  => Class['apache::service'],
     }
@@ -748,7 +752,7 @@ define apache::vhost(
   # - $redirectmatch_status_a
   # - $redirectmatch_regexp_a
   # - $redirectmatch_dest
-  if ($redirect_source and $redirect_dest) or ($redirectmatch_status and $redirectmatch_regexp and $redirectmatch_dest) {
+  if ($redirect_source and $redirect_dest) or ($redirectmatch_regexp and $redirectmatch_dest) {
     concat::fragment { "${name}-redirect":
       target  => "${priority_real}${filename}.conf",
       order   => 180,

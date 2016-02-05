@@ -15,6 +15,10 @@
 #   If installing from a tarball, use this one. Defaults to latest ODL.
 # [*unitfile_url*]
 #   OpenDaylight .service file to use for tarball installs. Defaults to one used by ODL RPM.
+# [*enable_l3*]
+#   Enable or disable ODL OVSDB ML2 L3 forwarding. Valid: true, false, 'yes' and 'no'.
+# [*log_levels*]
+#   Custom OpenDaylight logger verbosity configuration (TRACE, DEBUG, INFO, WARN, ERROR).
 #
 class opendaylight (
   $default_features = $::opendaylight::params::default_features,
@@ -24,6 +28,7 @@ class opendaylight (
   $tarball_url = $::opendaylight::params::tarball_url,
   $unitfile_url = $::opendaylight::params::unitfile_url,
   $enable_l3 = $::opendaylight::params::enable_l3,
+  $log_levels = $::opendaylight::params::log_levels,
 ) inherits ::opendaylight::params {
 
   # Validate OS family
@@ -46,8 +51,9 @@ class opendaylight (
       }
     }
     fedora: {
-      # Fedora distros < 20 are EOL as of Jan 6th 2015
-      if $::operatingsystemmajrelease < '20' {
+      # Fedora distros < 22 are EOL as of 2015-12-01
+      # https://fedoraproject.org/wiki/End_of_life
+      if $::operatingsystemmajrelease < '22' {
         fail("Unsupported OS: ${::operatingsystem} ${::operatingsystemmajrelease}")
       }
     }

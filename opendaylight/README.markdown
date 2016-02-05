@@ -14,6 +14,8 @@
   * [Karaf Features](#karaf-features)
   * [Install Method](#install-method)
   * [Ports](#ports)
+  * [Log Verbosity](#log-verbosity)
+  * [Enabling ODL OVSDB L3](#enabling-odl-ovsdb-l3)
 1. [Reference ](#reference)
 1. [Limitations](#limitations)
 1. [Development](#development)
@@ -34,7 +36,7 @@ module's [params](#parameters). If you need a new knob, [please raise an
 Issue][8].
 
 Both supported [install methods](#install-method) default to the latest
-stable OpenDaylight release, which is currently [Lithium 3.2.0][18].
+stable OpenDaylight release, which is currently [a Beryllium ERP][18].
 
 ## Setup
 
@@ -55,21 +57,34 @@ Getting started with the OpenDaylight Puppet module is as simple as declaring
 the `::opendaylight` class.
 
 The [vagrant-opendaylight][11] project provides an easy way to experiment
-with [applying the ODL Puppet module][12] to CentOS 7, Fedora 20 and Fedora
-21 Vagrant boxes.
+with [applying the ODL Puppet module][12] to CentOS 7, Fedora 22 and Fedora
+23 Vagrant boxes.
 
 ```
 [~/vagrant-opendaylight]$ vagrant status
 Current machine states:
 
-cent7                     not created (virtualbox)
-cent7_pup_rpm             not created (virtualbox)
-cent7_ansible             not created (virtualbox)
-cent7_pup_tb              not created (virtualbox)
-cent7_rpm                 not created (virtualbox)
-f21_pup_rpm               not created (virtualbox)
-f21_pup_tb                not created (virtualbox)
-f21_rpm                   not created (virtualbox)
+cent7                     not created (libvirt)
+cent7_rpm_he_sr4          not created (libvirt)
+cent7_rpm_li_sr2          not created (libvirt)
+cent7_rpm_be              not created (libvirt)
+cent7_ansible             not created (libvirt)
+cent7_ansible_be          not created (libvirt)
+cent7_ansible_path        not created (libvirt)
+cent7_pup_rpm             not created (libvirt)
+cent7_pup_custom_logs     not created (libvirt)
+cent7_pup_tb              not created (libvirt)
+f22_rpm_li                not created (libvirt)
+f22_ansible               not created (libvirt)
+f22_pup_rpm               not created (libvirt)
+f23_rpm_li                not created (libvirt)
+f23_rpm_li_sr1            not created (libvirt)
+f23_rpm_li_sr2            not created (libvirt)
+f23_rpm_li_sr3            not created (libvirt)
+f23_rpm_be                not created (libvirt)
+f23_ansible               not created (libvirt)
+f23_pup_rpm               not created (libvirt)
+
 [~/vagrant-opendaylight]$ vagrant up cent7_pup_rpm
 # A CentOS 7 VM is created and configured using the ODL Puppet mod's defaults
 [~/vagrant-opendaylight]$ vagrant ssh cent7_pup_rpm
@@ -147,6 +162,27 @@ class { 'opendaylight':
 }
 ```
 
+### Log Verbosity
+
+It's possible to define custom logger verbosity levels via the `log_levels`
+param.
+
+```puppet
+class { 'opendaylight':
+  log_levels => { 'org.opendaylight.ovsdb' => 'TRACE', 'org.opendaylight.ovsdb.lib' => 'INFO' },
+}
+```
+
+### Enabling ODL OVSDB L3
+
+To enable the ODL OVSDB L3, use the `enable_l3` flag. It's disabled by default.
+
+```puppet
+class { 'opendaylight':
+  enable_l3 => true,
+}
+```
+
 ## Reference
 
 ### Classes
@@ -207,6 +243,69 @@ Default: `'8080'`
 
 Valid options: A valid port number as a string or integer.
 
+##### `log_levels`
+
+Custom OpenDaylight logger verbosity configuration.
+
+Default: `{}`
+
+Valid options: A hash of loggers to log levels.
+
+```
+{ 'org.opendaylight.ovsdb' => 'TRACE', 'org.opendaylight.ovsdb.lib' => 'INFO' }
+```
+
+Valid log levels are TRACE, DEBUG, INFO, WARN, and ERROR.
+
+The above example would add the following logging configuration to
+`/opt/opendaylight/etc/org.ops4j.pax.logging.cfg`.
+
+```
+# Log level config added by puppet-opendaylight
+log4j.logger.org.opendaylight.ovsdb = TRACE
+
+# Log level config added by puppet-opendaylight
+log4j.logger.org.opendaylight.ovsdb.lib = INFO
+```
+
+To view loggers and their verbosity levels, use `log:list` at the ODL Karaf shell.
+
+```
+opendaylight-user@root>log:list
+Logger                     | Level
+----------------------------------
+ROOT                       | INFO
+org.opendaylight.ovsdb     | TRACE
+org.opendaylight.ovsdb.lib | INFO
+```
+
+The main log output file is `/opt/opendaylight/data/log/karaf.log`.
+
+##### `enable_l3`
+
+Enable or disable ODL OVSDB L3 forwarding.
+
+Default: `'no'`
+
+Valid options: The strings `'yes'` or `'no'` or boolean values `true` and `false`.
+
+The ODL OVSDB L3 config in `/opt/opendaylight/etc/custom.properties` is set to
+the value of the `enable_l3` param.
+
+A manifest like
+
+```puppet
+class { 'opendaylight':
+  enable_l3 => true,
+}
+```
+
+Would would result in
+
+```
+ovsdb.l3.fwd.enabled=yes
+```
+
 ##### `tarball_url`
 
 Specifies the ODL tarball to use when installing via the tarball install
@@ -230,12 +329,10 @@ tarball) as a string.
 
 ## Limitations
 
-* Tested on Fedora 20, 21, CentOS 7 and Ubuntu 14.04.
+* Tested on Fedora 22, 23, CentOS 7 and Ubuntu 14.04.
 * CentOS 7 is currently the most stable OS option.
 * The RPM install method is likely more reliable than the tarball install
 method.
-* Our [Fedora 21 Beaker tests are failing][13], but it seems to be an issue
-with the Vagrant image, not the Puppet mod.
 
 ## Development
 
@@ -267,4 +364,4 @@ See our [git commit history][17] for contributor information.
 [15]: https://github.com/dfarrell07/puppet-opendaylight/blob/master/CHANGELOG
 [16]: https://github.com/dfarrell07/puppet-opendaylight/releases
 [17]: https://github.com/dfarrell07/puppet-opendaylight/commits/master
-[18]: https://www.opendaylight.org/software/downloads/lithium
+[18]: http://cbs.centos.org/repos/nfv7-opendaylight-4-testing/x86_64/os/Packages/

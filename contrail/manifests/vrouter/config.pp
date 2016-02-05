@@ -16,6 +16,10 @@
 #   (optional) Network device
 #   Defaults to 'eth0'
 #
+# [*kmod_path*]
+#   (optional) full path for vrouter.ko
+#   Defaults to '/lib/modules/${::kernelrelease}/extra/net/vrouter/vrouter.ko
+#
 # [*compute_device*]
 #   (optional) Network device for Openstack compute
 #   Defaukts to 'eth0;
@@ -56,6 +60,7 @@ class contrail::vrouter::config (
   $vhost_ip               = '127.0.0.1',
   $discovery_ip           = '127.0.0.1',
   $device                 = 'eth0',
+  $kmod_path              = "/lib/modules/${::kernelrelease}/extra/net/vrouter/vrouter.ko",
   $compute_device         = 'eth0',
   $mask                   = '24',
   $netmask                = '255.255.255.0',

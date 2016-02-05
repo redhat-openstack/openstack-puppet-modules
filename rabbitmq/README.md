@@ -117,6 +117,17 @@ class { 'rabbitmq':
 }
 ```
 
+To change Management Plugin Config Variables in rabbitmq.config, use the parameters
+`config_management_variables` e.g.:
+
+```puppet
+class { 'rabbitmq':
+  config_management_variables  => {
+    'rates_mode' => 'basic',
+  }
+}
+```
+
 ### Clustering
 To use RabbitMQ clustering facilities, use the rabbitmq parameters
 `config_cluster`, `cluster_nodes`, and `cluster_node_type`, e.g.:
@@ -148,6 +159,13 @@ class { 'rabbitmq':
 ####`admin_enable`
 
 Boolean, if enabled sets up the management interface/plugin for RabbitMQ.
+
+####`auth_backends`
+
+An array specifying authorization/authentication backend to use. Syntax:
+single quotes should be placed around array entries, ex. ['{foo, baz}', 'baz']
+Defaults to [rabbit_auth_backend_internal], and if using LDAP defaults to
+[rabbit_auth_backend_internal, rabbit_auth_backend_ldap].
 
 ####`cluster_node_type`
 
@@ -184,6 +202,10 @@ the queue. You can read more about it
 ####`config_path`
 
 The path to write the RabbitMQ configuration file to.
+
+####`config_management_variables`
+
+Hash of configuration variables for the [Management Plugin](https://www.rabbitmq.com/management.html).
 
 ####`config_stomp`
 

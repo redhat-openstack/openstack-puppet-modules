@@ -658,6 +658,79 @@ LimitNOFILE=1234
                             '    {port, 389},', '    {foo, bar},', '    {log, true}'])
         end
       end
+      
+      describe 'configuring auth_backends' do
+        let :params do
+          { :auth_backends   => ['{baz, foo}', 'bar'] }
+        end
+        it 'should contain auth_backends' do
+          verify_contents(catalogue, 'rabbitmq.config',
+                          ['    {auth_backends, [{baz, foo}, bar]},'])
+        end
+      end
+
+      describe 'auth_backends overrides ldap_auth' do
+        let :params do
+          { :auth_backends   => ['{baz, foo}', 'bar'],
+            :ldap_auth => true, }
+        end
+        it 'should contain auth_backends' do
+          verify_contents(catalogue, 'rabbitmq.config',
+                          ['    {auth_backends, [{baz, foo}, bar]},'])
+        end
+      end
+
+      describe 'configuring shovel plugin' do
+        let :params do
+          {
+            :config_shovel => true
+          }
+        end
+
+        it { should contain_rabbitmq_plugin('rabbitmq_shovel') }
+
+        it { should contain_rabbitmq_plugin('rabbitmq_shovel_management') }
+
+        describe 'with admin_enable false' do
+          let :params do
+            {
+              :config_shovel => true,
+              :admin_enable  => false
+            }
+          end
+
+          it { should_not contain_rabbitmq_plugin('rabbitmq_shovel_management') }
+        end
+
+        describe 'with static shovels' do
+          let :params do
+            {
+              :config_shovel => true,
+              :config_shovel_statics => {
+                'shovel_first' => %q({sources,[{broker,"amqp://"}]},
+        {destinations,[{broker,"amqp://site1.example.com"}]},
+        {queue,<<"source_one">>}),
+                'shovel_second' => %q({sources,[{broker,"amqp://"}]},
+        {destinations,[{broker,"amqp://site2.example.com"}]},
+        {queue,<<"source_two">>})
+              }
+            }
+          end
+
+          it "should generate correct configuration" do
+            verify_contents(catalogue, 'rabbitmq.config', [
+'  {rabbitmq_shovel,',
+'    [{shovels,[',
+'      {shovel_first,[{sources,[{broker,"amqp://"}]},',
+'        {destinations,[{broker,"amqp://site1.example.com"}]},',
+'        {queue,<<"source_one">>}]},',
+'      {shovel_second,[{sources,[{broker,"amqp://"}]},',
+'        {destinations,[{broker,"amqp://site2.example.com"}]},',
+'        {queue,<<"source_two">>}]}',
+'    ]}]}' ])
+          end
+        end
+      end
 
       describe 'configuring shovel plugin' do
         let :params do
@@ -1082,6 +1155,16 @@ LimitNOFILE=1234
           should contain_file('rabbitmq.config') \
             .with_content(/\{inet_dist_listen_min, 9100\}/) \
             .with_content(/\{inet_dist_listen_max, 9105\}/)
+        end
+      end
+
+      describe 'config_management_variables' do                                                                                              
+        let(:params) {{ :config_management_variables => {
+            'rates_mode'      => 'none',
+        }}}
+        it 'should set config variables' do
+          should contain_file('rabbitmq.config') \
+            .with_content(/\{rates_mode, none\}/)
         end
       end
 

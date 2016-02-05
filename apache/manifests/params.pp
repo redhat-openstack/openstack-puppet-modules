@@ -31,19 +31,19 @@ class apache::params inherits ::apache::version {
 
   # Default mime types settings
   $mime_types_additional = {
-    'AddHandler' => {
-      'type-map' => 'var'
-      },
-    'AddType'    => {
-      'text/html' => '.shtml'
-      },
-    'AddOutputFilter' => {
-      'INCLUDES'      => '.shtml'
-      },
+    'AddHandler'      => { 'type-map'  => 'var', },
+    'AddType'         => { 'text/html' => '.shtml', },
+    'AddOutputFilter' => { 'INCLUDES'  => '.shtml', },
   }
 
   # should we use systemd module?
   $use_systemd = true
+
+  # Default mode for files
+  $file_mode = '0644'
+
+  # Default options for / directory
+  $root_directory_options = ['FollowSymLinks']
 
   $vhost_include_pattern = '*'
 
@@ -88,9 +88,8 @@ class apache::params inherits ::apache::version {
     $suphp_addhandler     = 'php5-script'
     $suphp_engine         = 'off'
     $suphp_configpath     = undef
-    # NOTE: The module for Shibboleth is not available to RH/CentOS without an additional repository. http://wiki.aaf.edu.au/tech-info/sp-install-guide
-    # NOTE: The auth_cas module isn't available to RH/CentOS without enabling EPEL.
     $mod_packages         = {
+      # NOTE: The auth_cas module isn't available on RH/CentOS without providing dependency packages provided by EPEL.
       'auth_cas'    => 'mod_auth_cas',
       'auth_kerb'   => 'mod_auth_kerb',
       'auth_mellon' => 'mod_auth_mellon',
@@ -106,6 +105,10 @@ class apache::params inherits ::apache::version {
         default => undef,
       },
       'pagespeed'   => 'mod-pagespeed-stable',
+      # NOTE: The passenger module isn't available on RH/CentOS without
+      # providing dependency packages provided by EPEL and passenger
+      # repositories. See
+      # https://www.phusionpassenger.com/library/install/apache/install/oss/el7/
       'passenger'   => 'mod_passenger',
       'perl'        => 'mod_perl',
       'php5'        => $::apache::version::distrelease ? {
@@ -115,6 +118,9 @@ class apache::params inherits ::apache::version {
       'proxy_html'  => 'mod_proxy_html',
       'python'      => 'mod_python',
       'security'    => 'mod_security',
+      # NOTE: The module for Shibboleth is not available on RH/CentOS without
+      # providing dependency packages provided by Shibboleth's repositories.
+      # See http://wiki.aaf.edu.au/tech-info/sp-install-guide
       'shibboleth'  => 'shibboleth',
       'ssl'         => 'mod_ssl',
       'wsgi'        => 'mod_wsgi',
@@ -156,6 +162,8 @@ class apache::params inherits ::apache::version {
     $modsec_crs_package   = 'mod_security_crs'
     $modsec_crs_path      = '/usr/lib/modsecurity.d'
     $modsec_dir           = '/etc/httpd/modsecurity.d'
+    $secpcrematchlimit = 1500
+    $secpcrematchlimitrecursion = 1500
     $modsec_secruleengine = 'On'
     $modsec_default_rules = [
       'base_rules/modsecurity_35_bad_robots.data',
@@ -178,7 +186,7 @@ class apache::params inherits ::apache::version {
       'base_rules/modsecurity_crs_49_inbound_blocking.conf',
       'base_rules/modsecurity_crs_50_outbound.conf',
       'base_rules/modsecurity_crs_59_outbound_blocking.conf',
-      'base_rules/modsecurity_crs_60_correlation.conf'
+      'base_rules/modsecurity_crs_60_correlation.conf',
     ]
   } elsif $::osfamily == 'Debian' {
     $user                = 'www-data'
@@ -258,6 +266,8 @@ class apache::params inherits ::apache::version {
     $modsec_crs_package   = 'modsecurity-crs'
     $modsec_crs_path      = '/usr/share/modsecurity-crs'
     $modsec_dir           = '/etc/modsecurity'
+    $secpcrematchlimit = 1500
+    $secpcrematchlimitrecursion = 1500
     $modsec_secruleengine = 'On'
     $modsec_default_rules = [
       'base_rules/modsecurity_35_bad_robots.data',
@@ -280,7 +290,7 @@ class apache::params inherits ::apache::version {
       'base_rules/modsecurity_crs_49_inbound_blocking.conf',
       'base_rules/modsecurity_crs_50_outbound.conf',
       'base_rules/modsecurity_crs_59_outbound_blocking.conf',
-      'base_rules/modsecurity_crs_60_correlation.conf'
+      'base_rules/modsecurity_crs_60_correlation.conf',
     ]
     $alias_icons_path     = '/usr/share/apache2/icons'
     $error_documents_path = '/usr/share/apache2/error'
@@ -442,19 +452,20 @@ class apache::params inherits ::apache::version {
     $suphp_configpath = '/etc/php5/apache2'
     $mod_packages     = {
       # NOTE: I list here only modules that are not included in www-servers/apache
-      'auth_kerb'  => 'www-apache/mod_auth_kerb',
-      'fcgid'      => 'www-apache/mod_fcgid',
-      'passenger'  => 'www-apache/passenger',
-      'perl'       => 'www-apache/mod_perl',
-      'php5'       => 'dev-lang/php',
-      'proxy_html' => 'www-apache/mod_proxy_html',
-      'proxy_fcgi' => 'www-apache/mod_proxy_fcgi',
-      'python'     => 'www-apache/mod_python',
-      'wsgi'       => 'www-apache/mod_wsgi',
-      'dav_svn'    => 'dev-vcs/subversion',
-      'xsendfile'  => 'www-apache/mod_xsendfile',
-      'rpaf'       => 'www-apache/mod_rpaf',
-      'xml2enc'    => 'www-apache/mod_xml2enc',
+      'auth_kerb'       => 'www-apache/mod_auth_kerb',
+      'authnz_external' => 'www-apache/mod_authnz_external',
+      'fcgid'           => 'www-apache/mod_fcgid',
+      'passenger'       => 'www-apache/passenger',
+      'perl'            => 'www-apache/mod_perl',
+      'php5'            => 'dev-lang/php',
+      'proxy_html'      => 'www-apache/mod_proxy_html',
+      'proxy_fcgi'      => 'www-apache/mod_proxy_fcgi',
+      'python'          => 'www-apache/mod_python',
+      'wsgi'            => 'www-apache/mod_wsgi',
+      'dav_svn'         => 'dev-vcs/subversion',
+      'xsendfile'       => 'www-apache/mod_xsendfile',
+      'rpaf'            => 'www-apache/mod_rpaf',
+      'xml2enc'         => 'www-apache/mod_xml2enc',
     }
     $mod_libs         = {
       'php5' => 'libphp5.so',

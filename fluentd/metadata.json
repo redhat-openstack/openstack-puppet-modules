@@ -17,7 +17,8 @@
         {
             "operatingsystem": "CentOS",
             "operatingsystemrelease": [
-                "7.0"
+                "6",
+                "7"
             ]
         },
         {
@@ -35,7 +36,7 @@
     ],
     "project_page": "https://github.com/soylent/konstantin-fluentd",
     "source": "https://github.com/soylent/konstantin-fluentd",
-    "summary": "Installs, configures, and manages the Fluentd service",
+    "summary": "Installs, configures, and manages Fluentd data collector",
     "tags": [
         "fluentd",
         "fluent",
@@ -43,5 +44,5 @@
         "treasuredata",
         "logging"
     ],
-    "version": "0.3.1"
+    "version": "0.4.0"
 }

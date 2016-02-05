@@ -170,6 +170,8 @@ describe 'apache::vhost', :type => :define do
           'logroot'                     => '/var/www/logs',
           'logroot_ensure'              => 'directory',
           'logroot_mode'                => '0600',
+          'logroot_owner'               => 'root',
+          'logroot_group'               => 'root',
           'log_level'                   => 'crit',
           'access_log'                  => false,
           'access_log_file'             => 'httpd_access_log',
@@ -565,6 +567,39 @@ describe 'apache::vhost', :type => :define do
         :content => /[.\/m]*<VirtualHost \[::1\]:80>[.\/m]*$/ ) }
       it { is_expected.to contain_concat__fragment('Listen [::1]:80') }
       it { is_expected.to_not contain_concat__fragment('NameVirtualHost [::1]:80') }
+    end
+
+    context 'vhost with wildcard ip address' do
+      let :params do
+        {
+          'port'                        => '80',
+          'ip'                          => '*',
+          'ip_based'                    => true,
+          'servername'                  => 'example.com',
+          'docroot'                     => '/var/www/html',
+          'add_listen'                  => true,
+          'ensure'                      => 'present'
+        }
+      end
+      let :facts do
+        {
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '7',
+          :concat_basedir         => '/dne',
+          :operatingsystem        => 'RedHat',
+          :id                     => 'root',
+          :kernel                 => 'Linux',
+          :path                   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+          :kernelversion          => '3.6.2',
+          :is_pe                  => false,
+        }
+      end
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-apache-header').with(
+        :content => /[.\/m]*<VirtualHost \*:80>[.\/m]*$/ ) }
+      it { is_expected.to contain_concat__fragment('Listen *:80') }
+      it { is_expected.to_not contain_concat__fragment('NameVirtualHost *:80') }
     end
 
     context 'set only aliases' do

@@ -48,7 +48,7 @@ class elasticsearch::config {
       mode   => '0644',
     }
 
-    file { $elasticsearch::params::logdir:
+    file { $elasticsearch::logdir:
       ensure  => 'directory',
       group   => undef,
       mode    => '0644',
@@ -57,12 +57,6 @@ class elasticsearch::config {
 
     file { $elasticsearch::params::homedir:
       ensure  => 'directory',
-    }
-
-    file { "${elasticsearch::params::homedir}/bin":
-      ensure  => 'directory',
-      recurse => true,
-      mode    => '0755',
     }
 
     file { $elasticsearch::datadir:
@@ -115,10 +109,12 @@ class elasticsearch::config {
     }
 
     $new_init_defaults = { 'CONF_DIR' => $elasticsearch::configdir }
-    augeas { "${elasticsearch::params::defaults_location}/elasticsearch":
-      incl    => "${elasticsearch::params::defaults_location}/elasticsearch",
-      lens    => 'Shellvars.lns',
-      changes => template("${module_name}/etc/sysconfig/defaults.erb"),
+    if $elasticsearch::params::defaults_location {
+      augeas { "${elasticsearch::params::defaults_location}/elasticsearch":
+        incl    => "${elasticsearch::params::defaults_location}/elasticsearch",
+        lens    => 'Shellvars.lns',
+        changes => template("${module_name}/etc/sysconfig/defaults.erb"),
+      }
     }
 
     file { '/etc/elasticsearch/elasticsearch.yml':

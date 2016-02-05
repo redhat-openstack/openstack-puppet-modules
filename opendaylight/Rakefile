@@ -65,16 +65,6 @@ task :centos_7_docker do
   sh "RS_SET=centos-7-docker INSTALL_METHOD=rpm bundle exec rake beaker"
 end
 
-desc "Run Beaker tests against Fedora 20 node."
-task :fedora_20 do
-  sh "RS_SET=fedora-20 INSTALL_METHOD=rpm bundle exec rake beaker"
-end
-
-desc "Run Beaker tests against Fedora 21 node."
-task :fedora_21 do
-  sh "RS_SET=fedora-21 INSTALL_METHOD=rpm bundle exec rake beaker"
-end
-
 desc "Run Beaker tests against Fedora 22 node."
 task :fedora_22 do
   sh "RS_SET=fedora-22 INSTALL_METHOD=rpm bundle exec rake beaker"

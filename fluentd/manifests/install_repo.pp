@@ -12,7 +12,7 @@ class fluentd::install_repo inherits fluentd {
 
       exec { 'rpmkey':
         command     => "rpm --import ${fluentd::repo_gpgkey}",
-        path        => '/usr/bin',
+        path        => '/bin:/usr/bin',
         refreshonly => true,
       }
 

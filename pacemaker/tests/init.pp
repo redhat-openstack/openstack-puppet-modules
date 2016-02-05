@@ -115,3 +115,20 @@ pacemaker::constraint::base { "ip-192.168.122.223_on_192.168.122.3":
   location        => '192.168.122.3',
   score           => 'INFINITY',
 }
+
+### Add properties
+pacemaker::property { 'global-bar':
+  property   => 'bar',
+  value      => 'baz',
+  force      => true,
+  tries      => 1,
+  try_sleep  => 1,
+}
+
+pacemaker::property { 'node-foo':
+  property   => 'foo',
+  value      => 'baz',
+  node       => 'cluster1',
+  tries      => 1,
+  try_sleep  => 1,
+}

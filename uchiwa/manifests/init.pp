@@ -90,22 +90,25 @@
 #  [*sensu_api_endpoints*]
 #    Array of hashes
 #    Default: [{
-#               name    => 'sensu',
-#               ssl     => false,
-#               port    => 4567,
-#               user    => 'sensu',
-#               pass    => 'sensu',
-#               path    => '',
-#               timeout => 5,
+#               name     => 'sensu',
+#               ssl      => false,
+#               hostname => '127.0.0.1',
+#               port     => 4567,
+#               user     => 'sensu',
+#               pass     => 'sensu',
+#               path     => '',
+#               timeout  => 5,
 #             }]
-#     An array of API endpoints to connect uchiwa to one or multiple sensu servers.
+#    An array of API endpoints to connect uchiwa to one or multiple sensu servers.
+#    The host field can be an array of hostnames or ip addresses for redundancy.
+#    You may also set the host field to be a single hostname or ip address string.
 #
 #  [*users*]
 #    Array of hashes
 #    An array of user credentials to access the uchiwa dashboard. If set, it takes
 #    precendence over 'user' and 'pass'.
-#    Example: 
-#    ```   
+#    Example:
+#    ```
 #    [{
 #       'username' => 'user1',
 #       'password' => 'pass1',

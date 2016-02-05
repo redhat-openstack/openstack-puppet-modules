@@ -97,7 +97,7 @@ describe "Integration testing" do
       it 'should run successfully' do
         pp = "class { 'elasticsearch': config => { 'cluster.name' => '#{test_settings['cluster_name']}'}, java_install => true, package_url => '#{test_settings['snapshot_package']}' }
               elasticsearch::instance { 'es-01': config => { 'node.name' => 'elasticsearch001', 'http.port' => '#{test_settings['port_a']}' } }
-              elasticsearch::plugin{'lmenezes/elasticsearch-kopf': instances => 'es-01' }
+              elasticsearch::plugin { 'lmenezes/elasticsearch-kopf': instances => 'es-01' }
              "
 
         # Run it twice and test for idempotency

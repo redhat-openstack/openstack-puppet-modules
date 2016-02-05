@@ -1,5 +1,7 @@
 # Fluentd
 
+[![Build Status](https://travis-ci.org/soylent/konstantin-fluentd.svg?branch=master)](https://travis-ci.org/soylent/konstantin-fluentd)
+
 Install, configure, and manage Fluentd data collector.
 
 ## Module Description
@@ -12,7 +14,7 @@ Install, configure, and manage Fluentd data collector.
 
 ## Usage
 
-### Routing events to Elasticsearch
+### Routing Events To Elasticsearch
 
 ```puppet
 include fluentd
@@ -36,7 +38,7 @@ fluentd::config { '500_elasticsearch.conf':
 }
 ```
 
-### Forwarding events to Fluentd aggregator
+### Forwarding Events To Fluentd Aggregator
 
 ```puppet
 include fluentd
@@ -63,8 +65,8 @@ fluentd::config { '600_forwarding.conf':
 
 All configs employ a numbering system in the resource's title that is used for
 ordering. When titling your config, make sure you prefix the filename with a
-number, for example, '999_catch_all.conf', '500_elasticsearch.conf'. 999 has
-smaller priority than 500.
+number, for example, `999_catch_all.conf`, `500_elasticsearch.conf` (999 has
+smaller priority than 500)
 
 ## Reference
 
@@ -174,7 +176,7 @@ Config Hash, please see usage examples.
 
 ## Limitations
 
-Tested only on CentOS 7, Ubuntu 14.04, Debian 7.8
+Tested on CentOS 6, CentOS 7, Ubuntu 14.04, Debian 7.8
 
 ## Development
 
@@ -183,10 +185,13 @@ Bug reports and pull requests are welcome!
 ### Running Tests
 
     $ bundle install
-    $ bundle exec rspec
-    $ bundle exec rake beaker BEAKER_set=debian-78-x64
-    $ bundle exec rake beaker BEAKER_set=ubuntu-server-1404-x64
     $ bundle exec rake lint
+    $ bundle exec rake metadata
+    $ bundle exec rake spec
+    $ bundle exec rake beaker BEAKER_set=centos-6-x64
+    $ bundle exec rake beaker BEAKER_set=centos-7-x64
+    $ bundle exec rake beaker BEAKER_set=debian-7-amd64
+    $ bundle exec rake beaker BEAKER_set=ubuntu-server-1404-x64
 
 Relevant Beaker docs: https://github.com/puppetlabs/beaker/blob/master/docs/How-to-Write-a-Beaker-Test-for-a-Module.md
 
@@ -196,7 +201,7 @@ Relevant Beaker docs: https://github.com/puppetlabs/beaker/blob/master/docs/How-
 
 ## License
 
-Copyright 2015 SPB TV AG
+Copyright 2015–2016 SPB TV AG
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License.

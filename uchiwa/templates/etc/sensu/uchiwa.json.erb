@@ -1,19 +1,28 @@
 {
 "sensu": [
-  <%- default_endpoint = scope['uchiwa::params::sensu_api_endpoints'][0] -%>
-  <%- @sensu_api_endpoints.each_with_index do |endpoint, i| -%>
-    {
-      "name": "<%= endpoint['name'] || default_endpoint['name'] %>",
-      "host": "<%= endpoint['host'] || default_endpoint['host'] %>",
-      "ssl": <%= endpoint['ssl'] || default_endpoint['ssl'] %>,
-      "insecure": <%= endpoint['insecure'] || default_endpoint['insecure']%>,
-      "port": <%= endpoint['port'] || default_endpoint['port'] %>,
-      "user": "<%= endpoint['user'] || default_endpoint['user'] %>",
-      "pass": "<%= endpoint['pass'] || default_endpoint['pass'] %>",
-      "path": "<%= endpoint['path'] || default_endpoint['path'] %>",
-      "timeout": <%= endpoint['timeout'] || default_endpoint['timeout'] %>
-    }<%= ',' if i < (@sensu_api_endpoints.size - 1) %>
-    <%- end -%>
+  <%-
+  default_endpoint = scope['uchiwa::params::sensu_api_endpoints'][0]
+  @sensu_api_endpoints.each_with_index do |endpoint, i|
+    if !endpoint['host'].kind_of?(Array)
+      host = endpoint['host'] || default_endpoint['host']
+      endpoint['host'] = []
+      endpoint['host'] << host
+    end
+    endpoint['host'].each_with_index do |host,j| -%>
+      {
+        "name": "<%= endpoint['name'] || default_endpoint['name'] %>",
+        "host": "<%= host %>",
+        "ssl": <%= endpoint['ssl'] || default_endpoint['ssl'] %>,
+        "insecure": <%= endpoint['insecure'] || default_endpoint['insecure']%>,
+        "port": <%= endpoint['port'] || default_endpoint['port'] %>,
+        "user": "<%= endpoint['user'] || default_endpoint['user'] %>",
+        "pass": "<%= endpoint['pass'] || default_endpoint['pass'] %>",
+        "path": "<%= endpoint['path'] || default_endpoint['path'] %>",
+        "timeout": <%= endpoint['timeout'] || default_endpoint['timeout'] %>
+      }<%= ',' if j < (endpoint['host'].size - 1) %>
+    <%- end %>
+    <%= ',' if i < (@sensu_api_endpoints.size - 1) %>
+  <%- end -%>
   ],
   "uchiwa": {
     "host": "<%= @host %>",

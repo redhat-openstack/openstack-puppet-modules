@@ -91,6 +91,7 @@ def karaf_feature_tests(options = {})
 
   # The order of this list concat matters
   features = default_features + extra_features
+  features_csv = features.join(',')
 
   # Confirm properties of Karaf features config file
   # NB: These hashes don't work with Ruby 1.8.7, but we
@@ -101,7 +102,13 @@ def karaf_feature_tests(options = {})
       'path'        => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
       'owner'   => 'odl',
       'group'   => 'odl',
-      'content'     => /^featuresBoot=#{features.join(",")}/
+    )
+  }
+  it {
+    should contain_file_line('featuresBoot').with(
+      'path'  => '/opt/opendaylight/etc/org.apache.karaf.features.cfg',
+      'line'  => "featuresBoot=#{features_csv}",
+      'match' => '^featuresBoot=.*$',
     )
   }
 end
@@ -127,11 +134,104 @@ def odl_rest_port_tests(options = {})
   }
 end
 
+def log_level_tests(options = {})
+  # Extract params
+  # NB: This default value should be the same as one in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  log_levels = options.fetch(:log_levels, {})
+
+  if log_levels.empty?
+    # Should contain log level config file
+    it {
+      should contain_file('org.ops4j.pax.logging.cfg').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/org.ops4j.pax.logging.cfg',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+      )
+    }
+    # Should not contain custom log level config
+    it {
+      should_not contain_file('org.ops4j.pax.logging.cfg').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/org.ops4j.pax.logging.cfg',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+        'content'     => /# Log level config added by puppet-opendaylight/
+      )
+    }
+  else
+    # Should contain log level config file
+    it {
+      should contain_file('org.ops4j.pax.logging.cfg').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/org.ops4j.pax.logging.cfg',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+      )
+    }
+    # Should contain custom log level config
+    it {
+      should contain_file('org.ops4j.pax.logging.cfg').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/org.ops4j.pax.logging.cfg',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+        'content'     => /# Log level config added by puppet-opendaylight/
+      )
+    }
+    # Verify each custom log level config entry
+    log_levels.each_pair do |logger, level|
+      it {
+        should contain_file('org.ops4j.pax.logging.cfg').with(
+          'ensure'      => 'file',
+          'path'        => '/opt/opendaylight/etc/org.ops4j.pax.logging.cfg',
+          'owner'   => 'odl',
+          'group'   => 'odl',
+          'content'     => /^log4j.logger.#{logger} = #{level}/
+        )
+      }
+    end
+  end
+end
+
+# Shared tests that specialize in testing enabling L3 via ODL OVSDB
+def enable_l3_tests(options = {})
+  # Extract params
+  # NB: This default value should be the same as one in opendaylight::params
+  # TODO: Remove this possible source of bugs^^
+  enable_l3 = options.fetch(:enable_l3, 'no')
+
+  if [true, 'yes'].include? enable_l3
+    # Confirm ODL OVSDB L3 is enabled
+    it {
+      should contain_file('custom.properties').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/custom.properties',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+        'content'     => /^ovsdb.l3.fwd.enabled=yes/
+      )
+    }
+  elsif [false, 'no'].include? enable_l3
+    # Confirm ODL OVSDB L3 is disabled
+    it {
+      should contain_file('custom.properties').with(
+        'ensure'      => 'file',
+        'path'        => '/opt/opendaylight/etc/custom.properties',
+        'owner'   => 'odl',
+        'group'   => 'odl',
+        'content'     => /^ovsdb.l3.fwd.enabled=no/
+      )
+    }
+  end
+end
+
 def tarball_install_tests(options = {})
   # Extract params
   # NB: These default values should be the same as ones in opendaylight::params
   # TODO: Remove this possible source of bugs^^
-  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.3-Lithium-SR3/distribution-karaf-0.3.3-Lithium-SR3.tar.gz')
+  tarball_url = options.fetch(:tarball_url, 'https://nexus.opendaylight.org/content/repositories/staging/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium-RC1/distribution-karaf-0.4.0-Beryllium-RC1.tar.gz')
   unitfile_url = options.fetch(:unitfile_url, 'https://github.com/dfarrell07/opendaylight-systemd/archive/master/opendaylight-unitfile.tar.gz')
   osfamily = options.fetch(:osfamily, 'RedHat')
 
@@ -255,7 +355,7 @@ def tarball_install_tests(options = {})
   end
 
   # Verify that there are no unexpected resources from RPM-type installs
-  it { should_not contain_yumrepo('opendaylight-3-candidate') }
+  it { should_not contain_yumrepo('opendaylight-4-testing') }
   it { should_not contain_package('opendaylight') }
 end
 
@@ -266,9 +366,9 @@ def rpm_install_tests(options = {})
   operatingsystem  = options.fetch(:operatingsystem, 'CentOS')
   case operatingsystem
   when 'CentOS'
-    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-3-candidate/$basearch/os/'
+    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-4-testing/$basearch/os/'
   when 'Fedora'
-    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-3-candidate/$basearch/os/'
+    yum_repo = 'http://cbs.centos.org/repos/nfv7-opendaylight-4-testing/$basearch/os/'
   else
     fail("Unknown operatingsystem: #{operatingsystem}")
   end
@@ -276,21 +376,21 @@ def rpm_install_tests(options = {})
   # Default to CentOS 7 Yum repo URL
 
   # Confirm presence of RPM-related resources
-  it { should contain_yumrepo('opendaylight-3-candidate') }
+  it { should contain_yumrepo('opendaylight-4-testing') }
   it { should contain_package('opendaylight') }
 
   # Confirm relationships between RPM-related resources
-  it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight-3-candidate]') }
-  it { should contain_yumrepo('opendaylight-3-candidate').that_comes_before('Package[opendaylight]') }
+  it { should contain_package('opendaylight').that_requires('Yumrepo[opendaylight-4-testing]') }
+  it { should contain_yumrepo('opendaylight-4-testing').that_comes_before('Package[opendaylight]') }
 
   # Confirm properties of RPM-related resources
   # NB: These hashes don't work with Ruby 1.8.7, but we
   #   don't support 1.8.7 so that's okay. See issue #36.
   it {
-    should contain_yumrepo('opendaylight-3-candidate').with(
+    should contain_yumrepo('opendaylight-4-testing').with(
       'enabled'     => '1',
       'gpgcheck'    => '0',
-      'descr'       => 'CentOS CBS OpenDaylight Lithium candidate repository',
+      'descr'       => 'CentOS CBS OpenDaylight Berillium testing repository',
       'baseurl'     => yum_repo,
     )
   }
@@ -313,7 +413,7 @@ def unsupported_os_tests(options = {})
   it { expect { should contain_class('opendaylight::service') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
 
   # Confirm that other resources fail on unsupported OSs
-  it { expect { should contain_yumrepo('opendaylight-3-candidate') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
+  it { expect { should contain_yumrepo('opendaylight-4-testing') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
   it { expect { should contain_package('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
   it { expect { should contain_service('opendaylight') }.to raise_error(Puppet::Error, /#{expected_msg}/) }
   it { expect { should contain_file('org.apache.karaf.features.cfg') }.to raise_error(Puppet::Error, /#{expected_msg}/) }

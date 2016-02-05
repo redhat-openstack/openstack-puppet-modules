@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '5a277163de3807235f7f2fb4b11ec3d1f0b2d05f',
+  :commit => 'de1bee73d362a1a952136077ff400a15550b3d8d',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'cassandra',
@@ -15,7 +15,7 @@ mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => '45c81859a5ff37c6cbbce0d260801e9f25354515',
+  :commit => '185f76380b57d7c420729be10bf70ef3a3c046ae',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
@@ -35,7 +35,7 @@ mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'contrail',
-  :commit => '83471677d5b7b7a1e26c7ccb20f5ab355f41efae',
+  :commit => '95616bdf12d90012034b484149d731b5c690da96',
   :git => 'https://github.com/redhat-cip/puppet-contrail.git'
 
 mod 'corosync',
@@ -47,7 +47,7 @@ mod 'datacat',
   :git => 'http://github.com/richardc/puppet-datacat'
 
 mod 'elasticsearch',
-  :commit => 'dbceae869eef2dde4ff3ad5504ec002bb4a98c3c',
+  :commit => 'da7b6a59fb8aca125499735ed53edb5fcfab3cbc',
   :git => 'https://github.com/elastic/puppet-elasticsearch.git'
 
 mod 'firewall',
@@ -55,7 +55,7 @@ mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall.git'
 
 mod 'fluentd',
-  :commit => 'ddc5f0e4c6c53d15f0cbd34f74bfaa91a0fb299f',
+  :commit => 'bbbf775ffc112b11035cb1334a4ebfd2e97caa84',
   :git => 'https://github.com/soylent/konstantin-fluentd.git'
 
 mod 'git',
@@ -139,15 +139,15 @@ mod 'module-data',
   :git => 'https://github.com/ripienaar/puppet-module-data.git'
 
 mod 'mongodb',
-  :commit => 'b25bdb3ce7dcb3e60a4427806fe72cc93625de13',
+  :commit => 'e5f62b3fd2f54f73d6a002e7ccec21d4136c3606',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb.git'
 
 mod 'mysql',
-  :commit => 'bc1c44afa4b2e2075aa5992d1528d840bf554a34',
+  :commit => '6598be8eed273201a87f9dfb37193c0ebd81c89f',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql.git'
 
 mod 'n1k_vsm',
-  :commit => '3ee42190ffb1cc7df53a2a61c453601a52a349bb',
+  :commit => '91772fa53dd3ed2686d2e8b0303c77ea6faefe68',
   :git => 'https://github.com/stackforge/puppet-n1k-vsm.git'
 
 mod 'nagios',
@@ -171,7 +171,7 @@ mod 'ntp',
   :git => 'https://github.com/puppetlabs/puppetlabs-ntp'
 
 mod 'opendaylight',
-  :commit => 'bb401b1349363c75310d102d1de49f66f3003a31',
+  :commit => 'bdd2a70d305c29a1ab9db03d10debe179cb84003',
   :git => 'https://github.com/dfarrell07/puppet-opendaylight.git'
 
 mod 'openstack_extras',
@@ -183,7 +183,7 @@ mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
-  :commit => '00d99b66931d520af202b94d0a2fe3b43f11d8ee',
+  :commit => '973d35a918cf6051a917e96165eaae6dbed6690a',
   :git => 'https://github.com/redhat-openstack/puppet-pacemaker.git'
 
 mod 'puppet',
@@ -195,7 +195,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => '45692304e66e4acfca06969574012b22def8f69b',
+  :commit => '1c635016237f16f99245f904885d534e17521842',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',
@@ -215,7 +215,7 @@ mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara.git'
 
 mod 'sensu',
-  :commit => '9bc7f4aa1bff8b2bb612f54d72df0a2730c7a0ea',
+  :commit => '8f4fc5780071c4895dec559eafc6030511b0caaa',
   :git => 'https://github.com/sensu/sensu-puppet.git'
 
 mod 'snmp',
@@ -267,7 +267,7 @@ mod 'tuskar',
   :git => 'https://github.com/openstack/puppet-tuskar.git'
 
 mod 'uchiwa',
-  :commit => 'a197642f71c8e5437d132d05444aff019f8ff817',
+  :commit => 'c1f9e42d4d15bb51a2ecc02f20fe49d40b8bf7af',
   :git => 'https://github.com/Yelp/puppet-uchiwa.git'
 
 mod 'vcsrepo',

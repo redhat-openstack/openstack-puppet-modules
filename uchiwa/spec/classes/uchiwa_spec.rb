@@ -152,6 +152,16 @@ describe 'uchiwa' do
     }
   end
 
+  context 'with sensu_api_endpoints multiple hosts' do
+    let(:params) {{ :sensu_api_endpoints => [ { 'name' => 'foo', 'host' => ['bar', 'baz' ] } ] }}
+    it {
+      should contain_file('/etc/sensu/uchiwa.json') \
+        .with_content(/"name": "foo"/) \
+        .with_content(/"host": "bar"/)
+        .with_content(/"host": "baz"/)
+    }
+  end
+
   context 'with multiple users' do
     let(:params) {{ :users => [ { 'username' => 'user1', 'password' => 'pass1', 'readonly' => true } ] }}
     it {

@@ -267,6 +267,11 @@
 #
 # [*path*]
 #   String. used to set PATH in /etc/default/sensu
+#
+# [*redact*]
+#   Array of strings. Use to redact passwords from checks on the client side
+#   Default: []
+
 class sensu (
   $version                        = 'latest',
   $sensu_plugin_name              = 'sensu-plugin',
@@ -342,11 +347,15 @@ class sensu (
   $enterprise_dashboard_github    = undef,
   $enterprise_dashboard_ldap      = undef,
   $path                           = undef,
+  $redact                         = [],
 
   ### START Hiera Lookups ###
   $extensions                  = {},
   $handlers                    = {},
+  $handler_defaults            = {},
   $checks                      = {},
+  $check_defaults              = {},
+  $mutators                    = {},
   ### END Hiera Lookups ###
 
 ){
@@ -436,8 +445,9 @@ class sensu (
 
   # Create resources from hiera lookups
   create_resources('::sensu::extension', $extensions)
-  create_resources('::sensu::handler', $handlers)
-  create_resources('::sensu::check', $checks)
+  create_resources('::sensu::handler', $handlers, $handler_defaults)
+  create_resources('::sensu::check', $checks, $check_defaults)
+  create_resources('::sensu::mutator', $mutators)
 
   # Include everything and let each module determine its state.  This allows
   # transitioning to purged config and stopping/disabling services

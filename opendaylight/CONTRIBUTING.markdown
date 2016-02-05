@@ -171,11 +171,12 @@ There are a number of pre-defined rake tasks to simplify running common
 Beaker tests.
 
 ```
+[~/puppet-opendaylight]$ bundle exec rake centos_7_docker
 [~/puppet-opendaylight]$ bundle exec rake centos
 [~/puppet-opendaylight]$ bundle exec rake centos_tarball
-[~/puppet-opendaylight]$ bundle exec rake fedora_20
-[~/puppet-opendaylight]$ bundle exec rake fedora_21
-[~/puppet-opendaylight]$ bundle exec rake ubuntu
+[~/puppet-opendaylight]$ bundle exec rake fedora_22
+[~/puppet-opendaylight]$ bundle exec rake ubuntu_1404
+[~/puppet-opendaylight]$ bundle exec rake ubuntu_1404_docker
 ```
 
 If you'd like to preserve the Beaker VM after a test run, perhaps for manual

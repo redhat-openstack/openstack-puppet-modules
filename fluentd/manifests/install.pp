@@ -8,7 +8,10 @@ class fluentd::install inherits fluentd {
   } ->
 
   file { $fluentd::config_path:
-    ensure => directory,
+    ensure  => directory,
+    recurse => true,
+    force   => true,
+    purge   => true,
   } ->
 
   file { $fluentd::config_file:
