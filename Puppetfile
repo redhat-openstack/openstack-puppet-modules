@@ -107,7 +107,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => 'd9cecd44a916978d1a41b1e18c246e5d9175aa05',
+  :commit => 'f710bed6aa445c33d3d307bdc144b6f7534d1282',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -159,7 +159,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '1e12e9c45c5c567b3ae90c0d51875b20ef8b74a4',
+  :commit => 'e64bc9a57b2a9febad50181889faa19fba5f72ef',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
