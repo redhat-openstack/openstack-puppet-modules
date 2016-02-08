@@ -1,0 +1,7 @@
+Code-Review+2: Jason Guiditta <jguiditt@redhat.com>
+Verified+1: Jason Guiditta <jguiditt@redhat.com>
+Submitted-by: Jason Guiditta <jguiditt@redhat.com>
+Submitted-at: Mon, 08 Feb 2016 17:34:47 +0100
+Reviewed-on: https://review.gerrithub.io/262139
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-liberty
