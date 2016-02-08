@@ -1,27 +1,29 @@
 class apache::mod::passenger (
-  $passenger_conf_file            = $::apache::params::passenger_conf_file,
-  $passenger_conf_package_file    = $::apache::params::passenger_conf_package_file,
-  $passenger_high_performance     = undef,
-  $passenger_pool_idle_time       = undef,
-  $passenger_max_requests         = undef,
-  $passenger_spawn_method         = undef,
-  $passenger_stat_throttle_rate   = undef,
-  $rack_autodetect                = undef,
-  $rails_autodetect               = undef,
-  $passenger_root                 = $::apache::params::passenger_root,
-  $passenger_ruby                 = $::apache::params::passenger_ruby,
-  $passenger_default_ruby         = $::apache::params::passenger_default_ruby,
-  $passenger_max_pool_size        = undef,
-  $passenger_min_instances        = undef,
-  $passenger_use_global_queue     = undef,
-  $passenger_app_env              = undef,
-  $passenger_log_file             = undef,
-  $mod_package                    = undef,
-  $mod_package_ensure             = undef,
-  $mod_lib                        = undef,
-  $mod_lib_path                   = undef,
-  $mod_id                         = undef,
-  $mod_path                       = undef,
+  $passenger_conf_file              = $::apache::params::passenger_conf_file,
+  $passenger_conf_package_file      = $::apache::params::passenger_conf_package_file,
+  $passenger_high_performance       = undef,
+  $passenger_pool_idle_time         = undef,
+  $passenger_max_request_queue_size = undef,
+  $passenger_max_requests           = undef,
+  $passenger_spawn_method           = undef,
+  $passenger_stat_throttle_rate     = undef,
+  $rack_autodetect                  = undef,
+  $rails_autodetect                 = undef,
+  $passenger_root                   = $::apache::params::passenger_root,
+  $passenger_ruby                   = $::apache::params::passenger_ruby,
+  $passenger_default_ruby           = $::apache::params::passenger_default_ruby,
+  $passenger_max_pool_size          = undef,
+  $passenger_min_instances          = undef,
+  $passenger_use_global_queue       = undef,
+  $passenger_app_env                = undef,
+  $passenger_log_file               = undef,
+  $manage_repo                      = true,
+  $mod_package                      = undef,
+  $mod_package_ensure               = undef,
+  $mod_lib                          = undef,
+  $mod_lib_path                     = undef,
+  $mod_id                           = undef,
+  $mod_path                         = undef,
 ) {
 
   if $passenger_spawn_method {
@@ -49,6 +51,21 @@ class apache::mod::passenger (
     }
   } else {
     $_lib_path = $mod_lib_path
+  }
+
+  if $::osfamily == 'RedHat' and $manage_repo {
+    yumrepo { 'passenger':
+      ensure        => 'present',
+      baseurl       => 'https://oss-binaries.phusionpassenger.com/yum/passenger/el/$releasever/$basearch',
+      descr         => 'passenger',
+      enabled       => '1',
+      gpgcheck      => '0',
+      gpgkey        => 'https://packagecloud.io/gpg.key',
+      repo_gpgcheck => '1',
+      sslcacert     => '/etc/pki/tls/certs/ca-bundle.crt',
+      sslverify     => '1',
+      before        => Apache::Mod['passenger'],
+    }
   }
 
   $_id = $mod_id

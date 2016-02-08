@@ -1,25 +1,7 @@
 require 'spec_helper_acceptance'
+require_relative './version.rb'
 
 describe 'apache::mod::pagespeed class' do
-  case fact('osfamily')
-  when 'Debian'
-    vhost_dir    = '/etc/apache2/sites-enabled'
-    mod_dir      = '/etc/apache2/mods-available'
-    service_name = 'apache2'
-  when 'RedHat'
-    vhost_dir    = '/etc/httpd/conf.d'
-    mod_dir      = '/etc/httpd/conf.d'
-    service_name = 'httpd'
-  when 'FreeBSD'
-    vhost_dir    = '/usr/local/etc/apache24/Vhosts'
-    mod_dir      = '/usr/local/etc/apache24/Modules'
-    service_name = 'apache24'
-  when 'Gentoo'
-    vhost_dir    = '/etc/apache2/vhosts.d'
-    mod_dir      = '/etc/apache2/modules.d'
-    service_name = 'apache2'
-  end
-
   context "default pagespeed config" do
     it 'succeeds in puppeting pagespeed' do
       pp= <<-EOS
@@ -66,12 +48,16 @@ describe 'apache::mod::pagespeed class' do
       apply_manifest(pp, :catch_failures => true)
     end
 
-    describe service(service_name) do
-      it { is_expected.to be_enabled }
+    describe service($service_name) do
+      if (fact('operatingsystem') == 'Debian' && fact('operatingsystemmajrelease') == '8')
+        pending 'Should be enabled - Bug 760616 on Debian 8'
+      else
+        it { should be_enabled }
+      end
       it { is_expected.to be_running }
     end
 
-    describe file("#{mod_dir}/pagespeed.conf") do
+    describe file("#{$mod_dir}/pagespeed.conf") do
       it { is_expected.to contain "AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html" }
       it { is_expected.to contain "ModPagespeedEnableFilters remove_comments" }
       it { is_expected.to contain "ModPagespeedDisableFilters extend_cache" }

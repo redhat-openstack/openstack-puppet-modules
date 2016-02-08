@@ -504,7 +504,7 @@ describe 'apache', :type => :class do
       it { is_expected.to contain_file("/opt/rh/root/etc/httpd/conf/httpd.conf").with(
         'ensure'  => 'file',
         'notify'  => 'Class[Apache::Service]',
-        'require' => ['Package[httpd]', 'File[/etc/httpd/conf/ports.conf]'],
+        'require' => ['Package[httpd]', 'Concat[/etc/httpd/conf/ports.conf]'],
       ) }
     end
 
@@ -833,6 +833,16 @@ describe 'apache', :type => :class do
         'ensure' => 'installed',
         'name'   => 'httpd24-httpd'
         )
+      }
+    end
+    context 'with a custom file_mode parameter' do
+      let :params do {
+        :file_mode => '0640'
+      }
+      end
+      it { is_expected.to contain_concat("/etc/httpd/conf/ports.conf").with(
+        'mode' => '0640',
+      )
       }
     end
     context 'default vhost defaults' do
