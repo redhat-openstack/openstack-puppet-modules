@@ -130,6 +130,10 @@ mod 'midonet',
   :commit => 'a4bb534be34a806811df51874a5bba132ca24724',
   :git => 'https://github.com/midonet/puppet-midonet.git'
 
+mod 'mistral',
+  :commit => '695770554bcea043947630260d1a29c0a964ed08',
+  :git => 'https://github.com/openstack/puppet-mistral.git'
+
 mod 'module-collectd',
   :commit => '010a7b9f5a6939e001fe515224cb1be6d9cfdf88',
   :git => 'https://github.com/pdxcat/puppet-module-collectd.git'
