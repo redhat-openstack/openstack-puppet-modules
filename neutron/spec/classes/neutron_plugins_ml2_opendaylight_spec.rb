@@ -12,9 +12,9 @@ describe 'neutron::plugins::ml2::opendaylight' do
   let :default_params do
     {
       :package_ensure => 'present',
-      #:odl_username   => '',
-      #:odl_password   => '',
-      #:odl_url        => '',
+      :odl_username   => '<SERVICE DEFAULT>',
+      :odl_password   => '<SERVICE DEFAULT>',
+      :odl_url        => '<SERVICE DEFAULT>',
     }
   end
 
@@ -44,18 +44,19 @@ describe 'neutron::plugins::ml2::opendaylight' do
     end
 
     it 'configures ml2_odl settings' do
-      is_expected.to contain_neutron_plugin_ml2('ml2_odl/password').with_ensure('absent')
-      is_expected.to contain_neutron_plugin_ml2('ml2_odl/username').with_ensure('absent')
-      is_expected.to contain_neutron_plugin_ml2('ml2_odl/url').with_ensure('absent')
+      is_expected.to contain_neutron_plugin_ml2('ml2_odl/password').with_value(params[:odl_password])
+      is_expected.to contain_neutron_plugin_ml2('ml2_odl/username').with_value(params[:odl_username])
+      is_expected.to contain_neutron_plugin_ml2('ml2_odl/url').with_value(params[:odl_url])
     end
   end
 
+
   context 'on RedHat platforms' do
     let :facts do
-      test_facts.merge({
+      @default_facts.merge(test_facts.merge({
           :osfamily               => 'RedHat',
           :operatingsystemrelease => '7'
-      })
+      }))
     end
 
     it_configures 'neutron plugin opendaylight ml2'
@@ -63,9 +64,9 @@ describe 'neutron::plugins::ml2::opendaylight' do
 
   context 'on Debian platforms' do
     let :facts do
-      test_facts.merge({
+      @default_facts.merge(test_facts.merge({
           :osfamily               => 'Debian',
-      })
+      }))
     end
 
     it_configures 'neutron plugin opendaylight ml2'

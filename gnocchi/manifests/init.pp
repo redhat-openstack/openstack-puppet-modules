@@ -10,7 +10,8 @@
 #
 # [*log_dir*]
 #   (optional) Directory where logs should be stored.
-#   If set to boolean false, it will not log to any directory.
+#   If set to boolean false or the $::os_service_default, it will not log to
+#   any directory.
 #   Defaults to undef
 #
 # [*state_path*]
@@ -52,6 +53,7 @@ class gnocchi (
   $debug                              = undef,
   $use_syslog                         = undef,
   $use_stderr                         = undef,
+  $log_dir                            = undef,
   $log_facility                       = undef,
   $database_connection                = undef,
 ) inherits gnocchi::params {

@@ -16,29 +16,29 @@ horizon
 Overview
 --------
 
-The horizon module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software.  The module its self is used to flexibly configure and manage the dashboard service for Openstack.
+The horizon module is a part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software.  The module its self is used to flexibly configure and manage the dashboard service for OpenStack.
 
 Module Description
 ------------------
 
 The horizon module is a thorough attempt to make Puppet capable of managing the entirety of horizon.  Horizon is a fairly classic django application, which results in a fairly simply Puppet module.
 
-This module is tested in combination with other modules needed to build and leverage an entire Openstack software stack.  These modules can be found, all pulled together in the [openstack module](https://github.com/stackforge/puppet-openstack).
+This module is tested in combination with other modules needed to build and leverage an entire OpenStack software stack.
 
 Setup
 -----
 
 **What the horizon module affects**
 
-* horizon, the dashboard service for Openstack.
+* [Horizon](https://wiki.openstack.org/wiki/Horizon), the dashboard service for OpenStack.
 
 ### Installing horizon
 
-    example% puppet module install openstack/horizon
+    puppet module install openstack/horizon
 
 ### Beginning with horizon
 
-To utilize the horizon module's functionality you will need to declare multiple resources but you'll find that doing so is much less complicated than the other OpenStack component modules.  The following is a modified excerpt from the [openstack module](https://github.com/stackforge/puppet-openstack).  We recommend you consult and understand the [openstack module](https://github.com/stackforge/puppet-openstack) and the [core openstack](http://docs.openstack.org) documentation.
+To utilize the horizon module's functionality you will need to declare multiple resources but you'll find that doing so is much less complicated than the other OpenStack component modules. We recommend you consult and understand the [core openstack](http://docs.openstack.org) documentation.
 
 **Define a horizon dashboard**
 

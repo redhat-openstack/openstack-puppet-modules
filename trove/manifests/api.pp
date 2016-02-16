@@ -34,11 +34,33 @@
 #
 # [*verbose*]
 #   (optional) Rather to log the trove api service at verbose level.
-#   Default: false
+#   Defaults to undef
 #
 # [*debug*]
 #   (optional) Rather to log the trove api service at debug level.
-#   Default: false
+#   Defaults to undef
+#
+# [*log_file*]
+#   (optional) The path of file used for logging
+#   If set to boolean false, it will not log to any file.
+#   Defaults to undef
+#
+# [*log_dir*]
+#   (optional) directory to which trove logs are sent.
+#   If set to boolean false, it will not log to any directory.
+#   Defaults to undef
+#
+# [*use_syslog*]
+#   (optional) Use syslog for logging.
+#   Defaults to undef
+#
+# [*use_stderr*]
+#   (optional) Use stderr for logging
+#   Defaults to undef
+#
+# [*log_facility*]
+#   (optional) Syslog facility to receive log lines.
+#   Defaults to undef.
 #
 # [*bind_host*]
 #   (optional) The address of the host to bind to.
@@ -56,31 +78,14 @@
 #   (optional) Number of trove API worker processes to start
 #   Default: $::processorcount
 #
-# [*log_file*]
-#   (optional) The path of file used for logging
-#   If set to boolean false, it will not log to any file.
-#   Default: /var/log/trove/trove-api.log
+# [*auth_uri*]
+#   (Optional) Complete public Identity API endpoint.
+#   Defaults to false.
 #
-# [*log_dir*]
-#   (optional) directory to which trove logs are sent.
-#   If set to boolean false, it will not log to any directory.
-#   Defaults to '/var/log/trove'
-#
-# [*auth_host*]
-#   (optional) Host running auth service.
-#   Defaults to '127.0.0.1'.
-#
-# [*auth_url*]
-#   (optional) Authentication URL.
-#   Defaults to 'http://localhost:5000/v2.0'.
-#
-# [*auth_port*]
-#   (optional) Port to use for auth service on auth_host.
-#   Defaults to '35357'.
-#
-# [*auth_protocol*]
-#   (optional) Protocol to use for auth.
-#   Defaults to 'http'.
+# [*identity_uri*]
+#   (Optional) Complete admin Identity API endpoint.
+#   This should specify the unversioned root endpoint.
+#   Defaults to false.
 #
 # [*keystone_tenant*]
 #   (optional) Tenant to authenticate to.
@@ -93,14 +98,6 @@
 # [*enabled*]
 #   (optional) Whether to enable services.
 #   Defaults to true.
-#
-# [*use_syslog*]
-#   (optional) Use syslog for logging.
-#   Defaults to false.
-#
-# [*log_facility*]
-#   (optional) Syslog facility to receive log lines.
-#   Defaults to 'LOG_USER'.
 #
 # [*purge_config*]
 #   (optional) Whether to set only the specified config options
@@ -139,25 +136,46 @@
 #   (optional) Default rate limit of mgmt post request.
 #   Defaults to 200.
 #
+# == DEPRECATED PARAMETERS
+#
+# [*auth_host*]
+#   (optional) DEPRECATED: Use identity_uri instead.
+#   Host running auth service.
+#   Defaults to '127.0.0.1.
+#
+# [*auth_port*]
+#   (optional) DEPRECATED: Use identity_uri instead.
+#   Port to use for auth service on auth_host.
+#   Defaults to '35357'.
+#
+# [*auth_protocol*]
+#   (optional) DEPRECATED: Use identity_uri instead.
+#   Protocol to use for auth.
+#   Defaults to 'http'.
+#
+# [*auth_url*]
+#   (optional) DEPRECATED: Use auth_uri instead.
+#   Authentication URL.
+#   Defaults to 'http://localhost:5000/v2.0'.
+#
 class trove::api(
   $keystone_password,
-  $verbose                      = false,
-  $debug                        = false,
+  $verbose                      = undef,
+  $debug                        = undef,
+  $log_file                     = undef,
+  $log_dir                      = undef,
+  $use_syslog                   = undef,
+  $use_stderr                   = undef,
+  $log_facility                 = undef,
   $bind_host                    = '0.0.0.0',
   $bind_port                    = '8779',
   $backlog                      = '4096',
   $workers                      = $::processorcount,
-  $log_file                     = '/var/log/trove/trove-api.log',
-  $log_dir                      = '/var/log/trove',
-  $auth_host                    = '127.0.0.1',
-  $auth_url                     = false,
-  $auth_port                    = '35357',
-  $auth_protocol                = 'http',
+  $auth_uri                     = false,
+  $identity_uri                 = false,
   $keystone_tenant              = 'services',
   $keystone_user                = 'trove',
   $enabled                      = true,
-  $use_syslog                   = false,
-  $log_facility                 = 'LOG_USER',
   $purge_config                 = false,
   $cert_file                    = false,
   $key_file                     = false,
@@ -169,29 +187,24 @@ class trove::api(
   $http_mgmt_post_rate          = 200,
   $manage_service               = true,
   $ensure_package               = 'present',
+  # DEPRECATED PARAMETERS
+  $auth_host                    = '127.0.0.1',
+  $auth_url                     = 'http://localhost:5000/v2.0',
+  $auth_port                    = '35357',
+  $auth_protocol                = 'http',
 ) inherits trove {
 
   require ::keystone::python
   include ::trove::db
+  include ::trove::logging
   include ::trove::params
 
   Trove_config<||> ~> Exec['post-trove_config']
   Trove_config<||> ~> Service['trove-api']
-  Package['trove-api'] -> Trove_api_paste_ini<||>
   Trove_api_paste_ini<||> ~> Service['trove-api']
-  # Trove db sync is broken in Ubuntu packaging
-  # This is a temporary fix until it's fixed in packaging.
-  # https://bugs.launchpad.net/ubuntu/+source/openstack-trove/+bug/1451134
-  file { '/etc/trove/trove.conf':
-    require => File['/etc/trove'],
-  }
-  File['/etc/trove/trove.conf'] -> Trove_config<||>
-  Trove_config<||> -> Package[$::trove::params::api_package_name]
 
   # basic service config
   trove_config {
-    'DEFAULT/verbose':                      value => $verbose;
-    'DEFAULT/debug':                        value => $debug;
     'DEFAULT/bind_host':                    value => $bind_host;
     'DEFAULT/bind_port':                    value => $bind_port;
     'DEFAULT/backlog':                      value => $backlog;
@@ -203,17 +216,68 @@ class trove::api(
     'DEFAULT/rpc_backend':                  value => $::trove::rpc_backend;
   }
 
-  if $auth_url {
-    trove_config { 'DEFAULT/trove_auth_url': value => $auth_url; }
+  if $identity_uri {
+    trove_config { 'keystone_authtoken/identity_uri': value => $identity_uri; }
   } else {
-    trove_config { 'DEFAULT/trove_auth_url': value => "${auth_protocol}://${auth_host}:5000/v2.0"; }
+    trove_config { 'keystone_authtoken/identity_uri': ensure => absent; }
   }
 
-  # auth config
+  if $auth_uri {
+    trove_config {
+      'DEFAULT/trove_auth_url'      : value => $auth_uri;
+      'keystone_authtoken/auth_uri' : value => $auth_uri;
+    }
+  } else {
+    if $auth_url {
+      warning('The auth_url parameter is deprecated. Please use auth_uri instead.')
+      trove_config {
+        'DEFAULT/trove_auth_url'      : value => $auth_url;
+        'keystone_authtoken/auth_uri' : value => $auth_url;
+      }
+    } else {
+      $auth_uri_real = "${auth_protocol}://${auth_host}:5000/v2.0"
+      warning('In a next release, auth_uri will be default to version-less keystone endpoint.')
+      trove_config {
+        'DEFAULT/trove_auth_url'      : value => $auth_uri_real;
+        'keystone_authtoken/auth_uri' : value => $auth_uri_real;
+      }
+    }
+  }
+
+
+  # if both auth_uri and identity_uri are set we skip these deprecated settings entirely
+  if !$auth_uri or !$identity_uri {
+
+    if $auth_host {
+      warning('The auth_host parameter is deprecated. Please use auth_uri and identity_uri instead.')
+      trove_config { 'keystone_authtoken/auth_host': value => $auth_host; }
+    } else {
+      trove_config { 'keystone_authtoken/auth_host': ensure => absent; }
+    }
+
+    if $auth_port {
+      warning('The auth_port parameter is deprecated. Please use auth_uri and identity_uri instead.')
+      trove_config { 'keystone_authtoken/auth_port': value => $auth_port; }
+    } else {
+      trove_config { 'keystone_authtoken/auth_port': ensure => absent; }
+    }
+
+    if $auth_protocol {
+      warning('The auth_protocol parameter is deprecated. Please use auth_uri and identity_uri instead.')
+      trove_config { 'keystone_authtoken/auth_protocol': value => $auth_protocol; }
+    } else {
+      trove_config { 'keystone_authtoken/auth_protocol': ensure => absent; }
+    }
+
+  } else {
+    trove_config {
+      'keystone_authtoken/auth_host'         : ensure => absent;
+      'keystone_authtoken/auth_port'         : ensure => absent;
+      'keystone_authtoken/auth_protocol'     : ensure => absent;
+    }
+  }
+
   trove_config {
-    'keystone_authtoken/auth_host':         value => $auth_host;
-    'keystone_authtoken/auth_port':         value => $auth_port;
-    'keystone_authtoken/auth_protocol':     value => $auth_protocol;
     'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
     'keystone_authtoken/admin_user':        value => $keystone_user;
     'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
@@ -248,39 +312,6 @@ class trove::api(
     }
   }
 
-  # Logging
-  if $log_file {
-    trove_config {
-      'DEFAULT/log_file': value  => $log_file;
-    }
-  } else {
-    trove_config {
-      'DEFAULT/log_file': ensure => absent;
-    }
-  }
-
-  if $log_dir {
-    trove_config {
-      'DEFAULT/log_dir': value  => $log_dir;
-    }
-  } else {
-    trove_config {
-      'DEFAULT/log_dir': ensure => absent;
-    }
-  }
-
-  # Syslog
-  if $use_syslog {
-    trove_config {
-      'DEFAULT/use_syslog'          : value => true;
-      'DEFAULT/syslog_log_facility' : value => $log_facility;
-    }
-  } else {
-    trove_config {
-      'DEFAULT/use_syslog': value => false;
-    }
-  }
-
   # rate limits
   trove_config {
     'DEFAULT/http_get_rate':       value => $http_get_rate;
@@ -311,18 +342,31 @@ class trove::api(
     'DEFAULT/heat_service_type':         value => $::trove::heat_service_type;
   }
 
+  trove_config {
+    'DEFAULT/notification_driver': value => join(any2array($::trove::notification_driver, ','));
+    'DEFAULT/notification_topics': value => $::trove::notification_topics;
+  }
+
   if $::trove::rpc_backend == 'trove.openstack.common.rpc.impl_kombu' or $::trove::rpc_backend == 'rabbit' {
     if ! $::trove::rabbit_password {
       fail('When rpc_backend is rabbitmq, you must set rabbit password')
     }
     if $::trove::rabbit_hosts {
       trove_config { 'oslo_messaging_rabbit/rabbit_hosts':     value  => join($::trove::rabbit_hosts, ',') }
-      trove_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
     } else  {
       trove_config { 'oslo_messaging_rabbit/rabbit_host':      value => $::trove::rabbit_host }
       trove_config { 'oslo_messaging_rabbit/rabbit_port':      value => $::trove::rabbit_port }
       trove_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${::trove::rabbit_host}:${::trove::rabbit_port}" }
-      trove_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+    }
+
+    if $::trove::rabbit_ha_queues == undef {
+      if size($::trove::rabbit_hosts) > 1 {
+        trove_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
+      } else {
+        trove_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      trove_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $::trove::rabbit_ha_queues }
     }
 
     trove_config {
@@ -331,6 +375,7 @@ class trove::api(
       'oslo_messaging_rabbit/rabbit_virtual_host':   value => $::trove::rabbit_virtual_host;
       'oslo_messaging_rabbit/rabbit_use_ssl':        value => $::trove::rabbit_use_ssl;
       'oslo_messaging_rabbit/kombu_reconnect_delay': value => $::trove::kombu_reconnect_delay;
+      'oslo_messaging_rabbit/amqp_durable_queues':   value => $::trove::amqp_durable_queues;
     }
 
     if $::trove::rabbit_use_ssl {
@@ -370,33 +415,7 @@ class trove::api(
   }
 
   if $::trove::rpc_backend == 'trove.openstack.common.rpc.impl_qpid' or $::trove::rpc_backend == 'qpid'{
-
     warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    trove_config {
-      'oslo_messaging_qpid/qpid_hostname':               value => $::trove::qpid_hostname;
-      'oslo_messaging_qpid/qpid_port':                   value => $::trove::qpid_port;
-      'oslo_messaging_qpid/qpid_username':               value => $::trove::qpid_username;
-      'oslo_messaging_qpid/qpid_password':               value => $::trove::qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat':              value => $::trove::qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol':               value => $::trove::qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $::trove::qpid_tcp_nodelay;
-    }
-    if is_array($::trove::qpid_sasl_mechanisms) {
-      trove_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($::trove::qpid_sasl_mechanisms, ' ');
-      }
-    }
-    elsif $::trove::qpid_sasl_mechanisms {
-      trove_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $::trove::qpid_sasl_mechanisms;
-      }
-    }
-    else {
-      trove_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
-      }
-    }
   }
 
   trove::generic_service { 'api':

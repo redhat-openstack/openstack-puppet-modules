@@ -22,6 +22,14 @@ require 'spec_helper'
 
 describe 'nova::migration::libvirt' do
 
+  generate = {}
+
+  before(:each) {
+    Puppet::Parser::Functions.newfunction(:generate, :type => :rvalue) {
+        |args| generate.call()
+    }
+    generate.stubs(:call).returns('0000-111-111')
+  }
 
   let :pre_condition do
    'include nova
@@ -36,6 +44,19 @@ describe 'nova::migration::libvirt' do
       it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf listen_tcp').with(:line => "listen_tcp = 1") }
       it { is_expected.not_to contain_file_line('/etc/libvirt/libvirtd.conf auth_tls')}
       it { is_expected.to contain_file_line('/etc/libvirt/libvirtd.conf auth_tcp').with(:line => "auth_tcp = \"none\"") }
+    end
+
+    context 'with override_uuid enabled' do
+      let :params do
+        {
+          :override_uuid => true,
+        }
+      end
+
+      it { is_expected.to contain_augeas('libvirt-conf-uuid').with({
+        :context => '/files/etc/libvirt/libvirtd.conf',
+        :changes => [ "set host_uuid 0000-111-111" ],
+      }).that_requires('Package[libvirt]').that_notifies('Service[libvirt]') }
     end
 
     context 'with tls enabled' do
@@ -96,7 +117,7 @@ describe 'nova::migration::libvirt' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     it_configures 'nova migration with libvirt'
@@ -105,7 +126,7 @@ describe 'nova::migration::libvirt' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     it_configures 'nova migration with libvirt'

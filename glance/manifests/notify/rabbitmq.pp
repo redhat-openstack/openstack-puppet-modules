@@ -21,6 +21,10 @@
 #  [*rabbit_virtual_host*]
 #    virtual_host to use. Optional. Defaults to '/'
 #
+# [*rabbit_ha_queues*]
+#   (optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef
+#
 # [*rabbit_heartbeat_timeout_threshold*]
 #   (optional) Number of seconds after which the RabbitMQ broker is considered
 #   down if the heartbeat keepalive fails.  Any value >0 enables heartbeats.
@@ -58,6 +62,11 @@
 #    available on some distributions.
 #    Defaults to 'TLSv1'
 #
+#  [*kombu_reconnect_delay*]
+#    (optional) How long to wait before reconnecting in response to an AMQP
+#    consumer cancel notification.
+#    Defaults to $::os_service_default.
+#
 #  [*rabbit_notification_exchange*]
 #    Defaults  to 'glance'
 #
@@ -81,6 +90,7 @@ class glance::notify::rabbitmq(
   $rabbit_port                        = '5672',
   $rabbit_hosts                       = false,
   $rabbit_virtual_host                = '/',
+  $rabbit_ha_queues                   = undef,
   $rabbit_heartbeat_timeout_threshold = 0,
   $rabbit_heartbeat_rate              = 2,
   $rabbit_use_ssl                     = false,
@@ -88,6 +98,7 @@ class glance::notify::rabbitmq(
   $kombu_ssl_certfile                 = undef,
   $kombu_ssl_keyfile                  = undef,
   $kombu_ssl_version                  = 'TLSv1',
+  $kombu_reconnect_delay              = $::os_service_default,
   $rabbit_notification_exchange       = 'glance',
   $rabbit_notification_topic          = 'notifications',
   $rabbit_durable_queues              = false,
@@ -105,16 +116,25 @@ class glance::notify::rabbitmq(
   if $rabbit_hosts {
     glance_api_config {
       'oslo_messaging_rabbit/rabbit_hosts':     value => join($rabbit_hosts, ',');
-      'oslo_messaging_rabbit/rabbit_ha_queues': value => true
     }
   } else {
     glance_api_config {
       'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host;
       'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port;
       'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}";
-      'oslo_messaging_rabbit/rabbit_ha_queues': value => false
     }
   }
+
+    # by default rabbit_ha_queues is undef
+    if $rabbit_ha_queues == undef {
+      if $rabbit_hosts {
+        glance_api_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
+      } else {
+        glance_api_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      glance_api_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
+    }
 
   glance_api_config {
     'DEFAULT/notification_driver':          value => $notification_driver;
@@ -125,6 +145,7 @@ class glance::notify::rabbitmq(
     'oslo_messaging_rabbit/rabbit_notification_topic':    value => $rabbit_notification_topic;
     'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
     'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
+    'oslo_messaging_rabbit/kombu_reconnect_delay':        value => $kombu_reconnect_delay;
     'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
     'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues_real;
   }

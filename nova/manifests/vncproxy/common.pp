@@ -23,6 +23,8 @@ class nova::vncproxy::common (
   $vncproxy_path     = undef,
 ) {
 
+  include ::nova::deps
+
   $vncproxy_host_real     = pick(
     $vncproxy_host,
     $::nova::compute::vncproxy_host,
@@ -48,7 +50,7 @@ class nova::vncproxy::common (
     $vncproxy_base_url = "${vncproxy_protocol_real}://${vncproxy_host_real}:${vncproxy_port_real}${vncproxy_path_real}"
     # config for vnc proxy
     nova_config {
-      'DEFAULT/novncproxy_base_url': value => $vncproxy_base_url;
+      'vnc/novncproxy_base_url': value => $vncproxy_base_url;
     }
   }
 }

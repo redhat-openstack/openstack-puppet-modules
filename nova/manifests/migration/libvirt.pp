@@ -21,12 +21,20 @@
 #   (optional) Migration flags to be set for block migration (string value)
 #   Defaults to undef
 #
+# [*override_uuid*]
+#   (optional) Set uuid not equal to output from dmidecode (boolean)
+#   Defaults to false
+#
 class nova::migration::libvirt(
   $use_tls              = false,
   $auth                 = 'none',
   $live_migration_flag  = undef,
   $block_migration_flag = undef,
+  $override_uuid        = false,
 ){
+
+  include ::nova::deps
+
   if $use_tls {
     $listen_tls = '1'
     $listen_tcp = '0'
@@ -52,89 +60,110 @@ class nova::migration::libvirt(
 
   validate_re($auth, [ '^sasl$', '^none$' ], 'Valid options for auth are none and sasl.')
 
-  Package['libvirt'] -> File_line<| path == '/etc/libvirt/libvirtd.conf' |>
+  Anchor['nova::config::begin']
+  -> File_line<| tag == 'libvirt-file_line'|>
+  -> Anchor['nova::config::end']
+
+  File_line<| tag == 'libvirt-file_line' |>
+  ~> Service['libvirt']
+
+  if $override_uuid {
+    if ! $::libvirt_uuid {
+      $host_uuid = generate('/bin/cat', '/proc/sys/kernel/random/uuid')
+      file { '/etc/libvirt/libvirt_uuid':
+        content => $host_uuid
+      }
+    } else {
+      $host_uuid = $::libvirt_uuid
+    }
+
+    augeas { 'libvirt-conf-uuid':
+      context => '/files/etc/libvirt/libvirtd.conf',
+      changes => [
+        "set host_uuid ${host_uuid}",
+      ],
+      notify  => Service['libvirt'],
+      require => Package['libvirt'],
+    }
+  }
 
   case $::osfamily {
     'RedHat': {
       file_line { '/etc/libvirt/libvirtd.conf listen_tls':
-        path   => '/etc/libvirt/libvirtd.conf',
-        line   => "listen_tls = ${listen_tls}",
-        match  => 'listen_tls =',
-        notify => Service['libvirt'],
+        path  => '/etc/libvirt/libvirtd.conf',
+        line  => "listen_tls = ${listen_tls}",
+        match => 'listen_tls =',
+        tag   => 'libvirt-file_line',
       }
 
       file_line { '/etc/libvirt/libvirtd.conf listen_tcp':
-        path   => '/etc/libvirt/libvirtd.conf',
-        line   => "listen_tcp = ${listen_tcp}",
-        match  => 'listen_tcp =',
-        notify => Service['libvirt'],
+        path  => '/etc/libvirt/libvirtd.conf',
+        line  => "listen_tcp = ${listen_tcp}",
+        match => 'listen_tcp =',
+        tag   => 'libvirt-file_line',
       }
 
       if $use_tls {
         file_line { '/etc/libvirt/libvirtd.conf auth_tls':
-          path   => '/etc/libvirt/libvirtd.conf',
-          line   => "auth_tls = \"${auth}\"",
-          match  => 'auth_tls =',
-          notify => Service['libvirt'],
+          path  => '/etc/libvirt/libvirtd.conf',
+          line  => "auth_tls = \"${auth}\"",
+          match => 'auth_tls =',
+          tag   => 'libvirt-file_line',
         }
       } else {
         file_line { '/etc/libvirt/libvirtd.conf auth_tcp':
-          path   => '/etc/libvirt/libvirtd.conf',
-          line   => "auth_tcp = \"${auth}\"",
-          match  => 'auth_tcp =',
-          notify => Service['libvirt'],
+          path  => '/etc/libvirt/libvirtd.conf',
+          line  => "auth_tcp = \"${auth}\"",
+          match => 'auth_tcp =',
+          tag   => 'libvirt-file_line',
         }
       }
 
       file_line { '/etc/sysconfig/libvirtd libvirtd args':
-        path   => '/etc/sysconfig/libvirtd',
-        line   => 'LIBVIRTD_ARGS="--listen"',
-        match  => 'LIBVIRTD_ARGS=',
-        notify => Service['libvirt'],
+        path  => '/etc/sysconfig/libvirtd',
+        line  => 'LIBVIRTD_ARGS="--listen"',
+        match => 'LIBVIRTD_ARGS=',
+        tag   => 'libvirt-file_line',
       }
-
-      Package['libvirt'] -> File_line<| path == '/etc/sysconfig/libvirtd' |>
     }
 
     'Debian': {
       file_line { '/etc/libvirt/libvirtd.conf listen_tls':
-        path   => '/etc/libvirt/libvirtd.conf',
-        line   => "listen_tls = ${listen_tls}",
-        match  => 'listen_tls =',
-        notify => Service['libvirt'],
+        path  => '/etc/libvirt/libvirtd.conf',
+        line  => "listen_tls = ${listen_tls}",
+        match => 'listen_tls =',
+        tag   => 'libvirt-file_line',
       }
 
       file_line { '/etc/libvirt/libvirtd.conf listen_tcp':
-        path   => '/etc/libvirt/libvirtd.conf',
-        line   => "listen_tcp = ${listen_tcp}",
-        match  => 'listen_tcp =',
-        notify => Service['libvirt'],
+        path  => '/etc/libvirt/libvirtd.conf',
+        line  => "listen_tcp = ${listen_tcp}",
+        match => 'listen_tcp =',
+        tag   => 'libvirt-file_line',
       }
 
       if $use_tls {
         file_line { '/etc/libvirt/libvirtd.conf auth_tls':
-          path   => '/etc/libvirt/libvirtd.conf',
-          line   => "auth_tls = \"${auth}\"",
-          match  => 'auth_tls =',
-          notify => Service['libvirt'],
+          path  => '/etc/libvirt/libvirtd.conf',
+          line  => "auth_tls = \"${auth}\"",
+          match => 'auth_tls =',
+          tag   => 'libvirt-file_line',
         }
       } else {
         file_line { '/etc/libvirt/libvirtd.conf auth_tcp':
-          path   => '/etc/libvirt/libvirtd.conf',
-          line   => "auth_tcp = \"${auth}\"",
-          match  => 'auth_tcp =',
-          notify => Service['libvirt'],
+          path  => '/etc/libvirt/libvirtd.conf',
+          line  => "auth_tcp = \"${auth}\"",
+          match => 'auth_tcp =',
+          tag   => 'libvirt-file_line',
         }
       }
 
       file_line { "/etc/default/${::nova::compute::libvirt::libvirt_service_name} libvirtd opts":
-        path   => "/etc/default/${::nova::compute::libvirt::libvirt_service_name}",
-        line   => 'libvirtd_opts="-d -l"',
-        match  => 'libvirtd_opts=',
-        notify => Service['libvirt'],
+        path  => "/etc/default/${::nova::compute::libvirt::libvirt_service_name}",
+        line  => 'libvirtd_opts="-d -l"',
+        match => 'libvirtd_opts=',
+        tag   => 'libvirt-file_line',
       }
-
-      Package['libvirt'] -> File_line<| path == "/etc/default/${::nova::compute::libvirt::libvirt_service_name}" |>
     }
 
     default:  {

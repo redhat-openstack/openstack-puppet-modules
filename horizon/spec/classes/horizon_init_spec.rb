@@ -25,7 +25,6 @@ describe 'horizon' do
 
     context 'with default parameters' do
       it {
-          is_expected.to contain_package('python-lesscpy').with_ensure('present')
           is_expected.to contain_package('horizon').with(
             :ensure => 'present',
             :tag    => ['openstack', 'horizon-package'],
@@ -61,7 +60,11 @@ describe 'horizon' do
       it 'generates local_settings.py' do
         verify_concat_fragment_contents(catalogue, 'local_settings.py', [
           'DEBUG = False',
+          "LOGIN_URL = '#{platforms_params[:root_url]}/auth/login/'",
+          "LOGOUT_URL = '#{platforms_params[:root_url]}/auth/logout/'",
+          "LOGIN_REDIRECT_URL = '#{platforms_params[:root_url]}'",
           "ALLOWED_HOSTS = ['*', ]",
+          "  'identity': 3,",
           "SECRET_KEY = 'elj1IWiLoWHgcyYxFVLj7cM5rGOOxWl0'",
           'OPENSTACK_KEYSTONE_URL = "http://127.0.0.1:5000/v2.0"',
           'OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"',
@@ -75,9 +78,6 @@ describe 'horizon' do
           "    'enable_security_group': True,",
           "    'enable_vpn': False,",
           'API_RESULT_LIMIT = 1000',
-          "LOGIN_URL = '#{platforms_params[:root_url]}/auth/login/'",
-          "LOGOUT_URL = '#{platforms_params[:root_url]}/auth/logout/'",
-          "LOGIN_REDIRECT_URL = '#{platforms_params[:root_url]}'",
           'COMPRESS_OFFLINE = True',
           "FILE_UPLOAD_TEMP_DIR = '/tmp'"
         ])
@@ -112,13 +112,16 @@ describe 'horizon' do
           :hypervisor_options           => {'can_set_mount_point' => false, 'can_set_password' => true },
           :cinder_options               => {'enable_backup' => true },
           :neutron_options              => {'enable_lb' => true, 'enable_firewall' => true, 'enable_quotas' => false, 'enable_security_group' => false, 'enable_vpn' => true,
-                                            'enable_distributed_router' => false, 'enable_ha_router' => false, 'profile_support' => 'cisco', },
+                                            'enable_distributed_router' => false, 'enable_ha_router' => false, 'profile_support' => 'cisco',
+                                            'supported_provider_types' => ['flat', 'vxlan'], 'supported_vnic_types' => ['*'], 'default_ipv4_subnet_pool_label' => 'None', },
           :file_upload_temp_dir         => '/var/spool/horizon',
           :secure_cookies               => true,
           :custom_theme_path            => 'static/themes/green',
-          :api_versions                 => {'identity' => 3},
+          :api_versions                 => {'identity' => 2.0},
           :keystone_multidomain_support => true,
-          :keystone_default_domain      => 'domain.tld'
+          :keystone_default_domain      => 'domain.tld',
+          :overview_days_range          => 1,
+          :session_timeout              => 1800
         })
       end
 
@@ -128,7 +131,7 @@ describe 'horizon' do
           "ALLOWED_HOSTS = ['*', ]",
           'CSRF_COOKIE_SECURE = True',
           'SESSION_COOKIE_SECURE = True',
-          "  'identity': 3,",
+          "  'identity': 2.0,",
           "OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True",
           "OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'domain.tld'",
           "SECRET_KEY = 'elj1IWiLoWHgcyYxFVLj7cM5rGOOxWl0'",
@@ -144,20 +147,25 @@ describe 'horizon' do
           "    'can_set_mount_point': False,",
           "    'can_set_password': True,",
           "    'enable_backup': True,",
+          "    'default_ipv4_subnet_pool_label': None,",
           "    'enable_firewall': True,",
           "    'enable_lb': True,",
           "    'enable_quotas': False,",
           "    'enable_security_group': False,",
           "    'enable_vpn': True,",
           "    'profile_support': 'cisco',",
+          "    'supported_provider_types': ['flat', 'vxlan'],",
+          "    'supported_vnic_types': ['*'],",
           'OPENSTACK_ENDPOINT_TYPE = "internalURL"',
           'SECONDARY_ENDPOINT_TYPE = "ANY-VALUE"',
           'API_RESULT_LIMIT = 4682',
           "CUSTOM_THEME_PATH = 'static/themes/green'",
           "            'level': 'DEBUG',",
           "            'handlers': ['syslog'],",
+          "SESSION_TIMEOUT = 1800",
           'COMPRESS_OFFLINE = False',
           "FILE_UPLOAD_TEMP_DIR = '/var/spool/horizon'",
+          "OVERVIEW_DAYS_RANGE = 1",
         ])
       end
 

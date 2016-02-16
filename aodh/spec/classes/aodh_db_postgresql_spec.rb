@@ -10,15 +10,7 @@ describe 'aodh::db::postgresql' do
     'include postgresql::server'
   end
 
-  context 'on a RedHat osfamily' do
-    let :facts do
-      {
-        :osfamily                 => 'RedHat',
-        :operatingsystemrelease   => '7.0',
-        :concat_basedir => '/var/lib/puppet/concat'
-      }
-    end
-
+  shared_examples 'aodh::db::postgresql' do
     context 'with only required parameters' do
       let :params do
         req_params
@@ -32,27 +24,19 @@ describe 'aodh::db::postgresql' do
 
   end
 
-  context 'on a Debian osfamily' do
-    let :facts do
-      {
-        :operatingsystemrelease => '7.8',
-        :operatingsystem        => 'Debian',
-        :osfamily               => 'Debian',
-        :concat_basedir => '/var/lib/puppet/concat'
-      }
-    end
-
-    context 'with only required parameters' do
-      let :params do
-        req_params
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts({
+          :concat_basedir => '/var/lib/puppet/concat'
+        }))
       end
 
-      it { is_expected.to contain_postgresql__server__db('aodh').with(
-        :user     => 'aodh',
-        :password => 'md534e5dd092d680f3d8c11c62951fb5c19'
-      )}
+      it_configures 'aodh::db::postgresql'
     end
-
   end
+
 
 end

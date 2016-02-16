@@ -42,7 +42,7 @@ class neutron::params {
     $midonet_server_package = 'python-neutron-plugin-midonet'
     $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
 
-    $plumgrid_plugin_package    = 'openstack-neutron-plumgrid'
+    $plumgrid_plugin_package    = 'networking-plumgrid'
     $plumgrid_pythonlib_package = 'plumgrid-pythonlib'
     $plumgrid_config_file       = '/etc/neutron/plugins/plumgrid/plumgrid.ini'
 
@@ -70,6 +70,7 @@ class neutron::params {
     } else {
       $openswan_package     = 'openswan'
     }
+    $libreswan_package     = 'libreswan'
 
     $l3_agent_package   = false
     $l3_agent_service   = 'neutron-l3-agent'
@@ -100,8 +101,16 @@ class neutron::params {
       $ml2_server_package = false
     }
 
-    $ovs_agent_package   = 'neutron-plugin-openvswitch-agent'
-    $ovs_agent_service   = 'neutron-plugin-openvswitch-agent'
+    case $::os_package_type {
+      'debian': {
+        $ovs_agent_package   = 'neutron-openvswitch-agent'
+        $ovs_agent_service   = 'neutron-openvswitch-agent'
+      }
+      default: {
+        $ovs_agent_package   = 'neutron-plugin-openvswitch-agent'
+        $ovs_agent_service   = 'neutron-plugin-openvswitch-agent'
+      }
+    }
     $ovs_server_package  = 'neutron-plugin-openvswitch'
     $ovs_cleanup_service = false
     $ovs_package         = 'openvswitch-switch'
@@ -125,7 +134,7 @@ class neutron::params {
     $midonet_server_package = 'python-neutron-plugin-midonet'
     $midonet_config_file    = '/etc/neutron/plugins/midonet/midonet.ini'
 
-    $plumgrid_plugin_package    = 'neutron-plugin-plumgrid'
+    $plumgrid_plugin_package    = 'networking-plumgrid'
     $plumgrid_pythonlib_package = 'plumgrid-pythonlib'
     $plumgrid_config_file       = '/etc/neutron/plugins/plumgrid/plumgrid.ini'
 
@@ -148,6 +157,7 @@ class neutron::params {
     $vpnaas_agent_service = 'neutron-vpn-agent'
 
     $openswan_package     = 'openswan'
+    $libreswan_package    = false
 
     $metadata_agent_package = 'neutron-metadata-agent'
     $metadata_agent_service = 'neutron-metadata-agent'

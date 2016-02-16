@@ -17,21 +17,21 @@ swift
 Overview
 --------
 
-The swift module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software.  The module itself is used to flexibly configure and manage the object storage service for Openstack.
+The swift module is a part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software.  The module itself is used to flexibly configure and manage the object storage service for OpenStack.
 
 Module Description
 ------------------
 
 The swift module is a thorough attempt to make Puppet capable of managing the entirety of swift.  This includes manifests to provision such things as keystone, storage backends, proxies, and the ring.  Types are shipped as part of the swift module to assist in manipulation of configuration files.  A custom service provider built around the swift-init tool is also provided as an option for enhanced swift service management. The classes in this module will deploy Swift using best practices for a typical deployment.
 
-This module is tested in combination with other modules needed to build and leverage an entire Openstack software stack.  These modules can be found, all pulled together in the [openstack module](https://github.com/stackforge/puppet-openstack).  In addition, this module requires Puppet's [exported resources](http://docs.puppetlabs.com/puppet/3/reference/lang_exported.html).
+This module is tested in combination with other modules needed to build and leverage an entire OpenStack software stack. In addition, this module requires Puppet's [exported resources](http://docs.puppetlabs.com/puppet/3/reference/lang_exported.html).
 
 Setup
 -----
 
 **What the swift module affects**
 
-* [Swift](https://wiki.openstack.org/wiki/Swift), the object storage service for Openstack.
+* [Swift](https://wiki.openstack.org/wiki/Swift), the object storage service for OpenStack.
 
 ### Installing swift
 
@@ -41,7 +41,7 @@ Setup
 
 You much first setup [exported resources](http://docs.puppetlabs.com/puppet/3/reference/lang_exported.html).
 
-To utilize the swift module's functionality you will need to declare multiple resources.  The following is a modified excerpt from the [openstack module](https://github.com/stackforge/puppet-openstack).  This is not an exhaustive list of all the components needed, we recommend you consult and understand the [openstack module](https://github.com/stackforge/puppet-openstack) and the [core openstack](http://docs.openstack.org) documentation.
+To utilize the swift module's functionality you will need to declare multiple resources. This is not an exhaustive list of all the components needed, we recommend you consult and understand the [core openstack](http://docs.openstack.org) documentation.
 
 **Defining a swift storage node**
 
@@ -192,6 +192,34 @@ swift::storage::server { '6010':
   devices              => '/srv/node',
   storage_local_net_ip => '127.0.0.1'
 }
+```
+
+### Define: swift::storage::filter::recon
+Configure the swift recon middleware on a swift:storage::server
+Can be configured on: account, container, object servers.
+
+### Define: swift::storage::filter::healthcheck
+Configure the swift health check middleware on a swift:storage::server
+Can be configured on: account, container, object servers.
+
+Declaring either the recon or health check middleware in a node manifest is required when specifying the recon or healthcheck middleware in an (account|container|object)_pipeline.
+
+example manifest:
+
+```
+
+class { 'swift::storage::all':
+  storage_local_net_ip => $swift_local_net_ip,
+  account_pipeline     => ['healthcheck', 'recon', 'account-server'],
+  container_pipeline   => ['healthcheck', 'recon', 'container-server'],
+  object_pipeline      => ['healthcheck', 'recon', 'object-server'],
+}
+$rings = [
+  'account',
+  'object',
+  'container']
+swift::storage::filter::recon { $rings: }
+swift::storage::filter::healthcheck { $rings: }
 ```
 
 ####`namevar`

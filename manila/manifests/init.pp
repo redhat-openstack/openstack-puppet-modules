@@ -76,6 +76,10 @@
 #   (Optional) Virtual_host to use.
 #   Defaults to '/'
 #
+# [*rabbit_ha_queues*]
+#   (optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef
+#
 # [*rabbit_use_ssl*]
 #   (Optional) Connect over SSL for RabbitMQ.
 #   Defaults to false
@@ -101,69 +105,6 @@
 # [*amqp_durable_queues*]
 #   Use durable queues in amqp.
 #   (Optional) Defaults to false.
-#
-# ==== Various QPID options (Optional)
-#
-# [*qpid_hostname*]
-#   (Optional) hostname of the qpid server.
-#   Defaults to 'localhost'
-#
-# [*qpid_port*]
-#   (Optional) Port of the qpid server.
-#   Defaults to 5672.
-#
-# [*qpid_username*]
-#   (Optional) User to connect to the qpid server.
-#   Defaults to 'guest'
-#
-# [*qpid_password*]
-#   (Optional) Password to connect to the qpid_server.
-#   Defaults to empty.
-#
-# [*qpid_heartbeat*]
-#   (Optional) Seconds between connection keepalive heartbeats.
-#   Defaults to 60s.
-#
-# [*qpid_protocol*]
-#   (Optional) Transport to use, either 'tcp' or 'ssl'.
-#   Defaults to tcp.
-#
-# [*qpid_tcp_nodelay*]
-#   (Optional) Whether to disable the Nagle algorithm.
-#   Defaults to true.
-#
-# [*qpid_reconnect*]
-#   (Optional) Enable the experimental use of reconnect on connection
-#   lost.
-#   Defaults to true.
-#
-# [*qpid_reconnect_timeout*]
-#   (Optional) How long to wait before considering a reconnect attempt
-#   to have failed. This value should not be longer than rpc_response_timeout.
-#   Defaults to 0.
-#
-# [*qpid_reconnect_limit*]
-#   (Optional) Limit of reconnect on connection lost.
-#   Defaults to 0.
-#
-# [*qpid_reconnect_interval*]
-#   (Optional) Interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to 0.
-#
-# [*qpid_reconnect_interval_min*]
-#   (Optional) Minimal interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to 0.
-#
-# [*qpid_reconnect_interval_max*]
-#   (Optional) Miximal interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to 0.
-#
-# [*qpid_sasl_mechanisms*]
-#   (Optional) ENable one or more SASL mechanisms.
-#   Defaults to false.
 #
 # [*use_stderr*]
 #   (optional) Use stderr for logging
@@ -265,8 +206,69 @@
 #   (optional) Accept clients using either SSL or plain TCP
 #   Defaults to false
 #
-
-
+# DEPRECATED PARAMETERS
+#
+# [*qpid_hostname*]
+#   (Optional) hostname of the qpid server.
+#   Defaults to undef.
+#
+# [*qpid_port*]
+#   (Optional) Port of the qpid server.
+#   Defaults to undef.
+#
+# [*qpid_username*]
+#   (Optional) User to connect to the qpid server.
+#   Defaults to undef.
+#
+# [*qpid_password*]
+#   (Optional) Password to connect to the qpid_server.
+#   Defaults to undef.
+#
+# [*qpid_heartbeat*]
+#   (Optional) Seconds between connection keepalive heartbeats.
+#   Defaults to undef.
+#
+# [*qpid_protocol*]
+#   (Optional) Transport to use, either 'tcp' or 'ssl'.
+#   Defaults to undef.
+#
+# [*qpid_tcp_nodelay*]
+#   (Optional) Whether to disable the Nagle algorithm.
+#   Defaults to undef.
+#
+# [*qpid_reconnect*]
+#   (Optional) Enable the experimental use of reconnect on connection
+#   lost.
+#   Defaults to undef.
+#
+# [*qpid_reconnect_timeout*]
+#   (Optional) How long to wait before considering a reconnect attempt
+#   to have failed. This value should not be longer than rpc_response_timeout.
+#   Defaults to undef.
+#
+# [*qpid_reconnect_limit*]
+#   (Optional) Limit of reconnect on connection lost.
+#   Defaults to undef.
+#
+# [*qpid_reconnect_interval*]
+#   (Optional) Interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to undef.
+#
+# [*qpid_reconnect_interval_min*]
+#   (Optional) Minimal interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to undef.
+#
+# [*qpid_reconnect_interval_max*]
+#   (Optional) Miximal interval between retries of opening a qpid connection. (integer
+#   value)
+#   Defaults to undef.
+#
+# [*qpid_sasl_mechanisms*]
+#   (Optional) ENable one or more SASL mechanisms.
+#   Defaults to undef.
+#
 class manila (
   $sql_connection              = undef,
   $sql_idle_timeout            = undef,
@@ -280,30 +282,17 @@ class manila (
   $notification_driver         = 'messaging',
   $rabbit_host                 = '127.0.0.1',
   $rabbit_port                 = 5672,
-  $rabbit_hosts                = false,
+  $rabbit_hosts                = undef,
   $rabbit_virtual_host         = '/',
   $rabbit_userid               = 'guest',
   $rabbit_password             = false,
+  $rabbit_ha_queues            = undef,
   $rabbit_use_ssl              = false,
   $kombu_ssl_ca_certs          = undef,
   $kombu_ssl_certfile          = undef,
   $kombu_ssl_keyfile           = undef,
   $kombu_ssl_version           = 'TLSv1',
   $amqp_durable_queues         = false,
-  $qpid_hostname               = 'localhost',
-  $qpid_port                   = '5672',
-  $qpid_username               = 'guest',
-  $qpid_password               = false,
-  $qpid_sasl_mechanisms        = false,
-  $qpid_reconnect              = true,
-  $qpid_reconnect_timeout      = 0,
-  $qpid_reconnect_limit        = 0,
-  $qpid_reconnect_interval_min = 0,
-  $qpid_reconnect_interval_max = 0,
-  $qpid_reconnect_interval     = 0,
-  $qpid_heartbeat              = 60,
-  $qpid_protocol               = 'tcp',
-  $qpid_tcp_nodelay            = true,
   $package_ensure              = 'present',
   $use_ssl                     = false,
   $ca_file                     = false,
@@ -331,6 +320,21 @@ class manila (
   $amqp_ssl_cert_file          = undef,
   $amqp_ssl_key_file           = undef,
   $amqp_ssl_key_password       = undef,
+  # DEPRECATED PARAMETERS
+  $qpid_hostname               = undef,
+  $qpid_port                   = undef,
+  $qpid_username               = undef,
+  $qpid_password               = undef,
+  $qpid_sasl_mechanisms        = undef,
+  $qpid_reconnect              = undef,
+  $qpid_reconnect_timeout      = undef,
+  $qpid_reconnect_limit        = undef,
+  $qpid_reconnect_interval_min = undef,
+  $qpid_reconnect_interval_max = undef,
+  $qpid_reconnect_interval     = undef,
+  $qpid_heartbeat              = undef,
+  $qpid_protocol               = undef,
+  $qpid_tcp_nodelay            = undef,
 ) {
 
   include ::manila::db
@@ -403,12 +407,20 @@ class manila (
 
     if $rabbit_hosts {
       manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => join($rabbit_hosts, ',') }
-      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
     } else {
       manila_config { 'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host }
       manila_config { 'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port }
       manila_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${rabbit_host}:${rabbit_port}" }
-      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+    }
+
+    if $rabbit_ha_queues == undef {
+      if size($rabbit_hosts) > 1 {
+        manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+      } else {
+        manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      manila_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
     }
 
     if $rabbit_use_ssl {
@@ -449,43 +461,7 @@ class manila (
   }
 
   if $rpc_backend == 'manila.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
-
-    warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    if ! $qpid_password {
-      fail('Please specify a qpid_password parameter.')
-    }
-
-    manila_config {
-      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
-      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
-      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
-      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-      'oslo_messaging_qpid/amqp_durable_queues':         value => $amqp_durable_queues;
-      'oslo_messaging_qpid/qpid_reconnect':              value => $qpid_reconnect;
-      'oslo_messaging_qpid/qpid_reconnect_timeout':      value => $qpid_reconnect_timeout;
-      'oslo_messaging_qpid/qpid_reconnect_limit':        value => $qpid_reconnect_limit;
-      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'oslo_messaging_qpid/qpid_reconnect_interval':     value => $qpid_reconnect_interval;
-    }
-
-    if is_array($qpid_sasl_mechanisms) {
-      manila_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
-      }
-    } elsif $qpid_sasl_mechanisms {
-      manila_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
-      }
-    } else {
-      manila_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
-      }
-    }
+    warning('Qpidd\'s driver was removed from Oslo.messaging in Mitaka release')
   }
 
 

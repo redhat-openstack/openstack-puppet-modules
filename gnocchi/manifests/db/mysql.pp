@@ -1,7 +1,7 @@
 # The gnocchi::db::mysql class implements mysql backend for gnocchi
 #
 # This class can be used to create tables, users and grant
-# privelege for a mysql gnocchi database.
+# privileges for a mysql gnocchi database.
 #
 # == parameters
 #

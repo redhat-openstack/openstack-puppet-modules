@@ -10,11 +10,19 @@
 #   Defaults to 'present'
 #
 # [*database_connection*]
-#   (optional) Connection url for the heat database.
+#   (optional) Connection url for the nova database.
 #   Defaults to undef.
 #
 # [*slave_connection*]
 #   (optional) Connection url to connect to nova slave database (read-only).
+#   Defaults to undef.
+#
+# [*api_database_connection*]
+#   (optional) Connection url for the nova API database.
+#   Defaults to undef.
+#
+# [*api_slave_connection*]
+#   (optional) Connection url to connect to nova API slave database (read-only).
 #   Defaults to undef.
 #
 # [*database_max_retries*]
@@ -58,7 +66,7 @@
 #
 # [*memcached_servers*]
 #   (optional) Use memcached instead of in-process cache. Supply a list of memcached server IP's:Memcached Port.
-#   Defaults to false
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_host*]
 #   (optional) Location of rabbitmq installation.
@@ -134,38 +142,6 @@
 #   (optional) Define queues as "durable" to rabbitmq.
 #   Defaults to false
 #
-# [*qpid_hostname*]
-#   (optional) Location of qpid server
-#   Defaults to 'localhost'
-#
-# [*qpid_port*]
-#   (optional) Port for qpid server
-#   Defaults to '5672'
-#
-# [*qpid_username*]
-#   (optional) Username to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_password*]
-#   (optional) Password to use when connecting to qpid
-#   Defaults to 'guest'
-#
-# [*qpid_heartbeat*]
-#   (optional) Seconds between connection keepalive heartbeats
-#   Defaults to 60
-#
-# [*qpid_protocol*]
-#   (optional) Transport to use, either 'tcp' or 'ssl''
-#   Defaults to 'tcp'
-#
-# [*qpid_sasl_mechanisms*]
-#   (optional) Enable one or more SASL mechanisms
-#   Defaults to false
-#
-# [*qpid_tcp_nodelay*]
-#   (optional) Disable Nagle algorithm
-#   Defaults to true
-#
 # [*auth_strategy*]
 #   (optional) The strategy to use for auth: noauth or keystone.
 #   Defaults to 'keystone'
@@ -220,10 +196,6 @@
 #   (optional) Syslog facility to receive log lines.
 #   Defaults to undef
 #
-# [*install_utilities*]
-#   (optional) Install nova utilities (Extra packages used by nova tools)
-#   Defaults to true,
-#
 # [*use_ssl*]
 #   (optional) Enable SSL on the API server
 #   Defaults to false, not set
@@ -231,7 +203,7 @@
 # [*enabled_ssl_apis*]
 #   (optional) List of APIs to SSL enable
 #   Defaults to []
-#   Possible values : 'ec2', 'osapi_compute', 'metadata'
+#   Possible values : 'osapi_compute', 'metadata'
 #
 # [*cert_file*]
 #   (optinal) Certificate file to use when starting API server securely
@@ -330,12 +302,52 @@
 #
 # [*use_ipv6*]
 #   (optional) Use IPv6 or not.
-#   Defaults to false
+#   Defaults to $::os_service_default
+#
+# DEPRECATED PARAMETERS
+#
+# [*qpid_hostname*]
+#   (optional) Location of qpid server
+#   Defaults to undef
+#
+# [*qpid_port*]
+#   (optional) Port for qpid server
+#   Defaults to undef
+#
+# [*qpid_username*]
+#   (optional) Username to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_password*]
+#   (optional) Password to use when connecting to qpid
+#   Defaults to undef
+#
+# [*qpid_heartbeat*]
+#   (optional) Seconds between connection keepalive heartbeats
+#   Defaults to undef
+#
+# [*qpid_protocol*]
+#   (optional) Transport to use, either 'tcp' or 'ssl''
+#   Defaults to undef
+#
+# [*qpid_sasl_mechanisms*]
+#   (optional) Enable one or more SASL mechanisms
+#   Defaults to undef
+#
+# [*qpid_tcp_nodelay*]
+#   (optional) Disable Nagle algorithm
+#   Defaults to undef
+#
+# [*install_utilities*]
+#   (optional) Install nova utilities (Extra packages used by nova tools)
+#   Defaults to undef
 #
 class nova(
   $ensure_package                     = 'present',
   $database_connection                = undef,
   $slave_connection                   = undef,
+  $api_database_connection            = undef,
+  $api_slave_connection               = undef,
   $database_idle_timeout              = undef,
   $database_min_pool_size             = undef,
   $database_max_pool_size             = undef,
@@ -347,7 +359,7 @@ class nova(
   # these glance params should be optional
   # this should probably just be configured as a glance client
   $glance_api_servers                 = 'localhost:9292',
-  $memcached_servers                  = false,
+  $memcached_servers                  = $::os_service_default,
   $rabbit_host                        = 'localhost',
   $rabbit_hosts                       = undef,
   $rabbit_password                    = 'guest',
@@ -364,14 +376,6 @@ class nova(
   $kombu_ssl_version                  = 'TLSv1',
   $kombu_reconnect_delay              = '1.0',
   $amqp_durable_queues                = false,
-  $qpid_hostname                      = 'localhost',
-  $qpid_port                          = '5672',
-  $qpid_username                      = 'guest',
-  $qpid_password                      = 'guest',
-  $qpid_sasl_mechanisms               = false,
-  $qpid_heartbeat                     = 60,
-  $qpid_protocol                      = 'tcp',
-  $qpid_tcp_nodelay                   = true,
   $auth_strategy                      = 'keystone',
   $service_down_time                  = 60,
   $log_dir                            = undef,
@@ -383,7 +387,7 @@ class nova(
   $report_interval                    = '10',
   $rootwrap_config                    = '/etc/nova/rootwrap.conf',
   $use_ssl                            = false,
-  $enabled_ssl_apis                   = ['ec2', 'metadata', 'osapi_compute'],
+  $enabled_ssl_apis                   = ['metadata', 'osapi_compute'],
   $ca_file                            = false,
   $cert_file                          = false,
   $key_file                           = false,
@@ -392,7 +396,6 @@ class nova(
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
-  $install_utilities                  = true,
   $notification_driver                = undef,
   $notification_topics                = 'notifications',
   $notify_api_faults                  = false,
@@ -408,8 +411,20 @@ class nova(
   $upgrade_level_intercell            = undef,
   $upgrade_level_network              = undef,
   $upgrade_level_scheduler            = undef,
-  $use_ipv6                           = false,
+  $use_ipv6                           = $::os_service_default,
+  # DEPRECATED PARAMETERS
+  $qpid_hostname                      = undef,
+  $qpid_port                          = undef,
+  $qpid_username                      = undef,
+  $qpid_password                      = undef,
+  $qpid_sasl_mechanisms               = undef,
+  $qpid_heartbeat                     = undef,
+  $qpid_protocol                      = undef,
+  $qpid_tcp_nodelay                   = undef,
+  $install_utilities                  = undef,
 ) inherits nova::params {
+
+  include ::nova::deps
 
   # maintain backward compatibility
   include ::nova::db
@@ -448,7 +463,8 @@ class nova(
       mode    => '0700',
       owner   => 'nova',
       group   => 'nova',
-      require => Package['nova-common'],
+      require => Anchor['nova::config::begin'],
+      before  => Anchor['nova::config::end'],
     }
 
     if $nova_public_key {
@@ -486,35 +502,25 @@ class nova(
         mode    => '0600',
         owner   => 'nova',
         group   => 'nova',
-        require => [ File['/var/lib/nova/.ssh'], Package['nova-common'] ],
+        require => File['/var/lib/nova/.ssh'],
       }
     }
   }
-
-  Nova_config<| |> ~> Exec['post-nova_config']
 
   if $install_utilities {
     class { '::nova::utilities': }
   }
 
-  # this anchor is used to simplify the graph between nova components by
-  # allowing a resource to serve as a point where the configuration of nova begins
-  anchor { 'nova-start': }
-
   package { 'python-nova':
     ensure => $ensure_package,
-    tag    => ['openstack'],
+    tag    => ['openstack', 'nova-package'],
   }
 
   package { 'nova-common':
     ensure  => $ensure_package,
     name    => $::nova::params::common_package_name,
-    require => [Package['python-nova'], Anchor['nova-start']],
+    require => Package['python-nova'],
     tag     => ['openstack', 'nova-package'],
-  }
-
-  file { '/etc/nova/nova.conf':
-    require => Package['nova-common'],
   }
 
   # used by debian/ubuntu in nova::network_bridge to refresh
@@ -524,20 +530,16 @@ class nova(
     refreshonly => true,
   }
 
-  nova_config { 'DEFAULT/image_service': value => $image_service }
-
   if $image_service == 'nova.image.glance.GlanceImageService' {
     if $glance_api_servers {
       nova_config { 'glance/api_servers': value => $glance_api_servers }
     }
   }
 
-  nova_config { 'DEFAULT/auth_strategy': value => $auth_strategy }
-
-  if $memcached_servers {
-    nova_config { 'DEFAULT/memcached_servers': value  => join($memcached_servers, ',') }
-  } else {
-    nova_config { 'DEFAULT/memcached_servers': ensure => absent }
+  nova_config {
+    'DEFAULT/image_service':                value => $image_service;
+    'DEFAULT/auth_strategy':                value => $auth_strategy;
+    'keystone_authtoken/memcached_servers': value => join(any2array($memcached_servers), ',');
   }
 
   # we keep "nova.openstack.common.rpc.impl_kombu" for backward compatibility
@@ -612,57 +614,31 @@ class nova(
   # we keep "nova.openstack.common.rpc.impl_qpid" for backward compatibility
   # but since Icehouse, "qpid" is enough.
   if $rpc_backend == 'nova.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
-
     warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    nova_config {
-      'oslo_messaging_qpid/qpid_hostname':               value => $qpid_hostname;
-      'oslo_messaging_qpid/qpid_port':                   value => $qpid_port;
-      'oslo_messaging_qpid/qpid_username':               value => $qpid_username;
-      'oslo_messaging_qpid/qpid_password':               value => $qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat':              value => $qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol':               value => $qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay':            value => $qpid_tcp_nodelay;
-    }
-    if is_array($qpid_sasl_mechanisms) {
-      nova_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($qpid_sasl_mechanisms, ' ');
-      }
-    }
-    elsif $qpid_sasl_mechanisms {
-      nova_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => $qpid_sasl_mechanisms;
-      }
-    }
-    else {
-      nova_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': ensure => absent;
-      }
-    }
   }
 
   # SSL Options
   if $use_ssl {
     nova_config {
       'DEFAULT/enabled_ssl_apis' : value => join($enabled_ssl_apis, ',');
-      'DEFAULT/ssl_cert_file' :    value => $cert_file;
-      'DEFAULT/ssl_key_file' :     value => $key_file;
+      'ssl/cert_file' :    value => $cert_file;
+      'ssl/key_file' :     value => $key_file;
     }
     if $ca_file {
-      nova_config { 'DEFAULT/ssl_ca_file' :
+      nova_config { 'ssl/ca_file' :
         value => $ca_file,
       }
     } else {
-      nova_config { 'DEFAULT/ssl_ca_file' :
+      nova_config { 'ssl/ca_file' :
         ensure => absent,
       }
     }
   } else {
     nova_config {
       'DEFAULT/enabled_ssl_apis' : ensure => absent;
-      'DEFAULT/ssl_cert_file' :    ensure => absent;
-      'DEFAULT/ssl_key_file' :     ensure => absent;
-      'DEFAULT/ssl_ca_file' :      ensure => absent;
+      'ssl/cert_file' :            ensure => absent;
+      'ssl/key_file' :             ensure => absent;
+      'ssl/ca_file' :              ensure => absent;
     }
   }
 
@@ -681,7 +657,7 @@ class nova(
     'DEFAULT/notify_api_faults':   value => $notify_api_faults;
     # Following may need to be broken out to different nova services
     'DEFAULT/state_path':          value => $state_path;
-    'DEFAULT/lock_path':           value => $lock_path;
+    'oslo_concurrency/lock_path':  value => $lock_path;
     'DEFAULT/service_down_time':   value => $service_down_time;
     'DEFAULT/rootwrap_config':     value => $rootwrap_config;
     'DEFAULT/report_interval':     value => $report_interval;
@@ -811,9 +787,13 @@ class nova(
     'DEFAULT/os_region_name':       ensure => absent;
   }
 
-  exec { 'post-nova_config':
-    command     => '/bin/echo "Nova config has changed"',
-    refreshonly => true,
+  # Deprecated in Juno, removed in Kilo
+  nova_config {
+    'DEFAULT/rabbit_userid':       ensure => absent;
+    'DEFAULT/rabbit_host':         ensure => absent;
+    'DEFAULT/rabbit_port':         ensure => absent;
+    'DEFAULT/rabbit_password':     ensure => absent;
+    'DEFAULT/rabbit_virtual_host': ensure => absent;
   }
 
 }

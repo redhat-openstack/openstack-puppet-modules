@@ -17,7 +17,7 @@ describe 'neutron::agents::ml2::sriov' do
     }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -38,7 +38,7 @@ describe 'neutron::agents::ml2::sriov' do
       is_expected.to contain_neutron_sriov_agent_config('sriov_nic/polling_interval').with_value(p[:polling_interval])
       is_expected.to contain_neutron_sriov_agent_config('sriov_nic/exclude_devices').with_value(p[:exclude_devices].join(','))
       is_expected.to contain_neutron_sriov_agent_config('sriov_nic/physical_device_mappings').with_value(p[:physical_device_mappings].join(','))
-      is_expected.to contain_neutron_sriov_agent_config('agent/extensions').with_value([''])
+      is_expected.to contain_neutron_sriov_agent_config('agent/extensions').with_value(['<SERVICE DEFAULT>'])
     end
 
 
@@ -97,7 +97,9 @@ describe 'neutron::agents::ml2::sriov' do
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge({ :osfamily => 'Debian' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'Debian'
+      }))
     end
 
     let :platform_params do
@@ -110,10 +112,10 @@ describe 'neutron::agents::ml2::sriov' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '7'
-      })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
 
     let :platform_params do

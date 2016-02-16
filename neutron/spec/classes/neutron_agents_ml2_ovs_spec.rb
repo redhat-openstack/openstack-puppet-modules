@@ -15,17 +15,13 @@ describe 'neutron::agents::ml2::ovs' do
       :enable_tunneling           => false,
       :local_ip                   => false,
       :tunnel_bridge              => 'br-tun',
-      :polling_interval           => 2,
-      :l2_population              => false,
-      :arp_responder              => false,
       :drop_flows_on_start        => false,
-      :enable_distributed_routing => false,
       :firewall_driver            => 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
       :manage_vswitch             => true,
-      :prevent_arp_spoofing       => true }
+      }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -43,18 +39,20 @@ describe 'neutron::agents::ml2::ovs' do
     it { is_expected.to contain_class('neutron::params') }
 
     it 'configures plugins/ml2/openvswitch_agent.ini' do
-      is_expected.to contain_neutron_agent_ovs('agent/polling_interval').with_value(p[:polling_interval])
-      is_expected.to contain_neutron_agent_ovs('agent/l2_population').with_value(p[:l2_population])
-      is_expected.to contain_neutron_agent_ovs('agent/arp_responder').with_value(p[:arp_responder])
-      is_expected.to contain_neutron_agent_ovs('agent/prevent_arp_spoofing').with_value(p[:prevent_arp_spoofing])
+      is_expected.to contain_neutron_agent_ovs('agent/polling_interval').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_agent_ovs('agent/l2_population').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_agent_ovs('agent/arp_responder').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_agent_ovs('agent/prevent_arp_spoofing').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_agent_ovs('agent/drop_flows_on_start').with_value(p[:drop_flows_on_start])
-      is_expected.to contain_neutron_agent_ovs('agent/extensions').with_value([''])
+      is_expected.to contain_neutron_agent_ovs('agent/extensions').with_value(['<SERVICE DEFAULT>'])
       is_expected.to contain_neutron_agent_ovs('ovs/integration_bridge').with_value(p[:integration_bridge])
       is_expected.to contain_neutron_agent_ovs('securitygroup/firewall_driver').\
         with_value(p[:firewall_driver])
       is_expected.to contain_neutron_agent_ovs('ovs/enable_tunneling').with_value(false)
       is_expected.to contain_neutron_agent_ovs('ovs/tunnel_bridge').with_ensure('absent')
       is_expected.to contain_neutron_agent_ovs('ovs/local_ip').with_ensure('absent')
+      is_expected.to contain_neutron_agent_ovs('ovs/int_peer_patch_port').with_ensure('absent')
+      is_expected.to contain_neutron_agent_ovs('ovs/tun_peer_patch_port').with_ensure('absent')
     end
 
     it 'installs neutron ovs agent package' do
@@ -203,6 +201,8 @@ describe 'neutron::agents::ml2::ovs' do
           is_expected.to contain_neutron_agent_ovs('ovs/enable_tunneling').with_value(true)
           is_expected.to contain_neutron_agent_ovs('ovs/tunnel_bridge').with_value(default_params[:tunnel_bridge])
           is_expected.to contain_neutron_agent_ovs('ovs/local_ip').with_value('127.0.0.1')
+          is_expected.to contain_neutron_agent_ovs('ovs/int_peer_patch_port').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_neutron_agent_ovs('ovs/tun_peer_patch_port').with_value('<SERVICE DEFAULT>')
         end
       end
 
@@ -248,7 +248,26 @@ describe 'neutron::agents::ml2::ovs' do
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge({ :osfamily => 'Debian' })
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'Debian',
+         :os_package_type => 'debian'
+      }))
+    end
+
+    let :platform_params do
+      { :ovs_agent_package => 'neutron-openvswitch-agent',
+        :ovs_agent_service => 'neutron-openvswitch-agent' }
+    end
+
+    it_configures 'neutron plugin ovs agent with ml2 plugin'
+  end
+
+  context 'on Ubuntu platforms' do
+    let :facts do
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'Debian',
+         :os_package_type => 'ubuntu'
+      }))
     end
 
     let :platform_params do
@@ -261,10 +280,10 @@ describe 'neutron::agents::ml2::ovs' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '7'
-      })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
 
     let :platform_params do

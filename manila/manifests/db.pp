@@ -10,37 +10,37 @@
 #
 # [*database_idle_timeout*]
 #   Timeout when db connections should be reaped.
-#   (Optional) Defaults to 3600.
+#   (Optional) Defaults to $::os_service_default
 #
 # [*database_min_pool_size*]
 #   Minimum number of SQL connections to keep open in a pool.
-#   (Optional) Defaults to 1.
+#   (Optional) Defaults to $::os_service_default
 #
 # [*database_max_pool_size*]
 #   Maximum number of SQL connections to keep open in a pool.
-#   (Optional) Defaults to 10.
+#   (Optional) Defaults to $::os_service_default
 #
 # [*database_max_retries*]
 #   Maximum db connection retries during startup.
 #   Setting -1 implies an infinite retry count.
-#   (Optional) Defaults to 10.
+#   (Optional) Defaults to $::os_service_default
 #
 # [*database_retry_interval*]
 #   Interval between retries of opening a sql connection.
-#   (Optional) Defaults to 10.
+#   (Optional) Defaults to $::os_service_default
 #
 # [*database_max_overflow*]
 #   If set, use this value for max_overflow with sqlalchemy.
-#   (Optional) Defaults to 20.
+#   (Optional) Defaults to $::os_service_default
 #
 class manila::db (
   $database_connection     = 'sqlite:////var/lib/manila/manila.sqlite',
-  $database_idle_timeout   = 3600,
-  $database_min_pool_size  = 1,
-  $database_max_pool_size  = 10,
-  $database_max_retries    = 10,
-  $database_retry_interval = 10,
-  $database_max_overflow   = 20,
+  $database_idle_timeout   = $::os_service_default,
+  $database_min_pool_size  = $::os_service_default,
+  $database_max_pool_size  = $::os_service_default,
+  $database_max_retries    = $::os_service_default,
+  $database_retry_interval = $::os_service_default,
+  $database_max_overflow   = $::os_service_default,
 ) {
 
   include ::manila::params
@@ -58,46 +58,44 @@ class manila::db (
   validate_re($database_connection_real,
     '^(sqlite|mysql(\+pymysql)?|postgresql):\/\/(\S+:\S+@\S+\/\S+)?')
 
-  if $database_connection_real {
-    case $database_connection_real {
-      /^mysql(\+pymysql)?:\/\//: {
-        require 'mysql::bindings'
-        require 'mysql::bindings::python'
-        if $database_connection_real =~ /^mysql\+pymysql/ {
-          $backend_package = $::manila::params::pymysql_package_name
-        } else {
-          $backend_package = false
-        }
-      }
-      /^postgresql:\/\//: {
+  case $database_connection_real {
+    /^mysql(\+pymysql)?:\/\//: {
+      require 'mysql::bindings'
+      require 'mysql::bindings::python'
+      if $database_connection_real =~ /^mysql\+pymysql/ {
+        $backend_package = $::manila::params::pymysql_package_name
+      } else {
         $backend_package = false
-        require 'postgresql::lib::python'
-      }
-      /^sqlite:\/\//: {
-        $backend_package = $::manila::params::sqlite_package_name
-      }
-      default: {
-        fail('Unsupported backend configured')
       }
     }
+    /^postgresql:\/\//: {
+      $backend_package = false
+      require 'postgresql::lib::python'
+    }
+    /^sqlite:\/\//: {
+      $backend_package = $::manila::params::sqlite_package_name
+    }
+    default: {
+      fail('Unsupported backend configured')
+    }
+  }
 
-    if $backend_package and !defined(Package[$backend_package]) {
-      package {'manila-backend-package':
-        ensure => present,
-        name   => $backend_package,
-        tag    => 'openstack',
-      }
+  if $backend_package and !defined(Package[$backend_package]) {
+    package {'manila-backend-package':
+      ensure => present,
+      name   => $backend_package,
+      tag    => 'openstack',
     }
+  }
 
-    manila_config {
-      'database/connection':     value => $database_connection_real, secret => true;
-      'database/idle_timeout':   value => $database_idle_timeout_real;
-      'database/min_pool_size':  value => $database_min_pool_size_real;
-      'database/max_retries':    value => $database_max_retries_real;
-      'database/retry_interval': value => $database_retry_interval_real;
-      'database/max_pool_size':  value => $database_max_pool_size_real;
-      'database/max_overflow':   value => $database_max_overflow_real;
-    }
+  manila_config {
+    'database/connection':     value => $database_connection_real, secret => true;
+    'database/idle_timeout':   value => $database_idle_timeout_real;
+    'database/min_pool_size':  value => $database_min_pool_size_real;
+    'database/max_retries':    value => $database_max_retries_real;
+    'database/retry_interval': value => $database_retry_interval_real;
+    'database/max_pool_size':  value => $database_max_pool_size_real;
+    'database/max_overflow':   value => $database_max_overflow_real;
   }
 
 }

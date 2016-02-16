@@ -32,6 +32,11 @@
 #   (optional) Tenant for this account as defined in keystone
 #   Defaults to 'openstack'.
 #
+# [*project_name*]
+#   (optional) Project for this account as defined in keystone
+#   Use instead of tenant_name for when using identity v3.
+#   Defaults to undef.
+#
 # [*region_name*]
 #   (optional) Openstack region to use
 #   Defaults to 'RegionOne'.
@@ -68,6 +73,15 @@
 #   (optional) File path
 #   Defaults to '/root/openrc'.
 #
+# [*project_domain*]
+#   (optional) Project domain in v3 api.
+#   Defaults to false
+#
+# [*user_domain*]
+#   (optional) User domain in v3 api.
+#   Defaults to false
+#
+
 class openstack_extras::auth_file(
   $password                 = undef,
   $auth_url                 = 'http://127.0.0.1:5000/v2.0/',
@@ -75,8 +89,11 @@ class openstack_extras::auth_file(
   $service_endpoint         = 'http://127.0.0.1:35357/v2.0/',
   $username                 = 'admin',
   $tenant_name              = 'openstack',
+  $project_name             = undef,
   $region_name              = 'RegionOne',
   $use_no_cache             = true,
+  $project_domain           = false,
+  $user_domain              = false,
   $cinder_endpoint_type     = 'publicURL',
   $glance_endpoint_type     = 'publicURL',
   $keystone_endpoint_type   = 'publicURL',

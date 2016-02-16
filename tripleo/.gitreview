@@ -2,4 +2,3 @@
 host=review.openstack.org
 port=29418
 project=openstack/puppet-tripleo.git
-defaultbranch=stable/liberty

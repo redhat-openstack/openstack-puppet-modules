@@ -1,5 +1,5 @@
 {
-  "name": "puppet-aodh",
+  "name": "openstack-aodh",
   "version": "7.0.0",
   "author": "OpenStack Contributors",
   "summary": "Puppet module for OpenStack Aodh",

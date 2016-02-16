@@ -1,100 +1,144 @@
-# Class ceilometer
+# == Class: ceilometer
 #
-#  ceilometer base package & configuration
+#  This class is used to specify configuration parameters that are common
+#  across all ceilometer services.
 #
-# == parameters
+# === Parameters:
 #
 #  [*http_timeout*]
-#    timeout seconds for HTTP requests
-#     Defaults to 600
+#    (Optional) Timeout seconds for HTTP requests.
+#    Defaults to 600.
+#
 #  [*event_time_to_live*]
-#    number of seconds that events are kept in the database for
+#    (Optional) Number of seconds that events are kept in the database for
 #    (<= 0 means forever)
-#    Defaults to -1
+#    Defaults to -1.
+#
 #  [*metering_time_to_live*]
-#    number of seconds that samples are kept in the database for
+#    (Optional) Number of seconds that samples are kept in the database for
 #    (<= 0 means forever)
-#    Defaults to -1
+#    Defaults to -1.
+#
 #  [*alarm_history_time_to_live*]
-#    number of seconds that alarm histories are kept in the database for
+#    (Optional) Number of seconds that alarm histories are kept in the database for
 #    (<= 0 means forever)
-#    Defaults to -1
+#    Defaults to -1.
+#
 #  [*metering_secret*]
-#    secret key for signing messages. Mandatory.
+#   (Required)  Secret key for signing messages.
+#
 #  [*notification_topics*]
-#    AMQP topic used for OpenStack notifications (list value)
-#    Defaults to 'notifications'
+#    (Optional) AMQP topic used for OpenStack notifications (list value)
+#    Defaults to 'notifications'.
+#
 #  [*package_ensure*]
-#    ensure state for package. Optional. Defaults to 'present'
+#    (Optional) ensure state for package.
+#    Defaults to 'present'.
+#
 #  [*debug*]
-#    should the daemons log debug messages. Optional. Defaults to undef
+#    (Optional) Should the daemons log debug messages.
+#    Defaults to undef.
+#
 #  [*log_dir*]
-#    (optional) directory to which ceilometer logs are sent.
+#    (Optional) Directory to which ceilometer logs are sent.
 #    If set to boolean false, it will not log to any directory.
-#    Defaults to undef
+#    Defaults to undef.
+#
 #  [*verbose*]
-#    should the daemons log verbose messages. Optional. Defaults to undef
+#    (Optional) should the daemons log verbose messages.
+#    Defaults to undef.
+#
 #  [*use_syslog*]
-#    (optional) Use syslog for logging
-#    Defaults to undef
+#    (Optional) Use syslog for logging
+#    Defaults to undef.
+#
 #  [*use_stderr*]
-#    (optional) Use stderr for logging
-#    Defaults to undef
+#    (Optional) Use stderr for logging
+#    Defaults to undef.
+#
 #  [*log_facility*]
-#    (optional) Syslog facility to receive log lines.
-#    Defaults to undef
-# [*rpc_backend*]
-#    (optional) what rpc/queuing service to use
-#    Defaults to 'rabbit'
+#    (Optional) Syslog facility to receive log lines.
+#    Defaults to undef.
+#
+#  [*rpc_backend*]
+#    (Optional) what rpc/queuing service to use
+#    Defaults to 'rabbit'.
+#
 #  [*rabbit_host*]
-#    ip or hostname of the rabbit server. Optional. Defaults to '127.0.0.1'
+#    (Optional) ip or hostname of the rabbit server.
+#    Defaults to '127.0.0.1'.
+#
 #  [*rabbit_port*]
-#    port of the rabbit server. Optional. Defaults to 5672.
+#    (Optional)  port of the rabbit server.
+#    Defaults to 5672.
+#
 #  [*rabbit_hosts*]
-#    array of host:port (used with HA queues). Optional. Defaults to undef.
+#    (Optional) array of host:port (used with HA queues).
 #    If defined, will remove rabbit_host & rabbit_port parameters from config
+#    Defaults to undef.
+#
 #  [*rabbit_userid*]
-#    user to connect to the rabbit server. Optional. Defaults to 'guest'
+#    (Optional) user to connect to the rabbit server.
+#    Defaults to 'guest'.
+#
 #  [*rabbit_password*]
-#    password to connect to the rabbit_server. Optional. Defaults to empty.
+#    (Optional) password to connect to the rabbit_server.
+#    Defaults to empty.
+#
 #  [*rabbit_virtual_host*]
-#    virtualhost to use. Optional. Defaults to '/'
+#    (Optional) virtualhost to use.
+#    Defaults to '/'.
+#
+# [*rabbit_ha_queues*]
+#   (Optional) Use HA queues in RabbitMQ (x-ha-policy: all).
+#   Defaults to undef.
 #
 # [*rabbit_heartbeat_timeout_threshold*]
-#   (optional) Number of seconds after which the RabbitMQ broker is considered
+#   (Optional) Number of seconds after which the RabbitMQ broker is considered
 #   down if the heartbeat keepalive fails.  Any value >0 enables heartbeats.
 #   Heartbeating helps to ensure the TCP connection to RabbitMQ isn't silently
 #   closed, resulting in missed or lost messages from the queue.
 #   (Requires kombu >= 3.0.7 and amqp >= 1.4.0)
-#   Defaults to 0
+#   Defaults to 0.
 #
 # [*rabbit_heartbeat_rate*]
-#   (optional) How often during the rabbit_heartbeat_timeout_threshold period to
+#   (Optional) How often during the rabbit_heartbeat_timeout_threshold period to
 #   check the heartbeat on RabbitMQ connection.  (i.e. rabbit_heartbeat_rate=2
 #   when rabbit_heartbeat_timeout_threshold=60, the heartbeat will be checked
 #   every 30 seconds.
-#   Defaults to 2
+#   Defaults to 2.
 #
 #  [*rabbit_use_ssl*]
-#    (optional) Connect over SSL for RabbitMQ
-#    Defaults to false
+#    (Optional) Connect over SSL for RabbitMQ
+#    Defaults to false.
+#
+#  [*amqp_durable_queues*]
+#    (optional) Define queues as "durable" to rabbitmq.
+#    Defaults to $::os_service_default
+#
 #  [*kombu_ssl_ca_certs*]
-#    (optional) SSL certification authority file (valid only if SSL enabled).
-#    Defaults to undef
+#    (Optional) SSL certification authority file (valid only if SSL enabled).
+#    Defaults to undef.
+#
 #  [*kombu_ssl_certfile*]
-#    (optional) SSL cert file (valid only if SSL enabled).
-#    Defaults to undef
+#    (Optional) SSL cert file (valid only if SSL enabled).
+#    Defaults to undef.
+#
 #  [*kombu_ssl_keyfile*]
-#    (optional) SSL key file (valid only if SSL enabled).
-#    Defaults to undef
+#    (Optional) SSL key file (valid only if SSL enabled).
+#    Defaults to undef.
+#
 #  [*kombu_ssl_version*]
-#    (optional) SSL version to use (valid only if SSL enabled).
+#    (Optional) SSL version to use (valid only if SSL enabled).
 #    Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #    available on some distributions.
-#    Defaults to 'TLSv1'
+#    Defaults to 'TLSv1'.
+#
 #  [*memcached_servers*]
-#    (optional) A list of memcached server(s) to use for caching.
-#    Defaults to undef
+#    (Optional) A list of memcached server(s) to use for caching.
+#    Defaults to undef.
+#
+# === DEPRECATED PARAMETERS:
 #
 # [*qpid_hostname*]
 # [*qpid_port*]
@@ -109,7 +153,6 @@
 # [*qpid_reconnect_interval*]
 # [*qpid_reconnect_interval_min*]
 # [*qpid_reconnect_interval_max*]
-# (optional) various QPID options
 #
 class ceilometer(
   $http_timeout                       = '600',
@@ -132,27 +175,30 @@ class ceilometer(
   $rabbit_userid                      = 'guest',
   $rabbit_password                    = '',
   $rabbit_virtual_host                = '/',
+  $rabbit_ha_queues                   = undef,
   $rabbit_heartbeat_timeout_threshold = 0,
   $rabbit_heartbeat_rate              = 2,
+  $amqp_durable_queues                = $::os_service_default,
   $rabbit_use_ssl                     = false,
   $kombu_ssl_ca_certs                 = undef,
   $kombu_ssl_certfile                 = undef,
   $kombu_ssl_keyfile                  = undef,
   $kombu_ssl_version                  = 'TLSv1',
   $memcached_servers                  = undef,
-  $qpid_hostname                      = 'localhost',
-  $qpid_port                          = 5672,
-  $qpid_username                      = 'guest',
-  $qpid_password                      = 'guest',
-  $qpid_heartbeat                     = 60,
-  $qpid_protocol                      = 'tcp',
-  $qpid_tcp_nodelay                   = true,
-  $qpid_reconnect                     = true,
-  $qpid_reconnect_timeout             = 0,
-  $qpid_reconnect_limit               = 0,
-  $qpid_reconnect_interval_min        = 0,
-  $qpid_reconnect_interval_max        = 0,
-  $qpid_reconnect_interval            = 0,
+  # DEPRECATED PARAMETERS
+  $qpid_hostname                      = undef,
+  $qpid_port                          = undef,
+  $qpid_username                      = undef,
+  $qpid_password                      = undef,
+  $qpid_heartbeat                     = undef,
+  $qpid_protocol                      = undef,
+  $qpid_tcp_nodelay                   = undef,
+  $qpid_reconnect                     = undef,
+  $qpid_reconnect_timeout             = undef,
+  $qpid_reconnect_limit               = undef,
+  $qpid_reconnect_interval_min        = undef,
+  $qpid_reconnect_interval_max        = undef,
+  $qpid_reconnect_interval            = undef,
 ) {
 
   validate_string($metering_secret)
@@ -208,11 +254,15 @@ class ceilometer(
       }
     }
 
+    if $rabbit_ha_queues == undef {
       if size($rabbit_hosts) > 1 {
         ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
       } else {
         ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
       }
+    } else {
+      ceilometer_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
+    }
 
       ceilometer_config {
         'oslo_messaging_rabbit/rabbit_userid':                value => $rabbit_userid;
@@ -221,6 +271,7 @@ class ceilometer(
         'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
         'oslo_messaging_rabbit/heartbeat_timeout_threshold':  value => $rabbit_heartbeat_timeout_threshold;
         'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
+        'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
       }
 
       if $rabbit_use_ssl {
@@ -262,25 +313,7 @@ class ceilometer(
 
   # we keep "ceilometer.openstack.common.rpc.impl_qpid" for backward compatibility
   if $rpc_backend == 'ceilometer.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
-
     warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    ceilometer_config {
-      'oslo_messaging_qpid/qpid_hostname'              : value => $qpid_hostname;
-      'oslo_messaging_qpid/qpid_port'                  : value => $qpid_port;
-      'oslo_messaging_qpid/qpid_username'              : value => $qpid_username;
-      'oslo_messaging_qpid/qpid_password'              : value => $qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat'             : value => $qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol'              : value => $qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay'           : value => $qpid_tcp_nodelay;
-      'oslo_messaging_qpid/qpid_reconnect'             : value => $qpid_reconnect;
-      'oslo_messaging_qpid/qpid_reconnect_timeout'     : value => $qpid_reconnect_timeout;
-      'oslo_messaging_qpid/qpid_reconnect_limit'       : value => $qpid_reconnect_limit;
-      'oslo_messaging_qpid/qpid_reconnect_interval_min': value => $qpid_reconnect_interval_min;
-      'oslo_messaging_qpid/qpid_reconnect_interval_max': value => $qpid_reconnect_interval_max;
-      'oslo_messaging_qpid/qpid_reconnect_interval'    : value => $qpid_reconnect_interval;
-    }
-
   }
 
   # Once we got here, we can act as an honey badger on the rpc used.

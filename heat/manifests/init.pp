@@ -23,40 +23,40 @@
 #
 # [*rpc_backend*]
 #   (Optional) Use these options to configure the message system.
-#   Defaults to 'rabbit'
+#   Defaults to $::os_service_default.
 #
 # [*rpc_response_timeout*]
 #   (Optional) Configure the timeout (in seconds) for rpc responses
-#   Defaults to 60 seconds
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_host*]
 #   (Optional) IP or hostname of the rabbit server.
-#   Defaults to '127.0.0.1'
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_port*]
 #   (Optional) Port of the rabbit server.
-#   Defaults to 5672.
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_hosts*]
 #   (Optional) Array of host:port (used with HA queues).
 #   If defined, will remove rabbit_host & rabbit_port parameters from config
-#   Defaults to undef.
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_userid*]
 #   (Optional) User to connect to the rabbit server.
-#   Defaults to 'guest'
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_password*]
 #   (Optional) Password to connect to the rabbit_server.
-#   Defaults to empty.
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_virtual_host*]
 #   (Optional) Virtual_host to use.
-#   Defaults to '/'
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_ha_queues*]
 #   (optional) Use HA queues in RabbitMQ (x-ha-policy: all).
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_heartbeat_timeout_threshold*]
 #   (optional) Number of seconds after which the RabbitMQ broker is considered
@@ -71,33 +71,47 @@
 #   check the heartbeat on RabbitMQ connection.  (i.e. rabbit_heartbeat_rate=2
 #   when rabbit_heartbeat_timeout_threshold=60, the heartbeat will be checked
 #   every 30 seconds.
-#   Defaults to 2
+#   Defaults to $::os_service_default.
 #
 # [*rabbit_use_ssl*]
 #   (Optional) Connect over SSL for RabbitMQ.
-#   Defaults to false
+#   Defaults to $::os_service_default.
 #
 # [*kombu_ssl_ca_certs*]
 #   (Optional) SSL certification authority file (valid only if SSL enabled).
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*kombu_ssl_certfile*]
 #   (Optional) SSL cert file (valid only if SSL enabled).
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*kombu_ssl_keyfile*]
 #   (Optional) SSL key file (valid only if SSL enabled).
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*kombu_ssl_version*]
 #   (Optional) SSL version to use (valid only if SSL enabled).
 #   Valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may be
 #   available on some distributions.
-#   Defaults to 'TLSv1'
+#   Defaults to $::os_service_default.
 #
 # [*amqp_durable_queues*]
 #   (Optional) Use durable queues in amqp.
-#   Defaults to false
+#   Defaults to $::os_service_default.
+#
+# [*max_template_size*]
+#   (Optional) Maximum raw byte size of any template.
+#   Defaults to $::os_service_default
+#
+# [*max_json_body_size*]
+#   (Optional) Maximum raw byte size of JSON request body.
+#   Should be larger than max_template_size.
+#   Defaults to $::os_service_default
+#
+# [*notification_driver*]
+#   (Optional) Driver or drivers to handle sending notifications.
+#   Value can be a string or a list.
+#   Defaults to $::os_service_default
 #
 # == keystone authentication options
 #
@@ -118,34 +132,6 @@
 # [*keystone_password*]
 #
 # [*keystone_ec2_uri*]
-#
-# ==== Various QPID options (Optional)
-#
-# [*qpid_hostname*]
-#
-# [*qpid_port*]
-#
-# [*qpid_username*]
-#
-# [*qpid_password*]
-#
-# [*qpid_heartbeat*]
-#
-# [*qpid_protocol*]
-#
-# [*qpid_tcp_nodelay*]
-#
-# [*qpid_reconnect*]
-#
-# [*qpid_reconnect_timeout*]
-#
-# [*qpid_reconnect_limit*]
-#
-# [*qpid_reconnect_interval*]
-#
-# [*qpid_reconnect_interval_min*]
-#
-# [*qpid_reconnect_interval_max*]
 #
 # [*database_connection*]
 #   (optional) Connection url for the heat database.
@@ -191,12 +177,12 @@
 #   (optional) Specifies the Authentication method.
 #   Set to 'standalone' to get Heat to work with a remote OpenStack
 #   Tested versions include 0.9 and 2.2
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*region_name*]
 #   (Optional) Region name for services. This is the
 #   default region name that heat talks to service endpoints on.
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*instance_user*]
 #   (Optional) The default user for new instances. Although heat claims that
@@ -207,11 +193,11 @@
 #
 # [*enable_stack_adopt*]
 #   (Optional) Enable the stack-adopt feature.
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*enable_stack_abandon*]
 #   (Optional) Enable the stack-abandon feature.
-#   Defaults to undef
+#   Defaults to $::os_service_default.
 #
 # [*sync_db*]
 #   (Optional) Run db sync on nodes after connection setting has been set.
@@ -237,6 +223,32 @@
 #   (Optional) DEPRECATED. The protocol used to access the keystone host
 #   Defaults to http.
 #
+# [*qpid_hostname*]
+#
+# [*qpid_port*]
+#
+# [*qpid_username*]
+#
+# [*qpid_password*]
+#
+# [*qpid_heartbeat*]
+#
+# [*qpid_protocol*]
+#
+# [*qpid_tcp_nodelay*]
+#
+# [*qpid_reconnect*]
+#
+# [*qpid_reconnect_timeout*]
+#
+# [*qpid_reconnect_limit*]
+#
+# [*qpid_reconnect_interval*]
+#
+# [*qpid_reconnect_interval_min*]
+#
+# [*qpid_reconnect_interval_max*]
+#
 class heat(
   $auth_uri                           = false,
   $identity_uri                       = false,
@@ -248,36 +260,23 @@ class heat(
   $keystone_tenant                    = 'services',
   $keystone_password                  = false,
   $keystone_ec2_uri                   = 'http://127.0.0.1:5000/v2.0/ec2tokens',
-  $rpc_backend                        = 'rabbit',
-  $rpc_response_timeout               = 60,
-  $rabbit_host                        = '127.0.0.1',
-  $rabbit_port                        = 5672,
-  $rabbit_hosts                       = undef,
-  $rabbit_userid                      = 'guest',
-  $rabbit_password                    = '',
-  $rabbit_virtual_host                = '/',
-  $rabbit_ha_queues                   = undef,
+  $rpc_backend                        = $::os_service_default,
+  $rpc_response_timeout               = $::os_service_default,
+  $rabbit_host                        = $::os_service_default,
+  $rabbit_port                        = $::os_service_default,
+  $rabbit_hosts                       = $::os_service_default,
+  $rabbit_userid                      = $::os_service_default,
+  $rabbit_password                    = $::os_service_default,
+  $rabbit_virtual_host                = $::os_service_default,
+  $rabbit_ha_queues                   = $::os_service_default,
   $rabbit_heartbeat_timeout_threshold = 0,
-  $rabbit_heartbeat_rate              = 2,
-  $rabbit_use_ssl                     = false,
-  $kombu_ssl_ca_certs                 = undef,
-  $kombu_ssl_certfile                 = undef,
-  $kombu_ssl_keyfile                  = undef,
-  $kombu_ssl_version                  = 'TLSv1',
-  $amqp_durable_queues                = false,
-  $qpid_hostname                      = 'localhost',
-  $qpid_port                          = 5672,
-  $qpid_username                      = 'guest',
-  $qpid_password                      = 'guest',
-  $qpid_heartbeat                     = 60,
-  $qpid_protocol                      = 'tcp',
-  $qpid_tcp_nodelay                   = true,
-  $qpid_reconnect                     = true,
-  $qpid_reconnect_timeout             = 0,
-  $qpid_reconnect_limit               = 0,
-  $qpid_reconnect_interval_min        = 0,
-  $qpid_reconnect_interval_max        = 0,
-  $qpid_reconnect_interval            = 0,
+  $rabbit_heartbeat_rate              = $::os_service_default,
+  $rabbit_use_ssl                     = $::os_service_default,
+  $kombu_ssl_ca_certs                 = $::os_service_default,
+  $kombu_ssl_certfile                 = $::os_service_default,
+  $kombu_ssl_keyfile                  = $::os_service_default,
+  $kombu_ssl_version                  = $::os_service_default,
+  $amqp_durable_queues                = $::os_service_default,
   $use_syslog                         = undef,
   $use_stderr                         = undef,
   $log_facility                       = undef,
@@ -288,11 +287,14 @@ class heat(
   $database_min_pool_size             = undef,
   $database_max_pool_size             = undef,
   $database_max_overflow              = undef,
-  $flavor                             = undef,
-  $region_name                        = undef,
-  $enable_stack_adopt                 = undef,
-  $enable_stack_abandon               = undef,
+  $flavor                             = $::os_service_default,
+  $region_name                        = $::os_service_default,
+  $enable_stack_adopt                 = $::os_service_default,
+  $enable_stack_abandon               = $::os_service_default,
   $sync_db                            = undef,
+  $max_template_size                  = $::os_service_default,
+  $max_json_body_size                 = $::os_service_default,
+  $notification_driver                = $::os_service_default,
   # Deprecated parameters
   $mysql_module                       = undef,
   $sql_connection                     = undef,
@@ -300,6 +302,19 @@ class heat(
   $keystone_port                      = '35357',
   $keystone_protocol                  = 'http',
   $instance_user                      = undef,
+  $qpid_hostname                      = undef,
+  $qpid_port                          = undef,
+  $qpid_username                      = undef,
+  $qpid_password                      = undef,
+  $qpid_heartbeat                     = undef,
+  $qpid_protocol                      = undef,
+  $qpid_tcp_nodelay                   = undef,
+  $qpid_reconnect                     = undef,
+  $qpid_reconnect_timeout             = undef,
+  $qpid_reconnect_limit               = undef,
+  $qpid_reconnect_interval_min        = undef,
+  $qpid_reconnect_interval_max        = undef,
+  $qpid_reconnect_interval            = undef,
 ) {
 
   include ::heat::logging
@@ -307,16 +322,19 @@ class heat(
   include ::heat::deps
   include ::heat::params
 
-  if $kombu_ssl_ca_certs and !$rabbit_use_ssl {
-    fail('The kombu_ssl_ca_certs parameter requires rabbit_use_ssl to be set to true')
+  if !$rabbit_use_ssl or is_service_default(rabbit_use_ssl) {
+    if !is_service_default($kombu_ssl_ca_certs) {
+      fail('The kombu_ssl_ca_certs parameter requires rabbit_use_ssl to be set to true')
+    }
+    if !is_service_default($kombu_ssl_certfile) {
+      fail('The kombu_ssl_certfile parameter requires rabbit_use_ssl to be set to true')
+    }
+    if !is_service_default($kombu_ssl_keyfile) {
+      fail('The kombu_ssl_keyfile parameter requires rabbit_use_ssl to be set to true')
+    }
   }
-  if $kombu_ssl_certfile and !$rabbit_use_ssl {
-    fail('The kombu_ssl_certfile parameter requires rabbit_use_ssl to be set to true')
-  }
-  if $kombu_ssl_keyfile and !$rabbit_use_ssl {
-    fail('The kombu_ssl_keyfile parameter requires rabbit_use_ssl to be set to true')
-  }
-  if ($kombu_ssl_certfile and !$kombu_ssl_keyfile) or ($kombu_ssl_keyfile and !$kombu_ssl_certfile) {
+  if ((!is_service_default($kombu_ssl_certfile)) and is_service_default($kombu_ssl_keyfile))
+    or ((!is_service_default($kombu_ssl_keyfile)) and is_service_default($kombu_ssl_certfile)) {
     fail('The kombu_ssl_certfile and kombu_ssl_keyfile parameters must be used together')
   }
   if $mysql_module {
@@ -329,32 +347,34 @@ class heat(
     tag    => ['openstack', 'heat-package'],
   }
 
-  if $rpc_backend == 'rabbit' {
+  if $rpc_backend == 'rabbit' or is_service_default($rpc_backend) {
 
-    if $rabbit_hosts {
-      heat_config { 'oslo_messaging_rabbit/rabbit_host': ensure => absent }
-      heat_config { 'oslo_messaging_rabbit/rabbit_port': ensure => absent }
-      heat_config { 'oslo_messaging_rabbit/rabbit_hosts':
-        value => join($rabbit_hosts, ',')
+    if ! is_service_default($rabbit_hosts) and $rabbit_hosts {
+      heat_config {
+        'oslo_messaging_rabbit/rabbit_hosts': value => join(any2array($rabbit_hosts), ',');
+        'oslo_messaging_rabbit/rabbit_host':  ensure => absent;
+        'oslo_messaging_rabbit/rabbit_port':  ensure => absent;
       }
-    } else {
-      heat_config { 'oslo_messaging_rabbit/rabbit_host': value => $rabbit_host }
-      heat_config { 'oslo_messaging_rabbit/rabbit_port': value => $rabbit_port }
-      heat_config { 'oslo_messaging_rabbit/rabbit_hosts':
-        value => "${rabbit_host}:${rabbit_port}"
-      }
-    }
-
-    if $rabbit_ha_queues == undef {
-      if size($rabbit_hosts) > 1 {
-        heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => true }
+      if size($rabbit_hosts) > 1 and is_service_default($rabbit_ha_queues) {
+        heat_config {
+          'oslo_messaging_rabbit/rabbit_ha_queues': value => true;
+        }
       } else {
-        heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+        heat_config {
+          'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues;
+        }
       }
     } else {
-      heat_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues }
+      heat_config {
+        'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host;
+        'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port;
+        'oslo_messaging_rabbit/rabbit_hosts':     ensure => absent;
+        'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues;
+      }
     }
-
+    if $rabbit_heartbeat_timeout_threshold == 0 {
+      warning('Default value for rabbit_heartbeat_timeout_threshold parameter is different from OpenStack project defaults')
+    }
     heat_config {
       'oslo_messaging_rabbit/rabbit_userid':                value => $rabbit_userid;
       'oslo_messaging_rabbit/rabbit_password':              value => $rabbit_password, secret => true;
@@ -363,66 +383,16 @@ class heat(
       'oslo_messaging_rabbit/heartbeat_rate':               value => $rabbit_heartbeat_rate;
       'oslo_messaging_rabbit/rabbit_use_ssl':               value => $rabbit_use_ssl;
       'oslo_messaging_rabbit/amqp_durable_queues':          value => $amqp_durable_queues;
-    }
-
-    if $rabbit_use_ssl {
-
-      if $kombu_ssl_ca_certs {
-        heat_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': value => $kombu_ssl_ca_certs; }
-      } else {
-        heat_config { 'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent; }
-      }
-
-      if $kombu_ssl_certfile or $kombu_ssl_keyfile {
-        heat_config {
-          'oslo_messaging_rabbit/kombu_ssl_certfile': value => $kombu_ssl_certfile;
-          'oslo_messaging_rabbit/kombu_ssl_keyfile':  value => $kombu_ssl_keyfile;
-        }
-      } else {
-        heat_config {
-          'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
-          'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
-        }
-      }
-
-      if $kombu_ssl_version {
-        heat_config { 'oslo_messaging_rabbit/kombu_ssl_version':  value => $kombu_ssl_version; }
-      } else {
-        heat_config { 'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent; }
-      }
-
-    } else {
-      heat_config {
-        'oslo_messaging_rabbit/kombu_ssl_version':  ensure => absent;
-        'oslo_messaging_rabbit/kombu_ssl_ca_certs': ensure => absent;
-        'oslo_messaging_rabbit/kombu_ssl_certfile': ensure => absent;
-        'oslo_messaging_rabbit/kombu_ssl_keyfile':  ensure => absent;
-      }
+      'oslo_messaging_rabbit/kombu_ssl_ca_certs':           value => $kombu_ssl_ca_certs;
+      'oslo_messaging_rabbit/kombu_ssl_certfile':           value => $kombu_ssl_certfile;
+      'oslo_messaging_rabbit/kombu_ssl_keyfile':            value => $kombu_ssl_keyfile;
+      'oslo_messaging_rabbit/kombu_ssl_version':            value => $kombu_ssl_version;
     }
 
   }
 
   if $rpc_backend == 'qpid' {
-
     warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    heat_config {
-      'oslo_messaging_qpid/qpid_hostname'               : value => $qpid_hostname;
-      'oslo_messaging_qpid/qpid_port'                   : value => $qpid_port;
-      'oslo_messaging_qpid/qpid_username'               : value => $qpid_username;
-      'oslo_messaging_qpid/qpid_password'               : value => $qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat'              : value => $qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol'               : value => $qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay'            : value => $qpid_tcp_nodelay;
-      'oslo_messaging_qpid/qpid_reconnect'              : value => $qpid_reconnect;
-      'oslo_messaging_qpid/qpid_reconnect_timeout'      : value => $qpid_reconnect_timeout;
-      'oslo_messaging_qpid/qpid_reconnect_limit'        : value => $qpid_reconnect_limit;
-      'oslo_messaging_qpid/qpid_reconnect_interval_min' : value => $qpid_reconnect_interval_min;
-      'oslo_messaging_qpid/qpid_reconnect_interval_max' : value => $qpid_reconnect_interval_max;
-      'oslo_messaging_qpid/qpid_reconnect_interval'     : value => $qpid_reconnect_interval;
-      'oslo_messaging_qpid/amqp_durable_queues'         : value => $amqp_durable_queues;
-    }
-
   }
 
   # if both auth_uri and identity_uri are set we skip these deprecated settings entirely
@@ -483,26 +453,28 @@ class heat(
     }
   }
 
+  if (!is_service_default($enable_stack_adopt)) {
+    validate_bool($enable_stack_adopt)
+  }
+
+  if (!is_service_default($enable_stack_abandon)) {
+    validate_bool($enable_stack_abandon)
+  }
+
   heat_config {
-    'DEFAULT/rpc_backend'                  : value => $rpc_backend;
-    'DEFAULT/rpc_response_timeout'         : value => $rpc_response_timeout;
-    'ec2authtoken/auth_uri'                : value => $keystone_ec2_uri;
-    'keystone_authtoken/admin_tenant_name' : value => $keystone_tenant;
-    'keystone_authtoken/admin_user'        : value => $keystone_user;
-    'keystone_authtoken/admin_password'    : value => $keystone_password, secret => true;
-  }
-
-  if $flavor {
-    heat_config { 'paste_deploy/flavor': value => $flavor; }
-  } else {
-    heat_config { 'paste_deploy/flavor': ensure => absent; }
-  }
-
-  # region name
-  if $region_name {
-    heat_config { 'DEFAULT/region_name_for_services': value => $region_name; }
-  } else {
-    heat_config { 'DEFAULT/region_name_for_services': ensure => absent; }
+    'DEFAULT/rpc_backend':                  value => $rpc_backend;
+    'DEFAULT/rpc_response_timeout':         value => $rpc_response_timeout;
+    'DEFAULT/max_template_size':            value => $max_template_size;
+    'DEFAULT/max_json_body_size':           value => $max_json_body_size;
+    'DEFAULT/notification_driver':          value => $notification_driver;
+    'DEFAULT/region_name_for_services':     value => $region_name;
+    'DEFAULT/enable_stack_abandon':         value => $enable_stack_abandon;
+    'DEFAULT/enable_stack_adopt':           value => $enable_stack_adopt;
+    'ec2authtoken/auth_uri':                value => $keystone_ec2_uri;
+    'keystone_authtoken/admin_tenant_name': value => $keystone_tenant;
+    'keystone_authtoken/admin_user':        value => $keystone_user;
+    'keystone_authtoken/admin_password':    value => $keystone_password, secret => true;
+    'paste_deploy/flavor':                  value => $flavor;
   }
 
   # instance_user
@@ -515,17 +487,4 @@ class heat(
     heat_config { 'DEFAULT/instance_user': ensure => absent; }
   }
 
-  if $enable_stack_adopt != undef {
-    validate_bool($enable_stack_adopt)
-    heat_config { 'DEFAULT/enable_stack_adopt': value => $enable_stack_adopt; }
-  } else {
-    heat_config { 'DEFAULT/enable_stack_adopt': ensure => absent; }
-  }
-
-  if $enable_stack_abandon != undef {
-    validate_bool($enable_stack_abandon)
-    heat_config { 'DEFAULT/enable_stack_abandon': value => $enable_stack_abandon; }
-  } else {
-    heat_config { 'DEFAULT/enable_stack_abandon': ensure => absent; }
-  }
 }

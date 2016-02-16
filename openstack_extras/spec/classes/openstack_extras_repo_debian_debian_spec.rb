@@ -12,7 +12,7 @@ describe 'openstack_extras::repo::debian::debian' do
 
   let :paramclass_defaults do
     {
-      :release        => 'liberty'
+      :release        => 'mitaka'
     }
   end
 
@@ -22,11 +22,11 @@ describe 'openstack_extras::repo::debian::debian' do
 
   context 'on Debian platforms' do
     let :facts do
-      {
+      @default_facts.merge({
         :osfamily        => 'Debian',
         :operatingsystem => 'Debian',
         :lsbdistid       => 'Debian'
-      }
+      })
     end
 
     describe 'with default parameters' do
@@ -36,13 +36,13 @@ describe 'openstack_extras::repo::debian::debian' do
 
       it { is_expected.to contain_apt__source('debian_wheezy').with(
         :location           => 'http://archive.gplhost.com/debian',
-        :release            => 'liberty',
+        :release            => 'mitaka',
         :repos              => 'main',
       )}
 
       it { is_expected.to contain_apt__source('debian_wheezy_backports').with(
         :location => 'http://archive.gplhost.com/debian',
-        :release  => 'liberty-backports',
+        :release  => 'mitaka-backports',
         :repos    => 'main'
       )}
 

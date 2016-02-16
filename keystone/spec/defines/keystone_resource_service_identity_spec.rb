@@ -172,7 +172,7 @@ describe 'keystone::resource::service_identity' do
 
   context 'on a Debian osfamily' do
     let :facts do
-      { :osfamily => "Debian" }
+      @default_facts.merge({ :osfamily => "Debian" })
     end
 
     include_examples 'keystone::resource::service_identity examples'
@@ -180,7 +180,7 @@ describe 'keystone::resource::service_identity' do
 
   context 'on a RedHat osfamily' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     include_examples 'keystone::resource::service_identity examples'

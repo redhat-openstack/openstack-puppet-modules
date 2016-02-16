@@ -25,7 +25,7 @@ describe 'basic gnocchi' do
           class { '::gnocchi':
             verbose             => true,
             debug               => true,
-            database_connection => 'mysql://gnocchi:a_big_secret@127.0.0.1/gnocchi?charset=utf8',
+            database_connection => 'mysql+pymysql://gnocchi:a_big_secret@127.0.0.1/gnocchi?charset=utf8',
           }
           class { '::gnocchi::api':
             enabled               => true,
@@ -33,6 +33,7 @@ describe 'basic gnocchi' do
             keystone_identity_uri => 'http://127.0.0.1:35357/',
             service_name          => 'httpd',
           }
+          class { '::gnocchi::metricd': }
           class { '::gnocchi::db::sync': }
           class { '::gnocchi::storage': }
           class { '::gnocchi::storage::file': }

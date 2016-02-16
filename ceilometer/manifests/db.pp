@@ -4,55 +4,57 @@
 #  This class will install the required libraries depending on the driver
 #  specified in the connection_string parameter
 #
-# == Parameters
-
+# === Parameters:
+#
 # [*database_connection*]
-#   Url used to connect to database.
-#   (Optional) Defaults to 'mysql://ceilometer:ceilometer@localhost/ceilometer'.
+#   (Optional) Url used to connect to database.
+#   Defaults to 'mysql://ceilometer:ceilometer@localhost/ceilometer'.
 #
 # [*database_idle_timeout*]
-#   Timeout when db connections should be reaped.
-#   (Optional) Defaults to 3600.
+#   (Optional) Timeout when db connections should be reaped.
+#   Defaults to $::os_service_default.
 #
 # [*database_min_pool_size*]
-#   Minimum number of SQL connections to keep open in a pool.
-#   (Optional) Defaults to 1.
+#   (Optional) Minimum number of SQL connections to keep open in a pool.
+#   Defaults to $::os_service_default.
 #
 # [*database_max_pool_size*]
-#   Maximum number of SQL connections to keep open in a pool.
-#   (Optional) Defaults to 10.
+#   (Optional) Maximum number of SQL connections to keep open in a pool.
+#   Defaults to $::os_service_default.
 #
 # [*database_max_retries*]
-#   Maximum db connection retries during startup.
+#   (Optional) Maximum db connection retries during startup.
 #   Setting -1 implies an infinite retry count.
-#   (Optional) Defaults to 10.
+#   Defaults to $::os_service_default.
 #
 # [*database_retry_interval*]
-#   Interval between retries of opening a sql connection.
-#   (Optional) Defaults to 10.
+#   (Optional) Interval between retries of opening a sql connection.
+#   Defaults to $::os_service_default.
 #
 # [*database_max_overflow*]
-#   If set, use this value for max_overflow with sqlalchemy.
-#   (Optional) Defaults to 20.
+#   (Optional) If set, use this value for max_overflow with sqlalchemy.
+#   Defaults to $::os_service_default.
 #
 # [*mongodb_replica_set*]
-#   The name of the replica set which is used to connect to MongoDB
+#   (Optional) DEPRECATED. The name of the replica set which is used to connect to MongoDB
 #   database. If it is set, MongoReplicaSetClient will be used instead
 #   of MongoClient.
-#   (Optional) Defaults to undef (string value).
+#   Defaults to undef (string value).
 #
-#  [*sync_db*]
-#    enable dbsync.
+# [*sync_db*]
+#   (Optional) enable dbsync.
+#   Defaults to true.
 #
 class ceilometer::db (
   $database_connection     = 'mysql://ceilometer:ceilometer@localhost/ceilometer',
-  $database_idle_timeout   = 3600,
-  $database_min_pool_size  = 1,
-  $database_max_pool_size  = 10,
-  $database_max_retries    = 10,
-  $database_retry_interval = 10,
-  $database_max_overflow   = 20,
+  $database_idle_timeout   = $::os_service_default,
+  $database_min_pool_size  = $::os_service_default,
+  $database_max_pool_size  = $::os_service_default,
+  $database_max_retries    = $::os_service_default,
+  $database_retry_interval = $::os_service_default,
+  $database_max_overflow   = $::os_service_default,
   $sync_db                 = true,
+  # DEPRECATED PARAMETERS
   $mongodb_replica_set     = undef,
 ) {
 
@@ -60,14 +62,22 @@ class ceilometer::db (
 
   Package<| title == 'ceilometer-common' |> -> Class['ceilometer::db']
 
+  if $mongodb_replica_set {
+    warning('mongodb_replica_set parameter is deprecated in Mitaka and has no effect. Add ?replicaSet=myreplicatset in database_connection instead.')
+  }
+
   validate_re($database_connection,
-    '(sqlite|mysql|postgresql|mongodb):\/\/(\S+:\S+@\S+\/\S+)?')
+    '^(sqlite|mysql(\+pymysql)?|postgresql|mongodb):\/\/(\S+:\S+@\S+\/\S+)?')
 
   case $database_connection {
-    /^mysql:\/\//: {
-      $backend_package = false
+    /^mysql(\+pymysql)?:\/\//: {
       require 'mysql::bindings'
       require 'mysql::bindings::python'
+      if $database_connection =~ /^mysql\+pymysql/ {
+        $backend_package = $::ceilometer::params::pymysql_package_name
+      } else {
+        $backend_package = false
+      }
     }
     /^postgresql:\/\//: {
       $backend_package = false
@@ -75,11 +85,6 @@ class ceilometer::db (
     }
     /^mongodb:\/\//: {
       $backend_package = $::ceilometer::params::pymongo_package_name
-      if $mongodb_replica_set {
-        ceilometer_config { 'database/mongodb_replica_set':  value => $mongodb_replica_set; }
-      } else {
-        ceilometer_config { 'database/mongodb_replica_set':  ensure => absent; }
-      }
     }
     /^sqlite:\/\//: {
       $backend_package = $::ceilometer::params::sqlite_package_name

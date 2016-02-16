@@ -8,8 +8,9 @@
 class gnocchi::db::sync (
   $user = 'gnocchi',
 ){
+
   exec { 'gnocchi-db-sync':
-    command     => 'gnocchi-dbsync --config-file /etc/gnocchi/gnocchi.conf',
+    command     => 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf',
     path        => '/usr/bin',
     refreshonly => true,
     user        => $user,

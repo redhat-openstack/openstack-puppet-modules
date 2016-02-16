@@ -27,7 +27,8 @@ class nova::params {
       $serialproxy_package_name      = 'openstack-nova-serialproxy'
       $spicehtml5proxy_package_name  = 'openstack-nova-console'
       $sqlite_package_name           = undef
-      $pymysql_package_name          = 'python2-PyMySQL'
+      $pymysql_package_name          = undef
+      $ceph_client_package_name      = 'ceph-common'
       # service names
       $api_service_name             = 'openstack-nova-api'
       $cells_service_name           = 'openstack-nova-cells'
@@ -84,6 +85,7 @@ class nova::params {
       $serialproxy_package_name     = 'nova-serialproxy'
       $sqlite_package_name          = 'python-pysqlite2'
       $pymysql_package_name         = 'python-pymysql'
+      $ceph_client_package_name     = 'ceph'
       # service names
       $api_service_name             = 'nova-api'
       $cells_service_name           = 'nova-cells'

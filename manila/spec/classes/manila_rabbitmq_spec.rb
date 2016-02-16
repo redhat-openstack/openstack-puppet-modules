@@ -3,9 +3,9 @@ require 'spec_helper'
 describe 'manila::rabbitmq' do
 
   let :facts do
-    { :puppetversion => '2.7',
+    @default_facts.merge({ :puppetversion => '2.7',
       :osfamily      => 'Debian',
-    }
+    })
   end
 
   describe 'with defaults' do

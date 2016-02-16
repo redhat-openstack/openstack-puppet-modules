@@ -110,18 +110,23 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
     end
     unless @domain_hash.include?(id)
       name = request('domain', 'show', id)[:name]
-      @domain_hash[id] = name if name
-    end
-    unless @domain_hash.include?(id)
-      err("Could not find domain with id [#{id}]")
+      err("Could not find domain with id [#{id}]") unless name
+      @domain_hash[id] = name
     end
     @domain_hash[id]
   end
 
-  def self.fetch_domain(domain)
-    request('domain', 'show', domain)
-  rescue Puppet::ExecutionFailure => e
-    raise e unless e.message =~ /No domain with a name or ID/
+  def self.domain_id_from_name(name)
+    unless @domain_hash_name
+      list = request('domain', 'list')
+      @domain_hash_name = Hash[list.collect{|domain| [domain[:name], domain[:id]]}]
+    end
+    unless @domain_hash_name.include?(name)
+      id = request('domain', 'show', name)[:id]
+      err("Could not find domain with name [#{name}]") unless id
+      @domain_hash_name[name] = id
+    end
+    @domain_hash_name[name]
   end
 
   def self.fetch_project(name, domain)
@@ -201,7 +206,7 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
 
   def self.request(service, action, properties=nil)
     super
-  rescue Puppet::Error::OpenstackAuthInputError => error
+  rescue Puppet::Error::OpenstackAuthInputError, Puppet::Error::OpenstackUnauthorizedError => error
     request_by_service_token(service, action, error, properties)
   end
 
@@ -221,8 +226,7 @@ class Puppet::Provider::Keystone < Puppet::Provider::Openstack
     if domain_name.nil? || domain_name.empty?
       raise(Puppet::Error, "Missing domain name for resource #{name}")
     end
-    domain = fetch_domain(domain_name)
-    domain_id = domain ? domain[:id] : nil
+    domain_id = self.domain_id_from_name(domain_name)
     case domain_id
     when default_domain_id
       name

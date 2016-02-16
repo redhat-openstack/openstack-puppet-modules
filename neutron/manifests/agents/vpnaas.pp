@@ -37,11 +37,13 @@
 # [*interface_driver*]
 #  (optional) Defaults to 'neutron.agent.linux.interface.OVSInterfaceDriver'.
 #
-# [*external_network_bridge*]
-#  (optional) Defaults to undef
-#
 # [*ipsec_status_check_interval*]
-#   (optional) Status check interval. Defaults to '60'.
+#   (optional) Status check interval. Defaults to $::os_service_default.
+#
+# === Deprecated Parameters
+#
+# [*external_network_bridge*]
+#  (optional) Deprecated. Defaults to $::os_service_default
 #
 class neutron::agents::vpnaas (
   $package_ensure              = present,
@@ -49,8 +51,8 @@ class neutron::agents::vpnaas (
   $manage_service              = true,
   $vpn_device_driver           = 'neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver',
   $interface_driver            = 'neutron.agent.linux.interface.OVSInterfaceDriver',
-  $external_network_bridge     = undef,
-  $ipsec_status_check_interval = '60'
+  $external_network_bridge     = $::os_service_default,
+  $ipsec_status_check_interval = $::os_service_default
 ) {
 
   include ::neutron::params
@@ -64,6 +66,17 @@ class neutron::agents::vpnaas (
       package { 'openswan':
         ensure => present,
         name   => $::neutron::params::openswan_package,
+      }
+    }
+    /\.LibreSwan/: {
+      if($::osfamily != 'Redhat') {
+        fail("LibreSwan is not supported on osfamily ${::osfamily}")
+      } else {
+        Package['libreswan'] -> Package<| title == 'neutron-vpnaas-agent' |>
+        package { 'libreswan':
+          ensure => present,
+          name   => $::neutron::params::libreswan_package,
+        }
       }
     }
     default: {
@@ -80,14 +93,12 @@ class neutron::agents::vpnaas (
     'DEFAULT/interface_driver':          value => $interface_driver;
   }
 
-  if ($external_network_bridge) {
-    neutron_vpnaas_agent_config {
-      'DEFAULT/external_network_bridge': value => $external_network_bridge;
-    }
-  } else {
-    neutron_vpnaas_agent_config {
-      'DEFAULT/external_network_bridge': ensure => absent;
-    }
+  if ! is_service_default ($external_network_bridge) {
+    warning('parameter external_network_bridge is deprecated')
+  }
+
+  neutron_vpnaas_agent_config {
+    'DEFAULT/external_network_bridge': value => $external_network_bridge;
   }
 
   if $::neutron::params::vpnaas_agent_package {

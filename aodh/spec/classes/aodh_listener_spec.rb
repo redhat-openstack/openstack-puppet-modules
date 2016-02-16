@@ -69,29 +69,27 @@ describe 'aodh::listener' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      { :osfamily => 'Debian' }
-    end
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
 
-    let :platform_params do
-      { :listener_package_name => 'aodh-listener',
-        :listener_service_name => 'aodh-listener' }
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :listener_package_name => 'aodh-listener',
+            :listener_service_name => 'aodh-listener' }
+        when 'RedHat'
+          { :listener_package_name => 'openstack-aodh-listener',
+            :listener_service_name => 'openstack-aodh-listener' }
+        end
+      end
+      it_configures 'aodh-listener'
     end
-
-    it_configures 'aodh-listener'
   end
 
-  context 'on RedHat platforms' do
-    let :facts do
-      { :osfamily => 'RedHat' }
-    end
 
-    let :platform_params do
-      { :listener_package_name => 'openstack-aodh-listener',
-        :listener_service_name => 'openstack-aodh-listener' }
-    end
-
-    it_configures 'aodh-listener'
-  end
 end

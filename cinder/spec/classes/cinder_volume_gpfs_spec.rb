@@ -8,6 +8,9 @@ describe 'cinder::volume::gpfs' do
   }
   end
 
+  let :facts do
+    OSDefaults.get_facts({})
+  end
   context 'gpfs volume driver' do
 
     it 'checks gpfs backend availability' do

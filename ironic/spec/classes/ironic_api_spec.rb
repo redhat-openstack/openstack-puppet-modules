@@ -66,68 +66,77 @@ describe 'ironic::api' do
       is_expected.to contain_ironic_config('api/port').with_value(p[:port])
       is_expected.to contain_ironic_config('api/host_ip').with_value(p[:host_ip])
       is_expected.to contain_ironic_config('api/max_limit').with_value(p[:max_limit])
+      is_expected.to contain_ironic_config('api/api_workers').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_ironic_config('keystone_authtoken/admin_password').with_value(p[:admin_password])
       is_expected.to contain_ironic_config('keystone_authtoken/admin_user').with_value(p[:admin_user])
       is_expected.to contain_ironic_config('keystone_authtoken/auth_uri').with_value('http://127.0.0.1:5000/')
+      is_expected.to contain_ironic_config('keystone_authtoken/identity_uri').with_value('http://127.0.0.1:35357/')
       is_expected.to contain_ironic_config('neutron/url').with_value('http://127.0.0.1:9696/')
     end
 
     context 'when overriding parameters' do
       before :each do
         params.merge!(
-          :port => '3430',
-          :host_ip => '127.0.0.1',
-          :max_limit => '10',
-          :auth_protocol => 'https',
-          :auth_host => '1.2.3.4'
+          :port         => '3430',
+          :host_ip      => '127.0.0.1',
+          :max_limit    => '10',
+          :workers      => '8',
+          :auth_uri     => 'https://1.2.3.4:5000/',
+          :identity_uri => 'https://1.2.3.4:35357/',
         )
       end
       it 'should replace default parameter with new value' do
         is_expected.to contain_ironic_config('api/port').with_value(p[:port])
         is_expected.to contain_ironic_config('api/host_ip').with_value(p[:host_ip])
         is_expected.to contain_ironic_config('api/max_limit').with_value(p[:max_limit])
+        is_expected.to contain_ironic_config('api/api_workers').with_value(p[:workers])
         is_expected.to contain_ironic_config('keystone_authtoken/auth_uri').with_value('https://1.2.3.4:5000/')
+        is_expected.to contain_ironic_config('keystone_authtoken/identity_uri').with_value('https://1.2.3.4:35357/')
       end
     end
 
-    context 'with custom keystone identity_uri' do
+    context 'when running ironic-api in wsgi' do
       before do
-        params.merge!({
-          :identity_uri => 'https://foo.bar:1234/',
-        })
+        params.merge!({ :service_name => 'httpd' })
       end
-      it 'configures identity_uri' do
-        is_expected.to contain_ironic_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:1234/");
-        # since only auth_uri is set the deprecated auth parameters should
-        # still get set in case they are still in use
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_host').with_value('127.0.0.1');
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_port').with_value('35357');
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_protocol').with_value('http');
+
+      let :pre_condition do
+        "include ::apache"
+      end
+
+      it 'configures ironic-api service with Apache' do
+        is_expected.to contain_service('ironic-api').with(
+          :ensure     => 'stopped',
+          :name       => platform_params[:api_service],
+          :enable     => false,
+          :tag        => 'ironic-service',
+        )
       end
     end
 
-    context 'with custom keystone identity_uri and auth_uri' do
+    context 'when service_name is not valid' do
       before do
-        params.merge!({
-          :identity_uri => 'https://foo.bar:35357/',
-          :auth_uri => 'https://foo.bar:5000/v2.0/',
-        })
+        params.merge!({ :service_name => 'foobar' })
       end
-      it 'configures identity_uri' do
-        is_expected.to contain_ironic_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:35357/");
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_uri').with_value("https://foo.bar:5000/v2.0/");
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_host').with_ensure('absent')
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_port').with_ensure('absent')
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_protocol').with_ensure('absent')
-        is_expected.to contain_ironic_config('keystone_authtoken/auth_admin_prefix').with_ensure('absent')
-      end
-    end
 
+      let :pre_condition do
+        "include ::apache"
+      end
+
+      it_raises 'a Puppet::Error', /Invalid service_name/
+    end
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily        => 'Debian',
+        :operatingsystem => 'Debian',
+        :operatingsystemrelease => '8.0',
+        :concat_basedir  => '/var/lib/puppet/concat',
+        :fqdn            => 'some.host.tld',
+        :processorcount  => 2,
+      })
     end
 
     let :platform_params do
@@ -140,11 +149,18 @@ describe 'ironic::api' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystem        => 'RedHat',
+        :operatingsystemrelease => '7.2',
+        :concat_basedir         => '/var/lib/puppet/concat',
+        :fqdn                   => 'some.host.tld',
+        :processorcount         => 2,
+      })
     end
 
     let :platform_params do
-      { :api_service => 'ironic-api' }
+      { :api_service => 'openstack-ironic-api' }
     end
 
     it_configures 'ironic api'

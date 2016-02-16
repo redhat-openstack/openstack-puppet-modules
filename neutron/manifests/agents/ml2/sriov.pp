@@ -54,7 +54,7 @@
 #
 # [*extensions*]
 #   (optional) Extensions list to use
-#   Defaults to []
+#   Defaults to $::os_service_default
 #
 class neutron::agents::ml2::sriov (
   $package_ensure             = 'present',
@@ -63,7 +63,7 @@ class neutron::agents::ml2::sriov (
   $physical_device_mappings   = [],
   $polling_interval           = 2,
   $exclude_devices            = [],
-  $extensions                 = [],
+  $extensions                 = $::os_service_default,
 ) {
 
   include ::neutron::params

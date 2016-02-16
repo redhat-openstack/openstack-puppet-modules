@@ -22,12 +22,12 @@ describe 'glance class' do
         password => 'a_big_secret',
       }
       class { '::glance::api':
-        database_connection => 'mysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
+        database_connection => 'mysql+pymysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
         verbose             => false,
         keystone_password   => 'a_big_secret',
       }
       class { '::glance::registry':
-        database_connection => 'mysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
+        database_connection => 'mysql+pymysql://glance:a_big_secret@127.0.0.1/glance?charset=utf8',
         verbose             => false,
         keystone_password   => 'a_big_secret',
       }
@@ -42,7 +42,7 @@ describe 'glance class' do
     EOS
 
     it 'should configure the glance endpoint before the glance-api service uses it' do
-      pp2 = pp + "Service['glance-api'] -> Keystone_endpoint['RegionOne/glance::image']"
+      pp2 = pp + "Service['glance-api'] -> Keystone_endpoint['RegionOne/Image Service::image']"
       expect(apply_manifest(pp2, :expect_failures => true, :noop => true).stderr).to match(/Found 1 dependency cycle/i)
     end
 

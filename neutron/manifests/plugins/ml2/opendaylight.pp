@@ -12,24 +12,24 @@
 #
 # [*odl_username*]
 # (optional) The opendaylight controller username
-# Defaults to undef
+# Defaults to $::os_service_default
 # Example: 'admin'
 #
 # [*odl_password*]
 # (optional) The opendaylight controller password
-# Defaults to undef
+# Defaults to $::os_service_default
 # Example: 'admin'
 #
 # [*odl_url*]
 # (optional) The opendaylight controller neutron URL
-# Defaults to undef
+# Defaults to $::os_service_default
 # Example: 'http://127.0.0.1:8080/controller/nb/v2/neutron'
 #
 class neutron::plugins::ml2::opendaylight (
   $package_ensure    = 'present',
-  $odl_username      = undef,
-  $odl_password      = undef,
-  $odl_url           = undef
+  $odl_username      = $::os_service_default,
+  $odl_password      = $::os_service_default,
+  $odl_url           = $::os_service_default,
 ) {
   require ::neutron::plugins::ml2
 
@@ -40,21 +40,9 @@ class neutron::plugins::ml2::opendaylight (
     }
   )
 
-  if ($odl_username) {
-    neutron_plugin_ml2 { 'ml2_odl/username': value => $odl_username; }
-  } else {
-    neutron_plugin_ml2 { 'ml2_odl/username': ensure => absent; }
-  }
-
-  if ($odl_password) {
-    neutron_plugin_ml2 { 'ml2_odl/password': value => $odl_password; }
-  } else {
-    neutron_plugin_ml2 { 'ml2_odl/password': ensure => absent; }
-  }
-
-  if ($odl_url) {
-    neutron_plugin_ml2 { 'ml2_odl/url': value => $odl_url; }
-  } else {
-    neutron_plugin_ml2 { 'ml2_odl/url': ensure => absent; }
+  neutron_plugin_ml2 {
+    'ml2_odl/username': value => $odl_username;
+    'ml2_odl/password': value => $odl_password;
+    'ml2_odl/url':      value => $odl_url;
   }
 }

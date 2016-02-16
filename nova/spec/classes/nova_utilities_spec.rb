@@ -3,11 +3,15 @@ require 'spec_helper'
 describe 'nova::utilities' do
 
   describe 'on debian platforms' do
-    let :facts do
-      { :osfamily => 'Debian' }
+    let :pre_condition do
+      "class { '::nova': install_utilities => true }"
     end
 
-    it 'installes utilities' do
+    let :facts do
+      @default_facts.merge({ :osfamily => 'Debian' })
+    end
+
+    it 'installs utilities' do
       is_expected.to contain_package('unzip').with_ensure('present')
       is_expected.to contain_package('screen').with_ensure('present')
       is_expected.to contain_package('parted').with_ensure('present')

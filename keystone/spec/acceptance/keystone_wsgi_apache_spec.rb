@@ -68,7 +68,6 @@ describe 'keystone server running with Apache/WSGI with resources' do
       }
       EOS
 
-
       # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true)
@@ -168,11 +167,14 @@ describe 'keystone server running with Apache/WSGI with resources' do
     end
     describe 'with v3 admin with v3 credentials' do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username adminv3 --os-password a_big_secret --os-project-name openstackv3 --os-user-domain-name admin_domain --os-project-domain-name admin_domain'
+        '--os-username adminv3 --os-password a_big_secret --os-project-name openstackv3' \
+        ' --os-user-domain-name admin_domain --os-project-domain-name admin_domain'
+
     end
     describe "with v3 service with v3 credentials" do
       include_examples 'keystone user/tenant/service/role/endpoint resources using v3 API',
-                       '--os-username beaker-civ3 --os-password secret --os-project-name servicesv3 --os-user-domain-name service_domain --os-project-domain-name service_domain'
+        '--os-username beaker-civ3 --os-password secret --os-project-name servicesv3 --os-user-domain-name service_domain --os-project-domain-name service_domain'
+
     end
   end
   describe 'composite namevar quick test' do
@@ -215,6 +217,7 @@ describe 'keystone server running with Apache/WSGI with resources' do
       apply_manifest(pp, :catch_changes => true)
     end
   end
+
   describe 'composite namevar for keystone_service and keystone_endpoint' do
     let(:pp) do
       <<-EOM
@@ -256,6 +259,215 @@ describe 'keystone server running with Apache/WSGI with resources' do
             .to include_regexp([/keystone_endpoint { 'RegionOne\/service_1::type_1':/,
                                 /keystone_endpoint { 'RegionOne\/service_1::type_2':/])
         end
+      end
+    end
+  end
+
+  context '#keystone_domain_config' do
+    # make sure everything is clean before playing the manifest
+    shared_examples 'clean_domain_configuration', :clean_domain_cfg => true do
+      before(:context) do
+        hosts.each do |host|
+          on host, 'rm -rf /etc/keystone/domains >/dev/null 2>&1'
+          on host, 'rm -rf /tmp/keystone.*.conf >/dev/null 2>&1'
+        end
+      end
+    end
+
+    context 'one domain configuration', :clean_domain_cfg => true  do
+      context 'simple use case' do
+        it_behaves_like 'puppet_apply_success', <<-EOM
+          file { '/etc/keystone/domains': ensure => directory }
+          keystone_domain_config { 'services::ldap/url':
+            value => 'http://auth.com/1',
+          }
+        EOM
+
+        context '/etc/keystone/domains/keystone.services.conf' do
+          # the idiom
+
+          # note: cannot use neither instance variable nor let on
+          # parameter for shared_example
+          it_behaves_like 'a_valid_configuration', <<-EOC
+
+[ldap]
+url=http://auth.com/1
+EOC
+        end
+      end
+
+      context 'with a non default identity/domain_config_dir' do
+        it_behaves_like 'puppet_apply_success', <<-EOM
+        keystone_config { 'identity/domain_config_dir': value => '/tmp' }
+        keystone_domain_config { 'services::ldap/url':
+          value => 'http://auth.com/1',
+        }
+        EOM
+
+        context '/tmp/keystone.services.conf' do
+          it_behaves_like 'a_valid_configuration', <<-EOC
+
+[ldap]
+url=http://auth.com/1
+EOC
+        end
+      end
+    end
+
+    context 'with a multiple configurations', :clean_domain_cfg => true do
+      it_behaves_like 'puppet_apply_success', <<-EOM
+      file { '/etc/keystone/domains': ensure => directory }
+      keystone_config { 'identity/domain_config_dir': value => '/etc/keystone/domains' }
+      keystone_domain_config { 'services::ldap/url':
+        value => 'http://auth.com/1',
+      }
+      keystone_domain_config { 'services::http/url':
+        value => 'http://auth.com/2',
+      }
+      keystone_domain_config { 'external::ldap/url':
+        value => 'http://ext-auth.com/1',
+      }
+      EOM
+
+      describe command('puppet resource keystone_domain_config') do
+        its(:exit_status) { is_expected.to eq(0) }
+        its(:stdout) { is_expected.to eq(<<EOO) }
+keystone_domain_config { 'external::ldap/url':
+  ensure => 'present',
+  value  => 'http://ext-auth.com/1',
+}
+keystone_domain_config { 'services::http/url':
+  ensure => 'present',
+  value  => 'http://auth.com/2',
+}
+keystone_domain_config { 'services::ldap/url':
+  ensure => 'present',
+  value  => 'http://auth.com/1',
+}
+EOO
+      end
+
+      describe '/etc/keystone/domains/keystone.services.conf' do
+        it_behaves_like 'a_valid_configuration', <<EOC
+
+[http]
+url=http://auth.com/2
+
+[ldap]
+url=http://auth.com/1
+EOC
+      end
+      describe '/etc/keystone/domains/keystone.external.conf' do
+        it_behaves_like 'a_valid_configuration', <<EOC
+
+[ldap]
+url=http://ext-auth.com/1
+EOC
+      end
+    end
+
+    context 'checking that the purge is working' do
+      it_behaves_like 'puppet_apply_success', <<-EOM
+      resources { 'keystone_domain_config': purge => true }
+      keystone_domain_config { 'services::ldap/url':
+        value => 'http://auth.com/1',
+      }
+      EOM
+
+      context '/etc/keystone/domains/keystone.services.conf' do
+        it_behaves_like 'a_valid_configuration', <<-EOC
+
+[http]
+
+[ldap]
+url=http://auth.com/1
+EOC
+      end
+    end
+    context '#ldap_backend', :clean_domain_cfg => true do
+      context 'manifest' do
+        let(:pp) do
+      <<-EOM
+      class { '::openstack_integration::keystone':
+        default_domain      => 'default_domain',
+        using_domain_config => true,
+      }
+      keystone_domain { 'domain_1_ldap_backend': ensure => present }
+      keystone_domain { 'domain_2_ldap_backend': ensure => present }
+      keystone::ldap_backend { 'domain_1_ldap_backend':
+        url  => 'ldap://foo',
+        user => 'cn=foo,dc=example,dc=com',
+        identity_driver => 'keystone.identity.backends.ldap.Identity',
+        credential_driver => 'keystone.credential.backends.ldap.Credential',
+        assignment_driver => 'keystone.assignment.backends.ldap.Assignment'
+      }
+      keystone::ldap_backend { 'domain_2_ldap_backend':
+        url  => 'ldap://bar',
+        user => 'cn=bar,dc=test,dc=com',
+        identity_driver => 'keystone.identity.backends.ldap.Identity',
+        credential_driver => 'keystone.credential.backends.ldap.Credential',
+        assignment_driver => 'keystone.assignment.backends.ldap.Assignment'
+      }
+      EOM
+        end
+        it 'should apply the manifest correctly' do
+          apply_manifest(pp, :accept_all_exit_codes => true)
+          # Cannot really test it as keystone will try to connect to
+          # the ldap backend when it restarts.  But the ldap server
+          # which doesn't exit.  The next "test" clean everything up
+          # to have a working keystone again.
+
+          # TODO: Sould we add a working ldap server ?
+        end
+        context '/etc/keystone/domains/keystone.domain_1_ldap_backend.conf' do
+          it_behaves_like 'a_valid_configuration', <<-EOC
+
+[ldap]
+use_pool=False
+pool_retry_delay=0.1
+url=ldap://foo
+auth_pool_size=100
+auth_pool_connection_lifetime=60
+user=cn=foo,dc=example,dc=com
+pool_connection_timeout=-1
+use_auth_pool=False
+pool_connection_lifetime=600
+pool_size=10
+pool_retry_max=3
+EOC
+        end
+
+        context '/etc/keystone/domains/keystone.domain_2_ldap_backend.conf' do
+          it_behaves_like 'a_valid_configuration', <<-EOC
+
+[ldap]
+pool_retry_delay=0.1
+url=ldap://bar
+user=cn=bar,dc=test,dc=com
+use_pool=False
+pool_retry_max=3
+pool_size=10
+auth_pool_size=100
+auth_pool_connection_lifetime=60
+use_auth_pool=False
+pool_connection_lifetime=600
+pool_connection_timeout=-1
+EOC
+        end
+      end
+      context 'clean up', :clean_domain_cfg => true do
+        # we must revert the changes as ldap backend is not fully
+        # functional and are "domain read only".  All subsequent tests
+        # will fail without this.
+        it_behaves_like 'puppet_apply_success', <<-EOM
+        keystone_config {
+          'identity/driver': value => 'sql';
+          'credential/driver': ensure => absent;
+          'assignment/driver': ensure => absent;
+          'identity/domain_specific_drivers_enabled': ensure => absent;
+          'identity/domain_config_dir': ensure => absent;
+        }
+        EOM
       end
     end
   end

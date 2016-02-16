@@ -15,12 +15,14 @@ describe 'neutron::plugins::plumgrid' do
     :connection           => 'http://127.0.0.1:35357/v2.0',
     :controller_priv_host => '127.0.0.1',
     :auth_protocol        => 'http',
+    :identity_version     => 'v2.0',
     :nova_metadata_ip     => '127.0.0.1',
     :nova_metadata_port   => '8775',
+    :connector_type       => 'distributed',
   }
   end
 
-  let :default_facts do
+  let :test_facts do
     { :operatingsystem           => 'default',
       :operatingsystemrelease    => 'default'
     }
@@ -51,30 +53,37 @@ describe 'neutron::plugins::plumgrid' do
     it 'should perform default configuration of plumgrid plugin' do
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/director_server').with_value(params[:director_server])
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/director_server_port').with_value(params[:director_server_port])
-      is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/username').with_value(params[:username])
-      is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/password').with_value(params[:password])
+      is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/username').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/password').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/servertimeout').with_value(params[:servertimeout])
       is_expected.to contain_neutron_plugin_plumgrid('database/connection').with_value(params[:connection])
     end
 
     it 'should perform default configuration of plumgrid plumlib' do
       is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/admin_user').with_value('admin')
-      is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/admin_password').with_value(params[:admin_password])
+      is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/admin_password').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/admin_tenant_name').with_value('admin')
-      auth_uri = params[:auth_protocol] + "://" + params[:controller_priv_host] + ":" + "35357/v2.0";
+      auth_uri = params[:auth_protocol] + "://" + params[:controller_priv_host] + ":" + "35357/" + params[:identity_version];
       is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/auth_uri').with_value(auth_uri)
+      is_expected.to contain_neutron_plumlib_plumgrid('keystone_authtoken/identity_version').with_value(params[:identity_version])
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/enable_pg_metadata').with_value('True')
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/metadata_mode').with_value('local')
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/nova_metadata_ip').with_value(params[:nova_metadata_ip])
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/nova_metadata_port').with_value(params[:nova_metadata_port])
-      is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/metadata_proxy_shared_secret').with_value(params[:metadata_proxy_shared_secret])
+      is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/metadata_proxy_shared_secret').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plumlib_plumgrid('ConnectorType/connector_type').with_value('distributed')
+      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/vendor').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/sw_username').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/sw_password').with_value('<SERVICE DEFAULT>')
     end
 
   end
 
   context 'on Debian platforms' do
     let :facts do
-      default_facts.merge({ :osfamily => 'Debian'})
+      @default_facts.merge(test_facts.merge({
+         :osfamily => 'Debian'
+      }))
     end
 
     it 'configures /etc/default/neutron-server' do
@@ -92,10 +101,10 @@ describe 'neutron::plugins::plumgrid' do
 
   context 'on RedHat platforms' do
     let :facts do
-      default_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '7'
-      })
+      @default_facts.merge(test_facts.merge({
+         :osfamily               => 'RedHat',
+         :operatingsystemrelease => '7'
+      }))
     end
 
     it 'should create plugin symbolic link' do

@@ -83,29 +83,31 @@ describe 'aodh::evaluator' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      { :osfamily => 'Debian' }
-    end
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts({
+          :fqdn           => 'some.host.tld',
+          :processorcount => 2,
+          :concat_basedir => '/var/lib/puppet/concat'
+        }))
+      end
 
-    let :platform_params do
-      { :evaluator_package_name => 'aodh-evaluator',
-        :evaluator_service_name => 'aodh-evaluator' }
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :evaluator_package_name => 'aodh-evaluator',
+            :evaluator_service_name => 'aodh-evaluator' }
+        when 'RedHat'
+          { :evaluator_package_name => 'openstack-aodh-evaluator',
+            :evaluator_service_name => 'openstack-aodh-evaluator' }
+        end
+      end
+      it_configures 'aodh-evaluator'
     end
-
-    it_configures 'aodh-evaluator'
   end
 
-  context 'on RedHat platforms' do
-    let :facts do
-      { :osfamily => 'RedHat' }
-    end
 
-    let :platform_params do
-      { :evaluator_package_name => 'openstack-aodh-evaluator',
-        :evaluator_service_name => 'openstack-aodh-evaluator' }
-    end
-
-    it_configures 'aodh-evaluator'
-  end
 end

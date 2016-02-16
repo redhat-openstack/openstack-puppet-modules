@@ -7,7 +7,7 @@ describe 'cinder::volume::iscsi' do
   end
 
   let :facts do
-    {:osfamily => 'Debian'}
+    OSDefaults.get_facts({:osfamily => 'Debian'})
   end
 
   describe 'with default params' do
@@ -20,9 +20,9 @@ describe 'cinder::volume::iscsi' do
            :value => 'cinder.volume.drivers.lvm.LVMVolumeDriver')}
     it { is_expected.to contain_cinder_config('DEFAULT/iscsi_ip_address').with(:value => '127.0.0.2')}
     it { is_expected.to contain_cinder_config('DEFAULT/iscsi_helper').with(:value => 'tgtadm')}
-    it { is_expected.to contain_cinder_config('DEFAULT/volume_group').with(:value => 'cinder-volumes')}
+    it { is_expected.to contain_cinder_config('DEFAULT/volume_group').with(:value => '<SERVICE DEFAULT>')}
     it { is_expected.to contain_cinder_config('DEFAULT/volumes_dir').with(:value => '/var/lib/cinder/volumes')}
-    it { is_expected.to contain_cinder_config('DEFAULT/iscsi_protocol').with(:value => 'iscsi')}
+    it { is_expected.to contain_cinder_config('DEFAULT/iscsi_protocol').with(:value => '<SERVICE DEFAULT>')}
 
   end
 
@@ -37,7 +37,7 @@ describe 'cinder::volume::iscsi' do
 
   end
 
-  describe 'with a unsupported iscsi helper' do
+  describe 'with an unsupported iscsi helper' do
     let(:params) { req_params.merge(:iscsi_helper => 'fooboozoo')}
 
     it_raises 'a Puppet::Error', /Unsupported iscsi helper: fooboozoo/
@@ -50,10 +50,10 @@ describe 'cinder::volume::iscsi' do
     end
 
     let :facts do
-      {:osfamily => 'RedHat',
+      @default_facts.merge({:osfamily => 'RedHat',
        :operatingsystem => 'RedHat',
        :operatingsystemrelease => 6.5,
-       :operatingsystemmajrelease => '6'}
+       :operatingsystemmajrelease => '6'})
     end
 
     it { is_expected.to contain_file_line('cinder include').with(
@@ -72,10 +72,10 @@ describe 'cinder::volume::iscsi' do
     end
 
     let :facts do
-      {:osfamily => 'RedHat',
+      @default_facts.merge({:osfamily => 'RedHat',
        :operatingsystem => 'RedHat',
        :operatingsystemrelease => 7.0,
-       :operatingsystemmajrelease => '7'}
+       :operatingsystemmajrelease => '7'})
     end
 
     it { is_expected.to contain_package('targetcli').with_ensure('present')}

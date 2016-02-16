@@ -19,7 +19,7 @@
 #  Note: The external value should be dropped to avoid problems.
 #
 # [*module_plugin*]
-#  The plugin for authentication acording to the choice made with protocol and
+#  The plugin for authentication according to the choice made with protocol and
 #  module.
 #  (Optional) Defaults to 'keystone.auth.plugins.mapped.Mapped' (string value)
 #
@@ -30,7 +30,7 @@
 # [*template_order*]
 #  This number indicates the order for the concat::fragment that will apply
 #  the shibboleth configuration to Keystone VirtualHost. The value should
-#  The value should be greater than 330 an less then 999, according to:
+#  The value should be greater than 330 and less than 999, according to:
 #  https://github.com/puppetlabs/puppetlabs-apache/blob/master/manifests/vhost.pp
 #  The value 330 corresponds to the order for concat::fragment  "${name}-filters"
 #  and "${name}-limits".
@@ -54,7 +54,7 @@
 #
 # == Note about Redhat osfamily
 #    According to puppet-apache we need to enable a new repo, but in puppet-openstack
-#    we won't enable any exteral third party repo.
+#    we won't enable any external third party repo.
 #    http://wiki.aaf.edu.au/tech-info/sp-install-guide.  We provide some helpers but
 #    as the packaging is lacking official support, we cannot guaranty it will work.
 #

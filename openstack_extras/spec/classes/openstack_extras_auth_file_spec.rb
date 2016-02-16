@@ -36,6 +36,7 @@ describe 'openstack_extras::auth_file' do
         :service_endpoint         => 'http://127.0.0.2:35357/v2.0/',
         :username                 => 'myuser',
         :tenant_name              => 'mytenant',
+        :project_name             => 'myproject',
         :region_name              => 'myregion',
         :use_no_cache             => 'false',
         :cinder_endpoint_type     => 'internalURL',
@@ -44,6 +45,8 @@ describe 'openstack_extras::auth_file' do
         :nova_endpoint_type       => 'internalURL',
         :neutron_endpoint_type    => 'internalURL',
         :auth_strategy            => 'no_auth',
+        :user_domain              => 'Default',
+        :project_domain           => 'Default'
       }
     end
 
@@ -53,11 +56,14 @@ describe 'openstack_extras::auth_file' do
         'export OS_SERVICE_ENDPOINT=\'http://127.0.0.2:35357/v2.0/\'',
         'export OS_NO_CACHE=\'false\'',
         'export OS_TENANT_NAME=\'mytenant\'',
+        'export OS_PROJECT_NAME=\'myproject\'',
         'export OS_USERNAME=\'myuser\'',
         'export OS_PASSWORD=\'admin\'',
         'export OS_AUTH_URL=\'http://127.0.0.2:5000/v2.0/\'',
         'export OS_AUTH_STRATEGY=\'no_auth\'',
         'export OS_REGION_NAME=\'myregion\'',
+        'export OS_PROJECT_DOMAIN_NAME=\'Default\'',
+        'export OS_USER_DOMAIN_NAME=\'Default\'',
         'export CINDER_ENDPOINT_TYPE=\'internalURL\'',
         'export GLANCE_ENDPOINT_TYPE=\'internalURL\'',
         'export KEYSTONE_ENDPOINT_TYPE=\'internalURL\'',

@@ -27,7 +27,7 @@ describe 'ceilometer::expirer' do
   end
 
   let :params do
-    { :time_to_live => '-1' }
+    {}
   end
 
   shared_examples_for 'ceilometer-expirer' do
@@ -62,15 +62,11 @@ describe 'ceilometer::expirer' do
       it { is_expected.to_not contain_cron('ceilometer-expirer') }
     end
 
-    it 'configures database section in ceilometer.conf' do
-      is_expected.to contain_ceilometer_config('database/time_to_live').with_value( params[:time_to_live] )
-    end
-
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     let :platform_params do
@@ -82,7 +78,7 @@ describe 'ceilometer::expirer' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     let :platform_params do

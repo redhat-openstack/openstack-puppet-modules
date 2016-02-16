@@ -54,6 +54,13 @@
 #   ephemeral storage or for the cinder volumes only.
 #   Defaults to true.
 #
+# [*manage_ceph_client*]
+#  (optional) Whether to manage the ceph client package.
+#  Defaults to true.
+#
+# [*ceph_client_ensure*]
+#  (optional) Ensure value for ceph client package.
+#  Defaults to 'present'.
 
 class nova::compute::rbd (
   $libvirt_rbd_user,
@@ -63,9 +70,21 @@ class nova::compute::rbd (
   $libvirt_images_rbd_ceph_conf = '/etc/ceph/ceph.conf',
   $rbd_keyring                  = 'client.nova',
   $ephemeral_storage            = true,
+  $manage_ceph_client           = true,
+  $ceph_client_ensure           = 'present',
 ) {
 
+  include ::nova::deps
   include ::nova::params
+
+  if $manage_ceph_client {
+    # Install ceph client libraries
+    package { 'ceph-client-package':
+      ensure => $ceph_client_ensure,
+      name   => $nova::params::ceph_client_package_name,
+      tag    => ['openstack'],
+    }
+  }
 
   nova_config {
     'libvirt/rbd_user': value => $libvirt_rbd_user;
@@ -78,13 +97,13 @@ class nova::compute::rbd (
 
     file { '/etc/nova/secret.xml':
       content => template('nova/secret.xml-compute.erb'),
-      require => Class['::nova']
+      require => Anchor['nova::config::begin'],
     }
 
     exec { 'get-or-set virsh secret':
       command => '/usr/bin/virsh secret-define --file /etc/nova/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/nova/virsh.secret',
       creates => '/etc/nova/virsh.secret',
-      require => File['/etc/nova/secret.xml']
+      require => [File['/etc/nova/secret.xml'], Package['ceph-client-package']],
     }
 
     if $libvirt_rbd_secret_key {
@@ -95,9 +114,9 @@ class nova::compute::rbd (
     exec { 'set-secret-value virsh':
       command => "/usr/bin/virsh secret-set-value --secret ${libvirt_rbd_secret_uuid} --base64 ${libvirt_key}",
       unless  => "/usr/bin/virsh secret-get-value ${libvirt_rbd_secret_uuid}",
-      require => Exec['get-or-set virsh secret']
+      require => Exec['get-or-set virsh secret'],
+      before  => Anchor['nova::config::end'],
     }
-
   }
 
   if $ephemeral_storage {

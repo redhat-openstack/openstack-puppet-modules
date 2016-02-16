@@ -150,6 +150,7 @@ class nova::compute (
   $allow_resize_to_same_host          = false,
 ) {
 
+  include ::nova::deps
   include ::nova::params
 
   nova_config {
@@ -161,19 +162,27 @@ class nova::compute (
 
   if ($vnc_enabled) {
     include ::nova::vncproxy::common
-  }
 
+    nova_config {
+      'vnc/vncserver_proxyclient_address': value =>
+        $vncserver_proxyclient_address;
+      'vnc/keymap':                        value => $vnc_keymap;
+    }
+  } else {
+    nova_config {
+      'vnc/vncserver_proxyclient_address': ensure => absent;
+      'vnc/keymap':                        ensure => absent;
+    }
+  }
   nova_config {
-    'DEFAULT/vnc_enabled':                   value => $vnc_enabled;
-    'DEFAULT/vncserver_proxyclient_address': value => $vncserver_proxyclient_address;
-    'DEFAULT/vnc_keymap':                    value => $vnc_keymap;
+    'vnc/enabled': value => $vnc_enabled;
   }
 
   if $neutron_enabled != true and $install_bridge_utils {
     # Install bridge-utils if we use nova-network
     package { 'bridge-utils':
       ensure => present,
-      before => Nova::Generic_service['compute'],
+      tag    => ['openstack', 'nova-support-package'],
     }
   }
 
@@ -217,10 +226,6 @@ class nova::compute (
       'DEFAULT/instance_usage_audit':        ensure => absent;
       'DEFAULT/instance_usage_audit_period': ensure => absent;
     }
-  }
-
-  package { 'pm-utils':
-    ensure => present,
   }
 
   nova_config {

@@ -5,11 +5,20 @@ export OS_SERVICE_ENDPOINT='<%= @service_endpoint %>'
 <% end -%>
 export OS_NO_CACHE='<%= @use_no_cache %>'
 export OS_TENANT_NAME='<%= @tenant_name %>'
+<% if @project_name -%>
+export OS_PROJECT_NAME='<%= @project_name %>'
+<% end -%>
 export OS_USERNAME='<%= @username %>'
 export OS_PASSWORD='<%= @password.gsub(/'/){ %q(\') } %>'
 export OS_AUTH_URL='<%= @auth_url %>'
 export OS_AUTH_STRATEGY='<%= @auth_strategy %>'
 export OS_REGION_NAME='<%= @region_name %>'
+<% if @project_domain -%>
+export OS_PROJECT_DOMAIN_NAME='<%= @project_domain %>'
+<% end -%>
+<% if @user_domain -%>
+export OS_USER_DOMAIN_NAME='<%= @user_domain %>'
+<% end -%>
 export CINDER_ENDPOINT_TYPE='<%= @cinder_endpoint_type %>'
 export GLANCE_ENDPOINT_TYPE='<%= @glance_endpoint_type %>'
 export KEYSTONE_ENDPOINT_TYPE='<%= @keystone_endpoint_type %>'

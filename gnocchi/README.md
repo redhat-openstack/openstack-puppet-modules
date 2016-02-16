@@ -16,7 +16,7 @@ puppet-gnocchi
 Overview
 --------
 
-The gnocchi module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software. The module itself is used to flexibly configure and manage the management service for Openstack.
+The gnocchi module is a part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software. The module itself is used to flexibly configure and manage the management service for OpenStack.
 
 Module Description
 ------------------
@@ -26,8 +26,12 @@ Setup
 
 **What the gnocchi module affects:**
 
-* gnocchi, the HTTP API to store metrics and index resources for OpenStack
+* [Gnocchi](http://docs.openstack.org/developer/gnocchi/), the HTTP API to store metrics and index resources for OpenStack
   (OpenStack Datapoint Service).
+
+### Installing gnocchi
+
+    puppet module install openstack/gnocchi
 
 Implementation
 --------------

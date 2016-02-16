@@ -5,15 +5,15 @@ describe 'heat::engine' do
   let :default_params do
     { :enabled                       => true,
       :manage_service                => true,
-      :heat_stack_user_role          => 'heat_stack_user',
+      :heat_stack_user_role          => '<SERVICE DEFAULT>',
       :heat_metadata_server_url      => 'http://127.0.0.1:8000',
       :heat_waitcondition_server_url => 'http://127.0.0.1:8000/v1/waitcondition',
       :heat_watch_server_url         => 'http://128.0.0.1:8003',
-      :engine_life_check_timeout     => '2',
+      :engine_life_check_timeout     => '<SERVICE DEFAULT>',
       :trusts_delegated_roles        => ['heat_stack_owner'],
-      :deferred_auth_method          => 'trusts',
-      :default_software_config_transport   => 'POLL_SERVER_CFN',
-      :default_deployment_signal_transport => 'CFN_SIGNAL',
+      :deferred_auth_method          => '<SERVICE DEFAULT>',
+      :default_software_config_transport   => '<SERVICE DEFAULT>',
+      :default_deployment_signal_transport => '<SERVICE DEFAULT>',
     }
   end
 
@@ -69,6 +69,9 @@ describe 'heat::engine' do
       it { is_expected.to contain_heat_config('DEFAULT/deferred_auth_method').with_value( expected_params[:deferred_auth_method] ) }
       it { is_expected.to contain_heat_config('DEFAULT/default_software_config_transport').with_value( expected_params[:default_software_config_transport] ) }
       it { is_expected.to contain_heat_config('DEFAULT/default_deployment_signal_transport').with_value( expected_params[:default_deployment_signal_transport] ) }
+      it { is_expected.to contain_heat_config('DEFAULT/instance_connection_is_secure').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_heat_config('DEFAULT/instance_connection_https_validate_certificates').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_heat_config('DEFAULT/max_resources_per_stack').with_value('<SERVICE DEFAULT>') }
     end
 
     context 'with disabled service managing' do

@@ -42,6 +42,7 @@ describe 'aodh' do
           :rabbit_heartbeat_timeout_threshold => '60',
           :rabbit_heartbeat_rate              => '10',
           :ensure_package                     => '2012.1.1-15.el6',
+          :gnocchi_url                        => 'http://127.0.0.1:8041',
           :notification_driver                => 'ceilometer.compute.aodh_notifier',
           :notification_topics                => 'openstack' }
       end
@@ -60,6 +61,7 @@ describe 'aodh' do
       it 'configures various things' do
         is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_value('ceilometer.compute.aodh_notifier')
         is_expected.to contain_aodh_config('DEFAULT/notification_topics').with_value('openstack')
+        is_expected.to contain_aodh_config('DEFAULT/gnocchi_url').with_value('http://127.0.0.1:8041')
       end
 
       context 'with multiple notification_driver' do
@@ -210,91 +212,27 @@ describe 'aodh' do
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
       end
     end
+  end
 
-    context 'with qpid rpc_backend' do
-      let :params do
-        { :rpc_backend => 'qpid' }
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
       end
 
-      context 'with default parameters' do
-        it 'configures qpid' do
-          is_expected.to contain_aodh_config('DEFAULT/rpc_backend').with_value('qpid')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_hostname').with_value('localhost')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_port').with_value('5672')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_username').with_value('guest')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_password').with_value('guest').with_secret(true)
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_heartbeat').with_value('60')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_protocol').with_value('tcp')
-          is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_tcp_nodelay').with_value(true)
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :aodh_common_package => 'aodh-common' }
+        when 'RedHat'
+          { :aodh_common_package => 'openstack-aodh-common' }
         end
       end
-
-      context 'with qpid_password parameter (without qpid_sasl_mechanisms)' do
-        before do
-          params.merge!({ :qpid_password => 'guest' })
-        end
-        it { is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_ensure('absent') }
-      end
-
-      context 'with qpid_password parameter (with qpid_sasl_mechanisms)' do
-        before do
-          params.merge!({
-            :qpid_password        => 'guest',
-            :qpid_sasl_mechanisms => 'A'
-          })
-        end
-        it { is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('A') }
-      end
-
-      context 'with qpid_password parameter (with array of qpid_sasl_mechanisms)' do
-        before do
-          params.merge!({
-            :qpid_password        => 'guest',
-            :qpid_sasl_mechanisms => [ 'DIGEST-MD5', 'GSSAPI', 'PLAIN' ]
-          })
-        end
-        it { is_expected.to contain_aodh_config('oslo_messaging_qpid/qpid_sasl_mechanisms').with_value('DIGEST-MD5 GSSAPI PLAIN') }
-      end
-    end
-
-    context 'with qpid rpc_backend with old parameter' do
-      let :params do
-        { :rpc_backend => 'aodh.openstack.common.rpc.impl_qpid' }
-      end
-      it { is_expected.to contain_aodh_config('DEFAULT/rpc_backend').with_value('aodh.openstack.common.rpc.impl_qpid') }
-    end
-
-    context 'with rabbitmq rpc_backend with old parameter' do
-      let :params do
-        { :rpc_backend => 'aodh.openstack.common.rpc.impl_kombu' }
-      end
-      it { is_expected.to contain_aodh_config('DEFAULT/rpc_backend').with_value('aodh.openstack.common.rpc.impl_kombu') }
+      it_behaves_like 'aodh'
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      { :osfamily        => 'Debian',
-        :operatingsystem => 'Debian' }
-    end
-
-    let :platform_params do
-      { :aodh_common_package => 'aodh-common' }
-    end
-
-    it_behaves_like 'aodh'
-  end
-
-  context 'on RedHat platforms' do
-    let :facts do
-      { :osfamily => 'RedHat' }
-    end
-
-    let :platform_params do
-      { :aodh_common_package => 'openstack-aodh-common' }
-    end
-
-    it_behaves_like 'aodh'
-  end
 
 end

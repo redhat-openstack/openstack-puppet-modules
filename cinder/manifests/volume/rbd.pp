@@ -16,22 +16,35 @@
 #
 # [*rbd_flatten_volume_from_snapshot*]
 #   (optional) Enable flatten volumes created from snapshots.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*rbd_secret_uuid*]
 #   (optional) A required parameter to use cephx.
-#   Defaults to false
-#
-# [*volume_tmp_dir*]
-#   (optional) Location to store temporary image files if the volume
-#   driver does not write them directly to the volume
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*rbd_max_clone_depth*]
 #   (optional) Maximum number of nested clones that can be taken of a
 #   volume before enforcing a flatten prior to next clone.
 #   A value of zero disables cloning
-#   Defaults to '5'
+#   Defaults to $::os_service_default
+#
+# [*rados_connect_timeout*]
+#   (optional) Timeout value (in seconds) used when connecting to ceph cluster.
+#   If value < 0, no timeout is set and default librados value is used.
+#   Defaults to $::os_service_default
+#
+# [*rados_connection_interval*]
+#   (optional) Interval value (in seconds) between connection retries to ceph
+#   cluster.
+#   Defaults to $::os_service_default
+#
+# [*rados_connection_retries*]
+#   (optional) Number of retries if connection to ceph cluster failed.
+#   Defaults to $::os_service_default
+#
+# [*rbd_store_chunk_size*]
+#   (optional) Volumes will be chunked into objects of this size (in megabytes).
+#   Defaults to $::os_service_default
 #
 # [*extra_options*]
 #   (optional) Hash of extra options to pass to the backend stanza
@@ -39,15 +52,27 @@
 #   Example :
 #     { 'rbd_backend/param1' => { 'value' => value1 } }
 #
+# === Deprecated Parameters
+#
+# [*volume_tmp_dir*]
+#   (deprecated by image_conversion_dir) Location to store temporary image files
+#   if the volume driver does not write them directly to the volume
+#   Defaults to false
+#
 class cinder::volume::rbd (
   $rbd_pool,
   $rbd_user,
   $rbd_ceph_conf                    = '/etc/ceph/ceph.conf',
-  $rbd_flatten_volume_from_snapshot = false,
-  $rbd_secret_uuid                  = false,
-  $volume_tmp_dir                   = false,
-  $rbd_max_clone_depth              = '5',
+  $rbd_flatten_volume_from_snapshot = $::os_service_default,
+  $rbd_secret_uuid                  = $::os_service_default,
+  $rbd_max_clone_depth              = $::os_service_default,
+  $rados_connect_timeout            = $::os_service_default,
+  $rados_connection_interval        = $::os_service_default,
+  $rados_connection_retries         = $::os_service_default,
+  $rbd_store_chunk_size             = $::os_service_default,
   $extra_options                    = {},
+  # DEPRECATED PARAMETERS
+  $volume_tmp_dir                   = false,
 ) {
 
   cinder::backend::rbd { 'DEFAULT':
@@ -58,6 +83,10 @@ class cinder::volume::rbd (
     rbd_secret_uuid                  => $rbd_secret_uuid,
     volume_tmp_dir                   => $volume_tmp_dir,
     rbd_max_clone_depth              => $rbd_max_clone_depth,
+    rados_connect_timeout            => $rados_connect_timeout,
+    rados_connection_interval        => $rados_connection_interval,
+    rados_connection_retries         => $rados_connection_retries,
+    rbd_store_chunk_size             => $rbd_store_chunk_size,
     extra_options                    => $extra_options,
   }
 }

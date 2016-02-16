@@ -2,14 +2,6 @@ require 'spec_helper'
 
 describe 'aodh::wsgi::apache' do
 
-  let :global_facts do
-    {
-      :processorcount => 42,
-      :concat_basedir => '/var/lib/puppet/concat',
-      :fqdn           => 'some.host.tld'
-    }
-  end
-
   shared_examples_for 'apache serving aodh with mod_wsgi' do
     it { is_expected.to contain_service('httpd').with_name(platform_parameters[:httpd_service_name]) }
     it { is_expected.to contain_class('aodh::params') }
@@ -81,44 +73,39 @@ describe 'aodh::wsgi::apache' do
     end
   end
 
-  context 'on RedHat platforms' do
-    let :facts do
-      global_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystemrelease => '7.0'
-      })
-    end
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts({
+          :processorcount => 42,
+          :concat_basedir => '/var/lib/puppet/concat',
+          :fqdn           => 'some.host.tld'
+        }))
+      end
 
-    let :platform_parameters do
-      {
-        :httpd_service_name => 'httpd',
-        :httpd_ports_file   => '/etc/httpd/conf/ports.conf',
-        :wsgi_script_path   => '/var/www/cgi-bin/aodh',
-        :wsgi_script_source => '/usr/lib/python2.7/site-packages/aodh/api/app.wsgi'
-      }
-    end
+      let(:platform_parameters) do
+        case facts[:osfamily]
+        when 'Debian'
+          {
+            :httpd_service_name => 'apache2',
+            :httpd_ports_file   => '/etc/apache2/ports.conf',
+            :wsgi_script_path   => '/usr/lib/cgi-bin/aodh',
+            :wsgi_script_source => '/usr/share/aodh-common/app.wsgi'
+          }
+        when 'RedHat'
+          {
+            :httpd_service_name => 'httpd',
+            :httpd_ports_file   => '/etc/httpd/conf/ports.conf',
+            :wsgi_script_path   => '/var/www/cgi-bin/aodh',
+            :wsgi_script_source => '/usr/lib/python2.7/site-packages/aodh/api/app.wsgi'
+          }
 
-    it_configures 'apache serving aodh with mod_wsgi'
+        end
+      end
+      it_configures 'apache serving aodh with mod_wsgi'
+    end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      global_facts.merge({
-        :osfamily               => 'Debian',
-        :operatingsystem        => 'Debian',
-        :operatingsystemrelease => '7.0'
-      })
-    end
-
-    let :platform_parameters do
-      {
-        :httpd_service_name => 'apache2',
-        :httpd_ports_file   => '/etc/apache2/ports.conf',
-        :wsgi_script_path   => '/usr/lib/cgi-bin/aodh',
-        :wsgi_script_source => '/usr/share/aodh-common/app.wsgi'
-      }
-    end
-
-    it_configures 'apache serving aodh with mod_wsgi'
-  end
 end

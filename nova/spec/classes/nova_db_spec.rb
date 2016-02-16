@@ -11,6 +11,8 @@ describe 'nova::db' do
     context 'with default parameters' do
       it { is_expected.to_not contain_nova_config('database/connection') }
       it { is_expected.to_not contain_nova_config('database/slave_connection') }
+      it { is_expected.to_not contain_nova_config('api_database/connection') }
+      it { is_expected.to_not contain_nova_config('api_database/slave_connection') }
       it { is_expected.to_not contain_nova_config('database/idle_timeout') }
       it { is_expected.to_not contain_nova_config('database/min_pool_size') }
       it { is_expected.to_not contain_nova_config('database/max_retries') }
@@ -20,18 +22,21 @@ describe 'nova::db' do
     context 'with overriden parameters' do
       before :each do
         params.merge!(
-          :database_connection   => 'mysql+pymysql://user:pass@db/db',
-          :slave_connection      => 'mysql+pymysql://user:pass@slave/db',
+          :database_connection     => 'mysql+pymysql://user:pass@db/db1',
+          :slave_connection        => 'mysql+pymysql://user:pass@slave/db1',
+          :api_database_connection => 'mysql+pymysql://user:pass@db/db2',
+          :api_slave_connection    => 'mysql+pymysql://user:pass@slave/db2',
         )
       end
 
-      it { is_expected.to contain_nova_config('database/connection').with_value('mysql+pymysql://user:pass@db/db').with_secret(true) }
-      it { is_expected.to contain_nova_config('database/slave_connection').with_value('mysql+pymysql://user:pass@slave/db').with_secret(true) }
-      it { is_expected.to contain_nova_config('database/idle_timeout').with_value('3600') }
-      it { is_expected.to contain_nova_config('database/min_pool_size').with_value('1') }
-      it { is_expected.to contain_nova_config('database/max_retries').with_value('10') }
-      it { is_expected.to contain_nova_config('database/retry_interval').with_value('10') }
-      it { is_expected.to contain_package('nova-backend-package').with({ :ensure => 'present', :name => platform_params[:pymysql_package_name] }) }
+      it { is_expected.to contain_nova_config('database/connection').with_value('mysql+pymysql://user:pass@db/db1').with_secret(true) }
+      it { is_expected.to contain_nova_config('database/slave_connection').with_value('mysql+pymysql://user:pass@slave/db1').with_secret(true) }
+      it { is_expected.to contain_nova_config('api_database/connection').with_value('mysql+pymysql://user:pass@db/db2').with_secret(true) }
+      it { is_expected.to contain_nova_config('api_database/slave_connection').with_value('mysql+pymysql://user:pass@slave/db2').with_secret(true) }
+      it { is_expected.to contain_nova_config('database/idle_timeout').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_nova_config('database/min_pool_size').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_nova_config('database/max_retries').with_value('<SERVICE DEFAULT>') }
+      it { is_expected.to contain_nova_config('database/retry_interval').with_value('<SERVICE DEFAULT>') }
     end
 
 
@@ -73,17 +78,27 @@ describe 'nova::db' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian',
+      @default_facts.merge({
+        :osfamily => 'Debian',
         :operatingsystem => 'Debian',
         :operatingsystemrelease => 'jessie',
-      }
-    end
-
-    let :platform_params do
-      { :pymysql_package_name => 'python-pymysql' }
+      })
     end
 
     it_configures 'nova::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection   => 'mysql+pymysql://user:pass@db/db', }
+      end
+      it 'install the proper backend package' do
+        is_expected.to contain_package('nova-backend-package').with(
+          :ensure => 'present',
+          :name   => 'python-pymysql',
+          :tag    => ['openstack', 'nova-package'],
+        )
+      end
+    end
 
     context 'with sqlite backend' do
       let :params do
@@ -94,7 +109,7 @@ describe 'nova::db' do
         is_expected.to contain_package('nova-backend-package').with(
           :ensure => 'present',
           :name   => 'python-pysqlite2',
-          :tag    => 'openstack'
+          :tag    => ['openstack', 'nova-package'],
         )
       end
 
@@ -103,16 +118,21 @@ describe 'nova::db' do
 
   context 'on Redhat platforms' do
     let :facts do
-      { :osfamily => 'RedHat',
+      @default_facts.merge({
+        :osfamily => 'RedHat',
         :operatingsystemrelease => '7.1',
-      }
-    end
-
-    let :platform_params do
-      { :pymysql_package_name => 'python2-PyMySQL' }
+      })
     end
 
     it_configures 'nova::db'
+
+    context 'using pymysql driver' do
+      let :params do
+        { :database_connection   => 'mysql+pymysql://user:pass@db/db', }
+      end
+
+      it { is_expected.not_to contain_package('nova-backend-package') }
+    end
   end
 
 end

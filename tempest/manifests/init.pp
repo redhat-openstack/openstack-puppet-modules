@@ -49,6 +49,8 @@
 #   Defaults to false
 #  [*log_file*]
 #   Defaults to undef
+#  [*logging_context_format_string*]
+#   Defaults to undef
 #  [*username*]
 #   Defaults to undef
 #  [*password*]
@@ -111,11 +113,19 @@
 #   Defaults to false
 #  [*nova_available*]
 #   Defaults to true
+#  [*murano_available*]
+#   Defaults to false
+#  [*zaqar_available*]
+#   Defaults to false
+#  [*run_service_broker_tests*]
+#   Defaults to false
 #  [*sahara_available*]
 #   Defaults to false
 #  [*swift_available*]
 #   Defaults to false
 #  [*trove_available*]
+#   Defaults to false
+#  [*ironic_available*]
 #   Defaults to false
 #  [*keystone_v2*]
 #   Defaults to true
@@ -133,94 +143,99 @@
 #   Defaults to undef
 #
 class tempest(
-  $install_from_source       = true,
-  $git_clone                 = true,
-  $tempest_config_file       = '/var/lib/tempest/etc/tempest.conf',
+  $install_from_source           = true,
+  $git_clone                     = true,
+  $tempest_config_file           = '/var/lib/tempest/etc/tempest.conf',
 
   # Clone config
   #
-  $tempest_repo_uri          = 'git://github.com/openstack/tempest.git',
-  $tempest_repo_revision     = undef,
-  $tempest_clone_path        = '/var/lib/tempest',
-  $tempest_clone_owner       = 'root',
+  $tempest_repo_uri              = 'git://github.com/openstack/tempest.git',
+  $tempest_repo_revision         = undef,
+  $tempest_clone_path            = '/var/lib/tempest',
+  $tempest_clone_owner           = 'root',
 
-  $setup_venv                = false,
+  $setup_venv                    = false,
 
   # Glance image config
   #
-  $configure_images          = true,
-  $image_name                = undef,
-  $image_name_alt            = undef,
+  $configure_images              = true,
+  $image_name                    = undef,
+  $image_name_alt                = undef,
 
   # Neutron network config
   #
-  $configure_networks        = true,
-  $public_network_name       = undef,
+  $configure_networks            = true,
+  $public_network_name           = undef,
 
   # Horizon dashboard config
-  $login_url                 = undef,
-  $dashboard_url             = undef,
+  $login_url                     = undef,
+  $dashboard_url                 = undef,
 
   # tempest.conf parameters
   #
-  $identity_uri              = undef,
-  $identity_uri_v3           = undef,
-  $cli_dir                   = undef,
-  $lock_path                 = '/var/lib/tempest',
-  $debug                     = false,
-  $verbose                   = false,
-  $use_stderr                = true,
-  $use_syslog                = false,
-  $log_file                  = undef,
+  $identity_uri                  = undef,
+  $identity_uri_v3               = undef,
+  $cli_dir                       = undef,
+  $lock_path                     = '/var/lib/tempest',
+  $debug                         = false,
+  $verbose                       = false,
+  $use_stderr                    = true,
+  $use_syslog                    = false,
+  $log_file                      = undef,
+  $logging_context_format_string = undef,
   # non admin user
-  $username                  = undef,
-  $password                  = undef,
-  $tenant_name               = undef,
+  $username                      = undef,
+  $password                      = undef,
+  $tenant_name                   = undef,
   # another non-admin user
-  $alt_username              = undef,
-  $alt_password              = undef,
-  $alt_tenant_name           = undef,
+  $alt_username                  = undef,
+  $alt_password                  = undef,
+  $alt_tenant_name               = undef,
   # admin user
-  $admin_username            = undef,
-  $admin_password            = undef,
-  $admin_tenant_name         = undef,
-  $admin_role                = undef,
-  $admin_domain_name         = undef,
+  $admin_username                = undef,
+  $admin_password                = undef,
+  $admin_tenant_name             = undef,
+  $admin_role                    = undef,
+  $admin_domain_name             = undef,
   # image information
-  $image_ref                 = undef,
-  $image_ref_alt             = undef,
-  $image_ssh_user            = undef,
-  $image_alt_ssh_user        = undef,
-  $flavor_ref                = undef,
-  $flavor_ref_alt            = undef,
+  $image_ref                     = undef,
+  $image_ref_alt                 = undef,
+  $image_ssh_user                = undef,
+  $image_alt_ssh_user            = undef,
+  $flavor_ref                    = undef,
+  $flavor_ref_alt                = undef,
   # whitebox
-  $whitebox_db_uri           = undef,
-  # testing features that are supported
-  $resize_available          = undef,
-  $change_password_available = undef,
-  $allow_tenant_isolation    = undef,
+  $whitebox_db_uri               = undef,
+  # testing features that are     supported
+  $resize_available              = undef,
+  $change_password_available     = undef,
+  $allow_tenant_isolation        = undef,
   # neutron config
-  $public_network_id         = undef,
-  # Upstream has a bad default - set it to empty string.
-  $public_router_id          = '',
+  $public_network_id             = undef,
+  # Upstream has a bad defaul    t - set it to empty string.
+  $public_router_id              = '',
   # Service configuration
-  $cinder_available          = true,
-  $glance_available          = true,
-  $heat_available            = false,
-  $ceilometer_available      = false,
-  $aodh_available            = false,
-  $horizon_available         = true,
-  $neutron_available         = false,
-  $nova_available            = true,
-  $sahara_available          = false,
-  $swift_available           = false,
-  $trove_available           = false,
-  $keystone_v2               = true,
-  $keystone_v3               = true,
-  $auth_version              = 'v2',
+  $cinder_available              = true,
+  $glance_available              = true,
+  $heat_available                = false,
+  $ceilometer_available          = false,
+  $aodh_available                = false,
+  $horizon_available             = true,
+  $neutron_available             = false,
+  $nova_available                = true,
+  $murano_available              = false,
+  $sahara_available              = false,
+  $swift_available               = false,
+  $trove_available               = false,
+  $ironic_available              = false,
+  $zaqar_available               = false,
+  $keystone_v2                   = true,
+  $keystone_v3                   = true,
+  $auth_version                  = 'v2',
+  $run_service_broker_tests      = false,
   # scenario options
-  $img_dir                   = '/var/lib/tempest',
-  $img_file                  = 'cirros-0.3.4-x86_64-disk.img',
+  $img_dir                       = '/var/lib/tempest',
+  $img_file                      = 'cirros-0.3.4-x86_64-disk.img',
 ) {
 
   include '::tempest::params'
@@ -285,56 +300,61 @@ class tempest(
   }
 
   tempest_config {
-    'compute/change_password_available': value => $change_password_available;
-    'compute/flavor_ref':                value => $flavor_ref;
-    'compute/flavor_ref_alt':            value => $flavor_ref_alt;
-    'compute/image_alt_ssh_user':        value => $image_alt_ssh_user;
-    'compute/image_ref':                 value => $image_ref;
-    'compute/image_ref_alt':             value => $image_ref_alt;
-    'compute/image_ssh_user':            value => $image_ssh_user;
-    'compute/resize_available':          value => $resize_available;
-    'compute/allow_tenant_isolation':    value => $allow_tenant_isolation;
-    'identity/admin_password':           value => $admin_password, secret => true;
-    'identity/admin_tenant_name':        value => $admin_tenant_name;
-    'identity/admin_username':           value => $admin_username;
-    'identity/admin_role':               value => $admin_role;
-    'identity/admin_domain_name':        value => $admin_domain_name;
-    'identity/alt_password':             value => $alt_password, secret => true;
-    'identity/alt_tenant_name':          value => $alt_tenant_name;
-    'identity/alt_username':             value => $alt_username;
-    'identity/password':                 value => $password, secret => true;
-    'identity/tenant_name':              value => $tenant_name;
-    'identity/uri':                      value => $identity_uri;
-    'identity/uri_v3':                   value => $identity_uri_v3;
-    'identity/username':                 value => $username;
-    'identity/auth_version':             value => $auth_version;
-    'identity-feature-enabled/api_v2':   value => $keystone_v2;
-    'identity-feature-enabled/api_v3':   value => $keystone_v3;
-    'network/public_network_id':         value => $public_network_id;
-    'network/public_router_id':          value => $public_router_id;
-    'dashboard/login_url':               value => $login_url;
-    'dashboard/dashboard_url':           value => $dashboard_url;
-    'service_available/cinder':          value => $cinder_available;
-    'service_available/glance':          value => $glance_available;
-    'service_available/heat':            value => $heat_available;
-    'service_available/ceilometer':      value => $ceilometer_available;
-    'service_available/aodh':            value => $aodh_available;
-    'service_available/horizon':         value => $horizon_available;
-    'service_available/neutron':         value => $neutron_available;
-    'service_available/nova':            value => $nova_available;
-    'service_available/sahara':          value => $sahara_available;
-    'service_available/swift':           value => $swift_available;
-    'service_available/trove':           value => $trove_available;
-    'whitebox/db_uri':                   value => $whitebox_db_uri;
-    'cli/cli_dir':                       value => $cli_dir;
-    'oslo_concurrency/lock_path':        value => $lock_path;
-    'DEFAULT/debug':                     value => $debug;
-    'DEFAULT/verbose':                   value => $verbose;
-    'DEFAULT/use_stderr':                value => $use_stderr;
-    'DEFAULT/use_syslog':                value => $use_syslog;
-    'DEFAULT/log_file':                  value => $log_file;
-    'scenario/img_dir':                  value => $img_dir;
-    'scenario/img_file':                 value => $img_file;
+    'compute/change_password_available':       value => $change_password_available;
+    'compute/flavor_ref':                      value => $flavor_ref;
+    'compute/flavor_ref_alt':                  value => $flavor_ref_alt;
+    'compute/image_alt_ssh_user':              value => $image_alt_ssh_user;
+    'compute/image_ref':                       value => $image_ref;
+    'compute/image_ref_alt':                   value => $image_ref_alt;
+    'compute/image_ssh_user':                  value => $image_ssh_user;
+    'compute/resize_available':                value => $resize_available;
+    'compute/allow_tenant_isolation':          value => $allow_tenant_isolation;
+    'identity/admin_password':                 value => $admin_password, secret => true;
+    'identity/admin_tenant_name':              value => $admin_tenant_name;
+    'identity/admin_username':                 value => $admin_username;
+    'identity/admin_role':                     value => $admin_role;
+    'identity/admin_domain_name':              value => $admin_domain_name;
+    'identity/alt_password':                   value => $alt_password, secret => true;
+    'identity/alt_tenant_name':                value => $alt_tenant_name;
+    'identity/alt_username':                   value => $alt_username;
+    'identity/password':                       value => $password, secret => true;
+    'identity/tenant_name':                    value => $tenant_name;
+    'identity/uri':                            value => $identity_uri;
+    'identity/uri_v3':                         value => $identity_uri_v3;
+    'identity/username':                       value => $username;
+    'identity/auth_version':                   value => $auth_version;
+    'identity-feature-enabled/api_v2':         value => $keystone_v2;
+    'identity-feature-enabled/api_v3':         value => $keystone_v3;
+    'network/public_network_id':               value => $public_network_id;
+    'network/public_router_id':                value => $public_router_id;
+    'dashboard/login_url':                     value => $login_url;
+    'dashboard/dashboard_url':                 value => $dashboard_url;
+    'service_available/cinder':                value => $cinder_available;
+    'service_available/glance':                value => $glance_available;
+    'service_available/heat':                  value => $heat_available;
+    'service_available/ceilometer':            value => $ceilometer_available;
+    'service_available/aodh':                  value => $aodh_available;
+    'service_available/horizon':               value => $horizon_available;
+    'service_available/neutron':               value => $neutron_available;
+    'service_available/nova':                  value => $nova_available;
+    'service_available/murano':                value => $murano_available;
+    'service_available/sahara':                value => $sahara_available;
+    'service_available/swift':                 value => $swift_available;
+    'service_available/trove':                 value => $trove_available;
+    'service_available/ironic':                value => $ironic_available;
+    'service_available/zaqar':                 value => $zaqar_available;
+    'whitebox/db_uri':                         value => $whitebox_db_uri;
+    'cli/cli_dir':                             value => $cli_dir;
+    'oslo_concurrency/lock_path':              value => $lock_path;
+    'DEFAULT/debug':                           value => $debug;
+    'DEFAULT/verbose':                         value => $verbose;
+    'DEFAULT/use_stderr':                      value => $use_stderr;
+    'DEFAULT/use_syslog':                      value => $use_syslog;
+    'DEFAULT/log_file':                        value => $log_file;
+    'DEFAULT/logging_context_format_string':   value => $logging_context_format_string;
+    'scenario/img_dir':                        value => $img_dir;
+    'scenario/img_file':                       value => $img_file;
+    'service_broker/run_service_broker_tests': value => $run_service_broker_tests;
   }
 
   if $configure_images {

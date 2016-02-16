@@ -33,22 +33,32 @@ describe Puppet::Provider::Keystone do
     another_class.reset
   end
 
-  describe '#fetch_domain' do
-    it 'should be false if the domain does not exist' do
+  describe '#domain_id_from_name' do
+    it 'should list all domains when requesting a domain name from an ID' do
       klass.expects(:openstack)
-        .with('domain', 'show', '--format', 'shell', 'no_domain')
-        .raises(Puppet::ExecutionFailure, "Execution of '/usr/bin/openstack domain show --format shell no_domain' returned 1: No domain with a name or ID of 'no_domain' exists.")
-      expect(klass.fetch_domain('no_domain')).to be_falsey
-    end
-
-    it 'should return the domain' do
-      klass.expects(:openstack)
-        .with('domain', 'show', '--format', 'shell', 'The Domain')
-        .returns('
-name="The Domain"
-id="the_domain_id"
+           .with('domain', 'list', '--quiet', '--format', 'csv', [])
+           .returns('"ID","Name","Enabled","Description"
+"someid","SomeName",True,"default domain"
 ')
-      expect(klass.fetch_domain('The Domain')).to eq({:name=>"The Domain", :id=>"the_domain_id"})
+      expect(klass.domain_id_from_name('SomeName')).to eq('someid')
+    end
+    it 'should lookup a domain when not found in the hash' do
+      klass.expects(:openstack)
+           .with('domain', 'show', '--format', 'shell', 'NewName')
+           .returns('
+name="NewName"
+id="newid"
+')
+      expect(klass.domain_id_from_name('NewName')).to eq('newid')
+    end
+    it 'should print an error when there is no such domain' do
+      klass.expects(:openstack)
+           .with('domain', 'show', '--format', 'shell', 'doesnotexist')
+           .returns('
+')
+      klass.expects(:err)
+           .with('Could not find domain with name [doesnotexist]')
+      expect(klass.domain_id_from_name('doesnotexist')).to eq(nil)
     end
   end
 
@@ -96,8 +106,10 @@ id="the_domain_id"
     end
 
     it 'should be false if the project does not exist' do
+      klass.expects(:request_timeout).returns(0)
       klass.expects(:openstack)
         .with('project', 'show', '--format', 'shell', ['no_project', '--domain', 'Default'])
+        .times(2)
         .raises(Puppet::ExecutionFailure, "Execution of '/usr/bin/openstack project show --format shell no_project' returned 1: No project with a name or ID of 'no_project' exists.")
       expect(klass.fetch_project('no_project', 'Default')).to be_falsey
     end
@@ -126,8 +138,10 @@ id="the_project_id"
     end
 
     it 'should be false if the user does not exist' do
+      klass.expects(:request_timeout).returns(0)
       klass.expects(:openstack)
         .with('user', 'show', '--format', 'shell', ['no_user', '--domain', 'Default'])
+        .times(2)
         .raises(Puppet::ExecutionFailure, "Execution of '/usr/bin/openstack user show --format shell no_user' returned 1: No user with a name or ID of 'no_user' exists.")
       expect(klass.fetch_user('no_user', 'Default')).to be_falsey
     end

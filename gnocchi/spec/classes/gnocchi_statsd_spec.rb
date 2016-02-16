@@ -74,8 +74,10 @@ describe 'gnocchi::statsd' do
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily        => 'Debian',
-        :operatingsystem => 'Debian' }
+      @default_facts.merge({
+        :osfamily        => 'Debian',
+        :operatingsystem => 'Debian',
+      })
     end
 
     let :platform_params do
@@ -88,8 +90,10 @@ describe 'gnocchi::statsd' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily               => 'RedHat',
-        :operatingsystem        => 'RedHat' }
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystem        => 'RedHat',
+      })
     end
 
     let :platform_params do

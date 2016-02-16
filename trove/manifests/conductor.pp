@@ -68,14 +68,6 @@ class trove::conductor(
 
   Trove_conductor_config<||> ~> Exec['post-trove_config']
   Trove_conductor_config<||> ~> Service['trove-conductor']
-  # Trove db sync is broken in Ubuntu packaging
-  # This is a temporary fix until it's fixed in packaging.
-  # https://bugs.launchpad.net/ubuntu/+source/openstack-trove/+bug/1451134
-  file { '/etc/trove/trove-conductor.conf':
-    require => File['/etc/trove'],
-  }
-  File['/etc/trove/trove-conductor.conf'] -> Trove_conductor_config<||>
-  Trove_conductor_config<||> -> Package[$::trove::params::conductor_package_name]
 
   if $::trove::database_connection {
     if($::trove::database_connection =~ /mysql:\/\/\S+:\S+@\S+\/\S+/) {
@@ -112,12 +104,20 @@ class trove::conductor(
     }
     if $::trove::rabbit_hosts {
       trove_conductor_config { 'oslo_messaging_rabbit/rabbit_hosts':     value  => join($::trove::rabbit_hosts, ',') }
-      trove_conductor_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
     } else  {
       trove_conductor_config { 'oslo_messaging_rabbit/rabbit_host':      value => $::trove::rabbit_host }
       trove_conductor_config { 'oslo_messaging_rabbit/rabbit_port':      value => $::trove::rabbit_port }
       trove_conductor_config { 'oslo_messaging_rabbit/rabbit_hosts':     value => "${::trove::rabbit_host}:${::trove::rabbit_port}" }
-      trove_conductor_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+    }
+
+    if $::trove::rabbit_ha_queues == undef {
+      if size($::trove::rabbit_hosts) > 1 {
+        trove_conductor_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value  => true }
+      } else {
+        trove_conductor_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => false }
+      }
+    } else {
+      trove_conductor_config { 'oslo_messaging_rabbit/rabbit_ha_queues': value => $::trove::rabbit_ha_queues }
     }
 
     trove_conductor_config {
@@ -126,6 +126,7 @@ class trove::conductor(
       'oslo_messaging_rabbit/rabbit_virtual_host':   value => $::trove::rabbit_virtual_host;
       'oslo_messaging_rabbit/rabbit_use_ssl':        value => $::trove::rabbit_use_ssl;
       'oslo_messaging_rabbit/kombu_reconnect_delay': value => $::trove::kombu_reconnect_delay;
+      'oslo_messaging_rabbit/amqp_durable_queues':   value => $::trove::amqp_durable_queues;
     }
 
     if $::trove::rabbit_use_ssl {
@@ -165,23 +166,7 @@ class trove::conductor(
   }
 
   if $::trove::rpc_backend == 'trove.openstack.common.rpc.impl_qpid' or $::trove::rpc_backend == 'qpid'{
-
     warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
-
-    trove_conductor_config {
-      'oslo_messaging_qpid/qpid_hostname':    value => $::trove::qpid_hostname;
-      'oslo_messaging_qpid/qpid_port':        value => $::trove::qpid_port;
-      'oslo_messaging_qpid/qpid_username':    value => $::trove::qpid_username;
-      'oslo_messaging_qpid/qpid_password':    value => $::trove::qpid_password, secret => true;
-      'oslo_messaging_qpid/qpid_heartbeat':   value => $::trove::qpid_heartbeat;
-      'oslo_messaging_qpid/qpid_protocol':    value => $::trove::qpid_protocol;
-      'oslo_messaging_qpid/qpid_tcp_nodelay': value => $::trove::qpid_tcp_nodelay;
-    }
-    if is_array($::trove::qpid_sasl_mechanisms) {
-      trove_conductor_config {
-        'oslo_messaging_qpid/qpid_sasl_mechanisms': value => join($::trove::qpid_sasl_mechanisms, ' ');
-      }
-    }
   }
 
   # Logging

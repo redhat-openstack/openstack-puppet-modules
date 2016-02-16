@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'nova::cron::archive_deleted_rows' do
 
   let :facts do
-    { :osfamily => 'Debian' }
+    @default_facts.merge({ :osfamily => 'Debian' })
   end
 
   let :params do
@@ -27,7 +27,7 @@ describe 'nova::cron::archive_deleted_rows' do
       :monthday    => params[:monthday],
       :month       => params[:month],
       :weekday     => params[:weekday],
-      :require     => 'Package[nova-common]',
+      :require     => 'Anchor[nova::dbsync::end]',
     )
   end
 end

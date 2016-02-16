@@ -14,7 +14,7 @@ describe 'openstack_extras::repo::redhat::redhat' do
 
   let :paramclass_defaults do
     {
-      :release        => 'liberty',
+      :release        => 'mitaka',
       :repo_defaults  => { 'enabled' => '1',
                            'gpgcheck' => '1',
                            'notify' => "Exec[yum_refresh]",
@@ -35,13 +35,13 @@ describe 'openstack_extras::repo::redhat::redhat' do
 
   context 'on RedHat platforms' do
     let :facts do
-      {
+      @default_facts.merge({
         :osfamily        => 'RedHat',
         :operatingsystem => 'RedHat',
         :operatingsystemrelease => '7.1',
         :operatingsystemmajrelease => '7',
         :puppetversion => Puppet.version,
-      }
+      })
     end
 
     describe 'with default parameters' do
@@ -50,8 +50,8 @@ describe 'openstack_extras::repo::redhat::redhat' do
       end
 
       it { is_expected.to contain_yumrepo('rdo-release').with(
-        :baseurl    => "http://mirror.centos.org/centos/7/cloud/$basearch/openstack-liberty/",
-        :descr      => "OpenStack Liberty Repository",
+        :baseurl    => "http://mirror.centos.org/centos/7/cloud/$basearch/openstack-mitaka/",
+        :descr      => "OpenStack Mitaka Repository",
         :priority   => 98,
         :gpgkey     => "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Cloud",
         :enabled    => '1',
@@ -59,6 +59,10 @@ describe 'openstack_extras::repo::redhat::redhat' do
         :mirrorlist => 'absent',
         :require    => "Anchor[openstack_extras_redhat]",
         :notify     => "Exec[yum_refresh]"
+      )}
+
+      it { is_expected.to contain_package('yum-plugin-priorities').with(
+        :ensure => 'present',
       )}
 
       # 'metalink' property is supported from Puppet 3.5
@@ -164,8 +168,8 @@ describe 'openstack_extras::repo::redhat::redhat' do
       end
 
       it { is_expected.to contain_yumrepo('rdo-release').with(
-        :baseurl    => "http://mirror.centos.org/centos/7/cloud/\$basearch/openstack-liberty/",
-        :descr      => "OpenStack Liberty Repository",
+        :baseurl    => "http://mirror.centos.org/centos/7/cloud/\$basearch/openstack-mitaka/",
+        :descr      => "OpenStack Mitaka Repository",
         :gpgkey     => "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Cloud",
         :proxy     => "http://my.proxy.com:8000"
       )}
@@ -198,6 +202,13 @@ describe 'openstack_extras::repo::redhat::redhat' do
       end
 
       it { is_expected.to_not contain_yumrepo('rdo-release') }
+    end
+    describe 'with manage_priorities disabled' do
+      let :params do
+        default_params.merge!({ :manage_priorities => false })
+      end
+
+      it { is_expected.to_not contain_package('yum-plugin-priorities') }
     end
   end
 end
