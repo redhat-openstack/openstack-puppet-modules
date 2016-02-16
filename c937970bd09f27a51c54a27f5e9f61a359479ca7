@@ -1,0 +1,7 @@
+Code-Review+2: Jason Guiditta <jguiditt@redhat.com>
+Verified+1: Jason Guiditta <jguiditt@redhat.com>
+Submitted-by: Jason Guiditta <jguiditt@redhat.com>
+Submitted-at: Tue, 16 Feb 2016 14:38:32 +0100
+Reviewed-on: https://review.gerrithub.io/263325
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-master
