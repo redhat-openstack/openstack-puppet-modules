@@ -189,7 +189,7 @@ describe 'gnocchi::api' do
     end
     it 'configures identity_uri' do
       is_expected.to contain_gnocchi_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:1234/");
-      is_expected.to contain_gnocchi_api_paste_ini('pipeline:main/pipeline').with_value('keystone_authtoken gnocchi');
+      is_expected.to contain_gnocchi_api_paste_ini('pipeline:main/pipeline').with_value('gnocchi+auth');
     end
   end
 
@@ -206,7 +206,7 @@ describe 'gnocchi::api' do
     it 'configures identity_uri and auth_uri but deprecates old auth settings' do
       is_expected.to contain_gnocchi_config('keystone_authtoken/identity_uri').with_value("https://foo.bar:35357/");
       is_expected.to contain_gnocchi_config('keystone_authtoken/auth_uri').with_value("https://foo.bar:5000/v2.0/");
-      is_expected.to contain_gnocchi_api_paste_ini('pipeline:main/pipeline').with_value('keystone_authtoken gnocchi');
+      is_expected.to contain_gnocchi_api_paste_ini('pipeline:main/pipeline').with_value('gnocchi+auth');
     end
   end
 

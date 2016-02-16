@@ -144,7 +144,7 @@ class gnocchi::api (
       'keystone_authtoken/identity_uri': value => $keystone_identity_uri;
     }
     gnocchi_api_paste_ini {
-      'pipeline:main/pipeline':  value => 'keystone_authtoken gnocchi',
+      'pipeline:main/pipeline':  value => 'gnocchi+auth',
     }
   } else {
     gnocchi_config {
