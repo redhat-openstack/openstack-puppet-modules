@@ -71,7 +71,7 @@ mod 'gluster',
   :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
 mod 'gnocchi',
-  :commit => 'e774f7df73ccce96ff2fe256e40a9de078b0fffb',
+  :commit => 'b8b942990fef44045e2e678ba3f7901d62f1fdb8',
   :git => 'https://github.com/openstack/puppet-gnocchi.git'
 
 mod 'haproxy',
@@ -91,7 +91,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ironic',
-  :commit => '92ba5d6f7be0f1a24664888f4a8767ab3ab9e703',
+  :commit => '754a156d6a9f1175a454789c53f2e288e7ec8e21',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -155,7 +155,7 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '3794e88c4e6cbf3a14125f19a1be9fa862718583',
+  :commit => 'a83bfe12562273a9e7bbba3ade9d8028bb6edd9d',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
@@ -179,7 +179,7 @@ mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
-  :commit => 'd36b88673a893284d5898159cc39ab93bc18c00c',
+  :commit => '3c03db279240c0f871a579331f41c3a3e0fc6b52',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
@@ -255,7 +255,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => '78e62660da958a975a899c5866a89d8158020222',
+  :commit => 'bd23dab3bbc710c72c481953f2cf13f8c51120ad',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',

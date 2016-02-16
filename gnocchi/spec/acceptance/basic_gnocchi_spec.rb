@@ -33,6 +33,7 @@ describe 'basic gnocchi' do
             keystone_identity_uri => 'http://127.0.0.1:35357/',
             service_name          => 'httpd',
           }
+          class { '::gnocchi::metricd': }
           class { '::gnocchi::db::sync': }
           class { '::gnocchi::storage': }
           class { '::gnocchi::storage::file': }
