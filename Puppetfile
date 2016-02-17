@@ -231,8 +231,8 @@ mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift.git'
 
 mod 'sysctl',
-  :commit => 'c4486acc2d66de857dbccd8b4b945ea803226705',
-  :git => 'https://github.com/puppetlabs/puppetlabs-sysctl.git'
+  :commit => '65ffe839a4ce785bc3901452488197a0ef158cd8',
+  :git => 'https://github.com/duritong/puppet-sysctl.git'
 
 mod 'tempest',
   :commit => 'af6ea67d88342c2626bb3ea3b25c23d69674339d',

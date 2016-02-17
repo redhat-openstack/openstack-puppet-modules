@@ -1,5 +1,4 @@
-module Puppet
-    newtype(:sysctl) do
+Puppet::Type.newtype(:sysctl) do
 
         @doc = "Manages kernel parameters in /etc/sysctl.conf.  By default this will
                 only edit the configuration file, and not change any of the runtime
@@ -31,12 +30,12 @@ module Puppet
 
         newproperty(:target) do
             desc "Name of the file to store parameters in"
-            defaultto { if @resource.class.defaultprovider.ancestors.include?(Puppet::Provider::ParsedFile)
+            defaultto { if @resource.class.defaultprovider and
+                           @resource.class.defaultprovider.ancestors.include?(Puppet::Provider::ParsedFile)
                             @resource.class.defaultprovider.default_target
                         else
                             nil
                         end
             }
         end
-    end
 end
