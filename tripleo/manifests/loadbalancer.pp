@@ -35,6 +35,10 @@
 #  The value to use as maxconn in the haproxy default config section.
 #  Defaults to 4096
 #
+# [*haproxy_default_timeout*]
+#  The value to use as timeout in the haproxy default config section.
+#  Defaults to [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ]
+#
 # [*haproxy_log_address*]
 #  The IPv4, IPv6 or filesystem socket path of the syslog server.
 #  Defaults to '/dev/log'
@@ -254,6 +258,7 @@ class tripleo::loadbalancer (
   $haproxy_service_manage    = true,
   $haproxy_global_maxconn    = 20480,
   $haproxy_default_maxconn   = 4096,
+  $haproxy_default_timeout   = [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
   $haproxy_log_address       = '/dev/log',
   $controller_host           = undef,
   $controller_hosts          = undef,
@@ -584,6 +589,7 @@ class tripleo::loadbalancer (
     }
     $heat_options = {
       'rsprep' => "^Location:\\ http://${public_virtual_ip}(.*) Location:\\ https://${public_virtual_ip}\\1",
+      'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
     }
     $heat_cw_bind_opts = {
       "${heat_api_vip}:8003" => [],
@@ -651,7 +657,7 @@ class tripleo::loadbalancer (
       'mode'    => 'tcp',
       'log'     => 'global',
       'retries' => '3',
-      'timeout' => [ 'http-request 10s', 'queue 1m', 'connect 10s', 'client 1m', 'server 1m', 'check 10s' ],
+      'timeout' => $haproxy_default_timeout,
       'maxconn' => $haproxy_default_maxconn,
     },
   }
@@ -676,6 +682,10 @@ class tripleo::loadbalancer (
     haproxy::listen { 'keystone_admin':
       bind             => $keystone_admin_bind_opts,
       collect_exported => false,
+      mode             => 'http', # Needed for http-request option
+      options          => {
+          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+      },
     }
     haproxy::balancermember { 'keystone_admin':
       listening_service => 'keystone_admin',
@@ -797,6 +807,10 @@ class tripleo::loadbalancer (
     haproxy::listen { 'nova_osapi':
       bind             => $nova_osapi_bind_opts,
       collect_exported => false,
+      mode             => 'http',
+      options          => {
+          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+      },
     }
     haproxy::balancermember { 'nova_osapi':
       listening_service => 'nova_osapi',
