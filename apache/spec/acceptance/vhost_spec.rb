@@ -1106,15 +1106,14 @@ describe 'apache::vhost define' do
     end
   end
 
-  # Passenger isn't even in EPEL on el-5
-  if (fact('osfamily') == 'RedHat' and fact('operatingsystemmajrelease') != '5')
-    describe 'rack_base_uris' do
-      before :all do
-        pp = "if $::osfamily == 'RedHat' { include epel }"
-        apply_manifest(pp, :catch_failures => true)
-      end
+  describe 'rack_base_uris' do
+    before :all do
+      pp = "if $::osfamily == 'RedHat' { include epel }"
+      apply_manifest(pp, :catch_failures => true)
+    end
 
-      it 'applies cleanly' do
+    it 'applies cleanly' do
+      test = lambda do
         pp = <<-EOS
           class { 'apache': }
           host { 'test.server': ip => '127.0.0.1' }
@@ -1125,7 +1124,16 @@ describe 'apache::vhost define' do
         EOS
         apply_manifest(pp, :catch_failures => true)
       end
+      if (fact('osfamily') == 'RedHat' and ! ['7','6','5'].include?(fact('operatingsystemmajrelease')))
+        pending("Passenger isn't even in EPEL on el-5, needs a kernel update on el-6, and needs selinux-policy >= 3.13.1-60 on el7 which is not available in official repos") do
+          test.call
+        end
+      else
+        test.call
+      end
+    end
 
+    if (fact('osfamily') == 'RedHat' and ! ['7','6','5'].include?(fact('operatingsystemmajrelease')))
       describe file("#{$vhost_dir}/25-test.server.conf") do
         it { is_expected.to be_file }
         it { is_expected.to contain 'RackBaseURI /test' }

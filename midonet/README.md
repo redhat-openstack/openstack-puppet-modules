@@ -1,5 +1,8 @@
 # MidoNet
 
+NOTE: This repository master now lives in [Openstack's
+github](https://github.com/openstack/puppet-midonet)
+
 #### Table of Contents
 
 1. [Overview](#overview)

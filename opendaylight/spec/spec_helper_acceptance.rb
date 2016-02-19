@@ -158,7 +158,7 @@ def generic_validations()
     it { should be_grouped_into 'odl' }
   end
 
-  if ['centos-7', 'centos-7-docker', 'fedora-22'].include? ENV['RS_SET']
+  if ['centos-7', 'centos-7-docker', 'fedora-22', 'fedora-23-docker'].include? ENV['RS_SET']
     # Validations for modern Red Hat family OSs
 
     # Verify ODL systemd .service file
@@ -320,7 +320,7 @@ def tarball_validations()
   end
 
   # Repo checks break (not fail) when yum doesn't make sense (Ubuntu)
-  if ['centos-7', 'fedora-22'].include? ENV['RS_SET']
+  if ['centos-7', 'fedora-22', 'fedora-23-docker'].include? ENV['RS_SET']
     describe yumrepo('opendaylight-4-testing') do
       it { should_not exist }
       it { should_not be_enabled }

@@ -1,0 +1,12 @@
+HOSTS:
+  fedora-23-docker:
+    roles:
+      - master
+    platform: el-7-x86_64
+    image: fedora:23
+    docker_cmd: '["/sbin/init"]'
+    hypervisor: docker
+
+CONFIG:
+  log_level: verbose
+  type: foss
