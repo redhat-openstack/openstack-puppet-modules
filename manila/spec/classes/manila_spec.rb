@@ -71,22 +71,8 @@ describe 'manila' do
       )
       is_expected.to contain_manila_config('DEFAULT/log_dir').with(:value => '/var/log/manila')
     end
-
-    it { is_expected.to contain_file('/etc/manila/manila.conf').with(
-      :owner   => 'manila',
-      :group   => 'manila',
-      :mode    => '0600',
-      :require => 'Package[manila]'
-    ) }
-
-    it { is_expected.to contain_file('/etc/manila/api-paste.ini').with(
-      :owner   => 'manila',
-      :group   => 'manila',
-      :mode    => '0600',
-      :require => 'Package[manila]'
-    ) }
-
   end
+
   describe 'with modified rabbit_hosts' do
     let :params do
       req_params.merge({'rabbit_hosts' => ['rabbit1:5672', 'rabbit2:5672']})
