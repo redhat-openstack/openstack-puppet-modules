@@ -374,22 +374,6 @@ class manila (
     tag     => ['openstack', 'manila-package'],
   }
 
-  file { $::manila::params::manila_conf:
-    ensure  => present,
-    owner   => 'manila',
-    group   => 'manila',
-    mode    => '0600',
-    require => Package['manila'],
-  }
-
-  file { $::manila::params::manila_paste_api_ini:
-    ensure  => present,
-    owner   => 'manila',
-    group   => 'manila',
-    mode    => '0600',
-    require => Package['manila'],
-  }
-
   if $rpc_backend == 'manila.openstack.common.rpc.impl_kombu' or $rpc_backend == 'rabbit' {
 
     if ! $rabbit_password {
