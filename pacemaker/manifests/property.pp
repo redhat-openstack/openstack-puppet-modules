@@ -10,7 +10,7 @@ define pacemaker::property (
   if $property == undef {
     fail('Must provide property')
   }
-  if ($ensure == 'present') and ! $value {
+  if ($ensure == 'present') and $value == undef {
     fail('When present, must provide value')
   }
 

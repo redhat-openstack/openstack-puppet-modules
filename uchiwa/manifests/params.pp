@@ -48,4 +48,5 @@ class uchiwa::params {
   $refresh         =     '5'
   $users           =     []
   $auth            =     {}
+  $ssl             =     {}
 }

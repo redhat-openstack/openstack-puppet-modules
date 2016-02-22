@@ -152,7 +152,8 @@ class uchiwa (
   $refresh              = $uchiwa::params::refresh,
   $sensu_api_endpoints  = $uchiwa::params::sensu_api_endpoints,
   $users                = $uchiwa::params::users,
-  $auth                 = $uchiwa::params::auth
+  $auth                 = $uchiwa::params::auth,
+  $ssl                  = $uchiwa::params::ssl,
 ) inherits uchiwa::params {
 
   # validate parameters here
@@ -175,6 +176,7 @@ class uchiwa (
   validate_array($sensu_api_endpoints)
   validate_array($users)
   validate_hash($auth)
+  validate_hash($ssl)
 
   anchor { 'uchiwa::begin': } ->
   class { 'uchiwa::install': } ->

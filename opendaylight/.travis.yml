@@ -16,6 +16,7 @@ env:
   - PUPPET_VERSION="~> 4.0.0"
   - PUPPET_VERSION="~> 4.1.0"
   - PUPPET_VERSION="~> 4.2.0"
+  - PUPPET_VERSION="~> 4.3.0"
 matrix:
   exclude:
   - rvm: 2.2.3

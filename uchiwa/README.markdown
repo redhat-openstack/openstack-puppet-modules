@@ -89,6 +89,29 @@ node 'uchiwa-server.foo.com' {
 }
 ```
 
+## SSL (HTTPS)
+
+This is an example on how to use Uchiwa with HTTPS:
+
+Puppet:
+```
+class { 'uchiwa':
+  ssl = {
+    'certfile' => '/path/to/certfile',
+    'keyfile' => '/path/to/keyfile',
+  }
+}
+```
+Simple YAML:
+```
+uchiwa::ssl: { 'certfile': '/opt/ssl/public.crt', 'keyfile': '/opt/ssl/private.key' }
+```
+
+Litle more advanced:
+```
+uchiwa::ssl: { 'certfile': '/opt/ssl/%{::hostname}.crt', 'keyfile': '/opt/ssl/%{::hostname}.key' }
+```
+
 ## License
 
 See LICENSE file.
