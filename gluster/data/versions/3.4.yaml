@@ -1,4 +1,0 @@
-# gluster/data/versions/3.4.yaml
----
-gluster::versions::operating_version: '2'
-# vim: ts=8

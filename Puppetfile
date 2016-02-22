@@ -26,10 +26,6 @@ mod 'cinder',
   :commit => 'd3a93d44050326571ce47948039504f43da93bdb',
   :git => 'https://github.com/openstack/puppet-cinder.git'
 
-mod 'common',
-  :commit => '4c97587bf49d04106444bc6d57a1262d7aca1393',
-  :git => 'https://github.com/purpleidea/puppet-common.git'
-
 mod 'concat',
   :commit => 'c307bee3933d88e6028274b0fa122a9b0c87b1d4',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
@@ -65,10 +61,6 @@ mod 'git',
 mod 'glance',
   :commit => 'a1680f1693bf8541c12631bd583ed9413ecda249',
   :git => 'https://github.com/openstack/puppet-glance.git'
-
-mod 'gluster',
-  :commit => '23b1055314bb435b4725134a9055c8676ccdfcff',
-  :git => 'https://github.com/purpleidea/puppet-gluster.git'
 
 mod 'gnocchi',
   :commit => '8052b93a2b4f3f37339c27b9b96569ea686b203b',
@@ -189,10 +181,6 @@ mod 'openstacklib',
 mod 'pacemaker',
   :commit => '973d35a918cf6051a917e96165eaae6dbed6690a',
   :git => 'https://github.com/openstack/puppet-pacemaker.git'
-
-mod 'puppet',
-  :commit => 'ede26b4d712697ea3edc91a40a0e8361b2ad0374',
-  :git => 'https://github.com/purpleidea/puppet-puppet.git'
 
 mod 'qpid',
   :commit => '4a3c8f0bceacb315de49530faf1325e3daeb02d0',
