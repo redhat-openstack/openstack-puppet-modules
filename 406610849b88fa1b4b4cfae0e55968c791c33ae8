@@ -1,0 +1,7 @@
+Code-Review+2: Gaël Chamoulaud <gchamoul@redhat.com>
+Verified+1: Gaël Chamoulaud <gchamoul@redhat.com>
+Submitted-by: Gaël Chamoulaud <gchamoul@redhat.com>
+Submitted-at: Mon, 22 Feb 2016 11:26:34 +0100
+Reviewed-on: https://review.gerrithub.io/263791
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-master
