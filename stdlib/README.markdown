@@ -77,11 +77,7 @@ The `stdlib::stages` class declares various run stages for deploying infrastruct
 
 #### `file_line`
 
-Ensures that a given line is contained within a file.  The implementation
-matches the full line, including whitespace at the beginning and end.  If
-the line is not contained in the given file, Puppet will append the line to
-the end of the file to ensure the desired state.  Multiple resources may
-be declared to manage multiple lines in the same file.
+Ensures that a given line is contained within a file. The implementation matches the full line, including whitespace at the beginning and end. If the line is not contained in the given file, Puppet appends the line to the end of the file to ensure the desired state.  Multiple resources can be declared to manage multiple lines in the same file.
 
 Example:
 
@@ -95,8 +91,7 @@ Example:
       line => '%sudonopw ALL=(ALL) NOPASSWD: ALL',
     }
 
-In this example, Puppet will ensure both of the specified lines are
-contained in the file /etc/sudoers.
+In this example, Puppet ensures that both of the specified lines are contained in the file `/etc/sudoers`.
 
 Match Example:
 
@@ -107,8 +102,7 @@ Match Example:
       match  => '^export\ HTTP_PROXY\=',
     }
 
-In this code example match will look for a line beginning with export
-followed by HTTP_PROXY and replace it with the value in line.
+In this code example, `match` looks for a line beginning with export followed by HTTP_PROXY and replaces it with the value in line.
 
 Match Example With `ensure => absent`:
 
@@ -120,20 +114,20 @@ Match Example With `ensure => absent`:
       match_for_absence => true,
     }
 
-In this code example match will look for a line beginning with export
+In this code example, `match` looks for a line beginning with export
 followed by HTTP_PROXY and delete it.  If multiple lines match, an
 error will be raised unless the `multiple => true` parameter is set.
 
-**Autorequires:** If Puppet is managing the file that will contain the line
-being managed, the file_line resource will autorequire that file.
+**Autorequires:** If Puppet is managing the file that contains the line being managed, the `file_line` resource autorequires that file.
 
 ##### Parameters
+
 All parameters are optional, unless otherwise noted.
 
-* `after`: Specifies the line after which Puppet will add any new lines. (Existing lines are added in place.) Valid options: String. Default: Undefined.
+* `after`: Specifies the line after which Puppet adds any new lines. (Existing lines are added in place.) Valid options: String. Default: Undefined.
 * `ensure`: Ensures whether the resource is present. Valid options: 'present', 'absent'. Default: 'present'.
 * `line`: **Required.** Sets the line to be added to the file located by the `path` parameter. Valid options: String. Default: Undefined.
-* `match`: Specifies a regular expression to run against existing lines in the file; if a match is found, it is replaced rather than adding a new line. A regex comparison is performed against the line value and if it does not match an exception will be raised. Valid options: String containing a regex. Default: Undefined.
+* `match`: Specifies a regular expression to run against existing lines in the file; if a match is found, it is replaced rather than adding a new line. A regex comparison is performed against the line value, and if it does not match, an exception is raised. Valid options: String containing a regex. Default: Undefined.
 * `match_for_absence`: An optional value to determine if match should be applied when `ensure => absent`. If set to true and match is set, the line that matches match will be deleted. If set to false (the default), match is ignored when `ensure => absent` and the value of `line` is used instead. Default: false.
 * `multiple`: Determines if `match` and/or `after` can change multiple lines. If set to false, an exception will be raised if more than one line matches. Valid options: 'true', 'false'. Default: Undefined.
 * `name`: Sets the name to use as the identity of the resource. This is necessary if you want the resource namevar to differ from the supplied `title` of the resource. Valid options: String. Default: Undefined.
@@ -152,7 +146,36 @@ Converts any object to an array containing that object. Empty argument lists are
 
 #### `base64`
 
-Converts a string to and from base64 encoding. Requires an action ('encode', 'decode') and either a plain or base64-encoded string. *Type*: rvalue.
+Converts a string to and from base64 encoding.
+Requires an `action` ('encode', 'decode') and either a plain or base64-encoded `string`,
+and an optional `method` ('default', 'strict', 'urlsafe')
+
+for backward compatibility, `metohd` will be set as `default` if not specified.
+
+*Examples:*
+~~~
+base64('encode', 'hello')
+base64('encode', 'hello', 'default')
+# return: "aGVsbG8=\n"
+
+base64('encode', 'hello', 'strict')
+# return: "aGVsbG8="
+
+base64('decode', 'aGVsbG8=')
+base64('decode', 'aGVsbG8=\n')
+base64('decode', 'aGVsbG8=', 'default')
+base64('decode', 'aGVsbG8=\n', 'default')
+base64('decode', 'aGVsbG8=', 'strict')
+# return: "hello"
+
+base64('encode', 'https://puppetlabs.com', 'urlsafe')
+# return: "aHR0cHM6Ly9wdXBwZXRsYWJzLmNvbQ=="
+
+base64('decode', 'aHR0cHM6Ly9wdXBwZXRsYWJzLmNvbQ==', 'urlsafe')
+# return: "https://puppetlabs.com"
+~~~
+
+*Type*: rvalue.
 
 #### `basename`
 
@@ -172,10 +195,7 @@ Converts a boolean to a number. Converts values:
 
 #### `bool2str`
 
-Converts a boolean to a string using optionally supplied arguments. The optional
-second and third arguments represent what true and false will be converted to
-respectively. If only one argument is given, it will be converted from a boolean
-to a string containing 'true' or 'false'.
+Converts a boolean to a string using optionally supplied arguments. The optional second and third arguments represent what true and false are converted to respectively. If only one argument is given, it is converted from a boolean to a string containing 'true' or 'false'.
 
 *Examples:*
 ~~~
@@ -188,7 +208,7 @@ Requires a single boolean as input. *Type*: rvalue.
 
 #### `capitalize`
 
-Capitalizes the first character of a string or array of strings, and lower-cases the remaining characters of each string. Requires either a single string or an array as an input. *Type*: rvalue.
+Capitalizes the first character of a string or array of strings and lowercases the remaining characters of each string. Requires either a single string or an array as an input. *Type*: rvalue.
 
 #### `ceiling`
 
@@ -201,6 +221,14 @@ Removes the record separator from the end of a string or an array of strings; fo
 #### `chop`
 
 Returns a new string with the last character removed. If the string ends with '\r\n', both characters are removed. Applying `chop` to an empty string returns an empty string. If you want to merely remove record separators, then you should use the `chomp` function. Requires a string or an array of strings as input. *Type*: rvalue.
+
+#### `clamp`
+
+Keeps value within the range [Min, X, Max] by sort based on integer value (order of params doesn't matter). Takes strings, arrays or numerics. Strings are converted and compared numerically. Arrays of values are flattened into a list for further handling. For example:
+  * `clamp('24', [575, 187])` returns 187.
+  * `clamp(16, 88, 661)` returns 88.
+  * `clamp([4, 3, '99'])` returns 4.
+  *Type*: rvalue.
 
 #### `concat`
 
@@ -254,6 +282,42 @@ Deletes all instances of the undef value from an array or hash. For example, `$h
 #### `difference`
 
 Returns the difference between two arrays. The returned array is a copy of the original array, removing any items that also appear in the second array. For example, `difference(["a","b","c"],["b","c","d"])` returns ["a"]. *Type*: rvalue.
+
+#### `dig`
+
+*Type*: rvalue.
+
+Retrieves a value within multiple layers of hashes and arrays via an array of keys containing a path. The function goes through the structure by each path component and tries to return the value at the end of the path.
+
+In addition to the required path argument, the function accepts the default argument. It is returned if the path is not correct, if no value was found, or if any other error has occurred.
+
+~~~ruby
+$data = {
+  'a' => {
+    'b' => [
+      'b1',
+      'b2',
+      'b3',
+    ]
+  }
+}
+
+$value = dig($data, ['a', 'b', 2])
+# $value = 'b3'
+
+# with all possible options
+$value = dig($data, ['a', 'b', 2], 'not_found')
+# $value = 'b3'
+
+# using the default value
+$value = dig($data, ['a', 'b', 'c', 'd'], 'not_found')
+# $value = 'not_found'
+~~~
+
+1. **$data** The data structure we are working with.
+2. **['a', 'b', 2]** The path array.
+3. **'not_found'** The default value. It will be returned if nothing is found.
+   (optional, defaults to *undef*)
 
 #### `dirname`
 
@@ -336,10 +400,13 @@ fqdn_rand_string(10, '', 'custom seed')
 Rotates an array or string a random number of times, combining the `$fqdn` fact and an optional seed for repeatable randomness.
 
 *Usage:*
+
 ~~~
 fqdn_rotate(VALUE, [SEED])
 ~~~
+
 *Examples:*
+
 ~~~
 fqdn_rotate(['a', 'b', 'c', 'd'])
 fqdn_rotate('abcd')
@@ -459,7 +526,7 @@ Returns an array an intersection of two. For example, `intersection(["a","b","c"
 
 #### `is_a`
 
-Boolean check to determine whether a variable is of a given data type. This is equivalent to the `=~` type checks. This function is only available in Puppet 4, or when using the "future" parser.
+Boolean check to determine whether a variable is of a given data type. This is equivalent to the `=~` type checks. This function is available only in Puppet 4 or in Puppet 3 with the "future" parser.
 
   ~~~
   foo = 3
@@ -477,8 +544,12 @@ Boolean check to determine whether a variable is of a given data type. This is e
   }
   ~~~
 
-See the documentation for "The Puppet Type System" for more information about types.
-See the `assert_type()` function for flexible ways to assert the type of a value.
+See the [the Puppet type system](https://docs.puppetlabs.com/references/latest/type.html#about-resource-types) for more information about types.
+See the [`assert_type()`](https://docs.puppetlabs.com/references/latest/function.html#asserttype) function for flexible ways to assert the type of a value.
+
+#### `is_absolute_path`
+
+Returns 'true' if the given path is absolute. *Type*: rvalue.
 
 #### `is_array`
 
@@ -511,6 +582,14 @@ Returns 'true' if the variable returned to this string is an integer. *Type*: rv
 #### `is_ip_address`
 
 Returns 'true' if the string passed to this function is a valid IP address. *Type*: rvalue.
+
+#### `is_ipv6_address`
+
+Returns 'true' if the string passed to this function is a valid IPv6 address. *Type*: rvalue.
+
+#### `is_ipv4_address`
+
+Returns 'true' if the string passed to this function is a valid IPv4 address. *Type*: rvalue.
 
 #### `is_mac_address`
 
@@ -555,7 +634,7 @@ Loads the metadata.json of a target module. Can be used to determine module vers
   notify { $metadata['author']: }
   ~~~
 
-If you do not want to fail the catalog compilation if the metadata file for a module is not present:
+If you do not want to fail the catalog compilation when a module's metadata file is absent:
 
   ~~~
   $metadata = load_module_metadata('mysql', true)
@@ -606,13 +685,11 @@ Converts a number or a string representation of a number into a true boolean. Ze
 
 #### `parsejson`
 
-Converts a string of JSON into the correct Puppet structure. *Type*: rvalue.
-The optional second argument will be returned if the data was not correct.
+Converts a string of JSON into the correct Puppet structure. *Type*: rvalue. The optional second argument is returned if the data was not correct.
 
 #### `parseyaml`
 
-Converts a string of YAML into the correct Puppet structure. *Type*: rvalue.
-The optional second argument will be returned if the data was not correct.
+Converts a string of YAML into the correct Puppet structure. *Type*: rvalue. The optional second argument is returned if the data was not correct.
 
 #### `pick`
 
@@ -626,7 +703,7 @@ From a list of values, returns the first value that is not undefined or an empty
 
 #### `pick_default`
 
-Will return the first value in a list of values. Contrary to the 'pick()' function, the 'pick_default()' does not fail if all arguments are empty. This allows it to use an empty value as default. *Type*: rvalue.
+Returns the first value in a list of values. Contrary to the `pick()` function, the `pick_default()` does not fail if all arguments are empty. This allows it to use an empty value as default. *Type*: rvalue.
 
 #### `prefix`
 
@@ -697,6 +774,10 @@ Reverses the order of a string or array. *Type*: rvalue.
 
 Strips spaces to the right of the string. *Type*: rvalue.
 
+#### `seeded_rand`
+
+Takes an integer max value and a string seed value and returns a repeatable random integer smaller than max. Like `fqdn_rand`, but does not add node specific data to the seed.  *Type*: rvalue.
+
 #### `shuffle`
 
 Randomizes the order of a string or array elements. *Type*: rvalue.
@@ -715,7 +796,7 @@ Returns a new string where runs of the same character that occur in this set are
 
 #### `str2bool`
 
-Converts certain strings to a boolean. This attempts to convert strings that contain the values '1', 't', 'y', and 'yes' to 'true'.  Strings that contain values '0', 'f', 'n', and 'no', or are an an empty string or undefined are converted to 'false'. Any other value will cause an error. *Type*: rvalue.
+Converts certain strings to a boolean. This attempts to convert strings that contain the values '1', 't', 'y', or 'yes' to true. Strings that contain values '0', 'f', 'n', or 'no', or that are an empty string or undefined are converted to false. Any other value causes an error. *Type*: rvalue.
 
 #### `str2saltedsha512`
 
@@ -798,18 +879,13 @@ Converts the argument into bytes, for example "4 kB" becomes "4096". Takes a sin
 
 *Type*: rvalue.
 
-Looks up into a complex structure of arrays and hashes to extract a value by
-its path in the structure. The path is a string of hash keys or array indexes
-starting with zero, separated by the path separator character (default "/").
-The function will go down the structure by each path component and will try to
-return the value at the end of the path.
+DEPRECATED: replaced by `dig()`.
 
-In addition to the required "path" argument the function accepts the default
-argument. It will be returned if the path is not correct, no value was found or
-a any other error have occurred. And the last argument can set the path
-separator character.
+Retrieves a value within multiple layers of hashes and arrays via a string containing a path. The path is a string of hash keys or array indexes starting with zero, separated by the path separator character (default "/"). The function goes through the structure by each path component and tries to return the value at the end of the path.
 
-```ruby
+In addition to the required path argument, the function accepts the default argument. It is returned if the path is not correct, if no value was found, or if any other error has occurred. The last argument can set the path separator character.
+
+~~~ruby
 $data = {
   'a' => {
     'b' => [
@@ -834,7 +910,7 @@ $value = try_get_value($data, 'a/b/c/d', 'not_found')
 # using custom separator
 $value = try_get_value($data, 'a|b', [], '|')
 # $value = ['b1','b2','b3']
-```
+~~~
 
 1. **$data** The data structure we are working with.
 2. **'a/b/2'** The path string.
@@ -1079,6 +1155,38 @@ Validates that the first argument is an integer (or an array of integers). Abort
 
   *Type*: statement.
 
+#### `validate_ip_address`
+
+Validates that the argument is an IP address, regardless of it is an IPv4 or an IPv6
+address. It also validates IP address with netmask. The argument must be given as a string.
+
+The following values will pass:
+
+  ~~~
+  validate_ip_address('0.0.0.0')
+  validate_ip_address('8.8.8.8')
+  validate_ip_address('127.0.0.1')
+  validate_ip_address('194.232.104.150')
+  validate_ip_address('3ffe:0505:0002::')
+  validate_ip_address('::1/64')
+  validate_ip_address('fe80::a00:27ff:fe94:44d6/64')
+  validate_ip_address('8.8.8.8/32')
+  ~~~
+
+The following values will fail, causing compilation to abort:
+
+  ~~~
+  validate_ip_address(1)
+  validate_ip_address(true)
+  validate_ip_address(0.0.0.256)
+  validate_ip_address('::1', {})
+  validate_ip_address('0.0.0.0.0')
+  validate_ip_address('3.3.3')
+  validate_ip_address('23.43.9.22/64')
+  validate_ip_address('260.2.32.43')
+  ~~~
+
+
 #### `validate_numeric`
 
 Validates that the first argument is a numeric value (or an array of numeric values). Aborts catalog compilation if any of the checks fail.
@@ -1121,8 +1229,7 @@ test, and the second argument should be a stringified regular expression (withou
   validate_re($::puppetversion, '^2.7', 'The $puppetversion fact value does not match 2.7')
   ~~~
 
-  Note: Compilation will also abort, if the first argument is not a String. Always use
-  quotes to force stringification:
+  Note: Compilation terminates if the first argument is not a string. Always use quotes to force stringification:
 
   ~~~
   validate_re("${::operatingsystemmajrelease}", '^[57]$')
@@ -1132,7 +1239,7 @@ test, and the second argument should be a stringified regular expression (withou
 
 #### `validate_slength`
 
-Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if arg 2 is not convertable to a number.  Optionally, a minimum string length can be given as the third argument.
+Validates that the first argument is a string (or an array of strings), and is less than or equal to the length of the second argument. It fails if the first argument is not a string or array of strings, or if the second argument is not convertable to a number.  Optionally, a minimum string length can be given as the third argument.
 
   The following values pass:
 
@@ -1182,6 +1289,22 @@ Instead, use:
 
 *Type*: statement.
 
+#### `validate_x509_rsa_key_pair`
+
+Validates a PEM-formatted X.509 certificate and private key using OpenSSL.
+Verifies that the certficate's signature was created from the supplied key.
+
+Fails catalog compilation if any value fails this check.
+
+Takes two arguments, the first argument must be a X.509 certificate and the
+second must be an RSA private key:
+
+  ~~~
+  validate_x509_rsa_key_pair($cert, $key)
+  ~~~
+
+*Type*: statement.
+
 #### `values`
 
 Returns the values of a given hash. For example, given `$hash = {'a'=1, 'b'=2, 'c'=3} values($hash)` returns [1,2,3].
@@ -1204,7 +1327,7 @@ Finds values inside an array based on location. The first argument is the array 
 
 Takes one element from first array given and merges corresponding elements from second array given. This generates a sequence of n-element arrays, where *n* is one more than the count of arguments. For example, `zip(['1','2','3'],['4','5','6'])` results in ["1", "4"], ["2", "5"], ["3", "6"]. *Type*: rvalue.
 
-##Limitations
+## Limitations
 
 As of Puppet Enterprise 3.7, the stdlib module is no longer included in PE. PE users should install the most recent release of stdlib for compatibility with Puppet modules.
 
@@ -1220,13 +1343,13 @@ Versions | Puppet 2.6 | Puppet 2.7 | Puppet 3.x | Puppet 4.x |
 
 **stdlib 5.x**: When released, stdlib 5.x will drop support for Puppet 2.7.x. Please see [this discussion](https://github.com/puppetlabs/puppetlabs-stdlib/pull/176#issuecomment-30251414).
 
-##Development
+## Development
 
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve. We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
+Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve. We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide](https://docs.puppetlabs.com/forge/contributing.html).
 
 To report or research a bug with any part of this module, please go to
 [http://tickets.puppetlabs.com/browse/PUP](http://tickets.puppetlabs.com/browse/PUP).
 
-##Contributors
+## Contributors
 
-The list of contributors can be found at: https://github.com/puppetlabs/puppetlabs-stdlib/graphs/contributors
+The list of contributors can be found at: [https://github.com/puppetlabs/puppetlabs-stdlib/graphs/contributors](https://github.com/puppetlabs/puppetlabs-stdlib/graphs/contributors).
