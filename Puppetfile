@@ -83,7 +83,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ironic',
-  :commit => '7c450d5f1c312e1b4ec6f622a603b59efce22951',
+  :commit => '77974fd8385bd03c03efbfcad4b3bc6b32cc5652',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -99,7 +99,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => 'cb3e09ca2d3ab1e832a0c9e28cc45f9c1392c1f0',
+  :commit => '363d63ac3dbcceeb6c482539e96d62b9ab07d234',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -151,11 +151,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => 'b6f722c23ff04ffba7e87be6fb10e538d9f84b70',
+  :commit => '97ec23c39ec9b47760638d895f2b24ef94b725c9',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '33ce47263871f43f026825daf2639f7204e0b3c2',
+  :commit => '9af479619834a0af0f2a59ce068af3a3dfe5e354',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -235,7 +235,7 @@ mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl.git'
 
 mod 'tempest',
-  :commit => 'af6ea67d88342c2626bb3ea3b25c23d69674339d',
+  :commit => '2d564f1ff7fc96deb47c6790cd563de9e8501e76',
   :git => 'https://github.com/openstack/puppet-tempest.git'
 
 mod 'timezone',
@@ -271,7 +271,7 @@ mod 'vlan',
   :git => 'https://github.com/derekhiggins/puppet-vlan.git'
 
 mod 'vswitch',
-  :commit => 'f4785cc8f3d0a7d2c8548435bf912a5a900e670d',
+  :commit => '3ebeb07188038a7306a6520a3ff4621da8f90eda',
   :git => 'https://github.com/openstack/puppet-vswitch.git'
 
 mod 'xinetd',
@@ -279,7 +279,7 @@ mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
 
 mod 'zaqar',
-  :commit => '6c05509bccbf58d8c6e08ca746d2f350e5d342a4',
+  :commit => 'c1e34c75a2019e747486aab800aa97bd5b8df23e',
   :git => 'https://github.com/openstack/puppet-zaqar.git'
 
 mod 'zookeeper',
