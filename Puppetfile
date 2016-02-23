@@ -151,7 +151,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => 'bc3eda43a6fa59334414dd5c1916fad8b5f99a57',
+  :commit => 'a8849eb13662ec61bd311c70e63419bc984e6464',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -243,7 +243,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => 'dbfada57bc9a24c7ad0aa5c7d3689683bdcc0a54',
+  :commit => 'd98b7c3d9ee5d5fd945118bf7274cbf23dfc6454',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
