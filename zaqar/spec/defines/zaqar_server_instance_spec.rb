@@ -1,16 +1,26 @@
 require 'spec_helper'
-describe 'zaqar::server' do
+describe 'zaqar::server_instance' do
 
-  shared_examples_for 'zaqar::server' do
-    describe 'with a zaqar server enabled' do
-      let :pre_condition do
-        "class {'::zaqar': admin_password => 'foo'}"
-      end
+  shared_examples_for 'zaqar::server_instance' do
+    let(:title) { '1' }
 
-      it { is_expected.to contain_service(platform_params[:zaqar_service_name]).with(
+    let :pre_condition do
+      "class { 'zaqar': admin_password => 'foo' }"
+    end
+
+    let :params do
+      {
+        :transport => 'websocket'
+      }
+    end
+
+    describe 'with a websocket server instance 1' do
+
+      it { is_expected.to contain_service("#{platform_params[:zaqar_service_name]}@1").with(
           :ensure => 'running',
           :enable => true
       )}
+      it { is_expected.to contain_file('/etc/zaqar/1.conf') }
 
     end
   end
@@ -32,7 +42,7 @@ describe 'zaqar::server' do
         end
       end
 
-      it_configures 'zaqar::server'
+      it_configures 'zaqar::server_instance'
     end
   end
 end

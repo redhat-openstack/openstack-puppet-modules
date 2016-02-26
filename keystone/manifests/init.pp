@@ -84,7 +84,8 @@
 #   Defaults to true.
 #
 # [*cache_dir*]
-#   (optional) Directory created when token_provider is pki.
+#   (optional) Directory created when token_provider is pki. This folder is not
+#   created unless enable_pki_setup is set to True.
 #   Defaults to /var/cache/keystone.
 #
 # [*memcache_servers*]
@@ -651,33 +652,14 @@ class keystone(
     }
   }
 
-  group { 'keystone':
-    ensure  => present,
-    system  => true,
-    require => Package['keystone'],
-  }
-
-  user { 'keystone':
-    ensure  => 'present',
-    gid     => 'keystone',
-    system  => true,
-    require => Package['keystone'],
-  }
-
   file { ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone']:
     ensure  => directory,
-    mode    => '0750',
-    owner   => 'keystone',
-    group   => 'keystone',
     require => Package['keystone'],
     notify  => Service[$service_name],
   }
 
   file { '/etc/keystone/keystone.conf':
     ensure  => present,
-    mode    => '0600',
-    owner   => 'keystone',
-    group   => 'keystone',
     require => Package['keystone'],
     notify  => Service[$service_name],
   }
@@ -801,23 +783,21 @@ class keystone(
     'signing/key_size':     value => $signing_key_size;
   }
 
-  # Create cache directory used for signing.
-  file { $cache_dir:
-    ensure => directory,
-  }
-
   # Only do pki_setup if we were asked to do so.  This is needed
   # regardless of the token provider since token revocation lists
   # are always signed.
   if $enable_pki_setup {
+    # Create cache directory used for signing.
+    file { $cache_dir:
+      ensure => directory,
+    }
+
     exec { 'keystone-manage pki_setup':
       path        => '/usr/bin',
-      user        => 'keystone',
       refreshonly => true,
       creates     => $signing_keyfile,
       notify      => Service[$service_name],
       subscribe   => Package['keystone'],
-      require     => User['keystone'],
     }
   }
 
@@ -939,7 +919,6 @@ class keystone(
     validate_string($fernet_key_repository)
     exec { 'keystone-manage fernet_setup':
       path        => '/usr/bin',
-      user        => 'keystone',
       refreshonly => true,
       creates     => "${fernet_key_repository}/0",
       notify      => Service[$service_name],

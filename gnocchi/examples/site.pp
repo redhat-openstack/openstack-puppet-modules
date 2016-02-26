@@ -1,11 +1,11 @@
 # This is an example of site.pp to deploy Gnocchi
 
 class { '::gnocchi::keystone::auth':
-  admin_address    => '10.0.0.1',
-  internal_address => '10.0.0.1',
-  public_address   => '10.0.0.1',
-  password         => 'verysecrete',
-  region           => 'OpenStack'
+  admin_url    => 'http://10.0.0.1:8041',
+  internal_url => 'http://10.0.0.1:8041',
+  public_url   => 'http://10.0.0.1:8041',
+  password     => 'verysecrete',
+  region       => 'OpenStack'
 }
 
 class { '::gnocchi':

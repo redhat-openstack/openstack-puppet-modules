@@ -127,24 +127,10 @@ describe 'keystone' do
       'ensure' => param_hash['client_package_ensure'],
     ) }
 
-    it { is_expected.to contain_group('keystone').with(
-      'ensure' => 'present',
-      'system' => true
-    ) }
-
-    it { is_expected.to contain_user('keystone').with(
-      'ensure' => 'present',
-      'gid'    => 'keystone',
-      'system' => true
-    ) }
-
     it 'should contain the expected directories' do
       ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone'].each do |d|
         is_expected.to contain_file(d).with(
           'ensure'     => 'directory',
-          'owner'      => 'keystone',
-          'group'      => 'keystone',
-          'mode'       => '0750',
           'require'    => 'Package[keystone]'
         )
       end
@@ -157,7 +143,6 @@ describe 'keystone' do
           :user        => 'keystone',
           :refreshonly => true,
           :subscribe   => ['Package[keystone]', 'Keystone_config[database/connection]'],
-          :require     => 'User[keystone]'
         )
       end
     end
@@ -341,17 +326,10 @@ describe 'keystone' do
           'token_provider' => 'keystone.token.providers.uuid.Provider'
         }
       end
-      it { is_expected.to contain_file('/var/cache/keystone').with_ensure('directory') }
-
-      describe 'when overriding the cache dir' do
-        before do
-          params.merge!(:cache_dir => '/var/lib/cache/keystone')
-        end
-        it { is_expected.to contain_file('/var/lib/cache/keystone') }
-      end
 
       describe 'pki_setup is disabled by default' do
         it { is_expected.to_not contain_exec('keystone-manage pki_setup') }
+        it { is_expected.to_not contain_file('/var/cache/keystone').with_ensure('directory') }
       end
     end
 
@@ -363,6 +341,16 @@ describe 'keystone' do
           'token_provider'   => 'keystone.token.providers.pki.Provider'
         }
       end
+
+      it { is_expected.to contain_file('/var/cache/keystone').with_ensure('directory') }
+
+      describe 'when overriding the cache dir' do
+        before do
+          params.merge!(:cache_dir => '/var/lib/cache/keystone')
+        end
+        it { is_expected.to contain_file('/var/lib/cache/keystone') }
+      end
+
       it { is_expected.to contain_exec('keystone-manage pki_setup').with(
         :creates => '/etc/keystone/ssl/private/signing_key.pem'
       ) }

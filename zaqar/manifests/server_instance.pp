@@ -30,13 +30,13 @@ define zaqar::server_instance(
   include ::zaqar
   include ::zaqar::params
 
-  service { "openstack-zaqar@${name}":
+  service { "${::zaqar::params::service_name}@${name}":
     ensure => $service_ensure,
     enable => $enabled,
   }
 
-  Package[$::zaqar::params::package_name] ~> Service["${::zaqar::params::service_name}@${name}"]
-  Package[$::zaqar::params::package_name] ~> File["/etc/zaqar/${name}.conf"]
+  Package['zaqar-common'] ~> Service["${::zaqar::params::service_name}@${name}"]
+  Package['zaqar-common'] ~> File["/etc/zaqar/${name}.conf"]
   File["/etc/zaqar/${name}.conf"] ~> Service["${::zaqar::params::service_name}@${name}"]
   Zaqar_config<||> ~> Service["${::zaqar::params::service_name}@${name}"]
 
