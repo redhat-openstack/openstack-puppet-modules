@@ -611,7 +611,9 @@ class tripleo::loadbalancer (
     }
     $heat_options = {
       'rsprep' => "^Location:\\ http://${public_virtual_ip}(.*) Location:\\ https://${public_virtual_ip}\\1",
-      'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+      'http-request' => [
+        'set-header X-Forwarded-Proto https if { ssl_fc }',
+        'set-header X-Forwarded-Proto http if !{ ssl_fc }'],
     }
     $heat_cw_bind_opts = {
       "${heat_api_vip}:8003" => $haproxy_listen_bind_param,
@@ -643,10 +645,17 @@ class tripleo::loadbalancer (
       "${horizon_vip}:80" => $haproxy_listen_bind_param,
       "${public_virtual_ip}:443" => union($haproxy_listen_bind_param, ['ssl', 'crt', $horizon_bind_certificate]),
     }
+    $horizon_options = {
+      'cookie' => 'SERVERID insert indirect nocache',
+      'rsprep' => '^Location:\ http://(.*) Location:\ https://\1',
+    }
   } else {
     $horizon_bind_opts = {
       "${horizon_vip}:80" => $haproxy_listen_bind_param,
       "${public_virtual_ip}:80" => $haproxy_listen_bind_param,
+    }
+    $horizon_options = {
+      'cookie' => 'SERVERID insert indirect nocache',
     }
   }
 
@@ -721,7 +730,9 @@ class tripleo::loadbalancer (
       collect_exported => false,
       mode             => 'http', # Needed for http-request option
       options          => {
-          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+          'http-request' => [
+            'set-header X-Forwarded-Proto https if { ssl_fc }',
+            'set-header X-Forwarded-Proto http if !{ ssl_fc }'],
       },
     }
     haproxy::balancermember { 'keystone_admin':
@@ -739,7 +750,9 @@ class tripleo::loadbalancer (
       collect_exported => false,
       mode             => 'http', # Needed for http-request option
       options          => {
-          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+          'http-request' => [
+            'set-header X-Forwarded-Proto https if { ssl_fc }',
+            'set-header X-Forwarded-Proto http if !{ ssl_fc }'],
       },
     }
     haproxy::balancermember { 'keystone_public':
@@ -771,7 +784,9 @@ class tripleo::loadbalancer (
       collect_exported => false,
       mode             => 'http', # Needed for http-request option
       options          => {
-          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+          'http-request' => [
+            'set-header X-Forwarded-Proto https if { ssl_fc }',
+            'set-header X-Forwarded-Proto http if !{ ssl_fc }'],
       },
     }
     haproxy::balancermember { 'cinder':
@@ -845,7 +860,9 @@ class tripleo::loadbalancer (
       collect_exported => false,
       mode             => 'http',
       options          => {
-          'http-request' => ['set-header X-Forwarded-Proto https if { ssl_fc }'],
+          'http-request' => [
+            'set-header X-Forwarded-Proto https if { ssl_fc }',
+            'set-header X-Forwarded-Proto http if !{ ssl_fc }'],
       },
     }
     haproxy::balancermember { 'nova_osapi':
@@ -964,9 +981,7 @@ class tripleo::loadbalancer (
   if $horizon {
     haproxy::listen { 'horizon':
       bind             => $horizon_bind_opts,
-      options          => {
-        'cookie' => 'SERVERID insert indirect nocache',
-      },
+      options          => $horizon_options,
       mode             => 'http',
       collect_exported => false,
     }
@@ -981,15 +996,17 @@ class tripleo::loadbalancer (
 
   if $mysql_clustercheck {
     $mysql_listen_options = {
-        'option'      => [ 'tcpka', 'httpchk' ],
-        'timeout'     => [ 'client 0', 'server 0' ],
-        'stick-table' => 'type ip size 1000',
-        'stick'       => 'on dst',
+      'option'         => [ 'tcpka', 'httpchk' ],
+      'timeout client' => '90m',
+      'timeout server' => '90m',
+      'stick-table'    => 'type ip size 1000',
+      'stick'          => 'on dst',
     }
     $mysql_member_options = union($haproxy_member_options, ['backup', 'port 9200', 'on-marked-down shutdown-sessions'])
   } else {
     $mysql_listen_options = {
-        'timeout'     => [ 'client 0', 'server 0' ],
+      'timeout client' => '90m',
+      'timeout server' => '90m',
     }
     $mysql_member_options = union($haproxy_member_options, ['backup'])
   }

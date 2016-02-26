@@ -23,7 +23,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => '4e26e2909b8d41dede6afb15321d455c78c445a1',
+  :commit => '1dec52c57d9359713506e0a346ac1957cd10a45d',
   :git => 'https://github.com/openstack/puppet-cinder.git'
 
 mod 'concat',
@@ -151,7 +151,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => 'a8849eb13662ec61bd311c70e63419bc984e6464',
+  :commit => '60d4eaf7a75ca246f14484700adf58086779ad79',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -243,7 +243,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => 'd98b7c3d9ee5d5fd945118bf7274cbf23dfc6454',
+  :commit => '974eef076bbe521088ccc417156c60e556effdbe',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
