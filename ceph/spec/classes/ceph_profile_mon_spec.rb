@@ -66,6 +66,7 @@ describe 'ceph::profile::mon' do
     let :facts do
       {
         :osfamily         => 'Debian',
+        :lsbdistid        => 'Debian',
         :lsbdistcodename  => 'wheezy',
         :operatingsystem  => 'Debian',
         :hostname         => 'first',
@@ -80,21 +81,11 @@ describe 'ceph::profile::mon' do
     let :facts do
       {
         :osfamily         => 'Debian',
-        :lsbdistcodename  => 'precise',
+        :lsbdistid        => 'Ubuntu',
+        :lsbdistcodename  => 'trusty',
         :operatingsystem  => 'Ubuntu',
         :hostname         => 'first',
       }
-    end
-
-    it_configures 'ceph profile mon'
-  end
-
-  context 'on RHEL6' do
-
-    let :facts do
-      { :osfamily                  => 'RedHat',
-        :hostname                  => 'first',
-        :operatingsystemmajrelease => '6' }
     end
 
     it_configures 'ceph profile mon'
