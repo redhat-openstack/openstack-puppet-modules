@@ -36,16 +36,12 @@
 # [*release*] The name of the Ceph release to install
 #   Optional. Default to 'hammer'.
 #
-# [*extras*] Install Ceph Extra APT repo.
-#   Optional. Defaults to 'false'.
-#
 # [*fastcgi*] Install Ceph fastcgi apache module for Ceph
 #   Optional. Defaults to 'false'
 #
 class ceph::repo (
   $ensure  = present,
   $release = 'hammer',
-  $extras  = false,
   $fastcgi = false,
 ) {
   case $::osfamily {
@@ -53,36 +49,25 @@ class ceph::repo (
       include ::apt
 
       apt::key { 'ceph':
-        ensure     => $ensure,
-        key        => '08B73419AC32B4E966C1A330E84AC2C0460F3994',
-        key_source => 'https://git.ceph.com/release.asc',
+        ensure => $ensure,
+        id     => '08B73419AC32B4E966C1A330E84AC2C0460F3994',
+        source => 'https://download.ceph.com/keys/release.asc',
       }
 
       apt::source { 'ceph':
         ensure   => $ensure,
-        location => "http://ceph.com/debian-${release}/",
+        location => "http://download.ceph.com/debian-${release}/",
         release  => $::lsbdistcodename,
         require  => Apt::Key['ceph'],
         tag      => 'ceph',
       }
 
-      if $extras {
-
-        apt::source { 'ceph-extras':
-          ensure   => $ensure,
-          location => 'http://ceph.com/packages/ceph-extras/debian/',
-          release  => $::lsbdistcodename,
-          require  => Apt::Key['ceph'],
-        }
-
-      }
-
       if $fastcgi {
 
         apt::key { 'ceph-gitbuilder':
-          ensure     => $ensure,
-          key        => 'FCC5CB2ED8E6F6FB79D5B3316EAEAE2203C3951A',
-          key_server => 'keyserver.ubuntu.com',
+          ensure => $ensure,
+          id     => 'FCC5CB2ED8E6F6FB79D5B3316EAEAE2203C3951A',
+          server => 'keyserver.ubuntu.com',
         }
 
         apt::source { 'ceph-fastcgi':
@@ -139,9 +124,9 @@ class ceph::repo (
         enabled    => $enabled,
         descr      => "External Ceph ${release}",
         name       => "ext-ceph-${release}",
-        baseurl    => "http://ceph.com/rpm-${release}/el${el}/\$basearch",
+        baseurl    => "http://download.ceph.com/rpm-${release}/el${el}/\$basearch",
         gpgcheck   => '1',
-        gpgkey     => 'https://git.ceph.com/release.asc',
+        gpgkey     => 'https://download.ceph.com/keys/release.asc',
         mirrorlist => absent,
         priority   => '10', # prefer ceph repos over EPEL
         tag        => 'ceph',
@@ -152,28 +137,12 @@ class ceph::repo (
         enabled    => $enabled,
         descr      => 'External Ceph noarch',
         name       => "ext-ceph-${release}-noarch",
-        baseurl    => "http://ceph.com/rpm-${release}/el${el}/noarch",
+        baseurl    => "http://download.ceph.com/rpm-${release}/el${el}/noarch",
         gpgcheck   => '1',
-        gpgkey     => 'https://git.ceph.com/release.asc',
+        gpgkey     => 'https://download.ceph.com/keys/release.asc',
         mirrorlist => absent,
         priority   => '10', # prefer ceph repos over EPEL
         tag        => 'ceph',
-      }
-
-      if $extras and $el == '6' {
-
-        yumrepo { 'ext-ceph-extras':
-          enabled    => $enabled,
-          descr      => 'External Ceph Extras',
-          name       => 'ext-ceph-extras',
-          baseurl    => 'http://ceph.com/packages/ceph-extras/rpm/rhel6/$basearch',
-          gpgcheck   => '1',
-          gpgkey     => 'https://git.ceph.com/release.asc',
-          mirrorlist => absent,
-          priority   => '10', # prefer ceph repos over EPEL
-          tag        => 'ceph',
-        }
-
       }
 
       if $fastcgi {
@@ -184,7 +153,7 @@ class ceph::repo (
           name       => 'ext-ceph-fastcgi',
           baseurl    => "http://gitbuilder.ceph.com/mod_fastcgi-rpm-rhel${el}-x86_64-basic/ref/master",
           gpgcheck   => '1',
-          gpgkey     => 'https://git.ceph.com/autobuild.asc',
+          gpgkey     => 'https://download.ceph.com/keys/autobuild.asc',
           mirrorlist => absent,
           priority   => '20', # prefer ceph repos over EPEL
           tag        => 'ceph',

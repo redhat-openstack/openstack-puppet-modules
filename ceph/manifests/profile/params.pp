@@ -94,9 +94,25 @@
 #   the repo by yourself.
 #   Optional. Defaults to true
 #
+# [*enable_rgw*] boolean to enable the installation and configuration of
+#   radosgw on the controller
+#   Optional. Default to false
+#
+# [*rgw_user*] the user ID radosgw should run as.
+#   Optional. Default to root
+#
+# [*rgw_print_continue*] should http 100 continue be used
+#  Optional. Default to false
+#
+# [*frontend_type*] What type of frontend to use
+#   Optional. Default is apache-fastcgi. Other options are apache-proxy-fcgi or civetweb
+#
+# [*rgw_frontends*] Arguments to the rgw frontend
+#   Optional. Default is 'fastcgi socket_port=9000 socket_host=127.0.0.1'. Example: "civetweb port=7480"
+#
+
 class ceph::profile::params (
-  # puppet 2.7 compatibiliy hack. TODO: change to undef once 2.7 is deprecated
-  $fsid = '4b5c8c0a-ff60-454b-a1b4-9747aa737d19',
+  $fsid = undef,
   $release = undef,
   $authentication_type = undef,
   $mon_initial_members = undef,
@@ -114,6 +130,11 @@ class ceph::profile::params (
   $client_keys = {},
   $osds = undef,
   $manage_repo = true,
+  $enable_rgw = false,
+  $rgw_user = 'root',
+  $rgw_print_continue = false,
+  $frontend_type = 'apache-fastcgi',
+  $rgw_frontends = 'fastcgi socket_port=9000 socket_host=127.0.0.1',
 ) {
   validate_hash($client_keys)
 

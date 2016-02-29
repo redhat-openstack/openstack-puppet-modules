@@ -88,6 +88,7 @@ define ceph::mon (
       $init = 'sysvinit'
       Service {
         name     => "ceph-mon-${id}",
+        provider => 'init',
         start    => "service ceph start mon.${id}",
         stop     => "service ceph stop mon.${id}",
         status   => "service ceph status mon.${id}",
@@ -112,12 +113,26 @@ define ceph::mon (
         if $key {
           $keyring_path = "/tmp/ceph-mon-keyring-${id}"
 
-          file { $keyring_path:
-            mode    => '0444',
-            content => "[mon.]\n\tkey = ${key}\n\tcaps mon = \"allow *\"\n",
+          Ceph_config<||> ->
+          exec { "create-keyring-${id}":
+            command => "/bin/true # comment to satisfy puppet syntax requirements
+set -ex
+cat > ${keyring_path} << EOF
+[mon.]
+    key = ${key}
+    caps mon = \"allow *\"
+EOF
+
+chmod 0444 ${keyring_path}
+",
+            unless  => "/bin/true # comment to satisfy puppet syntax requirements
+set -ex
+mon_data=\$(ceph-mon ${cluster_option} --id ${id} --show-config-value mon_data) || exit 1 # if ceph-mon fails then the mon is probably not configured yet
+test -e \$mon_data/done
+",
           }
 
-          File[$keyring_path] -> Exec[$ceph_mkfs]
+          Exec["create-keyring-${id}"] -> Exec[$ceph_mkfs]
 
         } else {
           $keyring_path = $keyring
@@ -131,7 +146,7 @@ define ceph::mon (
         $public_addr_option = "--public_addr ${public_addr}"
       }
 
-      Ceph_Config<||> ->
+      Ceph_config<||> ->
       # prevent automatic creation of the client.admin key by ceph-create-keys
       exec { "ceph-mon-${cluster_name}.client.admin.keyring-${id}":
         command => "/bin/true # comment to satisfy puppet syntax requirements

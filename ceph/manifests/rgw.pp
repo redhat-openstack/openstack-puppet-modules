@@ -14,6 +14,7 @@
 #   limitations under the License.
 #
 # Author: Ricardo Rocha <ricardo@catalyst.net.nz>
+# Author: Oleksiy Molchanov <omolchanov@mirantis.com>
 #
 # Configures a ceph radosgw.
 #
@@ -26,6 +27,12 @@
 #
 # [*pkg_radosgw*] Package name for the ceph radosgw.
 #   Optional. Default is osfamily dependent (check ceph::params).
+#
+# [*rgw_ensure*] Whether to start radosgw service.
+#   Optional. Default is running.
+#
+# [*rgw_enable*] Whether to enable radosgw service on boot.
+#   Optional. Default is true.
 #
 # [*rgw_data*] The path where the radosgw data should be stored.
 #   Optional. Default is '/var/lib/ceph/radosgw/${cluster}-${name}.
@@ -51,31 +58,71 @@
 # [*rgw_port*] Port the rados gateway listens.
 #   Optional. Default is undef.
 #
+# [*frontend_type*] What type of frontend to use
+#   Optional. Default is apache-fastcgi. Other option is apache-proxy-fcgi.
+#
+# [*rgw_frontends*] String for rgw_frontends config.
+#   Optional. Default is 'fastcgi socket_port=9000 socket_host=127.0.0.1'.
+#
 # [*syslog*] Whether or not to log to syslog.
 #   Optional. Default is true.
 #
+# [*frontend_type*] What type of frontend to use
+#   Optional. Default is apache-fastcgi. Other options are apache-proxy-fcgi or civetweb
+#
+# [*rgw_frontends*] Arguments to the rgw frontend
+#   Optional. Default is 'fastcgi socket_port=9000 socket_host=127.0.0.1'. Example: "civetweb port=7480"
+#
 define ceph::rgw (
-  $pkg_radosgw = $::ceph::params::pkg_radosgw,
-  $rgw_data = "/var/lib/ceph/radosgw/ceph-${name}",
-  $user = $::ceph::params::user_radosgw,
-  $keyring_path = "/etc/ceph/ceph.client.${name}.keyring",
-  $log_file = '/var/log/ceph/radosgw.log',
-  $rgw_dns_name = $::fqdn,
-  $rgw_socket_path = $::ceph::params::rgw_socket_path,
+  $pkg_radosgw        = $::ceph::params::pkg_radosgw,
+  $rgw_ensure         = 'running',
+  $rgw_enable         = true,
+  $rgw_data           = "/var/lib/ceph/radosgw/ceph-${name}",
+  $user               = $::ceph::params::user_radosgw,
+  $keyring_path       = "/etc/ceph/ceph.client.${name}.keyring",
+  $log_file           = '/var/log/ceph/radosgw.log',
+  $rgw_dns_name       = $::fqdn,
+  $rgw_socket_path    = $::ceph::params::rgw_socket_path,
   $rgw_print_continue = false,
-  $rgw_port = undef,
-  $syslog = true,
+  $rgw_port           = undef,
+  $frontend_type      = 'apache-fastcgi',
+  $rgw_frontends      = 'fastcgi socket_port=9000 socket_host=127.0.0.1',
+  $syslog             = true,
 ) {
 
   ceph_config {
     "client.${name}/host":               value => $::hostname;
     "client.${name}/keyring":            value => $keyring_path;
     "client.${name}/log_file":           value => $log_file;
-    "client.${name}/rgw_dns_name":       value => $rgw_dns_name;
-    "client.${name}/rgw_port":           value => $rgw_port;
-    "client.${name}/rgw_print_continue": value => $rgw_print_continue;
-    "client.${name}/rgw_socket_path":    value => $rgw_socket_path;
     "client.${name}/user":               value => $user;
+  }
+
+  if ($frontend_type == 'civetweb')
+  {
+    ceph::rgw::civetweb { 'radosgw.gateway':
+      rgw_frontends => $rgw_frontends,
+    }
+  }
+  elsif ( ( $frontend_type == 'apache-fastcgi' ) or ( $frontend_type == 'apache-proxy-fcgi' ) )
+  {
+    ceph_config {
+      "client.${name}/rgw_dns_name":       value => $rgw_dns_name;
+      "client.${name}/rgw_print_continue": value => $rgw_print_continue;
+      "client.${name}/rgw_socket_path":    value => $rgw_socket_path;
+    }
+    if $frontend_type == 'apache-fastcgi' {
+      ceph_config {
+        "client.${name}/rgw_port": value => $rgw_port;
+      }
+    } elsif $frontend_type == 'apache-proxy-fcgi' {
+      ceph_config {
+        "client.${name}/rgw_frontends": value => $rgw_frontends;
+      }
+    }
+  }
+  else
+  {
+    fail("Unsupported frontend_type: ${frontend_type}")
   }
 
   package { $pkg_radosgw:
@@ -104,7 +151,13 @@ define ceph::rgw (
 
   # service definition
   if $::operatingsystem == 'Ubuntu' {
-    $init = 'upstart'
+    if $rgw_enable {
+      file { "${rgw_data}/done":
+        ensure => present,
+        before => Service["radosgw-${name}"],
+      }
+    }
+
     Service {
       name     => "radosgw-${name}",
       provider => 'init',
@@ -112,36 +165,42 @@ define ceph::rgw (
       stop     => "stop radosgw id=${name}",
       status   => "status radosgw id=${name}",
     }
-  } elsif ($::operatingsystem == 'Debian') {
-    $init = 'sysvinit'
-    Service {
-      name     => "radosgw-${name}",
-      start    => "service radosgw start id=${name}",
-      stop     => "service radosgw stop id=${name}",
-      status   => "service radosgw status id=${name}",
+  } elsif ($::operatingsystem == 'Debian') or ($::osfamily == 'RedHat') {
+    if $rgw_enable {
+      file { "${rgw_data}/sysvinit":
+        ensure => present,
+        before => Service["radosgw-${name}"],
+      }
     }
-  } elsif ($::osfamily == 'RedHat') {
-    $init = 'sysvinit'
+
     Service {
       name     => "radosgw-${name}",
-      start    => "service ceph-radosgw start id=${name}",
-      stop     => "service ceph-radosgw stop id=${name}",
-      status   => "service ceph-radosgw status id=${name}",
+      start    => 'service radosgw start',
+      stop     => 'service radosgw stop',
+      status   => 'service radosgw status',
     }
   }
   else {
     fail("operatingsystem = ${::operatingsystem} is not supported")
   }
 
+  #for RHEL/CentOS7, systemctl needs to reload to pickup the ceph-radosgw init file
+  if (($::operatingsystem == 'RedHat' or $::operatingsystem == 'CentOS') and (versioncmp($::operatingsystemmajrelease, '7') >= 0))
+  {
+    exec { 'systemctl-reload-from-rgw': #needed for the new init file
+      command => '/usr/bin/systemctl daemon-reload',
+    }
+  }
   service { "radosgw-${name}":
-    ensure => running,
+    ensure => $rgw_ensure,
   }
 
-  Package<| tag == 'ceph' |>
-  -> File['/var/lib/ceph/radosgw']
+  Ceph_config<||> -> Service["radosgw-${name}"]
+  Package<| tag == 'ceph' |> -> File['/var/lib/ceph/radosgw']
+  Package<| tag == 'ceph' |> -> File[$log_file]
+  File['/var/lib/ceph/radosgw']
   -> File[$rgw_data]
-  -> File[$log_file]
-  -> Ceph::Pool<||>
   -> Service["radosgw-${name}"]
-
+  File[$log_file] -> Service["radosgw-${name}"]
+  Ceph::Pool<||> -> Service["radosgw-${name}"]
 }
