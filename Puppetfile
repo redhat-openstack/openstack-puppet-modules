@@ -11,7 +11,7 @@ mod 'cassandra',
   :git => 'https://github.com/locp/cassandra.git'
 
 mod 'ceilometer',
-  :commit => '4446631c8928c4eb7d29e90e3ecbba119a6f1ec4',
+  :commit => '23102fbff3e8b7e45e20d0d82dd6cedb6bd54bb1',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
@@ -247,7 +247,7 @@ mod 'tripleo',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
-  :commit => 'dac27f13f2d376d09511811ea2c84f8b06cd969d',
+  :commit => '651b00eeeee5da46bc08201055c7cac445802181',
   :git => 'https://github.com/openstack/puppet-trove'
 
 mod 'tuskar',
