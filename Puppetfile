@@ -59,7 +59,7 @@ mod 'git',
   :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
 
 mod 'glance',
-  :commit => 'dff967ad98f774d153f63d32630cab75f4daf832',
+  :commit => 'cda71192de9be99b8b68fa592a63c263ff38f48f',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gnocchi',
@@ -75,7 +75,7 @@ mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat.git'
 
 mod 'horizon',
-  :commit => '1c51079068309d71dd59457ff336685953c4b2bd',
+  :commit => '64f5872e5f69491393145c4be1166912e6e30e70',
   :git => 'https://github.com/openstack/puppet-horizon.git'
 
 mod 'inifile',
@@ -99,7 +99,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => 'c18e00e30f389c74613db93bff4a301ad688452a',
+  :commit => 'bdf4ed0a4c10d399142cdcd2d5a967c87f381cd4',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -151,11 +151,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => 'dc9da81ecc608b54669d1dfb82d900a99d6de403',
+  :commit => '6b435a055eaa79d4fe7c25764bf962eda6234b6d',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '425d7756da882eab3219a359fd7190f01f66db6e',
+  :commit => 'ab37a2bdcd109800da36e7aa7ba62b6bc526ee03',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',

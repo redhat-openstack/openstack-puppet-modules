@@ -127,15 +127,6 @@ describe 'keystone' do
       'ensure' => param_hash['client_package_ensure'],
     ) }
 
-    it 'should contain the expected directories' do
-      ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone'].each do |d|
-        is_expected.to contain_file(d).with(
-          'ensure'     => 'directory',
-          'require'    => 'Package[keystone]'
-        )
-      end
-    end
-
     it 'should synchronize the db if $sync_db is true' do
       if param_hash['sync_db']
         is_expected.to contain_exec('keystone-manage db_sync').with(
@@ -143,6 +134,16 @@ describe 'keystone' do
           :user        => 'keystone',
           :refreshonly => true,
           :subscribe   => ['Package[keystone]', 'Keystone_config[database/connection]'],
+        )
+      end
+    end
+
+    it 'should bootstrap $enable_bootstrap is true' do
+      if param_hash['enable_bootstrap']
+        is_expected.to contain_exec('keystone-manage bootstrap').with(
+          :command     => 'keystone-manage bootstrap --bootstrap-password service_token',
+          :user        => 'keystone',
+          :refreshonly => true
         )
       end
     end
@@ -338,7 +339,7 @@ describe 'keystone' do
         {
           'enable_pki_setup' => true,
           'admin_token'      => 'service_token',
-          'token_provider'   => 'keystone.token.providers.pki.Provider'
+          'token_provider'   => 'pki'
         }
       end
 
@@ -368,7 +369,7 @@ describe 'keystone' do
       let :params do
         {
           'admin_token'          => 'service_token',
-          'token_provider'       => 'keystone.token.providers.uuid.Provider',
+          'token_provider'       => 'uuid',
           'enable_pki_setup'     => false,
           'signing_certfile'     => 'signing_certfile',
           'signing_keyfile'      => 'signing_keyfile',
@@ -410,7 +411,7 @@ describe 'keystone' do
       let :params do
         {
           'admin_token'          => 'service_token',
-          'token_provider'       => 'keystone.token.providers.pki.Provider',
+          'token_provider'       => 'pki',
           'enable_pki_setup'     => false,
           'signing_certfile'     => 'signing_certfile',
           'signing_keyfile'      => 'signing_keyfile',
@@ -460,7 +461,7 @@ describe 'keystone' do
     describe 'when configuring catalog driver' do
       let :params do
         { :admin_token    => 'service_token',
-          :catalog_driver => 'keystone.catalog.backends.alien.AlienCatalog' }
+          :catalog_driver => 'alien' }
       end
 
       it { is_expected.to contain_keystone_config('catalog/driver').with_value(params[:catalog_driver]) }
@@ -499,12 +500,23 @@ describe 'keystone' do
     it { is_expected.not_to contain_exec('keystone-manage db_sync') }
   end
 
+  describe 'when enable_bootstrap is set to false' do
+    let :params do
+      {
+        'admin_token' => 'service_token',
+        'enable_bootstrap'     => false,
+      }
+    end
+
+    it { is_expected.not_to contain_exec('keystone-manage bootstrap') }
+  end
+
   describe 'configure memcache servers if set' do
     let :params do
       {
         'admin_token'                  => 'service_token',
         'memcache_servers'             => [ 'SERVER1:11211', 'SERVER2:11211' ],
-        'token_driver'                 => 'keystone.token.backends.memcache.Token',
+        'token_driver'                 => 'memcache',
         'cache_backend'                => 'dogpile.cache.memcached',
         'cache_backend_argument'       => ['url:SERVER1:12211'],
         'memcache_dead_retry'          => '60',
@@ -539,7 +551,7 @@ describe 'keystone' do
       {
         'admin_token'                  => 'service_token',
         'memcache_servers'             => [ 'SERVER1:11211', 'SERVER2:11211' ],
-        'token_driver'                 => 'keystone.token.backends.memcache.Token',
+        'token_driver'                 => 'memcache',
         'cache_backend'                => 'dogpile.cache.memcached',
         'cache_backend_argument'       => ['url:SERVER3:12211'],
         'cache_memcache_servers'       => [ 'SERVER3:11211', 'SERVER4:11211' ],
@@ -575,7 +587,7 @@ describe 'keystone' do
       {
         'admin_token'                  => 'service_token',
         'memcache_servers'             => [ 'SERVER1:11211', 'SERVER2:11211' ],
-        'token_driver'                 => 'keystone.token.backends.memcache.Token',
+        'token_driver'                 => 'memcache',
         'cache_backend'                => 'dogpile.cache.memcached',
         'cache_backend_argument'       => ['url:SERVER3:12211'],
         'cache_enabled'                => false,
@@ -758,7 +770,7 @@ describe 'keystone' do
       default_params
     end
 
-    it { is_expected.to contain_keystone_config('catalog/driver').with_value('keystone.catalog.backends.sql.Catalog') }
+    it { is_expected.to contain_keystone_config('catalog/driver').with_value('sql') }
   end
 
   describe 'setting default template catalog' do
@@ -769,7 +781,7 @@ describe 'keystone' do
       }
     end
 
-    it { is_expected.to contain_keystone_config('catalog/driver').with_value('keystone.catalog.backends.templated.Catalog') }
+    it { is_expected.to contain_keystone_config('catalog/driver').with_value('templated') }
     it { is_expected.to contain_keystone_config('catalog/template_file').with_value('/etc/keystone/default_catalog.templates') }
   end
 
@@ -814,7 +826,7 @@ describe 'keystone' do
       }
     end
 
-    it { is_expected.to contain_keystone_config('catalog/driver').with_value('keystone.catalog.backends.templated.Catalog') }
+    it { is_expected.to contain_keystone_config('catalog/driver').with_value('templated') }
     it { is_expected.to contain_keystone_config('catalog/template_file').with_value('/some/template_file') }
   end
 
