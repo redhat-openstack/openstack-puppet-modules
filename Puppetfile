@@ -59,7 +59,7 @@ mod 'git',
   :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
 
 mod 'glance',
-  :commit => '5160235bf1246295cfca22e2ee0d93f79bfe07b7',
+  :commit => 'ee9e375116ebfc7739429477b14eddd989457c6c',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gnocchi',
@@ -71,7 +71,7 @@ mod 'haproxy',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => '043a1ea5dcd60b7a626202a1b86b98c9c1f9a90f',
+  :commit => '59a7e6fa5180ae49b30bd0294ab9a1a37d878ff6',
   :git => 'https://github.com/openstack/puppet-heat.git'
 
 mod 'horizon',
