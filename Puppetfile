@@ -23,7 +23,7 @@ mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger.git'
 
 mod 'cinder',
-  :commit => '06e52c20785a35abc75555ab332a603cf63bb877',
+  :commit => '9bc49efba89267967927f74d99cd6807b0fecae1',
   :git => 'https://github.com/openstack/puppet-cinder.git'
 
 mod 'concat',
@@ -83,7 +83,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ironic',
-  :commit => '77974fd8385bd03c03efbfcad4b3bc6b32cc5652',
+  :commit => 'dfff2af1472146bf220929d9993ae30b24d269c2',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -99,7 +99,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => 'bdf4ed0a4c10d399142cdcd2d5a967c87f381cd4',
+  :commit => '6fbae758c128d0d49e1cf196f198c9c3aa92f78b',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -151,11 +151,11 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '6b435a055eaa79d4fe7c25764bf962eda6234b6d',
+  :commit => 'd4f299a4e2dc00e004fbcc7646c57c4d19be4d65',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => 'ab37a2bdcd109800da36e7aa7ba62b6bc526ee03',
+  :commit => '765111faaf66fd39f39e2b8229aa5ffde37cbec3',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
@@ -247,7 +247,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => '5f915a88e7c4eec6e6a0341808f0fbc4a4b1a161',
+  :commit => 'ad875e3361ee6c8492b00f7d1d36bd9b59d1f981',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
