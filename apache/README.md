@@ -3331,12 +3331,13 @@ Ex:
 
 ``` puppet
 apache::fastcgi::server { 'php':
-  host       => '127.0.0.1:9000',
-  timeout    => 15,
-  flush      => false,
-  faux_path  => '/var/www/php.fcgi',
-  fcgi_alias => '/php.fcgi',
-  file_type  => 'application/x-httpd-php'
+  host        => '127.0.0.1:9000',
+  timeout     => 15,
+  flush       => false,
+  faux_path   => '/var/www/php.fcgi',
+  fcgi_alias  => '/php.fcgi',
+  file_type   => 'application/x-httpd-php',
+  pass_header => ''
 }
 ```
 
@@ -3353,6 +3354,14 @@ apache::vhost { 'www':
 ##### `host`
 
 The hostname or IP address and TCP port number (1-65535) of the FastCGI server.
+
+It is also possible to pass a unix socket:
+
+``` puppet
+apache::fastcgi::server { 'php':
+  host        => '/var/run/fcgi.sock',
+}
+```
 
 ##### `timeout`
 
@@ -3374,9 +3383,13 @@ A unique alias. This is used internally to link the action with the FastCGI serv
 
 The MIME-type of the file to be processed by the FastCGI server.
 
+##### `pass_header`
+
+The name of an HTTP Request Header to be passed in the request environment. This option makes available the contents of headers which are normally not available (e.g. Authorization) to a CGI environment.
+
 #### Defined type: `apache::vhost::custom`
 
-The `apache::vhost::custom` defined type is a thin wrapper around the `apache::custom_config` defined type, and simply overrides some of its default settings specifc to the virtual host directory in Apache.
+The `apache::vhost::custom` defined type is a thin wrapper around the `apache::custom_config` defined type, and simply overrides some of its default settings specific to the virtual host directory in Apache.
 
 **Parameters within `apache::vhost::custom`**:
 

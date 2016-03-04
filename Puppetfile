@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => 'aeb1ea1fbe8bef4999860357e064bbe6128fdbfb',
+  :commit => '8552994ab3d70b7b167f2ff681e6ea92be5fffaa',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'cassandra',
@@ -15,7 +15,7 @@ mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => '08806947a8e282f80bdd33c16a4e45bbd3bf189f',
+  :commit => '2fb87074581f04c83885f8dec4f3bad0eaeae9ed',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
