@@ -83,7 +83,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ironic',
-  :commit => '10b056b50847863f44f24c5663c31384fd130169',
+  :commit => 'fc2496a4ef7f123bf4cdb3cb1ea7c32ce8c23262',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
@@ -167,7 +167,7 @@ mod 'opendaylight',
   :git => 'https://github.com/dfarrell07/puppet-opendaylight.git'
 
 mod 'openstack_extras',
-  :commit => '63bebcae6cc4b8396434756b38a3547f9c73de9a',
+  :commit => 'f9d4cd59e47a63da4d11161b8dec4f50753096c1',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
@@ -243,7 +243,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => '974eef076bbe521088ccc417156c60e556effdbe',
+  :commit => '8728efa710ecca2a965b88bf0ff9b435cd9a40e6',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
