@@ -1,0 +1,7 @@
+Code-Review+2: Emilien Macchi <emilien@redhat.com>
+Verified+1: Emilien Macchi <emilien@redhat.com>
+Submitted-by: Emilien Macchi <emilien@redhat.com>
+Submitted-at: Tue, 08 Mar 2016 14:08:29 +0100
+Reviewed-on: https://review.gerrithub.io/265264
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-liberty
