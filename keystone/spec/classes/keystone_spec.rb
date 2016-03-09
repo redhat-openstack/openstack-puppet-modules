@@ -283,6 +283,9 @@ describe 'keystone' do
       'validate'        => false
     )}
     it { is_expected.to contain_service('keystone').with_before(/Service\[#{platform_parameters[:httpd_service_name]}\]/) }
+    it { is_expected.to contain_exec('restart_keystone').with(
+      'command' => "service #{platform_parameters[:httpd_service_name]} restart",
+    ) }
   end
 
   describe 'when using invalid service name for keystone' do
@@ -606,7 +609,7 @@ describe 'keystone' do
 
   describe 'with RabbitMQ communication SSLed' do
     let :params do
-      default_params.merge!({
+      default_params.merge({
         :rabbit_use_ssl     => true,
         :kombu_ssl_ca_certs => '/path/to/ssl/ca/certs',
         :kombu_ssl_certfile => '/path/to/ssl/cert/file',
@@ -626,11 +629,11 @@ describe 'keystone' do
 
   describe 'with RabbitMQ communication not SSLed' do
     let :params do
-      default_params.merge!({
+      default_params.merge({
         :rabbit_use_ssl     => false,
-        :kombu_ssl_ca_certs => 'undef',
-        :kombu_ssl_certfile => 'undef',
-        :kombu_ssl_keyfile  => 'undef',
+        :kombu_ssl_ca_certs => false,
+        :kombu_ssl_certfile => false,
+        :kombu_ssl_keyfile  => false,
         :kombu_ssl_version  => 'TLSv1'
       })
     end
@@ -835,12 +838,6 @@ describe 'keystone' do
   end
 
   shared_examples_for "when configuring default domain" do
-    describe 'with default config' do
-      let :params do
-        default_params
-      end
-      it { is_expected.to_not contain_exec('restart_keystone') }
-    end
     describe 'with default domain and eventlet service is managed and enabled' do
       let :params do
         default_params.merge({
@@ -862,9 +859,6 @@ describe 'keystone' do
           'service_name'  => 'httpd',
         })
       end
-      it { is_expected.to contain_exec('restart_keystone').with(
-        'command' => "service #{platform_parameters[:httpd_service_name]} restart",
-      ) }
       it { is_expected.to contain_anchor('default_domain_created') }
     end
     describe 'with default domain and service is not managed' do

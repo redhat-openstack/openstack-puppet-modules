@@ -71,7 +71,7 @@ mod 'haproxy',
   :git => 'https://github.com/puppetlabs/puppetlabs-haproxy.git'
 
 mod 'heat',
-  :commit => '59a7e6fa5180ae49b30bd0294ab9a1a37d878ff6',
+  :commit => '536651fe8ac675e90a6bbceae2f364a114dd0fdd',
   :git => 'https://github.com/openstack/puppet-heat.git'
 
 mod 'horizon',
@@ -99,7 +99,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => '5525e033af2cd70d7efc3b61ebc99e20d52fc882',
+  :commit => '0ece5bfedf2e6af7b7281879cf6ebdfdb370831e',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
@@ -151,7 +151,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '60d4eaf7a75ca246f14484700adf58086779ad79',
+  :commit => '99bbfbb3426a1c3bb0b3966e72495117b13991dd',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
