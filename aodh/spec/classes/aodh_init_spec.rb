@@ -27,6 +27,7 @@ describe 'aodh' do
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
         is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_ensure('absent')
+        is_expected.to contain_aodh_config('database/alarm_history_time_to_live').with_value('<SERVICE DEFAULT>')
       end
     end
 
@@ -44,7 +45,9 @@ describe 'aodh' do
           :ensure_package                     => '2012.1.1-15.el6',
           :gnocchi_url                        => 'http://127.0.0.1:8041',
           :notification_driver                => 'ceilometer.compute.aodh_notifier',
-          :notification_topics                => 'openstack' }
+          :notification_topics                => 'openstack',
+          :alarm_history_time_to_live         => '604800',
+        }
       end
 
       it 'configures rabbit' do
@@ -56,6 +59,7 @@ describe 'aodh' do
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_virtual_host').with_value('/')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('60')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_rate').with_value('10')
+        is_expected.to contain_aodh_config('database/alarm_history_time_to_live').with_value('604800')
       end
 
       it 'configures various things' do

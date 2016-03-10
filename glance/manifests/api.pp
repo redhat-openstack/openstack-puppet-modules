@@ -175,21 +175,45 @@
 #
 # [*cert_file*]
 #   (optinal) Certificate file to use when starting API server securely
-#   Defaults to false, not set
+#   Defaults to $::os_service_default
 #
 # [*key_file*]
 #   (optional) Private key file to use when starting API server securely
-#   Defaults to false, not set
+#   Defaults to $::os_service_default
 #
 # [*ca_file*]
 #   (optional) CA certificate file to use to verify connecting clients
-#   Defaults to false, not set
+#   Defaults to $::os_service_default
 #
-# [*known_stores*]
-#   (optional)List of which store classes and store class locations are
+# [*registry_client_cert_file*]
+#   (optinal) The path to the cert file to use in SSL connections to the
+#   registry server.
+#   Defaults to $::os_service_default
+#
+# [*registry_client_key_file*]
+#   (optinal) The path to the private key file to use in SSL connections to the
+#   registry server.
+#   Defaults to $::os_service_default
+#
+# [*registry_client_ca_file*]
+#   (optinal) The path to the CA certificate file to use in SSL connections to the
+#   registry server.
+#   Defaults to $::os_service_default
+#
+# [*stores*]
+#   (optional) List of which store classes and store class locations are
 #    currently known to glance at startup.
 #    Defaults to false.
 #    Example: ['glance.store.filesystem.Store','glance.store.http.Store']
+#
+# [*default_store*]
+#   (optional) The default backend store, should be given as a string. Value
+#   must be provided if more than one store is listed in 'stores'.
+#   Defaults to undef
+#
+# [*multi_store*]
+#   (optional) Boolean describing if multiple backends will be configured
+#   Defaults to false
 #
 # [*image_cache_dir*]
 #   (optional) Base directory that the Image Cache uses.
@@ -234,58 +258,74 @@
 #       try_sleep: 10
 #   Defaults to {}
 #
+#  === deprecated parameters:
+#
+# [*known_stores*]
+#   (optional) DEPRECATED List of which store classes and store class
+#   locations are currently known to glance at startup. This parameter
+#   should be removed in the N release.
+#   Defaults to false.
+#   Example: ['glance.store.filesystem.Store','glance.store.http.Store']
+#
 class glance::api(
   $keystone_password,
-  $package_ensure           = 'present',
-  $verbose                  = undef,
-  $debug                    = undef,
-  $bind_host                = '0.0.0.0',
-  $bind_port                = '9292',
-  $backlog                  = '4096',
-  $workers                  = $::processorcount,
-  $log_file                 = undef,
-  $log_dir                  = undef,
-  $registry_host            = '0.0.0.0',
-  $registry_port            = '9191',
-  $registry_client_protocol = 'http',
-  $scrub_time               = $::os_service_default,
-  $delayed_delete           = $::os_service_default,
-  $auth_type                = 'keystone',
-  $auth_region              = $::os_service_default,
-  $auth_uri                 = 'http://127.0.0.1:5000/',
-  $identity_uri             = 'http://127.0.0.1:35357/',
-  $memcached_servers        = $::os_service_default,
-  $pipeline                 = 'keystone',
-  $keystone_tenant          = 'services',
-  $keystone_user            = 'glance',
-  $manage_service           = true,
-  $enabled                  = true,
-  $use_syslog               = undef,
-  $use_stderr               = undef,
-  $log_facility             = undef,
-  $show_image_direct_url    = false,
-  $show_multiple_locations  = $::os_service_default,
-  $location_strategy        = $::os_service_default,
-  $purge_config             = false,
-  $cert_file                = false,
-  $key_file                 = false,
-  $ca_file                  = false,
-  $known_stores             = false,
-  $database_connection      = undef,
-  $database_idle_timeout    = undef,
-  $database_min_pool_size   = undef,
-  $database_max_pool_size   = undef,
-  $database_max_retries     = undef,
-  $database_retry_interval  = undef,
-  $database_max_overflow    = undef,
-  $image_cache_max_size     = $::os_service_default,
-  $image_cache_stall_time   = $::os_service_default,
-  $image_cache_dir          = '/var/lib/glance/image-cache',
-  $os_region_name           = 'RegionOne',
-  $signing_dir              = $::os_service_default,
-  $token_cache_time         = $::os_service_default,
-  $validate                 = false,
-  $validation_options       = {},
+  $package_ensure            = 'present',
+  $verbose                   = undef,
+  $debug                     = undef,
+  $bind_host                 = '0.0.0.0',
+  $bind_port                 = '9292',
+  $backlog                   = '4096',
+  $workers                   = $::processorcount,
+  $log_file                  = undef,
+  $log_dir                   = undef,
+  $registry_host             = '0.0.0.0',
+  $registry_port             = '9191',
+  $registry_client_protocol  = 'http',
+  $scrub_time                = $::os_service_default,
+  $delayed_delete            = $::os_service_default,
+  $auth_type                 = 'keystone',
+  $auth_region               = $::os_service_default,
+  $auth_uri                  = 'http://127.0.0.1:5000/',
+  $identity_uri              = 'http://127.0.0.1:35357/',
+  $memcached_servers         = $::os_service_default,
+  $pipeline                  = 'keystone',
+  $keystone_tenant           = 'services',
+  $keystone_user             = 'glance',
+  $manage_service            = true,
+  $enabled                   = true,
+  $use_syslog                = undef,
+  $use_stderr                = undef,
+  $log_facility              = undef,
+  $show_image_direct_url     = false,
+  $show_multiple_locations   = $::os_service_default,
+  $location_strategy         = $::os_service_default,
+  $purge_config              = false,
+  $cert_file                 = $::os_service_default,
+  $key_file                  = $::os_service_default,
+  $ca_file                   = $::os_service_default,
+  $registry_client_cert_file = $::os_service_default,
+  $registry_client_key_file  = $::os_service_default,
+  $registry_client_ca_file   = $::os_service_default,
+  $stores                    = false,
+  $default_store             = undef,
+  $multi_store               = false,
+  $database_connection       = undef,
+  $database_idle_timeout     = undef,
+  $database_min_pool_size    = undef,
+  $database_max_pool_size    = undef,
+  $database_max_retries      = undef,
+  $database_retry_interval   = undef,
+  $database_max_overflow     = undef,
+  $image_cache_max_size      = $::os_service_default,
+  $image_cache_stall_time    = $::os_service_default,
+  $image_cache_dir           = '/var/lib/glance/image-cache',
+  $os_region_name            = 'RegionOne',
+  $signing_dir               = $::os_service_default,
+  $token_cache_time          = $::os_service_default,
+  $validate                  = false,
+  $validation_options        = {},
+  # DEPRECATED PARAMETERS
+  $known_stores              = false,
 ) inherits glance {
 
   include ::glance::policy
@@ -302,7 +342,6 @@ class glance::api(
     )
   }
 
-  Package[$glance::params::api_package_name] -> File['/etc/glance/']
   Package[$glance::params::api_package_name] -> Class['glance::policy']
 
   # adding all of this stuff b/c it devstack says glance-api uses the
@@ -311,15 +350,6 @@ class glance::api(
   Glance_cache_config<||> ~> Service['glance-api']
   Class['glance::policy'] ~> Service['glance-api']
   Service['glance-api']   ~> Glance_image<||>
-
-  File {
-    ensure  => present,
-    owner   => 'glance',
-    group   => 'glance',
-    mode    => '0640',
-    notify  => Service['glance-api'],
-    require => Class['glance']
-  }
 
   # basic service config
   glance_api_config {
@@ -337,10 +367,50 @@ class glance::api(
     'glance_store/os_region_name':     value => $os_region_name;
   }
 
-  # known_stores config
-  if $known_stores {
+  # stores config
+  if $stores and $known_stores {
+    fail('known_stores and stores cannot both be assigned values')
+  } elsif $stores {
+    $stores_real = $stores
+  } elsif $known_stores {
+    warning('The known_stores parameter is deprecated, use stores instead')
+    $stores_real = $known_stores
+  }
+  if $default_store {
+    $default_store_real = $default_store
+  }
+  # determine value for glance_store/stores
+  if !empty($stores_real) {
+    if size(any2array($stores_real)) > 1 {
+      $final_stores_real = join($stores_real, ',')
+    } else {
+      $final_stores_real = $stores_real[0]
+    }
+    if !$default_store_real {
+      # set default store based on provided stores when it isn't explicitly set
+      warning("default_store not provided, it will be automatically set to ${stores_real[0]}")
+      $default_store_real = $stores_real[0]
+    }
+  } elsif $default_store_real {
+    # set stores based on default_store if only default_store is provided
+    $final_stores_real = $default_store
+  } else {
+    warning('Glance-api is being provisioned without any stores configured')
+  }
+
+  if $default_store_real and $multi_store {
     glance_api_config {
-      'glance_store/stores':  value => join($known_stores, ',');
+      'glance_store/default_store': value => $default_store_real;
+    }
+  } elsif $multi_store {
+    glance_api_config {
+      'glance_store/default_store': ensure => absent;
+    }
+  }
+
+  if $final_stores_real {
+    glance_api_config {
+      'glance_store/stores': value => $final_stores_real;
     }
   } else {
     glance_api_config {
@@ -400,41 +470,13 @@ class glance::api(
   }
 
   # SSL Options
-  if $cert_file {
-    glance_api_config {
-      'DEFAULT/cert_file' : value => $cert_file;
-    }
-  } else {
-    glance_api_config {
-      'DEFAULT/cert_file': ensure => absent;
-    }
-  }
-  if $key_file {
-    glance_api_config {
-      'DEFAULT/key_file'  : value => $key_file;
-    }
-  } else {
-    glance_api_config {
-      'DEFAULT/key_file': ensure => absent;
-    }
-  }
-  if $ca_file {
-    glance_api_config {
-      'DEFAULT/ca_file'   : value => $ca_file;
-    }
-  } else {
-    glance_api_config {
-      'DEFAULT/ca_file': ensure => absent;
-    }
-  }
-
-  resources { 'glance_api_config':
-    purge => $purge_config,
-  }
-
-  file { ['/etc/glance/glance-api.conf',
-          '/etc/glance/glance-api-paste.ini',
-          '/etc/glance/glance-cache.conf']:
+  glance_api_config {
+    'DEFAULT/cert_file':                 value => $cert_file;
+    'DEFAULT/key_file' :                 value => $key_file;
+    'DEFAULT/ca_file'  :                 value => $ca_file;
+    'DEFAULT/registry_client_ca_file':   value => $registry_client_ca_file;
+    'DEFAULT/registry_client_cert_file': value => $registry_client_cert_file;
+    'DEFAULT/registry_client_key_file':  value => $registry_client_key_file;
   }
 
   if $manage_service {

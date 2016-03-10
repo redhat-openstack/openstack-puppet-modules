@@ -8,6 +8,11 @@
 #   (optional) The state of aodh packages
 #   Defaults to 'present'
 #
+#  [*alarm_history_time_to_live*]
+#    (Optional) Number of seconds that alarm histories are kept in the database for
+#    (<= 0 means forever)
+#    Defaults to $::os_service_default
+#
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
 #     rabbit (for rabbitmq)
@@ -205,6 +210,7 @@
 #
 class aodh (
   $ensure_package                     = 'present',
+  $alarm_history_time_to_live         = $::os_service_default,
   $rpc_backend                        = 'rabbit',
   $rabbit_host                        = 'localhost',
   $rabbit_hosts                       = undef,
@@ -351,9 +357,10 @@ class aodh (
     aodh_config { 'DEFAULT/notification_driver': ensure => absent; }
   }
   aodh_config {
-    'DEFAULT/rpc_backend':         value => $rpc_backend;
-    'DEFAULT/notification_topics': value => $notification_topics;
-    'DEFAULT/gnocchi_url':         value => $gnocchi_url;
+    'DEFAULT/rpc_backend':                 value => $rpc_backend;
+    'DEFAULT/notification_topics':         value => $notification_topics;
+    'DEFAULT/gnocchi_url':                 value => $gnocchi_url;
+    'database/alarm_history_time_to_live': value => $alarm_history_time_to_live;
   }
 
 }

@@ -32,6 +32,7 @@ describe 'glance::api' do
       :known_stores             => false,
       :delayed_delete           => '<SERVICE DEFAULT>',
       :scrub_time               => '<SERVICE DEFAULT>',
+      :default_store            => false,
       :image_cache_dir          => '/var/lib/glance/image-cache',
       :image_cache_stall_time   => '<SERVICE DEFAULT>',
       :image_cache_max_size     => '<SERVICE DEFAULT>',
@@ -145,9 +146,12 @@ describe 'glance::api' do
         end
 
         it 'is_expected.to have no ssl options' do
-          is_expected.to contain_glance_api_config('DEFAULT/ca_file').with_ensure('absent')
-          is_expected.to contain_glance_api_config('DEFAULT/cert_file').with_ensure('absent')
-          is_expected.to contain_glance_api_config('DEFAULT/key_file').with_ensure('absent')
+          is_expected.to contain_glance_api_config('DEFAULT/ca_file').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_glance_api_config('DEFAULT/cert_file').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_glance_api_config('DEFAULT/key_file').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_glance_api_config('DEFAULT/registry_client_ca_file').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_glance_api_config('DEFAULT/registry_client_cert_file').with_value('<SERVICE DEFAULT>')
+          is_expected.to contain_glance_api_config('DEFAULT/registry_client_key_file').with_value('<SERVICE DEFAULT>')
         end
 
         it 'is_expected.to configure itself for keystone if that is the auth_type' do
@@ -232,9 +236,12 @@ describe 'glance::api' do
     describe 'with ssl options' do
       let :params do
         default_params.merge({
-          :ca_file     => '/tmp/ca_file',
-          :cert_file   => '/tmp/cert_file',
-          :key_file    => '/tmp/key_file'
+          :ca_file                   => '/tmp/ca_file',
+          :cert_file                 => '/tmp/cert_file',
+          :key_file                  => '/tmp/key_file',
+          :registry_client_ca_file   => '/tmp/registry_ca_file',
+          :registry_client_key_file  => '/tmp/registry_key_file',
+          :registry_client_cert_file => '/tmp/registry_cert_file',
         })
       end
 
@@ -242,9 +249,12 @@ describe 'glance::api' do
         it { is_expected.to contain_glance_api_config('DEFAULT/ca_file').with_value('/tmp/ca_file') }
         it { is_expected.to contain_glance_api_config('DEFAULT/cert_file').with_value('/tmp/cert_file') }
         it { is_expected.to contain_glance_api_config('DEFAULT/key_file').with_value('/tmp/key_file') }
+        it { is_expected.to contain_glance_api_config('DEFAULT/registry_client_ca_file').with_value('/tmp/registry_ca_file') }
+        it { is_expected.to contain_glance_api_config('DEFAULT/registry_client_key_file').with_value('/tmp/registry_key_file') }
+        it { is_expected.to contain_glance_api_config('DEFAULT/registry_client_cert_file').with_value('/tmp/registry_cert_file') }
       end
     end
-    describe 'with known_stores by default' do
+    describe 'with stores by default' do
       let :params do
         default_params
       end
@@ -252,14 +262,64 @@ describe 'glance::api' do
       it { is_expected.to_not contain_glance_api_config('glance_store/stores').with_value('false') }
     end
 
-    describe 'with known_stores override' do
+    describe 'with stores override' do
       let :params do
         default_params.merge({
-          :known_stores   => ['glance.store.filesystem.Store','glance.store.http.Store'],
+          :default_store => 'glance.store.filesystem.Store',
+          :stores        => ['glance.store.filesystem.Store','glance.store.http.Store'],
+          :multi_store   => true,
         })
       end
 
-      it { is_expected.to contain_glance_api_config('glance_store/stores').with_value("glance.store.filesystem.Store,glance.store.http.Store") }
+      it { is_expected.to contain_glance_api_config('glance_store/default_store').with_value('glance.store.filesystem.Store') }
+      it { is_expected.to contain_glance_api_config('glance_store/stores').with_value('glance.store.filesystem.Store,glance.store.http.Store') }
+    end
+
+    describe 'with single store override and no default store' do
+      let :params do
+        default_params.merge({
+          :stores      => ['glance.store.filesystem.Store'],
+          :multi_store => true,
+        })
+      end
+
+      it { is_expected.to contain_glance_api_config('glance_store/default_store').with_value('glance.store.filesystem.Store') }
+      it { is_expected.to contain_glance_api_config('glance_store/stores').with_value('glance.store.filesystem.Store') }
+    end
+
+    describe 'with multiple stores override and no default store' do
+      let :params do
+        default_params.merge({
+          :stores      => ['glance.store.filesystem.Store', 'glance.store.http.Store'],
+          :multi_store => true,
+        })
+      end
+
+      it { is_expected.to contain_glance_api_config('glance_store/default_store').with_value('glance.store.filesystem.Store') }
+      it { is_expected.to contain_glance_api_config('glance_store/stores').with_value('glance.store.filesystem.Store,glance.store.http.Store') }
+    end
+
+    describe 'with both stores and known_stores provided' do
+      let :params do
+        default_params.merge({
+          :stores       => ['glance.store.filesystem.Store'],
+          :known_stores => ['glance.store.http.store'],
+        })
+      end
+
+      it { is_expected.to raise_error(Puppet::Error, /known_stores and stores cannot both be assigned values/) }
+    end
+
+    describe 'with known_stores not set but with default_store' do
+      let :params do
+        default_params.merge({
+          :default_store => 'glance.store.filesystem.Store',
+          :multi_store   => true,
+        })
+      end
+
+      it { is_expected.to contain_glance_api_config('glance_store/default_store').with_value('glance.store.filesystem.Store') }
+      it { is_expected.to contain_glance_api_config('glance_store/stores').with_value('glance.store.filesystem.Store') }
     end
 
     describe 'while validating the service with default command' do

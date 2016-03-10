@@ -97,6 +97,9 @@
 #   Defaults to undef
 #  [*public_router_id*]
 #   Defaults to ''
+#  [*sahara_plugins*]
+#   (optional) List of enabled Sahara plugins
+#   Defaults to undef
 #  [*cinder_available*]
 #   Defaults to true
 #  [*glance_available*]
@@ -142,6 +145,10 @@
 #  [*dashboard_url*]
 #   Defaults to undef
 #  [*compute_build_interval*]
+#   Defaults to undef
+#  [*ca_certificates_file*]
+#   Defaults to undef
+#  [*disable_ssl_validation*]
 #   Defaults to undef
 #
 class tempest(
@@ -217,6 +224,8 @@ class tempest(
   $public_network_id             = undef,
   # Upstream has a bad defaul    t - set it to empty string.
   $public_router_id              = '',
+  # Sahara config
+  $sahara_plugins                = undef,
   # Service configuration
   $cinder_available              = true,
   $glance_available              = true,
@@ -236,6 +245,8 @@ class tempest(
   $keystone_v3                   = true,
   $auth_version                  = 'v2',
   $run_service_broker_tests      = false,
+  $ca_certificates_file          = undef,
+  $disable_ssl_validation        = undef,
   # scenario options
   $img_dir                       = '/var/lib/tempest',
   $img_file                      = 'cirros-0.3.4-x86_64-disk.img',
@@ -303,62 +314,64 @@ class tempest(
   }
 
   tempest_config {
-    'compute/change_password_available':       value => $change_password_available;
-    'compute/flavor_ref':                      value => $flavor_ref;
-    'compute/flavor_ref_alt':                  value => $flavor_ref_alt;
-    'compute/image_alt_ssh_user':              value => $image_alt_ssh_user;
-    'compute/image_ref':                       value => $image_ref;
-    'compute/image_ref_alt':                   value => $image_ref_alt;
-    'compute/image_ssh_user':                  value => $image_ssh_user;
-    'compute/resize_available':                value => $resize_available;
-    'compute/allow_tenant_isolation':          value => $allow_tenant_isolation;
-    'compute/build_interval':                  value => $compute_build_interval;
-    'identity/admin_password':                 value => $admin_password, secret => true;
-    'identity/admin_tenant_name':              value => $admin_tenant_name;
-    'identity/admin_username':                 value => $admin_username;
-    'identity/admin_role':                     value => $admin_role;
-    'identity/admin_domain_name':              value => $admin_domain_name;
-    'identity/alt_password':                   value => $alt_password, secret => true;
-    'identity/alt_tenant_name':                value => $alt_tenant_name;
-    'identity/alt_username':                   value => $alt_username;
-    'identity/password':                       value => $password, secret => true;
-    'identity/tenant_name':                    value => $tenant_name;
-    'identity/uri':                            value => $identity_uri;
-    'identity/uri_v3':                         value => $identity_uri_v3;
-    'identity/username':                       value => $username;
-    'identity/auth_version':                   value => $auth_version;
-    'identity-feature-enabled/api_v2':         value => $keystone_v2;
-    'identity-feature-enabled/api_v3':         value => $keystone_v3;
-    'network/public_network_id':               value => $public_network_id;
-    'network/public_router_id':                value => $public_router_id;
-    'dashboard/login_url':                     value => $login_url;
-    'dashboard/dashboard_url':                 value => $dashboard_url;
-    'service_available/cinder':                value => $cinder_available;
-    'service_available/glance':                value => $glance_available;
-    'service_available/heat':                  value => $heat_available;
-    'service_available/ceilometer':            value => $ceilometer_available;
-    'service_available/aodh':                  value => $aodh_available;
-    'service_available/horizon':               value => $horizon_available;
-    'service_available/neutron':               value => $neutron_available;
-    'service_available/nova':                  value => $nova_available;
-    'service_available/murano':                value => $murano_available;
-    'service_available/sahara':                value => $sahara_available;
-    'service_available/swift':                 value => $swift_available;
-    'service_available/trove':                 value => $trove_available;
-    'service_available/ironic':                value => $ironic_available;
-    'service_available/zaqar':                 value => $zaqar_available;
-    'whitebox/db_uri':                         value => $whitebox_db_uri;
-    'cli/cli_dir':                             value => $cli_dir;
-    'oslo_concurrency/lock_path':              value => $lock_path;
-    'DEFAULT/debug':                           value => $debug;
-    'DEFAULT/verbose':                         value => $verbose;
-    'DEFAULT/use_stderr':                      value => $use_stderr;
-    'DEFAULT/use_syslog':                      value => $use_syslog;
-    'DEFAULT/log_file':                        value => $log_file;
-    'DEFAULT/logging_context_format_string':   value => $logging_context_format_string;
-    'scenario/img_dir':                        value => $img_dir;
-    'scenario/img_file':                       value => $img_file;
-    'service_broker/run_service_broker_tests': value => $run_service_broker_tests;
+    'compute/change_password_available':           value => $change_password_available;
+    'compute/flavor_ref':                          value => $flavor_ref;
+    'compute/flavor_ref_alt':                      value => $flavor_ref_alt;
+    'compute/image_alt_ssh_user':                  value => $image_alt_ssh_user;
+    'compute/image_ref':                           value => $image_ref;
+    'compute/image_ref_alt':                       value => $image_ref_alt;
+    'compute/image_ssh_user':                      value => $image_ssh_user;
+    'compute/resize_available':                    value => $resize_available;
+    'compute/allow_tenant_isolation':              value => $allow_tenant_isolation;
+    'compute/build_interval':                      value => $compute_build_interval;
+    'identity/admin_password':                     value => $admin_password, secret => true;
+    'identity/admin_tenant_name':                  value => $admin_tenant_name;
+    'identity/admin_username':                     value => $admin_username;
+    'identity/admin_role':                         value => $admin_role;
+    'identity/admin_domain_name':                  value => $admin_domain_name;
+    'identity/alt_password':                       value => $alt_password, secret => true;
+    'identity/alt_tenant_name':                    value => $alt_tenant_name;
+    'identity/alt_username':                       value => $alt_username;
+    'identity/password':                           value => $password, secret => true;
+    'identity/tenant_name':                        value => $tenant_name;
+    'identity/uri':                                value => $identity_uri;
+    'identity/uri_v3':                             value => $identity_uri_v3;
+    'identity/username':                           value => $username;
+    'identity/auth_version':                       value => $auth_version;
+    'identity/ca_certificates_file':               value => $ca_certificates_file;
+    'identity/disable_ssl_certificate_validation': value => $disable_ssl_validation;
+    'identity-feature-enabled/api_v2':             value => $keystone_v2;
+    'identity-feature-enabled/api_v3':             value => $keystone_v3;
+    'network/public_network_id':                   value => $public_network_id;
+    'network/public_router_id':                    value => $public_router_id;
+    'dashboard/login_url':                         value => $login_url;
+    'dashboard/dashboard_url':                     value => $dashboard_url;
+    'service_available/cinder':                    value => $cinder_available;
+    'service_available/glance':                    value => $glance_available;
+    'service_available/heat':                      value => $heat_available;
+    'service_available/ceilometer':                value => $ceilometer_available;
+    'service_available/aodh':                      value => $aodh_available;
+    'service_available/horizon':                   value => $horizon_available;
+    'service_available/neutron':                   value => $neutron_available;
+    'service_available/nova':                      value => $nova_available;
+    'service_available/murano':                    value => $murano_available;
+    'service_available/sahara':                    value => $sahara_available;
+    'service_available/swift':                     value => $swift_available;
+    'service_available/trove':                     value => $trove_available;
+    'service_available/ironic':                    value => $ironic_available;
+    'service_available/zaqar':                     value => $zaqar_available;
+    'whitebox/db_uri':                             value => $whitebox_db_uri;
+    'cli/cli_dir':                                 value => $cli_dir;
+    'oslo_concurrency/lock_path':                  value => $lock_path;
+    'DEFAULT/debug':                               value => $debug;
+    'DEFAULT/verbose':                             value => $verbose;
+    'DEFAULT/use_stderr':                          value => $use_stderr;
+    'DEFAULT/use_syslog':                          value => $use_syslog;
+    'DEFAULT/log_file':                            value => $log_file;
+    'DEFAULT/logging_context_format_string':       value => $logging_context_format_string;
+    'scenario/img_dir':                            value => $img_dir;
+    'scenario/img_file':                           value => $img_file;
+    'service_broker/run_service_broker_tests':     value => $run_service_broker_tests;
   }
 
   if $configure_images {
@@ -404,6 +417,12 @@ be provided.')
     } elsif ($public_network_name and $public_network_id) or (! $public_network_name and ! $public_network_id) {
       fail('A value for either public_network_id or public_network_name \
   must be provided.')
+    }
+  }
+
+  if $sahara_available {
+    tempest_config {
+      'data-processing-feature-enabled/plugins': value => $sahara_plugins,
     }
   }
 
