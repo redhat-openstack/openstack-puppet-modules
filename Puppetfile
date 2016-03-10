@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '8552994ab3d70b7b167f2ff681e6ea92be5fffaa',
+  :commit => '26aecf9c53f5cd7701fc413b8fd77e1ef39c0d85',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'cassandra',

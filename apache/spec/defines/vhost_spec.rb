@@ -158,6 +158,7 @@ describe 'apache::vhost', :type => :define do
           'ssl_proxy_check_peer_cn'     => 'on',
           'ssl_proxy_check_peer_name'   => 'on',
           'ssl_proxyengine'             => true,
+          'ssl_proxy_protocol'          => 'TLSv1.2',
 
           'priority'                    => '30',
           'default_vhost'               => true,
@@ -338,6 +339,10 @@ describe 'apache::vhost', :type => :define do
           'passenger_start_timeout'     => '600',
           'passenger_pre_start'         => 'http://localhost/myapp',
           'add_default_charset'         => 'UTF-8',
+          'jk_mounts'                   => [
+            { 'mount'   => '/*',     'worker' => 'tcnode1', },
+            { 'unmount' => '/*.jpg', 'worker' => 'tcnode1', },
+          ],
           'auth_kerb'                   => true,
           'krb_method_negotiate'        => 'off',
           'krb_method_k5passwd'         => 'off',
@@ -470,6 +475,8 @@ describe 'apache::vhost', :type => :define do
         :content => /^\s+SSLProxyCheckPeerCN\s+on$/ ) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy').with(
         :content => /^\s+SSLProxyCheckPeerName\s+on$/ ) }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy').with(
+        :content => /^\s+SSLProxyProtocol\s+TLSv1.2$/ ) }
       it { is_expected.to contain_concat__fragment('rspec.example.com-suphp') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-php_admin') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-header') }
@@ -484,6 +491,10 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to contain_concat__fragment('rspec.example.com-passenger') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-charsets') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-file_footer') }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-jk_mounts').with(
+        :content => /^\s+JkMount\s+\/\*\s+tcnode1$/)}
+      it { is_expected.to contain_concat__fragment('rspec.example.com-jk_mounts').with(
+        :content => /^\s+JkUnMount\s+\/\*\.jpg\s+tcnode1$/)}
       it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
         :content => /^\s+KrbMethodNegotiate\soff$/)}
       it { is_expected.to contain_concat__fragment('rspec.example.com-auth_kerb').with(
@@ -777,6 +788,19 @@ describe 'apache::vhost', :type => :define do
       it { is_expected.to compile }
       it { is_expected.not_to contain_concat__fragment('rspec.example.com-ssl') }
       it { is_expected.to contain_concat__fragment('rspec.example.com-sslproxy') }
+    end
+    context 'ssl_proxy_protocol without ssl_proxyengine' do
+      let :params do
+        {
+          'docroot'            => '/rspec/docroot',
+          'ssl'                => true,
+          'ssl_proxyengine'    => false,
+          'ssl_proxy_protocol' => 'TLSv1.2',
+        }
+      end
+      it { is_expected.to compile }
+      it { is_expected.to contain_concat__fragment('rspec.example.com-ssl') }
+      it { is_expected.not_to contain_concat__fragment('rspec.example.com-sslproxy') }
     end
   end
   describe 'access logs' do

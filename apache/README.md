@@ -71,6 +71,8 @@
 [Apache modules]: https://httpd.apache.org/docs/current/mod/
 [array]: https://docs.puppetlabs.com/puppet/latest/reference/lang_data_array.html
 
+[audit log]: https://github.com/SpiderLabs/ModSecurity/wiki/ModSecurity-2-Data-Formats#audit-log
+
 [beaker-rspec]: https://github.com/puppetlabs/beaker-rspec
 
 [certificate revocation list]: https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslcarevocationfile
@@ -1706,6 +1708,7 @@ ${modsec\_dir}/activated\_rules.
 - `restricted_headers`: A list of restricted headers separated by slashes and spaces. Default: 'Proxy-Connection/ /Lock-Token/ /Content-Range/ /Translate/ /via/ /if/'.
 - `secpcrematchlimit`: Sets the number for the match limit in the PCRE library. Default: '1500'
 - `secpcrematchlimitrecursion`: Sets the number for the match limit recursion in the PCRE library. Default: '1500'
+- `audit_log_parts`: Sets the sections to be put in the [audit log][]. Default: 'ABIJDEFHZ'
 
 ##### Class: `apache::mod::wsgi`
 
@@ -2146,6 +2149,23 @@ apache::vhost { 'sample.example.net':
     user  => 'someuser',
     group => 'somegroup',
   },
+}
+```
+
+##### `jk_mounts`
+
+Sets up a virtual host with 'JkMount' and 'JkUnMount' directives to handle the paths for URL mapping between Tomcat and Apache. Default: undef.
+
+The parameter must be an array of hashes where each hash must contain the 'worker' and either the 'mount' or 'unmount' keys.
+
+Usage typically looks like:
+
+``` puppet
+apache::vhost { 'sample.example.net':
+  jk_mounts => [
+    { mount   => '/*',     worker => 'tcnode1', },
+    { unmount => '/*.jpg', worker => 'tcnode1', },
+  ],
 }
 ```
 
@@ -2968,6 +2988,7 @@ Related parameters follow the names of `mod_auth_mellon` directives:
 
 - `mellon_cond`: Takes an array of mellon conditions that must be met to grant access, and creates a [MellonCond][`mod_auth_mellon`] directive for each item in the array.
 - `mellon_endpoint_path`: Sets the [MellonEndpointPath][`mod_auth_mellon`] to set the mellon endpoint path.
+- `mellon_sp_metadata_file`: Sets the [MellonSPMetadataFile][`mod_auth_mellon`] location of the SP metadata file.
 - `mellon_idp_metadata_file`: Sets the [MellonIDPMetadataFile][`mod_auth_mellon`] location of the IDP metadata file.
 - `mellon_saml_rsponse_dump`: Sets the [MellonSamlResponseDump][`mod_auth_mellon`] directive to enable debug of SAML.
 - `mellon_set_env_no_prefix`: Sets the [MellonSetEnvNoPrefix][`mod_auth_mellon`] directive to a hash of attribute names to map
@@ -3267,6 +3288,10 @@ apache::vhost { 'sample.example.net':
   ssl_verify_depth => 1,
 }
 ```
+##### `ssl_proxy_protocol`
+
+Sets the [SSLProxyProtocol](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxyprotocol) directive, which controls the SSL protocol flavors mod_ssl should use when establishing its server environment for proxy. It will only connect to servers using one of the provided protocols. Default: undef.
+
 
 ##### `ssl_proxy_verify`
 

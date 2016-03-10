@@ -29,6 +29,7 @@ define apache::vhost(
   $ssl_proxy_check_peer_cn     = undef,
   $ssl_proxy_check_peer_name   = undef,
   $ssl_proxy_machine_cert      = undef,
+  $ssl_proxy_protocol          = undef,
   $ssl_options                 = undef,
   $ssl_openssl_conf_cmd        = undef,
   $ssl_proxyengine             = false,
@@ -129,6 +130,7 @@ define apache::vhost(
   $modsec_disable_ids          = undef,
   $modsec_disable_ips          = undef,
   $modsec_body_limit           = undef,
+  $jk_mounts                   = undef,
   $auth_kerb                   = false,
   $krb_method_negotiate        = 'on',
   $krb_method_k5passwd         = 'on',
@@ -838,6 +840,7 @@ define apache::vhost(
   # - $ssl_proxy_check_peer_cn
   # - $ssl_proxy_check_peer_name
   # - $ssl_proxy_machine_cert
+  # - $ssl_proxy_protocol
   if $ssl_proxyengine {
     concat::fragment { "${name}-sslproxy":
       target  => "${priority_real}${filename}.conf",
@@ -991,6 +994,16 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 330,
       content => template('apache/vhost/_filters.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $jk_mounts
+  if $jk_mounts and ! empty($jk_mounts) {
+    concat::fragment { "${name}-jk_mounts":
+      target  => "${priority_real}${filename}.conf",
+      order   => 340,
+      content => template('apache/vhost/_jk_mounts.erb'),
     }
   }
 
