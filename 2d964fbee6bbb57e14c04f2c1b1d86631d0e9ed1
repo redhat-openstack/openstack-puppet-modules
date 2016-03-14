@@ -1,0 +1,7 @@
+Code-Review+2: Emilien Macchi <emilien@redhat.com>
+Verified+1: Emilien Macchi <emilien@redhat.com>
+Submitted-by: Emilien Macchi <emilien@redhat.com>
+Submitted-at: Mon, 14 Mar 2016 16:55:26 +0100
+Reviewed-on: https://review.gerrithub.io/266097
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-kilo
