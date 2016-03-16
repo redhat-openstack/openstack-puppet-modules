@@ -259,6 +259,11 @@ set config_cluster to 'False' and set 'erlang_cookie'.
 Set rabbitmq file ulimit. Defaults to 16384. Only available on systems with
 `$::osfamily == 'Debian'` or `$::osfamily == 'RedHat'`.
 
+####`heartbeat`
+
+Set the heartbeat timeout interval, default is unset which uses the builtin server
+defaultsof 60 seconds. Setting this to `0` will disable heartbeats.
+
 ####`key_content`
 
 Uses content method for Debian OS family. Should be a template for apt::source
@@ -313,7 +318,8 @@ Valid values are true or false.
 
 ####`node_ip_address`
 
-The value of NODE_IP_ADDRESS in rabbitmq_env.config
+The value of NODE_IP_ADDRESS in rabbitmq_env.config and of the
+rabbitmq_management server if it is enabled.
 
 ####`package_ensure`
 
@@ -644,9 +650,9 @@ For Debian systems:
       ensure => 'latest',
     }
 
-This module also depends on the excellent nanliu/staging module on the Forge:
+This module also depends on the excellent voxpupuli/staging module on the Forge:
 
-    puppet module install nanliu-staging
+    puppet module install voxpupuli-staging
 
 ### Downgrade Issues
 

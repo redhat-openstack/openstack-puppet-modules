@@ -68,7 +68,7 @@ class rabbitmq::params {
   $management_port             = '15672'
   $management_ssl              = true
   $package_apt_pin             = ''
-  $package_gpg_key             = 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
+  $package_gpg_key             = 'https://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
   $repos_ensure                = true
   $manage_repos                = undef
   $service_ensure              = 'running'
@@ -92,6 +92,7 @@ class rabbitmq::params {
   $node_ip_address             = 'UNSET'
   $port                        = '5672'
   $tcp_keepalive               = false
+  $heartbeat                   = undef
   $ssl                         = false
   $ssl_only                    = false
   $ssl_cacert                  = 'UNSET'

@@ -3,7 +3,7 @@ mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
-  :commit => '26aecf9c53f5cd7701fc413b8fd77e1ef39c0d85',
+  :commit => 'a13b5649830adbf671e21ee6086550fdfb568608',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache.git'
 
 mod 'cassandra',
@@ -15,7 +15,7 @@ mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
-  :commit => '6b44b360b5e7f1532eed499e203c434be0607d4d',
+  :commit => '512a34f42793d68ae7a503018e628c5c9dc01d23',
   :git => 'https://github.com/stackforge/puppet-ceph.git'
 
 mod 'certmonger',
@@ -187,7 +187,7 @@ mod 'qpid',
   :git => 'https://github.com/dprince/puppet-qpid'
 
 mod 'rabbitmq',
-  :commit => 'e9d62016ca0dc0008794beddf6785d2091d36652',
+  :commit => '51cc050a4e7e27e97ef04beb990e67f656222d95',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
 
 mod 'redis',
@@ -223,7 +223,7 @@ mod 'staging',
   :git => 'https://github.com/nanliu/puppet-staging.git'
 
 mod 'stdlib',
-  :commit => '69ca8d09c6124e9b5bd98e62fb201e734ae5bd05',
+  :commit => '72f6e379a647396c276d7f216b307361ac76f376',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',

@@ -5,6 +5,9 @@
   {ssl, [{versions, [<%= @ssl_versions.sort.map { |v| "'#{v}'" }.join(', ') %>]}]},
 <%- end -%>
   {rabbit, [
+<%- if @heartbeat -%>
+    {heartbeat, <%=@heartbeat%>},
+<% end -%>
 <% if @auth_backends -%>
     {auth_backends, [<%= @auth_backends.map { |v| "#{v}" }.join(', ') %>]},
 <% elsif @ldap_auth -%>
@@ -66,13 +69,13 @@
     <%= @config_kernel_variables.sort.map{|k,v| "{#{k}, #{v}}"}.join(",\n    ") %>
   ]}
 <%- end -%>
-<% if @config_management_variables -%>,
+<%- if @admin_enable or !@config_management_variables.empty? -%>,
   {rabbitmq_management, [
+    <%- if !@config_management_variables.empty? -%>
     <%= @config_management_variables.sort.map{|k,v| "{#{k}, #{v}}"}.join(",\n    ") %>
-  ]}
-<%- end -%>
-<%- if @admin_enable -%>,
-  {rabbitmq_management, [
+    <%- end -%>
+<%- if @admin_enable -%>
+<%- if  !@config_management_variables.empty? -%>,<%-end-%>
     {listener, [
 <%- if @ssl && @management_ssl -%>
       {port, <%= @ssl_management_port %>},
@@ -95,7 +98,11 @@
 <%- else -%>
       {port, <%= @management_port %>}
 <%- end -%>
+<%- if @node_ip_address -%>
+      ,{ip, "<%= @node_ip_address %>"}
+<%- end -%>
     ]}
+<%- end -%>
   ]}
 <%- end -%>
 <% if @config_stomp -%>,
