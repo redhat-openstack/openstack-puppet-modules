@@ -65,5 +65,5 @@ class gnocchi::db::mysql(
     allowed_hosts => $allowed_hosts,
   }
 
-  ::Openstacklib::Db::Mysql['gnocchi'] ~> Exec<| title == 'gnocchi-dbsync' |>
+  ::Openstacklib::Db::Mysql['gnocchi'] ~> Exec<| title == 'gnocchi-db-sync' |>
 }

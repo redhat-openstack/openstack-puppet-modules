@@ -56,7 +56,7 @@ describe 'manila::logging' do
   end
 
   shared_examples 'basic default logging settings' do
-    it 'configures manila logging settins with default values' do
+    it 'configures manila logging settings with default values' do
       is_expected.to contain_manila_config('DEFAULT/use_syslog').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_manila_config('DEFAULT/use_stderr').with(:value => '<SERVICE DEFAULT>')
       is_expected.to contain_manila_config('DEFAULT/log_dir').with(:value => '/var/log/manila')
@@ -66,7 +66,7 @@ describe 'manila::logging' do
   end
 
   shared_examples 'basic non-default logging settings' do
-    it 'configures manila logging settins with non-default values' do
+    it 'configures manila logging settings with non-default values' do
       is_expected.to contain_manila_config('DEFAULT/use_syslog').with(:value => 'true')
       is_expected.to contain_manila_config('DEFAULT/use_stderr').with(:value => 'false')
       is_expected.to contain_manila_config('DEFAULT/syslog_log_facility').with(:value => 'LOG_FOO')

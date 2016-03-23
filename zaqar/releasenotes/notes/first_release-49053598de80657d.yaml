@@ -1,0 +1,10 @@
+---
+prelude: >
+    This is the first release of puppet-zaqar, that allows to
+    deploy OpenStack messaging service.
+features:
+  - Deploy zaqar server
+  - Transport support for websocket and wsgi.
+  - Messaging support for mongodb.
+  - Manage Keystone resources to deploy Zaqar.
+  - Manage Database resources to deploy Zaqar.

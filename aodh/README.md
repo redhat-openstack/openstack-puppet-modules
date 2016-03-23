@@ -1,7 +1,7 @@
 AODH
 ====
 
-7.0.0 - 2015.2.0 - Liberty
+8.0.0 - 2016.1.0 - Mitaka
 
 #### Table of Contents
 

@@ -1,0 +1,3 @@
+---
+upgrade:
+  - Update db-sync command to use gnocchi-upgrade.

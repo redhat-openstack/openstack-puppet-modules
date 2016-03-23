@@ -6,16 +6,29 @@ describe 'gnocchi::db::sync' do
 
     it 'runs gnocchi-manage db_sync' do
       is_expected.to contain_exec('gnocchi-db-sync').with(
-        :command     => 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf',
+        :command     => 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf ',
         :path        => '/usr/bin',
         :user        => 'gnocchi',
         :refreshonly => 'true',
         :logoutput   => 'on_failure'
       )
     end
-
+    describe "overriding extra_opts" do
+        let :params do
+            {
+              :extra_opts => '--skip-storage',
+            }
+        end
+        it { is_expected.to contain_exec('gnocchi-db-sync').with(
+            :command     => 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf --skip-storage',
+            :path        => '/usr/bin',
+            :user        => 'gnocchi',
+            :refreshonly => 'true',
+            :logoutput   => 'on_failure'
+        )
+       }
+    end
   end
-
 
   context 'on a RedHat osfamily' do
     let :facts do

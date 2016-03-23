@@ -49,9 +49,6 @@
 #   (optional) Charset collate of trove database
 #   Defaults 'utf8_general_ci'.
 #
-# [*mysql_module*]
-#   (optional) Deprecated. Does nothing
-#
 class trove::db::mysql(
   $password,
   $dbname        = 'trove',
@@ -60,12 +57,9 @@ class trove::db::mysql(
   $allowed_hosts = undef,
   $charset       = 'utf8',
   $collate       = 'utf8_general_ci',
-  $mysql_module  = undef,
 ) {
 
-  if $mysql_module {
-    warning('The mysql_module parameter is deprecated. The latest 2.x mysql module will be used.')
-  }
+  include ::trove::deps
 
   validate_string($password)
 
@@ -79,5 +73,7 @@ class trove::db::mysql(
     allowed_hosts => $allowed_hosts,
   }
 
-  ::Openstacklib::Db::Mysql['trove'] ~> Exec<| title == 'trove-manage db_sync' |>
+  Anchor['trove::db::begin']
+  ~> Class['trove::db::mysql']
+  ~> Anchor['trove::db::end']
 }

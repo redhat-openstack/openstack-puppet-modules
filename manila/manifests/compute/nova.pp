@@ -16,7 +16,7 @@
 # (optional) region name of this node
 #
 # [*nova_ca_certificates_file*]
-# (optional) Location of ca certicates file to use for nova client
+# (optional) Location of ca certificates file to use for nova client
 # requests.
 #
 # [*nova_api_insecure*]

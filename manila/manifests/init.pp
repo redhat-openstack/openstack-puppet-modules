@@ -266,7 +266,7 @@
 #   Defaults to undef.
 #
 # [*qpid_sasl_mechanisms*]
-#   (Optional) ENable one or more SASL mechanisms.
+#   (Optional) Enable one or more SASL mechanisms.
 #   Defaults to undef.
 #
 class manila (

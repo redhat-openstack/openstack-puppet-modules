@@ -42,6 +42,5 @@ class gnocchi::db::postgresql(
     privileges    => $privileges,
   }
 
-  ::Openstacklib::Db::Postgresql['gnocchi']    ~> Exec<| title == 'gnocchi-dbsync' |>
-
+  ::Openstacklib::Db::Postgresql['gnocchi']    ~> Exec<| title == 'gnocchi-db-sync' |>
 }

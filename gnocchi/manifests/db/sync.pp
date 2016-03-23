@@ -5,12 +5,17 @@
 #   (optional) User to run dbsync command.
 #   Defaults to 'gnocchi'
 #
-class gnocchi::db::sync (
-  $user = 'gnocchi',
-){
+# [*extra_opts*]
+#   (optional) String of extra command line parameters to append
+#   to the gnocchi-db-sync command.
+#   Defaults to undef
 
+class gnocchi::db::sync (
+  $user       = 'gnocchi',
+  $extra_opts = undef,
+){
   exec { 'gnocchi-db-sync':
-    command     => 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf',
+    command     => "gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf ${extra_opts}",
     path        => '/usr/bin',
     refreshonly => true,
     user        => $user,
