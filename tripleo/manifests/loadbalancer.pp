@@ -303,6 +303,11 @@
 #  (optional) Enable or not Redis binding
 #  Defaults to false
 #
+# [*redis_password*]
+#  (optional) Password for Redis authentication, eventually needed by the
+#  specific monitoring we do from HAProxy for Redis
+#  Defaults to undef
+#
 # [*midonet_api*]
 #  (optional) Enable or not MidoNet API binding
 #  Defaults to false
@@ -408,6 +413,7 @@ class tripleo::loadbalancer (
   $mysql_clustercheck        = false,
   $rabbitmq                  = false,
   $redis                     = false,
+  $redis_password            = undef,
   $midonet_api               = false,
   $service_ports             = {}
 ) {
@@ -855,13 +861,25 @@ class tripleo::loadbalancer (
 
   $horizon_vip = hiera('horizon_vip', $controller_virtual_ip)
   if $horizon_bind_certificate {
+    # NOTE(jaosorior): If the horizon_vip and the public_virtual_ip are the
+    # same, the first option takes precedence. Which is the case when network
+    # isolation is not enabled. This is not a problem as both options are
+    # identical. If network isolation is enabled, this works correctly and
+    # will add a TLS binding to both the horizon_vip and the
+    # public_virtual_ip.
+    # Even though for the public_virtual_ip the port 80 is listening, we
+    # redirect to https in the horizon_options below.
     $horizon_bind_opts = {
-      "${horizon_vip}:80" => $haproxy_listen_bind_param,
+      "${horizon_vip}:80"        => $haproxy_listen_bind_param,
+      "${horizon_vip}:443"       => union($haproxy_listen_bind_param, ['ssl', 'crt', $horizon_bind_certificate]),
+      "${public_virtual_ip}:80"  => $haproxy_listen_bind_param,
       "${public_virtual_ip}:443" => union($haproxy_listen_bind_param, ['ssl', 'crt', $horizon_bind_certificate]),
     }
     $horizon_options = {
-      'cookie' => 'SERVERID insert indirect nocache',
-      'rsprep' => '^Location:\ http://(.*) Location:\ https://\1',
+      'cookie'   => 'SERVERID insert indirect nocache',
+      'rsprep'   => '^Location:\ http://(.*) Location:\ https://\1',
+      # NOTE(jaosorior): We always redirect to https for the public_virtual_ip.
+      'redirect' => "scheme https code 301 if { hdr(host) -i ${public_virtual_ip} } !{ ssl_fc }",
     }
   } else {
     $horizon_bind_opts = {
@@ -1344,12 +1362,17 @@ class tripleo::loadbalancer (
   }
 
   if $redis {
+    if $redis_password {
+      $redis_tcp_check_options = ["send AUTH\\ ${redis_password}\\r\\n"]
+    } else {
+      $redis_tcp_check_options = []
+    }
     haproxy::listen { 'redis':
       bind             => $redis_bind_opts,
       options          => {
         'balance'   => 'first',
         'option'    => ['tcp-check',],
-        'tcp-check' => ['send info\ replication\r\n','expect string role:master'],
+        'tcp-check' => union($redis_tcp_check_options, ['send PING\r\n','expect string +PONG','send info\ replication\r\n','expect string role:master','send QUIT\r\n','expect string +OK']),
       },
       collect_exported => false,
     }
