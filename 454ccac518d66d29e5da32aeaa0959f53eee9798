@@ -16,6 +16,24 @@
       "revId": "454ccac518d66d29e5da32aeaa0959f53eee9798",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_9b93dca3",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1005155
+      },
+      "writtenOn": "2016-04-05T16:13:06Z",
+      "side": 1,
+      "message": "Excellent, I\u0027ll update with that in a new patch, since this is already merged",
+      "parentUuid": "baa041b7_7b6258da",
+      "revId": "454ccac518d66d29e5da32aeaa0959f53eee9798",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
