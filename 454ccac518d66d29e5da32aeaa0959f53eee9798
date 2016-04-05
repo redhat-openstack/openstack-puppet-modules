@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_7b6258da",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000935
+      },
+      "writtenOn": "2016-04-05T15:57:05Z",
+      "side": 1,
+      "message": "there\u0027s now centos7-master symlink for consistency",
+      "revId": "454ccac518d66d29e5da32aeaa0959f53eee9798",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
