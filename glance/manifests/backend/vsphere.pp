@@ -24,7 +24,14 @@
 # [*vcenter_api_insecure*]
 #   (optional) Allow to perform insecure SSL requests to vCenter/ESXi.
 #   Should be a valid string boolean value
-#   Defaults to 'False'
+#   Defaults to 'True'
+#
+# [*vcenter_ca_file*]
+#   (optional) The name of the CA bundle file which will be used in
+#   verifying vCenter server certificate. If parameter is not set
+#   then system truststore is used. If parameter is set, vcenter_api_insecure
+#   value is ignored.
+#   Defaults to undef
 #
 # [*vcenter_host*]
 #   (required) vCenter/ESXi Server target system.
@@ -61,7 +68,10 @@
 #   (optional) Boolean describing if multiple backends will be configured
 #   Defaults to false
 #
-
+# [*glare_enabled*]
+#   (optional) Whether enabled Glance Glare API.
+#   Defaults to false
+#
 class glance::backend::vsphere(
   $vcenter_host,
   $vcenter_user,
@@ -69,14 +79,17 @@ class glance::backend::vsphere(
   $vcenter_datacenter,
   $vcenter_datastore,
   $vcenter_image_dir,
-  $vcenter_api_insecure       = 'False',
+  $vcenter_ca_file            = undef,
+  $vcenter_api_insecure       = 'True',
   $vcenter_task_poll_interval = '5',
   $vcenter_api_retry_count    = '10',
   $multi_store                = false,
+  $glare_enabled              = false,
 ) {
 
   glance_api_config {
     'glance_store/vmware_api_insecure': value       => $vcenter_api_insecure;
+    'glance_store/vmware_ca_file': value            => $vcenter_ca_file;
     'glance_store/vmware_server_host': value        => $vcenter_host;
     'glance_store/vmware_server_username': value    => $vcenter_user;
     'glance_store/vmware_server_password': value    => $vcenter_password;
@@ -87,7 +100,25 @@ class glance::backend::vsphere(
     'glance_store/vmware_datacenter_path': value    => $vcenter_datacenter;
   }
 
+  if $glare_enabled {
+    glance_glare_config {
+      'glance_store/vmware_api_insecure': value       => $vcenter_api_insecure;
+      'glance_store/vmware_ca_file': value            => $vcenter_ca_file;
+      'glance_store/vmware_server_host': value        => $vcenter_host;
+      'glance_store/vmware_server_username': value    => $vcenter_user;
+      'glance_store/vmware_server_password': value    => $vcenter_password;
+      'glance_store/vmware_datastore_name': value     => $vcenter_datastore;
+      'glance_store/vmware_store_image_dir': value    => $vcenter_image_dir;
+      'glance_store/vmware_task_poll_interval': value => $vcenter_task_poll_interval;
+      'glance_store/vmware_api_retry_count': value    => $vcenter_api_retry_count;
+      'glance_store/vmware_datacenter_path': value    => $vcenter_datacenter;
+    }
+  }
+
   if !$multi_store {
     glance_api_config {  'glance_store/default_store': value => 'vsphere'; }
+    if $glare_enabled {
+      glance_glare_config {  'glance_store/default_store': value => 'vsphere'; }
+    }
   }
 }

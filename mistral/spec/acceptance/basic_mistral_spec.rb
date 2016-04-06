@@ -48,7 +48,13 @@ describe 'basic mistral' do
           class { '::mistral::db::mysql':
             password => 'a_big_secret',
           }
-          class { '::mistral::api': }
+          class { '::mistral::api':
+            service_name => 'httpd',
+          }
+          include ::apache
+          class { '::mistral::wsgi::apache':
+            ssl => false,
+          }
           class { '::mistral::client': }
           class { '::mistral::engine': }
           class { '::mistral::executor': }
@@ -65,7 +71,7 @@ describe 'basic mistral' do
 
     if os[:family].casecmp('RedHat') == 0
       describe port(8989) do
-        it { is_expected.to be_listening.with('tcp') }
+        it { is_expected.to be_listening }
       end
     end
 

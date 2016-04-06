@@ -16,7 +16,7 @@ describe 'cinder::backend::bdd' do
         should contain_cinder_config('hippo/volume_backend_name').with_value('hippo')
         should contain_cinder_config('hippo/volume_driver').with_value('cinder.volume.drivers.block_device.BlockDeviceDriver')
         should contain_cinder_config('hippo/available_devices').with_value('/dev/sda')
-        should contain_cinder_config('hippo/iscsi_helper').with_value('fake')
+        should contain_cinder_config('hippo/iscsi_helper').with_value('tgtadm')
         should contain_cinder_config('hippo/volumes_dir').with_value('/var/lib/cinder/volumes')
         should contain_cinder_config('hippo/iscsi_ip_address').with_value('127.0.0.2')
         should contain_cinder_config('hippo/volume_group').with_value('<SERVICE DEFAULT>')
@@ -32,7 +32,8 @@ describe 'cinder::backend::bdd' do
           :available_devices => '/dev/sdb,/dev/sdc',
           :volumes_dir       => '/var/lib/cinder/bdd-volumes',
           :volume_clear      => 'zero',
-          :volume_group     => 'cinder',
+          :volume_group      => 'cinder',
+          :iscsi_helper      => 'lioadm',
         })
       end
 
@@ -40,6 +41,7 @@ describe 'cinder::backend::bdd' do
         should contain_cinder_config('hippo/available_devices').with_value('/dev/sdb,/dev/sdc')
         should contain_cinder_config('hippo/volumes_dir').with_value('/var/lib/cinder/bdd-volumes')
         should contain_cinder_config('hippo/iscsi_ip_address').with_value('10.20.0.2')
+        should contain_cinder_config('hippo/iscsi_helper').with_value('lioadm')
         should contain_cinder_config('hippo/volume_group').with_value('cinder')
         should contain_cinder_config('hippo/volume_clear').with_value('zero')
       end
@@ -58,6 +60,34 @@ describe 'cinder::backend::bdd' do
     end
   end
 
+  shared_examples_for 'check needed daemons' do
+    context 'tgtadm helper' do
+      it 'is expected to have tgtd daemon' do
+        is_expected.to contain_package('tgt').with(:ensure => :present)
+        is_expected.to contain_service('tgtd').with(:ensure => :running)
+      end
+    end
+
+    context 'lioadm helper' do
+     before do
+       params.merge!({:iscsi_helper => 'lioadm'})
+     end
+     it 'is expected to have target daemon' do
+       is_expected.to contain_package('targetcli').with(:ensure => :present)
+       is_expected.to contain_service('target').with(:ensure => :running)
+     end
+    end
+
+    context 'wrong helper' do
+      before do
+        params.merge!({:iscsi_helper => 'fake'})
+      end
+      it 'is expected to raise error' do
+        is_expected.to raise_error(Puppet::Error, /Unsupported iscsi helper: fake/)
+      end
+    end
+  end
+
   on_supported_os({
     :supported_os => OSDefaults.get_supported_os
   }).each do |os,facts|
@@ -67,6 +97,7 @@ describe 'cinder::backend::bdd' do
       end
 
       it_configures 'cinder block device'
+      it_configures 'check needed daemons'
     end
   end
 end

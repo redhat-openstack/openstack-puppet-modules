@@ -257,6 +257,8 @@ class tempest(
 
   include ::tempest::params
 
+  include ::openstacklib::openstackclient
+
   if $install_from_source {
     ensure_packages([
       'git',
@@ -438,6 +440,21 @@ class tempest(
       package { 'python-neutron-tests':
         ensure => present,
         name   => $::tempest::params::python_neutron_tests,
+        tag    => ['openstack', 'tempest-package'],
+      }
+      package { 'python-neutron-fwaas-tests':
+        ensure => present,
+        name   => $::tempest::params::python_fwaas_tests,
+        tag    => ['openstack', 'tempest-package'],
+      }
+      package { 'python-neutron-lbaas-tests':
+        ensure => present,
+        name   => $::tempest::params::python_lbaas_tests,
+        tag    => ['openstack', 'tempest-package'],
+      }
+      package { 'python-neutron-vpnaas-tests':
+        ensure => present,
+        name   => $::tempest::params::python_vpnaas_tests,
         tag    => ['openstack', 'tempest-package'],
       }
     }

@@ -160,6 +160,12 @@ describe 'tempest' do
           )
         end
 
+        it 'installs python-openstackclient package' do
+          is_expected.to contain_package('python-openstackclient').with(
+            :tag => 'openstack'
+          )
+        end
+
         it 'configure tempest config' do
           is_expected.to contain_tempest_config('compute/change_password_available').with(:value => nil)
           is_expected.to contain_tempest_config('compute/flavor_ref').with(:value => nil)
@@ -272,8 +278,22 @@ describe 'tempest' do
           :aodh_available        => true }
       end
 
-      describe "should install keystone tests package" do
+      describe "should install aodh tests package" do
         it { expect { is_expected.to contain_package('python-aodh-tests') } }
+      end
+    end
+
+    context 'with when managing tests packages for neutron (optional service)' do
+      let :params do
+        { :manage_tests_packages => true,
+          :neutron_available        => true }
+      end
+
+      describe "should install neutron and *aas tests packages" do
+        it { expect { is_expected.to contain_package('python-neutron-tests') } }
+        it { expect { is_expected.to contain_package('python-neutron-fwaas-tests') } }
+        it { expect { is_expected.to contain_package('python-neutron-lbaas-tests') } }
+        it { expect { is_expected.to contain_package('python-neutron-vpnaas-tests') } }
       end
     end
   end
