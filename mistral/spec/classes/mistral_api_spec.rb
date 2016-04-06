@@ -65,11 +65,49 @@ describe 'mistral::api' do
       end
     end
 
+    context 'when running mistral-api in wsgi' do
+      before do
+        params.merge!({ :service_name   => 'httpd' })
+      end
+
+      let :pre_condition do
+        "include ::apache
+         include ::mistral::db
+         class { '::mistral':
+           keystone_password => 'foo',
+           rabbit_password   => 'bar',
+         }"
+      end
+
+      it 'configures mistral-api service with Apache' do
+        is_expected.to contain_service('mistral-api').with(
+          :ensure     => 'stopped',
+          :name       => platform_params[:api_service_name],
+          :enable     => false,
+          :tag        => ['mistral-service'],
+        )
+      end
+    end
+
+    context 'when service_name is not valid' do
+      before do
+        params.merge!({ :service_name => 'foobar' })
+      end
+
+      it_raises 'a Puppet::Error', /Invalid service_name/
+    end
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({
+        :osfamily               => 'Debian',
+        :operatingsystem        => 'Debian',
+        :operatingsystemrelease => '8.0',
+        :concat_basedir         => '/var/lib/puppet/concat',
+        :fqdn                   => 'some.host.tld',
+        :processorcount         => 2,
+      })
     end
 
     let :platform_params do
@@ -81,7 +119,14 @@ describe 'mistral::api' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({
+        :osfamily               => 'RedHat',
+        :operatingsystem        => 'RedHat',
+        :operatingsystemrelease => '7.1',
+        :fqdn                   => 'some.host.tld',
+        :concat_basedir         => '/var/lib/puppet/concat',
+        :processorcount         => 2,
+      })
     end
 
     let :platform_params do

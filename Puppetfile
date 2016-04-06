@@ -123,7 +123,7 @@ mod 'midonet',
   :git => 'https://github.com/midonet/puppet-midonet.git'
 
 mod 'mistral',
-  :commit => '695770554bcea043947630260d1a29c0a964ed08',
+  :commit => 'e5b0a378dd67de9eccfc8179544ccebb2d83b2eb',
   :git => 'https://github.com/openstack/puppet-mistral.git'
 
 mod 'module-collectd',

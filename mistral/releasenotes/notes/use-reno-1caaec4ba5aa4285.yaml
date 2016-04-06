@@ -1,0 +1,4 @@
+---
+features:
+  - Release notes are no longer maintained by hand, we now use the reno tool to
+    manage them.
