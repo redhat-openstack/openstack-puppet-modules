@@ -1,0 +1,9 @@
+---
+prelude: >
+  This is the first release of puppet-mistral module.
+
+features:
+  - Allow to deploy Mistral API, Engine and Executor.
+  - Manage Keystone resources for Mistral.
+  - Allow to deploy Mistral API in WSGI with Apache.
+  - Manage Mistral database.
