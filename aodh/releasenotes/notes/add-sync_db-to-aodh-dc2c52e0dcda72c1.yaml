@@ -1,0 +1,6 @@
+---
+fixes:
+    - Add a sync_db option to ::aodh::api class. This makes it easier
+      to control the db sync. The sync_db param is a boolean and set to
+      false by default for backward compatibility so db sync is not run
+      out of the box.

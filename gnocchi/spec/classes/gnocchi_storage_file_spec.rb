@@ -19,20 +19,24 @@ describe 'gnocchi::storage::file' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({ :osfamily => 'Debian' })
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :aodh_common_package => 'aodh-common' }
+        when 'RedHat'
+          { :aodh_common_package => 'openstack-aodh-common' }
+        end
+      end
+      it_behaves_like 'gnocchi storage file'
     end
-
-    it_configures 'gnocchi storage file'
-  end
-
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({ :osfamily => 'RedHat' })
-    end
-
-    it_configures 'gnocchi storage file'
   end
 
 end

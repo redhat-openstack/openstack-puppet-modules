@@ -19,33 +19,24 @@ describe 'gnocchi::storage' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily               => 'Debian',
-        :operatingsystem        => 'Debian',
-      })
-    end
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
 
-    let :platform_params do
-      { :carbonara_package_name => 'gnocchi-carbonara' }
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :carbonara_package_name => 'gnocchi-carbonara' }
+        when 'RedHat'
+          { :carbonara_package_name => 'openstack-gnocchi-carbonara' }
+        end
+      end
+      it_behaves_like 'gnocchi-storage'
     end
-
-    it_configures 'gnocchi-storage'
   end
 
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily        => 'RedHat',
-        :operatingsystem => 'RedHat',
-      })
-    end
-
-    let :platform_params do
-      { :carbonara_package_name => 'openstack-gnocchi-carbonara' }
-    end
-
-    it_configures 'gnocchi-storage'
-  end
 end

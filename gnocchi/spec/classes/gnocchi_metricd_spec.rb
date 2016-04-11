@@ -56,36 +56,26 @@ describe 'gnocchi::metricd' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily        => 'Debian',
-        :operatingsystem => 'Debian',
-      })
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :metricd_package_name => 'gnocchi-metricd',
+            :metricd_service_name => 'gnocchi-metricd' }
+        when 'RedHat'
+          { :metricd_package_name => 'openstack-gnocchi-metricd',
+            :metricd_service_name => 'openstack-gnocchi-metricd' }
+        end
+      end
+      it_behaves_like 'gnocchi-metricd'
     end
-
-    let :platform_params do
-      { :metricd_package_name => 'gnocchi-metricd',
-        :metricd_service_name => 'gnocchi-metricd' }
-    end
-
-    it_configures 'gnocchi-metricd'
-  end
-
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystem        => 'RedHat',
-      })
-    end
-
-    let :platform_params do
-      { :metricd_package_name => 'openstack-gnocchi-metricd',
-        :metricd_service_name => 'openstack-gnocchi-metricd' }
-    end
-
-    it_configures 'gnocchi-metricd'
   end
 
 end

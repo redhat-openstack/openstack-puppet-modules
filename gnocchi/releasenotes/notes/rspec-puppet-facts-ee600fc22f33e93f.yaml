@@ -1,0 +1,3 @@
+---
+other:
+  - Switch spec tests to leverage rspec-puppet-facts

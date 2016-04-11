@@ -6,115 +6,124 @@ require 'spec_helper'
 
 describe 'gnocchi::keystone::auth' do
 
-  let :facts do
-    { :osfamily => 'Debian' }
-  end
+  shared_examples 'gnocchi-keystone-auth' do
+    context 'with default class parameters' do
+      let :params do
+        { :password => 'gnocchi_password',
+          :tenant   => 'foobar' }
+      end
 
-  describe 'with default class parameters' do
-    let :params do
-      { :password => 'gnocchi_password',
-        :tenant   => 'foobar' }
+      it { is_expected.to contain_keystone_user('gnocchi').with(
+        :ensure   => 'present',
+        :password => 'gnocchi_password',
+      ) }
+
+      it { is_expected.to contain_keystone_user_role('gnocchi@foobar').with(
+        :ensure  => 'present',
+        :roles   => ['admin']
+      )}
+
+      it { is_expected.to contain_keystone_service('gnocchi::metric').with(
+        :ensure      => 'present',
+        :description => 'OpenStack Metric Service'
+      ) }
+
+      it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi::metric').with(
+        :ensure       => 'present',
+        :public_url   => 'http://127.0.0.1:8041',
+        :admin_url    => 'http://127.0.0.1:8041',
+        :internal_url => 'http://127.0.0.1:8041',
+      ) }
     end
 
-    it { is_expected.to contain_keystone_user('gnocchi').with(
-      :ensure   => 'present',
-      :password => 'gnocchi_password',
-    ) }
+    context 'when overriding URL parameters' do
+      let :params do
+        { :password     => 'gnocchi_password',
+          :public_url   => 'https://10.10.10.10:80',
+          :internal_url => 'http://10.10.10.11:81',
+          :admin_url    => 'http://10.10.10.12:81' }
+      end
 
-    it { is_expected.to contain_keystone_user_role('gnocchi@foobar').with(
-      :ensure  => 'present',
-      :roles   => ['admin']
-    )}
-
-    it { is_expected.to contain_keystone_service('gnocchi::metric').with(
-      :ensure      => 'present',
-      :description => 'OpenStack Metric Service'
-    ) }
-
-    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi::metric').with(
-      :ensure       => 'present',
-      :public_url   => 'http://127.0.0.1:8041',
-      :admin_url    => 'http://127.0.0.1:8041',
-      :internal_url => 'http://127.0.0.1:8041',
-    ) }
-  end
-
-  describe 'when overriding URL parameters' do
-    let :params do
-      { :password     => 'gnocchi_password',
+      it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi::metric').with(
+        :ensure       => 'present',
         :public_url   => 'https://10.10.10.10:80',
         :internal_url => 'http://10.10.10.11:81',
-        :admin_url    => 'http://10.10.10.12:81' }
+        :admin_url    => 'http://10.10.10.12:81'
+      ) }
     end
 
-    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi::metric').with(
-      :ensure       => 'present',
-      :public_url   => 'https://10.10.10.10:80',
-      :internal_url => 'http://10.10.10.11:81',
-      :admin_url    => 'http://10.10.10.12:81'
-    ) }
-  end
+    context 'when overriding auth name' do
+      let :params do
+        { :password => 'foo',
+          :auth_name => 'gnocchiany' }
+      end
 
-  describe 'when overriding auth name' do
-    let :params do
-      { :password => 'foo',
-        :auth_name => 'gnocchiany' }
+      it { is_expected.to contain_keystone_user('gnocchiany') }
+      it { is_expected.to contain_keystone_user_role('gnocchiany@services') }
+      it { is_expected.to contain_keystone_service('gnocchiany::metric') }
+      it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchiany::metric') }
     end
 
-    it { is_expected.to contain_keystone_user('gnocchiany') }
-    it { is_expected.to contain_keystone_user_role('gnocchiany@services') }
-    it { is_expected.to contain_keystone_service('gnocchiany::metric') }
-    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchiany::metric') }
-  end
+    context 'when overriding service name' do
+      let :params do
+        { :service_name => 'gnocchi_service',
+          :auth_name    => 'gnocchi',
+          :password     => 'gnocchi_password' }
+      end
 
-  describe 'when overriding service name' do
-    let :params do
-      { :service_name => 'gnocchi_service',
-        :auth_name    => 'gnocchi',
-        :password     => 'gnocchi_password' }
+      it { is_expected.to contain_keystone_user('gnocchi') }
+      it { is_expected.to contain_keystone_user_role('gnocchi@services') }
+      it { is_expected.to contain_keystone_service('gnocchi_service::metric') }
+      it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi_service::metric') }
     end
 
-    it { is_expected.to contain_keystone_user('gnocchi') }
-    it { is_expected.to contain_keystone_user_role('gnocchi@services') }
-    it { is_expected.to contain_keystone_service('gnocchi_service::metric') }
-    it { is_expected.to contain_keystone_endpoint('RegionOne/gnocchi_service::metric') }
-  end
+    context 'when disabling user configuration' do
 
-  describe 'when disabling user configuration' do
+      let :params do
+        {
+          :password       => 'gnocchi_password',
+          :configure_user => false
+        }
+      end
 
-    let :params do
-      {
-        :password       => 'gnocchi_password',
-        :configure_user => false
-      }
+      it { is_expected.not_to contain_keystone_user('gnocchi') }
+      it { is_expected.to contain_keystone_user_role('gnocchi@services') }
+      it { is_expected.to contain_keystone_service('gnocchi::metric').with(
+        :ensure      => 'present',
+        :description => 'OpenStack Metric Service'
+      ) }
+
     end
 
-    it { is_expected.not_to contain_keystone_user('gnocchi') }
-    it { is_expected.to contain_keystone_user_role('gnocchi@services') }
-    it { is_expected.to contain_keystone_service('gnocchi::metric').with(
-      :ensure      => 'present',
-      :description => 'OpenStack Metric Service'
-    ) }
+    context 'when disabling user and user role configuration' do
 
-  end
+      let :params do
+        {
+          :password            => 'gnocchi_password',
+          :configure_user      => false,
+          :configure_user_role => false
+        }
+      end
 
-  describe 'when disabling user and user role configuration' do
+      it { is_expected.not_to contain_keystone_user('gnocchi') }
+      it { is_expected.not_to contain_keystone_user_role('gnocchi@services') }
+      it { is_expected.to contain_keystone_service('gnocchi::metric').with(
+        :ensure      => 'present',
+        :description => 'OpenStack Metric Service'
+      ) }
 
-    let :params do
-      {
-        :password            => 'gnocchi_password',
-        :configure_user      => false,
-        :configure_user_role => false
-      }
     end
-
-    it { is_expected.not_to contain_keystone_user('gnocchi') }
-    it { is_expected.not_to contain_keystone_user_role('gnocchi@services') }
-    it { is_expected.to contain_keystone_service('gnocchi::metric').with(
-      :ensure      => 'present',
-      :description => 'OpenStack Metric Service'
-    ) }
-
   end
 
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      it_behaves_like 'gnocchi-keystone-auth'
+    end
+  end
 end

@@ -60,6 +60,10 @@
 #   to make gnocchi-api be a web app using apache mod_wsgi.
 #   Defaults to '$::gnocchi::params::api_service_name'
 #
+# [*sync_db*]
+#   (optional) Run gnocchi-upgrade db sync on api nodes after installing the package.
+#   Defaults to false
+
 class gnocchi::api (
   $manage_service        = true,
   $enabled               = true,
@@ -74,6 +78,7 @@ class gnocchi::api (
   $workers               = $::processorcount,
   $max_limit             = 1000,
   $service_name          = $::gnocchi::params::api_service_name,
+  $sync_db               = false,
 ) inherits gnocchi::params {
 
   include ::gnocchi::policy
@@ -99,6 +104,10 @@ class gnocchi::api (
     } else {
       $service_ensure = 'stopped'
     }
+  }
+
+  if $sync_db {
+    include ::gnocchi::db::sync
   }
 
   if $service_name == $::gnocchi::params::api_service_name {

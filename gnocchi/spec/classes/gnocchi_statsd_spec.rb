@@ -72,36 +72,26 @@ describe 'gnocchi::statsd' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily        => 'Debian',
-        :operatingsystem => 'Debian',
-      })
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :statsd_package_name => 'gnocchi-statsd',
+            :statsd_service_name => 'gnocchi-statsd' }
+        when 'RedHat'
+          { :statsd_package_name => 'openstack-gnocchi-statsd',
+            :statsd_service_name => 'openstack-gnocchi-statsd' }
+        end
+      end
+      it_behaves_like 'gnocchi-statsd'
     end
-
-    let :platform_params do
-      { :statsd_package_name => 'gnocchi-statsd',
-        :statsd_service_name => 'gnocchi-statsd' }
-    end
-
-    it_configures 'gnocchi-statsd'
-  end
-
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily               => 'RedHat',
-        :operatingsystem        => 'RedHat',
-      })
-    end
-
-    let :platform_params do
-      { :statsd_package_name => 'openstack-gnocchi-statsd',
-        :statsd_service_name => 'openstack-gnocchi-statsd' }
-    end
-
-    it_configures 'gnocchi-statsd'
   end
 
 end

@@ -51,6 +51,10 @@
 #   to make aodh-api be a web app using apache mod_wsgi.
 #   Defaults to '$::aodh::params::api_service_name'
 #
+# [*sync_db*]
+#   (optional) Run gnocchi-upgrade db sync on api nodes after installing the package.
+#   Defaults to false
+
 class aodh::api (
   $manage_service        = true,
   $enabled               = true,
@@ -63,6 +67,7 @@ class aodh::api (
   $host                  = '0.0.0.0',
   $port                  = '8042',
   $service_name          = $::aodh::params::api_service_name,
+  $sync_db               = false,
 ) inherits aodh::params {
 
   include ::aodh::params
@@ -88,6 +93,10 @@ class aodh::api (
     } else {
       $service_ensure = 'stopped'
     }
+  }
+
+  if $sync_db {
+    include ::aodh::db::sync
   }
 
   if $service_name == $::aodh::params::api_service_name {

@@ -19,31 +19,24 @@ describe 'gnocchi' do
     end
   end
 
-  context 'on Debian platforms' do
-    let :facts do
-      @default_facts.merge({
-        :osfamily        => 'Debian',
-        :operatingsystem => 'Debian',
-      })
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      let(:platform_params) do
+        case facts[:osfamily]
+        when 'Debian'
+          { :gnocchi_common_package => 'gnocchi-common' }
+        when 'RedHat'
+          { :gnocchi_common_package => 'openstack-gnocchi-common' }
+        end
+      end
+      it_behaves_like 'gnocchi'
     end
-
-    let :platform_params do
-      { :gnocchi_common_package => 'gnocchi-common' }
-    end
-
-    it_behaves_like 'gnocchi'
-  end
-
-  context 'on RedHat platforms' do
-    let :facts do
-      @default_facts.merge({ :osfamily => 'RedHat' })
-    end
-
-    let :platform_params do
-      { :gnocchi_common_package => 'openstack-gnocchi-common' }
-    end
-
-    it_behaves_like 'gnocchi'
   end
 
 end

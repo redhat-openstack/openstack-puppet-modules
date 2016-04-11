@@ -30,27 +30,19 @@ describe 'gnocchi::db::sync' do
     end
   end
 
-  context 'on a RedHat osfamily' do
-    let :facts do
-      {
-        :osfamily                 => 'RedHat',
-        :operatingsystemrelease   => '7.0',
-      }
+  on_supported_os({
+    :supported_os   => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge(OSDefaults.get_facts({
+          :processorcount => 8,
+          :concat_basedir => '/var/lib/puppet/concat'
+        }))
+      end
+
+      it_configures 'gnocchi-dbsync'
     end
-
-    it_configures 'gnocchi-dbsync'
-  end
-
-  context 'on a Debian osfamily' do
-    let :facts do
-      {
-        :operatingsystemrelease => '7.8',
-        :operatingsystem        => 'Debian',
-        :osfamily               => 'Debian',
-      }
-    end
-
-    it_configures 'gnocchi-dbsync'
   end
 
 end
