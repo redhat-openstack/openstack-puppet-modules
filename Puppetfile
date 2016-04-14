@@ -151,7 +151,7 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => '78800d1b75102acc70cc4a58afc82e5d369e38f3',
+  :commit => 'f994bbb283156353e95cf84f28dfc7f42f5c227f',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
@@ -227,7 +227,7 @@ mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
 
 mod 'swift',
-  :commit => '66d3262a72a02fbb41e8ecbf1840e95524e36a41',
+  :commit => 'cde38d5a3f6281ec29b75e36d38f4873ffef75ed',
   :git => 'https://github.com/openstack/puppet-swift.git'
 
 mod 'sysctl',
