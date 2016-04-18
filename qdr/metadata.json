@@ -1,0 +1,14 @@
+{
+  "name": "ajssmith-qdr",
+  "version": "0.1.0",
+  "author": "Andy Smith",
+  "summary": "This module manages qpid-dispatch-router service",
+  "license": "Apache-2.0",
+  "source": "https://github.com/ajssmith/puppet-qdr",
+  "project_page": "https://github.com/ajssmith/puppet-qdr",
+  "issues_url": "https://github.com/ajssmith/puppet-qdr/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+

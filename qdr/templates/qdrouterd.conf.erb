@@ -1,0 +1,104 @@
+##
+## Licensed to the Apache Software Foundation (ASF) under one
+## or more contributor license agreements.  See the NOTICE file
+## distributed with this work for additional information
+## regarding copyright ownership.  The ASF licenses this file
+## to you under the Apache License, Version 2.0 (the
+## "License"); you may not use this file except in compliance
+## with the License.  You may obtain a copy of the License at
+##
+##   http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing,
+## software distributed under the License is distributed on an
+## "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+## KIND, either express or implied.  See the License for the
+## specific language governing permissions and limitations
+## under the License
+##
+
+# See the qdrouterd.conf (5) manual page for information about this
+# file's format and options.
+
+container {
+    containerName: <%= @container_name %>
+    workerThreads: <%= @container_worker_threads %>
+    debugDump: <%= @container_debug_dump %>
+    saslConfigPath: <%= @container_sasl_path %>
+    saslConfigName: <%= @container_sasl_name %>
+}
+
+router {
+    mode: <%= @router_mode %>
+    routerId: <%= @router_id %>
+}
+
+# sslProfile {
+#    name: <%= @container_name %>
+#    certDb: <%= @listener_ssl_cert_db %>
+#    certFile: <%= @listener_ssl_cert_file %>
+#    keyFile: <%= @listener_ssl_key_file %>
+#}
+
+listener {
+    addr: <%= @listener_addr %>
+    port: <%= @listener_port %>
+#    sslProfile: <%= @container_name %>
+    authenticatePeer: <%= @listener_auth_peer %>
+    saslMechanisms: <%= @listener_sasl_mech %>
+}
+
+fixedAddress {
+    prefix: /closest/
+    fanout: single
+    bias: closest
+}
+
+fixedAddress {
+    prefix: /multicast/
+    fanout: multiple
+}
+
+fixedAddress {
+    prefix: /queue/
+    phase:  0
+    fanout: single
+    bias:   closest
+}
+
+fixedAddress {
+    prefix: /queue/
+    phase:  1
+    fanout: single
+    bias:   closest
+}
+
+fixedAddress {
+    prefix: /unicast
+    fanout: single
+    bias: closest
+}
+
+fixedAddress {
+    prefix: /exclusive
+    fanout: single
+    bias: closest
+}
+
+fixedAddress {
+    prefix: /broadcast
+    fanout: multiple
+}
+
+fixedAddress {
+    prefix: /
+    fanout: multiple
+}
+
+log {
+   module: <%= @log_module %>
+   enable: <%= @log_enable %>
+   timestamp: true
+   output: <%= @log_output %>
+}
+

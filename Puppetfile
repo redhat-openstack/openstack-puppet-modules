@@ -182,6 +182,10 @@ mod 'pacemaker',
   :commit => '02d533f47753581f521ad97bbdb288674602d2fe',
   :git => 'https://github.com/openstack/puppet-pacemaker.git'
 
+mod 'qdr',
+  :commit => 'bda4c1a6f1baa0e7fc711690d4960f38c0da6671',
+  :git => 'https://github.com/ajssmith/puppet-qdr.git'
+
 mod 'qpid',
   :commit => '4a3c8f0bceacb315de49530faf1325e3daeb02d0',
   :git => 'https://github.com/dprince/puppet-qpid'
