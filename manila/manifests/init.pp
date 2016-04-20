@@ -206,69 +206,6 @@
 #   (optional) Accept clients using either SSL or plain TCP
 #   Defaults to false
 #
-# DEPRECATED PARAMETERS
-#
-# [*qpid_hostname*]
-#   (Optional) hostname of the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_port*]
-#   (Optional) Port of the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_username*]
-#   (Optional) User to connect to the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_password*]
-#   (Optional) Password to connect to the qpid_server.
-#   Defaults to undef.
-#
-# [*qpid_heartbeat*]
-#   (Optional) Seconds between connection keepalive heartbeats.
-#   Defaults to undef.
-#
-# [*qpid_protocol*]
-#   (Optional) Transport to use, either 'tcp' or 'ssl'.
-#   Defaults to undef.
-#
-# [*qpid_tcp_nodelay*]
-#   (Optional) Whether to disable the Nagle algorithm.
-#   Defaults to undef.
-#
-# [*qpid_reconnect*]
-#   (Optional) Enable the experimental use of reconnect on connection
-#   lost.
-#   Defaults to undef.
-#
-# [*qpid_reconnect_timeout*]
-#   (Optional) How long to wait before considering a reconnect attempt
-#   to have failed. This value should not be longer than rpc_response_timeout.
-#   Defaults to undef.
-#
-# [*qpid_reconnect_limit*]
-#   (Optional) Limit of reconnect on connection lost.
-#   Defaults to undef.
-#
-# [*qpid_reconnect_interval*]
-#   (Optional) Interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to undef.
-#
-# [*qpid_reconnect_interval_min*]
-#   (Optional) Minimal interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to undef.
-#
-# [*qpid_reconnect_interval_max*]
-#   (Optional) Miximal interval between retries of opening a qpid connection. (integer
-#   value)
-#   Defaults to undef.
-#
-# [*qpid_sasl_mechanisms*]
-#   (Optional) Enable one or more SASL mechanisms.
-#   Defaults to undef.
-#
 class manila (
   $sql_connection              = undef,
   $sql_idle_timeout            = undef,
@@ -320,21 +257,6 @@ class manila (
   $amqp_ssl_cert_file          = undef,
   $amqp_ssl_key_file           = undef,
   $amqp_ssl_key_password       = undef,
-  # DEPRECATED PARAMETERS
-  $qpid_hostname               = undef,
-  $qpid_port                   = undef,
-  $qpid_username               = undef,
-  $qpid_password               = undef,
-  $qpid_sasl_mechanisms        = undef,
-  $qpid_reconnect              = undef,
-  $qpid_reconnect_timeout      = undef,
-  $qpid_reconnect_limit        = undef,
-  $qpid_reconnect_interval_min = undef,
-  $qpid_reconnect_interval_max = undef,
-  $qpid_reconnect_interval     = undef,
-  $qpid_heartbeat              = undef,
-  $qpid_protocol               = undef,
-  $qpid_tcp_nodelay            = undef,
 ) {
 
   include ::manila::db
@@ -442,10 +364,6 @@ class manila (
       }
     }
 
-  }
-
-  if $rpc_backend == 'manila.openstack.common.rpc.impl_qpid' or $rpc_backend == 'qpid' {
-    warning('Qpidd\'s driver was removed from Oslo.messaging in Mitaka release')
   }
 
 

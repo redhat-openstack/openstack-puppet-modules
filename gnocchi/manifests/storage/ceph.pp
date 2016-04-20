@@ -29,7 +29,12 @@
 #   (required) Ceph username to use.
 #
 # [*ceph_keyring*]
-#   (required) Ceph keyring path.
+#   (optional) Ceph keyring path.
+#   Defaults to $::os_service_default
+#
+# [*ceph_secret*]
+#   (optional) Ceph secret.
+#   Defaults to $::os_service_default
 #
 # [*ceph_conffile*]
 #   (optional) Ceph configuration file.
@@ -37,15 +42,21 @@
 #
 class gnocchi::storage::ceph(
   $ceph_username,
-  $ceph_keyring,
+  $ceph_keyring  = $::os_service_default,
+  $ceph_secret   = $::os_service_default,
   $ceph_pool     = 'gnocchi',
   $ceph_conffile = '/etc/ceph/ceph.conf',
 ) {
+
+  if (is_service_default($ceph_keyring) and is_service_default($ceph_secret)) or (! $ceph_keyring and ! $ceph_secret) {
+    fail('You need to specify either gnocchi::storage::ceph::ceph_keyring or gnocchi::storage::ceph::ceph_secret.')
+  }
 
   gnocchi_config {
     'storage/driver':        value => 'ceph';
     'storage/ceph_username': value => $ceph_username;
     'storage/ceph_keyring':  value => $ceph_keyring;
+    'storage/ceph_secret':   value => $ceph_secret;
     'storage/ceph_pool':     value => $ceph_pool;
     'storage/ceph_conffile': value => $ceph_conffile;
   }

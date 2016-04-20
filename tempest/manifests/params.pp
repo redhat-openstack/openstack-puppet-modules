@@ -10,7 +10,7 @@ class tempest::params {
         'openssl-devel',
         'libffi-devel',
         'patch',
-        'gcc',
+        'gcc'
       ]
       $python_aodh_tests       = 'python-aodh-tests'
       $python_ceilometer_tests = 'python-ceilometer-tests'
@@ -19,6 +19,7 @@ class tempest::params {
       $python_heat_tests       = 'python-heat-tests'
       $python_ironic_tests     = 'python-ironic-tests'
       $python_keystone_tests   = 'python-keystone-tests'
+      $python_mistral_tests    = 'python-mistral-tests'
       $python_murano_tests     = 'python-murano-tests'
       $python_neutron_tests    = 'python-neutron-tests'
       $python_fwaas_tests      = 'python-neutron-fwaas-tests'
@@ -40,6 +41,7 @@ class tempest::params {
         'libffi-dev',
         'patch',
         'gcc',
+        'python-virtualenv',
       ]
       $python_aodh_tests       = false
       $python_ceilometer_tests = false
@@ -48,6 +50,7 @@ class tempest::params {
       $python_heat_tests       = false
       $python_ironic_tests     = false
       $python_keystone_tests   = false
+      $python_mistral_tests    = false
       $python_murano_tests     = false
       $python_neutron_tests    = false
       $python_nova_tests       = false

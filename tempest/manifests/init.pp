@@ -41,8 +41,6 @@
 #   Defaults to '/var/lib/tempest'
 #  [*debug*]
 #   Defaults to false
-#  [*verbose*]
-#   Defaults to false
 #  [*use_stderr*]
 #   Defaults to true
 #  [*use_syslog*]
@@ -120,6 +118,8 @@
 #   Defaults to false
 #  [*zaqar_available*]
 #   Defaults to false
+#  [*mistral_available*]
+#   Defaults to false
 #  [*run_service_broker_tests*]
 #   Defaults to false
 #  [*sahara_available*]
@@ -153,6 +153,9 @@
 #  [*manage_tests_packages*]
 #   Defaults to false
 #
+# DEPREACTED PARAMETERS
+#  [*verbose*]
+#   Defaults to false
 class tempest(
   $install_from_source           = true,
   $git_clone                     = true,
@@ -189,7 +192,6 @@ class tempest(
   $cli_dir                       = undef,
   $lock_path                     = '/var/lib/tempest',
   $debug                         = false,
-  $verbose                       = false,
   $use_stderr                    = true,
   $use_syslog                    = false,
   $log_file                      = undef,
@@ -243,6 +245,7 @@ class tempest(
   $trove_available               = false,
   $ironic_available              = false,
   $zaqar_available               = false,
+  $mistral_available             = false,
   $keystone_v2                   = true,
   $keystone_v3                   = true,
   $auth_version                  = 'v2',
@@ -253,7 +256,13 @@ class tempest(
   # scenario options
   $img_dir                       = '/var/lib/tempest',
   $img_file                      = 'cirros-0.3.4-x86_64-disk.img',
+  # DEPRECATED PARAMETERS
+  $verbose                       = false,
 ) {
+
+  if $verbose {
+    warning('verbose is deprecated and does nothing. Will be remove in a future release.')
+  }
 
   include ::tempest::params
 
@@ -294,7 +303,7 @@ class tempest(
     if $setup_venv {
       # virtualenv will be installed along with tox
       exec { 'setup-venv':
-        command => "/usr/bin/python ${tempest_clone_path}/tools/install_venv.py",
+        command => "/usr/bin/virtualenv ${tempest_clone_path}/.venv && ${tempest_clone_path}/.venv/bin/pip install -U -r requirements.txt",
         cwd     => $tempest_clone_path,
         unless  => "/usr/bin/test -d ${tempest_clone_path}/.venv",
         require => [
@@ -369,7 +378,6 @@ class tempest(
     'cli/cli_dir':                                 value => $cli_dir;
     'oslo_concurrency/lock_path':                  value => $lock_path;
     'DEFAULT/debug':                               value => $debug;
-    'DEFAULT/verbose':                             value => $verbose;
     'DEFAULT/use_stderr':                          value => $use_stderr;
     'DEFAULT/use_syslog':                          value => $use_syslog;
     'DEFAULT/log_file':                            value => $log_file;
@@ -490,6 +498,13 @@ class tempest(
       package { 'python-zaqar-tests':
         ensure => present,
         name   => $::tempest::params::python_zaqar_tests,
+        tag    => ['openstack', 'tempest-package'],
+      }
+    }
+    if $mistral_available and $::tempest::params::python_mistral_tests {
+      package { 'python-mistral-tests':
+        ensure => present,
+        name   => $::tempest::params::python_mistral_tests,
         tag    => ['openstack', 'tempest-package'],
       }
     }

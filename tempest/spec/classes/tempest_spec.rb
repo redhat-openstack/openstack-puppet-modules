@@ -220,7 +220,6 @@ describe 'tempest' do
           is_expected.to contain_tempest_config('cli/cli_dir').with(:value => nil)
           is_expected.to contain_tempest_config('oslo_concurrency/lock_path').with(:value => '/var/lib/tempest')
           is_expected.to contain_tempest_config('DEFAULT/debug').with(:value => false)
-          is_expected.to contain_tempest_config('DEFAULT/verbose').with(:value => false)
           is_expected.to contain_tempest_config('DEFAULT/use_stderr').with(:value => true)
           is_expected.to contain_tempest_config('DEFAULT/use_syslog').with(:value => false)
           is_expected.to contain_tempest_config('DEFAULT/log_file').with(:value => nil)
@@ -317,7 +316,8 @@ describe 'tempest' do
                               'libssl-dev',
                               'libffi-dev',
                               'patch',
-                              'gcc' ] }
+                              'gcc',
+                              'python-virtualenv' ] }
         when 'RedHat'
           { :dev_packages => ['python-devel',
                               'libxslt-devel',
@@ -325,7 +325,7 @@ describe 'tempest' do
                               'openssl-devel',
                               'libffi-devel',
                               'patch',
-                              'gcc' ] }
+                              'gcc'] }
         end
       end
 

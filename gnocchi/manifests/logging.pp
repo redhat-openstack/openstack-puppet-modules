@@ -62,8 +62,7 @@
 #    Defaults to $::os_service_default
 #    example:
 #      { 'amqp' => 'warn', 'amqplib' => 'warn', 'boto' => 'warn',
-#        'qpid' => 'warn', 'sqlalchemy' => 'warn', 'suds' => 'info',
-#        'iso8601' => 'warn',
+#        'sqlalchemy' => 'warn', 'suds' => 'info', 'iso8601' => 'warn',
 #        'requests.packages.urllib3.connectionpool' => 'warn' }
 #
 #  [*publish_errors*]

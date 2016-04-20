@@ -18,6 +18,7 @@ describe 'neutron::agents::ml2::ovs' do
       :drop_flows_on_start        => false,
       :firewall_driver            => 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
       :manage_vswitch             => true,
+      :purge_config               => false,
       }
   end
 
@@ -37,6 +38,12 @@ describe 'neutron::agents::ml2::ovs' do
     end
 
     it { is_expected.to contain_class('neutron::params') }
+
+    it 'passes purge to resource' do
+      is_expected.to contain_resources('neutron_agent_ovs').with({
+        :purge => false
+      })
+    end
 
     it 'configures plugins/ml2/openvswitch_agent.ini' do
       is_expected.to contain_neutron_agent_ovs('agent/polling_interval').with_value('<SERVICE DEFAULT>')
@@ -75,7 +82,7 @@ describe 'neutron::agents::ml2::ovs' do
         :enable  => true,
         :ensure  => 'running',
         :require => 'Class[Neutron]',
-        :tag     => 'neutron-service',
+        :tag     => ['neutron-service', 'neutron-db-sync-service'],
       )
       is_expected.to contain_service('neutron-ovs-agent-service').that_subscribes_to( [ 'Package[neutron]', 'Package[neutron-ovs-agent]' ] )
     end

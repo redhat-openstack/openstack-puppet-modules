@@ -142,6 +142,18 @@ describe 'gnocchi::api' do
       end
     end
 
+    context "with no keystone identity_uri" do
+      before do
+        params.merge!({
+          :keystone_identity_uri => false,
+        })
+      end
+      it 'configures identity_uri' do
+        is_expected.to contain_gnocchi_config('keystone_authtoken/identity_uri').with_value(nil);
+        is_expected.to contain_gnocchi_api_paste_ini('pipeline:main/pipeline').with_value('gnocchi+noauth');
+      end
+    end
+
     context "with custom keystone identity_uri" do
       before do
         params.merge!({

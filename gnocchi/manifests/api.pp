@@ -159,6 +159,9 @@ class gnocchi::api (
     gnocchi_config {
       'keystone_authtoken/identity_uri': ensure => absent;
     }
+    gnocchi_api_paste_ini {
+      'pipeline:main/pipeline':  value => 'gnocchi+noauth',
+    }
   }
 
 }

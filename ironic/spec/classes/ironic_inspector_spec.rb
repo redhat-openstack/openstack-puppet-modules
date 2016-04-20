@@ -24,6 +24,7 @@ describe 'ironic::inspector' do
     { :package_ensure                  => 'present',
       :enabled                         => true,
       :pxe_transfer_protocol           => 'tftp',
+      :enable_uefi                     => false,
       :auth_uri                        => 'http://127.0.0.1:5000/v2.0',
       :identity_uri                    => 'http://127.0.0.1:35357',
       :admin_user                      => 'ironic',
@@ -129,6 +130,14 @@ describe 'ironic::inspector' do
       )
     end
 
+    it 'should not contain BIOS iPXE image by default' do
+      is_expected.to_not contain_file('/tftpboot/undionly.kpxe')
+    end
+
+    it 'should not contain UEFI iPXE image by default' do
+      is_expected.to_not contain_file('/tftpboot/ipxe.efi')
+    end
+
     context 'when overriding parameters' do
       before :each do
         params.merge!(
@@ -143,6 +152,7 @@ describe 'ironic::inspector' do
           :pxe_transfer_protocol        => 'http',
           :additional_processing_hooks  => 'hook1,hook2',
           :ramdisk_kernel_args          => 'foo=bar',
+          :enable_uefi                  => true,
         )
       end
       it 'should replace default parameter with new value' do
@@ -172,6 +182,18 @@ describe 'ironic::inspector' do
         )
         is_expected.to contain_file('/httpboot/inspector.ipxe').with_content(
             /kernel http:\/\/192.168.0.1:8088\/agent.kernel ipa-inspection-callback-url=http:\/\/192.168.0.1:5050\/v1\/continue ipa-inspection-collectors=default.* foo=bar/
+        )
+      end
+      it 'should contain iPXE chainload images' do
+        is_expected.to contain_file('/tftpboot/undionly.kpxe').with(
+          'ensure' => 'present',
+          'backup'  => false,
+        )
+      end
+      it 'should contain iPXE UEFI chainload image' do
+        is_expected.to contain_file('/tftpboot/ipxe.efi').with(
+          'ensure' => 'present',
+          'backup'  => false,
         )
       end
     end

@@ -26,7 +26,7 @@ describe 'aodh' do
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_virtual_host').with_value('/')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_timeout_threshold').with_value('0')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/heartbeat_rate').with_value('2')
-        is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_ensure('absent')
+        is_expected.to contain_aodh_config('oslo_messaging_notifications/driver').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('database/alarm_history_time_to_live').with_value('<SERVICE DEFAULT>')
       end
     end
@@ -63,15 +63,15 @@ describe 'aodh' do
       end
 
       it 'configures various things' do
-        is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_value('ceilometer.compute.aodh_notifier')
-        is_expected.to contain_aodh_config('DEFAULT/notification_topics').with_value('openstack')
+        is_expected.to contain_aodh_config('oslo_messaging_notifications/driver').with_value('ceilometer.compute.aodh_notifier')
+        is_expected.to contain_aodh_config('oslo_messaging_notifications/topics').with_value('openstack')
         is_expected.to contain_aodh_config('DEFAULT/gnocchi_url').with_value('http://127.0.0.1:8041')
       end
 
       context 'with multiple notification_driver' do
         before { params.merge!( :notification_driver => ['ceilometer.compute.aodh_notifier', 'aodh.openstack.common.notifier.rpc_notifier']) }
 
-        it { is_expected.to contain_aodh_config('DEFAULT/notification_driver').with_value(
+        it { is_expected.to contain_aodh_config('oslo_messaging_notifications/driver').with_value(
           'ceilometer.compute.aodh_notifier,aodh.openstack.common.notifier.rpc_notifier'
         ) }
       end
@@ -84,17 +84,13 @@ describe 'aodh' do
       end
 
       it 'configures rabbit' do
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_host')
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_port')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_host').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_port').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_hosts').with_value('rabbit:5673,rabbit2:5674')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value(true)
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value(false)
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_reconnect_delay').with_value('1.0')
         is_expected.to contain_aodh_config('DEFAULT/amqp_durable_queues').with_value(false)
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
       end
     end
 
@@ -104,10 +100,10 @@ describe 'aodh' do
       end
 
       it 'configures rabbit' do
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_host')
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_port')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_host').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_port').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_hosts').with_value('rabbit:5673')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value(true)
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value(false)
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_reconnect_delay').with_value('1.0')
         is_expected.to contain_aodh_config('DEFAULT/amqp_durable_queues').with_value(false)
@@ -152,23 +148,19 @@ describe 'aodh' do
       end
 
       it 'configures rabbit' do
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_host')
-        is_expected.to_not contain_aodh_config('oslo_messaging_rabbit/rabbit_port')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_host').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_port').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_hosts').with_value('rabbit:5673')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value(true)
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('<SERVICE DEFAULT>')
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value(false)
         is_expected.to contain_aodh_config('DEFAULT/amqp_durable_queues').with_value(true)
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
       end
     end
 
     context 'with rabbit ssl enabled with kombu' do
       let :params do
         { :rabbit_hosts       => ['rabbit:5673'],
-          :rabbit_use_ssl     => 'true',
+          :rabbit_use_ssl     => true,
           :kombu_ssl_ca_certs => '/etc/ca.cert',
           :kombu_ssl_certfile => '/etc/certfile',
           :kombu_ssl_keyfile  => '/etc/key',
@@ -187,33 +179,15 @@ describe 'aodh' do
     context 'with rabbit ssl enabled without kombu' do
       let :params do
         { :rabbit_hosts       => ['rabbit:5673'],
-          :rabbit_use_ssl     => 'true', }
+          :rabbit_use_ssl     => true, }
       end
 
       it 'configures rabbit' do
         is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value(true)
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_value('TLSv1')
-      end
-    end
-
-    context 'with rabbit ssl disabled' do
-      let :params do
-        {
-          :rabbit_password    => 'pass',
-          :rabbit_use_ssl     => false,
-          :kombu_ssl_version  => 'TLSv1',
-        }
-      end
-
-      it 'configures rabbit' do
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/rabbit_use_ssl').with_value('false')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_ensure('absent')
-        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_ensure('absent')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_ca_certs').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_certfile').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_keyfile').with_value('<SERVICE DEFAULT>')
+        is_expected.to contain_aodh_config('oslo_messaging_rabbit/kombu_ssl_version').with_value('<SERVICE DEFAULT>')
       end
     end
   end

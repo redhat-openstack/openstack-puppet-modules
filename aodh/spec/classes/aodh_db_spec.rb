@@ -6,7 +6,6 @@ describe 'aodh::db' do
 
     context 'with default parameters' do
 
-      it { is_expected.to contain_class('aodh::params') }
       it { is_expected.to contain_aodh_config('database/connection').with_value('sqlite:////var/lib/aodh/aodh.sqlite') }
       it { is_expected.to contain_aodh_config('database/idle_timeout').with_value('3600') }
       it { is_expected.to contain_aodh_config('database/min_pool_size').with_value('1') }
@@ -25,7 +24,6 @@ describe 'aodh::db' do
         }
       end
 
-      it { is_expected.to contain_class('aodh::params') }
       it { is_expected.to contain_aodh_config('database/connection').with_value('mysql+pymysql://aodh:aodh@localhost/aodh').with_secret(true) }
       it { is_expected.to contain_aodh_config('database/idle_timeout').with_value('3601') }
       it { is_expected.to contain_aodh_config('database/min_pool_size').with_value('2') }
@@ -59,7 +57,7 @@ describe 'aodh::db' do
       end
 
       it 'installs python-mongodb package' do
-        is_expected.to contain_package('aodh-backend-package').with(
+        is_expected.to contain_package('db_backend_package').with(
           :ensure => 'present',
           :name   => 'python-pymongo',
           :tag    => 'openstack'
@@ -94,7 +92,7 @@ describe 'aodh::db' do
       end
 
       it 'install the proper backend package' do
-        is_expected.to contain_package('aodh-backend-package').with(
+        is_expected.to contain_package('db_backend_package').with(
           :ensure => 'present',
           :name   => 'python-pysqlite2',
           :tag    => 'openstack'
@@ -108,7 +106,7 @@ describe 'aodh::db' do
       end
 
       it 'install the proper backend package' do
-        is_expected.to contain_package('aodh-backend-package').with(
+        is_expected.to contain_package('db_backend_package').with(
           :ensure => 'present',
           :name   => 'python-pymysql',
           :tag    => 'openstack'
@@ -123,7 +121,7 @@ describe 'aodh::db' do
         { :database_connection     => 'mysql+pymysql://aodh:aodh@localhost/aodh', }
       end
 
-      it { is_expected.not_to contain_package('aodh-backend-package') }
+      it { is_expected.not_to contain_package('db_backend_package') }
     end
   end
 

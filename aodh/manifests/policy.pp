@@ -35,5 +35,4 @@ class aodh::policy (
   }
 
   create_resources('openstacklib::policy::base', $policies)
-
 }

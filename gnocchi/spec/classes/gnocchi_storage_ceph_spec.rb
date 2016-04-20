@@ -23,6 +23,29 @@ describe 'gnocchi::storage::ceph' do
         is_expected.to contain_gnocchi_config('storage/ceph_conffile').with_value('/etc/ceph/ceph.conf')
       end
     end
+
+    context 'with ceph_secret parameter' do
+      before do
+        params.merge!({
+          :ceph_secret => 'secrete'})
+      end
+      it { is_expected.to contain_gnocchi_config('storage/ceph_secret').with_value('secrete') }
+    end
+
+    context 'without required parameters' do
+      before { params.delete(:ceph_keyring) }
+      it { expect { is_expected.to raise_error(Puppet::Error) } }
+    end
+
+    context 'with both required parameters set to false' do
+      before do
+        params.merge!({
+          :ceph_secret  => false,
+          :ceph_keyring => false,
+        })
+      end
+      it { expect { is_expected.to raise_error(Puppet::Error) } }
+    end
   end
 
   on_supported_os({

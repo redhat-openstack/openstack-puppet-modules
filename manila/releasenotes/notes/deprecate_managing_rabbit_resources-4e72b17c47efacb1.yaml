@@ -1,0 +1,4 @@
+---
+deprications:
+  - Deprecated managing of rabbit resources.
+    It will be dropped in the next release.es the prelude.

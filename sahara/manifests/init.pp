@@ -133,7 +133,6 @@
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
 #     rabbit (for rabbitmq)
-#     qpid (for qpid)
 #     zmq (for zeromq)
 #   Defaults to $::os_service_default.
 #
@@ -242,51 +241,6 @@
 #   (Optional) Receiver listening port.
 #   Defaults to undef.
 #
-# [*qpid_hostname*]
-#   (Optional) IP or hostname of the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_port*]
-#   (Optional) Port of the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_hosts*]
-#   (Optional) Qpid HA cluster host:port pairs..
-#   comma separated array (ex: ['1.0.0.10:5672','1.0.0.11:5672'])
-#   Defaults to undef.
-#
-# [*qpid_username*]
-#   (Optional) User to connect to the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_password*]
-#   (Optional) Password to connect to the qpid server.
-#   Defaults to undef.
-#
-# [*qpid_sasl_mechanisms*]
-#   (Optional) String of SASL mechanisms to use.
-#   Defaults to undef.
-#
-# [*qpid_heartbeat*]
-#   (Optional) Seconds between connection keepalive heartbeats.
-#   Defaults to undef.
-#
-# [*qpid_protocol*]
-#   (Optional) Protocol to use for qpid (tcp/ssl).
-#   Defaults to undef.
-#
-# [*qpid_tcp_nodelay*]
-#   (Optional) Whether to disable the Nagle algorithm.
-#   Defaults to undef.
-#
-# [*qpid_receiver_capacity*]
-#   (Optional) Number of prefetched messages to hold.
-#   Defaults to undef.
-#
-# [*qpid_topology_version*]
-#   (Optional) Version of qpid toplogy to use.
-#   Defaults to undef.
-#
 class sahara(
   $package_ensure          = 'present',
   $verbose                 = undef,
@@ -344,17 +298,6 @@ class sahara(
   $kombu_reconnect_delay   = $::os_service_default,
   # DEPRECATED PARAMETERS
   $zeromq_port             = undef,
-  $qpid_hostname           = undef,
-  $qpid_port               = undef,
-  $qpid_hosts              = undef,
-  $qpid_username           = undef,
-  $qpid_password           = undef,
-  $qpid_sasl_mechanisms    = undef,
-  $qpid_heartbeat          = undef,
-  $qpid_protocol           = undef,
-  $qpid_tcp_nodelay        = undef,
-  $qpid_receiver_capacity  = undef,
-  $qpid_topology_version   = undef,
 ) {
   include ::sahara::params
   include ::sahara::logging
@@ -390,42 +333,26 @@ class sahara(
   }
 
   if $rpc_backend == 'rabbit' or is_service_default($rpc_backend) {
-    if ! is_service_default($rabbit_hosts) and $rabbit_hosts {
-      sahara_config {
-        'oslo_messaging_rabbit/rabbit_hosts':     value => join(any2array($rabbit_hosts), ',');
-        'oslo_messaging_rabbit/rabbit_ha_queues': value => true;
-      }
-    } else {
-      sahara_config {
-        'oslo_messaging_rabbit/rabbit_host':      value => $rabbit_host;
-        'oslo_messaging_rabbit/rabbit_port':      value => $rabbit_port;
-        'oslo_messaging_rabbit/rabbit_ha_queues': value => $rabbit_ha_queues;
-        'oslo_messaging_rabbit/rabbit_hosts':     ensure => absent;
-      }
+    oslo::messaging::rabbit { 'sahara_config':
+      rabbit_userid         => $rabbit_userid,
+      rabbit_password       => $rabbit_password,
+      rabbit_virtual_host   => $rabbit_virtual_host,
+      rabbit_host           => $rabbit_host,
+      rabbit_port           => $rabbit_port,
+      rabbit_hosts          => $rabbit_hosts,
+      rabbit_ha_queues      => $rabbit_ha_queues,
+      rabbit_use_ssl        => $rabbit_use_ssl,
+      kombu_reconnect_delay => $kombu_reconnect_delay,
+      kombu_ssl_version     => $kombu_ssl_version,
+      kombu_ssl_keyfile     => $kombu_ssl_keyfile,
+      kombu_ssl_certfile    => $kombu_ssl_certfile,
+      kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
+      amqp_durable_queues   => $amqp_durable_queues,
+      rabbit_login_method   => $rabbit_login_method,
+      rabbit_retry_interval => $rabbit_retry_interval,
+      rabbit_retry_backoff  => $rabbit_retry_backoff,
+      rabbit_max_retries    => $rabbit_max_retries,
     }
-    sahara_config {
-      'DEFAULT/rpc_backend':                       value => 'rabbit';
-      'oslo_messaging_rabbit/amqp_durable_queues': value => $amqp_durable_queues;
-      'oslo_messaging_rabbit/rabbit_use_ssl':      value => $rabbit_use_ssl;
-      'oslo_messaging_rabbit/rabbit_userid':       value => $rabbit_userid;
-      'oslo_messaging_rabbit/rabbit_password':
-        value => $rabbit_password,
-        secret => true;
-      'oslo_messaging_rabbit/rabbit_login_method':   value => $rabbit_login_method;
-      'oslo_messaging_rabbit/rabbit_virtual_host':   value => $rabbit_virtual_host;
-      'oslo_messaging_rabbit/rabbit_retry_interval': value => $rabbit_retry_interval;
-      'oslo_messaging_rabbit/rabbit_retry_backoff':  value => $rabbit_retry_backoff;
-      'oslo_messaging_rabbit/rabbit_max_retries':    value => $rabbit_max_retries;
-      'oslo_messaging_rabbit/kombu_ssl_ca_certs':    value => $kombu_ssl_ca_certs;
-      'oslo_messaging_rabbit/kombu_ssl_certfile':    value => $kombu_ssl_certfile;
-      'oslo_messaging_rabbit/kombu_ssl_keyfile':     value => $kombu_ssl_keyfile;
-      'oslo_messaging_rabbit/kombu_ssl_version':     value => $kombu_ssl_version;
-      'oslo_messaging_rabbit/kombu_reconnect_delay': value => $kombu_reconnect_delay;
-    }
-  }
-
-  if $rpc_backend == 'qpid' {
-    warning('Qpid driver is removed from Oslo.messaging in the Mitaka release')
   }
 
   if $rpc_backend == 'zmq' {
