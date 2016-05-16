@@ -29,6 +29,10 @@
 #  (optional) Protocol to be used for transferring the ramdisk
 #  Defaults to 'tftp'. Valid values are 'tftp' or 'http'.
 #
+# [*enable_uefi*]
+# (optional) Allow introspection of machines with UEFI firmware.
+# Defaults to false. Ignored unless $pxe_transfer_protocol='http'.
+#
 # [*debug*]
 #   (optional) Enable debug logging
 #   Defaults to undef
@@ -142,10 +146,15 @@
 #   String with kernel arguments to send to the ramdisk on boot.
 #   Defaults to undef
 #
+# [*ipxe_timeout*]
+#   (optional) ipxe timeout in second. Should be an integer.
+#   Defaults to '0' for unlimited.
+#
 class ironic::inspector (
   $package_ensure                  = 'present',
   $enabled                         = true,
   $pxe_transfer_protocol           = 'tftp',
+  $enable_uefi                     = false,
   $debug                           = undef,
   $auth_uri                        = 'http://127.0.0.1:5000/v2.0',
   $identity_uri                    = 'http://127.0.0.1:35357',
@@ -174,6 +183,7 @@ class ironic::inspector (
   $ramdisk_collectors              = 'default',
   $additional_processing_hooks     = undef,
   $ramdisk_kernel_args             = undef,
+  $ipxe_timeout                    = 0,
 ) {
 
   include ::ironic::params
@@ -219,6 +229,24 @@ class ironic::inspector (
       ensure  => 'present',
       content => template('ironic/inspector_ipxe.erb'),
       require => Package['ironic-inspector'],
+    }
+    if $::ironic::params::ipxe_rom_dir {
+      file { '/tftpboot/undionly.kpxe':
+        ensure  => 'present',
+        source  => "${::ironic::params::ipxe_rom_dir}/undionly.kpxe",
+        backup  => false,
+        seltype => 'tftpdir_t',
+      }
+      if $enable_uefi {
+        file { '/tftpboot/ipxe.efi':
+          ensure  => 'present',
+          source  => "${::ironic::params::ipxe_rom_dir}/ipxe.efi",
+          backup  => false,
+          seltype => 'tftpdir_t',
+        }
+      }
+    } else {
+      warning('iPXE ROM source location not set, ensure ROMs are copied into /tftpboot')
     }
   }
 
