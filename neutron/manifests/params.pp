@@ -58,6 +58,9 @@ class neutron::params {
     $lbaas_agent_package = 'openstack-neutron-lbaas'
     $lbaas_agent_service = 'neutron-lbaas-agent'
 
+    $lbaasv2_agent_package = false
+    $lbaasv2_agent_service = 'neutron-lbaasv2-agent'
+
     $haproxy_package   = 'haproxy'
 
     $metering_agent_package = 'openstack-neutron-metering-agent'
@@ -70,6 +73,7 @@ class neutron::params {
     } else {
       $openswan_package     = 'openswan'
     }
+    $libreswan_package     = 'libreswan'
 
     $l3_agent_package   = false
     $l3_agent_service   = 'neutron-l3-agent'
@@ -94,26 +98,27 @@ class neutron::params {
     $server_service     = 'neutron-server'
     $client_package     = 'python-neutronclient'
 
-    if $::operatingsystem == 'Ubuntu' {
-      $ml2_server_package = 'neutron-plugin-ml2'
-    } else {
+    if $::os_package_type =='debian' {
       $ml2_server_package = false
+    } else {
+      $ml2_server_package = 'neutron-plugin-ml2'
     }
 
-    $ovs_agent_package   = 'neutron-plugin-openvswitch-agent'
-    $ovs_agent_service   = 'neutron-plugin-openvswitch-agent'
+    $ovs_agent_package   = 'neutron-openvswitch-agent'
+    $ovs_agent_service   = 'neutron-openvswitch-agent'
+
     $ovs_server_package  = 'neutron-plugin-openvswitch'
     $ovs_cleanup_service = false
     $ovs_package         = 'openvswitch-switch'
     $libnl_package       = 'libnl1'
     $package_provider    = 'dpkg'
 
-    $linuxbridge_agent_package  = 'neutron-plugin-linuxbridge-agent'
-    $linuxbridge_agent_service  = 'neutron-plugin-linuxbridge-agent'
+    $linuxbridge_agent_package  = 'neutron-linuxbridge-agent'
+    $linuxbridge_agent_service  = 'neutron-linuxbridge-agent'
     $linuxbridge_server_package = 'neutron-plugin-linuxbridge'
 
-    $sriov_nic_agent_service = 'neutron-plugin-sriov-agent'
-    $sriov_nic_agent_package = 'neutron-plugin-sriov-agent'
+    $sriov_nic_agent_service = 'neutron-sriov-agent'
+    $sriov_nic_agent_package = 'neutron-sriov-agent'
 
     $cisco_server_package                   = 'neutron-plugin-cisco'
     $cisco_config_file                      = '/etc/neutron/plugins/cisco/cisco_plugins.ini'
@@ -139,6 +144,9 @@ class neutron::params {
     $lbaas_agent_package = 'neutron-lbaas-agent'
     $lbaas_agent_service = 'neutron-lbaas-agent'
 
+    $lbaasv2_agent_package = 'neutron-lbaasv2-agent'
+    $lbaasv2_agent_service = 'neutron-lbaasv2-agent'
+
     $haproxy_package   = 'haproxy'
 
     $metering_agent_package = 'neutron-metering-agent'
@@ -148,6 +156,7 @@ class neutron::params {
     $vpnaas_agent_service = 'neutron-vpn-agent'
 
     $openswan_package     = 'openswan'
+    $libreswan_package    = false
 
     $metadata_agent_package = 'neutron-metadata-agent'
     $metadata_agent_service = 'neutron-metadata-agent'

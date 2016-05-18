@@ -22,55 +22,47 @@
 #   (optional) Print debug info in logs
 #   Defaults to false
 #
-# [*external_network_bridge*]
-#   (optional) The name of the external bridge
-#   Defaults to br-ex
-#
 # [*interface_driver*]
 #   (optional) Driver to interface with neutron
 #   Defaults to OVSInterfaceDriver
 #
 # [*router_id*]
 #   (optional) The ID of the external router in neutron
-#   Defaults to blank
+#   Defaults to $::os_service_default
 #
 # [*gateway_external_network_id*]
 #   (optional) The ID of the external network in neutron
-#   Defaults to blank
+#   Defaults to $::os_service_default
 #
 # [*handle_internal_only_routers*]
 #   (optional) L3 Agent will handle non-external routers
-#   Defaults to true
+#   Defaults to $::os_service_default
 #
 # [*metadata_port*]
 #   (optional) The port of the metadata server
-#   Defaults to 9697
+#   Defaults to $::os_service_default
 #
 # [*send_arp_for_ha*]
 #   (optional) Send this many gratuitous ARPs for HA setup. Set it below or equal to 0
 #   to disable this feature.
-#   Defaults to 3
+#   Defaults to $::os_service_default
 #
 # [*periodic_interval*]
 #   (optional) seconds between re-sync routers' data if needed
-#   Defaults to 40
+#   Defaults to $::os_service_default
 #
 # [*periodic_fuzzy_delay*]
 #   (optional) seconds to start to sync routers' data after starting agent
-#   Defaults to 5
+#   Defaults to $::os_service_default
 #
 # [*enable_metadata_proxy*]
 #   (optional) can be set to False if the Nova metadata server is not available
-#   Defaults to True
+#   Defaults to $::os_service_default
 #
 # [*network_device_mtu*]
 #   (optional) The MTU size for the interfaces managed by the L3 agent
-#   Defaults to undef
+#   Defaults to $::os_service_default
 #   Should be deprecated in the next major release in favor of a global parameter
-#
-# [*router_delete_namespaces*]
-#   (optional) namespaces can be deleted cleanly on the host running the L3 agent
-#   Defaults to true
 #
 # [*ha_enabled*]
 #   (optional) Enabled or not HA for L3 agent.
@@ -82,7 +74,7 @@
 #
 # [*ha_vrrp_auth_password*]
 #   (optional) VRRP authentication password. Required if ha_enabled = true.
-#   Defaults to undef
+#   Defaults to $::os_service_default
 #
 # [*ha_vrrp_advert_int*]
 #   (optional) The advertisement interval in seconds.
@@ -104,33 +96,41 @@
 #   (optional) Deprecated. 'True' value will be enforced in future releases.
 #   Allow overlapping IP (Must have kernel build with
 #   CONFIG_NET_NS=y and iproute2 package that supports namespaces).
-#   Defaults to undef.
+#   Defaults to $::os_service_default.
+#
+# [*external_network_bridge*]
+#   (optional) Deprecated. The name of the external bridge
+#   Defaults to $::os_service_default
+#
+# [*router_delete_namespaces*]
+#   (optional) Deprecated. Namespaces can be deleted cleanly on the host running the L3 agent
+#   Defaults to ::os_service_default
 #
 class neutron::agents::l3 (
   $package_ensure                   = 'present',
   $enabled                          = true,
   $manage_service                   = true,
   $debug                            = false,
-  $external_network_bridge          = 'br-ex',
   $interface_driver                 = 'neutron.agent.linux.interface.OVSInterfaceDriver',
-  $router_id                        = undef,
-  $gateway_external_network_id      = undef,
-  $handle_internal_only_routers     = true,
-  $metadata_port                    = '9697',
-  $send_arp_for_ha                  = '3',
-  $periodic_interval                = '40',
-  $periodic_fuzzy_delay             = '5',
-  $enable_metadata_proxy            = true,
-  $network_device_mtu               = undef,
-  $router_delete_namespaces         = true,
+  $router_id                        = $::os_service_default,
+  $gateway_external_network_id      = $::os_service_default,
+  $handle_internal_only_routers     = $::os_service_default,
+  $metadata_port                    = $::os_service_default,
+  $send_arp_for_ha                  = $::os_service_default,
+  $periodic_interval                = $::os_service_default,
+  $periodic_fuzzy_delay             = $::os_service_default,
+  $enable_metadata_proxy            = $::os_service_default,
+  $network_device_mtu               = $::os_service_default,
   $ha_enabled                       = false,
   $ha_vrrp_auth_type                = 'PASS',
-  $ha_vrrp_auth_password            = undef,
+  $ha_vrrp_auth_password            = $::os_service_default,
   $ha_vrrp_advert_int               = '3',
   $agent_mode                       = 'legacy',
   # DEPRECATED PARAMETERS
   $allow_automatic_l3agent_failover = false,
-  $use_namespaces                   = undef,
+  $use_namespaces                   = $::os_service_default,
+  $external_network_bridge          = $::os_service_default,
+  $router_delete_namespaces         = $::os_service_default,
 ) {
 
   include ::neutron::params
@@ -139,7 +139,15 @@ class neutron::agents::l3 (
   Neutron_l3_agent_config<||> ~> Service['neutron-l3']
 
   if $allow_automatic_l3agent_failover {
-    notice('parameter allow_automatic_l3agent_failover is deprecated, use parameter in neutron::server instead')
+    warning('parameter allow_automatic_l3agent_failover is deprecated, use parameter in neutron::server instead')
+  }
+
+  if ! is_service_default ($external_network_bridge) {
+    warning('parameter external_network_bridge is deprecated')
+  }
+
+  if ! is_service_default ($router_delete_namespaces) {
+    warning('parameter router_delete_namespaces was removed in Mitaka, it does not take any affect')
   }
 
   if $ha_enabled {
@@ -162,26 +170,17 @@ class neutron::agents::l3 (
     'DEFAULT/periodic_interval':                value => $periodic_interval;
     'DEFAULT/periodic_fuzzy_delay':             value => $periodic_fuzzy_delay;
     'DEFAULT/enable_metadata_proxy':            value => $enable_metadata_proxy;
-    'DEFAULT/router_delete_namespaces':         value => $router_delete_namespaces;
     'DEFAULT/agent_mode':                       value => $agent_mode;
+    'DEFAULT/network_device_mtu':               value => $network_device_mtu;
+    'DEFAULT/use_namespaces':                   value => $use_namespaces;
   }
 
-  if $use_namespaces != undef {
+  if ! is_service_default ($use_namespaces) {
     warning('The use_namespaces parameter is deprecated and will be removed in future releases')
-    neutron_l3_agent_config {
-      'DEFAULT/use_namespaces':                 value => $use_namespaces;
-    }
   }
 
-  if $network_device_mtu {
+  if ! is_service_default ($network_device_mtu) {
     warning('The neutron::agents::l3::network_device_mtu parameter is deprecated, use neutron::network_device_mtu instead.')
-    neutron_l3_agent_config {
-      'DEFAULT/network_device_mtu':           value => $network_device_mtu;
-    }
-  } else {
-    neutron_l3_agent_config {
-      'DEFAULT/network_device_mtu':           ensure => absent;
-    }
   }
 
   if $::neutron::params::l3_agent_package {

@@ -15,7 +15,7 @@
 #   Defaults to true
 #
 # [*debug*]
-#   (optional) Show debugging output in log. Defaults to false.
+#   (optional) Show debugging output in log. Defaults to $::os_service_default.
 #
 # [*state_path*]
 #   (optional) Where to store dnsmasq state files. This directory must be
@@ -29,10 +29,6 @@
 # [*interface_driver*]
 #   (optional) Defaults to 'neutron.agent.linux.interface.OVSInterfaceDriver'.
 #
-# [*dhcp_domain*]
-#   (optional) domain to use for building the hostnames
-#   Defaults to 'openstacklocal'
-#
 # [*dhcp_driver*]
 #   (optional) Defaults to 'neutron.agent.linux.dhcp.Dnsmasq'.
 #
@@ -43,11 +39,11 @@
 #
 # [*dnsmasq_config_file*]
 #   (optional) Override the default dnsmasq settings with this file.
-#   Defaults to undef
+#   Defaults to $::os_service_default
 #
-# [*dhcp_delete_namespaces*]
-#   (optional) Delete namespace after removing a dhcp server
-#   Defaults to true.
+# [*dnsmasq_dns_servers*]
+#  (optional) List of servers to use as dnsmasq forwarders.
+#  Defaults to $::os_service_default.
 #
 # [*enable_isolated_metadata*]
 #   (optional) enable metadata support on isolated networks.
@@ -55,7 +51,7 @@
 #
 # [*enable_force_metadata*]
 #   (optional) enable metadata support on all networks.
-#   Defaults to false.
+#   Defaults to $::os_service_default
 #
 # [*enable_metadata_network*]
 #   (optional) Allows for serving metadata requests coming from a dedicated metadata
@@ -66,35 +62,44 @@
 #
 # [*dhcp_broadcast_reply*]
 #  (optional) Use broadcast in DHCP replies
-#  Defaults to false.
+#  Defaults to $::os_service_default.
 #
 # === Deprecated Parameters
+#
+# [*dhcp_delete_namespaces*]
+#   (optional) Deprecated. Delete namespace after removing a dhcp server
+#   Defaults to $::os_service_default.
+#
+# [*dhcp_domain*]
+#   (optional) Deprecated. Domain to use for building the hostnames
+#   Defaults to $::os_service_default
 #
 # [*use_namespaces*]
 #   (optional) Deprecated. 'True' value will be enforced in future releases.
 #   Allow overlapping IP (Must have kernel build with
 #   CONFIG_NET_NS=y and iproute2 package that supports namespaces).
-#   Defaults to undef.
+#   Defaults to $::os_service_default.
 #
 class neutron::agents::dhcp (
   $package_ensure           = present,
   $enabled                  = true,
   $manage_service           = true,
-  $debug                    = false,
+  $debug                    = $::os_service_default,
   $state_path               = '/var/lib/neutron',
   $resync_interval          = 30,
   $interface_driver         = 'neutron.agent.linux.interface.OVSInterfaceDriver',
-  $dhcp_domain              = 'openstacklocal',
   $dhcp_driver              = 'neutron.agent.linux.dhcp.Dnsmasq',
   $root_helper              = 'sudo neutron-rootwrap /etc/neutron/rootwrap.conf',
-  $dnsmasq_config_file      = undef,
-  $dhcp_delete_namespaces   = true,
+  $dnsmasq_config_file      = $::os_service_default,
+  $dnsmasq_dns_servers      = $::os_service_default,
   $enable_isolated_metadata = false,
-  $enable_force_metadata    = false,
+  $enable_force_metadata    = $::os_service_default,
   $enable_metadata_network  = false,
-  $dhcp_broadcast_reply     = false,
+  $dhcp_broadcast_reply     = $::os_service_default,
   # DEPRECATED PARAMETERS
-  $use_namespaces           = undef,
+  $dhcp_delete_namespaces   = $::os_service_default,
+  $dhcp_domain              = $::os_service_default,
+  $use_namespaces           = $::os_service_default,
 ) {
 
   include ::neutron::params
@@ -136,24 +141,23 @@ class neutron::agents::dhcp (
     'DEFAULT/dhcp_domain':            value => $dhcp_domain;
     'DEFAULT/dhcp_driver':            value => $dhcp_driver;
     'DEFAULT/root_helper':            value => $root_helper;
-    'DEFAULT/dhcp_delete_namespaces': value => $dhcp_delete_namespaces;
     'DEFAULT/dhcp_broadcast_reply':   value => $dhcp_broadcast_reply;
+    'DEFAULT/dnsmasq_config_file':    value => $dnsmasq_config_file;
+    'DEFAULT/dnsmasq_dns_servers':    value => join(any2array($dnsmasq_dns_servers), ',');
   }
 
-  if $use_namespaces != undef {
+  if ! is_service_default ($dhcp_delete_namespaces) {
+    warning('The dhcp_delete_namespaces parameter was removed in Mitaka, it does not take any affect')
+  }
+
+  if ! is_service_default ($dhcp_domain) {
+    warning('The dhcp_domain parameter is deprecated and will be removed in future releases')
+  }
+
+  if ! is_service_default ($use_namespaces) {
     warning('The use_namespaces parameter is deprecated and will be removed in future releases')
     neutron_dhcp_agent_config {
       'DEFAULT/use_namespaces':       value => $use_namespaces;
-    }
-  }
-
-  if $dnsmasq_config_file {
-    neutron_dhcp_agent_config {
-      'DEFAULT/dnsmasq_config_file':           value => $dnsmasq_config_file;
-    }
-  } else {
-    neutron_dhcp_agent_config {
-      'DEFAULT/dnsmasq_config_file':           ensure => absent;
     }
   }
 

@@ -504,6 +504,28 @@ describe 'basic neutron_config resource' do
         ensure_absent_val => 'toto',
       }
 
+      neutron_lbaas_service_config { 'DEFAULT/thisshouldexist' :
+        value => 'foo',
+      }
+
+      neutron_lbaas_service_config { 'DEFAULT/thisshouldexist2' :
+        value             => '<SERVICE DEFAULT>',
+        ensure_absent_val => 'toto',
+      }
+
+      neutron_lbaas_service_config { 'DEFAULT/thisshouldexist3' :
+        value => ['value1', 'value2'],
+      }
+
+      neutron_lbaas_service_config { 'DEFAULT/thisshouldnotexist' :
+        value => '<SERVICE DEFAULT>',
+      }
+
+      neutron_lbaas_service_config { 'DEFAULT/thisshouldnotexist2' :
+        value             => 'toto',
+        ensure_absent_val => 'toto',
+      }
+
       EOS
 
 
@@ -545,6 +567,11 @@ describe 'basic neutron_config resource' do
           it { is_expected.to_not match /thisshouldnotexist/ }
         end
       end
+    end
+
+    describe file('/etc/neutron/neutron.conf') do
+      it { is_expected.to contain('thisshouldexist3=value1') }
+      it { is_expected.to contain('thisshouldexist3=value2') }
     end
 
   end

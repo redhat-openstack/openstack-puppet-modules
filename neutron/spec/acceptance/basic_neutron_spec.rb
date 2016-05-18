@@ -73,6 +73,11 @@ describe 'basic neutron' do
         mechanism_drivers    => ['openvswitch', 'sriovnicswitch']
       }
       class { '::neutron::agents::ml2::sriov': }
+      class { '::neutron::services::lbaas':
+        service_providers => 'LOADBALANCER:Haproxy:neutron_lbaas.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default',
+      }
+      class { '::neutron::services::lbaas::haproxy': }
+      class { '::neutron::services::lbaas::octavia': }
       EOS
 
 

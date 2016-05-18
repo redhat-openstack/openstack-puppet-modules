@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'neutron::plugins::ovs::opendaylight' do
 
   let :pre_condition do
@@ -67,10 +69,10 @@ describe 'neutron::plugins::ovs::opendaylight' do
 
   context 'on RedHat platforms' do
     let :facts do
-      test_facts.merge({
+      @default_facts.merge(test_facts.merge({
           :osfamily               => 'RedHat',
           :operatingsystemrelease => '7'
-      })
+      }))
     end
 
     it_configures 'neutron plugin opendaylight ovs'
@@ -78,9 +80,9 @@ describe 'neutron::plugins::ovs::opendaylight' do
 
   context 'on Debian platforms' do
     let :facts do
-      test_facts.merge({
+      @default_facts.merge(test_facts.merge({
           :osfamily               => 'Debian'
-      })
+      }))
     end
 
     it_configures 'neutron plugin opendaylight ovs'

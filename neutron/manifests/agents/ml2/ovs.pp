@@ -71,17 +71,17 @@
 # [*polling_interval*]
 #   (optional) The number of seconds the agent will wait between
 #   polling for local device changes.
-#   Defaults to '2"
+#   Defaults to $::os_service_default
 #
 # [*l2_population*]
 #   (optional) Extension to use alongside ml2 plugin's l2population
 #   mechanism driver.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*arp_responder*]
 #   (optional) Enable or not the ARP responder.
 #   Recommanded when using l2 population mechanism driver.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*firewall_driver*]
 #   (optional) Firewall driver for realizing neutron security group function.
@@ -90,7 +90,7 @@
 # [*enable_distributed_routing*]
 #   (optional) Set to True on L2 agents to enable support
 #   for distributed virtual routing.
-#   Defaults to false
+#   Defaults to $::os_service_default
 #
 # [*drop_flows_on_start*]
 #   (optional) Set to True to drop all flows during agent start for a clean
@@ -107,17 +107,38 @@
 #
 # [*prevent_arp_spoofing*]
 #   (optional) Enable or not ARP Spoofing Protection
-#   Defaults to true
+#   Defaults to $::os_service_default
 #
 # [*extensions*]
 #   (optional) Extensions list to use
-#   Defaults to []
+#   Defaults to $::os_service_default
+#
+# [*int_peer_patch_port*]
+#   (optional) Peer patch port in integration bridge for tunnel bridge
+#   Defaults to $::os_service_default
+#
+# [*tun_peer_patch_port*]
+#   (optional) Peer patch port in tunnel bridge for integration bridge
+#   Defaults to $::os_service_default
+#
+# [*datapath_type*]
+#   (optional) Datapath type for ovs bridges
+#   Defaults to $::os_service_default
+#
+# [*vhostuser_socket_dir*]
+#   (optional) The vhost-user socket directory for OVS
+#   Defaults to $::os_service_default
+#
+# [*ovsdb_interface*]
+#   (optional) OpenFlow interface to use
+#   Allowed values: ovs-ofctl, native
+#   Defaults to $::os_service_default
 #
 class neutron::agents::ml2::ovs (
   $package_ensure             = 'present',
   $enabled                    = true,
   $manage_service             = true,
-  $extensions                 = [],
+  $extensions                 = $::os_service_default,
   $bridge_uplinks             = [],
   $bridge_mappings            = [],
   $integration_bridge         = 'br-int',
@@ -126,14 +147,19 @@ class neutron::agents::ml2::ovs (
   $local_ip                   = false,
   $tunnel_bridge              = 'br-tun',
   $vxlan_udp_port             = 4789,
-  $polling_interval           = 2,
-  $l2_population              = false,
-  $arp_responder              = false,
+  $polling_interval           = $::os_service_default,
+  $l2_population              = $::os_service_default,
+  $arp_responder              = $::os_service_default,
   $firewall_driver            = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
-  $enable_distributed_routing = false,
+  $enable_distributed_routing = $::os_service_default,
   $drop_flows_on_start        = false,
   $manage_vswitch             = true,
-  $prevent_arp_spoofing       = true,
+  $prevent_arp_spoofing       = $::os_service_default,
+  $int_peer_patch_port        = $::os_service_default,
+  $tun_peer_patch_port        = $::os_service_default,
+  $datapath_type              = $::os_service_default,
+  $vhostuser_socket_dir       = $::os_service_default,
+  $ovsdb_interface            = $::os_service_default,
 ) {
 
   include ::neutron::params
@@ -145,8 +171,14 @@ class neutron::agents::ml2::ovs (
     fail('Local ip for ovs agent must be set when tunneling is enabled')
   }
 
-  if $enable_tunneling and $enable_distributed_routing and ! $l2_population {
-    fail('L2 population must be enabled when DVR and tunneling are enabled')
+  if ($enable_tunneling) and (!is_service_default($enable_distributed_routing)) and (!is_service_default($l2_population)) {
+    if $enable_distributed_routing and ! $l2_population {
+      fail('L2 population must be enabled when DVR and tunneling are enabled')
+    }
+  }
+
+  if ! (is_service_default($ovsdb_interface)) and ! ($ovsdb_interface =~ /^(ovs-ofctl|native)$/) {
+    fail('A value of $ovsdb_interface is incorrect. The allowed values are ovs-ofctl and native')
   }
 
   Neutron_agent_ovs<||> ~> Service['neutron-ovs-agent-service']
@@ -189,6 +221,9 @@ class neutron::agents::ml2::ovs (
     'agent/prevent_arp_spoofing':       value => $prevent_arp_spoofing;
     'agent/extensions':                 value => join(any2array($extensions), ',');
     'ovs/integration_bridge':           value => $integration_bridge;
+    'ovs/datapath_type':                value => $datapath_type;
+    'ovs/vhostuser_socket_dir':         value => $vhostuser_socket_dir;
+    'ovs/ovsdb_interface':              value => $ovsdb_interface;
   }
 
   if $firewall_driver {
@@ -199,9 +234,11 @@ class neutron::agents::ml2::ovs (
 
   if $enable_tunneling {
     neutron_agent_ovs {
-      'ovs/enable_tunneling': value => true;
-      'ovs/tunnel_bridge':    value => $tunnel_bridge;
-      'ovs/local_ip':         value => $local_ip;
+      'ovs/enable_tunneling':      value => true;
+      'ovs/tunnel_bridge':         value => $tunnel_bridge;
+      'ovs/local_ip':              value => $local_ip;
+      'ovs/int_peer_patch_port':   value => $int_peer_patch_port;
+      'ovs/tun_peer_patch_port':   value => $tun_peer_patch_port;
     }
 
     if size($tunnel_types) > 0 {
@@ -217,9 +254,11 @@ class neutron::agents::ml2::ovs (
     }
   } else {
     neutron_agent_ovs {
-      'ovs/enable_tunneling': value  => false;
-      'ovs/tunnel_bridge':    ensure => absent;
-      'ovs/local_ip':         ensure => absent;
+      'ovs/enable_tunneling':      value  => false;
+      'ovs/tunnel_bridge':         ensure => absent;
+      'ovs/local_ip':              ensure => absent;
+      'ovs/int_peer_patch_port':   ensure => absent;
+      'ovs/tun_peer_patch_port':   ensure => absent;
     }
   }
 
