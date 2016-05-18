@@ -1,3 +1,8 @@
+## 8.0.0 and beyond
+
+From 8.0.0 release and beyond, release notes are published on
+[docs.openstack.org](http://docs.openstack.org/releasenotes/puppet-ironic/).
+
 ##2015-11-25 - 7.0.0
 ###Summary
 
@@ -8,7 +13,7 @@ This is a backwards-incompatible major release for OpenStack Liberty.
 - change section name for AMQP rabbit parameters
 
 ####Features
-- add heat::db::sync
+- add ironic::db::sync
 - add bifrost manifest
 - reflect provider change in puppet-openstacklib
 - put all the logging related parameters to the logging class

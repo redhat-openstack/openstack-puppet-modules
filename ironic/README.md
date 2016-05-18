@@ -16,7 +16,7 @@ puppet-ironic
 Overview
 --------
 
-The ironic module is a part of [OpenStack](https://github.com/openstack), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack and Openstack community projects as part of the core software. The module itself is used to flexibly configure and manage the baremetal service for Openstack.
+The ironic module is a part of [OpenStack](https://github.com/openstack), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack and OpenStack community projects as part of the core software. The module itself is used to flexibly configure and manage the baremetal service for OpenStack.
 
 Module Description
 ------------------
@@ -26,7 +26,7 @@ Setup
 
 **What the ironic module affects:**
 
-* [Ironic](https://wiki.openstack.org/wiki/Ironic), the baremetal service for Openstack.
+* [Ironic](https://wiki.openstack.org/wiki/Ironic), the baremetal service for OpenStack.
 
 ### Installing Ironic
 
@@ -34,11 +34,7 @@ Setup
 
 ### Beginning with ironic
 
-To utilize the ironic module's functionality you will need to declare multiple resources.
-The following is a modified excerpt from the [openstack module](httpd://github.com/stackforge/puppet-openstack).
-This is not an exhaustive list of all the components needed. We recommend that you consult and understand the
-[openstack module](https://github.com/stackforge/puppet-openstack) and the [core openstack](http://docs.openstack.org)
-documentation to assist you in understanding the available deployment options.
+To utilize the ironic module's functionality you will need to declare multiple resources. This is not an exhaustive list of all the components needed. We recommend that you consult and understand the [core openstack](http://docs.openstack.org) documentation to assist you in understanding the available deployment options.
 
 ```puppet
 # enable Ironic resources

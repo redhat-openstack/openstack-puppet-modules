@@ -24,7 +24,7 @@ describe 'ironic::inspector' do
     { :package_ensure                  => 'present',
       :enabled                         => true,
       :pxe_transfer_protocol           => 'tftp',
-      :debug                           => false,
+      :enable_uefi                     => false,
       :auth_uri                        => 'http://127.0.0.1:5000/v2.0',
       :identity_uri                    => 'http://127.0.0.1:35357',
       :admin_user                      => 'ironic',
@@ -44,7 +44,8 @@ describe 'ironic::inspector' do
       :swift_tenant_name               => 'services',
       :swift_auth_url                  => 'http://127.0.0.1:5000/v2.0',
       :dnsmasq_ip_range                => '192.168.0.100,192.168.0.120',
-      :dnsmasq_local_ip                => '192.168.0.1', }
+      :dnsmasq_local_ip                => '192.168.0.1',
+      :ipxe_timeout                    => 0, }
   end
 
   let :params do
@@ -57,6 +58,7 @@ describe 'ironic::inspector' do
     end
 
     it { is_expected.to contain_class('ironic::params') }
+    it { is_expected.to contain_class('ironic::inspector::logging') }
 
     it 'installs ironic inspector package' do
       if platform_params.has_key?(:inspector_package)
@@ -84,7 +86,6 @@ describe 'ironic::inspector' do
     end
 
     it 'configures inspector.conf' do
-      is_expected.to contain_ironic_inspector_config('DEFAULT/debug').with_value(p[:debug])
       is_expected.to contain_ironic_inspector_config('keystone_authtoken/auth_uri').with_value(p[:auth_uri])
       is_expected.to contain_ironic_inspector_config('keystone_authtoken/identity_uri').with_value(p[:identity_uri])
       is_expected.to contain_ironic_inspector_config('keystone_authtoken/admin_user').with_value(p[:admin_user])
@@ -130,6 +131,14 @@ describe 'ironic::inspector' do
       )
     end
 
+    it 'should not contain BIOS iPXE image by default' do
+      is_expected.to_not contain_file('/tftpboot/undionly.kpxe')
+    end
+
+    it 'should not contain UEFI iPXE image by default' do
+      is_expected.to_not contain_file('/tftpboot/ipxe.efi')
+    end
+
     context 'when overriding parameters' do
       before :each do
         params.merge!(
@@ -144,6 +153,7 @@ describe 'ironic::inspector' do
           :pxe_transfer_protocol        => 'http',
           :additional_processing_hooks  => 'hook1,hook2',
           :ramdisk_kernel_args          => 'foo=bar',
+          :enable_uefi                  => true,
         )
       end
       it 'should replace default parameter with new value' do
@@ -172,15 +182,40 @@ describe 'ironic::inspector' do
           'content' => /ipxe/,
         )
         is_expected.to contain_file('/httpboot/inspector.ipxe').with_content(
-            /kernel http:\/\/192.168.0.1:8088\/agent.kernel ipa-inspection-callback-url=http:\/\/192.168.0.1:5050\/v1\/continue ipa-inspection-collectors=default.* foo=bar/
+            /kernel http:\/\/192.168.0.1:8088\/agent.kernel ipa-inspection-callback-url=http:\/\/192.168.0.1:5050\/v1\/continue ipa-inspection-collectors=default.* foo=bar || goto retry_boot/
         )
+      end
+      it 'should contain iPXE chainload images' do
+        is_expected.to contain_file('/tftpboot/undionly.kpxe').with(
+          'ensure' => 'present',
+          'backup'  => false,
+        )
+      end
+      it 'should contain iPXE UEFI chainload image' do
+        is_expected.to contain_file('/tftpboot/ipxe.efi').with(
+          'ensure' => 'present',
+          'backup'  => false,
+        )
+      end
+
+      context 'when ipxe_timeout is set' do
+        before :each do
+          params.merge!(
+            :ipxe_timeout => 30,
+          )
+        end
+
+        it 'should contain file /httpboot/inspector.ipxe' do
+          is_expected.to contain_file('/httpboot/inspector.ipxe').with_content(
+              /kernel --timeout 30000/)
+        end
       end
     end
   end
 
   context 'on Debian platforms' do
     let :facts do
-      { :osfamily => 'Debian' }
+      @default_facts.merge({ :osfamily => 'Debian' })
     end
 
     let :platform_params do
@@ -193,7 +228,7 @@ describe 'ironic::inspector' do
 
   context 'on RedHat platforms' do
     let :facts do
-      { :osfamily => 'RedHat' }
+      @default_facts.merge({ :osfamily => 'RedHat' })
     end
 
     let :platform_params do
