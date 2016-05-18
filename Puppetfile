@@ -83,7 +83,7 @@ mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile.git'
 
 mod 'ironic',
-  :commit => 'fc2496a4ef7f123bf4cdb3cb1ea7c32ce8c23262',
+  :commit => '565ee8d0d17776e2d011c907c83f91d16fd13a22',
   :git => 'https://github.com/openstack/puppet-ironic.git'
 
 mod 'java',
