@@ -1,6 +1,6 @@
 {
   "name": "openstack-mistral",
-  "version": "0.0.1",
+  "version": "8.0.1",
   "author": "OpenStack Contributors",
   "summary": "Puppet module for OpenStack mistral",
   "license": "Apache-2.0",
