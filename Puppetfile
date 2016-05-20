@@ -99,7 +99,7 @@ mod 'keepalived',
   :git => 'https://github.com/Unyonsys/puppet-module-keepalived.git'
 
 mod 'keystone',
-  :commit => '3c4b7aeab06444f27d54987f42d57630a30d983d',
+  :commit => '30032ac35b1ce9f693190f1e2a4cdfc6ac18e55b',
   :git => 'https://github.com/openstack/puppet-keystone.git'
 
 mod 'kibana3',
