@@ -279,7 +279,7 @@ mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git'
 
 mod 'zaqar',
-  :commit => '1e3d2e6b9b619d5a06c7ffd5f3af5c1db32e22e8',
+  :commit => 'a48df6bd6f14a04fa90667ef794e851840557de6',
   :git => 'https://github.com/openstack/puppet-zaqar.git'
 
 mod 'zookeeper',
