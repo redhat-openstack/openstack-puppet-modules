@@ -182,10 +182,6 @@ mod 'pacemaker',
   :commit => '02d533f47753581f521ad97bbdb288674602d2fe',
   :git => 'https://github.com/openstack/puppet-pacemaker.git'
 
-mod 'qpid',
-  :commit => '4a3c8f0bceacb315de49530faf1325e3daeb02d0',
-  :git => 'https://github.com/dprince/puppet-qpid'
-
 mod 'rabbitmq',
   :commit => '51cc050a4e7e27e97ef04beb990e67f656222d95',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git'
