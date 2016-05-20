@@ -247,7 +247,7 @@ mod 'tomcat',
   :git => 'https://github.com/puppetlabs/puppetlabs-tomcat.git'
 
 mod 'tripleo',
-  :commit => 'a9448b7617b738d5ed532ad925bcdf41788bf69d',
+  :commit => '2f3d445a03f83ebf9b12b9df0f5ee7d5c0f3229c',
   :git => 'https://github.com/openstack/puppet-tripleo.git'
 
 mod 'trove',
