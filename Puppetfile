@@ -250,10 +250,6 @@ mod 'trove',
   :commit => 'a6d5e589fcb32be1a19b8057a05ebcef5fe27621',
   :git => 'https://github.com/openstack/puppet-trove'
 
-mod 'tuskar',
-  :commit => '52120a9c64eb411c1ef51dccfc6f758f7142f6a5',
-  :git => 'https://github.com/openstack/puppet-tuskar.git'
-
 mod 'uchiwa',
   :commit => 'a460563b969716496e0180b3f4dfe56335f1a1ae',
   :git => 'https://github.com/Yelp/puppet-uchiwa.git'
