@@ -120,6 +120,16 @@
 #  Any service-specific certificates take precedence over this one.
 #  Defaults to undef
 #
+# [*ssl_cipher_suite*]
+#  The default string describing the list of cipher algorithms ("cipher suite")
+#  that are negotiated during the SSL/TLS handshake for all "bind" lines. This
+#  value comes from the Fedora system crypto policy.
+#  Defaults to '!SSLv2:kEECDH:kRSA:kEDH:kPSK:+3DES:!aNULL:!eNULL:!MD5:!EXP:!RC4:!SEED:!IDEA:!DES'
+#
+# [*ssl_options*]
+#  String that sets the default ssl options to force on all "bind" lines.
+#  Defaults to 'no-sslv3'
+#
 # [*keystone_certificate*]
 #  Filename of an HAProxy-compatible certificate and key file
 #  When set, enables SSL on the Keystone public API endpoint using the specified file.
@@ -336,6 +346,8 @@ class tripleo::loadbalancer (
   $controller_hosts          = undef,
   $controller_hosts_names    = undef,
   $service_certificate       = undef,
+  $ssl_cipher_suite          = '!SSLv2:kEECDH:kRSA:kEDH:kPSK:+3DES:!aNULL:!eNULL:!MD5:!EXP:!RC4:!SEED:!IDEA:!DES',
+  $ssl_options               = 'no-sslv3',
   $keystone_certificate      = undef,
   $neutron_certificate       = undef,
   $cinder_certificate        = undef,
@@ -746,13 +758,25 @@ class tripleo::loadbalancer (
 
   $horizon_vip = hiera('horizon_vip', $controller_virtual_ip)
   if $horizon_bind_certificate {
+    # NOTE(jaosorior): If the horizon_vip and the public_virtual_ip are the
+    # same, the first option takes precedence. Which is the case when network
+    # isolation is not enabled. This is not a problem as both options are
+    # identical. If network isolation is enabled, this works correctly and
+    # will add a TLS binding to both the horizon_vip and the
+    # public_virtual_ip.
+    # Even though for the public_virtual_ip the port 80 is listening, we
+    # redirect to https in the horizon_options below.
     $horizon_bind_opts = {
-      "${horizon_vip}:80" => $haproxy_listen_bind_param,
+      "${horizon_vip}:80"        => $haproxy_listen_bind_param,
+      "${horizon_vip}:443"       => union($haproxy_listen_bind_param, ['ssl', 'crt', $horizon_bind_certificate]),
+      "${public_virtual_ip}:80"  => $haproxy_listen_bind_param,
       "${public_virtual_ip}:443" => union($haproxy_listen_bind_param, ['ssl', 'crt', $horizon_bind_certificate]),
     }
     $horizon_options = {
-      'cookie' => 'SERVERID insert indirect nocache',
-      'rsprep' => '^Location:\ http://(.*) Location:\ https://\1',
+      'cookie'   => 'SERVERID insert indirect nocache',
+      'rsprep'   => '^Location:\ http://(.*) Location:\ https://\1',
+      # NOTE(jaosorior): We always redirect to https for the public_virtual_ip.
+      'redirect' => "scheme https code 301 if { hdr(host) -i ${public_virtual_ip} } !{ ssl_fc }",
     }
   } else {
     $horizon_bind_opts = {
@@ -807,12 +831,14 @@ class tripleo::loadbalancer (
   class { '::haproxy':
     service_manage   => $haproxy_service_manage,
     global_options   => {
-      'log'     => "${haproxy_log_address} local0",
-      'pidfile' => '/var/run/haproxy.pid',
-      'user'    => 'haproxy',
-      'group'   => 'haproxy',
-      'daemon'  => '',
-      'maxconn' => $haproxy_global_maxconn,
+      'log'                      => "${haproxy_log_address} local0",
+      'pidfile'                  => '/var/run/haproxy.pid',
+      'user'                     => 'haproxy',
+      'group'                    => 'haproxy',
+      'daemon'                   => '',
+      'maxconn'                  => $haproxy_global_maxconn,
+      'ssl-default-bind-ciphers' => $ssl_cipher_suite,
+      'ssl-default-bind-options' => $ssl_options,
     },
     defaults_options => {
       'mode'    => 'tcp',
