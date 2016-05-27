@@ -1,27 +1,73 @@
-# == Define Resource Type: pacemaker::resource::ip
+# == Define: pacemaker::resource::ip
 #
 # A resource type to create pacemaker IPaddr2 resources, provided
 # for convenience.
 #
 # === Parameters
 #
-# [*name*]
-# The name of the pacemaker resource, i.e. as seen in "pcs status".
+# [*ensure*]
+#   (optional) Whether to make sure resource is created or removed
+#   Defaults to present
 #
 # [*ip_address*]
-# The virtual IP address you want pacemaker to create and manage.
+#   (optional) The virtual IP address you want pacemaker to create and manage
+#   Defaults to undef
 #
 # [*cidr_netmask*]
-# The netmask to use in the cidr= option in the "pcs resource create"
-# command. Optional.  Default is '32'.
+#   (optional) The netmask to use in the cidr= option in the
+#   "pcs resource create"command
+#   Defaults to '32'
 #
 # [*nic*]
-# The nic to use in the nic= option in the "pcs resource create"
-# command.  Optional.
+#   (optional) The nic to use in the nic= option in the "pcs resource create"
+#   command
+#   Defaults to ''
 #
 # [*group_params*]
-# Additional group parameters to pass to "pcs create", typically just
-# the the name of the pacemaker resource group. Optional.
+#   (optional) Additional group parameters to pass to "pcs create", typically
+#   just the name of the pacemaker resource group
+#   Defaults to ''
+#
+# [*post_success_sleep*]
+#   (optional) How long to wait acfter successful action
+#   Defaults to 0
+#
+# [*tries*]
+#   (optional) How many times to attempt to perform the action
+#   Defaults to 1
+#
+# [*try_sleep*]
+#   (optional) How long to wait between tries
+#   Defaults to 0
+#
+# [*verify_on_create*]
+#   (optional) Whether to verify creation of resource
+#   Defaults to false
+#
+# === Dependencies
+#
+#  None
+#
+# === Authors
+#
+#  Crag Wolfe <cwolfe@redhat.com>
+#  Jason Guiditta <jguiditt@redhat.com>
+#
+# === Copyright
+#
+# Copyright (C) 2016 Red Hat Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 #
 define pacemaker::resource::ip(
   $ensure             = 'present',
@@ -56,6 +102,7 @@ define pacemaker::resource::ip(
     tries              => $tries,
     try_sleep          => $try_sleep,
     verify_on_create   => $verify_on_create,
+    require            => Exec['wait-for-settle'],
   }
 
 }

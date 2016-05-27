@@ -5,7 +5,13 @@ spec/fixtures/
 .vagrant/
 .bundle/
 coverage/
+log/
 .idea/
-*.swp
 *.iml
-openstack/
+.*.sw
+
+# documentation
+doc
+.yardoc
+.yardwarns
+strings.json

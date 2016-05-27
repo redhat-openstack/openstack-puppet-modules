@@ -1,0 +1,181 @@
+<%-
+  indent_with = '    '
+
+  copy_options = lambda do |from, to, list|
+    list.each do |option|
+      to[option] = from[option] if from[option]
+    end
+  end
+
+  write_section = lambda do |name, data, indent=0, insert=nil|
+    break '' unless data && data.any? or insert
+    longest_key = data.keys.max_by { |k| k.length }
+    offset = 0
+    offset = longest_key.length + 1 if longest_key
+    text = "#{indent_with * indent}#{name} {\n"
+    data.sort.each do |key, value|
+      key += ':'
+      text += "#{indent_with * (indent + 1)}#{key.ljust offset} #{value}\n"
+    end
+    text += insert if insert
+    text += "#{indent_with * indent}}\n"
+    text
+  end
+
+  write_node_list = lambda do |nodes_data, indent=0|
+    text = ''
+    nodes_data.each do |_node_id, node_hash|
+      node = {}
+      node['name'] = node_hash['name'] if node_hash['name']
+      node['nodeid'] = node_hash['id'] if node_hash['id']
+      node['quorum_votes'] = node_hash['votes'] if node_hash['votes']
+      node['ring0_addr'] = node_hash['ring0'] if node_hash['ring0']
+      node['ring1_addr'] = node_hash['ring1'] if node_hash['ring1']
+      text += write_section.call 'node', node, (indent + 1)
+    end
+    write_section.call 'nodelist', {}, indent, text
+  end
+
+  write_option = lambda do |name, value, indent=0|
+    break '' unless value
+    "#{indent_with * indent}#{name}: #{value}\n"
+  end
+
+  write_interfaces = lambda do |interfaces, indent=0|
+    interfaces = [interfaces] unless interfaces.is_a? Array
+    text = ''
+    interfaces.each do |interface|
+      text += write_section.call 'interface', interface, indent
+    end
+    text
+  end
+
+  write_totem = lambda do |totem, interfaces, indent=0|
+    interface_section = write_interfaces.call interfaces, (indent + 1)
+    write_section.call 'totem', totem, indent, interface_section
+  end
+
+  write_logger_subsystems = lambda do |logger_subsystems, indent=0|
+    logger_subsystems = [logger_subsystems] unless logger_subsystems.is_a? Array
+    text = ''
+    logger_subsystems.each do |logger_subsystem|
+      text += write_section.call 'logger_subsys', logger_subsystem, indent
+    end
+    text
+  end
+
+  write_logging = lambda do |logging, logger_subsystems, indent=0|
+    logger_subsystems_section = write_logger_subsystems.call logger_subsystems, (indent + 1)
+    write_section.call 'logging', logging, indent, logger_subsystems_section
+  end
+
+  # Totem
+  totem = {}
+  totem['version'] = 2
+  totem['cluster_name'] = @cluster_name
+  totem['secauth'] = @cluster_auth_enabled ? 'on' : 'off'
+  totem['transport'] = 'udpu'
+  totem['vsftype'] = 'none'
+  totem['clear_node_high_bit'] = 'yes'
+
+  totem_options = %w(
+    version
+    nodeid
+    clear_node_high_bit
+    secauth
+    crypto_cipher
+    crypto_hash
+    rrp_mode
+    netmtu
+    threads
+    vsftype
+    transport
+    token
+    token_retransmit
+    hold
+    token_retransmits_before_loss_const
+    join
+    send_join
+    consensus
+    merge
+    downcheck
+    fail_recv_const
+    seqno_unchanged_const
+    heartbeat_failures_allowed
+    max_network_delay
+    window_size
+    max_messages
+    miss_count_const
+    rrp_problem_count_timeout
+    rrp_problem_count_threshold
+    rrp_problem_count_mcast_threshold
+    rrp_token_expired_timeout
+    rrp_autorecovery_check_timeout
+  )
+
+  copy_options.call @cluster_options, totem, totem_options
+
+  # Logging
+  logging = {}
+  logging['to_logfile'] = 'yes'
+  logging['logfile'] = @log_file_path
+  logging['to_syslog'] = 'yes'
+  logging['timestamp'] = 'on'
+  logging['debug'] = 'off'
+  logging['syslog_facility'] = 'daemon'
+  logging['function_name'] = 'on'
+
+  logging_options = %w(
+    timestamp
+    fileline
+    function_name
+    to_stderr
+    to_logfile
+    to_syslog
+    logfile
+    logfile_priority
+    syslog_facility
+    syslog_priority
+    debug
+    tags
+  )
+
+  copy_options.call @cluster_options, logging, logging_options
+
+  # Quorum
+  quorum = {}
+  quorum['provider'] = 'corosync_votequorum'
+  quorum['two_node'] = 1 if @cluster_nodes_data.length < 3
+
+  quorum_options = %w(
+  provider
+  two_node
+  wait_for_all
+  last_man_standing
+  last_man_standing_window
+  auto_tie_breaker
+  auto_tie_breaker_node
+  allow_downscale
+  expected_votes
+  expected_votes_tracking
+  votes
+  )
+
+  copy_options.call @cluster_options, quorum, quorum_options
+
+  ##########################################################################################################
+-%>
+<%= write_option.call 'compatibility', @cluster_options['compatibility'] %>
+<%= write_totem.call totem, @cluster_interfaces %>
+<%= write_logging.call logging, @cluster_log_subsys %>
+<%= write_node_list.call @cluster_nodes_data %>
+<%= write_section.call 'quorum', quorum %>
+
+amf {
+    mode: disabled
+}
+
+aisexec {
+    user:  root
+    group: root
+}

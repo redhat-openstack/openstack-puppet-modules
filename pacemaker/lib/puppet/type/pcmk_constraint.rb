@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:pcmk_constraint) do
     @doc = "Base constraint definition for a pacemaker constraint"
 
@@ -22,10 +24,7 @@ Puppet::Type.newtype(:pcmk_constraint) do
     newparam(:score) do
         desc "Score"
     end
-    newparam(:master_slave) do
+    newparam(:master_slave, :boolean => true, :parent => Puppet::Parameter::Boolean) do
         desc "Enable master/slave support with multistage"
-        newvalues(:true)
-        newvalues(:false)
     end
-
 end

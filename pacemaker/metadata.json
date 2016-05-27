@@ -1,6 +1,6 @@
 {
   "name": "puppet-pacemaker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "OpenStack Contributors",
   "summary": "Puppet module for Pacemaker",
   "license": "Apache-2.0",
@@ -8,14 +8,26 @@
   "project_page": "https://github.com/redhat-openstack/puppet-pacemaker",
   "issues_url": "https://github.com/redhat-openstack/puppet-pacemaker/issues",
   "description": "Installs and configures Pacemaker.",
+
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
-      "operatingsystemrelease": ["6", "7"]
+      "operatingsystemrelease": [ "5", "6", "7" ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [ "12.04", "14.04" ]
     }
   ],
+
   "dependencies": [
     { "name": "puppetlabs/stdlib", "version_requirement": ">= 4.2.0 <5.0.0" },
     { "name": "puppetlabs/firewall", "version_requirement": ">~1.7.0" }
+  ],
+
+  "requirements": [
+    { "name": "pe", "version_requirement": ">= 3.0.0"  },
+    { "name": "puppet", "version_requirement": ">= 3.0.0" }
   ]
+
 }
