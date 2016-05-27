@@ -1,0 +1,7 @@
+Code-Review+2: Emilien Macchi <emilien@redhat.com>
+Verified+1: Emilien Macchi <emilien@redhat.com>
+Submitted-by: Emilien Macchi <emilien@redhat.com>
+Submitted-at: Fri, 27 May 2016 11:43:55 -0400
+Reviewed-on: https://review.gerrithub.io/278156
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-mitaka
