@@ -151,7 +151,7 @@ mod 'nagios',
   :git => 'https://github.com/gildub/puppet-nagios-openstack.git'
 
 mod 'neutron',
-  :commit => 'dee072b3c7633f5e4aa28e55e83fd1d5ad99e321',
+  :commit => '54af250db20fb3d41bfbc81f74788b03b682bed8',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
