@@ -59,7 +59,7 @@ mod 'git',
   :git => 'https://github.com/puppetlabs/puppetlabs-git.git'
 
 mod 'glance',
-  :commit => 'c3721cf5102954cd4623c5425344e4572fb23d8a',
+  :commit => '9b06a7c8c25a5bd11e0257ea39c7a9680fbac9ab',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gnocchi',
