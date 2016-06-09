@@ -63,7 +63,7 @@ mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance.git'
 
 mod 'gnocchi',
-  :commit => '98c6fe07cdb36f748f4b6bec2a3de86d8b955b6e',
+  :commit => 'b0100904b688946f0bf2a00ae67a74c15ed1d377',
   :git => 'https://github.com/openstack/puppet-gnocchi.git'
 
 mod 'haproxy',

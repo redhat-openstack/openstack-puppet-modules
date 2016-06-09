@@ -20,14 +20,24 @@
 #   (optional) ensure state for package.
 #   Defaults to 'present'
 #
+# [*coordination_url*]
+#   (optional) The url to use for distributed group membership coordination.
+#   Defaults to $::os_service_default.
+#
+
 class gnocchi::storage(
-  $package_ensure = 'present',
+  $package_ensure   = 'present',
+  $coordination_url = $::os_service_default,
 ) inherits gnocchi::params {
 
   package { 'gnocchi-carbonara':
     ensure => $package_ensure,
     name   => $::gnocchi::params::carbonara_package_name,
     tag    => ['openstack', 'gnocchi-package'],
+  }
+
+  gnocchi_config {
+    'storage/coordination_url' : value => $coordination_url;
   }
 
 }

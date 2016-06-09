@@ -17,6 +17,16 @@ describe 'gnocchi::storage' do
         :tag    => ['openstack', 'gnocchi-package'],
       )
     end
+
+    context 'with coordination' do
+      before do
+        params.merge!({ :coordination_url => 'redis://localhost:6379' })
+      end
+
+      it 'configures backend_url' do
+        is_expected.to contain_gnocchi_config('storage/coordination_url').with_value('redis://localhost:6379')
+      end
+    end
   end
 
   context 'on Debian platforms' do
