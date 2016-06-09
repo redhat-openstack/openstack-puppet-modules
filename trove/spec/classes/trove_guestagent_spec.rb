@@ -29,9 +29,6 @@ describe 'trove::guestagent' do
       it 'configures trove-guestagent with default parameters' do
         is_expected.to contain_trove_guestagent_config('DEFAULT/verbose').with_value(false)
         is_expected.to contain_trove_guestagent_config('DEFAULT/debug').with_value(false)
-        is_expected.to contain_trove_guestagent_config('DEFAULT/nova_proxy_admin_user').with_value('admin')
-        is_expected.to contain_trove_guestagent_config('DEFAULT/nova_proxy_admin_pass').with_value('verysecrete')
-        is_expected.to contain_trove_guestagent_config('DEFAULT/nova_proxy_admin_tenant_name').with_value('admin')
         is_expected.to contain_trove_guestagent_config('DEFAULT/os_region_name').with_value('RegionOne')
       end
 
@@ -43,6 +40,23 @@ describe 'trove::guestagent' do
         end
         it 'configures trove-guestagent with RabbitMQ' do
           is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_host').with_value('10.0.0.1')
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('false')
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/amqp_durable_queues').with_value('false')
+        end
+      end
+
+      context 'when using a single RabbitMQ server with enable ha options' do
+        let :pre_condition do
+          "class { 'trove':
+             nova_proxy_admin_pass => 'verysecrete',
+             rabbit_ha_queues      => 'true',
+             amqp_durable_queues   => 'true',
+             rabbit_host           => '10.0.0.1'}"
+        end
+        it 'configures trove-api with RabbitMQ' do
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_host').with_value('10.0.0.1')
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('true')
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/amqp_durable_queues').with_value('true')
         end
       end
 
@@ -54,6 +68,7 @@ describe 'trove::guestagent' do
         end
         it 'configures trove-guestagent with RabbitMQ' do
           is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_hosts').with_value(['10.0.0.1,10.0.0.2'])
+          is_expected.to contain_trove_guestagent_config('oslo_messaging_rabbit/rabbit_ha_queues').with_value('true')
         end
       end
 
