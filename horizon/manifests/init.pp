@@ -249,6 +249,10 @@
 #    Example: image_backend => { 'image_formats' => { '' => 'Select type', 'qcow2' => 'QCOW2' } }
 #    Default to empty hash
 #
+#  [*timezone*]
+#    (optional) The timezone of the server.
+#    Defaults to 'UTC'.
+#
 # === Examples
 #
 #  class { 'horizon':
@@ -308,6 +312,7 @@ class horizon(
   $keystone_multidomain_support        = false,
   $keystone_default_domain             = undef,
   $image_backend                       = {},
+  $timezone                            = 'UTC',
   # DEPRECATED PARAMETERS
   $can_set_mount_point                 = undef,
   $vhost_extra_params                  = undef,
@@ -358,6 +363,12 @@ class horizon(
   $cinder_options_real     = merge($cinder_defaults,$cinder_options)
   $neutron_options_real    = merge($neutron_defaults,$neutron_options)
   validate_hash($api_versions)
+
+  if $cache_backend =~ /MemcachedCache/ {
+    ensure_packages('python-memcache',
+      { name   => $::horizon::params::memcache_package,
+        tag    => ['openstack', 'horizon-package']})
+  }
 
   package { 'horizon':
     ensure => $package_ensure,

@@ -75,6 +75,7 @@ describe 'horizon' do
           "    'enable_security_group': True,",
           "    'enable_vpn': False,",
           'API_RESULT_LIMIT = 1000',
+          'TIME_ZONE = "UTC"',
           "LOGIN_URL = '#{platforms_params[:root_url]}/auth/login/'",
           "LOGOUT_URL = '#{platforms_params[:root_url]}/auth/logout/'",
           "LOGIN_REDIRECT_URL = '#{platforms_params[:root_url]}'",
@@ -118,7 +119,8 @@ describe 'horizon' do
           :custom_theme_path            => 'static/themes/green',
           :api_versions                 => {'identity' => 3},
           :keystone_multidomain_support => true,
-          :keystone_default_domain      => 'domain.tld'
+          :keystone_default_domain      => 'domain.tld',
+          :timezone                     => 'Asia/Shanghai',
         })
       end
 
@@ -153,6 +155,7 @@ describe 'horizon' do
           'OPENSTACK_ENDPOINT_TYPE = "internalURL"',
           'SECONDARY_ENDPOINT_TYPE = "ANY-VALUE"',
           'API_RESULT_LIMIT = 4682',
+          'TIME_ZONE = "Asia/Shanghai"',
           "CUSTOM_THEME_PATH = 'static/themes/green'",
           "            'level': 'DEBUG',",
           "            'handlers': ['syslog'],",
@@ -185,6 +188,21 @@ describe 'horizon' do
         else
           is_expected.to_not contain_exec('refresh_horizon_django_cache')
         end
+      }
+    end
+
+    context 'installs python memcache library when cache_backend is set to memcache' do
+      before do
+        params.merge!({
+          :cache_backend => 'django.core.cache.backends.memcached.MemcachedCache'
+        })
+      end
+
+      it {
+        is_expected.to contain_package('python-memcache').with(
+          :ensure => 'present',
+          :tag    => ['openstack', 'horizon-package']
+         )
       }
     end
 
