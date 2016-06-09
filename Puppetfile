@@ -231,7 +231,7 @@ mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl.git'
 
 mod 'tempest',
-  :commit => 'b7aaccb9243a889a3ac8445b26168f720781ed4a',
+  :commit => 'a05ea8ca6b51e85dcb25557a7a99e6290a00871c',
   :git => 'https://github.com/openstack/puppet-tempest.git'
 
 mod 'timezone',
