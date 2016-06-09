@@ -1,5 +1,5 @@
 mod 'aodh',
-  :commit => '0cf4beb29311515d51dfa1c5cc483311f0c219ef',
+  :commit => '166ed1cb4da6205e885d812b2d8a88832c1f1ed3',
   :git => 'https://github.com/openstack/puppet-aodh.git'
 
 mod 'apache',
