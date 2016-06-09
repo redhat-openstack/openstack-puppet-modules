@@ -111,7 +111,7 @@ mod 'kmod',
   :git => 'https://github.com/camptocamp/puppet-kmod.git'
 
 mod 'manila',
-  :commit => 'aa67e8981023eee8ba3662ff64a26b689f7c3afc',
+  :commit => '3d8244db11cb603f89980b8fbefc5dc228f0a7d8',
   :git => 'https://github.com/openstack/puppet-manila.git'
 
 mod 'memcached',
