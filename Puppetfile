@@ -175,7 +175,7 @@ mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
-  :commit => '5bf09ce1a53c7282bb0a12f29e9b1cc5b0e620d3',
+  :commit => 'ac816ed43ea14ae136c387f444c33d8fc9feb356',
   :git => 'https://github.com/openstack/puppet-openstacklib.git'
 
 mod 'pacemaker',
