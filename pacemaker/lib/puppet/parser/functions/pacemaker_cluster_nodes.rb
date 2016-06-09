@@ -146,6 +146,7 @@ Output forms:
       fail "Data is not a hash: #{hash.inspect}" unless hash.is_a? Hash
       node_list = []
       hash.each do |node_name, node|
+        node = node.dup
         node['name'] = node_name if node_name and not node['name']
         node_hash = node_hash_process.call node
         next unless node_hash['ring0'] or node_hash['ring1']

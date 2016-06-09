@@ -4,7 +4,7 @@ module Puppet::Parser::Functions
       type: :rvalue,
       arity: -1,
       doc: <<-eof
-  Gather resource parameters and their values
+Gather resource parameters and their values
   eof
   ) do |args|
     parameters = {}
@@ -15,6 +15,7 @@ module Puppet::Parser::Functions
         next if key.nil?
         next if value.nil?
         next if value == ''
+        next if value == :undef
         key = key.to_s
         parameters.store key, value
       end

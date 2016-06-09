@@ -24,7 +24,7 @@ class pacemaker::new::params {
     $log_file_path = '/var/log/cluster/corosync.log'
   } elsif $::osfamily == 'Debian' {
     $pcsd_mode = false
-    $package_list = ['pacemaker-mgmt', 'pacemaker', 'corosync', 'pacemaker-cli-utils', 'resource-agents']
+    $package_list = ['pacemaker-mgmt', 'pacemaker', 'corosync', 'pacemaker-cli-utils', 'resource-agents', 'crmsh']
     $cluster_user  = 'root'
     $cluster_group = 'root'
     $log_file_path = '/var/log/corosync/corosync.log'
