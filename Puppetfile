@@ -11,7 +11,7 @@ mod 'cassandra',
   :git => 'https://github.com/locp/cassandra.git'
 
 mod 'ceilometer',
-  :commit => '23102fbff3e8b7e45e20d0d82dd6cedb6bd54bb1',
+  :commit => '1b44ba9015801a7bb94e8c89e9d07a4df1639fc8',
   :git => 'https://github.com/openstack/puppet-ceilometer.git'
 
 mod 'ceph',
