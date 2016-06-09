@@ -16,7 +16,18 @@ Puppet::Type.type(:keystone_user).provide(
     @property_flush = {}
   end
 
+  def self.do_not_manage
+    @do_not_manage
+  end
+
+  def self.do_not_manage=(value)
+    @do_not_manage = value
+  end
+
   def create
+    if self.class.do_not_manage
+      fail("Not managing Keystone_user[#{@resource[:name]}] due to earlier Keystone API failures.")
+    end
     user_name, user_domain = resource[:name], resource[:domain]
     properties = [user_name]
     if resource[:enabled] == :true
@@ -65,12 +76,22 @@ Puppet::Type.type(:keystone_user).provide(
   mk_resource_methods
 
   def exists?
-    @property_hash[:ensure] == :present
+    return true if @property_hash[:ensure] == :present
+    domain = self.class.fetch_domain(resource[:domain])
+    domain_id = domain ? domain[:id] : nil
+    @property_hash = self.class.fetch_user(resource[:name], domain_id)
+    @property_hash ||= {}
+    # This can happen in bad LDAP mapping
+    @property_hash[:enabled] = 'true' if @property_hash[:enabled].nil?
+
+    return false if @property_hash.nil? || @property_hash[:id].nil?
+    true
   end
 
   # Types properties
   def enabled
-    bool_to_sym(@property_hash[:enabled])
+    is_enabled = @property_hash[:enabled].downcase.chomp == 'true' ? true : false
+    bool_to_sym(is_enabled)
   end
 
   def enabled=(value)
@@ -107,7 +128,9 @@ Puppet::Type.type(:keystone_user).provide(
         credentials.project_id = projects[0][:id]
       else
         # last chance - try a domain scoped token
-        credentials.domain_name = domain
+        domain = self.class.fetch_domain(resource[:domain])
+        domain_name = domain ? domain[:name] : nil
+        credentials.domain_name = domain_name
       end
       begin
         token = Puppet::Provider::Openstack.request('token', 'issue', ['--format', 'value'], credentials)
@@ -121,6 +144,9 @@ Puppet::Type.type(:keystone_user).provide(
   end
 
   def password=(value)
+    if self.class.do_not_manage
+      fail("Not managing Keystone_user[#{@resource[:name]}] due to earlier Keystone API failures.")
+    end
     @property_flush[:password] = value
   end
 
@@ -129,6 +155,9 @@ Puppet::Type.type(:keystone_user).provide(
   end
 
   def replace_password=(value)
+    if self.class.do_not_manage
+      fail("Not managing Keystone_user[#{@resource[:name]}] due to earlier Keystone API failures.")
+    end
     @property_flush[:replace_password] = value
   end
 
@@ -138,35 +167,6 @@ Puppet::Type.type(:keystone_user).provide(
 
   def domain_id
     @property_hash[:domain_id]
-  end
-
-  def self.instances
-    if default_domain_changed
-      warning(default_domain_deprecation_message)
-    end
-    users = request('user', 'list', ['--long'])
-    users.collect do |user|
-      domain_name = domain_name_from_id(user[:domain])
-      new(
-        :name        => resource_to_name(domain_name, user[:name]),
-        :ensure      => :present,
-        :enabled     => user[:enabled].downcase.chomp == 'true' ? true : false,
-        :password    => user[:password],
-        :email       => user[:email],
-        :description => user[:description],
-        :domain      => domain_name,
-        :domain_id   => user[:domain],
-        :id          => user[:id]
-      )
-    end
-  end
-
-  def self.prefetch(resources)
-    prefetch_composite(resources) do |sorted_namevars|
-      domain = sorted_namevars[0]
-      name   = sorted_namevars[1]
-      resource_to_name(domain, name)
-    end
   end
 
 end
