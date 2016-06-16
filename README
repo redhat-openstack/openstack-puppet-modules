@@ -1,0 +1,2 @@
+openstack-puppet-modules RPM in RDO >= Newton is a source-less metapackage:
+see https://review.rdoproject.org/r/gitweb?p=openstack/openstack-puppet-modules-distgit.git;a=blob;f=openstack-puppet-modules.spec;hb=HEAD
