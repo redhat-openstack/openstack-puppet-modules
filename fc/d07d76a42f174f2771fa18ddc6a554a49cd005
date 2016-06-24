@@ -1,0 +1,8 @@
+Code-Review+1: Alfredo Moralejo <amoralej@redhat.com>
+Code-Review+2: Lukáš Bezdička <lbezdick@redhat.com>
+Verified+1: Lukáš Bezdička <lbezdick@redhat.com>
+Submitted-by: Gaël Chamoulaud <gchamoul@redhat.com>
+Submitted-at: Fri, 24 Jun 2016 05:11:39 -0400
+Reviewed-on: https://review.gerrithub.io/281665
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/stable/mitaka
