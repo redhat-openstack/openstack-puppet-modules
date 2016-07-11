@@ -171,7 +171,7 @@ mod 'opendaylight',
   :git => 'https://github.com/dfarrell07/puppet-opendaylight.git'
 
 mod 'openstack_extras',
-  :commit => 'd6581b5681b88b229b76fda12621fa24d98e4f76',
+  :commit => '2f767ec0c43eda163b5e9f97f208e9db6cb23861',
   :git => 'https://github.com/openstack/puppet-openstack_extras.git'
 
 mod 'openstacklib',
