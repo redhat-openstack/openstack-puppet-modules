@@ -7,9 +7,9 @@ describe 'aodh::client' do
     it { is_expected.to contain_class('aodh::params') }
 
     it 'installs aodh client package' do
-      is_expected.to contain_package('python-ceilometerclient').with(
+      is_expected.to contain_package('python-aodhclient').with(
         :ensure => 'present',
-        :name   => 'python-ceilometerclient',
+        :name   => 'python-aodhclient',
         :tag    => 'openstack',
       )
     end

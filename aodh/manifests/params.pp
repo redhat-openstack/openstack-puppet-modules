@@ -2,7 +2,7 @@
 #
 class aodh::params {
 
-  $client_package_name = 'python-ceilometerclient'
+  $client_package_name = 'python-aodhclient'
 
   case $::osfamily {
     'RedHat': {
