@@ -18,7 +18,7 @@ group :test do
   gem 'rspec-puppet-facts',                                         :require => false
   gem 'rspec',                                                      :require => false
   gem 'rspec-puppet-utils',                                         :require => false
-  gem 'puppet-lint-absolute_classname-check',                       :require => false
+  gem 'puppet-lint-absolute_classname-check', '~> 0.2.4',           :require => false
   gem 'puppet-lint-leading_zero-check',                             :require => false
   gem 'puppet-lint-trailing_comma-check',                           :require => false
   gem 'puppet-lint-version_comparison-check',                       :require => false
@@ -35,6 +35,10 @@ group :development do
 end
 
 group :system_tests do
+  #TODO: to be removed when
+  #https://tickets.puppetlabs.com/browse/BKR-851 is resolved.
+  gem 'specinfra', '= 2.59.0'
+
   if beaker_version = ENV['BEAKER_VERSION']
     gem 'beaker', *location_for(beaker_version)
   else

@@ -5,6 +5,8 @@ require 'pry'
 
 run_puppet_install_helper
 
+# Xenial install is in /opt/puppetlabs
+
 def example_manifest(name, path = '../examples')
   test_dir = File.expand_path File.join File.dirname(__FILE__), path
   manifest = File.join test_dir, name
@@ -20,7 +22,8 @@ RSpec.configure do |c|
   c.formatter = :documentation
   c.before :suite do
     hosts.each do |host|
-
+      # https://tickets.puppetlabs.com/browse/BKR-821
+      on host, '[ ! -f /opt/puppetlabs/bin/puppet ] || ln -s /opt/puppetlabs/bin/puppet /usr/bin/puppet'
       copy_module_to(host, source: root, module_name: 'pacemaker')
       on host, puppet('module', 'install', 'puppetlabs-stdlib')
 

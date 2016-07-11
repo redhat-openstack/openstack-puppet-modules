@@ -107,7 +107,10 @@ define pacemaker::resource::service(
       tries              => $tries,
       try_sleep          => $try_sleep,
       verify_on_create   => $verify_on_create,
+      # https://github.com/voxpupuli/puppet-lint-absolute_classname-check/issues/9
+      # lint:ignore:relative_classname_inclusion
       require            => Exec['wait-for-settle'],
+      # lint:endignore
     }
   })
 }

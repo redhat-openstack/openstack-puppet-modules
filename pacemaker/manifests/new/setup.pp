@@ -27,7 +27,7 @@ class pacemaker::new::setup (
     class { '::pacemaker::new::setup::debian' :
       plugin_version => $plugin_version,
     }
-    contain 'pacemaker::new::setup::debian'
+    pacemaker::contain { 'pacemaker::new::setup::debian': }
   }
 
   class { '::pacemaker::new::setup::auth_key' :
@@ -36,7 +36,7 @@ class pacemaker::new::setup (
     cluster_user         => $cluster_user,
     cluster_group        => $cluster_group,
   }
-  contain 'pacemaker::new::setup::auth_key'
+  pacemaker::contain { 'pacemaker::new::setup::auth_key': }
 
   if $pcsd_mode {
     class { '::pacemaker::new::setup::pcsd' :
@@ -50,7 +50,7 @@ class pacemaker::new::setup (
       cluster_password  => $cluster_password,
       pcs_bin_path      => $pcs_bin_path,
     }
-    contain 'pacemaker::new::setup::pcsd'
+    pacemaker::contain { 'pacemaker::new::setup::pcsd': }
   } else {
     class { '::pacemaker::new::setup::config' :
       cluster_nodes        => $cluster_nodes,
@@ -64,6 +64,6 @@ class pacemaker::new::setup (
       cluster_log_subsys   => $cluster_log_subsys,
       log_file_path        => $log_file_path,
     }
-    contain 'pacemaker::new::setup::config'
+    pacemaker::contain { 'pacemaker::new::setup::config': }
   }
 }

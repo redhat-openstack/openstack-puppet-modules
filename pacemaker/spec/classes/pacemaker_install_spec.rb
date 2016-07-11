@@ -13,7 +13,11 @@ describe 'pacemaker::new::install', type: :class do
             %w(pacemaker pcs fence-agents cman)
           end
         elsif facts[:osfamily] == 'Debian'
-          %w(pacemaker-mgmt pacemaker corosync pacemaker-cli-utils resource-agents)
+          if facts[:operatingsystem] == 'Ubuntu' && facts[:operatingsystemmajrelease].to_i >= 16
+            %w(pacemaker corosync pacemaker-cli-utils resource-agents)
+          else
+            %w(pacemaker-mgmt pacemaker corosync pacemaker-cli-utils resource-agents)
+          end
         else
           []
         end

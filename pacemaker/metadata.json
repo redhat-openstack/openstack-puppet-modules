@@ -1,5 +1,5 @@
 {
-  "name": "puppet-pacemaker",
+  "name": "openstack-pacemaker",
   "version": "0.3.0",
   "author": "OpenStack Contributors",
   "summary": "Puppet module for Pacemaker",
@@ -16,7 +16,7 @@
     },
     {
       "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [ "12.04", "14.04" ]
+      "operatingsystemrelease": ["14.04", "16.04" ]
     }
   ],
 

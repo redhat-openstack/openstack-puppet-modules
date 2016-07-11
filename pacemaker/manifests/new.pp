@@ -102,10 +102,10 @@ class pacemaker::new (
     pacemaker_provider => $pacemaker_provider,
   }
 
-  contain 'pacemaker::new::firewall'
-  contain 'pacemaker::new::install'
-  contain 'pacemaker::new::setup'
-  contain 'pacemaker::new::service'
+  pacemaker::contain { 'pacemaker::new::firewall': }
+  pacemaker::contain { 'pacemaker::new::install': }
+  pacemaker::contain { 'pacemaker::new::setup': }
+  pacemaker::contain { 'pacemaker::new::service': }
 
   Class['::pacemaker::new::firewall'] ->
   Class['::pacemaker::new::install']
