@@ -155,7 +155,7 @@ mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron.git'
 
 mod 'nova',
-  :commit => '1d236a87c38f1506182134d0d6726432c3d240d6',
+  :commit => '13c09c6af787d2cd7c6085c67e6297e90c216479',
   :git => 'https://github.com/openstack/puppet-nova.git'
 
 mod 'nssdb',
