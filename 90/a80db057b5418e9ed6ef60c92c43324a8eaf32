@@ -1,0 +1,7 @@
+Code-Review+2: Jason Guiditta <jguiditt@redhat.com>
+Verified+1: Jason Guiditta <jguiditt@redhat.com>
+Submitted-by: Jason Guiditta <jguiditt@redhat.com>
+Submitted-at: Thu, 04 Aug 2016 11:22:42 -0400
+Reviewed-on: https://review.gerrithub.io/286348
+Project: redhat-openstack/openstack-puppet-modules
+Branch: refs/heads/upstream-mitaka
