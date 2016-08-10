@@ -129,10 +129,20 @@
 #   (optional) The vhost-user socket directory for OVS
 #   Defaults to $::os_service_default
 #
-# [*ovsdb_interface*]
+# [*of_interface*]
 #   (optional) OpenFlow interface to use
 #   Allowed values: ovs-ofctl, native
 #   Defaults to $::os_service_default
+#
+# [*ovsdb_interface*]
+#   (optional) The interface for interacting with the OVSDB
+#   Allowed values: vsctl, native
+#   Defaults to $::os_service_default
+#
+# [*purge_config*]
+#   (optional) Whether to set only the specified config options
+#   in the ovs config.
+#   Defaults to false.
 #
 class neutron::agents::ml2::ovs (
   $package_ensure             = 'present',
@@ -159,7 +169,9 @@ class neutron::agents::ml2::ovs (
   $tun_peer_patch_port        = $::os_service_default,
   $datapath_type              = $::os_service_default,
   $vhostuser_socket_dir       = $::os_service_default,
+  $of_interface               = $::os_service_default,
   $ovsdb_interface            = $::os_service_default,
+  $purge_config               = false,
 ) {
 
   include ::neutron::params
@@ -177,11 +189,19 @@ class neutron::agents::ml2::ovs (
     }
   }
 
-  if ! (is_service_default($ovsdb_interface)) and ! ($ovsdb_interface =~ /^(ovs-ofctl|native)$/) {
-    fail('A value of $ovsdb_interface is incorrect. The allowed values are ovs-ofctl and native')
+  if ! (is_service_default($of_interface)) and ! ($of_interface =~ /^(ovs-ofctl|native)$/) {
+    fail('A value of $of_interface is incorrect. The allowed values are ovs-ofctl and native')
+  }
+
+  if ! (is_service_default($ovsdb_interface)) and ! ($ovsdb_interface =~ /^(vsctl|native)$/) {
+    fail('A value of $ovsdb_interface is incorrect. The allowed values are vsctl and native')
   }
 
   Neutron_agent_ovs<||> ~> Service['neutron-ovs-agent-service']
+
+  resources { 'neutron_agent_ovs':
+    purge => $purge_config,
+  }
 
   if ($bridge_mappings != []) {
     # bridge_mappings are used to describe external networks that are
@@ -224,6 +244,7 @@ class neutron::agents::ml2::ovs (
     'ovs/datapath_type':                value => $datapath_type;
     'ovs/vhostuser_socket_dir':         value => $vhostuser_socket_dir;
     'ovs/ovsdb_interface':              value => $ovsdb_interface;
+    'ovs/of_interface':                 value => $of_interface;
   }
 
   if $firewall_driver {

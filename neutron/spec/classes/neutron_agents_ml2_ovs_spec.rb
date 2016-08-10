@@ -18,6 +18,7 @@ describe 'neutron::agents::ml2::ovs' do
       :drop_flows_on_start        => false,
       :firewall_driver            => 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
       :manage_vswitch             => true,
+      :purge_config               => false,
       }
   end
 
@@ -38,6 +39,12 @@ describe 'neutron::agents::ml2::ovs' do
 
     it { is_expected.to contain_class('neutron::params') }
 
+    it 'passes purge to resource' do
+      is_expected.to contain_resources('neutron_agent_ovs').with({
+        :purge => false
+      })
+    end
+
     it 'configures plugins/ml2/openvswitch_agent.ini' do
       is_expected.to contain_neutron_agent_ovs('agent/polling_interval').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_agent_ovs('agent/l2_population').with_value('<SERVICE DEFAULT>')
@@ -48,6 +55,7 @@ describe 'neutron::agents::ml2::ovs' do
       is_expected.to contain_neutron_agent_ovs('ovs/datapath_type').with_value(['<SERVICE DEFAULT>'])
       is_expected.to contain_neutron_agent_ovs('ovs/vhostuser_socket_dir').with_value(['<SERVICE DEFAULT>'])
       is_expected.to contain_neutron_agent_ovs('ovs/ovsdb_interface').with_value(['<SERVICE DEFAULT>'])
+      is_expected.to contain_neutron_agent_ovs('ovs/of_interface').with_value(['<SERVICE DEFAULT>'])
       is_expected.to contain_neutron_agent_ovs('ovs/integration_bridge').with_value(p[:integration_bridge])
       is_expected.to contain_neutron_agent_ovs('securitygroup/firewall_driver').\
         with_value(p[:firewall_driver])
@@ -264,7 +272,7 @@ describe 'neutron::agents::ml2::ovs' do
         before :each do
           params.merge!(:ovsdb_interface => 'random')
         end
-        it_raises 'a Puppet::Error', /A value of \$ovsdb_interface is incorrect. The allowed values are ovs-ofctl and native/
+        it_raises 'a Puppet::Error', /A value of \$ovsdb_interface is incorrect. The allowed values are vsctl and native/
       end
 
       context 'with supported value' do
@@ -273,6 +281,24 @@ describe 'neutron::agents::ml2::ovs' do
         end
         it 'should configure ovsdb_interface for ovs' do
           is_expected.to contain_neutron_agent_ovs('ovs/ovsdb_interface').with_value('native')
+        end
+      end
+    end
+
+    context 'when supplying of_interface' do
+      context 'with incorrect value' do
+        before :each do
+          params.merge!(:of_interface => 'random')
+        end
+        it_raises 'a Puppet::Error', /A value of \$of_interface is incorrect. The allowed values are ovs-ofctl and native/
+      end
+
+      context 'with supported value' do
+        before :each do
+          params.merge!(:of_interface => 'native')
+        end
+        it 'should configure of_interface for ovs' do
+          is_expected.to contain_neutron_agent_ovs('ovs/of_interface').with_value('native')
         end
       end
     end

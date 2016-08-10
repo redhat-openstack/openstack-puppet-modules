@@ -86,6 +86,11 @@
 #   (optional) Ensure state for plugin package.
 #   Defaults to 'present'.
 #
+# [*purge_config*]
+#   (optional) Whether to set only the specified config options
+#   in the plumgrid config.
+#   Defaults to false.
+#
 class neutron::plugins::plumgrid (
   $director_server              = '127.0.0.1',
   $director_server_port         = '443',
@@ -107,7 +112,8 @@ class neutron::plugins::plumgrid (
   $l2gateway_sw_username        = $::os_service_default,
   $l2gateway_sw_password        = $::os_service_default,
   $plumlib_package_ensure       = 'present',
-  $package_ensure               = 'present'
+  $package_ensure               = 'present',
+  $purge_config                 = false,
 ) {
 
   include ::neutron::params
@@ -161,6 +167,14 @@ class neutron::plugins::plumgrid (
     }
   }
 
+  resources { 'neutron_plugin_plumgrid':
+    purge => $purge_config,
+  }
+
+  resources { 'neutron_plumlib_plumgrid':
+    purge => $purge_config,
+  }
+
   neutron_plugin_plumgrid {
     'PLUMgridDirector/director_server':      value => $director_server;
     'PLUMgridDirector/director_server_port': value => $director_server_port;
@@ -168,6 +182,9 @@ class neutron::plugins::plumgrid (
     'PLUMgridDirector/password':             value => $password, secret =>true;
     'PLUMgridDirector/servertimeout':        value => $servertimeout;
     'database/connection':                   value => $connection;
+    'l2gateway/vendor':                      value => $l2gateway_vendor;
+    'l2gateway/sw_username':                 value => $l2gateway_sw_username;
+    'l2gateway/sw_password':                 value => $l2gateway_sw_password;
   }
 
   neutron_plumlib_plumgrid {
@@ -184,8 +201,5 @@ class neutron::plugins::plumgrid (
     'PLUMgridMetadata/nova_metadata_subnet':         value => $nova_metadata_subnet;
     'PLUMgridMetadata/metadata_proxy_shared_secret': value => $metadata_proxy_shared_secret;
     'ConnectorType/connector_type':                  value => $connector_type;
-    'l2gateway/vendor':                              value => $l2gateway_vendor;
-    'l2gateway/sw_username':                         value => $l2gateway_sw_username;
-    'l2gateway/sw_password':                         value => $l2gateway_sw_password;
   }
 }

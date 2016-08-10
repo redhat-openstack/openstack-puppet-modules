@@ -21,6 +21,7 @@ describe 'neutron::plugins::plumgrid' do
     :nova_metadata_port   => '8775',
     :nova_metadata_subnet => '127.0.0.1/24',
     :connector_type       => 'distributed',
+    :purge_config         => false,
   }
   end
 
@@ -52,6 +53,18 @@ describe 'neutron::plugins::plumgrid' do
       )
     end
 
+    it 'passes purge to resource plugin_plumgrid' do
+      is_expected.to contain_resources('neutron_plugin_plumgrid').with({
+        :purge => false
+      })
+    end
+
+    it 'passes purge to resource plumlib_plumgrid' do
+      is_expected.to contain_resources('neutron_plumlib_plumgrid').with({
+        :purge => false
+      })
+    end
+
     it 'should perform default configuration of plumgrid plugin' do
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/director_server').with_value(params[:director_server])
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/director_server_port').with_value(params[:director_server_port])
@@ -59,6 +72,9 @@ describe 'neutron::plugins::plumgrid' do
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/password').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_plugin_plumgrid('PLUMgridDirector/servertimeout').with_value(params[:servertimeout])
       is_expected.to contain_neutron_plugin_plumgrid('database/connection').with_value(params[:connection])
+      is_expected.to contain_neutron_plugin_plumgrid('l2gateway/vendor').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plugin_plumgrid('l2gateway/sw_username').with_value('<SERVICE DEFAULT>')
+      is_expected.to contain_neutron_plugin_plumgrid('l2gateway/sw_password').with_value('<SERVICE DEFAULT>')
     end
 
     it 'should perform default configuration of plumgrid plumlib' do
@@ -76,9 +92,6 @@ describe 'neutron::plugins::plumgrid' do
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/nova_metadata_subnet').with_value(params[:nova_metadata_subnet])
       is_expected.to contain_neutron_plumlib_plumgrid('PLUMgridMetadata/metadata_proxy_shared_secret').with_value('<SERVICE DEFAULT>')
       is_expected.to contain_neutron_plumlib_plumgrid('ConnectorType/connector_type').with_value('distributed')
-      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/vendor').with_value('<SERVICE DEFAULT>')
-      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/sw_username').with_value('<SERVICE DEFAULT>')
-      is_expected.to contain_neutron_plumlib_plumgrid('l2gateway/sw_password').with_value('<SERVICE DEFAULT>')
     end
 
   end

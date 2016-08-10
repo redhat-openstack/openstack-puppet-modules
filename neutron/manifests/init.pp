@@ -110,6 +110,10 @@
 #  directly
 #  Defaults to 'sudo neutron-rootwrap /etc/neutron/rootwrap.conf'.
 #
+# [*root_helper_daemon*]
+#  (optional) Root helper daemon application to use when possible.
+#  Defaults to $::os_service_default.
+#
 # [*report_interval*]
 #   (optional) Seconds between nodes reporting state to server; should be less than
 #   agent_down_time, best if it is half or less than agent_down_time.
@@ -248,6 +252,11 @@
 #   by the user executing the agent
 #   Defaults to: '$state_path/lock'
 #
+# [*purge_config*]
+#   (optional) Whether to set only the specified config options
+#   in the neutron config.
+#   Defaults to false.
+#
 # DEPRECATED PARAMETERS
 #
 # [*qpid_hostname*]
@@ -289,6 +298,7 @@ class neutron (
   $allow_overlapping_ips              = $::os_service_default,
   $api_extensions_path                = $::os_service_default,
   $root_helper                        = 'sudo neutron-rootwrap /etc/neutron/rootwrap.conf',
+  $root_helper_daemon                 = $::os_service_default,
   $report_interval                    = $::os_service_default,
   $memcache_servers                   = false,
   $control_exchange                   = 'neutron',
@@ -321,6 +331,7 @@ class neutron (
   $log_dir                            = '/var/log/neutron',
   $state_path                         = $::os_service_default,
   $lock_path                          = '$state_path/lock',
+  $purge_config                       = false,
   # DEPRECATED PARAMETERS
   $qpid_hostname                      = undef,
   $qpid_port                          = undef,
@@ -383,6 +394,10 @@ class neutron (
   # Make sure all services get restarted if neutron-common package is upgraded
   Package['neutron'] ~> Service<| tag == 'neutron-service' |>
 
+  resources { 'neutron_config':
+    purge => $purge_config,
+  }
+
   neutron_config {
     'DEFAULT/verbose':                 value => $verbose;
     'DEFAULT/debug':                   value => $debug;
@@ -412,6 +427,7 @@ class neutron (
     'DEFAULT/global_physnet_mtu':      value => pick($network_device_mtu, $global_physnet_mtu);
     'oslo_concurrency/lock_path':      value => $lock_path;
     'agent/root_helper':               value => $root_helper;
+    'agent/root_helper_daemon':        value => $root_helper_daemon;
     'agent/report_interval':           value => $report_interval;
   }
 
