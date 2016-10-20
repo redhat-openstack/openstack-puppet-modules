@@ -52,6 +52,7 @@ class contrail::control::provision_encap (
 ) {
 
   exec { "provision_encap.py ${api_address}" :
+    path => '/usr/bin',
     command => "python /opt/contrail/utils/provision_encap.py \
                  --api_server_ip ${api_address} \
                  --api_server_port ${api_port} \

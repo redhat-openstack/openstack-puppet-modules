@@ -98,6 +98,7 @@ class contrail::vrouter::config (
   }
 
   exec { '/bin/python /opt/contrail/utils/update_dev_net_config_files.py' :
+    path => '/usr/bin',
     command => "/bin/python /opt/contrail/utils/update_dev_net_config_files.py \
                  --vhost_ip ${vhost_ip} \
                  --dev ${device} \

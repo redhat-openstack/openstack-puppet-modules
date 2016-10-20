@@ -31,7 +31,7 @@ mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat.git'
 
 mod 'contrail',
-  :commit => '95616bdf12d90012034b484149d731b5c690da96',
+  :commit => 'c0f7cde686c20ce139c184c688e9f7d13dcd0743',
   :git => 'https://github.com/redhat-cip/puppet-contrail.git'
 
 mod 'corosync',
