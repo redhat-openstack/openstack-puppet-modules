@@ -6,6 +6,6 @@ pname=contrail-vrouter-agent
 LIBDIR=/usr/lib64
 VHOST_CFG=/etc/sysconfig/network-scripts/ifcfg-vhost0
 dev=<%= @device %>
-vgw_subnet_ip=
-vgw_int=
-LOGFILE=--log-file=/var/log/contrail/vrouter.log
+vgw_subnet_ip=<%= @vgw_public_subnet %>
+vgw_int=<%= @vgw_interface %>
+LOGFILE=/var/log/contrail/vrouter.log
