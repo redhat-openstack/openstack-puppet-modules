@@ -297,6 +297,10 @@
 #  (optional) Enable or not Ironic API binding
 #  Defaults to false
 #
+# [*ironic_inspector*]
+#  (optional) Enable or not Ironic Inspector API binding
+#  Defaults to false
+#
 # [*mysql*]
 #  (optional) Enable or not MySQL Galera binding
 #  Defaults to false
@@ -344,6 +348,8 @@
 #    'heat_cw_ssl_port' (Defaults to 13003)
 #    'ironic_api_port' (Defaults to 6385)
 #    'ironic_api_ssl_port' (Defaults to 13385)
+#    'ironic_inspector_port' (Defaults to 5050)
+#    'ironic_inspector_ssl_port' (Defaults to 13050)
 #    'keystone_admin_api_port' (Defaults to 35357)
 #    'keystone_admin_api_ssl_port' (Defaults to 13357)
 #    'keystone_public_api_port' (Defaults to 5000)
@@ -429,6 +435,7 @@ class tripleo::loadbalancer (
   $heat_cfn                  = false,
   $horizon                   = false,
   $ironic                    = false,
+  $ironic_inspector          = false,
   $mysql                     = false,
   $mysql_clustercheck        = false,
   $rabbitmq                  = false,
@@ -457,6 +464,8 @@ class tripleo::loadbalancer (
     heat_cw_ssl_port => 13003,
     ironic_api_port => 6385,
     ironic_api_ssl_port => 13385,
+    ironic_inspector_port => 5050,
+    ironic_inspector_ssl_port => 13050,
     keystone_admin_api_port => 35357,
     keystone_admin_api_ssl_port => 13357,
     keystone_public_api_port => 5000,
@@ -539,7 +548,7 @@ class tripleo::loadbalancer (
     }
 
 
-    if $internal_api_virtual_ip and $internal_api_virtual_ip != $control_virtual_interface {
+    if $internal_api_virtual_ip and $internal_api_virtual_ip != $controller_virtual_ip {
       $internal_api_virtual_interface = interface_for_ip($internal_api_virtual_ip)
       # KEEPALIVE INTERNAL API NETWORK
       keepalived::instance { '53':
@@ -551,7 +560,7 @@ class tripleo::loadbalancer (
       }
     }
 
-    if $storage_virtual_ip and $storage_virtual_ip != $control_virtual_interface {
+    if $storage_virtual_ip and $storage_virtual_ip != $controller_virtual_ip {
       $storage_virtual_interface = interface_for_ip($storage_virtual_ip)
       # KEEPALIVE STORAGE NETWORK
       keepalived::instance { '54':
@@ -563,7 +572,7 @@ class tripleo::loadbalancer (
       }
     }
 
-    if $storage_mgmt_virtual_ip and $storage_mgmt_virtual_ip != $control_virtual_interface {
+    if $storage_mgmt_virtual_ip and $storage_mgmt_virtual_ip != $controller_virtual_ip {
       $storage_mgmt_virtual_interface = interface_for_ip($storage_mgmt_virtual_ip)
       # KEEPALIVE STORAGE MANAGEMENT NETWORK
       keepalived::instance { '55':
@@ -652,6 +661,8 @@ class tripleo::loadbalancer (
   } else {
     $ironic_bind_certificate = $service_certificate
   }
+  # The individual certificates get removed in newton.
+  $ironic_inspector_bind_certificate = $service_certificate
   # TODO(bnemec): When we have support for SSL on private and admin endpoints,
   # have the haproxy stats endpoint use that certificate by default.
   if $haproxy_stats_certificate {
@@ -931,6 +942,18 @@ class tripleo::loadbalancer (
       "${public_virtual_ip}:${ports[ironic_api_port]}" => $haproxy_listen_bind_param,
     }
   }
+  $ironic_inspector_api_vip = hiera('ironic_inspector_vip', $controller_virtual_ip)
+  if $ironic_inspector_bind_certificate {
+    $ironic_inspector_bind_opts = {
+      "${ironic_inspector_api_vip}:${ports[ironic_inspector_port]}" => $haproxy_listen_bind_param,
+      "${public_virtual_ip}:${ports[ironic_inspector_ssl_port]}" => union($haproxy_listen_bind_param, ['ssl', 'crt', $ironic_inspector_bind_certificate]),
+    }
+  } else {
+    $ironic_inspector_bind_opts = {
+      "${ironic_inspector_api_vip}:${ports[ironic_inspector_port]}" => $haproxy_listen_bind_param,
+      "${public_virtual_ip}:${ports[ironic_inspector_port]}" => $haproxy_listen_bind_param,
+    }
+  }
 
   if $haproxy_stats_bind_certificate {
     $haproxy_stats_bind_opts = {
@@ -958,6 +981,7 @@ class tripleo::loadbalancer (
   }
 
   sysctl::value { 'net.ipv4.ip_nonlocal_bind': value => '1' }
+  sysctl::value { 'net.ipv6.ip_nonlocal_bind': value => '1' }
 
   class { '::haproxy':
     service_manage   => $haproxy_service_manage,
@@ -1324,6 +1348,20 @@ class tripleo::loadbalancer (
       ipaddresses       => hiera('horizon_node_ips', $controller_hosts_real),
       server_names      => $controller_hosts_names_real,
       options           => union($haproxy_member_options, ["cookie ${::hostname}"]),
+    }
+  }
+
+  if $ironic_inspector {
+    haproxy::listen { 'ironic-inspector':
+      bind             => $ironic_inspector_bind_opts,
+      collect_exported => false,
+    }
+    haproxy::balancermember { 'ironic-inspector':
+      listening_service => 'ironic_inspector',
+      ports             => '5050',
+      ipaddresses       => hiera('ironic_inspector_node_ips', $controller_hosts_real),
+      server_names      => $controller_hosts_names_real,
+      options           => $haproxy_member_options,
     }
   }
 
