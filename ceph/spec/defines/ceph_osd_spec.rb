@@ -54,7 +54,7 @@ udevadm settle
         'unless'    => "/bin/true # comment to satisfy puppet syntax requirements
 set -ex
 ceph-disk list | grep -E ' */srv1? .*ceph data, (prepared|active)' ||
-ls -l /var/lib/ceph/osd/ceph-* | grep ' /srv\$'
+{ test -f /srv/fsid && test -f /srv/ceph_fsid && test -f /srv/magic ;}
 ",
         'logoutput' => true
       ) }
@@ -118,7 +118,7 @@ udevadm settle
         'unless'    => "/bin/true # comment to satisfy puppet syntax requirements
 set -ex
 ceph-disk list | grep -E ' */srv/data1? .*ceph data, (prepared|active)' ||
-ls -l /var/lib/ceph/osd/testcluster-* | grep ' /srv/data\$'
+{ test -f /srv/data/fsid && test -f /srv/data/ceph_fsid && test -f /srv/data/magic ;}
 ",
         'logoutput' => true
       ) }
@@ -168,8 +168,9 @@ fi
 if [ \"\$id\" ] ; then
   stop ceph-osd cluster=ceph id=\$id || true
   service ceph stop osd.\$id || true
+  ceph  osd crush remove osd.\$id
+  ceph  auth del osd.\$id
   ceph  osd rm \$id
-  ceph auth del osd.\$id
   rm -fr /var/lib/ceph/osd/ceph-\$id/*
   umount /var/lib/ceph/osd/ceph-\$id || true
   rm -fr /var/lib/ceph/osd/ceph-\$id
