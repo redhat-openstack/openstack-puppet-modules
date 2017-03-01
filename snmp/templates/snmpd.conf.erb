@@ -1,0 +1,106 @@
+###
+### File managed by Puppet
+###
+
+################################################################################
+# AGENT BEHAVIOUR
+
+<% if (@agentaddress.is_a?(Array)) and (@agentaddress.count > 0) -%>
+agentaddress <%= @agentaddress.join(',') %>
+<% end -%>
+
+################################################################################
+# ACCESS CONTROL
+
+# ------------------------------------------------------------------------------
+# Traditional Access Control
+<% if @ro_community -%>
+rocommunity <%= @ro_community %> <%= @ro_network %>
+<% end -%>
+<% if @ro_community6 -%>
+rocommunity6 <%= @ro_community6 %> <%= @ro_network6 %>
+<% end -%>
+<% if @rw_community -%>
+rwcommunity <%= @rw_community %> <%= @rw_network %>
+<% end -%>
+<% if @rw_community6 -%>
+rwcommmunity6 <%= @rw_community6 %> <%= @rw_network6 %>
+<% end -%>
+
+# ------------------------------------------------------------------------------
+# VACM Configuration
+#       sec.name       source        community
+<% if @com2sec.any? -%>
+<% @com2sec.each do |com2sec| -%>
+com2sec <%= com2sec %>
+<% end -%>
+<% end -%>
+
+<% if @com2sec6.any? -%>
+<% @com2sec6.each do |com2sec6| -%>
+com2sec6 <%= com2sec6 %>
+<% end -%>
+<% end -%>
+
+#       groupName      securityModel securityName
+<% if @groups.any? -%>
+<% @groups.each do |group| -%>
+group   <%= group %>
+<% end -%>
+<% end -%>
+
+#       name          incl/excl  subtree             mask(optional)
+<% @views.each do |view| -%>
+view    <%= view %>
+<% end -%>
+
+#       group          context sec.model sec.level prefix read       write notif
+<% @accesses.each do |access| -%>
+access  <%= access %>
+<% end -%>
+
+# ------------------------------------------------------------------------------
+# Typed-View Configuration
+
+################################################################################
+# SYSTEM INFORMATION
+
+# ------------------------------------------------------------------------------
+# System Group
+sysLocation <%= @location %>
+sysContact <%= @contact %>
+sysServices <%= @services %>
+sysName <%= @sysname %>
+
+################################################################################
+# EXTENDING AGENT FUNCTIONALITY
+
+<% if @dlmod.any? -%>
+# ------------------------------------------------------------------------------
+# Dynamically Loadable Modules
+<% @dlmod.each do |mod| -%>
+dlmod <%= mod %>
+<% end -%>
+
+<% end -%>
+
+###############################################################################
+## Logging
+##
+
+## We do not want annoying "Connection from UDP: " messages in syslog.
+## If the following option is set to 'no', snmpd will print each incoming
+## connection, which can be useful for debugging.
+
+dontLogTCPWrappersConnects <%= @do_not_log_tcpwrappers %>
+
+################################################################################
+# OTHER CONFIGURATION
+
+<% if @openmanage_enable -%>
+#Allow Systems Management Data Engine SNMP to connect to snmpd using SMUX
+smuxpeer .1.3.6.1.4.1.674.10892.1
+<% end -%>
+<% @snmpd_config.each do |line| -%>
+<%= line %>
+<% end -%>

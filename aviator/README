@@ -1,0 +1,45 @@
+Puppet Aviator
+
+A feature module for the Aviator project.
+
+Aviator is a lightweight library for communicating with the OpenStack
+API
+
+See Aviator_README.md for more information on Aviator.
+
+License
+-------
+MIT License
+
+Contact
+-------
+Aimon Bustardo <me at aimon dot net>
+
+Example Usage:
+-------
+    
+    $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', '..',
+'..'))
+    require 'puppet/feature/aviator'
+   
+    configuration = {
+        :provider => 'openstack',
+        :auth_service => {
+            :name      => 'identity',
+            :host_uri  => 'http://devstack:5000/v2.0',
+            :request   => 'create_token',
+            :validator => 'list_tenants'
+        },
+        :auth_credentials => {
+            :username    => 'myusername',
+            :password    => 'mypassword',
+            :tenant_name => 'myproject'
+        }
+    }
+
+    openstack = Aviator::Session.new(:config => configuration)
+
+    openstack.authenticate
+    response = openstack.request :identity_service, :list_tenants, :endpoint_type => 'admin'
+
+    puts response[:body]

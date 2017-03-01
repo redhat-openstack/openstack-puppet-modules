@@ -1,0 +1,61 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Read in a single integer from a text file, increment it, and write it back.
+
+This script is usually only executed by a puppet exec type.
+"""
+# Increment an ID so that it is unique to each puppet run.
+# Copyright (C) 2012-2013+ James Shubin
+# Written by James Shubin <james@shubin.ca>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+if len(sys.argv) != 2: sys.exit(1)
+
+# parse the commandline, and don't run the increment if --noop is used :)
+pid = os.getpid()		# my pid
+ppid = os.getppid()		# parent pid
+
+# parse parent cmdline
+with open("/proc/%d/cmdline" % ppid, 'r') as f:
+	cmdline = f.read()
+argv = cmdline.split("\0")	# separated by nulls (the: ^@ character in vim)
+if argv[-1] == '': argv.pop()	# remove empty element at end of list if exists
+
+# TODO: does the noop detection work when we run as a service ? (probably not!)
+if '--noop' in argv:
+	sys.exit(0)
+
+# now do the actual incremental work...
+f = open(sys.argv[1], 'r')
+a = [l.strip() for l in f.readlines() if l.strip() != '']
+f.close()
+if len(a) == 0:
+	i = 0
+elif len(a) != 1: sys.exit(2)
+else:
+	try:
+		i = int(a[0])
+	except ValueError, e:
+		sys.exit(3)
+
+#print(i)
+f = open(sys.argv[1], 'w')
+f.write("%d\n" % (i+1))
+f.close()
+sys.exit(0)
+
