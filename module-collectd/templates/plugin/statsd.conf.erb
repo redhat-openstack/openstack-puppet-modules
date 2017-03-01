@@ -1,0 +1,35 @@
+<Plugin statsd>
+<% if @host -%>
+  Host "<%= @host %>"
+<% end -%>
+<% if @port -%>
+  Port <%= @port %>
+<% end -%>
+<% unless @deletecounters.nil? -%>
+  DeleteCounters <%= @deletecounters %>
+<% end -%>
+<% unless @deletetimers.nil? -%>
+  DeleteTimers <%= @deletetimers %>
+<% end -%>
+<% unless @deletegauges.nil? -%>
+  DeleteGauges <%= @deletegauges %>
+<% end -%>
+<% unless @deletesets.nil? -%>
+  Deletesets <%= @deletesets %>
+<% end -%>
+<% if @timerpercentile -%>
+  TimerPercentile <%= @timerpercentile %>
+<% end -%>
+<% if @timerupper -%>
+  TimerUpper <%= @timerupper %>
+<% end -%>
+<% if @timerlower -%>
+  TimerLower <%= @timerlower %>
+<% end -%>
+<% if @timersum -%>
+  TimerSum <%= @timersum %>
+<% end -%>
+<% if @timercount -%>
+  TimerCount <%= @timercount %>
+<% end -%>
+</Plugin>

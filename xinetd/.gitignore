@@ -1,0 +1,5 @@
+pkg/
+.DS_Store
+*.swp
+Gemfile.lock
+.rspec_system/
