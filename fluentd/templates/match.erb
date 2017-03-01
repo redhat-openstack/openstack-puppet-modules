@@ -1,0 +1,36 @@
+<match <%= @pattern %>>
+<%- if @config.is_a?( Array ) -%>
+  type copy
+  <%- @config.each do |config| -%>
+  <store>
+    <%- config.each do |key, val| -%>
+      <%- if key == 'servers' -%>
+        <%- val.each do |server| -%>
+        <server>
+          <%- server.each do |k,v| -%>
+          <%= k %> <%= v %>
+          <%- end -%>
+        </server>
+        <%- end -%>
+      <%- else -%>
+        <%= key %> <%= val %>
+      <%- end -%>
+    <%- end -%>
+  </store>
+  <%- end -%>
+<%- else -%>
+  <%- @config.each do |key, val| -%>
+    <%- if key == 'servers' -%>
+      <%- val.each do |server| -%>
+      <server>
+        <%- server.each do |k,v| -%>
+        <%= k %> <%= v %>
+        <%- end -%>
+      </server>
+      <%- end -%>
+    <%- else -%>
+      <%= key %> <%= val %>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+</match>

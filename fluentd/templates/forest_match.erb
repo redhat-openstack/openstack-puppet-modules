@@ -1,0 +1,21 @@
+<match <%= @pattern %>>
+  type <%= @type %>
+<% @config.sort_by{|key,val|key}.each do |key, val| -%>
+  <% if val.class == Hash && key == 'template' %> 
+    <template>
+    <% val.sort_by{|tkey,tval|tkey}.each do |tkey, tval| -%>
+        <%= tkey %> <%= tval %>
+    <% end -%>
+    </template>
+  <% else -%>
+        <%= key %> <%= val %>
+  <% end -%>
+<% end -%>
+<% @servers.each do |server| -%>
+  <server>
+<% @server.sort_by{|key,val|key}.each do |key, val| -%>
+    <%= key %> <%= val %>
+<% end -%>
+  </server>
+<% end -%>
+</match>

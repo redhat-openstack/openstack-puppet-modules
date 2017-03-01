@@ -1,0 +1,69 @@
+compatibility: whitetank
+
+totem {
+  version:                             2
+  token:                               <%= @token %>
+  token_retransmits_before_loss_const: <%= @token_retransmits_before_loss_const %>
+  join:                                60
+  consensus:                           3600
+  vsftype:                             none
+  max_messages:                        20
+  clear_node_high_bit:                 yes
+  rrp_mode:                            <%= @rrp_mode %>
+  secauth:                             <%= @enable_secauth_real %>
+  threads:                             <%= @threads %>
+<% [@bind_address].flatten.each_index do |i| -%>
+  interface {
+    ringnumber:  <%= i %>
+    bindnetaddr: <%= [@bind_address].flatten[i] %>
+<% if [@multicast_address].flatten[i] == 'broadcast' -%>
+    broadcast:   yes
+<% else -%>
+    mcastaddr:   <%= [@multicast_address].flatten[i] %>
+<% end -%>
+    mcastport:   <%= [@port].flatten[i] %>
+<% if @ttl -%>
+    ttl:         <%= @ttl %>
+<% end -%>
+  }
+<% end -%>
+}
+
+logging {
+  fileline:        off
+  to_stderr:       yes
+  to_logfile:      no
+  to_syslog:       yes
+  syslog_facility: daemon
+  debug:           <%= scope.lookupvar('debug') ? 'on' : 'off' %>
+  timestamp:       on
+  logger_subsys {
+    subsys: AMF
+    debug:  off
+    tags:   enter|leave|trace1|trace2|trace3|trace4|trace6
+  }
+}
+
+amf {
+  mode: disabled
+}
+
+aisexec {
+  user:  root
+  group: root
+}
+
+<% if @set_votequorum -%>
+quorum {
+  provider: corosync_votequorum
+}
+
+nodelist {
+<% [@quorum_members].flatten.each_index do |i| -%>
+  node {
+    ring0_addr: <%= [@quorum_members].flatten[i] %>
+    nodeid: <%= i+1 %>
+  }
+<% end -%>
+}
+<% end -%>
