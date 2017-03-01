@@ -1,0 +1,33 @@
+{
+  "name": "eNovance-contrail",
+  "version": "1.0.0",
+  "author": "Yanis Guenane, Sebastien Badia, and eNovance Contributors",
+  "summary": "Puppet module for Juniper OpenContrail",
+  "license": "Apache-2.0",
+  "source": "git://github.com/enovance/puppet-{{cookiecutter.project_name}}.git",
+  "project_page": "https://github.com/enovance/puppet-contrail",
+  "issues_url": "https://github.com/enovance/puppet-contrail/issues",
+  "description": "Installs and configures OpenContrail.",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": ["8"]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": ["21","22"]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": ["7"]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": ["12.04","14.04"]
+    }
+  ],
+  "dependencies": [
+    { "name": "puppetlabs/inifile", "version_requirement": ">=1.0.0 <2.0.0" },
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 4.0.0 <5.0.0" }
+  ]
+}

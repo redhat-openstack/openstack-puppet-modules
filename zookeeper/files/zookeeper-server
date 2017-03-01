@@ -1,0 +1,28 @@
+#!/bin/sh
+
+###
+### This file is managed by Puppet.
+###
+
+# This script is based on /usr/bin/zookeeper-server that ships with ZooKeeper 3.4.5 in Cloudera CDH 4
+# (RPM: zookeeper-3.4.5+25-1.cdh4.6.0.p0.12.el6.x86_64).  The only modification is the addition of the workaround to fix
+# a ZooKeeper restart problem, see below.
+
+# Workaround: This `trap` fixes a problem where supervisord is not able to restart the ZooKeeper processes (this script,
+# which will become the parent parent process, and the actual ZooKeeper processes, which runs as the former's child).
+# See https://github.com/miguno/puppet-zookeeper/issues/1 for more information.
+trap "kill -- -$$" EXIT
+
+# Autodetect JAVA_HOME if not defined
+. /usr/lib/bigtop-utils/bigtop-detect-javahome
+
+export ZOOPIDFILE=${ZOOPIDFILE:-/var/run/zookeeper/zookeeper-server.pid}
+export ZOOKEEPER_HOME=${ZOOKEEPER_CONF:-/usr/lib/zookeeper}
+export ZOOKEEPER_CONF=${ZOOKEEPER_CONF:-/etc/zookeeper/conf}
+export ZOOCFGDIR=${ZOOCFGDIR:-$ZOOKEEPER_CONF}
+export CLASSPATH=$CLASSPATH:$ZOOKEEPER_CONF:$ZOOKEEPER_HOME/*:$ZOOKEEPER_HOME/lib/*
+export ZOO_LOG_DIR=${ZOO_LOG_DIR:-/var/log/zookeeper}
+export ZOO_LOG4J_PROP=${ZOO_LOG4J_PROP:-INFO,ROLLINGFILE}
+export JVMFLAGS=${JVMFLAGS:--Dzookeeper.log.threshold=INFO}
+export ZOO_DATADIR_AUTOCREATE_DISABLE=${ZOO_DATADIR_AUTOCREATE_DISABLE:-true}
+env CLASSPATH=$CLASSPATH /usr/lib/zookeeper/bin/zkServer.sh "$@"
