@@ -1,0 +1,27 @@
+This is puppet-puppet a puppet module for puppet.
+
+Please read the INSTALL file for instructions on getting this installed.
+Look in the examples/ folder for usage. If none exist, please contribute one!
+This code may be a work in progress. The interfaces may change without notice.
+Patches are welcome, but please be patient. They are best received by email.
+Please ping me if you have big changes in mind, before you write a giant patch.
+
+Module specific notes:
+* I've always had an issue with this module.
+* I recently ripped out support for a lot of the old puppet 0.24 era features.
+* I've only since tested it on the recent 3.x series.
+* A lot has changed from Puppet version to version.
+* It has been hard to follow this and keep it sane.
+* There are serious improvements that could be made to this code.
+* This module is useful for automatic deployments of puppet with vagrant.
+* The puppet::vardir class is a dependency for some of my other puppet modules.
+
+Dependencies:
+* my puppet-shorewall module (optional)
+* my puppet-yum module (optional)
+* puppetlabs-apt module (optional, untested)
+
+
+Happy hacking,
+James Shubin <james@shubin.ca>, https://ttboj.wordpress.com/
+
