@@ -1,0 +1,189 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Run puppet again if notified to do so
+
+This script is only executed by a puppet exec type. When run, it forks and then
+waits for the parent process (puppet) to exit. It then runs puppet "again",
+with the same arguments it was originally started with.
+
+The exec type for "again" is already provided. To activate it, you notify it:
+
+	include again
+	sometype { 'foo':
+		notify => Exec['again'],	# notify it like this
+	}
+
+This is particularly useful if you know that when one of your types runs, it
+*will* need another puppet execution to finish building. Sadly, for certain
+complex puppet modules, this is unavoidable. You can however make sure to avoid
+infinite loops, which will just waste system resources.
+"""
+# Run puppet again if notified to do so
+# Copyright (C) 2012-2013+ James Shubin
+# Written by James Shubin <james@shubin.ca>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+import time
+import math
+import errno
+import argparse
+
+DELAY = 0	# wait this many seconds after puppet exit before running again
+LOCKFILE = '/var/lib/puppet/state/agent_catalog_run.lock'	# lockfile path
+
+def merge(a, b):			# merge two hashes and return the union
+	r = a.copy()
+	r.update(b)
+	return r
+
+def is_running(pid):
+	"""
+	os.waitpid() may not work if the process is not a child of the current
+	process. In that case, using os.kill(pid, 0) may indeed be the best
+	solution. Note that, in general, there are three likely outcomes of
+	calling os.kill() on a process:
+
+	* If the process exists and belongs to you, the call succeeds.
+	* If the process exists but belong to another user, it throws an
+	OSError with the errno attribute set to errno.EPERM.
+	* If the process does not exist, it throws an OSError with the errno
+	attribute set to errno.ESRCH.
+	"""
+	try:
+		os.kill(pid, 0)
+	except OSError as e:
+		if e.errno == errno.ESRCH:
+			return False
+	return True
+
+def is_locked():
+	"""
+	Lets us know if a puppet agent is currently running.
+	"""
+	# TODO: is there a more reliable way to do this ? This is sort of racy.
+	return os.path.isfile(LOCKFILE)
+
+parser = argparse.ArgumentParser(description="Utility used by Puppet Exec['again'].")
+parser.add_argument('--delta', dest='delta', action='store', type=int, required=False, default=0)
+# start delta timer immediately, instead of waiting till puppet finishes...
+parser.add_argument('--start-timer-now', dest='start_timer_now', action='store_true', default=False, required=False)
+args = parser.parse_args()
+
+start = time.time()		# TODO: use time.monotonic() if exists
+service = False			# are we running as a service ?
+pid = os.getpid()		# my pid
+ppid = os.getppid()		# parent pid
+
+# parse parent cmdline
+with open("/proc/%d/cmdline" % ppid, 'r') as f:
+	cmdline = f.read()
+argv = cmdline.split("\0")	# separated by nulls (the: ^@ character in vim)
+if argv[-1] == '': argv.pop()	# remove empty element at end of list if exists
+
+# parse parent environ
+with open("/proc/%d/environ" % ppid, 'r') as f:
+	environ = f.read()
+
+env = environ.split("\0")
+if env[-1] == '': env.pop()	# as above, there is a trailing null to remove!
+env = map(lambda x: {x.split('=')[0]: '='.join(x.split('=')[1:])}, env)	# list!
+env = reduce(lambda a,b: merge(a,b), env)	# merge the hash list into hash
+
+# TODO: does the noop detection work when we run as a service ? (probably not!)
+# if we're running as no op, then repeat execution won't help
+if '--noop' in argv:
+	sys.exit(0)
+
+# TODO: do a sanity check to verify that we've got a valid puppet cmdline...
+
+# heuristic, based on previous experiments, that service agents have a weird $0
+# see: $0 = "puppet agent: applying configuration" in: [...]/puppet/agent.rb
+if argv[0].startswith('puppet agent: '):
+	service = True		# bonus
+	argv = ['/usr/bin/puppet', 'agent', '--test']
+	# NOTE: create a shim, if you ever need help debugging :)
+	# argv.insert(0, '/tmp/shim.sh')
+
+# if we're running as a service, kick off a "one of" run
+# TODO: is there a more reliable way to detect this ?
+if not('--test' in argv) and not('-t' in argv):
+	service = True		# this is the main setter of this variable
+	argv.append('--test')	# TODO: this isn't ideal, but it's safe enough!
+
+# fork a child process. return 0 in the child and the child’s process id in the
+# parent. if an error occurs OSError is raised.
+try:
+	fork = os.fork()	# TODO: forkpty() instead ?
+
+except OSError, e:
+	print >> sys.stderr, "Error forking: %s" % str(e)
+	sys.exit(1)
+
+# branch
+if fork == 0:			# child
+	# wait for ppid to exit...
+	# TODO: we can probably remove the service check altogether, because
+	# actually the ppid does spawn, and then exit i think... it doesn't
+	# mean we can skip the is_locked() check, but we don't have to verify
+	# that we're really a service, because the ppid does dissapear.
+	if not service:		# the service pid shouldn't ever exit...
+		while is_running(ppid):
+			time.sleep(1)
+
+	if not args.start_timer_now:
+		start = time.time()	# TODO: use time.monotonic() if exists
+
+	# wait for any agent runs to finish...
+	while is_locked():
+		time.sleep(1)
+
+	if service:	# we need to wait for is_locked to end first...
+		if not args.start_timer_now:
+			start = time.time()	# TODO: use time.monotonic() if exists
+
+	# optionally delay before starting puppet again
+	if DELAY > 0:
+		time.sleep(int(DELAY))
+
+	# wait out the --delta timer
+	while True:
+		delta = time.time() - start	# time elapsed
+		timeleft = args.delta - delta	# time left
+		if int(timeleft) <= 0:
+			break
+
+		time.sleep(int(math.ceil(timeleft)))	# this much time left
+
+	# wait for any agents to finish running, now that we waited for timers!
+	# NOTE: if puppet starts running immediately after this spinlock ended,
+	# but before our exec call runs, then when our exec runs puppet it will
+	# exit right away due to the puppet lock. this is a race condition, but
+	# it isn't a problem because the effect of having puppet run right away
+	# after this spinlock, will be successful, albeit by different means...
+	while is_locked():
+		time.sleep(1)
+
+	# now run puppet the same way it ran in cmdline
+	# NOTE: env is particularly important or puppet breaks :(
+	os.execvpe(argv[0], argv, env)		# this command does not return!
+
+else:				# parent
+	print "pid: %d will try to puppet again..." % fork
+	sys.exit(0)				# let puppet exit successfully!
+
+# vim: ts=8
