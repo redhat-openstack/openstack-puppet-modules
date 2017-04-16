@@ -1,0 +1,5 @@
+Gemfile.lock
+.vagrant
+vendor
+spec/fixtures/modules
+spec/fixtures/manifests/site.pp
