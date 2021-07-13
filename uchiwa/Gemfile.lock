@@ -2,7 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (2.2.8)
-    addressable (2.3.6)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     archive-tar-minitar (0.5.2)
     autoparse (0.3.3)
       addressable (>= 2.3.1)
@@ -154,6 +155,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    public_suffix (4.0.6)
     puppet (3.6.2)
       facter (> 1.6, < 3)
       hiera (~> 1.0)
